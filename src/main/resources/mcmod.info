@@ -1,0 +1,16 @@
+[
+{
+  "modid": "skyblock_dungeons_guide",
+  "name": "Skyblock Dungeons Guide",
+  "description": "A mod to help dungeon players to find and solve secrets and puzzles most efficiently.",
+  "version": "${version}",
+  "mcversion": "${mcversion}",
+  "url": "",
+  "updateUrl": "",
+  "authorList": ["syeyoung"],
+  "credits": "The guild Jerry's Crew, for nothing.",
+  "logoFile": "",
+  "screenshots": [],
+  "dependencies": []
+}
+]
