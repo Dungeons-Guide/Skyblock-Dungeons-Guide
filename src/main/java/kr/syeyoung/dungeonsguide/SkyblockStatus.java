@@ -1,8 +1,10 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.scoreboard.*;
 
@@ -17,7 +19,13 @@ public class SkyblockStatus {
     @Getter
     private boolean isOnDungeon;
 
+    @Getter
+    @Setter
+    private DungeonContext context;
+
     private final Pattern SERVER_BRAND_PATTERN = Pattern.compile("(.+) <- (?:.+)");
+
+
 
     public boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();
