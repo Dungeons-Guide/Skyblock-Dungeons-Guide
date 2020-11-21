@@ -33,6 +33,12 @@ public class SkyblockStatus {
     private static final Set<String> SKYBLOCK_IN_ALL_LANGUAGES = Sets.newHashSet("SKYBLOCK");
 
     public void updateStatus() {
+        if (!isOnHypixel()) {
+            isOnDungeon = false;
+            isOnSkyblock = false;
+            return;
+        }
+
         Scoreboard scoreboard = Minecraft.getMinecraft().thePlayer.getWorldScoreboard();
         ScoreObjective scoreObjective = scoreboard.getObjectiveInDisplaySlot(1);
         if (scoreObjective == null) return;
