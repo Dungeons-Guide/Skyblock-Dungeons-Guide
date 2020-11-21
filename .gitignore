@@ -5,7 +5,9 @@ eclipse/*
 
 build/*
 
-
+logs/*
+config/*
+crash-reports/*
 run/*
 gradle/*
 
