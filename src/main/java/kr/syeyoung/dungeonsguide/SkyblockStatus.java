@@ -70,8 +70,7 @@ public class SkyblockStatus {
         Collection<Score> scores = scoreboard.getSortedScores(scoreObjective);
         boolean foundDungeon = false;
         for (Score sc:scores) {
-            if (sc.getPlayerName() == null) continue;
-            ScorePlayerTeam scorePlayerTeam = scoreboard.getTeam(sc.getPlayerName());
+            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
 
             if (strippedLine.contains("Dungeon Cleared: ")) {
