@@ -15,7 +15,10 @@ public class EventListener {
                 SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                 boolean isOnDungeon = skyblockStatus.isOnDungeon();
                 skyblockStatus.updateStatus();
-                if (!skyblockStatus.isOnDungeon()) return;
+                if (!skyblockStatus.isOnDungeon()) {
+                    skyblockStatus.setContext(null);
+                    return;
+                }
                 if (isOnDungeon) skyblockStatus.getContext().tick();
                 else skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
             }
