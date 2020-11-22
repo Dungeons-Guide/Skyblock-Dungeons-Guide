@@ -11,38 +11,17 @@ import net.minecraft.world.storage.MapData;
 public class DungeonContext {
     @Getter
     private World world;
-
-    private byte[] lastMapData;
+    @Getter
+    private MapProcessor mapProcessor;
 
     public DungeonContext(World world) {
         this.world = world;
+        mapProcessor = new MapProcessor(this);
     }
 
 
     public void tick() {
-        mapTick();
+        mapProcessor.tick();
     }
 
-    private void buildMap(byte[] mapData) {
-
-    }
-    private void processMap(byte[] mapData) {
-
-    }
-
-    private void mapTick() {
-        ItemStack stack = Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(8);
-        byte[] mapData;
-        if (stack == null || !(stack.getItem() instanceof ItemMap)) {
-            mapData = lastMapData;
-        } else {
-            MapData mapData1 = ((ItemMap)stack.getItem()).getMapData(stack, world);
-            mapData = mapData1.colors;
-        }
-
-        if (lastMapData == null && mapData != null) buildMap(mapData);
-        processMap(mapData);
-
-        lastMapData = mapData;
-    }
 }
