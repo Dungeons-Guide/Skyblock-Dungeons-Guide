@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -42,6 +43,8 @@ public class EventListener {
         MapUtils.getImage().getRGB(0,0,128,128, textureData, 0, 128);
         dynamicTexture.updateDynamicTexture();
         Minecraft.getMinecraft().getTextureManager().bindTexture(location);
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
         GuiScreen.drawModalRectWithCustomSizedTexture(0,0, 0, 0, 128, 128, 128, 128);
     }
 }

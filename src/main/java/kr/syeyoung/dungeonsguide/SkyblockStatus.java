@@ -23,6 +23,9 @@ public class SkyblockStatus {
     @Setter
     private DungeonContext context;
 
+    @Getter
+    private String dungeonName;
+
     private final Pattern SERVER_BRAND_PATTERN = Pattern.compile("(.+) <- (?:.+)");
 
 
@@ -72,9 +75,12 @@ public class SkyblockStatus {
         for (Score sc:scores) {
             ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
-
             if (strippedLine.contains("Dungeon Cleared: ")) {
                 foundDungeon = true;
+            }
+            if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
+                System.out.println(strippedLine);
+                dungeonName = strippedLine;
             }
         }
 
