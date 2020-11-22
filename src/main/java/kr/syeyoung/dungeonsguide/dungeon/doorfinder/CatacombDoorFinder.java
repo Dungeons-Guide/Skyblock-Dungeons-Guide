@@ -42,4 +42,30 @@ public class CatacombDoorFinder implements StartDoorFinder {
         }
         return null;
     }
+
+    @Override
+    public Vector2d offset(World w) {
+        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
+            @Override
+            public boolean apply(EntityArmorStand input) {
+                System.out.println(input.getName());
+                return input.getName().equals("§bMort");
+            }
+        });
+
+        if (armorStand.size() != 0) {
+            EntityArmorStand mort = armorStand.iterator().next();
+            BlockPos pos = mort.getPosition();
+            pos = pos.add(0, 3, 0);
+            for (int i = 0; i < 5; i++) {
+                for (Vector2d vector2d:directions) {
+                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
+                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
+                        return vector2d;
+                    }
+                }
+            }
+        }
+        return null;
+    }
 }

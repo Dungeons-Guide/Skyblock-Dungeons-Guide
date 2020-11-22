@@ -1,15 +1,12 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DoorFinderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.StartDoorFinder;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
@@ -18,8 +15,8 @@ import net.minecraft.world.storage.MapData;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.Collection;
-import java.util.Set;
+import java.util.*;
+import java.util.List;
 
 public class MapProcessor {
 
@@ -32,6 +29,10 @@ public class MapProcessor {
     private Point topLeftMapPoint;
 
     private boolean bugged = false;
+
+    private List<Point> roomsFound = new ArrayList<Point>();
+
+    private boolean axisMatch = false;
 
     public MapProcessor(DungeonContext context) {
         this.context = context;
@@ -114,6 +115,9 @@ public class MapProcessor {
             unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1);
             unitPoint.translate((int)doorDir.x, (int)doorDir.y);
 
+            Vector2d offset = doorFinder.offset(context.getWorld());
+            axisMatch = doorDir.equals(offset);
+
             int worldX = unitPoint.x * 16;
             int worldY = unitPoint.y * 16;
             BlockPos worldMin = door.add(-worldX, 0, -worldY);
@@ -122,22 +126,108 @@ public class MapProcessor {
         }
 
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Found Green room:"+startroom));
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Axis match:"+axisMatch));
+        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("World Min:"+context.getDungeonMin()));
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Dimension:"+unitRoomDimension));
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("top Left:"+topLeftMapPoint));
         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("door dimension:"+doorDimension));
     }
 
-    private Point mapPointToRoomPoint(Point mapPoint) {
+    public Point mapPointToRoomPoint(Point mapPoint) {
         int x = (int)((mapPoint.x - topLeftMapPoint.x) / ((double)unitRoomDimension.width + doorDimension.height));
         int y = (int)((mapPoint.y - topLeftMapPoint.y) / ((double)unitRoomDimension.height + doorDimension.height));
         return new Point(x,y);
     }
+    public Point roomPointToMapPoint(Point roomPoint) {
+        return new Point(roomPoint.x * (unitRoomDimension.width +doorDimension.height) + topLeftMapPoint.x,
+                roomPoint.y *(unitRoomDimension.height + doorDimension.height) + topLeftMapPoint.y);
+    }
+    public BlockPos roomPointToWorldPoint(Point roomPoint) {
+        return new BlockPos(context.getDungeonMin().getX() +(roomPoint.x * 32), context.getDungeonMin().getY(), context.getDungeonMin().getZ() +(roomPoint.y *32));
+    }
 
     private void processMap(byte[] mapData) {
+        int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
+        int width = (int) ((128.0 - topLeftMapPoint.x) / (unitRoomDimension.width + doorDimension.height));
+        for (int y = 0; y <= height; y++){
+            for (int x = 0; x <= width; x++) {
+                if (roomsFound.contains(new Point(x,y))) continue;
+
+                Point mapPoint = roomPointToMapPoint(new Point(x,y));
+                byte color = MapUtils.getMapColorAt(mapData, mapPoint.x, mapPoint.y);
+                MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(255,255,0,80));
+                if (color != 0 && color != 85) {
+                    MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
+                    DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
+                    context.getDungeonRoomList().add(rooms);
+                    for (Point p:rooms.getUnitPoints()) {
+                        roomsFound.add(p);
+                        context.getRoomMapper().put(p, rooms);
+                    }
+                }
+
+            }
+        }
 
     }
 
+    private DungeonRoom buildRoom(byte[] mapData, Point unitPoint) {
+        Queue<Point[]> toCheck = new LinkedList<Point[]>();
+        toCheck.add(new Point[] {unitPoint, unitPoint}); // requestor, target
+        Set<Point> checked = new HashSet<Point>();
+        List<Point> ayConnected = new ArrayList<Point>();
+
+        int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+        while(toCheck.peek() != null) {
+            Point[] check = toCheck.poll();
+            if (checked.contains(check[1])) continue;
+            checked.add(check[1]);
+
+            if (checkIfConnected(mapData, check[0], check[1])) {
+                ayConnected.add(check[1]);
+                if (check[1].x < minX) minX = check[1].x;
+                if (check[1].y < minY) minY = check[1].y;
+                for (Vector2d dir: directions) {
+                    Point newPt = new Point(check[1].x + (int)dir.x, check[1].y +(int)dir.y);
+                    toCheck.add(new Point[]{check[1], newPt});
+                }
+            }
+        }
+
+        short shape = 0;
+        for (Point p:ayConnected) {
+            int localX = p.x - minX, localY = p.y - minY;
+            shape |= 1 <<(localY *4 + localX);
+        }
+
+        Point pt2 = roomPointToMapPoint(ayConnected.get(0));
+        byte unit1 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
+
+        return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), context);
+    }
+
+    private boolean checkIfConnected(byte[] mapData, Point unitPoint1, Point unitPoint2) {
+        if (unitPoint1 == unitPoint2) return true;
+        if (unitPoint1.equals(unitPoint2)) return true;
+
+
+        Point high = (unitPoint2.y > unitPoint1.y) ? unitPoint2 :(unitPoint2.x > unitPoint1.x) ? unitPoint2 : unitPoint1;
+        Point low = high == unitPoint2 ? unitPoint1 : unitPoint2;
+
+        int xOff = low.x - high.x;
+        int yOff = low.y - high.y;
+        Point pt = roomPointToMapPoint(high);
+        Point pt2 = roomPointToMapPoint(low);
+        byte unit1 = MapUtils.getMapColorAt(mapData, pt.x, pt.y);
+        byte unit2 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
+        pt.translate(xOff, yOff);
+        byte unit3 = MapUtils.getMapColorAt(mapData, pt.x, pt.y);
+
+        return unit1 == unit2 && unit2 == unit3;
+    }
+
     public void tick() {
+        if (bugged) return;
         ItemStack stack = Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(8);
         byte[] mapData;
         if (stack == null || !(stack.getItem() instanceof ItemMap)) {
