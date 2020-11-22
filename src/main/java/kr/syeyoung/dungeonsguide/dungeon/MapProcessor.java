@@ -149,6 +149,7 @@ public class MapProcessor {
     private void processMap(byte[] mapData) {
         int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
         int width = (int) ((128.0 - topLeftMapPoint.x) / (unitRoomDimension.width + doorDimension.height));
+        if (MapUtils.getMapColorAt(mapData,0,0) != 0) return;
         for (int y = 0; y <= height; y++){
             for (int x = 0; x <= width; x++) {
                 if (roomsFound.contains(new Point(x,y))) continue;
@@ -159,6 +160,7 @@ public class MapProcessor {
                 if (color != 0 && color != 85) {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" min: "+rooms.getMin()+" / "+x+","+y));
                     context.getDungeonRoomList().add(rooms);
                     for (Point p:rooms.getUnitPoints()) {
                         roomsFound.add(p);
