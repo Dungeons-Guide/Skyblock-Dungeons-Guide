@@ -46,7 +46,7 @@ public class MapProcessor {
         // determine the gap
         {
             Point midStartRoom = new Point(startroom.x + unitRoomDimension.width / 2, startroom.y +unitRoomDimension.height / 2);
-            final int halfWidth = unitRoomDimension.width / 2 + 4;
+            final int halfWidth = unitRoomDimension.width / 2 + 2;
             Vector2d dir = null;
             for (Vector2d v:directions) {
                 byte color = MapUtils.getMapColorAt(mapData, (int)(v.x * halfWidth +midStartRoom.x), (int)(v.y *halfWidth +midStartRoom.y));
@@ -67,7 +67,7 @@ public class MapProcessor {
             if (dir.y > 0) basePoint.y += unitRoomDimension.height;
             if (dir.y < 0) basePoint.y += -1;
             int gap = MapUtils.getLengthOfColorExtending(mapData, (byte) 0, basePoint, dir);
-            Point pt = MapUtils.findFirstColorWithInNegate(mapData, (byte)0, new Rectangle(basePoint.x, basePoint.y, (int)Math.abs(dir.y) * 128, (int)Math.abs(dir.x) *128));
+            Point pt = MapUtils.findFirstColorWithInNegate(mapData, (byte)0, new Rectangle(basePoint.x, basePoint.y, (int)Math.abs(dir.y) * unitRoomDimension.width + 1, (int)Math.abs(dir.x) * unitRoomDimension.height + 1));
             if (pt == null) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("BUGGED MAP, can't find door"));
                 bugged = true;
@@ -80,8 +80,8 @@ public class MapProcessor {
         {
             int x = startroom.x;
             int y = startroom.y;
-            while (x > unitRoomDimension.width + doorDimension.height) x -= unitRoomDimension.width + doorDimension.height;
-            while (y > unitRoomDimension.height + doorDimension.height) y -= unitRoomDimension.height + doorDimension.height;
+            while (x >= unitRoomDimension.width + doorDimension.height) x -= unitRoomDimension.width + doorDimension.height;
+            while (y >= unitRoomDimension.height + doorDimension.height) y -= unitRoomDimension.height + doorDimension.height;
             topLeftMapPoint = new Point(x, y);
         }
 
@@ -101,7 +101,8 @@ public class MapProcessor {
             mapData = lastMapData;
         } else {
             MapData mapData1 = ((ItemMap)stack.getItem()).getMapData(stack, context.getWorld());
-            mapData = mapData1.colors;
+            if (mapData1 == null) mapData = lastMapData;
+            else mapData = mapData1.colors;
         }
 
         if (lastMapData == null && mapData != null) buildMap(mapData);
