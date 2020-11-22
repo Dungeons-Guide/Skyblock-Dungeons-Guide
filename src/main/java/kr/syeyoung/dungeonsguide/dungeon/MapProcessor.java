@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import com.google.common.collect.Sets;
+import jdk.nashorn.internal.ir.Block;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DoorFinderRegistry;
@@ -145,6 +146,9 @@ public class MapProcessor {
     public BlockPos roomPointToWorldPoint(Point roomPoint) {
         return new BlockPos(context.getDungeonMin().getX() +(roomPoint.x * 32), context.getDungeonMin().getY(), context.getDungeonMin().getZ() +(roomPoint.y *32));
     }
+    public Point worldPointToRoomPoint(BlockPos worldPoint) {
+        return new Point((worldPoint.getX() - context.getDungeonMin().getX()) / 32, (worldPoint.getZ() - context.getDungeonMin().getZ()) / 32);
+    }
 
     private void processMap(byte[] mapData) {
         int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
@@ -160,7 +164,18 @@ public class MapProcessor {
                 if (color != 0 && color != 85) {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" min: "+rooms.getMin()+" / "+x+","+y));
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin()));
+                    StringBuilder builder = new StringBuilder();
+                    for (int dy =0;dy<4;dy++) {
+                        for (int dx = 0; dx < 4; dx ++) {
+                            boolean isSet = ((rooms.getShape() >> (dy * 4 + dx)) & 0x1) != 0;
+                            builder.append(isSet ? "O" : "X");
+                        }
+                        builder.append("\n");
+                    }
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Shape visual: "+builder.toString()));
+
                     context.getDungeonRoomList().add(rooms);
                     for (Point p:rooms.getUnitPoints()) {
                         roomsFound.add(p);

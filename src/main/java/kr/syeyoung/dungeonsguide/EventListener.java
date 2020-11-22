@@ -6,6 +6,8 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -55,6 +57,20 @@ public class EventListener {
         GlStateManager.enableAlpha();
         GuiScreen.drawModalRectWithCustomSizedTexture(0,0, 0, 0, 128, 128, 128, 128);
 
+        if (skyblockStatus.getContext() != null) {
+            DungeonContext context = skyblockStatus.getContext();
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+            if (dungeonRoom == null) {
+                fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
+            } else {
+                fontRenderer.drawString("you're in the room... "+dungeonRoom.getColor()+" / "+dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
+            }
+
+        }
     }
 
     @SubscribeEvent
