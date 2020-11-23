@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide;
 
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
@@ -70,7 +71,6 @@ public class EventListener {
                 fontRenderer.drawString("room uuid: "+dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ?"":" (not registered)"), 5, 138, 0xFFFFFF);
                 fontRenderer.drawString("room name: "+dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
             }
-
         }
     }
 

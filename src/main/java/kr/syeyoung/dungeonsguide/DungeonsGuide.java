@@ -1,6 +1,8 @@
 package kr.syeyoung.dungeonsguide;
 
+import kr.syeyoung.dungeonsguide.commands.CommandEditRoom;
 import net.minecraft.init.Blocks;
+import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -22,6 +24,9 @@ public class DungeonsGuide
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
         MinecraftForge.EVENT_BUS.register(new EventListener());
+        CommandEditRoom cc = new CommandEditRoom();
+        ClientCommandHandler.instance.registerCommand(cc);
+        MinecraftForge.EVENT_BUS.register(cc);
     }
 
     public SkyblockStatus getSkyblockStatus() {
