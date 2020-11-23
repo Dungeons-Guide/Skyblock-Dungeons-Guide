@@ -1,7 +1,9 @@
-package kr.syeyoung.dungeonsguide.dungeon.data;
+package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import lombok.Getter;
 import net.minecraft.util.BlockPos;
 
@@ -24,6 +26,8 @@ public class DungeonRoom {
 
     private final List<DungeonDoor> doors = new ArrayList<DungeonDoor>();
 
+    private DungeonRoomInfo dungeonRoomInfo;
+
     public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, DungeonContext context) {
         this.unitPoints = points;
         this.shape = shape;
@@ -31,6 +35,7 @@ public class DungeonRoom {
         this.min = min;
         this.context = context;
         buildDoors();
+        buildRoom();
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
@@ -49,5 +54,16 @@ public class DungeonRoom {
         for (BlockPos door : positions) {
             doors.add(new DungeonDoor(context.getWorld(), door));
         }
+    }
+
+    private RoomMatcher roomMatcher = null;
+    private void buildRoom() {
+        if (roomMatcher == null)
+            roomMatcher = new RoomMatcher(this);
+        DungeonRoomInfo dungeonRoomInfo = roomMatcher.match();
+        if (dungeonRoomInfo == null)
+            dungeonRoomInfo = roomMatcher.createNew();
+
+        this.dungeonRoomInfo = dungeonRoomInfo;
     }
 }

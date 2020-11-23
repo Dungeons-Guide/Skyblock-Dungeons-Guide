@@ -1,10 +1,8 @@
 package kr.syeyoung.dungeonsguide.utils;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;

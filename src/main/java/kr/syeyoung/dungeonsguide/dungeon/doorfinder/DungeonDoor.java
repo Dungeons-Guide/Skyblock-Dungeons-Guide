@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.dungeon.data;
+package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.collect.Sets;
 import lombok.Getter;

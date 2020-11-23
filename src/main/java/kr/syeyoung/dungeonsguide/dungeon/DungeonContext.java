@@ -1,16 +1,10 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.BlockPackedIce;
-import net.minecraft.client.Minecraft;
-import net.minecraft.init.Items;
-import net.minecraft.item.ItemMap;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraft.world.storage.MapData;
 
 import java.awt.*;
 import java.util.ArrayList;
