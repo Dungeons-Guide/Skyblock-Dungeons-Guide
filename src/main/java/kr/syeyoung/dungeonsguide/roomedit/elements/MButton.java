@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
 import org.lwjgl.opengl.GL11;
 import org.w3c.dom.css.Rect;
 
@@ -33,7 +34,7 @@ public class MButton extends MPanel {
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
         }
-        GL11.glClearColor(bg.getRed(), bg.getGreen(), bg.getBlue(), bg.getAlpha());
+        Gui.drawRect(0,0,bounds.width, bounds.height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(text);

@@ -17,6 +17,7 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -53,7 +54,6 @@ public class EventListener {
         dynamicTexture.updateDynamicTexture();
         Minecraft.getMinecraft().getTextureManager().bindTexture(location);
 
-        GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
         GuiScreen.drawModalRectWithCustomSizedTexture(0,0, 0, 0, 128, 128, 128, 128);
 

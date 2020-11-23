@@ -2,6 +2,9 @@ package kr.syeyoung.dungeonsguide.roomedit;
 
 import lombok.AccessLevel;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import org.w3c.dom.css.Rect;
 
@@ -22,6 +25,7 @@ public class MPanel {
     protected boolean isFocused;
 
     public void setBackgroundColor(Color c) {
+        if (c == null) return;
         this.backgroundColor = c;
     }
 
@@ -40,6 +44,7 @@ public class MPanel {
     }
 
     public void setBounds(Rectangle bounds) {
+        if (bounds == null) return;
         this.bounds.x = bounds.x;
         this.bounds.y = bounds.y;
         this.bounds.width = bounds.width;
@@ -54,23 +59,36 @@ public class MPanel {
         this.childComponents.remove(panel);
     }
 
-    public void render0(Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
+    public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
+
+
         int relMousex = relMousex0 - bounds.x;
         int relMousey = relMousey0 - bounds.y;
 
-        Rectangle absParent = parentClip.getBounds();
-
         GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
         GL11.glTranslated(bounds.x, bounds.y, 0);
-        absParent.add(-bounds.x, -bounds.y);
 
         Rectangle absBound = bounds.getBounds(); // 0,0 - a a
+        absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
 
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        clip(resolution, clip.x, clip.y, clip.width, clip.height);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GL11.glScissor(clip.x, clip.y, clip.width, clip.height);
+        if (backgroundColor != null)
+        GL11.glColor4ub((byte)backgroundColor.getRed(), (byte)backgroundColor.getGreen() , (byte)backgroundColor.getBlue() , (byte)backgroundColor.getAlpha() );
 
-        GL11.glClearColor(backgroundColor.getRed(), backgroundColor.getGreen(), backgroundColor.getBlue(), backgroundColor.getAlpha());
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3i(0, 0,0);
+        GL11.glVertex3i(0, bounds.height,0);
+        GL11.glVertex3i(bounds.width, bounds.height,0);
+        GL11.glVertex3i(bounds.width, 0,0);
+        GL11.glEnd();
+
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
 
         GL11.glPushMatrix();
         render(absMousex, absMousey, relMousex, relMousey, partialTicks);
@@ -80,11 +98,18 @@ public class MPanel {
 
         GL11.glPopAttrib();
 
+        Point newPt = new Point(parentPoint.x + bounds.x, parentPoint.y + bounds.y);
+
         for (MPanel mPanel : childComponents){
             GL11.glPushMatrix();
-            mPanel.render0(clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
             GL11.glPopMatrix();
         }
+    }
+
+    public void clip(ScaledResolution resolution, int x, int y, int width, int height) {
+        int scale = resolution.getScaleFactor();
+        GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width + x) * scale, height * scale);
     }
 
     private Rectangle determineClip(Rectangle rect1, Rectangle rect2) {
@@ -107,7 +132,7 @@ public class MPanel {
         if (isFocused)
             keyTyped(typedChar, keyCode);
     }
-    protected void keyTyped(char typedChar, int keyCode) {};
+    protected void keyTyped(char typedChar, int keyCode) {}
 
     protected boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
         int relMousex = relMouseX0 - bounds.x;

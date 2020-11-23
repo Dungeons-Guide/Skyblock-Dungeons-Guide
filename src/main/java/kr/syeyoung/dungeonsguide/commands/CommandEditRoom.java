@@ -32,7 +32,7 @@ public class CommandEditRoom extends CommandBase {
     }
 
     @Override
-    public void processCommand(ICommandSender sender, String[] args) throws CommandException {
+    public void processCommand(ICommandSender sender, String[] args) {
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) {
             sender.addChatMessage(new ChatComponentText("You're not in dungeons"));
@@ -58,7 +58,7 @@ public class CommandEditRoom extends CommandBase {
         openit = new GuiDungeonRoomEdit(dungeonRoom);
     }
 
-    GuiScreen openit;
+    GuiScreen openit = null;
 
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent tick){
