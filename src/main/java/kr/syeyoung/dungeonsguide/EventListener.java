@@ -67,7 +67,7 @@ public class EventListener {
                 fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
             } else {
                 fontRenderer.drawString("you're in the room... "+dungeonRoom.getColor()+" / "+dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
-                fontRenderer.drawString("room uuid: "+dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ?"":" (not registered)"), 5, 148, 0xFFFFFF);
+                fontRenderer.drawString("room uuid: "+dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ?"":" (not registered)"), 5, 138, 0xFFFFFF);
                 fontRenderer.drawString("room name: "+dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
             }
 

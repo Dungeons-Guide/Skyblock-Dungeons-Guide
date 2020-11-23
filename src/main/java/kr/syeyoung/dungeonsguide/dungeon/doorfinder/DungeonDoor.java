@@ -16,7 +16,7 @@ public class DungeonDoor {
     private boolean exist = true;
     private boolean isZDir;
 
-    private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.hardened_clay);
+    private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.stained_hardened_clay);
 
 
     public DungeonDoor(World world, BlockPos pos) {

@@ -146,6 +146,7 @@ public class MapProcessor {
         return new BlockPos(context.getDungeonMin().getX() +(roomPoint.x * 32), context.getDungeonMin().getY(), context.getDungeonMin().getZ() +(roomPoint.y *32));
     }
     public Point worldPointToRoomPoint(BlockPos worldPoint) {
+        if (context.getDungeonMin() == null) return null;
         return new Point((worldPoint.getX() - context.getDungeonMin().getX()) / 32, (worldPoint.getZ() - context.getDungeonMin().getZ()) / 32);
     }
 
