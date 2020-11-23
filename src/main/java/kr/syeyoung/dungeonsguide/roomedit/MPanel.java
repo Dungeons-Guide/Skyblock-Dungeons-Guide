@@ -19,7 +19,7 @@ public class MPanel {
 
     protected List<MPanel> childComponents = new ArrayList<MPanel>();
 
-    protected Color backgroundColor;
+    protected Color backgroundColor = new Color(0,0,0,0);
 
     @Getter(AccessLevel.PUBLIC)
     protected boolean isFocused;
@@ -109,7 +109,7 @@ public class MPanel {
 
     public void clip(ScaledResolution resolution, int x, int y, int width, int height) {
         int scale = resolution.getScaleFactor();
-        GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width + x) * scale, height * scale);
+        GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }
 
     private Rectangle determineClip(Rectangle rect1, Rectangle rect2) {

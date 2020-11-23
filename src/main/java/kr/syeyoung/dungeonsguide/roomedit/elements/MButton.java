@@ -18,9 +18,10 @@ public class MButton extends MPanel {
 
     private Color foreground = Color.white;
     private Color hover = Color.gray;
+    private Color clicked = Color.lightGray;
     private Color disabled = Color.darkGray;
 
-    private boolean enabled;
+    private boolean enabled = true;
 
     private Runnable onActionPerformed;
 
@@ -34,7 +35,8 @@ public class MButton extends MPanel {
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
         }
-        Gui.drawRect(0,0,bounds.width, bounds.height, bg.getRGB());
+        if (bg != null)
+            Gui.drawRect(0,0,bounds.width, bounds.height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(text);
