@@ -9,6 +9,13 @@ import java.util.UUID;
 @Setter
 public class DungeonRoomInfo {
 
+    public DungeonRoomInfo(short shape, byte color) {
+        this.uuid = UUID.randomUUID();
+        this.name = this.uuid.toString();
+        this.shape = shape;
+        this.color = color;
+    }
+
     private transient boolean registered;
 
     private short shape;

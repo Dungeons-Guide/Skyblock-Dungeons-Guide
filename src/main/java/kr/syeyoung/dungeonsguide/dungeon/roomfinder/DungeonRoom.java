@@ -2,17 +2,17 @@ package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import lombok.Getter;
+import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 @Getter
 public class DungeonRoom {
@@ -21,6 +21,8 @@ public class DungeonRoom {
     private final byte color;
 
     private final BlockPos min;
+    private final BlockPos max;
+    private final Point minRoomPt;
 
     private final DungeonContext context;
 
@@ -28,14 +30,26 @@ public class DungeonRoom {
 
     private DungeonRoomInfo dungeonRoomInfo;
 
-    public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, DungeonContext context) {
+    private final int unitWidth; // X
+    private final int unitHeight; // Z
+
+    public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context) {
         this.unitPoints = points;
         this.shape = shape;
         this.color = color;
         this.min = min;
+        this.max = max;
         this.context = context;
         buildDoors();
         buildRoom();
+
+        minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        for (Point pt : unitPoints) {
+            if (pt.x < minRoomPt.x) minRoomPt.x = pt.x;
+            if (pt.y < minRoomPt.y) minRoomPt.y = pt.y;
+        }
+        unitWidth = (int) Math.ceil(max.getX() - min.getX() / 32.0);
+        unitHeight = (int) Math.ceil(max.getZ() - min.getZ() / 32.0);
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
@@ -65,5 +79,52 @@ public class DungeonRoom {
             dungeonRoomInfo = roomMatcher.createNew();
 
         this.dungeonRoomInfo = dungeonRoomInfo;
+    }
+
+    public Block getAbsoluteBlockAt(int x, int y, int z) {
+        // validate x y z's
+        BlockPos pos = new BlockPos(x,y,z);
+        if (canAccessAbsolute(pos)) {
+            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlock(pos);
+        }
+        return null;
+    }
+
+    public Block getRelativeBlockAt(int x, int y, int z) {
+        // validate x y z's
+        if (canAccessRelative(x,z)) {
+            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),0,min.getZ());
+            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlock(pos);
+        }
+        return null;
+    }
+
+    public int getRelativeBlockDataAt(int x, int y, int z) {
+        // validate x y z's
+        if (canAccessRelative(x,z)) {
+            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),0,min.getZ());
+            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlockMetadata(pos);
+        }
+        return -1;
+    }
+
+    public int getAbsoluteBlockDataAt(int x, int y, int z) {
+        // validate x y z's
+        BlockPos pos = new BlockPos(x,y,z);
+        if (canAccessAbsolute(pos)) {
+            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlockMetadata(pos);
+        }
+        return -1;
+    }
+
+    public boolean canAccessAbsolute(BlockPos pos) {
+        MapProcessor mapProcessor = this.context.getMapProcessor();
+        Point roomPt = mapProcessor.worldPointToRoomPoint(pos);
+        roomPt.translate(-minRoomPt.x, -minRoomPt.y);
+
+        return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
+    }
+    public boolean canAccessRelative(int x, int z) {
+        return (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
     }
 }

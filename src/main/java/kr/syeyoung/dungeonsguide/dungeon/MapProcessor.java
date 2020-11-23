@@ -195,6 +195,7 @@ public class MapProcessor {
         List<Point> ayConnected = new ArrayList<Point>();
 
         int minX = Integer.MAX_VALUE, minY = Integer.MAX_VALUE;
+        int maxX = 0, maxY = 0;
         while(toCheck.peek() != null) {
             Point[] check = toCheck.poll();
             if (checked.contains(check[1])) continue;
@@ -204,6 +205,8 @@ public class MapProcessor {
                 ayConnected.add(check[1]);
                 if (check[1].x < minX) minX = check[1].x;
                 if (check[1].y < minY) minY = check[1].y;
+                if (check[1].x > maxX) maxX = check[1].x;
+                if (check[1].y > maxY) maxY = check[1].y;
                 for (Vector2d dir: directions) {
                     Point newPt = new Point(check[1].x + (int)dir.x, check[1].y +(int)dir.y);
                     toCheck.add(new Point[]{check[1], newPt});
@@ -220,7 +223,7 @@ public class MapProcessor {
         Point pt2 = roomPointToMapPoint(ayConnected.get(0));
         byte unit1 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
 
-        return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), context);
+        return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), roomPointToWorldPoint(new Point(maxX+1, maxY+1)).add(-1, 0, -1), context);
     }
 
     private boolean checkIfConnected(byte[] mapData, Point unitPoint1, Point unitPoint2) {
