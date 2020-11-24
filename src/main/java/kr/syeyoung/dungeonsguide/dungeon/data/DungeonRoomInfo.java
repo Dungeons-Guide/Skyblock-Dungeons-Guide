@@ -3,11 +3,12 @@ package kr.syeyoung.dungeonsguide.dungeon.data;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.util.UUID;
 
 @Getter
 @Setter
-public class DungeonRoomInfo {
+public class DungeonRoomInfo implements Serializable {
 
     public DungeonRoomInfo(short shape, byte color) {
         this.uuid = UUID.randomUUID();

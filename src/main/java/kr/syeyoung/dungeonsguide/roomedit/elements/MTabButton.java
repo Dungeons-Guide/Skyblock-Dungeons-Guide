@@ -6,32 +6,38 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import org.lwjgl.opengl.GL11;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 
 @Getter
 @Setter
-public class MButton extends MPanel {
+public class MTabButton extends MPanel {
     private String text;
 
     private Color foreground = Color.white;
-    private Color hover = Color.gray;
-    private Color clicked = Color.lightGray;
-    private Color disabled = Color.darkGray;
+    private Color hover = new Color(236, 236, 236, 64);
+    private Color clicked = new Color(30,30,30,0);
+    private Color selected = new Color(0,0,0,255);
+    private Color disabled = new Color(0,0,0);
 
     private boolean enabled = true;
 
-    private Runnable onActionPerformed;
+    private MTabbedPane tabbedPane;
+
+    public MTabButton(MTabbedPane tabbedPane, String key) {
+        this.tabbedPane = tabbedPane;
+        this.text = key;
+    }
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
         Dimension bounds = getSize();
 
-        Color bg = backgroundColor;
+        Color bg = null;
         if (!enabled) {
             bg = disabled;
+        } else if (tabbedPane.getSelectedKey().equals(text)) {
+            bg = selected;
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
         }
@@ -48,7 +54,8 @@ public class MButton extends MPanel {
 
     @Override
     protected void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (onActionPerformed != null && new Rectangle(new Point(0,0),getSize()).contains(relMouseX, relMouseY))
-            onActionPerformed.run();
+        if (new Rectangle(new Point(0,0),getSize()).contains(relMouseX, relMouseY)) {
+            tabbedPane.setSelectedKey(text);
+        }
     }
 }

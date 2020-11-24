@@ -17,15 +17,32 @@ public class MLabel extends MPanel {
     @Setter
     private Color foreground = Color.white;
 
+    public static enum Alignment {
+        LEFT, CENTER, RIGHT;
+    }
+    @Getter
+    @Setter
+    private Alignment alignment= Alignment.LEFT;
+
     @Override
-    public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
+    public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
         Dimension bounds = getSize();
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(text);
-        int x = (bounds.width - width) / 2;
-        int y = (bounds.height - renderer.FONT_HEIGHT) / 2;
-
-        renderer.drawString(text, x,y, foreground.getRGB());
+        int x,y;
+        if (alignment == Alignment.CENTER) {
+            x = (bounds.width - width) / 2;
+             y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+        } else if (alignment == Alignment.LEFT) {
+             x = 0;
+             y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+        } else if (alignment == Alignment.RIGHT) {
+            x = bounds.width - width;
+            y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+        } else{
+            return;
+        }
+        renderer.drawString(text, x,y, 0xffffff);
     }
 }

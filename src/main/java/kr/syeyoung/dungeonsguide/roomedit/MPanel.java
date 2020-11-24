@@ -3,8 +3,10 @@ package kr.syeyoung.dungeonsguide.roomedit;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 import org.w3c.dom.css.Rect;
 
@@ -12,12 +14,13 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.List;
 import java.util.ArrayList;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter
 public class MPanel {
     protected Rectangle bounds = new Rectangle(0,0,0,0); // relative to parent
 
-    protected List<MPanel> childComponents = new ArrayList<MPanel>();
+    protected List<MPanel> childComponents = new CopyOnWriteArrayList<MPanel>();
 
     protected Color backgroundColor = new Color(0,0,0,0);
 
@@ -49,6 +52,10 @@ public class MPanel {
         this.bounds.y = bounds.y;
         this.bounds.width = bounds.width;
         this.bounds.height = bounds.height;
+
+        for (MPanel childComponent : childComponents) {
+            childComponent.resize0(bounds.width, bounds.height);
+        }
     }
 
     public void add(MPanel child) {
@@ -65,42 +72,33 @@ public class MPanel {
         int relMousex = relMousex0 - bounds.x;
         int relMousey = relMousey0 - bounds.y;
 
-        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
         GL11.glTranslated(bounds.x, bounds.y, 0);
 
-        Rectangle absBound = bounds.getBounds(); // 0,0 - a a
+        Rectangle absBound = bounds.getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
 
-        GlStateManager.enableBlend();
-        GlStateManager.disableTexture2D();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         clip(resolution, clip.x, clip.y, clip.width, clip.height);
+        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        if (backgroundColor != null)
-        GL11.glColor4ub((byte)backgroundColor.getRed(), (byte)backgroundColor.getGreen() , (byte)backgroundColor.getBlue() , (byte)backgroundColor.getAlpha() );
 
-        GL11.glBegin(GL11.GL_QUADS);
-        GL11.glVertex3i(0, 0,0);
-        GL11.glVertex3i(0, bounds.height,0);
-        GL11.glVertex3i(bounds.width, bounds.height,0);
-        GL11.glVertex3i(bounds.width, 0,0);
-        GL11.glEnd();
+        GL11.glEnable(GL11.GL_BLEND);
+        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
+        GuiScreen.drawRect(0,0, bounds.width, bounds.height, backgroundColor.getRGB());
 
         GL11.glPushMatrix();
-        render(absMousex, absMousey, relMousex, relMousey, partialTicks);
+        render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
         GL11.glPopMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
         GL11.glPopAttrib();
+
 
         Point newPt = new Point(parentPoint.x + bounds.x, parentPoint.y + bounds.y);
 
-        for (MPanel mPanel : childComponents){
+        for (MPanel mPanel : getChildComponents()){
             GL11.glPushMatrix();
             mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
             GL11.glPopMatrix();
@@ -122,10 +120,17 @@ public class MPanel {
         return new Rectangle(minX, minY, maxX - minX, maxY - minY);
     }
 
-    public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {}
+    public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {}
+
+    public void resize0(int parentWidth, int parentHeight) {
+        resize(parentWidth, parentHeight);
+    }
+
+    public void resize(int parentWidth, int parentHeight) {}
+
 
     protected void keyTyped0(char typedChar, int keyCode) {
-        for (MPanel childComponent : childComponents) {
+        for (MPanel childComponent  : getChildComponents()) {
             childComponent.keyTyped0(typedChar, keyCode);
         }
 
@@ -140,16 +145,18 @@ public class MPanel {
 
         boolean noClip = true;
         boolean focusedOverall = false;
-        for (MPanel childComponent : childComponents) {
-            if (childComponent.mouseClicked0(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton)) {
+        for (MPanel childComponent  : getChildComponents()) {
+            if (childComponent.mouseClicked0(absMouseX, absMouseY, relMousex, relMousey, mouseButton)) {
                 noClip = false;
                 focusedOverall = true;
             }
         }
 
-        if (bounds.contains(relMousex, relMousey) && noClip) {
+        if (bounds.contains(relMouseX0, relMouseY0) && noClip) {
             isFocused = true;
             focusedOverall = true;
+        } else {
+            isFocused = false;
         }
 
         mouseClicked(absMouseX, absMouseY, relMousex, relMousey, mouseButton);
@@ -162,7 +169,7 @@ public class MPanel {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
-        for (MPanel childComponent : childComponents) {
+        for (MPanel childComponent : getChildComponents()) {
             childComponent.mouseReleased0(absMouseX, absMouseY, relMousex, relMousey, state);
         }
         mouseReleased(absMouseX, absMouseY, relMousex, relMousey, state);
@@ -173,7 +180,7 @@ public class MPanel {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
-        for (MPanel childComponent : childComponents) {
+        for (MPanel childComponent  : getChildComponents()) {
             childComponent.mouseClickMove0(absMouseX, absMouseY, relMousex, relMousey, clickedMouseButton, timeSinceLastClick);
         }
         mouseClickMove(absMouseX, absMouseY, relMousex, relMousey, clickedMouseButton, timeSinceLastClick);
@@ -184,7 +191,7 @@ public class MPanel {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
-        for (MPanel childComponent : childComponents) {
+        for (MPanel childComponent  : getChildComponents()) {
             childComponent.mouseScrolled0(absMouseX, absMouseY, relMousex, relMousey, scrollAmount);
         }
         mouseScrolled(absMouseX, absMouseY, relMousex, relMousey, scrollAmount);

@@ -3,6 +3,9 @@ package kr.syeyoung.dungeonsguide.roomedit;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
+import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -22,18 +25,21 @@ public class GuiDungeonRoomEdit extends GuiScreen {
     public GuiDungeonRoomEdit(DungeonRoom room) {
         this.room = room;
 
-        mainPanel.setBackgroundColor(Color.green);
-        MLabel label = new MLabel();
-        label.setText("blah blah is great!");
-        label.setBackgroundColor(Color.BLACK);
-        label.setForeground(Color.white);
-        label.setBounds(new Rectangle(0,0,50,10));
-        mainPanel.add(label);
+        MTabbedPane tabbedPane = new MTabbedPane();
+        mainPanel.add(tabbedPane);
+        tabbedPane.setBackground2(new Color(17, 17, 17, 179));
+
+
+        tabbedPane.addTab("General", new GeneralEditPane(room));
 
         MButton mButton = new MButton();
         mButton.setText("this is awesome");
         mButton.setBounds(new Rectangle(30,20,50,10));
-        mainPanel.add(mButton);
+        tabbedPane.addTab("button-o", mButton);
+
+        MTextField mTextField = new MTextField();
+        mTextField.setBounds(new Rectangle(30,20,100,30));
+        tabbedPane.addTab("text-o", mTextField);
     }
 
     @Override
@@ -41,7 +47,7 @@ public class GuiDungeonRoomEdit extends GuiScreen {
         super.initGui();
         // update bounds
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle((scaledResolution.getScaledWidth() - 500) / 2, (scaledResolution.getScaledHeight() - 300) / 2,500,300));
+        mainPanel.setBounds(new Rectangle(Math.min((scaledResolution.getScaledWidth() - 500) / 2, scaledResolution.getScaledWidth()), Math.min((scaledResolution.getScaledHeight() - 300) / 2, scaledResolution.getScaledHeight()),500,300));
     }
 
     @Override

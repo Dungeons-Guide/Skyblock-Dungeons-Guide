@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 
+import java.io.*;
 import java.util.*;
 
 public class DungeonRoomInfoRegistry {
@@ -37,5 +38,35 @@ public class DungeonRoomInfoRegistry {
         registered.remove(dungeonRoomInfo);
         shapeMap.get(dungeonRoomInfo.getShape()).remove(dungeonRoomInfo);
         uuidMap.remove(dungeonRoomInfo.getUuid());
+    }
+
+    public static void saveAll(File dir) {
+        dir.mkdirs();
+        for (DungeonRoomInfo dungeonRoomInfo : registered) {
+            try {
+                FileOutputStream fos = new FileOutputStream(new File(dir, dungeonRoomInfo.getUuid().toString() + ".roomdata"));
+                ObjectOutputStream oos = new ObjectOutputStream(fos);
+                oos.writeObject(dungeonRoomInfo);
+                oos.flush();
+                oos.close();
+            } catch (Exception e) {e.printStackTrace();}
+        }
+    }
+
+    public static void loadAll(File dir) {
+        registered.clear();
+        shapeMap.clear();
+        uuidMap.clear();
+        for (File f: dir.listFiles()) {
+            if (!f.isFile() || !f.getName().endsWith(".roomdata")) continue;
+            try {
+                FileInputStream fis = new FileInputStream(f);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
+                ois.close();
+                fis.close();
+                register(dri);
+            } catch (Exception e) {e.printStackTrace();}
+        }
     }
 }

@@ -1,12 +1,17 @@
 package kr.syeyoung.dungeonsguide;
 
 import kr.syeyoung.dungeonsguide.commands.CommandEditRoom;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import lombok.Getter;
 import net.minecraft.init.Blocks;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
+import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+
+import java.io.File;
 
 @Mod(modid = DungeonsGuide.MODID, version = DungeonsGuide.VERSION)
 public class DungeonsGuide
@@ -27,6 +32,18 @@ public class DungeonsGuide
         CommandEditRoom cc = new CommandEditRoom();
         ClientCommandHandler.instance.registerCommand(cc);
         MinecraftForge.EVENT_BUS.register(cc);
+
+        configDir.mkdirs();
+        DungeonRoomInfoRegistry.loadAll(configDir);
+
+    }
+
+    @Getter
+    private File configDir;
+
+    @EventHandler
+    public void pre(FMLPreInitializationEvent event) {
+        configDir = event.getModConfigurationDirectory();
     }
 
     public SkyblockStatus getSkyblockStatus() {
