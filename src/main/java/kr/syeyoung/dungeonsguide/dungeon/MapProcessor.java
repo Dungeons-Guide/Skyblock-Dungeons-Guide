@@ -259,7 +259,7 @@ public class MapProcessor {
         }
 
         if (lastMapData == null && mapData != null) buildMap(mapData);
-        processMap(mapData);
+        else if (mapData != null) processMap(mapData);
 
         lastMapData = mapData;
     }

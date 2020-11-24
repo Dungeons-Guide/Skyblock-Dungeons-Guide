@@ -47,7 +47,7 @@ public class DungeonsGuide
 
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
-        configDir = event.getModConfigurationDirectory();
+        configDir = new File(event.getModConfigurationDirectory(),"pog");
     }
 
     public SkyblockStatus getSkyblockStatus() {
