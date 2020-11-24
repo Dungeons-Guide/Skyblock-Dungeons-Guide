@@ -1,6 +1,8 @@
 package kr.syeyoung.dungeonsguide;
 
 import kr.syeyoung.dungeonsguide.commands.CommandEditRoom;
+import kr.syeyoung.dungeonsguide.commands.CommandLoadData;
+import kr.syeyoung.dungeonsguide.commands.CommandSaveData;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import lombok.Getter;
 import net.minecraft.init.Blocks;
@@ -32,6 +34,8 @@ public class DungeonsGuide
         CommandEditRoom cc = new CommandEditRoom();
         ClientCommandHandler.instance.registerCommand(cc);
         MinecraftForge.EVENT_BUS.register(cc);
+        ClientCommandHandler.instance.registerCommand(new CommandLoadData());
+        ClientCommandHandler.instance.registerCommand(new CommandSaveData());
 
         configDir.mkdirs();
         DungeonRoomInfoRegistry.loadAll(configDir);
