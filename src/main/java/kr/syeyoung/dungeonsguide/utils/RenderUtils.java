@@ -2,12 +2,19 @@ package kr.syeyoung.dungeonsguide.utils;
 
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.entity.RenderManager;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
+import javax.vecmath.Vector3f;
 import java.awt.*;
 
 public class RenderUtils {
@@ -156,18 +163,62 @@ public class RenderUtils {
 //...
 
     }
+    public static void drawTextAtWorld(String text, float x, float y, float z, int color, float scale, boolean increase, boolean renderBlackBox, float partialTicks) {
+        float lScale = scale;
 
-    private void drawLineWithGL(Vec3 blockA, Vec3 blockB) {
-        int d = Math.round((float)blockA.distanceTo(blockB)+0.2f);
-        GL11.glColor3f(0F, 1F, 0F);
-        float oz = (blockA.xCoord - blockB.xCoord == 0?0:-1f/16f);
-        float ox = (blockA.zCoord - blockB.zCoord == 0?0:1f/16f);
-        GL11.glBegin(GL11.GL_LINE_STRIP);
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
-        //you will want to modify these offsets.
-        GL11.glVertex3d(blockA.xCoord + 0.5,blockA.yCoord - 0.01,blockA.zCoord + 0.5);
-        GL11.glVertex3d(blockB.xCoord + 0.5,blockB.yCoord - 0.01,blockB.zCoord + 0.5);
+        Vector3f renderPos = getRenderPos(x, y, z, partialTicks);
 
-        GL11.glEnd();
+        if (increase) {
+            double distance = Math.sqrt(renderPos.x * renderPos.x + renderPos.y * renderPos.y + renderPos.z * renderPos.z);
+            double multiplier = distance / 120f; //mobs only render ~120 blocks away
+            lScale *= 0.45f * multiplier;
+        }
+
+        GL11.glColor4f(1f, 1f, 1f, 0.5f);
+        GL11.glPushMatrix();
+        GL11.glTranslatef(renderPos.x, renderPos.y, renderPos.z);
+        GL11.glRotatef(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+        GL11.glRotatef(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
+        GL11.glScalef(-lScale, -lScale, lScale);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDepthMask(false);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        int textWidth = fontRenderer.getStringWidth(text);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        if (renderBlackBox) {
+            double j = textWidth / 2;
+            GlStateManager.disableTexture2D();
+            worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            worldRenderer.pos((double)(-j - 1), (double)(-1), 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos((double)(-j - 1), (double)8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos((double)(j + 1), (double)8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos((double)(j + 1), (double)(-1), 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            tessellator.draw();
+            GlStateManager.enableTexture2D();
+        }
+
+        fontRenderer.drawString(text, -textWidth / 2, 0, color);
+
+        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        GL11.glDepthMask(true);
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glPopMatrix();
+    }
+
+    private static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
+        EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
+        return new Vector3f(
+                x - (float) (sp.lastTickPosX + (sp.posX - sp.lastTickPosX) * partialTicks),
+                y - (float) (sp.lastTickPosY + (sp.posY - sp.lastTickPosY) * partialTicks),
+                z - (float) (sp.lastTickPosZ + (sp.posZ - sp.lastTickPosZ) * partialTicks)
+        );
     }
 }

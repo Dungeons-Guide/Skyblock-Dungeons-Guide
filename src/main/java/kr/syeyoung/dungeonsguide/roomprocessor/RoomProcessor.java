@@ -4,5 +4,5 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 
 public interface RoomProcessor {
     void tick();
-    void drawScreen();
+    void drawScreen(float partialTicks);
 }

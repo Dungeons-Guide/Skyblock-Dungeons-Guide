@@ -23,5 +23,6 @@ public class ProcessorFactory {
 
     static {
         registerRoomProcessor("default", new DefaultRoomProcessor.Generator());
+        registerRoomProcessor("puzzle_blaze_solver", new RoomProcessorBlazeSolver.Generator());
     }
 }

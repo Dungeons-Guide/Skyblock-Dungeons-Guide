@@ -14,7 +14,7 @@ public class DefaultRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void drawScreen() {
+    public void drawScreen(float partialTicks) {
 
     }
 

@@ -84,7 +84,7 @@ public class EventListener {
                 fontRenderer.drawString("room uuid: "+dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ?"":" (not registered)"), 5, 138, 0xFFFFFF);
                 fontRenderer.drawString("room name: "+dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
                 if (dungeonRoom.getRoomProcessor() != null)
-                    dungeonRoom.getRoomProcessor().drawScreen();
+                    dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
             }
 
         }
