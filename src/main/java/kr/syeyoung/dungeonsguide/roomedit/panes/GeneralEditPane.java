@@ -88,7 +88,12 @@ System.out.println("building");
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        save.setBounds(new Rectangle(0,100,bounds.width, 20));
         this.setBounds(new Rectangle(5,5,parentWidth-10,parentHeight-10));
+    }
+
+    @Override
+    public void onBoundsUpdate() {
+        if (save != null)
+            save.setBounds(new Rectangle(0,100,bounds.width, 20));
     }
 }

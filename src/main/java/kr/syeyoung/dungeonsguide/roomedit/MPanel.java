@@ -56,6 +56,11 @@ public class MPanel {
         for (MPanel childComponent : childComponents) {
             childComponent.resize0(bounds.width, bounds.height);
         }
+        onBoundsUpdate();
+    }
+
+    public void onBoundsUpdate() {
+
     }
 
     public void add(MPanel child) {

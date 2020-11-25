@@ -14,7 +14,7 @@ public class RoomMatcher {
     @Getter
     private DungeonRoomInfo match;
     @Getter
-    private int rotation;
+    private int rotation; // how much the "found room" has to rotate to match the given dungeon room info. !
     private boolean triedMatch = false;
 
     public RoomMatcher(DungeonRoom dungeonRoom) {
@@ -75,17 +75,17 @@ public class RoomMatcher {
         int minX = dungeonRoom.getMin().getX();
         int minZ = dungeonRoom.getMin().getZ();
         int y = dungeonRoom.getMin().getY();
-        int widthX = maxX - minX;
-        int heightZ = maxZ - minZ;
-        int[][] data = new int[dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1][dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() +1];
+        int widthX = maxX - minX + 2;
+        int heightZ = maxZ - minZ + 2;
+        int[][] data = new int[dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() +2][dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 2];
 
         for (int z = 0; z < data.length; z++) {
             for (int x = 0; x < data[0].length; x++) {
-                if (!(offset <= x && widthX - offset >= x && offset <= z && heightZ - offset >= z)) {
+                if (!(offset <= x && widthX - offset > x && offset <= z && heightZ - offset > z)) {
                     data[z][x] = -1;
                     continue;
                 }
-                if (!(dungeonRoom.canAccessRelative(x + offset, z + offset) && dungeonRoom.canAccessRelative(x - offset, z - offset))) {
+                if (!(dungeonRoom.canAccessRelative(x + offset - 1, z + offset - 1) && dungeonRoom.canAccessRelative(x - offset, z - offset))) {
                     data[z][x] = -1;
                     continue;
                 }

@@ -23,9 +23,7 @@ public class MLabelAndElement extends MPanel {
     }
 
     @Override
-    public void setBounds(Rectangle bounds) {
-        super.setBounds(bounds);
-
+    public void onBoundsUpdate() {
         label.setBounds(new Rectangle(0,0,bounds.width / 3, bounds.height));
         element.setBounds(new Rectangle(bounds.width / 3,0,bounds.width / 3 * 2, bounds.height));
     }

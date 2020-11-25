@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
 import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
+import kr.syeyoung.dungeonsguide.roomedit.panes.RoomDataDisplayPane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -31,15 +32,9 @@ public class GuiDungeonRoomEdit extends GuiScreen {
 
 
         tabbedPane.addTab("General", new GeneralEditPane(room));
+        tabbedPane.addTab("Room Match", new RoomDataDisplayPane(room));
 
-        MButton mButton = new MButton();
-        mButton.setText("this is awesome");
-        mButton.setBounds(new Rectangle(30,20,50,10));
-        tabbedPane.addTab("button-o", mButton);
 
-        MTextField mTextField = new MTextField();
-        mTextField.setBounds(new Rectangle(30,20,100,30));
-        tabbedPane.addTab("text-o", mTextField);
     }
 
     @Override
