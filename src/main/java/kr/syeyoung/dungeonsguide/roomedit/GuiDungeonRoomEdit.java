@@ -33,8 +33,6 @@ public class GuiDungeonRoomEdit extends GuiScreen {
 
         tabbedPane.addTab("General", new GeneralEditPane(room));
         tabbedPane.addTab("Room Match", new RoomDataDisplayPane(room));
-
-
     }
 
     @Override

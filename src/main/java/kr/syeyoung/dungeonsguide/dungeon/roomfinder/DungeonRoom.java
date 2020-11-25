@@ -5,6 +5,9 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
@@ -33,6 +36,9 @@ public class DungeonRoom {
     private final int unitWidth; // X
     private final int unitHeight; // Z
 
+
+    private RoomProcessor roomProcessor;
+
     public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context) {
         this.unitPoints = points;
         this.shape = shape;
@@ -40,8 +46,6 @@ public class DungeonRoom {
         this.min = min;
         this.max = max;
         this.context = context;
-        buildDoors();
-        buildRoom();
 
         minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
         for (Point pt : unitPoints) {
@@ -50,6 +54,11 @@ public class DungeonRoom {
         }
         unitWidth = (int) Math.ceil(max.getX() - min.getX() / 32.0);
         unitHeight = (int) Math.ceil(max.getZ() - min.getZ() / 32.0);
+
+
+        buildDoors();
+        buildRoom();
+        updateRoomProcessor();
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
@@ -79,6 +88,12 @@ public class DungeonRoom {
             dungeonRoomInfo = roomMatcher.createNew();
 
         this.dungeonRoomInfo = dungeonRoomInfo;
+    }
+
+    public void updateRoomProcessor() {
+        RoomProcessorGenerator roomProcessorGenerator = ProcessorFactory.getRoomProcessorGenerator(dungeonRoomInfo.getProcessorId());
+        if (roomProcessorGenerator == null) this.roomProcessor = null;
+        else this.roomProcessor = roomProcessorGenerator.createNew(this);
     }
 
     public Block getAbsoluteBlockAt(int x, int y, int z) {

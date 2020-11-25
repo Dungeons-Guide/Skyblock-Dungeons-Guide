@@ -26,4 +26,6 @@ public class DungeonRoomInfo implements Serializable {
 
     private UUID uuid;
     private String name;
+
+    private String processorId = "default";
 }
