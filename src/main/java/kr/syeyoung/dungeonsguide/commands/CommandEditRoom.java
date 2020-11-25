@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import net.minecraft.client.Minecraft;
@@ -23,12 +24,12 @@ import java.awt.*;
 public class CommandEditRoom extends CommandBase {
     @Override
     public String getCommandName() {
-        return "editroom";
+        return "editsession";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "editroom";
+        return "editsession";
     }
 
     @Override
@@ -55,16 +56,22 @@ public class CommandEditRoom extends CommandBase {
             return;
         }
 
-        openit = new GuiDungeonRoomEdit(dungeonRoom);
+        if (EditingContext.getEditingContext() != null) {
+            sender.addChatMessage(new ChatComponentText("There is an editing session currently open."));
+            return;
+        }
+
+        EditingContext.createEditingContext(dungeonRoom);
+        openGuiReq = true;
     }
 
-    GuiScreen openit = null;
+    private boolean openGuiReq = false;
 
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent tick){
-        if ( openit != null &&tick.phase == TickEvent.Phase.END && tick.side == Side.CLIENT && tick.type == TickEvent.Type.CLIENT) {
-            Minecraft.getMinecraft().displayGuiScreen(openit);
-            openit = null;
+        if ( openGuiReq &&tick.phase == TickEvent.Phase.END && tick.side == Side.CLIENT && tick.type == TickEvent.Type.CLIENT) {
+            DungeonRoom dr = EditingContext.getEditingContext().getRoom();
+            EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dr));
         }
     }
 

@@ -37,9 +37,11 @@ public class DungeonsGuide
         ClientCommandHandler.instance.registerCommand(new CommandLoadData());
         ClientCommandHandler.instance.registerCommand(new CommandSaveData());
 
+        //noinspection ResultOfMethodCallIgnored
         configDir.mkdirs();
         DungeonRoomInfoRegistry.loadAll(configDir);
 
+        Keybinds.register();
     }
 
     @Getter

@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.*;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
@@ -20,6 +21,7 @@ public class GeneralEditPane extends MPanel {
     private MLabelAndElement shape2;
 
     private MButton save;
+    private MButton end;
 
     private MLabelAndElement roomProcessor;
 
@@ -84,6 +86,19 @@ System.out.println("building");
             });
         }
         {
+            end = new MButton();
+            end.setText("End Editing Session");
+            end.setOnActionPerformed(new Runnable() {
+                @Override
+                public void run() {
+                    EditingContext.endEditingSession();
+                }
+            });
+            end.setBackgroundColor(Color.green);
+            end.setBounds(new Rectangle(0,120,bounds.width, 20));
+            add(end);
+        }
+        {
             if (dungeonRoom.getDungeonRoomInfo().isRegistered()) return;
             save = new MButton();
             save.setText("Save RoomData");
@@ -95,7 +110,7 @@ System.out.println("building");
                 }
             });
             save.setBackgroundColor(Color.green);
-            save.setBounds(new Rectangle(1,120,bounds.width-2, 20));
+            save.setBounds(new Rectangle(0,140,bounds.width, 20));
             add(save);
             System.out.println(save.getBounds());
         }
@@ -109,6 +124,7 @@ System.out.println("building");
     @Override
     public void onBoundsUpdate() {
         if (save != null)
-            save.setBounds(new Rectangle(0,120,bounds.width, 20));
+            save.setBounds(new Rectangle(0,140,bounds.width, 20));
+        end.setBounds(new Rectangle(1,120,bounds.width-2, 20));
     }
 }
