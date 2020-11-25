@@ -27,8 +27,8 @@ public class EventListener {
     public void onTick(TickEvent.ClientTickEvent e) {
         if (e.phase == TickEvent.Phase.START) {
             timerTick ++;
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (timerTick % 5 == 0) {
-                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                 boolean isOnDungeon = skyblockStatus.isOnDungeon();
 //                System.out.println(isOnDungeon);
                 skyblockStatus.updateStatus();
@@ -39,6 +39,19 @@ public class EventListener {
                 }
                 if (isOnDungeon) skyblockStatus.getContext().tick();
                 else skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
+            }
+
+            if (!skyblockStatus.isOnDungeon()) return;
+
+            if (skyblockStatus.getContext() != null) {
+                DungeonContext context = skyblockStatus.getContext();
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
+                    dungeonRoom.getRoomProcessor().tick();
+                }
             }
         }
     }
@@ -70,7 +83,10 @@ public class EventListener {
                 fontRenderer.drawString("you're in the room... "+dungeonRoom.getColor()+" / "+dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
                 fontRenderer.drawString("room uuid: "+dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ?"":" (not registered)"), 5, 138, 0xFFFFFF);
                 fontRenderer.drawString("room name: "+dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
+                if (dungeonRoom.getRoomProcessor() != null)
+                    dungeonRoom.getRoomProcessor().drawScreen();
             }
+
         }
     }
 

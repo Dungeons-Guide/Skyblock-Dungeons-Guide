@@ -4,6 +4,8 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.io.Serializable;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 
 @Getter
@@ -28,4 +30,6 @@ public class DungeonRoomInfo implements Serializable {
     private String name;
 
     private String processorId = "default";
+
+    private Map<String, Object> properties = new HashMap<String, Object>();
 }

@@ -51,12 +51,11 @@ public class RoomMatcher {
 
         System.out.println("Trying to match "+dungeonRoomInfo.getUuid().toString()+" / "+dungeonRoomInfo.getName()+"... at rotation "+rotation);
 
-        int y = dungeonRoom.getMin().getY();
         for (int z = 0; z < res.length; z ++) {
             for (int x = 0; x < res[0].length; x++) {
                 int data = res[z][x];
                 if (data == -1) continue;
-                Block b = dungeonRoom.getRelativeBlockAt(x,y,z);
+                Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
                 if (b == null || Block.getIdFromBlock(b) != data) {
                     System.out.println("Match failed at offset X"+x+" / Z"+z+". expected "+data+" but found "+b +" ("+Block.getIdFromBlock(b)+")");
                     return false;
@@ -74,7 +73,6 @@ public class RoomMatcher {
         int maxZ = dungeonRoom.getMax().getZ();
         int minX = dungeonRoom.getMin().getX();
         int minZ = dungeonRoom.getMin().getZ();
-        int y = dungeonRoom.getMin().getY();
         int widthX = maxX - minX + 2;
         int heightZ = maxZ - minZ + 2;
         int[][] data = new int[dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() +2][dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 2];
@@ -90,7 +88,7 @@ public class RoomMatcher {
                     continue;
                 }
 
-                Block b = dungeonRoom.getRelativeBlockAt(x,y,z);
+                Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
                 if (b == null) {
                     data[z][x] = -1;
                 } else {
