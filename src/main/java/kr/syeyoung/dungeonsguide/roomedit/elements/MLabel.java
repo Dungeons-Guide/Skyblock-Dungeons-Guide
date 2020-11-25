@@ -17,8 +17,8 @@ public class MLabel extends MPanel {
     @Setter
     private Color foreground = Color.white;
 
-    public static enum Alignment {
-        LEFT, CENTER, RIGHT;
+    public enum Alignment {
+        LEFT, CENTER, RIGHT
     }
     @Getter
     @Setter
@@ -29,7 +29,7 @@ public class MLabel extends MPanel {
         Dimension bounds = getSize();
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
-        int width = renderer.getStringWidth(text);
+        int width = renderer.getStringWidth(getText());
         int x,y;
         if (alignment == Alignment.CENTER) {
             x = (bounds.width - width) / 2;
@@ -43,6 +43,6 @@ public class MLabel extends MPanel {
         } else{
             return;
         }
-        renderer.drawString(text, x,y, 0xffffff);
+        renderer.drawString(getText(), x,y, 0xffffff);
     }
 }

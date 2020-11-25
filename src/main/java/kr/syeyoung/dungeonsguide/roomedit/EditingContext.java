@@ -37,6 +37,7 @@ public class EditingContext {
 
     private Stack<GuiScreen> guiStack = new Stack<GuiScreen>();
 
+    @Getter
     private GuiScreen current;
 
     public void openGui(GuiScreen gui) {

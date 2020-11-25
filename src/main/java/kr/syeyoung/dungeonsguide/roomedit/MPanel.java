@@ -35,11 +35,13 @@ public class MPanel {
     public void setPosition(Point pt) {
         this.bounds.x = pt.x;
         this.bounds.y = pt.y;
+        onBoundsUpdate();
     }
 
     public void setSize(Dimension dim) {
         this.bounds.width = dim.width;
         this.bounds.height = dim.height;
+        onBoundsUpdate();
     }
 
     public Dimension getSize() {

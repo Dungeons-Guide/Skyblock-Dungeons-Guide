@@ -72,6 +72,7 @@ public class CommandEditRoom extends CommandBase {
         if ( openGuiReq &&tick.phase == TickEvent.Phase.END && tick.side == Side.CLIENT && tick.type == TickEvent.Type.CLIENT) {
             DungeonRoom dr = EditingContext.getEditingContext().getRoom();
             EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dr));
+            openGuiReq = false;
         }
     }
 

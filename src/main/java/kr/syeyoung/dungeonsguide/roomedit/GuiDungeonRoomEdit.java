@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
 import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
+import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
 import kr.syeyoung.dungeonsguide.roomedit.panes.RoomDataDisplayPane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -32,7 +33,8 @@ public class GuiDungeonRoomEdit extends GuiScreen {
 
 
         tabbedPane.addTab("General", new GeneralEditPane(room));
-        tabbedPane.addTab("Room Match", new RoomDataDisplayPane(room));
+        tabbedPane.addTab("Match", new RoomDataDisplayPane(room));
+        tabbedPane.addTab("Proc.Params", new ProcessorParameterEditPane(room));
     }
 
     @Override
