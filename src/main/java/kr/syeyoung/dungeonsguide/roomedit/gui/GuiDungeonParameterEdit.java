@@ -40,6 +40,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
 
     public GuiDungeonParameterEdit(final MParameter parameter2, final ProcessorParameterEditPane processorParameterEditPane) {
         dungeonRoom = EditingContext.getEditingContext().getRoom();
+        mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
         this.parameter = parameter2.getParameter();
         {
             MTextField mTextField = new MTextField() {
@@ -51,7 +52,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
             MLabelAndElement mLabelAndElement = new MLabelAndElement("Name", mTextField);
 
             mTextField.setText(parameter.getName());
-            mLabelAndElement.setBounds(new Rectangle(0,20,200, 20));
+            mLabelAndElement.setBounds(new Rectangle(0,0,200, 20));
             mainPanel.add(mLabelAndElement);
         }
         {
@@ -59,7 +60,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
             final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(ValueEditRegistry.getClassesSupported(), classSelection) {
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 20, parentWidth,parentHeight - 20));
+                    setBounds(new Rectangle(0, 20, parentWidth,20));
                 }
             };
 
@@ -123,8 +124,11 @@ public class GuiDungeonParameterEdit extends GuiScreen {
         currentValueEdit.getChildComponents().clear();
 
         ValueEditCreator valueEditCreator = ValueEditRegistry.getValueEditMap(classSelection);
-        parameter.setNewData(valueEditCreator.createDefaultValue(parameter));
-        parameter.setPreviousData(valueEditCreator.cloneObj(parameter.getNewData()));
+
+        if (!classSelection.equals(parameter.getNewData() == null ?"null" :parameter.getNewData().getClass().getName())) {
+            parameter.setNewData(valueEditCreator.createDefaultValue(parameter));
+            parameter.setPreviousData(valueEditCreator.cloneObj(parameter.getNewData()));
+        }
 
         MPanel valueEdit = (MPanel) valueEditCreator.createValueEdit(parameter);
         if (valueEdit == null) {

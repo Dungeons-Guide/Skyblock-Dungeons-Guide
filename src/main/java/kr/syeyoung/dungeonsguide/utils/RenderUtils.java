@@ -163,6 +163,75 @@ public class RenderUtils {
 //...
 
     }
+    public static void highlightBlock2(BlockPos blockpos, Color c, float partialTicks) {
+
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+
+        Vector3f renderPos = getRenderPos(blockpos.getX(), blockpos.getY(), blockpos.getZ(), partialTicks);
+
+
+        GL11.glPushMatrix();
+        GlStateManager.pushAttrib();
+        GL11.glTranslatef(renderPos.x, renderPos.y, renderPos.z);
+        GL11.glRotatef(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+        GL11.glRotatef(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
+        GL11.glDisable(GL11.GL_LIGHTING);
+        GL11.glDepthMask(false);
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glEnable(GL11.GL_BLEND);
+        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+
+        GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
+
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 0, 1);
+        GL11.glVertex3d(0, 1, 1);
+        GL11.glVertex3d(0, 1, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(1, 0, 1);
+        GL11.glVertex3d(1, 0, 0);
+        GL11.glVertex3d(1, 1, 0);
+        GL11.glVertex3d(1, 1, 1);
+
+        GL11.glVertex3d(0, 1, 1);
+        GL11.glVertex3d(0, 0, 1);
+        GL11.glVertex3d(1, 0, 1);
+        GL11.glVertex3d(1, 1, 1); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 1, 0);
+        GL11.glVertex3d(1, 1, 0);
+        GL11.glVertex3d(1, 0, 0);
+
+        GL11.glVertex3d(0,1,0);
+        GL11.glVertex3d(0,1,1);
+        GL11.glVertex3d(1,1,1);
+        GL11.glVertex3d(1,1,0);
+
+        GL11.glVertex3d(0,0,1);
+        GL11.glVertex3d(0,0,0);
+        GL11.glVertex3d(1,0,0);
+        GL11.glVertex3d(1,0,1);
+
+
+
+        GL11.glEnd();
+
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+
+
+//...
+
+    }
     public static void drawTextAtWorld(String text, float x, float y, float z, int color, float scale, boolean increase, boolean renderBlackBox, float partialTicks) {
         float lScale = scale;
 

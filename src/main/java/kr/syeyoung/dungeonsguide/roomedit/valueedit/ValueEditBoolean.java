@@ -4,15 +4,17 @@ import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MStringSelectionButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 
-public class ValueEditString extends MPanel implements ValueEdit<String> {
+public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
     private Parameter parameter;
 
 
-    public ValueEditString(Parameter parameter2) {
+    public ValueEditBoolean(Parameter parameter2) {
         this.parameter = parameter2;
         {
             MLabel label = new MLabel() {
@@ -26,14 +28,14 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
             add(mLabelAndElement);
         }
         {
-            String newData = (String) parameter.getNewData();
-            MTextField textField = new MTextField() {
+            boolean newData = (Boolean) parameter.getNewData();
+            final MStringSelectionButton textField = new MStringSelectionButton(Arrays.asList(new String[] {"true", "false"}), Boolean.toString(newData));
+            textField.setOnUpdate(new Runnable() {
                 @Override
-                public void edit(String str) {
-                    parameter.setNewData(str);
+                public void run() {
+                    parameter.setNewData(Boolean.valueOf(textField.getSelected()));
                 }
-            };
-            textField.setText(newData);
+            });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("New",textField);
             mLabelAndElement.setBounds(new Rectangle(0,20,bounds.width,20));
             add(mLabelAndElement);
@@ -57,16 +59,16 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditString> {
+    public static class Generator implements ValueEditCreator<ValueEditBoolean> {
 
         @Override
-        public ValueEditString createValueEdit(Parameter parameter) {
-            return new ValueEditString(parameter);
+        public ValueEditBoolean createValueEdit(Parameter parameter) {
+            return new ValueEditBoolean(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return "default";
+            return true;
         }
 
         @Override

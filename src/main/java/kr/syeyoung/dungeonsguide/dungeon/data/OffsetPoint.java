@@ -11,12 +11,16 @@ import javax.vecmath.Vector2d;
 
 @Data
 @AllArgsConstructor
-public class OffsetPoint {
+public class OffsetPoint implements Cloneable {
     private int x;
     private int y;
     private int z;
 
     public OffsetPoint(DungeonRoom dungeonRoom, BlockPos pos) {
+        setPosInWorld(dungeonRoom, pos);
+    }
+
+    public void setPosInWorld(DungeonRoom dungeonRoom, BlockPos pos) {
         Vector2d vector2d = new Vector2d(pos.getX(), pos.getZ());
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++)
             vector2d = VectorUtils.rotateClockwise(vector2d);
@@ -47,11 +51,28 @@ public class OffsetPoint {
         Block b = dungeonRoom.getRelativeBlockAt(relBp.getX(), relBp.getY(), relBp.getZ());
         return b;
     }
+    public BlockPos getBlockPos(DungeonRoom dungeonRoom) {
+        BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
+        return dungeonRoom.getRelativeBlockPosAt(relBp.getX(), relBp.getY(), relBp.getZ());
+    }
 
     public int getData(DungeonRoom dungeonRoom) {
         BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
 
         int b = dungeonRoom.getRelativeBlockDataAt(relBp.getX(), relBp.getY(), relBp.getZ());
         return b;
+    }
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        return new OffsetPoint(x,y,z);
+    }
+
+    @Override
+    public String toString() {
+        return "OffsetPoint{x=" + x +
+                ", y=" + y +
+                ", z=" + z +
+                '}';
     }
 }

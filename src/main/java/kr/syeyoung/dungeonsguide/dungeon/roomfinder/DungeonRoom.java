@@ -114,6 +114,11 @@ public class DungeonRoom {
         return null;
     }
 
+    public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
+            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getZ(),min.getZ());
+            return pos;
+    }
+
     public int getRelativeBlockDataAt(int x, int y, int z) {
         // validate x y z's
         if (canAccessRelative(x,z)) {

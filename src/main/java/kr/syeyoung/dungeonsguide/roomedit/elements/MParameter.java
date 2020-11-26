@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomedit.elements;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
 import lombok.Getter;
 import lombok.Setter;
@@ -52,7 +53,7 @@ public class MParameter extends MPanel {
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (this.bounds.x > -20 && new Rectangle(new Point(0,0),bounds.getSize()).contains(relMouseX, relMouseY)) {
             // open new gui;
-            System.out.println("hey I'm "+parameter.getName()+", i'ma open gui");
+            EditingContext.getEditingContext().openGui(new GuiDungeonParameterEdit(this, processorParameterEditPane));
         }
     }
 

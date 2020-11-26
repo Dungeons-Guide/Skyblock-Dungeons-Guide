@@ -2,17 +2,18 @@ package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MIntegerSelectionButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
 
 import java.awt.*;
 
-public class ValueEditString extends MPanel implements ValueEdit<String> {
+public class ValueEditInteger extends MPanel implements ValueEdit<Integer> {
     private Parameter parameter;
 
 
-    public ValueEditString(Parameter parameter2) {
+    public ValueEditInteger(final Parameter parameter2) {
         this.parameter = parameter2;
         {
             MLabel label = new MLabel() {
@@ -26,14 +27,14 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
             add(mLabelAndElement);
         }
         {
-            String newData = (String) parameter.getNewData();
-            MTextField textField = new MTextField() {
+            int newData = (Integer) parameter.getNewData();
+            final MIntegerSelectionButton textField = new MIntegerSelectionButton(newData);
+            textField.setOnUpdate(new Runnable() {
                 @Override
-                public void edit(String str) {
-                    parameter.setNewData(str);
+                public void run() {
+                    parameter.setNewData(textField.getData());
                 }
-            };
-            textField.setText(newData);
+            });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("New",textField);
             mLabelAndElement.setBounds(new Rectangle(0,20,bounds.width,20));
             add(mLabelAndElement);
@@ -57,16 +58,16 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditString> {
+    public static class Generator implements ValueEditCreator<ValueEditInteger> {
 
         @Override
-        public ValueEditString createValueEdit(Parameter parameter) {
-            return new ValueEditString(parameter);
+        public ValueEditInteger createValueEdit(Parameter parameter) {
+            return new ValueEditInteger(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return "default";
+            return 0;
         }
 
         @Override

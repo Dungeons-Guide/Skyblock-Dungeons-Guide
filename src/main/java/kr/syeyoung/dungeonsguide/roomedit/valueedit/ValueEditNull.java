@@ -12,4 +12,9 @@ public class ValueEditNull implements ValueEditCreator {
     public ActuallyClonable createDefaultValue(Parameter parameter) {
         return null;
     }
+
+    @Override
+    public Object cloneObj(Object object) {
+        return null;
+    }
 }
