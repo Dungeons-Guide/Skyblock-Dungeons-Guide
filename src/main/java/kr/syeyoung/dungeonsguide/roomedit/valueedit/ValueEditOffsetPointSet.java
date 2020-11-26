@@ -156,6 +156,10 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
     }
 
     public void addAll(List<OffsetPoint> blockPoses) {
+        ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().addAll(blockPoses);
+        for (OffsetPoint blockPose : blockPoses) {
+            MParameters.add(new MOffsetPoint(this, blockPose));
+        }
     }
 
     public static class Generator implements ValueEditCreator<ValueEditOffsetPointSet> {

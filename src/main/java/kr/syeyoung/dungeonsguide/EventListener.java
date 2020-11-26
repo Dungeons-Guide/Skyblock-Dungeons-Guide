@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonOffsetPointEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
@@ -123,6 +124,8 @@ public class EventListener {
                 if (valueEdit != null) {
                     valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
                 }
+            } else if (guiScreen instanceof GuiDungeonAddSet) {
+                ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
             }
         }
     }

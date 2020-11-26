@@ -36,8 +36,8 @@ public class GuiDungeonAddSet extends GuiScreen {
         for (OffsetPoint pos:getBlockPoses()) {
             RenderUtils.highlightBlock(pos.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,255,50), partialTicks);
         }
-        RenderUtils.highlightBlock(start.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(255,0,0,50), partialTicks);
-        RenderUtils.highlightBlock(end.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,0,50), partialTicks);
+        RenderUtils.highlightBlock(start.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(255,0,0,100), partialTicks);
+        RenderUtils.highlightBlock(end.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,0,100), partialTicks);
     }
 
     public List<OffsetPoint> getBlockPoses() {
