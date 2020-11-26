@@ -3,111 +3,114 @@ package kr.syeyoung.dungeonsguide.roomedit.gui;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
+import kr.syeyoung.dungeonsguide.roomedit.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
-import lombok.Getter;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.BlockPos;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 
-public class GuiDungeonOffsetPointEdit extends GuiScreen {
+public class GuiDungeonAddSet extends GuiScreen {
+
     private MPanel mainPanel = new MPanel();
-    @Getter
-    private OffsetPoint offsetPoint;
-    private MButton save;
-    private MButton delete;
 
-    @Getter
-    private ValueEdit valueEdit;
+    private ValueEditOffsetPointSet valueEditOffsetPointSet;
 
-    public GuiDungeonOffsetPointEdit(final ValueEditOffsetPointSet valueEditOffsetPointSet, final OffsetPoint offsetPoint) {
-        this.offsetPoint = offsetPoint;
+    private MButton add;
+    private MButton back;
+
+
+    private OffsetPoint start;
+    private OffsetPoint end;
+
+    public void onWorldRender(float partialTicks) {
+        for (OffsetPoint pos:getBlockPoses()) {
+            RenderUtils.highlightBlock(pos.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,255,50), partialTicks);
+        }
+        RenderUtils.highlightBlock(start.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(255,0,0,50), partialTicks);
+        RenderUtils.highlightBlock(end.getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,0,50), partialTicks);
+    }
+
+    public List<OffsetPoint> getBlockPoses() {
+        int minX = Math.min(start.getX(), end.getX());
+        int minY = Math.min(start.getY(), end.getY());
+        int minZ = Math.min(start.getZ(), end.getZ());
+        int maxX = Math.max(start.getX(), end.getX());
+        int maxY = Math.max(start.getY(), end.getY());
+        int maxZ = Math.max(start.getZ(), end.getZ());
+
+        List<OffsetPoint> offsetPoints = new ArrayList<OffsetPoint>();
+        for (int z = minZ; z <= maxZ; z++) {
+            for (int x = minX; x <=maxX; x++) {
+                for (int y = maxY; y >= minY; y --) {
+                    offsetPoints.add(new OffsetPoint(x,y,z));
+                }
+            }
+        }
+        return offsetPoints;
+    }
+
+    public void add() {
+        valueEditOffsetPointSet.addAll(getBlockPoses());
+    }
+
+    public GuiDungeonAddSet(final ValueEditOffsetPointSet processorParameterEditPane) {
+        this.valueEditOffsetPointSet = processorParameterEditPane;
         mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
         {
-            MPanel thing = (MPanel) ValueEditRegistry.getValueEditMap(OffsetPoint.class.getName()).createValueEdit(new Parameter(null, null, null) {
-                @Override
-                public Object getPreviousData() {
-                    return offsetPoint;
-                }
-
-                @Override
-                public Object getNewData() {
-                    return offsetPoint;
-                }
-
-                @Override
-                public String getName() {
-                    return "";
-                }
-
-                @Override
-                public void setName(String name) {
-                    return;
-                }
-
-                @Override
-                public void setPreviousData(Object previousData) {
-                    return;
-                }
-
-                @Override
-                public void setNewData(Object newData) {
-                    return;
-                }
-            });
-            valueEdit = (ValueEdit) thing;
-            MPanel wrapper = new MPanel() {
-                @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 0, parentWidth,parentHeight - 20));
-                }
-            };
-            wrapper.add(thing);
-            mainPanel.add(wrapper);
+            start = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
+            end = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
         }
         {
-            delete = new MButton() {
+            MOffsetPoint mOffsetPoint = new MOffsetPoint(null,start);
+            mOffsetPoint.setBounds(new Rectangle(0,0,150,20));
+            mainPanel.add(mOffsetPoint);
+            MOffsetPoint mOffsetPoint2 = new MOffsetPoint(null,end);
+            mOffsetPoint2.setBounds(new Rectangle(0,20,150,20));
+            mainPanel.add(mOffsetPoint2);
+        }
+        {
+            add = new MButton() {
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
                     setBounds(new Rectangle(0,parentHeight - 20, parentWidth / 2, 20));
                 }
             };
-            delete.setText("Delete");
-            delete.setBackgroundColor(Color.red);
-            delete.setOnActionPerformed(new Runnable() {
+            add.setText("Add");
+            add.setBackgroundColor(Color.red);
+            add.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    if (valueEditOffsetPointSet != null)
-                        valueEditOffsetPointSet.delete(offsetPoint);
+                    add();
                     EditingContext.getEditingContext().goBack();
                 }
             });
 
-            save = new MButton(){
+            back = new MButton(){
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
                     setBounds(new Rectangle(parentWidth / 2,parentHeight - 20, parentWidth / 2, 20));
                 }
             };
-            save.setText("Go back");
-            save.setBackgroundColor(Color.green);
-            save.setOnActionPerformed(new Runnable() {
+            back.setText("Go back");
+            back.setBackgroundColor(Color.green);
+            back.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
                     EditingContext.getEditingContext().goBack();
                 }
             });
-            mainPanel.add(delete);
-            mainPanel.add(save);
+            mainPanel.add(add);
+            mainPanel.add(back);
         }
     }
 

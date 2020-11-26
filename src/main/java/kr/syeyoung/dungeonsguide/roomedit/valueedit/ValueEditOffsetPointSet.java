@@ -8,6 +8,7 @@ import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MOffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MParameter;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -119,7 +120,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
             addSet.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    //open gui
+                    EditingContext.getEditingContext().openGui(new GuiDungeonAddSet(ValueEditOffsetPointSet.this));
                 }
             });
             add(add);
@@ -152,6 +153,9 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
     @Override
     public void resize(int parentWidth, int parentHeight) {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
+    }
+
+    public void addAll(List<OffsetPoint> blockPoses) {
     }
 
     public static class Generator implements ValueEditCreator<ValueEditOffsetPointSet> {
