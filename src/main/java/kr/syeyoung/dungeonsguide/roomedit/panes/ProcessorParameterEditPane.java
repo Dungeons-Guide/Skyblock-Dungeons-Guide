@@ -7,6 +7,9 @@ import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MParameter;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ActuallyClonable;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -36,7 +39,7 @@ public class ProcessorParameterEditPane extends MPanel {
                 @Override
                 public void run() {
                     MParameter parameter;
-                    parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null)));
+                    parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null, null), ProcessorParameterEditPane.this));
                     parameter.setBounds(new Rectangle(0,0,bounds.width, 20));
                 }
             });
@@ -53,14 +56,20 @@ public class ProcessorParameterEditPane extends MPanel {
 
                     for (MParameter parameter : parameters) {
                         Parameter real = parameter.getParameter();
-                        dungeonRoomInfo.getProperties().put(real.getName(), real.getData());
+
+                        ValueEditCreator vec = ValueEditRegistry.getValueEditMap(real.getNewData() == null ? "null" :real.getNewData().getClass().getName());
+
+                        real.setPreviousData(vec.cloneObj(real.getNewData()));
+                        dungeonRoomInfo.getProperties().put(real.getName(), real.getNewData());
                     }
                 }
             });
         }
         {
             for (Map.Entry<String, Object> en : dungeonRoom.getDungeonRoomInfo().getProperties().entrySet()) {
-                MParameter mParameter = new MParameter(new Parameter(en.getKey(), en.getValue()));
+                ValueEditCreator vec = ValueEditRegistry.getValueEditMap(en.getValue() == null ? "null" :en.getValue().getClass().getName());
+
+                MParameter mParameter = new MParameter(new Parameter(en.getKey(), vec.cloneObj(en.getValue()), vec.cloneObj(en.getValue())), this);
                 mParameter.setBounds(new Rectangle(0,0,bounds.width,20));
                 parameters.add(mParameter);
             }
@@ -103,7 +112,7 @@ public class ProcessorParameterEditPane extends MPanel {
     }
 
     @Override
-    protected void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+    public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         if (scrollAmount > 0) offsetY -= 20;
         else if (scrollAmount < 0) offsetY += 20;
         if (offsetY < 0) offsetY = 0;

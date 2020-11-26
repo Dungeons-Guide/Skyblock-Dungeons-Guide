@@ -79,7 +79,7 @@ public class RoomDataDisplayPane extends MPanel {
     private int lastX;
     private int lastY;
     @Override
-    protected void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+    public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         lastX = absMouseX;
         lastY = absMouseY;
 
@@ -90,7 +90,7 @@ public class RoomDataDisplayPane extends MPanel {
     }
 
     @Override
-    protected void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
+    public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
         int dX = absMouseX - lastX;
         int dY = absMouseY - lastY;
         offsetX += dX;

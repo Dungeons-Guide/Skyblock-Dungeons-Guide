@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ActuallyClonable;
 import lombok.Getter;
 import lombok.Setter;
 

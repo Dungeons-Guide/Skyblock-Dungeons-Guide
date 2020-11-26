@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomedit.elements;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
@@ -18,8 +19,10 @@ public class MParameter extends MPanel {
 
     @Getter @Setter
     private Parameter parameter;
+    private ProcessorParameterEditPane processorParameterEditPane;
 
-    public MParameter(final Parameter parameter) {
+    public MParameter(final Parameter parameter, ProcessorParameterEditPane processorParameterEditPane) {
+        this.processorParameterEditPane = processorParameterEditPane;
         this.add(this.label = new MLabel() {
             @Override
             public String getText() {
@@ -29,7 +32,7 @@ public class MParameter extends MPanel {
         this.add(this.data = new MLabel() {
             @Override
             public String getText() {
-                return parameter.getData() != null ?parameter.getData().toString() :"-empty-";
+                return parameter.getNewData() != null ?parameter.getNewData().toString() :"-empty-";
             }
         });
         this.label.setAlignment(MLabel.Alignment.LEFT);
@@ -46,7 +49,7 @@ public class MParameter extends MPanel {
     }
 
     @Override
-    protected void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+    public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (this.bounds.x > -20 && new Rectangle(new Point(0,0),bounds.getSize()).contains(relMouseX, relMouseY)) {
             // open new gui;
             System.out.println("hey I'm "+parameter.getName()+", i'ma open gui");

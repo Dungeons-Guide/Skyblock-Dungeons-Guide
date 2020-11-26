@@ -72,7 +72,7 @@ System.out.println("building");
             add(shape2);
         }
         {
-            final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(new ArrayList<String>(ProcessorFactory.getProcessors()));
+            final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(new ArrayList<String>(ProcessorFactory.getProcessors()), dungeonRoom.getDungeonRoomInfo().getProcessorId());
             roomProcessor = new MLabelAndElement("Room Processor: ", mStringSelectionButton);
             roomProcessor.setBounds(new Rectangle(0,100,bounds.width, 20));
             add(roomProcessor);

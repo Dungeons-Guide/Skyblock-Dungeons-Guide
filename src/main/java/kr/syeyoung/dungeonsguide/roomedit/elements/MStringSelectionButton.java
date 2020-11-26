@@ -22,9 +22,10 @@ public class MStringSelectionButton extends MPanel {
     @Setter
     private Runnable onUpdate;
 
-    public MStringSelectionButton(final List<String> possible) {
+    public MStringSelectionButton(final List<String> possible, String defaultValue) {
         this.possible = possible;
-        selectedIndex = 0;
+        selectedIndex = possible.indexOf(defaultValue);
+        if (selectedIndex == -1) selectedIndex = 0;
 
         dec = new MButton(); dec.setText("<"); add(dec);
         inc = new MButton(); inc.setText(">"); add(inc);

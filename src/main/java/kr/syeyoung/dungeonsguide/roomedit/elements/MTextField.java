@@ -71,7 +71,7 @@ public class MTextField extends MPanel {
     }
 
     @Override
-    protected void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+    public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         Rectangle actualField = new Rectangle(1, 3,bounds.width - 2, bounds.height - 6);
         if (!actualField.contains(relMouseX, relMouseY)) return;
 
@@ -96,7 +96,7 @@ public class MTextField extends MPanel {
     }
 
     @Override
-    protected void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
+    public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
         if (!isFocused) return;
         selectionStart = cursor;
         selectionEnd = cursor;
@@ -127,7 +127,7 @@ public class MTextField extends MPanel {
     }
 
     @Override
-    protected void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+    public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         if (!isFocused) return;
         if (scrollAmount > 0) {
             xOffset += 5;
@@ -147,7 +147,7 @@ public class MTextField extends MPanel {
     }
 
     @Override
-    protected void keyTyped(char typedChar, int keycode) {
+    public void keyTyped(char typedChar, int keycode) {
         if (!isFocused) return;
 
 

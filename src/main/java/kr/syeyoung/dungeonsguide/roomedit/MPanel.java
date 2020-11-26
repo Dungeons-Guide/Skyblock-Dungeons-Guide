@@ -136,7 +136,7 @@ public class MPanel {
     public void resize(int parentWidth, int parentHeight) {}
 
 
-    protected void keyTyped0(char typedChar, int keyCode) {
+    public void keyTyped0(char typedChar, int keyCode) {
         for (MPanel childComponent  : getChildComponents()) {
             childComponent.keyTyped0(typedChar, keyCode);
         }
@@ -144,9 +144,9 @@ public class MPanel {
         if (isFocused)
             keyTyped(typedChar, keyCode);
     }
-    protected void keyTyped(char typedChar, int keyCode) {}
+    public void keyTyped(char typedChar, int keyCode) {}
 
-    protected boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
+    public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
@@ -170,9 +170,9 @@ public class MPanel {
         return focusedOverall;
     }
 
-    protected void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {}
+    public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {}
 
-    protected void mouseReleased0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int state) {
+    public void mouseReleased0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int state) {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
@@ -181,9 +181,9 @@ public class MPanel {
         }
         mouseReleased(absMouseX, absMouseY, relMousex, relMousey, state);
     }
-    protected void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {}
+    public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {}
 
-    protected void mouseClickMove0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
+    public void mouseClickMove0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
@@ -192,9 +192,9 @@ public class MPanel {
         }
         mouseClickMove(absMouseX, absMouseY, relMousex, relMousey, clickedMouseButton, timeSinceLastClick);
     }
-    protected void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
+    public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
 
-    protected void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+    public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         int relMousex = relMouseX0 - bounds.x;
         int relMousey = relMouseY0 - bounds.y;
 
@@ -203,5 +203,5 @@ public class MPanel {
         }
         mouseScrolled(absMouseX, absMouseY, relMousex, relMousey, scrollAmount);
     }
-    protected void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {}
+    public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {}
 }
