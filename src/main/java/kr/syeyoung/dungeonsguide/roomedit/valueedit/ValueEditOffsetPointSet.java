@@ -101,8 +101,10 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                 @Override
                 public void run() {
                     OffsetPoint offsetPoint = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
-                    MParameters.add(new MOffsetPoint(ValueEditOffsetPointSet.this, offsetPoint));
+                    MOffsetPoint mOffsetPoint;
+                    MParameters.add(mOffsetPoint = new MOffsetPoint(ValueEditOffsetPointSet.this, offsetPoint));
                     ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().add(offsetPoint);
+                    mOffsetPoint.setSize(new Dimension(bounds.width, 20));
                 }
             });
 

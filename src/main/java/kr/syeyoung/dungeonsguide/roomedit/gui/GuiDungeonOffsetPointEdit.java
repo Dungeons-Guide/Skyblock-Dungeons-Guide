@@ -31,6 +31,7 @@ public class GuiDungeonOffsetPointEdit extends GuiScreen {
 
     public GuiDungeonOffsetPointEdit(final ValueEditOffsetPointSet valueEditOffsetPointSet, final OffsetPoint offsetPoint) {
         this.offsetPoint = offsetPoint;
+        mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
         {
             MPanel thing = (MPanel) ValueEditRegistry.getValueEditMap(OffsetPoint.class.getName()).createValueEdit(new Parameter(null, null, null) {
                 @Override

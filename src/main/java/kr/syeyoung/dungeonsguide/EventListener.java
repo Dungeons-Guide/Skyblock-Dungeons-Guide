@@ -52,6 +52,7 @@ public class EventListener {
             if (skyblockStatus.getContext() != null) {
                 DungeonContext context = skyblockStatus.getContext();
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                if (thePlayer == null) return;
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
