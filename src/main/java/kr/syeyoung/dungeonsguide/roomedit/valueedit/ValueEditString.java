@@ -11,6 +11,10 @@ import java.awt.*;
 public class ValueEditString extends MPanel implements ValueEdit<String> {
     private Parameter parameter;
 
+    @Override
+    public void renderWorld(float partialTicks) {
+
+    }
 
     public ValueEditString(Parameter parameter2) {
         this.parameter = parameter2;

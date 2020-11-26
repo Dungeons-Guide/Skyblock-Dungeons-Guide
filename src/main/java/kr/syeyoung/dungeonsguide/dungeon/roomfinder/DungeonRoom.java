@@ -108,21 +108,21 @@ public class DungeonRoom {
     public Block getRelativeBlockAt(int x, int y, int z) {
         // validate x y z's
         if (canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getZ(),min.getZ());
+            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
             return this.context.getWorld().getChunkFromBlockCoords(pos).getBlock(pos);
         }
         return null;
     }
 
     public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
-            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getZ(),min.getZ());
+            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
             return pos;
     }
 
     public int getRelativeBlockDataAt(int x, int y, int z) {
         // validate x y z's
         if (canAccessRelative(x,z)) {
-            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),0,min.getZ());
+            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
             return this.context.getWorld().getChunkFromBlockCoords(pos).getBlockMetadata(pos);
         }
         return -1;

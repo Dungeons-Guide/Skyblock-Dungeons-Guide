@@ -4,4 +4,6 @@ import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 
 public interface ValueEdit<T extends Object> {
     public void setParameter(Parameter parameter);
+
+    public void renderWorld(float partialTicks);
 }

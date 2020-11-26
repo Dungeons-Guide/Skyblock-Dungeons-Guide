@@ -55,6 +55,11 @@ public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
     }
 
     @Override
+    public void renderWorld(float partialTicks) {
+
+    }
+
+    @Override
     public void resize(int parentWidth, int parentHeight) {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }

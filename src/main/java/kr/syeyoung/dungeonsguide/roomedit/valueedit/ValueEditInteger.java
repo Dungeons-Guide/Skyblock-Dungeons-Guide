@@ -13,6 +13,10 @@ public class ValueEditInteger extends MPanel implements ValueEdit<Integer> {
     private Parameter parameter;
 
 
+    @Override
+    public void renderWorld(float partialTicks) {
+
+    }
     public ValueEditInteger(final Parameter parameter2) {
         this.parameter = parameter2;
         {

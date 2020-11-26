@@ -15,6 +15,11 @@ import java.awt.*;
 public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
     private Parameter parameter;
 
+    @Override
+    public void renderWorld(float partialTicks) {
+        RenderUtils.highlightBlock(((OffsetPoint)parameter.getPreviousData()).getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(255,0,0,150), partialTicks);
+        RenderUtils.highlightBlock(((OffsetPoint)parameter.getNewData()).getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,0,150), partialTicks);
+    }
 
     public ValueEditOffsetPoint(final Parameter parameter2) {
         this.parameter = parameter2;
@@ -59,7 +64,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
             textField.setOnUpdate(new Runnable() {
                 @Override
                 public void run() {
-                    ((OffsetPoint) parameter.getNewData()).setX(textField.getData());
+                    ((OffsetPoint) parameter.getNewData()).setZ(textField.getData());
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("z",textField);
@@ -79,12 +84,6 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
             mLabelAndElement.setBounds(new Rectangle(0,80,bounds.width,20));
             add(mLabelAndElement);
         }
-    }
-
-    @Override
-    public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        RenderUtils.highlightBlock2(((OffsetPoint)parameter.getPreviousData()).getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(255,0,0,150), partialTicks);
-        RenderUtils.highlightBlock2(((OffsetPoint)parameter.getNewData()).getBlockPos(EditingContext.getEditingContext().getRoom()), new Color(0,255,0,150), partialTicks);
     }
 
     @Override

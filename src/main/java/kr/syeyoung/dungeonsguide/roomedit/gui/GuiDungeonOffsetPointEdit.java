@@ -1,17 +1,12 @@
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
-import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
-import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.RoomDataDisplayPane;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -23,69 +18,60 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.UUID;
 
-public class GuiDungeonParameterEdit extends GuiScreen {
-
+public class GuiDungeonOffsetPointEdit extends GuiScreen {
     private MPanel mainPanel = new MPanel();
-
-    private Parameter parameter;
-    private DungeonRoom dungeonRoom;
-
-    private String classSelection;
-
-    private MPanel currentValueEdit;
-
+    @Getter
+    private OffsetPoint offsetPoint;
     private MButton save;
     private MButton delete;
 
     @Getter
     private ValueEdit valueEdit;
 
-    public GuiDungeonParameterEdit(final MParameter parameter2, final ProcessorParameterEditPane processorParameterEditPane) {
-        dungeonRoom = EditingContext.getEditingContext().getRoom();
-        mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
-        this.parameter = parameter2.getParameter();
+    public GuiDungeonOffsetPointEdit(final ValueEditOffsetPointSet valueEditOffsetPointSet, final OffsetPoint offsetPoint) {
+        this.offsetPoint = offsetPoint;
         {
-            MTextField mTextField = new MTextField() {
+            MPanel thing = (MPanel) ValueEditRegistry.getValueEditMap(OffsetPoint.class.getName()).createValueEdit(new Parameter(null, null, null) {
                 @Override
-                public void edit(String str) {
-                    parameter.setName(str);
+                public Object getPreviousData() {
+                    return offsetPoint;
                 }
-            };
-            MLabelAndElement mLabelAndElement = new MLabelAndElement("Name", mTextField);
 
-            mTextField.setText(parameter.getName());
-            mLabelAndElement.setBounds(new Rectangle(0,0,200, 20));
-            mainPanel.add(mLabelAndElement);
-        }
-        {
-            classSelection = parameter.getNewData() == null ?"null" : parameter.getNewData().getClass().getName();
-            final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(ValueEditRegistry.getClassesSupported(), classSelection) {
                 @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 20, parentWidth,20));
+                public Object getNewData() {
+                    return offsetPoint;
                 }
-            };
 
-            mStringSelectionButton.setOnUpdate(new Runnable() {
                 @Override
-                public void run() {
-                    classSelection = mStringSelectionButton.getSelected();
-                    updateClassSelection();
+                public String getName() {
+                    return "";
+                }
+
+                @Override
+                public void setName(String name) {
+                    return;
+                }
+
+                @Override
+                public void setPreviousData(Object previousData) {
+                    return;
+                }
+
+                @Override
+                public void setNewData(Object newData) {
+                    return;
                 }
             });
-            mStringSelectionButton.setBounds(new Rectangle(0,20,150,20));
-            mainPanel.add(mStringSelectionButton);
-        }
-        {
-            currentValueEdit = new MPanel(){
+            valueEdit = (ValueEdit) thing;
+            MPanel wrapper = new MPanel() {
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 40, parentWidth,parentHeight - 60));
+                    setBounds(new Rectangle(0, 0, parentWidth,parentHeight - 20));
                 }
             };
-            mainPanel.add(currentValueEdit);
+            wrapper.add(thing);
+            mainPanel.add(wrapper);
         }
         {
             delete = new MButton() {
@@ -99,7 +85,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
             delete.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    processorParameterEditPane.delete(parameter2);
+                    valueEditOffsetPointSet.delete(offsetPoint);
                     EditingContext.getEditingContext().goBack();
                 }
             });
@@ -121,37 +107,8 @@ public class GuiDungeonParameterEdit extends GuiScreen {
             mainPanel.add(delete);
             mainPanel.add(save);
         }
-        updateClassSelection();
     }
 
-    public void updateClassSelection() {
-        currentValueEdit.getChildComponents().clear();
-
-        ValueEditCreator valueEditCreator = ValueEditRegistry.getValueEditMap(classSelection);
-
-        if (!classSelection.equals(parameter.getNewData() == null ?"null" :parameter.getNewData().getClass().getName())) {
-            parameter.setNewData(valueEditCreator.createDefaultValue(parameter));
-            parameter.setPreviousData(valueEditCreator.cloneObj(parameter.getNewData()));
-        }
-
-        MPanel valueEdit = (MPanel) valueEditCreator.createValueEdit(parameter);
-        if (valueEdit == null) {
-            MLabel valueEdit2 = new MLabel() {
-                @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 0, parentWidth,20));
-                }
-            };
-            valueEdit2.setText("No Value Edit");
-            valueEdit2.setBounds(new Rectangle(0,0,150,20));
-            valueEdit = valueEdit2;
-            this.valueEdit = null;
-        } else{
-            this.valueEdit = (ValueEdit) valueEdit;
-        }
-        valueEdit.resize0(currentValueEdit.getBounds().width, currentValueEdit.getBounds().height);
-        currentValueEdit.add(valueEdit);
-    }
     @Override
     public void initGui() {
         super.initGui();

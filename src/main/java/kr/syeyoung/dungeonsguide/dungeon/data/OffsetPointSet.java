@@ -6,6 +6,15 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class OffsetPointSet {
+public class OffsetPointSet implements Cloneable{
     private List<OffsetPoint> offsetPointList = new ArrayList<OffsetPoint>();
+
+    @Override
+    public Object clone() throws CloneNotSupportedException {
+        OffsetPointSet ops = new OffsetPointSet();
+        for (OffsetPoint offsetPoint : offsetPointList) {
+            ops.offsetPointList.add((OffsetPoint) offsetPoint.clone());
+        }
+        return ops;
+    }
 }

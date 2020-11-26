@@ -21,7 +21,7 @@ public class OffsetPoint implements Cloneable {
     }
 
     public void setPosInWorld(DungeonRoom dungeonRoom, BlockPos pos) {
-        Vector2d vector2d = new Vector2d(pos.getX(), pos.getZ());
+        Vector2d vector2d = new Vector2d(pos.getX() - dungeonRoom.getMin().getX(), pos.getZ() - dungeonRoom.getMin().getZ());
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++)
             vector2d = VectorUtils.rotateClockwise(vector2d);
 
@@ -30,7 +30,7 @@ public class OffsetPoint implements Cloneable {
 
         this.x = (int) vector2d.x;
         this.z = (int) vector2d.y;
-        this.y = dungeonRoom.getMin().getY() + pos.getY();
+        this.y = pos.getY()-dungeonRoom.getMin().getY();
     }
 
     public BlockPos toRotatedRelBlockPos(DungeonRoom dungeonRoom) {

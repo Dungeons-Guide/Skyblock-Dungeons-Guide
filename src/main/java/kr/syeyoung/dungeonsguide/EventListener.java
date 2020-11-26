@@ -5,6 +5,9 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonOffsetPointEdit;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -104,6 +107,21 @@ public class EventListener {
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
             for(DungeonDoor door : dungeonRoom.getDoors()) {
                 RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+            }
+        }
+
+        if (EditingContext.getEditingContext() != null) {
+            GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
+            if (guiScreen instanceof GuiDungeonParameterEdit) {
+                ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
+                if (valueEdit != null) {
+                    valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+                }
+            } else if (guiScreen instanceof GuiDungeonOffsetPointEdit) {
+                ValueEdit valueEdit = ((GuiDungeonOffsetPointEdit) guiScreen).getValueEdit();
+                if (valueEdit != null) {
+                    valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+                }
             }
         }
     }

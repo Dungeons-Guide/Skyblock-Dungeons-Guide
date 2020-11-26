@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -24,5 +25,6 @@ public class ValueEditRegistry {
         valueEditMap.put(Boolean.class.getName(), new ValueEditBoolean.Generator());
         valueEditMap.put(Integer.class.getName(), new ValueEditInteger.Generator());
         valueEditMap.put(OffsetPoint.class.getName(), new ValueEditOffsetPoint.Generator());
+        valueEditMap.put(OffsetPointSet.class.getName(), new ValueEditOffsetPointSet.Generator());
     }
 }
