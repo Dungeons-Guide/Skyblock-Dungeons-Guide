@@ -5,7 +5,9 @@ import kr.syeyoung.dungeonsguide.commands.CommandLoadData;
 import kr.syeyoung.dungeonsguide.commands.CommandSaveData;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -24,6 +26,13 @@ public class DungeonsGuide
     private SkyblockStatus skyblockStatus;
     
     private static DungeonsGuide dungeonsGuide;
+
+    public static boolean DEBUG = false;
+
+    public static void sendDebugChat(IChatComponent iChatComponent) {
+        if (DEBUG)
+            Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
+    }
 
     @EventHandler
     public void init(FMLInitializationEvent event)

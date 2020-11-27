@@ -29,6 +29,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
+    @Override
+    public void chatReceived(String chat) {
+
+    }
+
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {
         @Override
         public GeneralRoomProcessor createNew(DungeonRoom dungeonRoom) {

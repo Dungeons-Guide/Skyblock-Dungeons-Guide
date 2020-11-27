@@ -70,13 +70,14 @@ public class EventListener {
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) return;
-        int[] textureData = dynamicTexture.getTextureData();
-        MapUtils.getImage().getRGB(0,0,128,128, textureData, 0, 128);
-        dynamicTexture.updateDynamicTexture();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-
-        GlStateManager.enableAlpha();
-        GuiScreen.drawModalRectWithCustomSizedTexture(0,0, 0, 0, 128, 128, 128, 128);
+        if (DungeonsGuide.DEBUG) {
+            int[] textureData = dynamicTexture.getTextureData();
+            MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
+            dynamicTexture.updateDynamicTexture();
+            Minecraft.getMinecraft().getTextureManager().bindTexture(location);
+            GlStateManager.enableAlpha();
+            GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
+        }
 
         if (skyblockStatus.getContext() != null) {
             DungeonContext context = skyblockStatus.getContext();
@@ -86,11 +87,14 @@ public class EventListener {
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
             if (dungeonRoom == null) {
-                fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
+                if (DungeonsGuide.DEBUG)
+                    fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
             } else {
-                fontRenderer.drawString("you're in the room... "+dungeonRoom.getColor()+" / "+dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
-                fontRenderer.drawString("room uuid: "+dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ?"":" (not registered)"), 5, 138, 0xFFFFFF);
-                fontRenderer.drawString("room name: "+dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
+                if (DungeonsGuide.DEBUG) {
+                    fontRenderer.drawString("you're in the room... " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
+                    fontRenderer.drawString("room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)"), 5, 138, 0xFFFFFF);
+                    fontRenderer.drawString("room name: " + dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
+                }
                 if (dungeonRoom.getRoomProcessor() != null)
                     dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
             }
@@ -105,10 +109,11 @@ public class EventListener {
 
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return;
-
-        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-            for(DungeonDoor door : dungeonRoom.getDoors()) {
-                RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+        if (DungeonsGuide.DEBUG) {
+            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                for(DungeonDoor door : dungeonRoom.getDoors()) {
+                    RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+                }
             }
         }
 
@@ -148,7 +153,7 @@ public class EventListener {
     public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
         if (Keybinds.opengui.isKeyDown()){
             EditingContext ec = EditingContext.getEditingContext();
-            if (ec == null) Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("No Editing session is open right now"));
+            if (ec == null) DungeonsGuide.sendDebugChat(new ChatComponentText("No Editing session is open right now"));
             else ec.reopen();
         }
     }

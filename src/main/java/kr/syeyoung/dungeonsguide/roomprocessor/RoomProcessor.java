@@ -6,4 +6,5 @@ public interface RoomProcessor {
     void tick();
     void drawScreen(float partialTicks);
     void drawWorld(float partialTicks);
+    void chatReceived(String chat);
 }
