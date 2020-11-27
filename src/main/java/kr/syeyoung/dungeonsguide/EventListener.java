@@ -19,6 +19,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -101,6 +102,28 @@ public class EventListener {
 
         }
     }
+
+    @SubscribeEvent
+    public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
+        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+        if (!skyblockStatus.isOnDungeon()) return;
+
+        DungeonContext context = skyblockStatus.getContext();
+
+        if (skyblockStatus.getContext() != null) {
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+            if (dungeonRoom != null) {
+                if (dungeonRoom.getRoomProcessor() != null)
+                    dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+            }
+
+        }
+    }
+
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {

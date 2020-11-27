@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.commands.CommandSaveData;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.command.CommandDebug;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -45,6 +46,7 @@ public class DungeonsGuide
         MinecraftForge.EVENT_BUS.register(cc);
         ClientCommandHandler.instance.registerCommand(new CommandLoadData());
         ClientCommandHandler.instance.registerCommand(new CommandSaveData());
+        ClientCommandHandler.instance.registerCommand(new CommandDebug());
 
         //noinspection ResultOfMethodCallIgnored
         configDir.mkdirs();

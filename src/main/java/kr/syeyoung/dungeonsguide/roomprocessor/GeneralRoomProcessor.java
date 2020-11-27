@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.RoomProcessorWaterPuzzle;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.util.IChatComponent;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -30,7 +31,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void chatReceived(String chat) {
+    public void chatReceived(IChatComponent chat) {
 
     }
 
