@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ActuallyClonable;
 import lombok.Getter;
 import lombok.Setter;
@@ -33,4 +34,6 @@ public class DungeonRoomInfo implements Serializable {
     private String processorId = "default";
 
     private Map<String, Object> properties = new HashMap<String, Object>();
+
+    private Map<String, DungeonMechanic> mechanics = new HashMap<String, DungeonMechanic>();
 }
