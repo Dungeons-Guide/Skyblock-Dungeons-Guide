@@ -11,6 +11,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
+import org.lwjgl.Sys;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -18,6 +19,7 @@ import java.util.*;
 import java.util.List;
 
 public class WaterBoard {
+    @Getter
     WaterNode[][] board;
     RoomProcessorWaterPuzzle waterPuzzle;
 
@@ -64,7 +66,7 @@ public class WaterBoard {
                 World w=  waterPuzzle.getDungeonRoom().getContext().getWorld();
                 BlockLever.EnumOrientation enumOrientation = w.getBlockState(pos).getValue(BlockLever.FACING);
                 EnumFacing enumFacing = enumOrientation.getFacing();
-                BlockPos newPos = pos.add(enumFacing.getDirectionVec());
+                BlockPos newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
 
                 int id = Block.getIdFromBlock(w.getChunkFromBlockCoords(newPos).getBlock(newPos));
                 int data = w.getChunkFromBlockCoords(newPos).getBlockMetadata(newPos);
@@ -87,7 +89,6 @@ public class WaterBoard {
                 doorsToOpen.add(Block.getIdFromBlock(b)+":"+offsetPoint.getData(waterPuzzle.getDungeonRoom()));
             }
         }
-
         if (!(reqOpen.containsAll(doorsToOpen) && doorsToOpen.containsAll(reqOpen))) {
             reqOpen = doorsToOpen;
             if (doorsToOpen.size() != 0) {
@@ -101,6 +102,7 @@ public class WaterBoard {
 
     private final Set<Point> possibleDir = Sets.newHashSet(new Point(0,-1), new Point(1,0), new Point(-1, 0));
     public Route pathFind(WaterNodeEnd endNode) {
+
         Route start = new Route();
         start.setX(endNode.getX());
         start.setY(endNode.getY());
@@ -112,21 +114,21 @@ public class WaterBoard {
             Route r2 = routes.poll();
             int x = r2.getX();
             int y = r2.getY();
-            int size = 0;
             for (Point vec:possibleDir) {
                 WaterNode node = getNodeAt(x + vec.x, y + vec.y);
+
                 if (node == null) continue;
-                if (r2.getNodes().contains(node)) continue;;
+                if (r2.getNodes().contains(node)) continue;
                 if (!node.canWaterGoThrough()) continue;
-                size ++;
+
                 Route r = r2.clone();
                 r.getNodes().add(node);
                 r.getConditionList().add(node.getCondition());
-                r.setX(node.getX());
-                r.setY(node.getY());
+                r.setX(x + vec.x);
+                r.setY(y + vec.y);
 
                 WaterNode void2 = getNodeAt(r.getX(), r.getY() + 1);
-                if ((void2 == null || void2.getCondition() == null) && !r.getNodes().contains(void2)) {
+                if ((void2 == null || (void2.canWaterGoThrough() && void2.getCondition() == null)) && !r.getNodes().contains(void2)) {
                     continue;
                 }
 
@@ -166,21 +168,50 @@ public class WaterBoard {
                         int end = node.getX() + offset;
                         int y = node.getY() + 2;
                         int y2 = node.getY() + 1;
+                        System.out.println("Y Change detected :: offset: "+offset+" start: "+start+" end" + end + " detect X"+node.getX());
 
+                        boolean visited_offsetPt = false;
                         for (int x = start; (start < end) ? (x <= end) : (x >= end); x += (start < end) ?1:-1){
                             WaterNode node2 = getNodeAt(x, y2);
+
                             if (node2 == null || !node2.canWaterGoThrough()) break;
+
+                            if (node2.canWaterGoThrough() && node2.getCondition() != null) {
+                                WaterCondition condition = node2.getCondition().invert();
+                                if (visited_offsetPt) {
+                                    boolean isConditionContradicting = false;
+                                    for (WaterCondition wc : r.getConditionList()) {
+                                        if (wc ==null) continue;
+                                        if (!wc.getBlockId().equals(condition.getBlockId())) continue;
+                                        if (wc.isRequiredState() == condition.isRequiredState()) continue;
+                                        isConditionContradicting = true;
+                                        break;
+                                    }
+                                    if (!isConditionContradicting) {
+                                        System.out.println("Found midBlock, exiting check");
+                                        r.getConditionList().add(condition);
+                                        break;
+                                    }
+                                }
+                            }
                             node2 = getNodeAt(x, y);
-                            if (node2 == null || node2.getCondition() == null) {
+                            System.out.println("Checking "+x+","+y+"to me non water go throughable:: "+node2);
+                            if ((node2.canWaterGoThrough() && node2.getCondition() == null)) {
+                                System.out.println("Contradiction found!");
                                 r.getConditionList().add(new WaterConditionContradict());
                                 return;
                             } else {
-                                r.getConditionList().add(node2.getCondition().invert());
+                                if (node2.getCondition() != null) {
+                                    System.out.println("Adding Condition:: " + node2.getCondition().invert());
+                                    r.getConditionList().add(node2.getCondition().invert());
+                                }
                             }
+                            if (x == node.getX()) visited_offsetPt = true;
                         }
                     }
                 }
                 startX = node.getX();
+                prevY = currY;
             }
         }
     }
@@ -195,7 +226,7 @@ public class WaterBoard {
         List<OffsetPoint> frontPoints = frontPlate.getOffsetPointList();
         List<OffsetPoint> backPoints = backPlate.getOffsetPointList();
 
-        board = new WaterNode[19][25];
+        board = new WaterNode[25][19];
         for (int x = 0; x < 19; x++) {
             for (int y = 0; y < 25; y++) {
                 OffsetPoint front = frontPoints.get(x *25 +y);
@@ -205,13 +236,13 @@ public class WaterBoard {
                 int frontData = front.getData(waterPuzzle.getDungeonRoom());
                 int backData = back.getData(waterPuzzle.getDungeonRoom());
                 WaterNode node;
-                if (validSwitches.containsKey(backId +":"+backData) && frontId == 0) {
+                if (validSwitches.containsKey(backId +":"+backData)) {
                     String resId = backId + ":"+backData;
                     node = new WaterNodeToggleable(resId, isSwitchActive(validSwitches.get(resId)), front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
                 } else if (validSwitches.containsKey(frontId +":"+frontData)) {
                     String resId = frontId +":"+frontData;
                     node = new WaterNodeToggleable(resId, !isSwitchActive(validSwitches.get(resId)), front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
-                } else if (frontId == 0) {
+                } else if (frontId == 0 || frontId == 8 || frontId == 9) {
                     if (y == 24) {
                         OffsetPoint pos;
                         if (x != 0) {
@@ -224,7 +255,7 @@ public class WaterBoard {
                         int data= pos.getData(waterPuzzle.getDungeonRoom());
                         node = new WaterNodeEnd(id+":"+data, front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
                         waterNodeEndMap.put(id+":"+data, (WaterNodeEnd) node);
-                    } else if (y == 0) {
+                    } else if (y == 3) {
                         waterNodeStart = (WaterNodeStart) (node = new WaterNodeStart(front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y));
                     } else {
                         node = new WaterNodeAir(front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
@@ -241,6 +272,7 @@ public class WaterBoard {
     private boolean checkContradiction(Set<WaterCondition> conditions) {
         Map<String, Boolean> conditionMap = new HashMap<String, Boolean>();
         for (WaterCondition condition : conditions) {
+            if (condition == null) continue;
             if (condition instanceof WaterConditionContradict) return true;
             if (conditionMap.containsKey(condition.getBlockId())) {
                 if (conditionMap.get(condition.getBlockId()) != condition.isRequiredState())

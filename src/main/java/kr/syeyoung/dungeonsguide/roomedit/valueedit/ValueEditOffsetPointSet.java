@@ -66,6 +66,35 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                 }
 
                 @Override
+                public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
+                    if (!bounds.contains(relMouseX0, relMouseY0)) {
+                        return false;
+                    }
+
+                    int relMousex = relMouseX0 - bounds.x;
+                    int relMousey = relMouseY0 - bounds.y;
+
+                    boolean noClip = true;
+                    boolean focusedOverall = false;
+                    for (MPanel childComponent  : getChildComponents()) {
+                        if (childComponent.mouseClicked0(absMouseX, absMouseY, relMousex, relMousey, mouseButton)) {
+                            noClip = false;
+                            focusedOverall = true;
+                        }
+                    }
+
+                    if (bounds.contains(relMouseX0, relMouseY0) && noClip) {
+                        isFocused = true;
+                        focusedOverall = true;
+                    } else {
+                        isFocused = false;
+                    }
+
+                    mouseClicked(absMouseX, absMouseY, relMousex, relMousey, mouseButton);
+                    return focusedOverall;
+                }
+
+                @Override
                 public void onBoundsUpdate() {
                     for (MPanel panel :getChildComponents()){
                         panel.setSize(new Dimension(bounds.width, 20));

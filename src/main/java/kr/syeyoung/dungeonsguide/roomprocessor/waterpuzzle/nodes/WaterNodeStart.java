@@ -36,4 +36,8 @@ public class WaterNodeStart implements WaterNode {
         return blockPos;
     }
     private int x,y;
+
+    public String toString() {
+        return "S";
+    }
 }

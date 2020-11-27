@@ -39,4 +39,9 @@ public class WaterNodeToggleable implements WaterNode {
     public BlockPos getBlockPos() {
         return blockPos;
     }
+
+
+    public String toString() {
+        return "T:"+blockId+(invert ? ":Y":":N");
+    }
 }

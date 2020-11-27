@@ -23,11 +23,14 @@ public class OffsetPoint implements Cloneable, Serializable {
 
     public void setPosInWorld(DungeonRoom dungeonRoom, BlockPos pos) {
         Vector2d vector2d = new Vector2d(pos.getX() - dungeonRoom.getMin().getX(), pos.getZ() - dungeonRoom.getMin().getZ());
-        for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++)
+        for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             vector2d = VectorUtils.rotateClockwise(vector2d);
-
-        if (vector2d.x < 0) vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 1;
-        if (vector2d.y < 0) vector2d.y += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 1;
+            if (i % 2 == 0) {
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 1;
+            } else {
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 1;
+            }
+        }
 
         this.x = (int) vector2d.x;
         this.z = (int) vector2d.y;
@@ -37,11 +40,16 @@ public class OffsetPoint implements Cloneable, Serializable {
     public BlockPos toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
         int rot = dungeonRoom.getRoomMatcher().getRotation();
         Vector2d rot2 = new Vector2d(x,z);
+//        System.out.println("Before rot " +rot2);
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot2 = VectorUtils.rotateCounterClockwise(rot2);
+            if (i % 2 == 0) {
+                rot2.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1;
+            } else {
+                rot2.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1;
+            }
         }
-        if (rot2.x < 0) rot2.x += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 2;
-        if (rot2.y < 0) rot2.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 2;
+//        System.out.println("After rot "+rot+" / "+rot2);
 
         return new BlockPos(rot2.x, y, rot2.y);
     }

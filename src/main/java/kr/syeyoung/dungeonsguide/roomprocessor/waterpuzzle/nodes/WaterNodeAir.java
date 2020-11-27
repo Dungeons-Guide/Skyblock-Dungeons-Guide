@@ -34,4 +34,8 @@ public class WaterNodeAir implements WaterNode {
     }
 
     private int x,y;
+
+    public String toString() {
+        return "A";
+    }
 }

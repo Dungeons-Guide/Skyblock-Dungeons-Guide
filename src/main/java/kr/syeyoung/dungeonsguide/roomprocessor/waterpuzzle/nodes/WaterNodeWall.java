@@ -36,4 +36,9 @@ public class WaterNodeWall implements WaterNode {
     public BlockPos getBlockPos() {
         return blockPos;
     }
+
+
+    public String toString() {
+        return "W";
+    }
 }

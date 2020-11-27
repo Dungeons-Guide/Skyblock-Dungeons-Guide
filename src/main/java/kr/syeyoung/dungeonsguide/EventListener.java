@@ -112,6 +112,20 @@ public class EventListener {
             }
         }
 
+
+        if (skyblockStatus.getContext() != null) {
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+            if (dungeonRoom != null) {
+                if (dungeonRoom.getRoomProcessor() != null)
+                    dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+            }
+
+        }
+
         if (EditingContext.getEditingContext() != null) {
             GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
             if (guiScreen instanceof GuiDungeonParameterEdit) {
