@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.RoomProcessorWaterPuzzle;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -22,7 +23,8 @@ public class ProcessorFactory {
     }
 
     static {
-        registerRoomProcessor("default", new DefaultRoomProcessor.Generator());
+        registerRoomProcessor("default", new GeneralRoomProcessor.Generator());
         registerRoomProcessor("puzzle_blaze_solver", new RoomProcessorBlazeSolver.Generator());
+        registerRoomProcessor("puzzle_water_solver", new RoomProcessorWaterPuzzle.Generator());
     }
 }

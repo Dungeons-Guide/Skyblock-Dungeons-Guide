@@ -8,10 +8,11 @@ import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 
 import javax.vecmath.Vector2d;
+import java.io.Serializable;
 
 @Data
 @AllArgsConstructor
-public class OffsetPoint implements Cloneable {
+public class OffsetPoint implements Cloneable, Serializable {
     private int x;
     private int y;
     private int z;

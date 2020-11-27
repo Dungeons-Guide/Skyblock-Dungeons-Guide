@@ -2,11 +2,12 @@ package kr.syeyoung.dungeonsguide.dungeon.data;
 
 import lombok.Data;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 
 @Data
-public class OffsetPointSet implements Cloneable{
+public class OffsetPointSet implements Cloneable, Serializable {
     private List<OffsetPoint> offsetPointList = new ArrayList<OffsetPoint>();
 
     @Override

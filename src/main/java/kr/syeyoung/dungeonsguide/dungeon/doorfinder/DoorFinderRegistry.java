@@ -8,7 +8,7 @@ public class DoorFinderRegistry {
     private static final Map<Pattern, StartDoorFinder> doorFinders = new HashMap<Pattern, StartDoorFinder>();
 
     static {
-        doorFinders.put(Pattern.compile("The Catacombs F[0-9]"), new CatacombDoorFinder());
+        doorFinders.put(Pattern.compile("The Catacombs (?:F[0-9]|E)"), new CatacombDoorFinder());
     }
 
     public static StartDoorFinder getDoorFinder(String dungeonName) {

@@ -15,20 +15,20 @@ import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
 import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
-public class RoomProcessorBlazeSolver implements RoomProcessor {
+public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
-    private DungeonRoom dungeonRoom;
     private boolean highToLow = false;
 
     private List<EntityArmorStand> entityList = new ArrayList<EntityArmorStand>();
     private EntityArmorStand next;
     public RoomProcessorBlazeSolver(DungeonRoom dungeonRoom) {
-        this.dungeonRoom = dungeonRoom;
+        super(dungeonRoom);
         Object highToLow = dungeonRoom.getDungeonRoomInfo().getProperties().get("order");
         if (highToLow == null) this.highToLow = false;
         else this.highToLow = (Boolean) highToLow;
@@ -36,6 +36,9 @@ public class RoomProcessorBlazeSolver implements RoomProcessor {
 
     @Override
     public void tick() {
+        super.tick();
+
+        DungeonRoom dungeonRoom = getDungeonRoom();
         World w = dungeonRoom.getContext().getWorld();
         final BlockPos low = dungeonRoom.getMin();
         final BlockPos high = dungeonRoom.getMax();
@@ -53,7 +56,7 @@ public class RoomProcessorBlazeSolver implements RoomProcessor {
         for (EntityArmorStand ea : entityList) {
             String name = ea.getName();
             String colorGone = TextUtils.stripColor(name);
-            String health2 = colorGone.split("/")[1];
+            String health2 = TextUtils.keepIntegerCharactersOnly(colorGone.split("/")[1]);
             try {
                 int heal = Integer.parseInt(health2);
                 if (highToLow && heal > health) {
@@ -70,11 +73,14 @@ public class RoomProcessorBlazeSolver implements RoomProcessor {
         next = semi_target;
     }
 
+
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawWorld(float partialTicks) {
+        super.drawWorld(partialTicks);
         if (next == null) return;
         Vec3 pos = next.getPositionEyes(partialTicks);
         RenderUtils.drawTextAtWorld("NEXT", (float)pos.xCoord, (float)pos.yCoord, (float)pos.zCoord, 0xFFFF0000, 3, true, false, partialTicks);
+        RenderUtils.highlightBlock(next.getPosition(), new Color(0,255,0,50), partialTicks);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorBlazeSolver> {
