@@ -93,6 +93,45 @@ public class RenderUtils {
 
     }
 
+    public static void drawLine(BlockPos pos1, BlockPos pos2, Color c, float partialTicks) {
+
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+
+        GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(false);
+        GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
+
+        GL11.glBegin(GL11.GL_LINES);
+
+        GL11.glVertex3f(pos1.getX(), pos1.getY(), pos1.getZ());
+        GL11.glVertex3f(pos1.getX(),pos1.getY(),pos1.getZ());
+
+
+        GL11.glEnd();
+
+
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+    }
+
     public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks) {
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 

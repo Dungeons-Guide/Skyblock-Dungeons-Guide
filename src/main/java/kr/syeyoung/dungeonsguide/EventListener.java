@@ -30,13 +30,11 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 public class EventListener {
-    private int timerTick = 0;
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         if (e.phase == TickEvent.Phase.START) {
-            timerTick ++;
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (timerTick % 5 == 0) {
+             {
                 boolean isOnDungeon = skyblockStatus.isOnDungeon();
 //                System.out.println(isOnDungeon);
                 skyblockStatus.updateStatus();
@@ -115,10 +113,10 @@ public class EventListener {
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
             if (dungeonRoom != null) {
-                if (dungeonRoom.getRoomProcessor() != null)
+                if (dungeonRoom.getRoomProcessor() != null) {
                     dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+                }
             }
 
         }

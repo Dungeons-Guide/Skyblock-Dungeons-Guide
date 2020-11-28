@@ -255,8 +255,9 @@ public class WaterBoard {
                         int data= pos.getData(waterPuzzle.getDungeonRoom());
                         node = new WaterNodeEnd(id+":"+data, front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
                         waterNodeEndMap.put(id+":"+data, (WaterNodeEnd) node);
-                    } else if (y == 3) {
-                        waterNodeStart = (WaterNodeStart) (node = new WaterNodeStart(front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y));
+                    } else if (y == 1) {
+                        waterNodeStart = (WaterNodeStart) (node = new WaterNodeStart(front.getBlockPos(waterPuzzle.getDungeonRoom()),
+                                frontId != 0 ^ validSwitches.get("mainStream").getCurrentState(),x,y));
                     } else {
                         node = new WaterNodeAir(front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
                     }

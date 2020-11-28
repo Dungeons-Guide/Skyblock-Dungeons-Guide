@@ -13,7 +13,8 @@ import net.minecraft.world.World;
 @AllArgsConstructor
 public class WaterNodeStart implements WaterNode {
 
-    BlockPos blockPos;
+    private BlockPos blockPos;
+    private boolean isReversed;
 
     @Override
     public boolean canWaterGoThrough() {
@@ -22,7 +23,7 @@ public class WaterNodeStart implements WaterNode {
 
     @Override
     public WaterCondition getCondition() {
-        return new WaterCondition("mainStream", true);
+        return new WaterCondition("mainStream", !isReversed);
     }
 
     @Override

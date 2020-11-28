@@ -24,7 +24,12 @@ public class ProcessorFactory {
 
     static {
         registerRoomProcessor("default", new GeneralRoomProcessor.Generator());
-        registerRoomProcessor("puzzle_blaze_solver", new RoomProcessorBlazeSolver.Generator());
         registerRoomProcessor("puzzle_water_solver", new RoomProcessorWaterPuzzle.Generator());
+        registerRoomProcessor("puzzle_teleport_solver", new RoomProcessorTeleportMazeSolver.Generator());
+        registerRoomProcessor("puzzle_riddle_solver", new RoomProcessorRiddle.Generator());
+        registerRoomProcessor("puzzle_creeper_solver", new RoomProcessorCreeperSolver.Generator());
+        registerRoomProcessor("puzzle_tictactoe_solver", new RoomProcessorTicTacToeSolver.Generator());
+
+        registerRoomProcessor("puzzle_blaze_solver", new RoomProcessorBlazeSolver.Generator());
     }
 }
