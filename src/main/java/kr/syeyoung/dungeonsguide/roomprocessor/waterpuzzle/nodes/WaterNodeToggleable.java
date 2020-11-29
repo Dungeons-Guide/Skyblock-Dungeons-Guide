@@ -35,6 +35,12 @@ public class WaterNodeToggleable implements WaterNode {
     }
     private int x,y;
 
+    public boolean isTriggered(World w) {
+        Block b= w.getChunkFromBlockCoords(blockPos).getBlock(blockPos);
+
+        return !(b == Blocks.air || b == Blocks.water || b == Blocks.flowing_water) ^ invert;
+    }
+
 
     public BlockPos getBlockPos() {
         return blockPos;

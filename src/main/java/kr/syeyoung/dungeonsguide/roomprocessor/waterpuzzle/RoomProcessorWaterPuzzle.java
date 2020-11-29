@@ -78,7 +78,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             for (WaterCondition condition : route.getConditionList()) {
                 if (condition == null) continue;
                 SwitchData switchData = waterBoard.getValidSwitches().get(condition.getBlockId());
-                if (switchData.getCurrentState() != condition.isRequiredState()) {
+                if (switchData.getCurrentState(getDungeonRoom().getContext().getWorld()) != condition.isRequiredState()) {
                     RenderUtils.highlightBlock(switchData.getSwitchLoc(), new Color(0,255,0,50), partialTicks);
                     RenderUtils.drawTextAtWorld(condition.isRequiredState() ? "on":"off",switchData.getSwitchLoc().getX(), switchData.getSwitchLoc().getY(), switchData.getSwitchLoc().getZ(),  0xFF000000,0.1f, false, false, partialTicks);
                 }

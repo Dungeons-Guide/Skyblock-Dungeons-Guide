@@ -110,7 +110,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (!err)
-        RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks);
+        RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, false);
     }
 
     public Point getPointOfSilverFishOnMap(BlockPos blockPos) {

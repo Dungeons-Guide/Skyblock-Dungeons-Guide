@@ -38,6 +38,9 @@ public class WaterBoard {
     private Map<String, WaterNodeEnd> waterNodeEndMap = new HashMap<String, WaterNodeEnd>();
 
     @Getter
+    private Map<String, WaterNode> toggleableMap = new HashMap<String, WaterNode>();
+
+    @Getter
     private Set<String> reqOpen = new HashSet<String>();
 
     @Getter
@@ -72,12 +75,12 @@ public class WaterBoard {
                 int data = w.getChunkFromBlockCoords(newPos).getBlockMetadata(newPos);
 
                 SwitchData sw;
-                switchData.add(sw = new SwitchData(pos,newPos,id+":"+data));
+                switchData.add(sw = new SwitchData(this, pos,newPos,id+":"+data));
                 validSwitches.put(id+":"+data, sw);
             }
         }
         SwitchData sw;
-        switchData.add(sw = new SwitchData(lever.getBlockPos(waterPuzzle.getDungeonRoom()),lever.getBlockPos(waterPuzzle.getDungeonRoom()).add(0,-1,0),"mainStream"));
+        switchData.add(sw = new SwitchData(this, lever.getBlockPos(waterPuzzle.getDungeonRoom()),lever.getBlockPos(waterPuzzle.getDungeonRoom()).add(0,-1,0),"mainStream"));
         validSwitches.put("mainStream", sw);
     }
 
@@ -239,9 +242,13 @@ public class WaterBoard {
                 if (validSwitches.containsKey(backId +":"+backData)) {
                     String resId = backId + ":"+backData;
                     node = new WaterNodeToggleable(resId, isSwitchActive(validSwitches.get(resId)), front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
+
+                    toggleableMap.put(resId, node);
                 } else if (validSwitches.containsKey(frontId +":"+frontData)) {
                     String resId = frontId +":"+frontData;
                     node = new WaterNodeToggleable(resId, !isSwitchActive(validSwitches.get(resId)), front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
+
+                    toggleableMap.put(resId, node);
                 } else if (frontId == 0 || frontId == 8 || frontId == 9) {
                     if (y == 24) {
                         OffsetPoint pos;
@@ -255,9 +262,9 @@ public class WaterBoard {
                         int data= pos.getData(waterPuzzle.getDungeonRoom());
                         node = new WaterNodeEnd(id+":"+data, front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
                         waterNodeEndMap.put(id+":"+data, (WaterNodeEnd) node);
-                    } else if (y == 1) {
+                    } else if (y == 2) {
                         waterNodeStart = (WaterNodeStart) (node = new WaterNodeStart(front.getBlockPos(waterPuzzle.getDungeonRoom()),
-                                frontId != 0 ^ validSwitches.get("mainStream").getCurrentState(),x,y));
+                                frontId != 0 ^ isSwitchActive(validSwitches.get("mainStream")),x,y));
                     } else {
                         node = new WaterNodeAir(front.getBlockPos(waterPuzzle.getDungeonRoom()),x,y);
                     }
@@ -267,6 +274,7 @@ public class WaterBoard {
                 board[y][x] =node;
             }
         }
+        toggleableMap.put("mainStream", waterNodeStart);
     }
 
     // true if contradiction

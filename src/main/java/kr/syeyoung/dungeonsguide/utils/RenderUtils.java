@@ -94,7 +94,7 @@ public class RenderUtils {
 
     }
 
-    public static void drawLine(Vec3 pos1, Vec3 pos2, Color colour, float partialTicks) {
+    public static void drawLine(Vec3 pos1, Vec3 pos2, Color colour, float partialTicks , boolean depth) {
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -105,8 +105,10 @@ public class RenderUtils {
         GlStateManager.pushMatrix();
         GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        if (!depth) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(false);
+        }
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -120,15 +122,17 @@ public class RenderUtils {
 
         GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
+        if (!depth) {
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(true);
+        }
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
     }
 
-    public static void drawLines(List<BlockPos> poses, Color colour, float partialTicks) {
+    public static void drawLines(List<BlockPos> poses, Color colour, float partialTicks, boolean depth) {
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -141,7 +145,10 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-
+        if (!depth) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(false);
+        }
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GL11.glLineWidth(2);
         GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
@@ -155,11 +162,18 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+        if (!depth) {
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(true);
+        }
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
     }
 
     public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks) {
+        highlightBlock(blockpos,c,partialTicks,false);
+    }
+    public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -175,8 +189,10 @@ public class RenderUtils {
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.disableTexture2D();
 
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        if (!depth) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(false);
+        }
         GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
 
         GL11.glTranslated(blockpos.getX(), blockpos.getY(), blockpos.getZ());
@@ -217,8 +233,10 @@ public class RenderUtils {
         GL11.glEnd();
 
 
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
+        if (!depth) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(true);
+        }
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();

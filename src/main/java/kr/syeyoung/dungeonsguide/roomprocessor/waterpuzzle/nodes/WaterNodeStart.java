@@ -32,6 +32,11 @@ public class WaterNodeStart implements WaterNode {
         return b == Blocks.water || b == Blocks.flowing_water;
     }
 
+    public boolean isTriggered(World w) {
+        System.out.println("water filled called");
+        return isWaterFilled(w);
+    }
+
 
     public BlockPos getBlockPos() {
         return blockPos;
