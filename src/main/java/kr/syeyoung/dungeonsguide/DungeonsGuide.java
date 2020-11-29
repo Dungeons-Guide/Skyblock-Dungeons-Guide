@@ -50,8 +50,8 @@ public class DungeonsGuide
         ClientCommandHandler.instance.registerCommand(new CommandSaveData());
         ClientCommandHandler.instance.registerCommand(new CommandToggleDebug());
 
-        //noinspection ResultOfMethodCallIgnored
         if (!configDir.exists()) {
+            //noinspection ResultOfMethodCallIgnored
             configDir.mkdirs();
             String[] files = {
                     "990f6e4c-f7cf-4d27-ae91-11219b85861f.roomdata",

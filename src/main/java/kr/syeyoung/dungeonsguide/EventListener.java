@@ -32,142 +32,160 @@ import java.awt.*;
 public class EventListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
-        if (e.phase == TickEvent.Phase.START) {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-             {
-                boolean isOnDungeon = skyblockStatus.isOnDungeon();
-//                System.out.println(isOnDungeon);
-                skyblockStatus.updateStatus();
-                if (!skyblockStatus.isOnDungeon()) {
-                    skyblockStatus.setContext(null);
-                    MapUtils.clearMap();
-                    return;
+        try {
+            if (e.phase == TickEvent.Phase.START) {
+                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+                 {
+                    boolean isOnDungeon = skyblockStatus.isOnDungeon();
+    //                System.out.println(isOnDungeon);
+                    skyblockStatus.updateStatus();
+                    if (!skyblockStatus.isOnDungeon()) {
+                        skyblockStatus.setContext(null);
+                        MapUtils.clearMap();
+                        return;
+                    }
+                            if (isOnDungeon) {
+                                    skyblockStatus.getContext().tick();
+                            }
+                            else skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
                 }
-                if (isOnDungeon) skyblockStatus.getContext().tick();
-                else skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
-            }
 
-            if (!skyblockStatus.isOnDungeon()) return;
+                if (!skyblockStatus.isOnDungeon()) return;
 
-            if (skyblockStatus.getContext() != null) {
-                DungeonContext context = skyblockStatus.getContext();
-                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-                if (thePlayer == null) return;
-                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+                if (skyblockStatus.getContext() != null) {
+                    DungeonContext context = skyblockStatus.getContext();
+                    EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                    if (thePlayer == null) return;
+                    Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
-                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-                if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
-                    dungeonRoom.getRoomProcessor().tick();
+                    DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                    if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
+                            dungeonRoom.getRoomProcessor().tick();
+                    }
                 }
             }
-        }
+        } catch (Error e2) {e2.printStackTrace();}
     }
 
     DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
     ResourceLocation location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
-        if (DungeonsGuide.DEBUG) {
-            int[] textureData = dynamicTexture.getTextureData();
-            MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
-            dynamicTexture.updateDynamicTexture();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-            GlStateManager.enableAlpha();
-            GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
-        }
-
-        if (skyblockStatus.getContext() != null) {
-            DungeonContext context = skyblockStatus.getContext();
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
-
-            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-            if (dungeonRoom == null) {
-                if (DungeonsGuide.DEBUG)
-                    fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
-            } else {
-                if (DungeonsGuide.DEBUG) {
-                    fontRenderer.drawString("you're in the room... " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
-                    fontRenderer.drawString("room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)"), 5, 138, 0xFFFFFF);
-                    fontRenderer.drawString("room name: " + dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
-                }
-                if (dungeonRoom.getRoomProcessor() != null)
-                    dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnDungeon()) return;
+            if (DungeonsGuide.DEBUG) {
+                int[] textureData = dynamicTexture.getTextureData();
+                MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
+                dynamicTexture.updateDynamicTexture();
+                Minecraft.getMinecraft().getTextureManager().bindTexture(location);
+                GlStateManager.enableAlpha();
+                GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
             }
 
+            if (skyblockStatus.getContext() != null) {
+                DungeonContext context = skyblockStatus.getContext();
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+                if (dungeonRoom == null) {
+                    if (DungeonsGuide.DEBUG)
+                        fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
+                } else {
+                    if (DungeonsGuide.DEBUG) {
+                        fontRenderer.drawString("you're in the room... " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
+                        fontRenderer.drawString("room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)"), 5, 138, 0xFFFFFF);
+                        fontRenderer.drawString("room name: " + dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
+                    }
+                    if (dungeonRoom.getRoomProcessor() != null) {
+                            dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
+                    }
+                }
+
+            }
+        } catch (Error e) {
+            e.printStackTrace();
         }
     }
 
     @SubscribeEvent
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) return;
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        try {
+            if (clientChatReceivedEvent.type == 2) return;
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
+            DungeonContext context = skyblockStatus.getContext();
 
-        if (skyblockStatus.getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+            if (skyblockStatus.getContext() != null) {
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
-            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-            if (dungeonRoom != null) {
-                if (dungeonRoom.getRoomProcessor() != null) {
-                    dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                if (dungeonRoom != null) {
+                    if (dungeonRoom.getRoomProcessor() != null) {
+                            dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+                    }
                 }
-            }
 
+            }
+        } catch (Error e) {
+            e.printStackTrace();
         }
     }
 
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
-        if (context == null) return;
-        if (DungeonsGuide.DEBUG) {
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                for(DungeonDoor door : dungeonRoom.getDoors()) {
-                    RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+            DungeonContext context = skyblockStatus.getContext();
+            if (context == null) return;
+            if (DungeonsGuide.DEBUG) {
+                for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                    for(DungeonDoor door : dungeonRoom.getDoors()) {
+                        RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+                    }
                 }
             }
-        }
 
 
-        if (skyblockStatus.getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+            if (skyblockStatus.getContext() != null) {
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
-            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-            if (dungeonRoom != null) {
-                if (dungeonRoom.getRoomProcessor() != null)
-                    dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+                if (dungeonRoom != null) {
+                    if (dungeonRoom.getRoomProcessor() != null) {
+                            dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+                    }
+                }
+
             }
 
-        }
-
-        if (EditingContext.getEditingContext() != null) {
-            GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
-            if (guiScreen instanceof GuiDungeonParameterEdit) {
-                ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
-                if (valueEdit != null) {
-                    valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+            if (EditingContext.getEditingContext() != null) {
+                GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
+                if (guiScreen instanceof GuiDungeonParameterEdit) {
+                    ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
+                    if (valueEdit != null) {
+                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+                    }
+                } else if (guiScreen instanceof GuiDungeonOffsetPointEdit) {
+                    ValueEdit valueEdit = ((GuiDungeonOffsetPointEdit) guiScreen).getValueEdit();
+                    if (valueEdit != null) {
+                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+                    }
+                } else if (guiScreen instanceof GuiDungeonAddSet) {
+                    ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
                 }
-            } else if (guiScreen instanceof GuiDungeonOffsetPointEdit) {
-                ValueEdit valueEdit = ((GuiDungeonOffsetPointEdit) guiScreen).getValueEdit();
-                if (valueEdit != null) {
-                    valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
-                }
-            } else if (guiScreen instanceof GuiDungeonAddSet) {
-                ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
             }
+        } catch (Error e) {
+            e.printStackTrace();
         }
     }
 
