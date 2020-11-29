@@ -31,5 +31,11 @@ public class ProcessorFactory {
         registerRoomProcessor("puzzle_tictactoe_solver", new RoomProcessorTicTacToeSolver.Generator());
 
         registerRoomProcessor("puzzle_blaze_solver", new RoomProcessorBlazeSolver.Generator());
+
+
+        registerRoomProcessor("puzzle_silverfish", new RoomProcessorIcePath.Generator()); // done
+
+
+        registerRoomProcessor("puzzle_icefill", new RoomProcessorIcePath2.Generator());
     }
 }

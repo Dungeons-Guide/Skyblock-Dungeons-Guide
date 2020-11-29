@@ -103,6 +103,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
+        if (clientChatReceivedEvent.type == 2) return;
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) return;
 

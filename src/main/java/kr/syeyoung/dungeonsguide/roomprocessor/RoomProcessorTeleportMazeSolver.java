@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -26,7 +27,8 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         super.tick();
 
         World w = getDungeonRoom().getContext().getWorld();
-        BlockPos pos2 = Minecraft.getMinecraft().thePlayer.getPosition();
+        EntityPlayerSP entityPlayerSP = Minecraft.getMinecraft().thePlayer;
+        BlockPos pos2 = new BlockPos(Math.floor(entityPlayerSP.posX), Math.floor(entityPlayerSP.posY), Math.floor(entityPlayerSP.posZ));
         Block b = w.getChunkFromBlockCoords(pos2).getBlock(pos2);
         if (b == Blocks.stone_slab || b == Blocks.stone_slab2) {
             boolean teleport = false;
@@ -36,16 +38,20 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
                     break;
                 }
             }
-            for (BlockPos allInBox : BlockPos.getAllInBox(pos2.add(-1, 0, -1), pos2.add(1, 0, 1))) {
-                if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.end_portal_frame) {
-                    visitedPortals.add(allInBox);
-                    break;
+            if (teleport) {
+                for (BlockPos allInBox : BlockPos.getAllInBox(pos2.add(-1, 0, -1), pos2.add(1, 0, 1))) {
+                    if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.end_portal_frame) {
+                        if (!visitedPortals.contains(allInBox))
+                        visitedPortals.add(allInBox);
+                        break;
+                    }
                 }
-            }
-            for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation.add(-1, -1, -1), lastPlayerLocation.add(1, 1, 1))) {
-                if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.end_portal_frame) {
-                    visitedPortals.add(allInBox);
-                    break;
+                for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation.add(-1, -1, -1), lastPlayerLocation.add(1, 1, 1))) {
+                    if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.end_portal_frame) {
+                        if (!visitedPortals.contains(allInBox))
+                        visitedPortals.add(allInBox);
+                        break;
+                    }
                 }
             }
         }

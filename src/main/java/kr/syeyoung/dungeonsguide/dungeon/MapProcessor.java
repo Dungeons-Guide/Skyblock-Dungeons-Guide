@@ -40,6 +40,7 @@ public class MapProcessor {
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
+    private int waitCnt = 0;
     private void buildMap(final byte[] mapData) {
         final Point startroom = MapUtils.findFirstColorWithIn(mapData, (byte) 30, new Rectangle(0,0,128,128));
         if (startroom == null){
@@ -243,10 +244,14 @@ public class MapProcessor {
         pt.translate(xOff, yOff);
         byte unit3 = MapUtils.getMapColorAt(mapData, pt.x, pt.y);
 
-        return unit1 == unit2 && unit2 == unit3;
+        return unit1 == unit2 && unit2 == unit3 && unit1 != 0;
     }
 
     public void tick() {
+        if (waitCnt < 5) {
+            waitCnt++;
+            return;
+        }
         if (bugged) return;
         ItemStack stack = Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(8);
         byte[] mapData;

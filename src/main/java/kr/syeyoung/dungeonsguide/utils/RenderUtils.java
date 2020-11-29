@@ -16,6 +16,7 @@ import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
 import java.awt.*;
+import java.util.List;
 
 public class RenderUtils {
     public static void renderDoor(DungeonDoor dungeonDoor, float partialTicks) {
@@ -93,43 +94,69 @@ public class RenderUtils {
 
     }
 
-    public static void drawLine(BlockPos pos1, BlockPos pos2, Color c, float partialTicks) {
+    public static void drawLine(Vec3 pos1, Vec3 pos2, Color colour, float partialTicks) {
+        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
+        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
+        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-
-        GlStateManager.disableLighting();
-        GlStateManager.enableBlend();
-        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
-
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(false);
-        GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GL11.glLineWidth(2);
+        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
+        worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
 
-        GL11.glBegin(GL11.GL_LINES);
+        worldRenderer.pos(pos1.xCoord, pos1.yCoord, pos1.zCoord).endVertex();
+        worldRenderer.pos(pos2.xCoord, pos2.yCoord, pos2.zCoord).endVertex();
+        Tessellator.getInstance().draw();
 
-        GL11.glVertex3f(pos1.getX(), pos1.getY(), pos1.getZ());
-        GL11.glVertex3f(pos1.getX(),pos1.getY(),pos1.getZ());
-
-
-        GL11.glEnd();
-
-
+        GlStateManager.translate(realX, realY, realZ);
+        GlStateManager.disableBlend();
         GL11.glEnable(GL11.GL_DEPTH_TEST);
         GL11.glDepthMask(true);
+        GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
-        GlStateManager.enableLighting();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+    }
+
+    public static void drawLines(List<BlockPos> poses, Color colour, float partialTicks) {
+        Entity render = Minecraft.getMinecraft().getRenderViewEntity();
+        WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
+
+        double realX = render.lastTickPosX + (render.posX - render.lastTickPosX) * partialTicks;
+        double realY = render.lastTickPosY + (render.posY - render.lastTickPosY) * partialTicks;
+        double realZ = render.lastTickPosZ + (render.posZ - render.lastTickPosZ) * partialTicks;
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-realX, -realY, -realZ);
+        GlStateManager.disableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.disableAlpha();
+
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GL11.glLineWidth(2);
+        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
+        worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+        for (BlockPos pos:poses) {
+            worldRenderer.pos(pos.getX() +0.5, pos.getY() +0.5, pos.getZ() +0.5).endVertex();
+        }
+        Tessellator.getInstance().draw();
+
+        GlStateManager.translate(realX, realY, realZ);
+        GlStateManager.disableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.enableTexture2D();
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.popMatrix();
     }
 
     public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks) {
