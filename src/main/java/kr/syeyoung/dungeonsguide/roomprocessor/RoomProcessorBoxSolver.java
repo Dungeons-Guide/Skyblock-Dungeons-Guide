@@ -123,57 +123,65 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         return true;
     }
 
+    private int lastPlayerY = 0;
+    private Point lastPlayer = null;
+
     @Override
     public void tick() {
         super.tick();
         if (bugged) return;
-//        boolean calculate = lastboard == null;
         byte[][] currboard = buildCurrentState();
-//        if (!calculate) {
-//            label:
-//            for (int y = 0; y < 6; y ++) {
-//                for (int x = 0; x < 7; x++)
-//                    if (currboard[y][x] != lastboard[y][x]) {
-//                        calculate = true;
-//                        break label;
-//                    }
-//            }
-//        }
-//
-        if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
-            Point playerPos = getPlayerPos();
-            try {
-                solution = solve(currboard, playerPos.x, playerPos.y);
-                if (solution != null)
-                    solution.addFirst(new Move(playerPos.x, playerPos.y));
-            } catch (Error e) {
-                e.printStackTrace();
+        Point playerPos = getPlayerPos(currboard);
+        boolean calculate = lastboard == null || lastPlayerY != Minecraft.getMinecraft().thePlayer.getPosition().getY() || (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68 && !playerPos.equals(lastPlayer));
+        if (!calculate) {
+            label:
+            for (int y = 0; y < 6; y ++) {
+                for (int x = 0; x < 7; x++)
+                    if (currboard[y][x] != lastboard[y][x]) {
+                        calculate = true;
+                        break label;
+                    }
             }
-        } else {
-            for (int i = 0; i < 7; i++) {
-                if (currboard[5][i] == 0) {
-                    try {
-                        solution = solve(currboard, i, 5);
-                        if (solution != null) {
-                            solution.addFirst(new Move(i, 5));
-                            break;
+        }
+        if (calculate) {
+            if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
+                try {
+                    solution = solve(currboard, playerPos.x, playerPos.y);
+                    if (solution != null)
+                        solution.addFirst(new Move(playerPos.x, playerPos.y));
+                } catch (Error e) {
+                    e.printStackTrace();
+                }
+            } else {
+                for (int i = 0; i < 7; i++) {
+                    if (currboard[5][i] == 0) {
+                        try {
+                            solution = solve(currboard, i, 5);
+                            if (solution != null) {
+                                solution.addFirst(new Move(i, 5));
+                                break;
+                            }
+                        } catch (Error e) {
+                            e.printStackTrace();
                         }
-                    } catch (Error e) {
-                        e.printStackTrace();
                     }
                 }
             }
         }
+        lastPlayerY = Minecraft.getMinecraft().thePlayer.getPosition().getY();
+        lastPlayer = playerPos;
+        lastboard = currboard;
     }
 
     private LinkedList<Action> solution;
 
-    public Point getPlayerPos() {
+    public Point getPlayerPos(byte[][] map) {
         BlockPos playerPos = Minecraft.getMinecraft().thePlayer.getPosition();
         int minDir = Integer.MAX_VALUE;
         Point pt = null;
         for (int y = 0; y < poses.length; y++) {
             for (int x = 0; x < poses[0].length; x++) {
+                if (map[y][x] == 1) continue;
                 int dir = (int) poses[y][x].distanceSq(playerPos);
                 if (dir < minDir) {
                     minDir = dir;

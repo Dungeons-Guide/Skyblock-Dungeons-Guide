@@ -36,5 +36,6 @@ public class ProcessorFactory {
         registerRoomProcessor("puzzle_silverfish", new RoomProcessorIcePath.Generator()); // done
         registerRoomProcessor("puzzle_icefill", new RoomProcessorIcePath2.Generator());
         registerRoomProcessor("puzzle_box", new RoomProcessorBoxSolver.Generator());
+        registerRoomProcessor("puzzle_trivia", new RoomProcessorTrivia.Generator());
     }
 }
