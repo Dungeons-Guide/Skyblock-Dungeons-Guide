@@ -73,16 +73,16 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             for (int y = 0; y < copied.length; y++)
                 copied[y] = board[y].clone();
 
-            LinkedList<Action> solved;
+            LinkedList<Action> solved = null;
             boolean pushed = false;
             copied[playerY][playerX] = 2;
-            if (board[resY][resX] == 1) {
+            if (board[resY][resX] == 1 && board[playerY][playerX] != 2) {
                 if (!push(copied, resX, resY, dir.x, dir.y)) {
                      continue;
                 }
                 pushed = true;
                 solved = solve(copied, playerX, playerY);
-            } else {
+            } else if (board[resY][resX] == 0){
                 solved = solve(copied, resX, resY);
             }
             if (solved != null) {
@@ -116,7 +116,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         int resultingX= x + dx;
         int resultingY = y +dy;
         if (resultingX < 0 || resultingY < 0 || resultingX >= board[0].length || resultingY >= board.length) return false;
-        if (board[resultingY][resultingX] != 0) return false;
+        if (board[resultingY][resultingX] == 1) return false;
 
         board[resultingY][resultingX] = 1;
         board[y][x] = 0;
@@ -159,11 +159,9 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 for (int i = 0; i < 7; i++) {
                     if (currboard[5][i] == 0) {
                         try {
-                            LinkedList<Action> semiSolution;
-                            semiSolution = solve(currboard, i, 5);
-                            if (semiSolution != null) {
-                                semiSolution.addFirst(new Move(i, 5));
-                                solution = semiSolution;
+                            solution = solve(currboard, i, 5);
+                            if (solution != null) {
+                                solution.addFirst(new Move(i, 5));
                                 break;
                             }
                         } catch (Error e) {

@@ -18,6 +18,13 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
     public RoomProcessorTrivia(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
+        for (Map.Entry<String, String[]> answer : answers.entrySet()) {
+            StringBuilder sb = new StringBuilder();
+            for (String s : answer.getValue()) {
+                sb.append(s).append(',');
+            }
+            dungeonRoom.getDungeonRoomInfo().getProperties().put(answer.getKey(), sb.toString());
+        }
     }
 
 
@@ -86,7 +93,9 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
         String theRealAnswer = match(question, answerA, answerB, answerC);
 
         if (theRealAnswer == null)
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't determine the answer!"));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't determine the answer! (no question found)"));
+        else if (theRealAnswer.length() >1)
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't determine the answer! ("+theRealAnswer+")"));
         else
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §6"+theRealAnswer+"§f is the correct answer!"));
         correctAnswer = theRealAnswer;
@@ -99,11 +108,13 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
         return matcher.group(1);
     }
     private String match(String question, String a, String b, String c) {
-        String[] answers = RoomProcessorTrivia.answers.get(question.toLowerCase().trim());
+        String semi_answers = (String) getDungeonRoom().getDungeonRoomInfo().getProperties().get(question.toLowerCase().trim());
+        if (semi_answers == null) return null;
+        String[] answers = semi_answers.split(",");
         if (match(answers, a)) return "A";
         if (match(answers, b)) return "B";
         if (match(answers, c)) return "C";
-        return "Unknown";
+        return semi_answers;
     }
     private boolean match(String[] match, String match2) {
         for (String s : match) {
