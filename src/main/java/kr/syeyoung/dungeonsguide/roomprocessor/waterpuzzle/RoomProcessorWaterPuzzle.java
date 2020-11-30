@@ -90,6 +90,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         BlockPos target = waterBoard.getTarget();
         if (target != null) {
             RenderUtils.highlightBlock(target, new Color(0,255,255,255), partialTicks);
+            RenderUtils.highlightBlock(waterBoard.getToggleableMap().get("mainStream").getBlockPos(), new Color(0,255,0,255), partialTicks);
         }
 //        RenderUtils.highlightBlock(waterBoard.get);
     }

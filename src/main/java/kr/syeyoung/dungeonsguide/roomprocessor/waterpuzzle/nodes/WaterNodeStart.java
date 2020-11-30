@@ -33,7 +33,6 @@ public class WaterNodeStart implements WaterNode {
     }
 
     public boolean isTriggered(World w) {
-        System.out.println("water filled called");
         return isWaterFilled(w);
     }
 
