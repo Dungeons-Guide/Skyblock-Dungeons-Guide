@@ -73,7 +73,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         for (List<BlockPos> solution:this.solution)
-            RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, false);
+            RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, true);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorIcePath2> {
