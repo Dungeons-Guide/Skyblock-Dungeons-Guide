@@ -10,6 +10,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
@@ -227,6 +228,85 @@ public class RenderUtils {
         GL11.glVertex3d(0,0,0);
         GL11.glVertex3d(1,0,0);
         GL11.glVertex3d(1,0,1);
+
+
+
+        GL11.glEnd();
+
+
+        if (!depth) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(true);
+        }
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+
+
+//...
+
+    }
+
+    public static void highlightBox(Entity entity, Color c, float partialTicks, boolean depth) {
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+
+        if (!depth) {
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDepthMask(false);
+        }
+        GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
+
+        AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
+        GL11.glTranslated(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
+
+        double x = 0.8;
+        double y = 1.5;
+        double z = 0.8;
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, y, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, 0, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, y, z);
+
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, y, z); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, y, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, 0, 0);
+
+        GL11.glVertex3d(0,y,0);
+        GL11.glVertex3d(0,y,z);
+        GL11.glVertex3d(x,y,z);
+        GL11.glVertex3d(x,y,0);
+
+        GL11.glVertex3d(0,0,z);
+        GL11.glVertex3d(0,0,0);
+        GL11.glVertex3d(x,0,0);
+        GL11.glVertex3d(x,0,z);
 
 
 

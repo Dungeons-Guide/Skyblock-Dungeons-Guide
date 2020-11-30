@@ -67,22 +67,21 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         for (Point dir:directions) {
             int resX = playerX + dir.x;
             int resY = playerY + dir.y;
-            if (resX < 0 || resY < 0 || resX >= board[0].length|| resY>=board.length || board[resY][resX] == 2) continue;
-
+            if (resX < 0 || resY < 0 || resX >= board[0].length|| resY>=board.length || (board[resY][resX] > 1 && resY > 0) ||(board[resY][resX] > 3)) continue;
             byte[][] copied = new byte[board.length][];
             for (int y = 0; y < copied.length; y++)
                 copied[y] = board[y].clone();
 
             LinkedList<Action> solved = null;
             boolean pushed = false;
-            copied[playerY][playerX] = 2;
             if (board[resY][resX] == 1) {
                 if (!push(copied, resX, resY, dir.x, dir.y)) {
                      continue;
                 }
                 pushed = true;
                 solved = solve(copied, playerX, playerY);
-            } else if (board[resY][resX] == 0){
+            } else {
+                copied[playerY][playerX] += 2;
                 solved = solve(copied, resX, resY);
             }
             if (solved != null) {
@@ -123,16 +122,12 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         return true;
     }
 
-    private int lastPlayerY = 0;
-    private Point lastPlayer = null;
-
     @Override
     public void tick() {
         super.tick();
         if (bugged) return;
         byte[][] currboard = buildCurrentState();
-        Point playerPos = getPlayerPos(currboard);
-        boolean calculate = lastboard == null || lastPlayerY != Minecraft.getMinecraft().thePlayer.getPosition().getY() || (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68 && !playerPos.equals(lastPlayer));
+        boolean calculate = lastboard == null;
         if (!calculate) {
             label:
             for (int y = 0; y < 6; y ++) {
@@ -144,18 +139,6 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             }
         }
         if (calculate) {
-            if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
-                try {
-                    LinkedList<Action> semiSolution;
-                    semiSolution = solve(currboard, playerPos.x, playerPos.y);
-                    if (semiSolution != null) {
-                        semiSolution.addFirst(new Move(playerPos.x, playerPos.y));
-                        solution = semiSolution;
-                    }
-                } catch (Error e) {
-                    e.printStackTrace();
-                }
-            } else {
                 for (int i = 0; i < 7; i++) {
                     if (currboard[5][i] == 0) {
                         try {
@@ -169,10 +152,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                         }
                     }
                 }
-            }
         }
-        lastPlayerY = Minecraft.getMinecraft().thePlayer.getPosition().getY();
-        lastPlayer = playerPos;
         lastboard = currboard;
     }
 

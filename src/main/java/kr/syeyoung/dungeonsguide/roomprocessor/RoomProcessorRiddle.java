@@ -1,12 +1,21 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
+import java.awt.*;
 import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
@@ -44,9 +53,44 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         }
         if (foundMatch) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
+            final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").toLowerCase();
+            final BlockPos low = getDungeonRoom().getMin();
+            final BlockPos high = getDungeonRoom().getMax();
+            World w = getDungeonRoom().getContext().getWorld();
+            System.out.println(name);
+            List<EntityArmorStand> armor = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
+                @Override
+                public boolean apply(@Nullable EntityArmorStand input) {
+                    BlockPos pos = input.getPosition();
+                    return low.getX() < pos.getX() && pos.getX() < high.getX()
+                            && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && input.getName().toLowerCase().contains(name);
+                }
+            });
+
+            if (armor != null) {
+                BlockPos pos = armor.get(0).getPosition();
+                for (BlockPos allInBox : BlockPos.getAllInBox(pos.add(-1, -2, -1), pos.add(1, -2, 1))) {
+                    Block b = w.getChunkFromBlockCoords(allInBox).getBlock(allInBox);
+
+                    if ((b == Blocks.chest || b == Blocks.trapped_chest) && allInBox.distanceSq(pos.add(0,-1,0)) == 1) {
+                        this.chest = allInBox;
+                        return;
+                    }
+                }
+            }
+
         }
     }
 
+    BlockPos chest;
+
+    @Override
+    public void drawWorld(float partialTicks) {
+        super.drawWorld(partialTicks);
+        if (chest != null) {
+            RenderUtils.highlightBlock(chest, new Color(0,255,0, 50),partialTicks);
+        }
+    }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorRiddle> {
         @Override

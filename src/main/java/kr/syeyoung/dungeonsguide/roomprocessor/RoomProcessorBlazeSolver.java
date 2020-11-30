@@ -80,7 +80,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         if (next == null) return;
         Vec3 pos = next.getPositionEyes(partialTicks);
         RenderUtils.drawTextAtWorld("NEXT", (float)pos.xCoord, (float)pos.yCoord, (float)pos.zCoord, 0xFF00ff00, 0.5f, true, false, partialTicks);
-        RenderUtils.highlightBlock(next.getPosition(), new Color(0,255,0,50), partialTicks);
+        RenderUtils.highlightBox(next, new Color(0,255,0,50), partialTicks, false);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorBlazeSolver> {
