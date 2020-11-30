@@ -63,7 +63,8 @@ public class DungeonsGuide
                     "cf6d49d3-4f1e-4ec9-836e-049573793ddd.roomdata",
                     "cf44c95c-950e-49e0-aa4c-82c2b18d0acc.roomdata",
                     "d3e61abf-4198-4520-a950-a03761a0eb6f.roomdata",
-                    "ffd5411b-6ff4-4f60-b387-72f00510ec50.roomdata"
+                    "ffd5411b-6ff4-4f60-b387-72f00510ec50.roomdata",
+                    "b2dce4ed-2bda-4303-a4d7-3ebb914db318.roomdata"
             };
             for (String str:files) {
                 try {

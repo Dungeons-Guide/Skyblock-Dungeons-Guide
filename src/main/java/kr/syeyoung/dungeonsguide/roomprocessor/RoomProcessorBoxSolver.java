@@ -76,7 +76,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             LinkedList<Action> solved = null;
             boolean pushed = false;
             copied[playerY][playerX] = 2;
-            if (board[resY][resX] == 1 && board[playerY][playerX] != 2) {
+            if (board[resY][resX] == 1) {
                 if (!push(copied, resX, resY, dir.x, dir.y)) {
                      continue;
                 }

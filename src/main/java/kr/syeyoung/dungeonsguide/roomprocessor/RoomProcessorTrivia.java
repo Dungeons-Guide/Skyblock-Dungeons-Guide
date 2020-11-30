@@ -7,6 +7,7 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import org.apache.commons.lang3.math.NumberUtils;
 
 import java.awt.*;
 import java.util.*;
@@ -18,54 +19,54 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
     public RoomProcessorTrivia(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        for (Map.Entry<String, String[]> answer : answers.entrySet()) {
-            StringBuilder sb = new StringBuilder();
-            for (String s : answer.getValue()) {
-                sb.append(s).append(',');
-            }
-            dungeonRoom.getDungeonRoomInfo().getProperties().put(answer.getKey(), sb.toString());
-        }
+//        for (Map.Entry<String, String[]> answer : answers.entrySet()) {
+//            StringBuilder sb = new StringBuilder();
+//            for (String s : answer.getValue()) {
+//                sb.append(s).append(',');
+//            }
+//            dungeonRoom.getDungeonRoomInfo().getProperties().put(answer.getKey(), sb.toString());
+//        }
     }
 
 
     private List<String> questionDialog = new ArrayList<String>();
     private boolean questionDialogStart = false;
 
-    private static final Map<String, String[]> answers = new HashMap<String,String[]>() {{
-        put("what is the status of the watcher?", new String[]{"stalker"});
-        put("what is the status of bonzo?", new String[]{"new necromancer"});
-        put("what is the status of scarf?", new String[]{"apprentice necromancer"});
-        put("what is the status of the professor?", new String[]{"professor"});
-        put("what is the status of thorn?", new String[]{"shaman necromancer"});
-        put("what is the status of livid?", new String[]{"master necromancer"});
-        put("what is the status of sadan?", new String[]{"necromancer lord"});
-        put("what is the status of maxor?", new String[]{"young wither"});
-        put("what is the status of goldor?", new String[]{"wither soldier"});
-        put("what is the status of storm?", new String[]{"elementalist"});
-        put("what is the status of necron?", new String[]{"wither lord"});
-        put("how many total fairy souls are there?", new String[]{"209 fairy souls"});
-        put("how many fairy souls are there in spider's den?", new String[]{"17"});
-        put("how many fairy souls are there in the end?", new String[]{"12"});
-        put("how many fairy souls are there in the barn?", new String[]{"7"});
-        put("how many fairy souls are there in mushroom desert?", new String[]{"8"});
-        put("how many fairy souls are there in blazing fortress?", new String[]{"19"});
-        put("how many fairy souls are there in the park?", new String[]{"11"});
-        put("how many fairy souls are there in jerry's workshop?", new String[]{"5"});
-        put("how many fairy souls are there in the hub?", new String[]{"79"});
-        put("how many fairy souls are there in deep caverns?", new String[]{"21"});
-        put("how many fairy souls are there in gold mine?", new String[]{"12"});
-        put("how many fairy souls are there in dungeon hub?", new String[]{"7"});
-        put("which brother is on the spider's den?", new String[]{"rick"});
-        put("what is the name of rick's brother?", new String[]{"pat"});
-        put("what is the name of the painter in the hub?", new String[]{"marco"});
-        put("what is the name of the person that upgrades pets?", new String[]{"kat"});
-        put("what is the name of the lady of the nether?", new String[]{"elle"});
-        put("which villager in the village gives you a rogue sword?", new String[]{"jamie"});
-        put("how many unique minions are there?", new String[]{"52"});
-        put("which of these enemies does not spawn in the spider's den?", new String[]{"zombie spider","cave spider","broodfather"});
-        put("which of these monsters only spawns at night?", new String[]{"zombie villager","ghast"});
-        put("which of these is not a dragon in the end?", new String[]{"zoomer dragon","weak dragon","stonk dragon","holy dragon","boomer dragon","stable dragon"});
-    }};
+//    private static final Map<String, String[]> answers = new HashMap<String,String[]>() {{
+//        put("what is the status of the watcher?", new String[]{"stalker"});
+//        put("what is the status of bonzo?", new String[]{"new necromancer"});
+//        put("what is the status of scarf?", new String[]{"apprentice necromancer"});
+//        put("what is the status of the professor?", new String[]{"professor"});
+//        put("what is the status of thorn?", new String[]{"shaman necromancer"});
+//        put("what is the status of livid?", new String[]{"master necromancer"});
+//        put("what is the status of sadan?", new String[]{"necromancer lord"});
+//        put("what is the status of maxor?", new String[]{"young wither"});
+//        put("what is the status of goldor?", new String[]{"wither soldier"});
+//        put("what is the status of storm?", new String[]{"elementalist"});
+//        put("what is the status of necron?", new String[]{"wither lord"});
+//        put("how many total fairy souls are there?", new String[]{"209 fairy souls"});
+//        put("how many fairy souls are there in spider's den?", new String[]{"17"});
+//        put("how many fairy souls are there in the end?", new String[]{"12"});
+//        put("how many fairy souls are there in the barn?", new String[]{"7"});
+//        put("how many fairy souls are there in mushroom desert?", new String[]{"8"});
+//        put("how many fairy souls are there in blazing fortress?", new String[]{"19"});
+//        put("how many fairy souls are there in the park?", new String[]{"11"});
+//        put("how many fairy souls are there in jerry's workshop?", new String[]{"5"});
+//        put("how many fairy souls are there in the hub?", new String[]{"79"});
+//        put("how many fairy souls are there in deep caverns?", new String[]{"21"});
+//        put("how many fairy souls are there in gold mine?", new String[]{"12"});
+//        put("how many fairy souls are there in dungeon hub?", new String[]{"7"});
+//        put("which brother is on the spider's den?", new String[]{"rick"});
+//        put("what is the name of rick's brother?", new String[]{"pat"});
+//        put("what is the name of the painter in the hub?", new String[]{"marco"});
+//        put("what is the name of the person that upgrades pets?", new String[]{"kat"});
+//        put("what is the name of the lady of the nether?", new String[]{"elle"});
+//        put("which villager in the village gives you a rogue sword?", new String[]{"jamie"});
+//        put("how many unique minions are there?", new String[]{"52"});
+//        put("which of these enemies does not spawn in the spider's den?", new String[]{"zombie spider","cave spider","broodfather"});
+//        put("which of these monsters only spawns at night?", new String[]{"zombie villager","ghast"});
+//        put("which of these is not a dragon in the end?", new String[]{"zoomer dragon","weak dragon","stonk dragon","holy dragon","boomer dragon","stable dragon"});
+//    }};
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
@@ -73,6 +74,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
         System.out.println(ch2 + " / "+chat.getFormattedText());
         if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
             questionDialogStart = true;
+            questionDialog.clear();
         }
 
         if (questionDialogStart && (chat.getFormattedText().startsWith("§r       ") || chat.getFormattedText().trim().startsWith("§r§6 "))) {
@@ -88,8 +90,9 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private void parseDialog() {
         String question = TextUtils.stripColor(questionDialog.get(1)).trim();
         String answerA = getAnswer(questionDialog.get(2));
-        String answerB = getAnswer(questionDialog.get(2));
-        String answerC = getAnswer(questionDialog.get(2));
+        String answerB = getAnswer(questionDialog.get(3));
+        String answerC = getAnswer(questionDialog.get(4));
+        System.out.println("question ::"+question+" :: answerC"+answerC);
         String theRealAnswer = match(question, answerA, answerB, answerC);
 
         if (theRealAnswer == null)
@@ -118,7 +121,11 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     }
     private boolean match(String[] match, String match2) {
         for (String s : match) {
-            if (s.equalsIgnoreCase(match2)) return true;
+            if (NumberUtils.isNumber(s)) {
+                if (match2.toLowerCase().contains(s)) return true;
+            } else {
+                if (match2.equalsIgnoreCase(s)) return true;
+            }
         }
         return false;
     }
