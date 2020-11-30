@@ -10,6 +10,7 @@ import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.entity.RenderIronGolem;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -105,16 +106,19 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
         boolean pathFindReq = false;
         if (calcDone2) {
-            this.solution = puzzleSolvingThread.solution;
+            BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (solution == null) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't find solution involving less than 20 box moves"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
             } else{
+                solution = semi_solution.boxMoves;
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Solution Found!"));
             }
             step = 0;
             lastState = currboard;
             calcDone2 = false;
             pathFindReq = true;
+
+            calcTotalPath();
         }
 
         if (lastState == null) return;
@@ -131,9 +135,6 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
         if (moved) {
             step++;
-            if (step == solution.size()) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Congratulations! box puzzle is now solved"));
-            }
         }
 
         Point player = getPlayerPos(currboard);
@@ -155,6 +156,41 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         }
 
     }
+
+    public void calcTotalPath() {
+        Point player = new Point(0,5);
+        totalPath = new LinkedList<BlockPos>();
+        totalPushedBlocks = new LinkedList<BlockPos>();
+        byte[][] currboard = buildCurrentState();
+        for (int i = 0; i <= solution.size(); i++) {
+            Point target = null;
+            BoxPuzzleSolvingThread.BoxMove boxMove = null;
+            if (i < solution.size()) {
+                boxMove = solution.get(i);
+                target = new Point(boxMove.x - boxMove.dx, boxMove.y - boxMove.dy);
+            }
+            List<Point> semi_pathFound = pathfind(currboard, player, target);
+            for (Point point : semi_pathFound) {
+                totalPath.add(poses[point.y][point.x].add(0, -1, 0));
+            }
+
+            player = target;
+            if (boxMove != null) {
+                BoxPuzzleSolvingThread.push(currboard, boxMove.x, boxMove.y, boxMove.dx, boxMove.dy);
+                int fromX = boxMove.x - boxMove.dx;
+                int fromY = boxMove.y - boxMove.dy;
+
+                BlockPos pos = poses[fromY][fromX];
+                BlockPos pos2 = poses[boxMove.y][boxMove.x];
+                BlockPos dir = pos.subtract(pos2);
+                dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+
+                BlockPos highlight = pos2.add(dir);
+                totalPushedBlocks.add(highlight);
+            }
+        }
+    }
+
     private boolean yState = true;
     public Point getPlayerPos(byte[][] map) {
         BlockPos playerPos = Minecraft.getMinecraft().thePlayer.getPosition();
@@ -175,6 +211,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     private List<BoxPuzzleSolvingThread.BoxMove> solution;
     private List<BlockPos> pathFound;
+    private List<BlockPos> totalPath;
+    private List<BlockPos> totalPushedBlocks;
     private Point lastPlayer;
 
     private static final java.util.List<Point> directions = Arrays.asList(new Point(-1,0), new Point(1,0), new Point(0,1), new Point(0,-1));
@@ -258,22 +296,35 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;
-        if (step < solution.size()) {
-            BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
-            int fromX = boxMove.x - boxMove.dx;
-            int fromY = boxMove.y - boxMove.dy;
+        if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
+            if (step < solution.size()) {
+                BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
+                int fromX = boxMove.x - boxMove.dx;
+                int fromY = boxMove.y - boxMove.dy;
 
-            BlockPos pos = poses[fromY][fromX];
-            BlockPos pos2 = poses[boxMove.y][boxMove.x];
-            BlockPos dir = pos.subtract(pos2);
-            dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1,1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
+                BlockPos pos = poses[fromY][fromX];
+                BlockPos pos2 = poses[boxMove.y][boxMove.x];
+                BlockPos dir = pos.subtract(pos2);
+                dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
 
-            BlockPos highlight = pos2.add(dir);
-            RenderUtils.highlightBlock(highlight, new Color(0,255,0,MathHelper.clamp_int((int) (255 - Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight)),50,255)), partialTicks, false);
-        }
+                BlockPos highlight = pos2.add(dir);
+                RenderUtils.highlightBlock(highlight, new Color(0, 255, 0, MathHelper.clamp_int((int) (255 - Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight)), 50, 255)), partialTicks, false);
+            }
 
-        if (pathFound != null) {
-            RenderUtils.drawLines(pathFound, new Color(0,255,0,255), partialTicks, true);
+            if (pathFound != null) {
+                RenderUtils.drawLines(pathFound, new Color(0, 255, 0, 255), partialTicks, true);
+            }
+        } else {
+            if (totalPath != null) {
+                RenderUtils.drawLines(totalPath, new Color(0, 255, 0, 255), partialTicks, false);
+            }
+            if (totalPushedBlocks != null) {
+                for (int i = 0; i < totalPushedBlocks.size(); i++) {
+                    BlockPos pos = totalPushedBlocks.get(i);
+                    RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 255), partialTicks, false);
+                    RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, 0xFF00000, 1.5f, false, false, partialTicks);
+                }
+            }
         }
 
     }

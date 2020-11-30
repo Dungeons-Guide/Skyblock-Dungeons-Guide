@@ -25,17 +25,18 @@ public class BoxPuzzleSolvingThread extends Thread {
         this.callback = onDone;
     }
 
-    LinkedList<BoxMove> solution = new LinkedList<BoxMove>();
+    Route solution = null;
 
     private boolean solved = false;
 
     @Override
     public void run() {
         solved = false;
-        solution = solve(data,playerX,playerY);
+        solution = solve(data,playerX,playerY, 20);
         callback.run();
         solved = true;
     }
+
 
     public static String stateString(byte[][] array) {
         StringBuilder sb = new StringBuilder();
@@ -47,72 +48,76 @@ public class BoxPuzzleSolvingThread extends Thread {
     }
 
 
-    private static LinkedList<BoxMove> solve(byte[][] board, int playerX, int playerY) {
-        for (int i = 10; i < 20; i++) {
-            LinkedList<BoxMove> solvedStateBoxMove = solve(new HashSet<String>(), board, playerX, playerY, 0, i);
-            if (solvedStateBoxMove != null)
-                return solvedStateBoxMove;
+    private static final List<Point> directions = Arrays.asList(new Point(-1,0), new Point(1,0), new Point(0,1), new Point(0,-1));
+    private static Route solve(byte[][] boardStart, int playerX, int playerY, int maxRecursion) { // result:: playerY == 0
+        Queue<Route> routes = new LinkedList<Route>();
+        Set<String> globalStatesBeen = new HashSet<String>();
+
+        Route r = new Route();
+        r.currentState = boardStart;
+        routes.add(r);
+
+        while (!routes.isEmpty()) {
+            Route route = routes.poll();
+
+            if (routes.size() > 3000000) return null;
+
+            String stateId = stateString(route.currentState);
+            if (maxRecursion < route.boxMoves.size()) continue;
+            if (globalStatesBeen.contains(stateId)) continue;
+
+            Queue<Point> points = new LinkedList<Point>();
+            Set<Point> reached= new HashSet<Point>();
+            List<BoxMove> possibleBoxMoves = new ArrayList<BoxMove>();
+            points.add(new Point(playerX, playerY));
+
+            while (!points.isEmpty()) {
+                Point pt = points.poll();
+                if (pt.y == 0) {
+                    return route;
+                }
+                if (reached.contains(pt)) continue;
+                reached.add(pt);
+                for (Point dir:directions) {
+                    int resX= pt.x + dir.x;
+                    int resY = pt.y + dir.y;
+                    if (resX < 0 || resY < 0 || resX >= route.currentState[0].length || resY >= route.currentState.length) {
+                        continue;
+                    }
+                    if (route.currentState[resY][resX] > 0) {
+                        possibleBoxMoves.add(new BoxMove(resX, resY, dir.x, dir.y));
+                        continue;
+                    }
+                    points.add(new Point(resX, resY));
+                }
+            }
+
+            globalStatesBeen.add(stateId);
+            for (BoxMove possibleBoxMove : possibleBoxMoves) {
+                byte[][] copied = new byte[route.currentState.length][];
+                for (int y = 0; y < copied.length; y++)
+                    copied[y] = route.currentState[y].clone();
+
+                if (push(copied, possibleBoxMove.x, possibleBoxMove.y, possibleBoxMove.dx, possibleBoxMove.dy)){
+                    String stateId2 = stateString(copied);
+                    if (globalStatesBeen.contains(stateId2)) continue;
+
+                    Route route2 = new Route();
+                    route2.boxMoves = new ArrayList<BoxMove>(route.boxMoves);
+                    route2.boxMoves.add(possibleBoxMove);
+                    route2.currentState = copied;
+
+                    routes.add(route2);
+                }
+            }
         }
+
+
         return null;
     }
 
-    private static final java.util.List<Point> directions = Arrays.asList(new Point(-1,0), new Point(1,0), new Point(0,1), new Point(0,-1));
-    private static LinkedList<BoxMove> solve(Set<String> prevStates, byte[][] board, int playerX, int playerY, int recursionLevel, int maxRecursion) { // result:: playerY == 0
-        String stateId = stateString(board);
-        if (maxRecursion < recursionLevel) return null;
-        if (prevStates.contains(stateId)) return null;
 
-        java.util.Queue<Point> points = new LinkedList<Point>();
-        Set<Point> reached= new HashSet<Point>();
-        List<BoxMove> possibleBoxMoves = new ArrayList<BoxMove>();
-        points.add(new Point(playerX, playerY));
-
-        while (!points.isEmpty()) {
-            Point pt = points.poll();
-            if (pt.y == 0) {
-                return new LinkedList<BoxMove>();
-            }
-            if (reached.contains(pt)) continue;
-            reached.add(pt);
-            for (Point dir:directions) {
-                int resX= pt.x + dir.x;
-                int resY = pt.y + dir.y;
-                if (resX < 0 || resY < 0 || resX >= board[0].length || resY >= board.length) {
-                    continue;
-                }
-                if (board[resY][resX] > 0) {
-                    possibleBoxMoves.add(new BoxMove(resX, resY, dir.x, dir.y));
-                    continue;
-                }
-                points.add(new Point(resX, resY));
-            }
-        }
-
-        prevStates.add(stateId);
-        for (BoxMove possibleBoxMove : possibleBoxMoves) {
-            byte[][] copied = new byte[board.length][];
-            for (int y = 0; y < copied.length; y++)
-                copied[y] = board[y].clone();
-
-            if (push(copied, possibleBoxMove.x, possibleBoxMove.y, possibleBoxMove.dx, possibleBoxMove.dy)){
-//                    System.out.println("------testing "+recursionLevel+"  "+possibleBoxMove.x+","+possibleBoxMove.y);
-//                    print(copied);
-
-                prevStates.add(stateId);
-                LinkedList<BoxMove> moves = solve(prevStates, copied, possibleBoxMove.x, possibleBoxMove.y, recursionLevel +1, maxRecursion);
-                if (moves != null) {
-                    moves.addFirst(possibleBoxMove);
-                    return moves;
-                }
-            }
-        }
-        prevStates.remove(stateId);
-
-        return null;
-    }
-
-
-    private static boolean push(byte[][] board, int x,int y,int dx,int dy) {
+    public static boolean push(byte[][] board, int x,int y,int dx,int dy) {
         if (board[y][x] != 1) return false;
         int resultingX= x + dx;
         int resultingY = y +dy;
@@ -124,12 +129,38 @@ public class BoxPuzzleSolvingThread extends Thread {
         return true;
     }
 
-    @Data
-    @AllArgsConstructor
     public static class BoxMove {
         int x;
         int y;
         int dx;
         int dy;
+
+        public BoxMove(int x, int y, int dx, int dy) {
+            this.x = x;
+            this.y = y;
+            this.dx = dx;
+            this.dy = dy;
+        }
+
+        public int getX() {
+            return x;
+        }
+
+        public int getY() {
+            return y;
+        }
+
+        public int getDx() {
+            return dx;
+        }
+
+        public int getDy() {
+            return dy;
+        }
+    }
+
+    public static class Route {
+        List<BoxMove> boxMoves = new LinkedList<BoxMove>();
+        byte[][] currentState;
     }
 }
