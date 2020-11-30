@@ -146,9 +146,12 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calculate) {
             if (Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68) {
                 try {
-                    solution = solve(currboard, playerPos.x, playerPos.y);
-                    if (solution != null)
-                        solution.addFirst(new Move(playerPos.x, playerPos.y));
+                    LinkedList<Action> semiSolution;
+                    semiSolution = solve(currboard, playerPos.x, playerPos.y);
+                    if (semiSolution != null) {
+                        semiSolution.addFirst(new Move(playerPos.x, playerPos.y));
+                        solution = semiSolution;
+                    }
                 } catch (Error e) {
                     e.printStackTrace();
                 }
@@ -156,9 +159,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 for (int i = 0; i < 7; i++) {
                     if (currboard[5][i] == 0) {
                         try {
-                            solution = solve(currboard, i, 5);
-                            if (solution != null) {
-                                solution.addFirst(new Move(i, 5));
+                            LinkedList<Action> semiSolution;
+                            semiSolution = solve(currboard, i, 5);
+                            if (semiSolution != null) {
+                                semiSolution.addFirst(new Move(i, 5));
+                                solution = semiSolution;
                                 break;
                             }
                         } catch (Error e) {
