@@ -76,8 +76,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
             questionDialogStart = true;
             questionDialog.clear();
         }
-
-        if (questionDialogStart && (chat.getFormattedText().startsWith("§r       ") || chat.getFormattedText().trim().startsWith("§r§6 "))) {
+        if (questionDialogStart && (chat.getFormattedText().startsWith("§r  ") || chat.getFormattedText().trim().startsWith("§r§6 "))) {
             questionDialog.add(chat.getFormattedText());
         }
 
