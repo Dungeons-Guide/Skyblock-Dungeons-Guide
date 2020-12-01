@@ -22,6 +22,7 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -64,7 +65,7 @@ public class EventListener {
                     }
                 }
             }
-        } catch (Error e2) {e2.printStackTrace();}
+        } catch (Throwable e2) {e2.printStackTrace();}
     }
 
     DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
@@ -105,7 +106,7 @@ public class EventListener {
                 }
 
             }
-        } catch (Error e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -131,7 +132,7 @@ public class EventListener {
                 }
 
             }
-        } catch (Error e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
@@ -184,7 +185,7 @@ public class EventListener {
                     ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
                 }
             }
-        } catch (Error e) {
+        } catch (Throwable e) {
             e.printStackTrace();
         }
     }
