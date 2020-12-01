@@ -73,6 +73,7 @@ public class EventListener {
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
+            if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
             if (DungeonsGuide.DEBUG) {

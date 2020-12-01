@@ -68,11 +68,12 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             });
 
             if (armor != null) {
+                this.chest = null;
                 BlockPos pos = armor.get(0).getPosition();
-                for (BlockPos allInBox : BlockPos.getAllInBox(pos.add(-1, -2, -1), pos.add(1, -2, 1))) {
+                for (BlockPos allInBox : BlockPos.getAllInBox(pos.add(-1, 0, -1), pos.add(1, 0, 1))) {
                     Block b = w.getChunkFromBlockCoords(allInBox).getBlock(allInBox);
 
-                    if ((b == Blocks.chest || b == Blocks.trapped_chest) && allInBox.distanceSq(pos.add(0,-1,0)) == 1) {
+                    if ((b == Blocks.chest || b == Blocks.trapped_chest)&& allInBox.distanceSq(pos) == 1 ) {
                         this.chest = allInBox;
                         return;
                     }
