@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
@@ -10,6 +11,7 @@ import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.math.NumberUtils;
 
 import java.awt.*;
+import java.io.IOException;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Matcher;
@@ -104,6 +106,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     }
     String correctAnswer;
 
+
     private String getAnswer(String answerString) {
         Matcher matcher = anwerPattern.matcher(answerString.trim());
         if (!matcher.matches()) return "";
@@ -112,11 +115,25 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private String match(String question, String a, String b, String c) {
         String semi_answers = (String) getDungeonRoom().getDungeonRoomInfo().getProperties().get(question.toLowerCase().trim());
         if (semi_answers == null) return null;
+        semi_answers = takeCareOfPlaceHolders(semi_answers);
         String[] answers = semi_answers.split(",");
         if (match(answers, a)) return "A";
         if (match(answers, b)) return "B";
         if (match(answers, c)) return "C";
         return semi_answers;
+    }
+
+    private String takeCareOfPlaceHolders(String input) {
+        String str = input;
+        if (str.contains("$year")) {
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
+            try {
+                str = str.replace("$year", SkyblockUtils.getSkyblockYear()+"");
+            } catch (IOException e) {
+                str = str.replace("$year", "Couldn't determine current skyblock year :: "+e.getMessage());
+            }
+        }
+        return str;
     }
     private boolean match(String[] match, String match2) {
         for (String s : match) {

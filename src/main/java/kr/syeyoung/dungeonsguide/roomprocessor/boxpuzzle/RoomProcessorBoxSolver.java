@@ -25,7 +25,7 @@ import java.util.List;
 public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
 
-    private BlockPos[][] poses = new BlockPos[6][7];
+    private BlockPos[][] poses = new BlockPos[7][7];
     private boolean bugged= true;
 
     private BoxPuzzleSolvingThread puzzleSolvingThread;
@@ -92,7 +92,6 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             puzzleSolvingThread.start();
         }
         if (calcReq) {
-
             OffsetPointSet ops = (OffsetPointSet) getDungeonRoom().getDungeonRoomInfo().getProperties().get("board");
                 if (ops != null) {
                     poses = new BlockPos[7][7];
@@ -105,6 +104,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 }
 
             calcDone = false;
+            if (puzzleSolvingThread != null)
+                puzzleSolvingThread.stop();
             puzzleSolvingThread = new BoxPuzzleSolvingThread(currboard, 0, 6, new Runnable() {
                 @Override
                 public void run() {

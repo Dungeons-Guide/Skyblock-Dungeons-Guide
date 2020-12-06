@@ -95,24 +95,21 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     }
 
 
-
+    private static final Color[] colors = new Color[] {Color.red, Color.orange, Color.green, Color.cyan, Color.blue, Color.pink, Color.yellow, Color.darkGray, Color.lightGray};
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         World w = getDungeonRoom().getContext().getWorld();
-        int index = 0;
-        for (BlockPos[] poset:poses) {
-            index ++;
+        for (int i = 0; i < poses.size(); i++) {
+            BlockPos[] poset = poses.get(i);
+            Color color = colors[i % colors.length];
+            boolean oneIsConnected = false;
             if (w.getChunkFromBlockCoords(poset[0]).getBlock(poset[0]) != Blocks.sea_lantern &&
                 w.getChunkFromBlockCoords(poset[1]).getBlock(poset[1]) != Blocks.sea_lantern) {
-                continue;
+                oneIsConnected = true;
             }
             RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
-                    new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), new Color(index * 10,255,255,255), partialTicks, true);
-//Re
-//            RenderUtils.highlightBlock(poset[0], new Color(0,255,255,50), partialTicks);
-//            RenderUtils.highlightBlock(poset[1], new Color(255,0,0,50), partialTicks);
-            //            RenderUtils.drawLines(Arrays.asList(new BlockPos[] {poset[0], poset[1], poset[0]}), new Color(0,255,255,255), partialTicks);
+                    new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }
     }
 

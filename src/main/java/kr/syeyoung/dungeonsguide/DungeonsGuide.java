@@ -1,9 +1,6 @@
 package kr.syeyoung.dungeonsguide;
 
-import kr.syeyoung.dungeonsguide.commands.CommandEditRoom;
-import kr.syeyoung.dungeonsguide.commands.CommandLoadData;
-import kr.syeyoung.dungeonsguide.commands.CommandSaveData;
-import kr.syeyoung.dungeonsguide.commands.CommandToggleDebug;
+import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -49,6 +46,7 @@ public class DungeonsGuide
         ClientCommandHandler.instance.registerCommand(new CommandLoadData());
         ClientCommandHandler.instance.registerCommand(new CommandSaveData());
         ClientCommandHandler.instance.registerCommand(new CommandToggleDebug());
+        ClientCommandHandler.instance.registerCommand(new CommandWhatYearIsIt());
 
         if (!configDir.exists()) {
             //noinspection ResultOfMethodCallIgnored

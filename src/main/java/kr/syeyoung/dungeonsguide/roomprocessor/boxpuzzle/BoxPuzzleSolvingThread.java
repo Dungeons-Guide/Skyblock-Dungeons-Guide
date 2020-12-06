@@ -23,6 +23,7 @@ public class BoxPuzzleSolvingThread extends Thread {
         this.playerX = playerX;
         this.playerY = playerY;
         this.callback = onDone;
+        System.out.println("new solving thread");
     }
 
     Route solution = null;
@@ -33,8 +34,8 @@ public class BoxPuzzleSolvingThread extends Thread {
     public void run() {
         solved = false;
         solution = solve(data,playerX,playerY, 20);
-        callback.run();
         solved = true;
+        callback.run();
     }
 
 
