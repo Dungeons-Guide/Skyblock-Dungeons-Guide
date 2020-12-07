@@ -8,6 +8,7 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -80,7 +81,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     public void tick() {
         super.tick();
         while (!messageQueue.isEmpty()){
-            Minecraft.getMinecraft().thePlayer.sendChatMessage(messageQueue.poll());
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(messageQueue.poll()));
         }
     }
 

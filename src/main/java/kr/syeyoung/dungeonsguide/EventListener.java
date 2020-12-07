@@ -126,17 +126,20 @@ public class EventListener {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
+                RoomProcessor roomProcessor = null;
                 try {
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                     if (dungeonRoom != null) {
                         if (dungeonRoom.getRoomProcessor() != null) {
                                 dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+                                roomProcessor = dungeonRoom.getRoomProcessor();
                         }
                     }
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
                 for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
+                    if (globalRoomProcessor == roomProcessor) continue;;
                     try {
                         globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
                     } catch (Throwable t) {
