@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
@@ -78,7 +79,13 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
         }
     }
 
-
+    @Override
+    public void tick() {
+        super.tick();
+        while (!messageQueue.isEmpty()){
+            Minecraft.getMinecraft().thePlayer.sendChatMessage(messageQueue.poll());
+        }
+    }
 
     @Override
     public void drawWorld(float partialTicks) {
