@@ -28,22 +28,32 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
     private List<BlockPos[]> poses = new ArrayList<BlockPos[]>();
 
+    private boolean bugged = false;
+
     public RoomProcessorCreeperSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        World w = dungeonRoom.getContext().getWorld();
+
+        findCreeperAndDoPoses();
+    }
+
+    private void findCreeperAndDoPoses() {
+        World w = getDungeonRoom().getContext().getWorld();
         Set<BlockPos> prismarines = new HashSet<BlockPos>();
-        final BlockPos low = dungeonRoom.getMin().add(0,-3,0);
-        final BlockPos high = dungeonRoom.getMax().add(0,15,0);
+        final BlockPos low = getDungeonRoom().getMin().add(0,-3,0);
+        final BlockPos high = getDungeonRoom().getMax().add(0,15,0);
         List<EntityCreeper> creeepr = w.getEntities(EntityCreeper.class, new Predicate<EntityCreeper>() {
             @Override
             public boolean apply(@Nullable EntityCreeper input) {
                 if (input.isInvisible()) return false;
-                      BlockPos pos = input.getPosition();
-                        return low.getX() < pos.getX() && pos.getX() < high.getX()
-                                && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
+                BlockPos pos = input.getPosition();
+                return low.getX() < pos.getX() && pos.getX() < high.getX()
+                        && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
             }
         });
-        if (creeepr.isEmpty()) return;
+        if (creeepr.isEmpty()) {
+            bugged = true;
+            return;
+        }
         EntityCreeper creeper = creeepr.get(0);
         Vec3 position = creeper.getPositionVector().addVector(0,1,0);
 
@@ -91,9 +101,16 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
                 System.out.println("Found Set :: "+allInBox + " / "+otherPrismarine + " / "+opposite+" / "+pos +" / "+position);
             }
         }
-
+        bugged = false;
     }
 
+    @Override
+    public void tick() {
+        super.tick();
+        if (bugged) {
+            findCreeperAndDoPoses();
+        }
+    }
 
     private static final Color[] colors = new Color[] {Color.red, Color.orange, Color.green, Color.cyan, Color.blue, Color.pink, Color.yellow, Color.darkGray, Color.lightGray};
     @Override

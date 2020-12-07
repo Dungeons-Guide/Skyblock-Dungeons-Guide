@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonOffsetPointEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -125,13 +126,23 @@ public class EventListener {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
-                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-                if (dungeonRoom != null) {
-                    if (dungeonRoom.getRoomProcessor() != null) {
-                            dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+                try {
+                    DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                    if (dungeonRoom != null) {
+                        if (dungeonRoom.getRoomProcessor() != null) {
+                                dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
+                        }
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+                for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
+                    try {
+                        globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
+                    } catch (Throwable t) {
+                        t.printStackTrace();
                     }
                 }
-
             }
         } catch (Throwable e) {
             e.printStackTrace();

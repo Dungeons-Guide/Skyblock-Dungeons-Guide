@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.BlockPos;
@@ -11,6 +12,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DungeonContext {
     @Getter
@@ -26,6 +28,9 @@ public class DungeonContext {
     private Map<Point, DungeonRoom> roomMapper = new HashMap<Point, DungeonRoom>();
     @Getter
     private List<DungeonRoom> dungeonRoomList = new ArrayList<DungeonRoom>();
+
+    @Getter
+    private List<RoomProcessor> globalRoomProcessors = new ArrayList<RoomProcessor>();
 
     public DungeonContext(World world) {
         this.world = world;

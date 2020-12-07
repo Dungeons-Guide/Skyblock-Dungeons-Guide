@@ -8,4 +8,6 @@ public interface RoomProcessor {
     void drawScreen(float partialTicks);
     void drawWorld(float partialTicks);
     void chatReceived(IChatComponent chat);
+
+    boolean readGlobalChat();
 }

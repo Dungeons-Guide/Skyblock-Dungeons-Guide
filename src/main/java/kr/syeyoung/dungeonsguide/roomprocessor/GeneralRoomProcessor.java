@@ -35,6 +35,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
+    @Override
+    public boolean readGlobalChat() {
+        return false;
+    }
+
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {
         @Override
         public GeneralRoomProcessor createNew(DungeonRoom dungeonRoom) {

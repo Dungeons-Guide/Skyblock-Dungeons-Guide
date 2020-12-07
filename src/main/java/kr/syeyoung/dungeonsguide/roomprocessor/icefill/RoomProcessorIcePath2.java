@@ -19,8 +19,6 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
-    private boolean bugged = false;
-
     private List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
 
     private Queue<String> messageQueue = new ConcurrentLinkedQueue<String>();
@@ -31,7 +29,6 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
 
         String levels = (String) dungeonRoom.getDungeonRoomInfo().getProperties().get("levels");
         if (levels == null) {
-            bugged = true;
             return;
         }
 

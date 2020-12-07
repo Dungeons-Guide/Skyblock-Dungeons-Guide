@@ -164,4 +164,9 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
             return defaultRoomProcessor;
         }
     }
+
+    @Override
+    public boolean readGlobalChat() {
+        return true;
+    }
 }

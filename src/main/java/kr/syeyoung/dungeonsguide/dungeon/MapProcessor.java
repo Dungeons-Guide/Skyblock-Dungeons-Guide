@@ -182,6 +182,8 @@ public class MapProcessor {
                         roomsFound.add(p);
                         context.getRoomMapper().put(p, rooms);
                     }
+                    if (rooms.getRoomProcessor() != null && rooms.getRoomProcessor().readGlobalChat())
+                        context.getGlobalRoomProcessors().add(rooms.getRoomProcessor());
                 }
 
             }
