@@ -121,7 +121,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcDone2) {
             BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (semi_solution == null) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
@@ -131,7 +131,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 return;
             } else{
                 solution = semi_solution.boxMoves;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Solution Found!"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
             }
             step = 0;
             lastState = currboard;

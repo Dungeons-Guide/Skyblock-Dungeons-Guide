@@ -1,27 +1,28 @@
-package kr.syeyoung.dungeonsguide.roomprocessor;
+package kr.syeyoung.dungeonsguide.roomprocessor.icefill;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Queue;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.regex.Pattern;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     private boolean bugged = false;
 
-    private List<List<BlockPos>> solution = new ArrayList<List<BlockPos>>();
+    private List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
+
+    private Queue<String> messageQueue = new ConcurrentLinkedQueue<String>();
 
     public RoomProcessorIcePath2(DungeonRoom dungeonRoom) {
 
@@ -33,19 +34,19 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
             return;
         }
 
-        for (String s : levels.split(",")) {
+        for (final String s : levels.split(",")) {
             try {
                 OffsetPointSet level = (OffsetPointSet) dungeonRoom.getDungeonRoomInfo().getProperties().get(s + "-board");
                 String data = (String) dungeonRoom.getDungeonRoomInfo().getProperties().get(s + "-level");
-                int width = Integer.parseInt(data.split(":")[0]);
-                int height = Integer.parseInt(data.split(":")[1]);
-                int startX = Integer.parseInt(data.split(":")[2]);
-                int startY = Integer.parseInt(data.split(":")[3]);
-                int endX = Integer.parseInt(data.split(":")[4]);
-                int endY = Integer.parseInt(data.split(":")[5]);
+                final int width = Integer.parseInt(data.split(":")[0]);
+                final int height = Integer.parseInt(data.split(":")[1]);
+                final int startX = Integer.parseInt(data.split(":")[2]);
+                final int startY = Integer.parseInt(data.split(":")[3]);
+                final int endX = Integer.parseInt(data.split(":")[4]);
+                final int endY = Integer.parseInt(data.split(":")[5]);
 
-                int[][] map = new int[height][width];
-                BlockPos[][] map2 = new BlockPos[height][width];
+                final int[][] map = new int[height][width];
+                final BlockPos[][] map2 = new BlockPos[height][width];
                 for (int y = 0; y < height; y++) {
                     for (int x = 0; x < width; x++) {
                         map2[y][x] = level.getOffsetPointList().get(y * width + x).getBlockPos(dungeonRoom);
@@ -53,15 +54,24 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                     }
                 }
 
-                List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
-                if (hamiltonianPath == null) continue;
-                hamiltonianPath.add(0,new Point(startX, startY));
-                List<BlockPos> poses = new LinkedList<BlockPos>();
-                for (int i = 0; i < hamiltonianPath.size(); i++) {
-                    Point p = hamiltonianPath.get(i);
-                    poses.add(map2[p.y][p.x]);
-                }
-                solution.add(poses);
+                new Thread() {
+                    public void run() {
+                        messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §fCalculating solution for floor "+s);
+                        List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
+                        if (hamiltonianPath == null) {
+                            messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
+                            return;
+                        }
+                        messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §fFound solution for floor "+s+"!");
+                        hamiltonianPath.add(0,new Point(startX, startY));
+                        List<BlockPos> poses = new LinkedList<BlockPos>();
+                        for (int i = 0; i < hamiltonianPath.size(); i++) {
+                            Point p = hamiltonianPath.get(i);
+                            poses.add(map2[p.y][p.x]);
+                        }
+                        solution.add(poses);
+                    }
+                }.start();
             } catch (Exception e) {
                 e.printStackTrace();
             }

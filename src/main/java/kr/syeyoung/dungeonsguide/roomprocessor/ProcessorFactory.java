@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.roomprocessor.boxpuzzle.RoomProcessorBoxSolver;
+import kr.syeyoung.dungeonsguide.roomprocessor.icefill.RoomProcessorIcePath2;
 import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.RoomProcessorWaterPuzzle;
 
 import java.util.HashMap;

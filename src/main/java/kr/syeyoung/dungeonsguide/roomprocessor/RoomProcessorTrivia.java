@@ -97,11 +97,11 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
         String theRealAnswer = match(question, answerA, answerB, answerC);
 
         if (theRealAnswer == null)
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't determine the answer! (no question found)"));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
         else if (theRealAnswer.length() >1)
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §cCouldn't determine the answer! ("+theRealAnswer+")"));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
         else
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: §6"+theRealAnswer+"§f is the correct answer!"));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
         correctAnswer = theRealAnswer;
     }
     String correctAnswer;

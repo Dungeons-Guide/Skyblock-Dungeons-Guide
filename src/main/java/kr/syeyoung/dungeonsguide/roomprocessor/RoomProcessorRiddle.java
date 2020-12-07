@@ -52,7 +52,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             }
         }
         if (foundMatch) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").toLowerCase();
             final BlockPos low = getDungeonRoom().getMin();
             final BlockPos high = getDungeonRoom().getMax();
