@@ -1,8 +1,17 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
+import jdk.internal.util.xml.impl.Input;
+import kr.syeyoung.dungeonsguide.Authenticator;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.*;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class DungeonRoomInfoRegistry {
@@ -41,6 +50,7 @@ public class DungeonRoomInfoRegistry {
     }
 
     public static void saveAll(File dir) {
+        if (!DungeonsGuide.DEBUG) return;
         dir.mkdirs();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
@@ -53,14 +63,19 @@ public class DungeonRoomInfoRegistry {
         }
     }
 
-    public static void loadAll(File dir) {
+    public static void loadAll() throws BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
-        for (File f: dir.listFiles()) {
-            if (!f.isFile() || !f.getName().endsWith(".roomdata")) continue;
+        Authenticator authenticator = DungeonsGuide.getDungeonsGuide().getAuthenticator();
+        InputStream inputStream = authenticator.getInputStream("roomdata/datas.txt");
+        BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
+        String name;
+        while ((name = br.readLine()) != null) {
+            System.out.println("Trying to load "+name);
+            if (name.endsWith(".roomdata")) continue;
             try {
-                FileInputStream fis = new FileInputStream(f);
+                InputStream fis = authenticator.getInputStream(name);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
                 ois.close();

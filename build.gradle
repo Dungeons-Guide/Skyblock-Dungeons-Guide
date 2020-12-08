@@ -40,6 +40,7 @@ minecraft {
 
 dependencies {
     implementation 'org.jetbrains:annotations-java5:19.0.0'
+    implementation 'com.auth0:java-jwt:3.11.0'
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
