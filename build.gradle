@@ -11,9 +11,11 @@ buildscript {
     }
     dependencies {
         classpath 'net.minecraftforge.gradle:ForgeGradle:2.1-SNAPSHOT'
+        classpath 'com.github.jengelman.gradle.plugins:shadow:1.2.4'
     }
 }
 apply plugin: 'net.minecraftforge.gradle.forge'
+apply plugin: 'com.github.johnrengelman.shadow'
 
 /*
 // for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
@@ -38,9 +40,14 @@ minecraft {
     // makeObfSourceJar = false // an Srg named sources jar is made by default. uncomment this to disable.
 }
 
+configurations {
+    shade
+    compile.extendsFrom shade
+}
+
 dependencies {
     implementation 'org.jetbrains:annotations-java5:19.0.0'
-    implementation 'com.auth0:java-jwt:3.11.0'
+    compile 'com.auth0:java-jwt:3.11.0'
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -69,6 +76,12 @@ dependencies {
     testAnnotationProcessor 'org.projectlombok:lombok:1.18.16'
 }
 
+shadowJar {
+    dependencies {
+    }
+}
+
+
 processResources
 {
     // this will ensure that this task is redone when the versions change.
@@ -89,8 +102,4 @@ processResources
     }
 }
 
-task getHomeDir {
-    doLast {
-        println gradle.gradleHomeDir
-    }
-}
+build.dependsOn shadowJar
