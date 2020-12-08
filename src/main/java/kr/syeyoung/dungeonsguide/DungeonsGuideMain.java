@@ -46,7 +46,7 @@ public class DungeonsGuideMain
             token = authenticator.authenticate();
             System.out.println(token);
             if (token != null) {
-                classLoader = new NetworkClassLoader(authenticator, DungeonsGuide.class.getClassLoader());
+                classLoader = new NetworkClassLoader(authenticator, DungeonsGuideMain.class.getClassLoader());
 
                 Class skyblockStatusCls = null;
                 try {
