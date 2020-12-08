@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DoorFinderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.StartDoorFinder;
@@ -97,15 +98,15 @@ public class MapProcessor {
         }
         // determine door location based on npc, and determine map min from there
         {
-            StartDoorFinder doorFinder = DoorFinderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            StartDoorFinder doorFinder = DoorFinderRegistry.getDoorFinder(((SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
             if (doorFinder == null) {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Couldn't find door finder for :: "+DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
+                DungeonsGuide.sendDebugChat(new ChatComponentText("Couldn't find door finder for :: "+((SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
                 bugged = true;
                 return;
             }
             BlockPos door = doorFinder.find(context.getWorld());
             if (door == null) {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Couldn't find door :: "+DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
+                DungeonsGuide.sendDebugChat(new ChatComponentText("Couldn't find door :: "+((SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
                 bugged = true;
                 return;
             }

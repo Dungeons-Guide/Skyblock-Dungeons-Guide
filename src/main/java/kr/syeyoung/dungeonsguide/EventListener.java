@@ -36,7 +36,7 @@ public class EventListener {
     public void onTick(TickEvent.ClientTickEvent e) {
         try {
             if (e.phase == TickEvent.Phase.START) {
-                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+                SkyblockStatus skyblockStatus = (SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                  {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
     //                System.out.println(isOnDungeon);
@@ -75,7 +75,7 @@ public class EventListener {
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
             if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = (SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
             if (DungeonsGuide.DEBUG) {
                 int[] textureData = dynamicTexture.getTextureData();
@@ -117,7 +117,7 @@ public class EventListener {
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
             if (clientChatReceivedEvent.type == 2) return;
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = (SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -156,7 +156,7 @@ public class EventListener {
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = (SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();

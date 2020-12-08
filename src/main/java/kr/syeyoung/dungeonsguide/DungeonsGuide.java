@@ -34,7 +34,7 @@ public class DungeonsGuide
     public static final String MODID = "skyblock_dungeons_guide";
     public static final String VERSION = "0.1";
 
-    private SkyblockStatus skyblockStatus;
+    private Object skyblockStatus;
     
     private static DungeonsGuide dungeonsGuide;
 
@@ -177,8 +177,8 @@ public class DungeonsGuide
         throw e;
     }
 
-    public SkyblockStatus getSkyblockStatus() {
-        return skyblockStatus;
+    public Object getSkyblockStatus() {
+        return (SkyblockStatus) skyblockStatus;
     }
 
     public static DungeonsGuide getDungeonsGuide() {

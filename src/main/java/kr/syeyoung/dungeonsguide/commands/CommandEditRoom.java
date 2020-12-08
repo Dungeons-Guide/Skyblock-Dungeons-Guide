@@ -30,7 +30,7 @@ public class CommandEditRoom extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+        SkyblockStatus skyblockStatus = (SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) {
             sender.addChatMessage(new ChatComponentText("You're not in dungeons"));
             return;
