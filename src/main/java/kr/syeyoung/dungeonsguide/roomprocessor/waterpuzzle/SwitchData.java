@@ -1,13 +1,9 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.nodes.WaterNodeStart;
 import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.nodes.WaterNodeToggleable;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.block.BlockLever;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 

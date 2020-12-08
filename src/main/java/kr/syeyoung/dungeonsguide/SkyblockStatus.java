@@ -40,37 +40,6 @@ public class SkyblockStatus {
 
     private final Pattern SERVER_BRAND_PATTERN = Pattern.compile("(.+) <- (?:.+)");
 
-    public SkyblockStatus() {
-        MinecraftForge.EVENT_BUS.register(new EventListener());
-        CommandEditRoom cc = new CommandEditRoom();
-        ClientCommandHandler.instance.registerCommand(cc);
-        MinecraftForge.EVENT_BUS.register(cc);
-        ClientCommandHandler.instance.registerCommand(new CommandLoadData());
-        ClientCommandHandler.instance.registerCommand(new CommandSaveData());
-        ClientCommandHandler.instance.registerCommand(new CommandToggleDebug());
-        ClientCommandHandler.instance.registerCommand(new CommandWhatYearIsIt());
-
-        try {
-            DungeonRoomInfoRegistry.loadAll();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        }
-
-        Keybinds.register();
-    }
-
 
     public boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();

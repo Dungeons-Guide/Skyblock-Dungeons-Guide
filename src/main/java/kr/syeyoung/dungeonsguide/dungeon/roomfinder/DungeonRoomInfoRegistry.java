@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import kr.syeyoung.dungeonsguide.Authenticator;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.DungeonsGuideMain;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 
 import javax.crypto.BadPaddingException;
@@ -66,7 +67,7 @@ public class DungeonRoomInfoRegistry {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
-        Authenticator authenticator = DungeonsGuide.getDungeonsGuide().getAuthenticator();
+        Authenticator authenticator = DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator();
         InputStream inputStream = authenticator.getInputStream("roomdata/datas.txt");
         inputStream.read(new byte[4]);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));

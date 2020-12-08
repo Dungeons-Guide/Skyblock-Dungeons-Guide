@@ -1,6 +1,5 @@
 package kr.syeyoung.dungeonsguide.commands;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
