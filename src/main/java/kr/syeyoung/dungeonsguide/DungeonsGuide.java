@@ -8,6 +8,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -48,68 +49,39 @@ public class DungeonsGuide
     @EventHandler
     public void init(FMLInitializationEvent event)
     {
-        dungeonsGuide = this;
-        skyblockStatus = new SkyblockStatus();
-        MinecraftForge.EVENT_BUS.register(new EventListener());
-        CommandEditRoom cc = new CommandEditRoom();
-        ClientCommandHandler.instance.registerCommand(cc);
-        MinecraftForge.EVENT_BUS.register(cc);
-        ClientCommandHandler.instance.registerCommand(new CommandLoadData());
-        ClientCommandHandler.instance.registerCommand(new CommandSaveData());
-        ClientCommandHandler.instance.registerCommand(new CommandToggleDebug());
-        ClientCommandHandler.instance.registerCommand(new CommandWhatYearIsIt());
+        Thread.currentThread().setContextClassLoader(classLoader);
 
-        if (!configDir.exists()) {
-            //noinspection ResultOfMethodCallIgnored
-            configDir.mkdirs();
-            String[] files = {
-                    "990f6e4c-f7cf-4d27-ae91-11219b85861f.roomdata",
-                    "5000be9d-3081-4a5e-8563-dd826705663a.roomdata",
-                    "9139cb1c-b6f3-4bac-92de-909b1eb73449.roomdata",
-                    "11982f7f-703e-4d98-9d27-4e07ba3fef71.roomdata",
-                    "a053f4fa-d6b2-4aef-ae3e-97c7eee0252e.roomdata",
-                    "c2ea0a41-d495-437f-86cc-235a71c49f22.roomdata",
-                    "cf6d49d3-4f1e-4ec9-836e-049573793ddd.roomdata",
-                    "cf44c95c-950e-49e0-aa4c-82c2b18d0acc.roomdata",
-                    "d3e61abf-4198-4520-a950-a03761a0eb6f.roomdata",
-                    "ffd5411b-6ff4-4f60-b387-72f00510ec50.roomdata",
-                    "b2dce4ed-2bda-4303-a4d7-3ebb914db318.roomdata"
-            };
-            for (String str:files) {
-                try {
-                    copy(DungeonsGuide.class.getResourceAsStream("/roomdata/"+str), new File(configDir, str));
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-        }
+        Class skyblockStatusCls = null;
         try {
-            DungeonRoomInfoRegistry.loadAll();
-        } catch (BadPaddingException e) {
+            skyblockStatusCls = classLoader.findClass("kr.syeyoung.dungeonsguide.SkyblockStatus");
+        } catch (ClassNotFoundException e) {
             e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
+
+            error(new String[]{
+                    "Couldn't load Dungeons Guide",
+                    "Please contact developer if this problem persists after restart"
+            });
+            return;
         }
 
-        Keybinds.register();
-    }
+        dungeonsGuide = this;
+        try {
+            skyblockStatus = skyblockStatusCls.newInstance();
+        } catch (InstantiationException e) {
+            e.printStackTrace();
 
-    private void copy(InputStream inputStream, File f) throws IOException {
-        FileOutputStream fos = new FileOutputStream(f);
-        IOUtils.copy(inputStream, fos);
-        fos.flush();
-        fos.close();
-        inputStream.close();
+            error(new String[]{
+                    "Couldn't load Dungeons Guide",
+                    "Please contact developer if this problem persists after restart"
+            });
+        } catch (IllegalAccessException e) {
+            e.printStackTrace();
+
+            error(new String[]{
+                    "Couldn't load Dungeons Guide",
+                    "Please contact developer if this problem persists after restart"
+            });
+        }
     }
 
     @Getter
@@ -120,6 +92,7 @@ public class DungeonsGuide
     private NetworkClassLoader classLoader;
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
+        System.out.println(DungeonsGuide.class.getClassLoader());
         configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
 
         authenticator = new Authenticator();
@@ -128,8 +101,7 @@ public class DungeonsGuide
             token = authenticator.authenticate();
             System.out.println(token);
             if (token != null) {
-                classLoader = new NetworkClassLoader(authenticator);
-                Thread.currentThread().setContextClassLoader(classLoader);
+                classLoader = new NetworkClassLoader(authenticator, DungeonsGuide.class.getClassLoader());
                 return;
             }
         } catch (IOException e) {
@@ -140,6 +112,14 @@ public class DungeonsGuide
             e.printStackTrace();
         }
 
+        error(new String[]{
+                "Can't validate current installation of Dungeons Guide",
+                "Please contact mod author if you purchased this mod and getting this error",
+                "And if you haven't purchased the mod, please consider doing so"
+        });
+    }
+
+    public void error(final String[] s_msg) {
         final GuiScreen errorGui = new GuiErrorScreen(null, null) {
 
             @Override
@@ -153,11 +133,6 @@ public class DungeonsGuide
             @Override
             public void drawScreen(int par1, int par2, float par3) {
                 drawDefaultBackground();
-                String[] s_msg = new String[] {
-                        "Can't validate current installation of Dungeons Guide",
-                        "Please contact mod author if you purchased this mod and getting this error",
-                        "And if you haven't purchased the mod, please consider doing so"
-                };
                 for (int i = 0; i < s_msg.length; ++i) {
                     drawCenteredString(fontRendererObj, s_msg[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
                 }
@@ -176,7 +151,6 @@ public class DungeonsGuide
         };
         throw e;
     }
-
     public Object getSkyblockStatus() {
         return (SkyblockStatus) skyblockStatus;
     }

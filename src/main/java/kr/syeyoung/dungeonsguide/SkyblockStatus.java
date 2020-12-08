@@ -1,13 +1,25 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.scoreboard.*;
+import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.common.MinecraftForge;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
+import java.io.File;
+import java.io.IOException;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Set;
 import java.util.regex.Matcher;
@@ -28,6 +40,36 @@ public class SkyblockStatus {
 
     private final Pattern SERVER_BRAND_PATTERN = Pattern.compile("(.+) <- (?:.+)");
 
+    public SkyblockStatus() {
+        MinecraftForge.EVENT_BUS.register(new EventListener());
+        CommandEditRoom cc = new CommandEditRoom();
+        ClientCommandHandler.instance.registerCommand(cc);
+        MinecraftForge.EVENT_BUS.register(cc);
+        ClientCommandHandler.instance.registerCommand(new CommandLoadData());
+        ClientCommandHandler.instance.registerCommand(new CommandSaveData());
+        ClientCommandHandler.instance.registerCommand(new CommandToggleDebug());
+        ClientCommandHandler.instance.registerCommand(new CommandWhatYearIsIt());
+
+        try {
+            DungeonRoomInfoRegistry.loadAll();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (NoSuchAlgorithmException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        }
+
+        Keybinds.register();
+    }
 
 
     public boolean isOnHypixel() {

@@ -3,10 +3,7 @@ package kr.syeyoung.dungeonsguide;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -14,8 +11,8 @@ import java.security.NoSuchAlgorithmException;
 public class NetworkClassLoader extends ClassLoader {
     Authenticator authenticator;
 
-    public NetworkClassLoader(Authenticator authenticator) {
-        super();
+    public NetworkClassLoader(Authenticator authenticator, ClassLoader parent) {
+        super(parent);
         this.authenticator = authenticator;
     }
 
@@ -25,7 +22,8 @@ public class NetworkClassLoader extends ClassLoader {
         try {
             b = loadClassFromFile(name);
             return defineClass(name, b, 0, b.length);
-        } catch (BadPaddingException e) {
+        } catch (FileNotFoundException ignored) {
+        } catch(BadPaddingException e) {
             e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -51,6 +49,7 @@ public class NetworkClassLoader extends ClassLoader {
                 length |= (inputStream.read() & 0xFF) << i * 8;
             }
         }
+        while (inputStream.available() < length);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         int nextValue = 0;
@@ -59,7 +58,7 @@ public class NetworkClassLoader extends ClassLoader {
             while ( (inputStream.read(buffer)) != -1 ) {
                 byteStream.write(buffer);
             }
-        } catch (Exception e) {}
+        } catch (Exception ignored) {}
         byte[] byte1 = byteStream.toByteArray();
         byte[] byte2 = new byte[(int) length];
         System.arraycopy(byte1, 0, byte2, 0, byte2.length);

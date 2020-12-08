@@ -105,6 +105,8 @@ public class Authenticator {
         return new BigInteger(result).toString(16);
     }
     public InputStream getInputStream(String resource) throws IOException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
+        System.out.println("loading "+resource);
+
         HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN+"resource/resource?class="+ URLEncoder.encode(resource)).openConnection();
         huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         huc.setRequestProperty("Content-Type", "application/json");
@@ -119,11 +121,9 @@ public class Authenticator {
                 ((bytes[1] & 0xFF) << 16) |
                 ((bytes[2] & 0xFF) << 8 ) |
                 ((bytes[3] & 0xFF));
-        System.out.println(len);
         while(inputStream.available() < len);
         byte[] pubKey = new byte[len];
         inputStream.read(pubKey);
-        System.out.println(DatatypeConverter.printBase64Binary(pubKey));
 
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         byte[] byteEncrypted = pubKey;
