@@ -1,8 +1,11 @@
 package kr.syeyoung.dungeonsguide;
 
+import com.google.common.io.Files;
+
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.xml.bind.DatatypeConverter;
 import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -43,26 +46,30 @@ public class NetworkClassLoader extends ClassLoader {
 
     private byte[] loadClassFromFile(String fileName) throws BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException {
         InputStream inputStream = authenticator.getInputStream(fileName.replace('.', '/')+ ".class");
-        long length = 0;
-        {
-            for (int i = 4; i >= 0; i--) {
-                length |= (inputStream.read() & 0xFF) << i * 8;
-            }
-        }
-        while (inputStream.available() < length);
+
+        byte[] bytes = new byte[4];
+        inputStream.read(bytes);
+        int length = ((bytes[0] & 0xFF) << 24) |
+                ((bytes[1] & 0xFF) << 16) |
+                ((bytes[2] & 0xFF) << 8 ) |
+                ((bytes[3] & 0xFF));
+
+        System.out.println("Expecting "+length);
 
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        int nextValue = 0;
+        int totalLen = 0;
         try {
-            byte[] buffer = new byte[1024];
-            while ( (inputStream.read(buffer)) != -1 ) {
-                byteStream.write(buffer);
+            byte[] buffer = new byte[128];
+            int read = 0;
+            while ( (read = inputStream.read(buffer)) != -1 ) {
+                totalLen += read;
+                byteStream.write(buffer, 0, read);
+                if (totalLen >= length) break;;
             }
         } catch (Exception ignored) {}
         byte[] byte1 = byteStream.toByteArray();
         byte[] byte2 = new byte[(int) length];
         System.arraycopy(byte1, 0, byte2, 0, byte2.length);
-
         return byte2;
     }
 }
