@@ -4,11 +4,13 @@ import kr.syeyoung.dungeonsguide.Authenticator;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.DungeonsGuideMain;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import org.apache.commons.io.IOUtils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
+import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -67,38 +69,12 @@ public class DungeonRoomInfoRegistry {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
-        Authenticator authenticator = DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator();
-        InputStream inputStream = authenticator.getInputStream("roomdata/datas.txt");
-        byte[] bytes = new byte[4];
-        inputStream.read(bytes);
-
-        int length = ((bytes[0] & 0xFF) << 24) |
-                ((bytes[1] & 0xFF) << 16) |
-                ((bytes[2] & 0xFF) << 8 ) |
-                ((bytes[3] & 0xFF));
-        ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
-        int totalLen = 0;
-        try {
-            byte[] buffer = new byte[128];
-            int read = 0;
-            while ( (read = inputStream.read(buffer)) != -1 ) {
-                totalLen += read;
-                byteStream.write(buffer, 0, read);
-                if (totalLen >= length) break;;
-            }
-        } catch (Exception ignored) {}
-        byte[] byte1 = byteStream.toByteArray();
-        byte[] byte2 = new byte[(int) length];
-        System.arraycopy(byte1, 0, byte2, 0, byte2.length);
-        inputStream.close();
-
-        String names = new String(byte2);
-
-        for (String name  : names.split("\n")) {
+        URL url = new URL("dungeonsguide:///roomdata/data.txt");
+        List<String> lines = IOUtils.readLines(url.openConnection().getInputStream());
+        for (String name  : lines) {
             if (name.endsWith(".roomdata")) continue;
             try {
-                InputStream fis = authenticator.getInputStream(name);
-                fis.read(new byte[4]);
+                InputStream fis = new URL("dungeonsguide:///"+name).openStream();
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
                 ois.close();

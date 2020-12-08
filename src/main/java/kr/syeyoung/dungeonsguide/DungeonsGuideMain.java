@@ -1,12 +1,13 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonsguide.customurl.DGURLStreamHandlerFactory;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.*;
+import java.net.URL;
 import java.security.NoSuchAlgorithmException;
 
 @Mod(modid = DungeonsGuideMain.MODID, version = DungeonsGuideMain.VERSION)
@@ -22,7 +24,7 @@ public class DungeonsGuideMain
     public static final String MODID = "skyblock_dungeons_guide";
     public static final String VERSION = "0.1";
 
-    private static DungeonsGuideMain DungeonsGuideMain;
+    private static DungeonsGuideMain dungeonsGuideMain;
 
     private DungeonsGuideInterface dungeonsGuideInterface;
 
@@ -30,14 +32,13 @@ public class DungeonsGuideMain
     public void init(FMLInitializationEvent event)
     {
 
-        DungeonsGuideMain = this;
+        dungeonsGuideMain = this;
 
         dungeonsGuideInterface.init(event);
     }
 
     @Getter
     private Authenticator authenticator;
-    private NetworkClassLoader classLoader;
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
         authenticator = new Authenticator();
@@ -45,31 +46,14 @@ public class DungeonsGuideMain
         try {
             token = authenticator.authenticate();
             if (token != null) {
-                classLoader = new NetworkClassLoader(authenticator, DungeonsGuideMain.class.getClassLoader());
+                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(authenticator));
+                LaunchClassLoader launchClassLoader = (LaunchClassLoader) DungeonsGuideMain.class.getClassLoader();
+                launchClassLoader.addURL(new URL("dungeonsguide:///"));
 
-                Class skyblockStatusCls = null;
                 try {
-                    skyblockStatusCls = classLoader.findClass("kr.syeyoung.dungeonsguide.DungeonsGuide");
-                } catch (ClassNotFoundException e) {
-                    e.printStackTrace();
-
-                    error(new String[]{
-                            "Couldn't load Dungeons Guide",
-                            "Please contact developer if this problem persists after restart"
-                    });
-                    return;
-                }
-                try {
-                    dungeonsGuideInterface = (DungeonsGuideInterface) skyblockStatusCls.newInstance();
+                    dungeonsGuideInterface = new DungeonsGuide();
                     dungeonsGuideInterface.pre(event);
-                } catch (InstantiationException e) {
-                    e.printStackTrace();
-
-                    error(new String[]{
-                            "Couldn't load Dungeons Guide",
-                            "Please contact developer if this problem persists after restart"
-                    });
-                } catch (IllegalAccessException e) {
+                } catch (Exception e) {
                     e.printStackTrace();
 
                     error(new String[]{
@@ -127,6 +111,6 @@ public class DungeonsGuideMain
         throw e;
     }
     public static DungeonsGuideMain getDungeonsGuideMain() {
-        return DungeonsGuideMain;
+        return dungeonsGuideMain;
     }
 }

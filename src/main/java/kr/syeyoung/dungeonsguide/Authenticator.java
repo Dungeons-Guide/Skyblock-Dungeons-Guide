@@ -104,36 +104,4 @@ public class Authenticator {
         byte[] result = md.digest();
         return new BigInteger(result).toString(16);
     }
-    public InputStream getInputStream(String resource) throws IOException, BadPaddingException, IllegalBlockSizeException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException {
-        System.out.println("loading "+resource);
-
-        HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN+"resource/resource?class="+ URLEncoder.encode(resource)).openConnection();
-        huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
-        huc.setRequestProperty("Content-Type", "application/json");
-        huc.setRequestProperty("Authorization", token);
-        huc.setDoInput(true);
-        huc.setDoOutput(true);
-
-        InputStream inputStream = huc.getInputStream();
-        byte[] bytes = new byte[4];
-        inputStream.read(bytes);
-        int len = ((bytes[0] & 0xFF) << 24) |
-                ((bytes[1] & 0xFF) << 16) |
-                ((bytes[2] & 0xFF) << 8 ) |
-                ((bytes[3] & 0xFF));
-        while(inputStream.available() < len);
-        byte[] pubKey = new byte[len];
-        inputStream.read(pubKey);
-
-        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
-        byte[] byteEncrypted = pubKey;
-        cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
-        byte[] bytePlain = cipher.doFinal(byteEncrypted);
-
-        cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
-        SecretKeySpec keySpec = new SecretKeySpec(bytePlain, "AES");
-        IvParameterSpec ivSpec = new IvParameterSpec(bytePlain);
-        cipher.init(Cipher.DECRYPT_MODE,keySpec,ivSpec);
-        return new CipherInputStream(inputStream, cipher);
-    }
 }
