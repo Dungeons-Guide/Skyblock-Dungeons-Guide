@@ -43,7 +43,6 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             return;
         }
         String watsaid = TextUtils.stripColor(ch2.split(":")[1]).trim();
-        System.out.println(watsaid);
         boolean foundMatch = false;
         for (Pattern p:patternList) {
             if (p.matcher(watsaid).matches()) {
@@ -57,7 +56,6 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             final BlockPos low = getDungeonRoom().getMin();
             final BlockPos high = getDungeonRoom().getMax();
             World w = getDungeonRoom().getContext().getWorld();
-            System.out.println(name);
             List<EntityArmorStand> armor = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
                 @Override
                 public boolean apply(@Nullable EntityArmorStand input) {

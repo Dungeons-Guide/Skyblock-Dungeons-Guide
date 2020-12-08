@@ -143,26 +143,16 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
         queue.addLast(new Point(startX, startY));
         iceCaveColors[startY][startX] = startPoint;
 
-        for (int y = 0; y < iceCave.length; y ++) {
-            for (int x = 0; x < iceCave[y].length; x++) {
-                System.out.print((startX == x && startY == y)? "S\t":iceCave[y][x]+"\t");
-            }
-            System.out.println();
-        }
-
         while (queue.size() != 0) {
             Point currPos = queue.pollFirst();
-//            System.out.println(currPos);
-            // traverse adjacent nodes while sliding on the ice
             for (Direction dir : Direction.values()) {
                 Point nextPos = move(iceCave, iceCaveColors, currPos, dir);
                 if (nextPos != null) {
                     queue.addLast(nextPos);
                     iceCaveColors[nextPos.getY()][nextPos.getX()] = new Point(currPos.getX(), currPos.getY());
                     if (isEnd.apply(nextPos)) {
-                        // we found the end point
                         List<Point> route = new ArrayList<Point>();
-                        Point tmp = currPos;  // if we start from nextPos we will count one too many edges
+                        Point tmp = currPos;
                         int count = 0;
                         route.add(nextPos);
                         route.add(currPos);
@@ -171,7 +161,6 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
                             tmp = iceCaveColors[tmp.getY()][tmp.getX()];
                             route.add(tmp);
                         }
-                        System.out.println(route);
                         return route;
                     }
                 }

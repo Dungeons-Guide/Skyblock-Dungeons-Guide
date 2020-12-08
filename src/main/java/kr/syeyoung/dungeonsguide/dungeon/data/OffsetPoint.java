@@ -40,7 +40,6 @@ public class OffsetPoint implements Cloneable, Serializable {
     public BlockPos toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
         int rot = dungeonRoom.getRoomMatcher().getRotation();
         Vector2d rot2 = new Vector2d(x,z);
-//        System.out.println("Before rot " +rot2);
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot2 = VectorUtils.rotateCounterClockwise(rot2);
             if (i % 2 == 0) {
@@ -49,7 +48,6 @@ public class OffsetPoint implements Cloneable, Serializable {
                 rot2.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1;
             }
         }
-//        System.out.println("After rot "+rot+" / "+rot2);
 
         return new BlockPos(rot2.x, y, rot2.y);
     }

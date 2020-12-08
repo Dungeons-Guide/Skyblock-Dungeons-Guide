@@ -44,7 +44,6 @@ public class DungeonsGuideMain
         String token = null;
         try {
             token = authenticator.authenticate();
-            System.out.println(token);
             if (token != null) {
                 classLoader = new NetworkClassLoader(authenticator, DungeonsGuideMain.class.getClassLoader());
 

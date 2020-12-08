@@ -171,7 +171,6 @@ public class WaterBoard {
                         int end = node.getX() + offset;
                         int y = node.getY() + 2;
                         int y2 = node.getY() + 1;
-                        System.out.println("Y Change detected :: offset: "+offset+" start: "+start+" end" + end + " detect X"+node.getX());
 
                         boolean visited_offsetPt = false;
                         for (int x = start; (start < end) ? (x <= end) : (x >= end); x += (start < end) ?1:-1){
@@ -191,21 +190,17 @@ public class WaterBoard {
                                         break;
                                     }
                                     if (!isConditionContradicting) {
-                                        System.out.println("Found midBlock, exiting check");
                                         r.getConditionList().add(condition);
                                         break;
                                     }
                                 }
                             }
                             node2 = getNodeAt(x, y);
-                            System.out.println("Checking "+x+","+y+"to me non water go throughable:: "+node2);
                             if ((node2.canWaterGoThrough() && node2.getCondition() == null)) {
-                                System.out.println("Contradiction found!");
                                 r.getConditionList().add(new WaterConditionContradict());
                                 return;
                             } else {
                                 if (node2.getCondition() != null) {
-                                    System.out.println("Adding Condition:: " + node2.getCondition().invert());
                                     r.getConditionList().add(node2.getCondition().invert());
                                 }
                             }

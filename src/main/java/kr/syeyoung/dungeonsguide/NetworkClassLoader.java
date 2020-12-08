@@ -54,8 +54,6 @@ public class NetworkClassLoader extends ClassLoader {
                 ((bytes[2] & 0xFF) << 8 ) |
                 ((bytes[3] & 0xFF));
 
-        System.out.println("Expecting "+length);
-
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         int totalLen = 0;
         try {
@@ -70,6 +68,7 @@ public class NetworkClassLoader extends ClassLoader {
         byte[] byte1 = byteStream.toByteArray();
         byte[] byte2 = new byte[(int) length];
         System.arraycopy(byte1, 0, byte2, 0, byte2.length);
+        inputStream.close();
         return byte2;
     }
 }

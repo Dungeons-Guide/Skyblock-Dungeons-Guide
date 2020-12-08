@@ -103,7 +103,6 @@ public class MTextField extends MPanel {
 
         int relStartT = relMouseX-3;
         int offseted = relStartT + xOffset;
-        System.out.println("click!" +offseted);
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 

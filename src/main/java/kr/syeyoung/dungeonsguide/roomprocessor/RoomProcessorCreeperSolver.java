@@ -98,7 +98,6 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
                 prismarines.add(otherPrismarine);
                 poses.add(new BlockPos[] {allInBox, otherPrismarine});
-                System.out.println("Found Set :: "+allInBox + " / "+otherPrismarine + " / "+opposite+" / "+pos +" / "+position);
             }
         }
         bugged = false;

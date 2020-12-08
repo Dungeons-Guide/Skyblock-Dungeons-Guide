@@ -27,7 +27,6 @@ public class GeneralEditPane extends MPanel {
 
     public GeneralEditPane(final DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
-System.out.println("building");
         {
             MLabel la;
             uuid = new MLabelAndElement("Room UUID: ", la = new MLabel());
@@ -39,7 +38,6 @@ System.out.println("building");
             MTextField la = new MTextField() {
                 @Override
                 public void edit(String str) {
-                    System.out.println(str);
                     dungeonRoom.getDungeonRoomInfo().setName(str);
                 }
             };
@@ -112,7 +110,6 @@ System.out.println("building");
             save.setBackgroundColor(Color.green);
             save.setBounds(new Rectangle(0,140,bounds.width, 20));
             add(save);
-            System.out.println(save.getBounds());
         }
     }
 

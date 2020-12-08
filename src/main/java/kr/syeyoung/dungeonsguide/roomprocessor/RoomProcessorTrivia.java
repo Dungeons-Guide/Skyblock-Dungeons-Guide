@@ -73,7 +73,6 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
         String ch2 = chat.getUnformattedText();
-        System.out.println(ch2 + " / "+chat.getFormattedText());
         if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
             questionDialogStart = true;
             questionDialog.clear();
@@ -93,7 +92,6 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
         String answerA = getAnswer(questionDialog.get(2));
         String answerB = getAnswer(questionDialog.get(3));
         String answerC = getAnswer(questionDialog.get(4));
-        System.out.println("question ::"+question+" :: answerC"+answerC);
         String theRealAnswer = match(question, answerA, answerB, answerC);
 
         if (theRealAnswer == null)

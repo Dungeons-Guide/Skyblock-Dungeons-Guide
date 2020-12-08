@@ -23,7 +23,6 @@ public class BoxPuzzleSolvingThread extends Thread {
         this.playerX = playerX;
         this.playerY = playerY;
         this.callback = onDone;
-        System.out.println("new solving thread");
     }
 
     Route solution = null;

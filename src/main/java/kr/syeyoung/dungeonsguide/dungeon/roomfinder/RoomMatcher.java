@@ -49,15 +49,12 @@ public class RoomMatcher {
         for (int i = 0; i < rotation; i++)
             res = ArrayUtils.rotateCounterClockwise(res);
 
-        System.out.println("Trying to match "+dungeonRoomInfo.getUuid().toString()+" / "+dungeonRoomInfo.getName()+"... at rotation "+rotation);
-
         for (int z = 0; z < res.length; z ++) {
             for (int x = 0; x < res[0].length; x++) {
                 int data = res[z][x];
                 if (data == -1) continue;
                 Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
                 if (b == null || Block.getIdFromBlock(b) != data) {
-                    System.out.println("Match failed at offset X"+x+" / Z"+z+". expected "+data+" but found "+b +" ("+Block.getIdFromBlock(b)+")");
                     return false;
                 }
             }

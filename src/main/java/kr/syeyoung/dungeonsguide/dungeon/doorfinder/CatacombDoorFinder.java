@@ -22,7 +22,6 @@ public class CatacombDoorFinder implements StartDoorFinder {
         Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
             @Override
             public boolean apply(EntityArmorStand input) {
-                System.out.println(input.getName());
                 return input.getName().equals("§bMort");
             }
         });
@@ -48,7 +47,6 @@ public class CatacombDoorFinder implements StartDoorFinder {
         Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
             @Override
             public boolean apply(EntityArmorStand input) {
-                System.out.println(input.getName());
                 return input.getName().equals("§bMort");
             }
         });

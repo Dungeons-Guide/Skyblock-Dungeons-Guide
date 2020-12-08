@@ -36,7 +36,6 @@ public class EventListener {
                 SkyblockStatus skyblockStatus = (SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                  {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
-    //                System.out.println(isOnDungeon);
                     skyblockStatus.updateStatus();
                     if (!skyblockStatus.isOnDungeon()) {
                         skyblockStatus.setContext(null);
