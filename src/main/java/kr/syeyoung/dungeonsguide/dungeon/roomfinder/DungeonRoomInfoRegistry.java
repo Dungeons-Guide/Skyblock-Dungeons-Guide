@@ -68,6 +68,7 @@ public class DungeonRoomInfoRegistry {
         uuidMap.clear();
         Authenticator authenticator = DungeonsGuide.getDungeonsGuide().getAuthenticator();
         InputStream inputStream = authenticator.getInputStream("roomdata/datas.txt");
+        inputStream.read(new byte[4]);
         BufferedReader br = new BufferedReader(new InputStreamReader(inputStream));
         String name;
         while ((name = br.readLine()) != null) {
@@ -75,6 +76,7 @@ public class DungeonRoomInfoRegistry {
             if (name.endsWith(".roomdata")) continue;
             try {
                 InputStream fis = authenticator.getInputStream(name);
+                fis.read(new byte[4]);
                 ObjectInputStream ois = new ObjectInputStream(fis);
                 DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
                 ois.close();

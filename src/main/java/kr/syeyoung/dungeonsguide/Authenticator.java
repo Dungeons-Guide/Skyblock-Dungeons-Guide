@@ -1,7 +1,5 @@
 package kr.syeyoung.dungeonsguide;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.interfaces.DecodedJWT;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
@@ -52,12 +50,18 @@ public class Authenticator {
 
         String jwt = requestAuth(session.getProfile());
         MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getMinecraft().getSessionService();
-        DecodedJWT jwt2 = JWT.decode(jwt);
-        String hash = calculateAuthHash(DatatypeConverter.parseBase64Binary(jwt2.getClaim("sharedSecret").asString()),
-                DatatypeConverter.parseBase64Binary(jwt2.getClaim("publicKey").asString()));
+        JsonObject jwt2 = parseJWT(jwt);
+        String hash = calculateAuthHash(DatatypeConverter.parseBase64Binary(jwt2.get("sharedSecret").getAsString()),
+                DatatypeConverter.parseBase64Binary(jwt2.get("publicKey").getAsString()));
         yggdrasilMinecraftSessionService.joinServer(session.getProfile(), token, hash);
         this.token = requestAuth2(jwt, keyPair.getPublic());
         return this.token;
+    }
+
+    public JsonObject parseJWT(String jwt) {
+        String payload = jwt.split("\\.")[1].replace("+", "-").replace("/", "_");
+        String json = new String(DatatypeConverter.parseBase64Binary(payload));
+        return (JsonObject) new JsonParser().parse(json);
     }
 
     private String requestAuth(GameProfile profile) throws IOException {

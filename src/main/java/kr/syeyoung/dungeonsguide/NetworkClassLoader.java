@@ -44,16 +44,26 @@ public class NetworkClassLoader extends ClassLoader {
     }
 
     private byte[] loadClassFromFile(String fileName) throws BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException {
-        byte[] buffer;
         InputStream inputStream = authenticator.getInputStream(fileName.replace('.', '/')+ ".class");
+        long length = 0;
+        {
+            for (int i = 4; i >= 0; i--) {
+                length |= (inputStream.read() & 0xFF) << i * 8;
+            }
+        }
+
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         int nextValue = 0;
         try {
-            while ( (nextValue = inputStream.read()) != -1 ) {
-                byteStream.write(nextValue);
+            byte[] buffer = new byte[1024];
+            while ( (inputStream.read(buffer)) != -1 ) {
+                byteStream.write(buffer);
             }
         } catch (Exception e) {}
-        buffer = byteStream.toByteArray();
-        return buffer;
+        byte[] byte1 = byteStream.toByteArray();
+        byte[] byte2 = new byte[(int) length];
+        System.arraycopy(byte1, 0, byte2, 0, byte2.length);
+
+        return byte2;
     }
 }
