@@ -56,8 +56,8 @@ public class Authenticator {
         String hash = calculateAuthHash(DatatypeConverter.parseBase64Binary(jwt2.getClaim("sharedSecret").asString()),
                 DatatypeConverter.parseBase64Binary(jwt2.getClaim("publicKey").asString()));
         yggdrasilMinecraftSessionService.joinServer(session.getProfile(), token, hash);
-        token = requestAuth2(jwt, keyPair.getPublic());
-        return token;
+        this.token = requestAuth2(jwt, keyPair.getPublic());
+        return this.token;
     }
 
     private String requestAuth(GameProfile profile) throws IOException {
@@ -115,11 +115,13 @@ public class Authenticator {
                 ((bytes[1] & 0xFF) << 16) |
                 ((bytes[2] & 0xFF) << 8 ) |
                 ((bytes[3] & 0xFF));
-
+        System.out.println(len);
+        while(inputStream.available() < len);
         byte[] pubKey = new byte[len];
         inputStream.read(pubKey);
+        System.out.println(DatatypeConverter.printBase64Binary(pubKey));
 
-        Cipher cipher = Cipher.getInstance("RSA");
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         byte[] byteEncrypted = pubKey;
         cipher.init(Cipher.DECRYPT_MODE, keyPair.getPrivate());
         byte[] bytePlain = cipher.doFinal(byteEncrypted);

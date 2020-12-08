@@ -48,9 +48,11 @@ public class NetworkClassLoader extends ClassLoader {
         InputStream inputStream = authenticator.getInputStream(fileName.replace('.', '/')+ ".class");
         ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
         int nextValue = 0;
-        while ( (nextValue = inputStream.read()) != -1 ) {
-            byteStream.write(nextValue);
-        }
+        try {
+            while ( (nextValue = inputStream.read()) != -1 ) {
+                byteStream.write(nextValue);
+            }
+        } catch (Exception e) {}
         buffer = byteStream.toByteArray();
         return buffer;
     }
