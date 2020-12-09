@@ -48,7 +48,7 @@ public class DungeonsGuideMain
             if (token != null) {
                 URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory());
                 LaunchClassLoader launchClassLoader = (LaunchClassLoader) DungeonsGuideMain.class.getClassLoader();
-                launchClassLoader.addURL(new URL("dungeonsguide://"+token+"@/"));
+                launchClassLoader.addURL(new URL("dungeonsguide:///"));
 
                 try {
                     dungeonsGuideInterface = new DungeonsGuide();

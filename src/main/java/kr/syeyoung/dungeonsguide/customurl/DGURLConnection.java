@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.customurl;
 import kr.syeyoung.dungeonsguide.Authenticator;
 import kr.syeyoung.dungeonsguide.DungeonsGuideMain;
 import lombok.SneakyThrows;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 
 import javax.crypto.Cipher;
 import javax.crypto.CipherInputStream;
@@ -22,6 +23,11 @@ public class DGURLConnection extends URLConnection {
 
     protected DGURLConnection(URL url) {
         super(url);
+        try {
+            connect();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @SneakyThrows
@@ -30,12 +36,20 @@ public class DGURLConnection extends URLConnection {
         if (!(url.getPath().contains("kr/syeyoung") ||url.getPath().contains("roomdata"))) return;
         this.connected = true;
 
-        System.out.println("loading "+url.getPath().substring(1));
+        boolean classLoader = false;
+        for (StackTraceElement ste:Thread.currentThread().getStackTrace()){
+            if (ste.getClassName().equals("net.minecraft.launchwrapper.LaunchClassLoader")) {
+                classLoader = true;
+            }
+        }
+
+
+        System.out.println("loading "+url.getPath().substring(1) +" called from classloader "+classLoader);
 
         HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN+"resource/resource?class="+ URLEncoder.encode(url.getPath().substring(1))).openConnection();
         huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         huc.setRequestProperty("Content-Type", "application/json");
-        huc.setRequestProperty("Authorization", url.getUserInfo());
+        huc.setRequestProperty("Authorization", (url.getUserInfo() == null && classLoader) ? DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator().getToken() : url.getUserInfo());
         huc.setDoInput(true);
         huc.setDoOutput(true);
 
