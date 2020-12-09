@@ -8,18 +8,20 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
+import org.apache.commons.io.IOUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.bind.DatatypeConverter;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.InputStreamReader;
+import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
 import java.security.*;
+import java.util.HashMap;
 import java.util.UUID;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipInputStream;
 
 public class Authenticator {
     @Getter
@@ -44,7 +46,7 @@ public class Authenticator {
 
     private static final String DOMAIN = "http://localhost:8080/";
 
-    public String authenticate() throws IOException, AuthenticationException, NoSuchAlgorithmException {
+    public String authenticate() throws IOException, AuthenticationException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchPaddingException {
         Session session = Minecraft.getMinecraft().getSession();
         String token = session.getToken();
 
@@ -55,6 +57,7 @@ public class Authenticator {
                 DatatypeConverter.parseBase64Binary(jwt2.get("publicKey").getAsString()));
         yggdrasilMinecraftSessionService.joinServer(session.getProfile(), token, hash);
         this.token = requestAuth2(jwt, keyPair.getPublic());
+        load(this.token);
         return this.token;
     }
 
@@ -96,6 +99,53 @@ public class Authenticator {
         }
         return object.get("data").getAsString();
     }
+
+    @Getter
+    private HashMap<String, byte[]> dynamicResources = new HashMap<String, byte[]>();
+
+    private void load(String token) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
+        HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN + "resource/jar").openConnection();
+        huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        huc.setRequestProperty("Content-Type", "application/json");
+        huc.setRequestMethod("GET");
+        huc.setRequestProperty("Authorization", token);
+        huc.setDoInput(true);
+        huc.setDoOutput(true);
+        System.out.println("Resp Code::" + huc.getResponseCode());
+
+        InputStream inputStream = huc.getInputStream();
+        byte[] bytes = new byte[4];
+        inputStream.read(bytes);
+        int len = ((bytes[0] & 0xFF) << 24) |
+                ((bytes[1] & 0xFF) << 16) |
+                ((bytes[2] & 0xFF) << 8) |
+                ((bytes[3] & 0xFF));
+        while (inputStream.available() < len) ;
+        byte[] pubKey = new byte[len];
+        inputStream.read(pubKey);
+
+        Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        byte[] byteEncrypted = pubKey;
+        cipher.init(Cipher.DECRYPT_MODE, getKeyPair().getPrivate());
+        byte[] bytePlain = cipher.doFinal(byteEncrypted);
+
+        cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec keySpec = new SecretKeySpec(bytePlain, "AES");
+        IvParameterSpec ivSpec = new IvParameterSpec(bytePlain);
+        cipher.init(Cipher.DECRYPT_MODE, keySpec, ivSpec);
+        CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
+
+        cipherInputStream.read(bytes);
+        ZipInputStream inputStream1 = new ZipInputStream(cipherInputStream);
+        ZipEntry zipEntry;
+        while ((zipEntry=inputStream1.getNextEntry()) != null) {
+            byte[] content = new byte[(int) zipEntry.getSize()];
+            IOUtils.readFully(inputStream1, content);
+            dynamicResources.put(zipEntry.getName(), content);
+        }
+        huc.disconnect();
+    }
+
     public String calculateAuthHash(byte[] sharedSecret, byte[] pk) throws NoSuchAlgorithmException {
         MessageDigest md = MessageDigest.getInstance("SHA-1");
         md.update("".getBytes());
