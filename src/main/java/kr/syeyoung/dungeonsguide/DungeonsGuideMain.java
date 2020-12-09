@@ -41,59 +41,70 @@ public class DungeonsGuideMain
         dungeonsGuideInterface.init(event);
     }
 
+//    @EventHandler
+//    public void pre(FMLPreInitializationEvent event) {
+//        Authenticator authenticator = new Authenticator();
+//        String token = null;
+//        try {
+//            token = authenticator.authenticate();
+//            if (token != null) {
+//                dungeonsGuideMain = this;
+//                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(authenticator));
+//                LaunchClassLoader launchClassLoader = (LaunchClassLoader) DungeonsGuideMain.class.getClassLoader();
+//                launchClassLoader.addURL(new URL("dungeonsguide:///"));
+//
+//                try {
+//                    dungeonsGuideInterface = new DungeonsGuide(authenticator);
+//                    dungeonsGuideInterface.pre(event);
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//
+//                    error(new String[]{
+//                            "Couldn't load Dungeons Guide",
+//                            "Please contact developer if this problem persists after restart"
+//                    });
+//                }
+//                return;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }  catch (AuthenticationException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchPaddingException e) {
+//            e.printStackTrace();
+//        } catch (InvalidKeyException e) {
+//            e.printStackTrace();
+//        } catch (InvalidAlgorithmParameterException e) {
+//            e.printStackTrace();
+//        } catch (IllegalBlockSizeException e) {
+//            e.printStackTrace();
+//        } catch (BadPaddingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        error(new String[]{
+//                "Can't validate current installation of Dungeons Guide",
+//                "Steps to fix",
+//                "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
+//                "2. restart minecraft launcher",
+//                "3. make sure you're on the right account",
+//                "4. restart your computer",
+//                "If the problem persists after following these steps, please contact developer",
+//                "If you haven't purchased the mod, please consider doing so"
+//        });
+//    }
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
-        Authenticator authenticator = new Authenticator();
-        String token = null;
-        try {
-            token = authenticator.authenticate();
-            if (token != null) {
                 dungeonsGuideMain = this;
-                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(authenticator));
-                LaunchClassLoader launchClassLoader = (LaunchClassLoader) DungeonsGuideMain.class.getClassLoader();
-                launchClassLoader.addURL(new URL("dungeonsguide:///"));
-
+                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(null));
                 try {
-                    dungeonsGuideInterface = new DungeonsGuide(authenticator);
+                    dungeonsGuideInterface = new DungeonsGuide(null);
                     dungeonsGuideInterface.pre(event);
                 } catch (Exception e) {
                     e.printStackTrace();
-
-                    error(new String[]{
-                            "Couldn't load Dungeons Guide",
-                            "Please contact developer if this problem persists after restart"
-                    });
                 }
-                return;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  catch (AuthenticationException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        }
-
-        error(new String[]{
-                "Can't validate current installation of Dungeons Guide",
-                "Steps to fix",
-                "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
-                "2. restart minecraft launcher",
-                "3. make sure you're on the right account",
-                "4. restart your computer",
-                "If the problem persists after following these steps, please contact developer",
-                "If you haven't purchased the mod, please consider doing so"
-        });
     }
 
     public void error(final String[] s_msg) {

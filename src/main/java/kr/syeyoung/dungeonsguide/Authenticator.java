@@ -146,7 +146,8 @@ public class Authenticator {
                 baos.write(buffer, 0, size);
             }
 
-            dynamicResources.put(zipEntry.getName(), buffer);
+            System.out.println(zipEntry.getName());
+            dynamicResources.put(zipEntry.getName(), baos.toByteArray());
         }
         huc.disconnect();
     }

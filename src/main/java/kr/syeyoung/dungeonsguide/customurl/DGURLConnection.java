@@ -31,8 +31,12 @@ public class DGURLConnection extends URLConnection {
     }
     @Override
     public InputStream getInputStream() throws IOException {
-        String path  = url.getPath().substring(1);
-        if (!authenticator.getDynamicResources().containsKey(path)) throw new FileNotFoundException();
-        return new ByteArrayInputStream(authenticator.getDynamicResources().get(path));
+        if (authenticator != null) {
+            String path = url.getPath().substring(1);
+            if (!authenticator.getDynamicResources().containsKey(path)) throw new FileNotFoundException();
+            return new ByteArrayInputStream(authenticator.getDynamicResources().get(path));
+        } else {
+            return DGURLConnection.class.getResourceAsStream(url.getPath());
+        }
     }
 }
