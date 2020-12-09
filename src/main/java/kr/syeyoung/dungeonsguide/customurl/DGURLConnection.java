@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.customurl;
 
 import kr.syeyoung.dungeonsguide.Authenticator;
+import kr.syeyoung.dungeonsguide.DungeonsGuideMain;
 import lombok.SneakyThrows;
 
 import javax.crypto.Cipher;
@@ -17,30 +18,24 @@ import java.net.URLConnection;
 import java.net.URLEncoder;
 
 public class DGURLConnection extends URLConnection {
-    private Authenticator authenticator;
-    protected DGURLConnection(URL url, Authenticator authenticator) {
-        super(url);
-        this.authenticator = authenticator;
-        try {
-            connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
-    }
-
     private static final String DOMAIN = "http://localhost:8080/";
+
+    protected DGURLConnection(URL url) {
+        super(url);
+    }
 
     @SneakyThrows
     @Override
     public void connect() throws IOException {
+        if (!(url.getPath().contains("kr/syeyoung") ||url.getPath().contains("roomdata"))) return;
         this.connected = true;
 
-        System.out.println("loading "+url.getPath());
+        System.out.println("loading "+url.getPath().substring(1));
 
-        HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN+"resource/resource?class="+ URLEncoder.encode(url.getPath())).openConnection();
+        HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN+"resource/resource?class="+ URLEncoder.encode(url.getPath().substring(1))).openConnection();
         huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         huc.setRequestProperty("Content-Type", "application/json");
-        huc.setRequestProperty("Authorization", authenticator.getToken());
+        huc.setRequestProperty("Authorization", url.getUserInfo());
         huc.setDoInput(true);
         huc.setDoOutput(true);
 
@@ -57,7 +52,7 @@ public class DGURLConnection extends URLConnection {
 
         Cipher cipher = Cipher.getInstance("RSA/ECB/PKCS1Padding");
         byte[] byteEncrypted = pubKey;
-        cipher.init(Cipher.DECRYPT_MODE, authenticator.getKeyPair().getPrivate());
+        cipher.init(Cipher.DECRYPT_MODE, DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator().getKeyPair().getPrivate());
         byte[] bytePlain = cipher.doFinal(byteEncrypted);
 
         cipher = Cipher.getInstance("AES/CBC/PKCS5Padding");
