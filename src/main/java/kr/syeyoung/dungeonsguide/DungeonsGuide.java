@@ -33,6 +33,12 @@ public class DungeonsGuide implements DungeonsGuideInterface {
 
     public static boolean DEBUG = false;
 
+    @Getter
+    private Authenticator authenticator;
+    public DungeonsGuide(Authenticator authenticator) {
+        this.authenticator = authenticator;
+    }
+
     public static void sendDebugChat(IChatComponent iChatComponent) {
         if (DEBUG)
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);

@@ -33,25 +33,23 @@ public class DungeonsGuideMain
     {
 
         dungeonsGuideMain = this;
-
         dungeonsGuideInterface.init(event);
     }
 
-    @Getter
-    private Authenticator authenticator;
     @EventHandler
     public void pre(FMLPreInitializationEvent event) {
-        authenticator = new Authenticator();
+        Authenticator authenticator = new Authenticator();
         String token = null;
         try {
             token = authenticator.authenticate();
             if (token != null) {
-                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory());
+                dungeonsGuideMain = this;
+                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(authenticator));
                 LaunchClassLoader launchClassLoader = (LaunchClassLoader) DungeonsGuideMain.class.getClassLoader();
                 launchClassLoader.addURL(new URL("dungeonsguide:///"));
 
                 try {
-                    dungeonsGuideInterface = new DungeonsGuide();
+                    dungeonsGuideInterface = new DungeonsGuide(authenticator);
                     dungeonsGuideInterface.pre(event);
                 } catch (Exception e) {
                     e.printStackTrace();
