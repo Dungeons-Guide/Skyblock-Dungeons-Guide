@@ -69,10 +69,10 @@ public class DungeonRoomInfoRegistry {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
-        URL url = new URL("dungeonsguide://"+DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator().getToken()+"@/roomdatas/data.txt");
+        URL url = new URL("dungeonsguide://"+DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator().getToken()+"@/roomdata/datas.txt");
         List<String> lines = IOUtils.readLines(url.openConnection().getInputStream());
-        for (String name  : lines) {
-            if (name.endsWith(".roomdata")) continue;
+        for (String name : lines) {
+            if (!name.endsWith(".roomdata")) continue;
             try {
                 InputStream fis = new URL("dungeonsguide://"+DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator().getToken()+"@/"+name).openStream();
                 ObjectInputStream ois = new ObjectInputStream(fis);

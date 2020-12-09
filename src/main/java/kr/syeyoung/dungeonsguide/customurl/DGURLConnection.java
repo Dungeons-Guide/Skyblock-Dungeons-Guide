@@ -23,12 +23,14 @@ public class DGURLConnection extends URLConnection {
 
     protected DGURLConnection(URL url) {
         super(url);
-        try {
-            connect();
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
     }
+
+    @Override
+    public void setUseCaches(boolean b) {
+        checkExist = !b;
+    }
+    private boolean checkExist = false;
+    private boolean exists= false;
 
     @SneakyThrows
     @Override
@@ -49,9 +51,15 @@ public class DGURLConnection extends URLConnection {
         HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN+"resource/resource?class="+ URLEncoder.encode(url.getPath().substring(1))).openConnection();
         huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         huc.setRequestProperty("Content-Type", "application/json");
+        huc.setRequestMethod(checkExist ? "HEAD" : "GET");
         huc.setRequestProperty("Authorization", (url.getUserInfo() == null && classLoader) ? DungeonsGuideMain.getDungeonsGuideMain().getAuthenticator().getToken() : url.getUserInfo());
         huc.setDoInput(true);
         huc.setDoOutput(true);
+
+        exists = huc.getResponseCode() != 404;
+        if (checkExist) {
+            return;
+        }
 
         InputStream inputStream = huc.getInputStream();
         byte[] bytes = new byte[4];
@@ -75,6 +83,7 @@ public class DGURLConnection extends URLConnection {
         cipher.init(Cipher.DECRYPT_MODE,keySpec,ivSpec);
         CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
 
+        cipherInputStream.read(bytes);
         int length = ((bytes[0] & 0xFF) << 24) |
                 ((bytes[1] & 0xFF) << 16) |
                 ((bytes[2] & 0xFF) << 8 ) |
@@ -87,7 +96,7 @@ public class DGURLConnection extends URLConnection {
             while ( (read = cipherInputStream.read(buffer)) != -1 ) {
                 totalLen += read;
                 byteStream.write(buffer, 0, read);
-                if (totalLen >= length) break;;
+                if (totalLen >= length) break;
             }
         } catch (Exception ignored) {}
         byte[] byte1 = byteStream.toByteArray();
@@ -101,6 +110,7 @@ public class DGURLConnection extends URLConnection {
 
     @Override
     public InputStream getInputStream() throws IOException {
+        if (!connected) connect();
         return inputStream;
     }
 }
