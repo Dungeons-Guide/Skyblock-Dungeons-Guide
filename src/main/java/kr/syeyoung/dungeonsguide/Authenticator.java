@@ -139,9 +139,14 @@ public class Authenticator {
         ZipInputStream inputStream1 = new ZipInputStream(cipherInputStream);
         ZipEntry zipEntry;
         while ((zipEntry=inputStream1.getNextEntry()) != null) {
-            byte[] content = new byte[(int) zipEntry.getSize()];
-            IOUtils.readFully(inputStream1, content);
-            dynamicResources.put(zipEntry.getName(), content);
+            byte[] buffer = new byte[256];
+            ByteArrayOutputStream baos = new ByteArrayOutputStream();
+            int size = 0;
+            while((size = inputStream1.read(buffer)) > 0) {
+                baos.write(buffer, 0, size);
+            }
+
+            dynamicResources.put(zipEntry.getName(), buffer);
         }
         huc.disconnect();
     }

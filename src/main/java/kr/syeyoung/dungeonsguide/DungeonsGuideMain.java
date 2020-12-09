@@ -14,8 +14,13 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import javax.crypto.BadPaddingException;
+import javax.crypto.IllegalBlockSizeException;
+import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.net.URL;
+import java.security.InvalidAlgorithmParameterException;
+import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
 @Mod(modid = DungeonsGuideMain.MODID, version = DungeonsGuideMain.VERSION)
@@ -67,12 +72,27 @@ public class DungeonsGuideMain
             e.printStackTrace();
         } catch (NoSuchAlgorithmException e) {
             e.printStackTrace();
+        } catch (NoSuchPaddingException e) {
+            e.printStackTrace();
+        } catch (InvalidKeyException e) {
+            e.printStackTrace();
+        } catch (InvalidAlgorithmParameterException e) {
+            e.printStackTrace();
+        } catch (IllegalBlockSizeException e) {
+            e.printStackTrace();
+        } catch (BadPaddingException e) {
+            e.printStackTrace();
         }
 
         error(new String[]{
                 "Can't validate current installation of Dungeons Guide",
-                "Please contact mod author if you purchased this mod and getting this error",
-                "And if you haven't purchased the mod, please consider doing so"
+                "Steps to fix",
+                "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
+                "2. restart minecraft launcher",
+                "3. make sure you're on the right account",
+                "4. restart your computer",
+                "If the problem persists after following these steps, please contact developer",
+                "If you haven't purchased the mod, please consider doing so"
         });
     }
 
