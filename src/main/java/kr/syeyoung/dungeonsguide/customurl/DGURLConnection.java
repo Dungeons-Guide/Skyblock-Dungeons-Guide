@@ -15,7 +15,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.net.URLEncoder;
 
-public class DGURLConnection extends URLConnection {
+public class DGURLConnection extends HttpURLConnection {
     private static final String DOMAIN = "http://localhost:8080/";
 
     private Authenticator authenticator;
@@ -25,11 +25,6 @@ public class DGURLConnection extends URLConnection {
         this.authenticator = authenticator;
     }
 
-    @Override
-    public void setUseCaches(boolean b) {
-        checkExist = !b;
-    }
-    private boolean checkExist = false;
     private boolean exists= false;
 
     @Override
@@ -51,14 +46,14 @@ public class DGURLConnection extends URLConnection {
             HttpURLConnection huc = (HttpURLConnection) new URL(DOMAIN + "resource/resource?class=" + URLEncoder.encode(url.getPath().substring(1))).openConnection();
             huc.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
             huc.setRequestProperty("Content-Type", "application/json");
-            huc.setRequestMethod(checkExist ? "HEAD" : "GET");
+            huc.setRequestMethod(method.equals("HEAD") ? "HEAD" : "GET");
             huc.setRequestProperty("Authorization", (url.getUserInfo() == null && classLoader) ? authenticator.getToken() : url.getUserInfo());
             huc.setDoInput(true);
             huc.setDoOutput(true);
-            System.out.println("Resp Code::" + huc.getResponseCode() + "/ " + checkExist);
+            System.out.println("Resp Code::" + huc.getResponseCode() + "/ " + method);
 
             exists = huc.getResponseCode() != 404;
-            if (checkExist) {
+            if (method.equals("HEAD")) {
                 return;
             }
 
@@ -116,7 +111,16 @@ public class DGURLConnection extends URLConnection {
     @Override
     public InputStream getInputStream() throws IOException {
         if (!connected) connect();
-        if (checkExist && !exists) throw new FileNotFoundException();
+        if (method.equals("HEAD") && !exists) throw new FileNotFoundException();
         return inputStream;
+    }
+
+    @Override
+    public void disconnect() {
+    }
+
+    @Override
+    public boolean usingProxy() {
+        return false;
     }
 }
