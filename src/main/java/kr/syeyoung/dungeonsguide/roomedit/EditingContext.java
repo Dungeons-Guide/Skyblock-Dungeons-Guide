@@ -1,8 +1,10 @@
 package kr.syeyoung.dungeonsguide.roomedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import lombok.Data;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
@@ -37,10 +39,19 @@ public class EditingContext {
 
     private Stack<GuiScreen> guiStack = new Stack<GuiScreen>();
 
+    public boolean isEditingSecrets() {
+        return guiDungeonRoomEdit.isEditingSelected();
+    }
+    public void endEditing() {
+        guiDungeonRoomEdit.endEditing();
+    }
+
+    private GuiDungeonRoomEdit guiDungeonRoomEdit;
     @Getter
     private GuiScreen current;
 
     public void openGui(GuiScreen gui) {
+        if (gui instanceof GuiDungeonRoomEdit) guiDungeonRoomEdit = (GuiDungeonRoomEdit) gui;
         guiStack.push(current);
         this.current = gui;
         Minecraft.getMinecraft().displayGuiScreen(gui);
@@ -52,6 +63,7 @@ public class EditingContext {
     }
 
     public void reopen() {
+        guiDungeonRoomEdit.endEditing();
         Minecraft.getMinecraft().displayGuiScreen(current);
     }
 }

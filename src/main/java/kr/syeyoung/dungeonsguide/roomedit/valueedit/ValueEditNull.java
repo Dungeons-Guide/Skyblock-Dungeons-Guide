@@ -9,7 +9,7 @@ public class ValueEditNull implements ValueEditCreator {
     }
 
     @Override
-    public ActuallyClonable createDefaultValue(Parameter parameter) {
+    public Cloneable createDefaultValue(Parameter parameter) {
         return null;
     }
 

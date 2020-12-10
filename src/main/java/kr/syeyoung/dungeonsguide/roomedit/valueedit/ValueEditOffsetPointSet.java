@@ -6,8 +6,7 @@ import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MOffsetPoint;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MParameter;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MValue;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
@@ -17,7 +16,6 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
-import java.util.UUID;
 
 public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetPointSet> {
     private Parameter parameter;
@@ -36,7 +34,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
         ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().remove(offsetPoint);
         Iterator<MPanel> iterator = MParameters.iterator();
         while (iterator.hasNext()) {
-            MOffsetPoint panel = (MOffsetPoint) iterator.next();
+            MValue panel = (MValue) iterator.next();
             if (panel.getData() == offsetPoint) {
                 iterator.remove();
                 break;
@@ -131,10 +129,10 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                 @Override
                 public void run() {
                     OffsetPoint offsetPoint = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
-                    MOffsetPoint mOffsetPoint;
-                    MParameters.add(mOffsetPoint = new MOffsetPoint(ValueEditOffsetPointSet.this, offsetPoint));
+                    MValue mValue;
+                    MParameters.add(mValue = new MValue(offsetPoint, buildAddonsFor(offsetPoint)));
                     ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().add(offsetPoint);
-                    mOffsetPoint.setSize(new Dimension(bounds.width, 20));
+                    mValue.setSize(new Dimension(bounds.width, 20));
                 }
             });
 
@@ -156,8 +154,24 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
             add(addSet);
         }
         for (OffsetPoint offsetPoint : ((OffsetPointSet)parameter.getNewData()).getOffsetPointList()) {
-            MParameters.add(new MOffsetPoint(this, offsetPoint));
+            MParameters.add(new MValue(offsetPoint, buildAddonsFor(offsetPoint)));
         }
+    }
+
+    public List<MPanel> buildAddonsFor(final OffsetPoint offsetPoint) {
+        ArrayList<MPanel> panels = new ArrayList<MPanel>();
+        MButton mButton = new MButton();
+        mButton.setText("Delete");
+        mButton.setForeground(Color.white);
+        mButton.setBackgroundColor(Color.red);
+        mButton.setOnActionPerformed(new Runnable() {
+            @Override
+            public void run() {
+                delete(offsetPoint);
+            }
+        });
+        panels.add(mButton);
+        return panels;
     }
 
     @Override
@@ -187,7 +201,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
     public void addAll(List<OffsetPoint> blockPoses) {
         ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().addAll(blockPoses);
         for (OffsetPoint blockPose : blockPoses) {
-            MParameters.add(new MOffsetPoint(this, blockPose));
+            MParameters.add(new MValue(blockPose, buildAddonsFor(blockPose)));
         }
     }
 

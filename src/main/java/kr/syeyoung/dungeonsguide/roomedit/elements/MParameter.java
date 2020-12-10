@@ -4,7 +4,7 @@ import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
-import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
+import kr.syeyoung.dungeonsguide.roomedit.panes.DynamicEditor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
@@ -20,9 +20,9 @@ public class MParameter extends MPanel {
 
     @Getter @Setter
     private Parameter parameter;
-    private ProcessorParameterEditPane processorParameterEditPane;
+    private DynamicEditor processorParameterEditPane;
 
-    public MParameter(final Parameter parameter, ProcessorParameterEditPane processorParameterEditPane) {
+    public MParameter(final Parameter parameter, DynamicEditor processorParameterEditPane) {
         this.processorParameterEditPane = processorParameterEditPane;
         this.add(this.label = new MLabel() {
             @Override

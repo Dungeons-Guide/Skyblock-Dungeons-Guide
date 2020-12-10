@@ -1,12 +1,13 @@
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
+import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.roomedit.panes.DynamicEditor;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -17,85 +18,57 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.List;
 import java.io.IOException;
 
-public class GuiDungeonOffsetPointEdit extends GuiScreen {
-    private MPanel mainPanel = new MPanel();
-    @Getter
-    private OffsetPoint offsetPoint;
+public class GuiDungeonValueEdit extends GuiScreen {
+
+    private MPanel mainPanel = new MPanel() {
+        @Override
+        public void onBoundsUpdate() {
+            for (int i = 0; i < addons.size(); i++) {
+                addons.get(i).setBounds(new Rectangle(0, bounds.height - (i+1) * 20 - 20, bounds.width, 20));
+            }
+        }
+    };
+
+    private DungeonRoom dungeonRoom;
+
+
+    private MPanel currentValueEdit;
+
     private MButton save;
-    private MButton delete;
 
     @Getter
     private ValueEdit valueEdit;
 
-    public GuiDungeonOffsetPointEdit(final ValueEditOffsetPointSet valueEditOffsetPointSet, final OffsetPoint offsetPoint) {
-        this.offsetPoint = offsetPoint;
+    private List<MPanel> addons;
+
+    private Object editingObj;
+
+    public GuiDungeonValueEdit(final Object object, final List<MPanel> addons) {
+        dungeonRoom = EditingContext.getEditingContext().getRoom();
+        this.addons = addons;
+        this.editingObj = object;
         mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
         {
-            MPanel thing = (MPanel) ValueEditRegistry.getValueEditMap(OffsetPoint.class.getName()).createValueEdit(new Parameter(null, null, null) {
-                @Override
-                public Object getPreviousData() {
-                    return offsetPoint;
-                }
-
-                @Override
-                public Object getNewData() {
-                    return offsetPoint;
-                }
-
-                @Override
-                public String getName() {
-                    return "";
-                }
-
-                @Override
-                public void setName(String name) {
-                    return;
-                }
-
-                @Override
-                public void setPreviousData(Object previousData) {
-                    return;
-                }
-
-                @Override
-                public void setNewData(Object newData) {
-                    return;
-                }
-            });
-            valueEdit = (ValueEdit) thing;
-            MPanel wrapper = new MPanel() {
+            currentValueEdit = new MPanel(){
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 0, parentWidth,parentHeight - 20));
+                    setBounds(new Rectangle(0, 0, parentWidth,parentHeight - 20 - addons.size() * 20));
                 }
             };
-            wrapper.add(thing);
-            mainPanel.add(wrapper);
+            mainPanel.add(currentValueEdit);
         }
-        {
-            delete = new MButton() {
-                @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0,parentHeight - 20, parentWidth / 2, 20));
-                }
-            };
-            delete.setText("Delete");
-            delete.setBackgroundColor(Color.red);
-            delete.setOnActionPerformed(new Runnable() {
-                @Override
-                public void run() {
-                    if (valueEditOffsetPointSet != null)
-                        valueEditOffsetPointSet.delete(offsetPoint);
-                    EditingContext.getEditingContext().goBack();
-                }
-            });
 
+            for (MPanel addon : addons) {
+                mainPanel.add(addon);
+            }
+        {
             save = new MButton(){
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(parentWidth / 2,parentHeight - 20, parentWidth / 2, 20));
+                    setBounds(new Rectangle(parentWidth ,parentHeight - 20, parentWidth, 20));
                 }
             };
             save.setText("Go back");
@@ -106,11 +79,34 @@ public class GuiDungeonOffsetPointEdit extends GuiScreen {
                     EditingContext.getEditingContext().goBack();
                 }
             });
-            mainPanel.add(delete);
             mainPanel.add(save);
         }
+        updateClassSelection();
     }
 
+    public void updateClassSelection() {
+        currentValueEdit.getChildComponents().clear();
+
+        ValueEditCreator valueEditCreator = ValueEditRegistry.getValueEditMap(editingObj == null ?"null":editingObj.getClass().getName());
+
+        MPanel valueEdit = (MPanel) valueEditCreator.createValueEdit(new Parameter("", editingObj, editingObj));
+        if (valueEdit == null) {
+            MLabel valueEdit2 = new MLabel() {
+                @Override
+                public void resize(int parentWidth, int parentHeight) {
+                    setBounds(new Rectangle(0, 0, parentWidth,20));
+                }
+            };
+            valueEdit2.setText("No Value Edit");
+            valueEdit2.setBounds(new Rectangle(0,0,150,20));
+            valueEdit = valueEdit2;
+            this.valueEdit = null;
+        } else{
+            this.valueEdit = (ValueEdit) valueEdit;
+        }
+        valueEdit.resize0(currentValueEdit.getBounds().width, currentValueEdit.getBounds().height);
+        currentValueEdit.add(valueEdit);
+    }
     @Override
     public void initGui() {
         super.initGui();

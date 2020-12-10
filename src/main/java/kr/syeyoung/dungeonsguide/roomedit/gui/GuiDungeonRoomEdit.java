@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
 import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
 import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
 import kr.syeyoung.dungeonsguide.roomedit.panes.RoomDataDisplayPane;
+import kr.syeyoung.dungeonsguide.roomedit.panes.SecretEditPane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -25,6 +26,8 @@ public class GuiDungeonRoomEdit extends GuiScreen {
 
     private DungeonRoom room;
 
+    private MTabbedPane tabbedPane;
+
     public GuiDungeonRoomEdit(DungeonRoom room) {
         this.room = room;
 
@@ -35,7 +38,16 @@ public class GuiDungeonRoomEdit extends GuiScreen {
 
         tabbedPane.addTab("General", new GeneralEditPane(room));
         tabbedPane.addTab("Match", new RoomDataDisplayPane(room));
+        tabbedPane.addTab("Secrets", new SecretEditPane(room));
         tabbedPane.addTab("Proc.Params", new ProcessorParameterEditPane(room));
+        this.tabbedPane = tabbedPane;
+    }
+
+    public boolean isEditingSelected() {
+        return "Secrets".equals(tabbedPane.getSelectedKey());
+    }
+    public void endEditing() {
+        tabbedPane.setSelectedKey("General");
     }
 
     @Override

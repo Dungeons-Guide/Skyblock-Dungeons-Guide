@@ -5,8 +5,8 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
-import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonOffsetPointEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
@@ -203,10 +203,31 @@ public class EventListener {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
-        if (Keybinds.opengui.isKeyDown()){
+        if (DungeonsGuide.DEBUG &&Keybinds.editingSession.isKeyDown() ){
             EditingContext ec = EditingContext.getEditingContext();
-            if (ec == null) DungeonsGuide.sendDebugChat(new ChatComponentText("No Editing session is open right now"));
-            else ec.reopen();
+            if (ec == null) {
+                DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
+                if (context == null) {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Not in dungeons"));
+                    return;
+                }
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+
+                if (dungeonRoom == null) {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Can't determine the dungeon room you're in"));
+                    return;
+                }
+
+                if (EditingContext.getEditingContext() != null) {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("There is an editing session currently open."));
+                    return;
+                }
+
+                EditingContext.createEditingContext(dungeonRoom);
+                EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
+            } else ec.reopen();
         }
     }
 }

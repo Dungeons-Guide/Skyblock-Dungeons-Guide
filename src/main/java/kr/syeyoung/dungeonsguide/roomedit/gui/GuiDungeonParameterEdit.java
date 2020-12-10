@@ -1,15 +1,11 @@
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
-import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.*;
-import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.RoomDataDisplayPane;
+import kr.syeyoung.dungeonsguide.roomedit.panes.DynamicEditor;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
@@ -23,7 +19,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.UUID;
 
 public class GuiDungeonParameterEdit extends GuiScreen {
 
@@ -42,7 +37,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
     @Getter
     private ValueEdit valueEdit;
 
-    public GuiDungeonParameterEdit(final MParameter parameter2, final ProcessorParameterEditPane processorParameterEditPane) {
+    public GuiDungeonParameterEdit(final MParameter parameter2, final DynamicEditor processorParameterEditPane) {
         dungeonRoom = EditingContext.getEditingContext().getRoom();
         mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
         this.parameter = parameter2.getParameter();
@@ -61,7 +56,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
         }
         {
             classSelection = parameter.getNewData() == null ?"null" : parameter.getNewData().getClass().getName();
-            final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(ValueEditRegistry.getClassesSupported(), classSelection) {
+            final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(processorParameterEditPane.allowedClass(), classSelection) {
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
                     setBounds(new Rectangle(0, 20, parentWidth,20));

@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
@@ -15,29 +16,37 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
-public class ProcessorParameterEditPane extends MPanel implements DynamicEditor {
+public class SecretEditPane extends MPanel implements DynamicEditor {
     private DungeonRoom dungeonRoom;
 
     private MButton save;
     private MButton create;
     private List<MParameter> parameters = new ArrayList<MParameter>();
 
-    public ProcessorParameterEditPane(DungeonRoom dungeonRoom) {
+    private List<String> allowedClasses = new ArrayList<String>();
+
+    public SecretEditPane(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
         buildElements();
+
+        for (String clazz : ValueEditRegistry.getClassesSupported()) {
+            if (clazz.contains("mechanics") || clazz.equals("null")) {
+                allowedClasses.add(clazz);
+            }
+        }
     }
 
     public void buildElements() {
         {
             create = new MButton();
-            create.setText("Create New Parameter");
+            create.setText("Create New Mechanic");
             create.setBackgroundColor(Color.cyan);
             create.setBounds(new Rectangle(0,0,100,20));
             create.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
                     MParameter parameter;
-                    parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null, null), ProcessorParameterEditPane.this));
+                    parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null, null), SecretEditPane.this));
                     parameter.setBounds(new Rectangle(0,0,bounds.width, 20));
                 }
             });
@@ -58,13 +67,13 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
                         ValueEditCreator vec = ValueEditRegistry.getValueEditMap(real.getNewData() == null ? "null" :real.getNewData().getClass().getName());
 
                         real.setPreviousData(vec.cloneObj(real.getNewData()));
-                        dungeonRoomInfo.getProperties().put(real.getName(), real.getNewData());
+                        dungeonRoomInfo.getMechanics().put(real.getName(), (DungeonMechanic) real.getNewData());
                     }
                 }
             });
         }
         {
-            for (Map.Entry<String, Object> en : dungeonRoom.getDungeonRoomInfo().getProperties().entrySet()) {
+            for (Map.Entry<String, DungeonMechanic> en : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
                 ValueEditCreator vec = ValueEditRegistry.getValueEditMap(en.getValue() == null ? "null" :en.getValue().getClass().getName());
 
                 MParameter mParameter = new MParameter(new Parameter(en.getKey(), vec.cloneObj(en.getValue()), vec.cloneObj(en.getValue())), this);
@@ -92,9 +101,8 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
 
     @Override
     public List<String> allowedClass() {
-        return ValueEditRegistry.getClassesSupported();
+        return allowedClasses;
     }
-
 
     @Override
     public List<MPanel> getChildComponents() {

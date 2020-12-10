@@ -6,12 +6,14 @@ import org.lwjgl.input.Keyboard;
 
 public class Keybinds
 {
-    public static KeyBinding opengui;
+    public static KeyBinding editingSession;
+    public static KeyBinding ringMenuForSecretEdit;
 
     public static void register()
     {
-        opengui = new KeyBinding("ay", Keyboard.KEY_R, "key.categories.misc");
-
-        ClientRegistry.registerKeyBinding(opengui);
+        if (DungeonsGuide.DEBUG) {
+            editingSession = new KeyBinding("start editing session", Keyboard.KEY_R, "key.categories.misc");
+            ClientRegistry.registerKeyBinding(editingSession);
+        }
     }
 }

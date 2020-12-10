@@ -1,18 +1,12 @@
 package kr.syeyoung.dungeonsguide;
 
-import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiErrorScreen;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
-import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
@@ -31,7 +25,7 @@ public class DungeonsGuide implements DungeonsGuideInterface {
 
     private static DungeonsGuide dungeonsGuide;
 
-    public static boolean DEBUG = false;
+    public static boolean DEBUG = true;
 
     @Getter
     private Authenticator authenticator;
@@ -50,13 +44,8 @@ public class DungeonsGuide implements DungeonsGuideInterface {
         skyblockStatus = new SkyblockStatus();
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
-        CommandEditRoom cc = new CommandEditRoom();
-        ClientCommandHandler.instance.registerCommand(cc);
-        MinecraftForge.EVENT_BUS.register(cc);
         ClientCommandHandler.instance.registerCommand(new CommandLoadData());
         ClientCommandHandler.instance.registerCommand(new CommandSaveData());
-        ClientCommandHandler.instance.registerCommand(new CommandToggleDebug());
-        ClientCommandHandler.instance.registerCommand(new CommandWhatYearIsIt());
 
         try {
             DungeonRoomInfoRegistry.loadAll();
@@ -86,7 +75,7 @@ public class DungeonsGuide implements DungeonsGuideInterface {
     private File configDir;
 
 
-    public Object getSkyblockStatus() {
+    public SkyblockStatus getSkyblockStatus() {
         return (SkyblockStatus) skyblockStatus;
     }
 

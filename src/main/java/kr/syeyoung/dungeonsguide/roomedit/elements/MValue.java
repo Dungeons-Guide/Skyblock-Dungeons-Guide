@@ -3,29 +3,29 @@ package kr.syeyoung.dungeonsguide.roomedit.elements;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonOffsetPointEdit;
-import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
-import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
-
-public class MOffsetPoint extends MPanel {
+import java.util.ArrayList;
+import java.util.List;
+public class MValue<T> extends MPanel {
     @Getter
-    private OffsetPoint data;
+    private T data;
     private ValueEditOffsetPointSet valueEditOffsetPointSet;
     private MLabel dataLab;
 
     @Getter @Setter
     private Color hover = Color.gray;
 
+    private List<MPanel> addons;
 
-    public MOffsetPoint(ValueEditOffsetPointSet valueEditOffsetPointSet, final OffsetPoint parameter) {
-        this.valueEditOffsetPointSet = valueEditOffsetPointSet;
+    public MValue(final T parameter, List<MPanel> addons) {
+        this.addons = addons;
         this.add(this.dataLab = new MLabel() {
             @Override
             public String getText() {
@@ -47,7 +47,7 @@ public class MOffsetPoint extends MPanel {
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (this.bounds.x > -20 && new Rectangle(new Point(0,0),bounds.getSize()).contains(relMouseX, relMouseY)) {
-            EditingContext.getEditingContext().openGui(new GuiDungeonOffsetPointEdit(valueEditOffsetPointSet, data));
+            EditingContext.getEditingContext().openGui(new GuiDungeonValueEdit(data, addons));
         }
     }
 

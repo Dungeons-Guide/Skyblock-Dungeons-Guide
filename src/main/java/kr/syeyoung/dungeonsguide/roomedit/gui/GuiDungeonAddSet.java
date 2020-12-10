@@ -10,13 +10,13 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.BlockPos;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class GuiDungeonAddSet extends GuiScreen {
@@ -71,12 +71,12 @@ public class GuiDungeonAddSet extends GuiScreen {
             end = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
         }
         {
-            MOffsetPoint mOffsetPoint = new MOffsetPoint(null,start);
-            mOffsetPoint.setBounds(new Rectangle(0,0,150,20));
-            mainPanel.add(mOffsetPoint);
-            MOffsetPoint mOffsetPoint2 = new MOffsetPoint(null,end);
-            mOffsetPoint2.setBounds(new Rectangle(0,20,150,20));
-            mainPanel.add(mOffsetPoint2);
+            MValue mValue = new MValue(start, Collections.emptyList());
+            mValue.setBounds(new Rectangle(0,0,150,20));
+            mainPanel.add(mValue);
+            MValue mValue2 = new MValue(end,Collections.emptyList());
+            mValue2.setBounds(new Rectangle(0,20,150,20));
+            mainPanel.add(mValue2);
         }
         {
             add = new MButton() {
