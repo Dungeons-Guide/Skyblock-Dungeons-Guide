@@ -174,18 +174,6 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
         }
     }
 
-    @Override
-    public void drawScreen(float partialTicks) {
-        super.drawScreen(partialTicks);
-        if (lastBoard == null) return;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        for (int y = 0; y < 3; y++){
-            for(int x = 0; x < 3; x++) {
-                fr.drawString(lastBoard[y][x]+"", x * 2 *fr.FONT_HEIGHT, y * fr.FONT_HEIGHT, (x *3 +y) == chosePos ?0xFF00FF00 :0xFFFFFF);
-            }
-        }
-    }
-
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTicTacToeSolver> {
         @Override
         public RoomProcessorTicTacToeSolver createNew(DungeonRoom dungeonRoom) {
