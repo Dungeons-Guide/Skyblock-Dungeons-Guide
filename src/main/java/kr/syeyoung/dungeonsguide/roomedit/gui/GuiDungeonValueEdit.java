@@ -29,6 +29,7 @@ public class GuiDungeonValueEdit extends GuiScreen {
             for (int i = 0; i < addons.size(); i++) {
                 addons.get(i).setBounds(new Rectangle(0, bounds.height - (i+1) * 20 - 20, bounds.width, 20));
             }
+            save.setBounds(new Rectangle(0 ,bounds.height - 20, bounds.width, 20));
         }
     };
 
@@ -68,7 +69,7 @@ public class GuiDungeonValueEdit extends GuiScreen {
             save = new MButton(){
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(parentWidth ,parentHeight - 20, parentWidth, 20));
+                    setBounds(new Rectangle(0 ,parentHeight - 20, parentWidth, 20));
                 }
             };
             save.setText("Go back");

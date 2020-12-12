@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.utils;
 
 import java.text.DecimalFormat;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class TextUtils {
@@ -20,6 +21,16 @@ public class TextUtils {
 
     public static String keepIntegerCharactersOnly(String text) {
         return INTEGER_CHARACTERS.matcher(text).replaceAll("");
+    }
+
+    public static String join(List list, String delimeter) {
+        if (list.isEmpty()) return "";
+        StringBuilder stringBuilder = new StringBuilder();
+        for (int i = 0; i < list.size() - 1; i++) {
+            stringBuilder.append(list.get(i).toString()).append(delimeter);
+        }
+        stringBuilder.append(list.get(list.size() - 1).toString());
+        return stringBuilder.toString();
     }
 
 }

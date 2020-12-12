@@ -7,6 +7,7 @@ import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
@@ -187,8 +188,8 @@ public class EventListener {
                     if (valueEdit != null) {
                         valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
                     }
-                } else if (guiScreen instanceof GuiDungeonOffsetPointEdit) {
-                    ValueEdit valueEdit = ((GuiDungeonOffsetPointEdit) guiScreen).getValueEdit();
+                } else if (guiScreen instanceof GuiDungeonValueEdit) {
+                    ValueEdit valueEdit = ((GuiDungeonValueEdit) guiScreen).getValueEdit();
                     if (valueEdit != null) {
                         valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
                     }
