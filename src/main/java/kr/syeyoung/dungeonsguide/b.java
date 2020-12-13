@@ -43,7 +43,6 @@ public class b {
         a();
     }
 
-    private static final String DOMAIN = "http://localhost:8080/";
 
     public String b() throws IOException, AuthenticationException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchPaddingException {
         Session a = Minecraft.getMinecraft().getSession();
@@ -67,7 +66,7 @@ public class b {
     }
 
     private String a(GameProfile d) throws IOException {
-        HttpURLConnection a = (HttpURLConnection) new URL(DOMAIN+"auth/requestAuth").openConnection();
+        HttpURLConnection a = (HttpURLConnection) new URL("https://dungeonsguide.kro.kr/auth/requestAuth").openConnection();
         a.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         a.setRequestProperty("Content-Type", "application/json");
         a.setRequestMethod("POST");
@@ -83,7 +82,7 @@ public class b {
         return c.get("data").getAsString();
     }
     private String a(String a, PublicKey b) throws IOException {
-        HttpURLConnection c = (HttpURLConnection) new URL(DOMAIN+"auth/authenticate").openConnection();
+        HttpURLConnection c = (HttpURLConnection) new URL("https://dungeonsguide.kro.kr/auth/authenticate").openConnection();
         c.setRequestMethod("POST");
         c.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         c.setRequestProperty("Content-Type", "application/json");
@@ -106,7 +105,7 @@ public class b {
     }
 
     private void b(String a) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        HttpURLConnection b = (HttpURLConnection) new URL(DOMAIN + "resource/jar").openConnection();
+        HttpURLConnection b = (HttpURLConnection) new URL("https://dungeonsguide.kro.kr/resource/jar").openConnection();
         b.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         b.setRequestProperty("Content-Type", "application/json");
         b.setRequestMethod("GET");
