@@ -110,7 +110,7 @@ public class ValueEditBreakableWall extends MPanel implements ValueEdit<DungeonS
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonSecret();
+            return new DungeonBreakableWall();
         }
 
         @Override

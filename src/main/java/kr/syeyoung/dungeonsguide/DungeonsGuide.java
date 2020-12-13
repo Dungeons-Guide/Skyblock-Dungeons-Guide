@@ -25,7 +25,7 @@ public class DungeonsGuide implements DungeonsGuideInterface {
 
     private static DungeonsGuide dungeonsGuide;
 
-    public static boolean DEBUG = true;
+    public static boolean DEBUG = false;
 
     @Getter
     private Authenticator authenticator;

@@ -87,7 +87,7 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonSecret> {
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonSecret();
+            return new DungeonTomb();
         }
 
         @Override

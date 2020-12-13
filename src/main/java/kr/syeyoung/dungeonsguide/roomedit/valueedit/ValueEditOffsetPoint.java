@@ -8,6 +8,8 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.*;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.util.BlockPos;
 import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
@@ -82,6 +84,22 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
             };
             MLabelAndElement mLabelAndElement = new MLabelAndElement("newPt",setToHEre);
             mLabelAndElement.setBounds(new Rectangle(0,80,bounds.width,20));
+            add(mLabelAndElement);
+        }
+        {
+            final MButton setToHEre2 = new MButton();
+            setToHEre2.setText("Set to here");
+            setToHEre2.setBackgroundColor(Color.green);
+            setToHEre2.setOnActionPerformed(new Runnable() {
+                @Override
+                public void run() {
+                    EntityPlayer player = Minecraft.getMinecraft().thePlayer;
+                    BlockPos pos = new BlockPos(player.posX, player.posY, player.posZ);
+                    ((OffsetPoint)parameter2.getNewData()).setPosInWorld(EditingContext.getEditingContext().getRoom(),pos );
+                }
+            });
+            MLabelAndElement mLabelAndElement = new MLabelAndElement("set",setToHEre2);
+            mLabelAndElement.setBounds(new Rectangle(0,100,bounds.width,20));
             add(mLabelAndElement);
         }
     }
