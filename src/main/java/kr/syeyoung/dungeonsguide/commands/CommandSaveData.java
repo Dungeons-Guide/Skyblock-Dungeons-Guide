@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.commands;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -18,7 +18,7 @@ public class CommandSaveData extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        DungeonRoomInfoRegistry.saveAll(DungeonsGuide.getDungeonsGuide().getConfigDir());
+        DungeonRoomInfoRegistry.saveAll(e.getDungeonsGuide().getConfigDir());
     }
     @Override
     public int getRequiredPermissionLevel() {

@@ -19,17 +19,17 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-public class DungeonsGuide implements DungeonsGuideInterface {
+public class e implements c {
 
     private SkyblockStatus skyblockStatus;
 
-    private static DungeonsGuide dungeonsGuide;
+    private static e dungeonsGuide;
 
-    public static boolean DEBUG = false;
+    public static final boolean DEBUG = false;
 
     @Getter
-    private Authenticator authenticator;
-    public DungeonsGuide(Authenticator authenticator) {
+    private b authenticator;
+    public e(b authenticator) {
         this.authenticator = authenticator;
     }
 
@@ -68,7 +68,7 @@ public class DungeonsGuide implements DungeonsGuideInterface {
         Keybinds.register();
     }
     public void pre(FMLPreInitializationEvent event) {
-        configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
+        configDir = new File(event.getModConfigurationDirectory(),"z");
     }
 
     @Getter
@@ -79,7 +79,7 @@ public class DungeonsGuide implements DungeonsGuideInterface {
         return (SkyblockStatus) skyblockStatus;
     }
 
-    public static DungeonsGuide getDungeonsGuide() {
+    public static e getDungeonsGuide() {
         return dungeonsGuide;
     }
 }

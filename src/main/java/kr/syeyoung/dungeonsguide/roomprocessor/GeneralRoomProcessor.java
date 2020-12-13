@@ -1,9 +1,8 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.RoomProcessorWaterPuzzle;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.IChatComponent;
@@ -32,7 +31,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (DungeonsGuide.DEBUG) {
+        if (e.DEBUG) {
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() == null) continue;;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);

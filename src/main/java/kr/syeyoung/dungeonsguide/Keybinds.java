@@ -11,7 +11,7 @@ public class Keybinds
 
     public static void register()
     {
-        if (DungeonsGuide.DEBUG) {
+        if (e.DEBUG) {
             editingSession = new KeyBinding("start editing session", Keyboard.KEY_R, "key.categories.misc");
             ClientRegistry.registerKeyBinding(editingSession);
         }

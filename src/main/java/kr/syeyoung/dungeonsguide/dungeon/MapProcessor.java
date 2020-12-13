@@ -1,7 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DoorFinderRegistry;
@@ -45,7 +45,7 @@ public class MapProcessor {
     private void buildMap(final byte[] mapData) {
         final Point startroom = MapUtils.findFirstColorWithIn(mapData, (byte) 30, new Rectangle(0,0,128,128));
         if (startroom == null){
-            DungeonsGuide.sendDebugChat(new ChatComponentText("BUGGED MAP"));
+            e.sendDebugChat(new ChatComponentText("BUGGED MAP"));
             bugged = true;
             return;
         }
@@ -69,7 +69,7 @@ public class MapProcessor {
             }
 
             if (doorDir == null) {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("BUGGED MAP, no connected door found"));
+                e.sendDebugChat(new ChatComponentText("BUGGED MAP, no connected door found"));
                 bugged = true;
                 return;
             }
@@ -81,7 +81,7 @@ public class MapProcessor {
             int gap = MapUtils.getLengthOfColorExtending(mapData, (byte) 0, basePoint, doorDir);
             Point pt = MapUtils.findFirstColorWithInNegate(mapData, (byte)0, new Rectangle(basePoint.x, basePoint.y, (int)Math.abs(doorDir.y) * unitRoomDimension.width + 1, (int)Math.abs(doorDir.x) * unitRoomDimension.height + 1));
             if (pt == null) {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("BUGGED MAP, can't find door"));
+                e.sendDebugChat(new ChatComponentText("BUGGED MAP, can't find door"));
                 bugged = true;
                 return;
             }
@@ -98,20 +98,20 @@ public class MapProcessor {
         }
         // determine door location based on npc, and determine map min from there
         {
-            StartDoorFinder doorFinder = DoorFinderRegistry.getDoorFinder(((SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+            StartDoorFinder doorFinder = DoorFinderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
             if (doorFinder == null) {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Couldn't find door finder for :: "+((SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
+                e.sendDebugChat(new ChatComponentText("Couldn't find door finder for :: "+((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
                 bugged = true;
                 return;
             }
             BlockPos door = doorFinder.find(context.getWorld());
             if (door == null) {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Couldn't find door :: "+((SkyblockStatus) DungeonsGuide.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
+                e.sendDebugChat(new ChatComponentText("Couldn't find door :: "+((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
                 bugged = true;
                 return;
             }
 
-            DungeonsGuide.sendDebugChat(new ChatComponentText("door Pos:"+door));
+            e.sendDebugChat(new ChatComponentText("door Pos:"+door));
 
             Point unitPoint = mapPointToRoomPoint(startroom);
             unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1);
@@ -127,12 +127,12 @@ public class MapProcessor {
 
         }
 
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Found Green room:"+startroom));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Axis match:"+axisMatch));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("World Min:"+context.getDungeonMin()));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Dimension:"+unitRoomDimension));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("top Left:"+topLeftMapPoint));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("door dimension:"+doorDimension));
+        e.sendDebugChat(new ChatComponentText("Found Green room:"+startroom));
+        e.sendDebugChat(new ChatComponentText("Axis match:"+axisMatch));
+        e.sendDebugChat(new ChatComponentText("World Min:"+context.getDungeonMin()));
+        e.sendDebugChat(new ChatComponentText("Dimension:"+unitRoomDimension));
+        e.sendDebugChat(new ChatComponentText("top Left:"+topLeftMapPoint));
+        e.sendDebugChat(new ChatComponentText("door dimension:"+doorDimension));
     }
 
     public Point mapPointToRoomPoint(Point mapPoint) {
@@ -166,8 +166,8 @@ public class MapProcessor {
                 if (color != 0 && color != 85) {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
-                    DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
-                    DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin()));
+                    e.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
+                    e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy =0;dy<4;dy++) {
                         for (int dx = 0; dx < 4; dx ++) {
@@ -176,7 +176,7 @@ public class MapProcessor {
                         }
                         builder.append("\n");
                     }
-                    DungeonsGuide.sendDebugChat(new ChatComponentText("Shape visual: "+builder.toString()));
+                    e.sendDebugChat(new ChatComponentText("Shape visual: "+builder.toString()));
 
                     context.getDungeonRoomList().add(rooms);
                     for (Point p:rooms.getUnitPoints()) {

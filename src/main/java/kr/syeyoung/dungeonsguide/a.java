@@ -1,8 +1,7 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.customurl.DGURLStreamHandlerFactory;
-import lombok.Getter;
+import kr.syeyoung.dungeonsguide.d.c;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiErrorScreen;
@@ -23,43 +22,43 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-@Mod(modid = DungeonsGuideMain.MODID, version = DungeonsGuideMain.VERSION)
-public class DungeonsGuideMain
+@Mod(modid = a.b, version = a.c)
+public class a
 {
-    public static final String MODID = "skyblock_dungeons_guide";
-    public static final String VERSION = "1.0";
+    public static final String b = "skyblock_dungeons_guide";
+    public static final String c = "1.0";
 
-    private static DungeonsGuideMain dungeonsGuideMain;
+    private static a a;
 
-    private DungeonsGuideInterface dungeonsGuideInterface;
+    private kr.syeyoung.dungeonsguide.c d;
 
     @EventHandler
-    public void init(FMLInitializationEvent event)
+    public void a(FMLInitializationEvent a)
     {
 
-        dungeonsGuideMain = this;
-        dungeonsGuideInterface.init(event);
+        this.a = this;
+        d.init(a);
     }
 
     @EventHandler
-    public void pre(FMLPreInitializationEvent event) {
-        Authenticator authenticator = new Authenticator();
-        String token = null;
+    public void a(FMLPreInitializationEvent a) {
+        b b = new b();
+        String c = null;
         try {
-            token = authenticator.authenticate();
-            if (token != null) {
-                dungeonsGuideMain = this;
-                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(authenticator));
-                LaunchClassLoader launchClassLoader = (LaunchClassLoader) DungeonsGuideMain.class.getClassLoader();
-                launchClassLoader.addURL(new URL("dungeonsguide:///"));
+            c = b.b();
+            if (c != null) {
+                this.a = this;
+                URL.setURLStreamHandlerFactory(new c(b));
+                LaunchClassLoader d = (LaunchClassLoader) a.class.getClassLoader();
+                d.addURL(new URL("z:///"));
 
                 try {
-                    dungeonsGuideInterface = new DungeonsGuide(authenticator);
-                    dungeonsGuideInterface.pre(event);
+                    this.d = new e(b);
+                    this.d.pre(a);
                 } catch (Exception e) {
                     e.printStackTrace();
 
-                    error(new String[]{
+                    a(new String[]{
                             "Couldn't load Dungeons Guide",
                             "Please contact developer if this problem persists after restart"
                     });
@@ -84,7 +83,7 @@ public class DungeonsGuideMain
             e.printStackTrace();
         }
 
-        error(new String[]{
+        a(new String[]{
                 "Can't validate current installation of Dungeons Guide",
                 "Steps to fix",
                 "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
@@ -107,8 +106,8 @@ public class DungeonsGuideMain
 //                }
 //    }
 
-    public void error(final String[] s_msg) {
-        final GuiScreen errorGui = new GuiErrorScreen(null, null) {
+    public void a(final String[] a) {
+        final GuiScreen b = new GuiErrorScreen(null, null) {
 
             @Override
             public void handleMouseInput() {
@@ -121,8 +120,8 @@ public class DungeonsGuideMain
             @Override
             public void drawScreen(int par1, int par2, float par3) {
                 drawDefaultBackground();
-                for (int i = 0; i < s_msg.length; ++i) {
-                    drawCenteredString(fontRendererObj, s_msg[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
+                for (int i = 0; i < a.length; ++i) {
+                    drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
                 }
             }
         };
@@ -130,7 +129,7 @@ public class DungeonsGuideMain
 
             @Override
             public void initGui(GuiErrorScreen errorScreen, FontRenderer fontRenderer) {
-                Minecraft.getMinecraft().displayGuiScreen(errorGui);
+                Minecraft.getMinecraft().displayGuiScreen(b);
             }
 
             @Override
@@ -139,7 +138,7 @@ public class DungeonsGuideMain
         };
         throw e;
     }
-    public static DungeonsGuideMain getDungeonsGuideMain() {
-        return dungeonsGuideMain;
+    public static a a() {
+        return a;
     }
 }

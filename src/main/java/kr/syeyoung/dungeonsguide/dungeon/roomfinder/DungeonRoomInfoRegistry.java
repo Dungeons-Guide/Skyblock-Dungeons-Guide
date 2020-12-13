@@ -1,8 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
-import kr.syeyoung.dungeonsguide.Authenticator;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.DungeonsGuideMain;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import org.apache.commons.io.IOUtils;
 
@@ -52,7 +50,7 @@ public class DungeonRoomInfoRegistry {
     }
 
     public static void saveAll(File dir) {
-        if (!DungeonsGuide.DEBUG) return;
+        if (!e.DEBUG) return;
         dir.mkdirs();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
