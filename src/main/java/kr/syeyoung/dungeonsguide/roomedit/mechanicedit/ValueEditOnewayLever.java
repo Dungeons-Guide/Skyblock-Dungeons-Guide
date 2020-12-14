@@ -29,6 +29,9 @@ public class ValueEditOnewayLever extends MPanel implements ValueEdit<DungeonOne
     private MValue<OffsetPoint> value;
     private MTextField preRequisite;
     private MLabelAndElement preRequisite2;
+    private MTextField target;
+    private MLabelAndElement target2;
+
 
     public ValueEditOnewayLever(final Parameter parameter2) {
         this.parameter = parameter2;
@@ -53,6 +56,18 @@ public class ValueEditOnewayLever extends MPanel implements ValueEdit<DungeonOne
         preRequisite2 = new MLabelAndElement("Req.",preRequisite);
         preRequisite2.setBounds(new Rectangle(0,40,bounds.width,20));
         add(preRequisite2);
+
+
+        target = new MTextField() {
+            @Override
+            public void edit(String str) {
+                dungeonLever.setTriggering(str);
+            }
+        };
+        target.setText(dungeonLever.getTriggering());
+        target2 = new MLabelAndElement("Req.",target);
+        target2.setBounds(new Rectangle(0,60,bounds.width,20));
+        add(target2);
     }
 
     @Override
@@ -60,6 +75,7 @@ public class ValueEditOnewayLever extends MPanel implements ValueEdit<DungeonOne
         label.setBounds(new Rectangle(0,0,bounds.width, 20));
         value.setBounds(new Rectangle(0,20,bounds.width, 20));
         preRequisite2.setBounds(new Rectangle(0,40,bounds.width,20));
+        target2.setBounds(new Rectangle(0,60,bounds.width,20));
     }
 
     @Override

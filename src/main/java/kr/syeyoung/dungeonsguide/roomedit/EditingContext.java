@@ -63,7 +63,6 @@ public class EditingContext {
     }
 
     public void reopen() {
-        guiDungeonRoomEdit.endEditing();
         Minecraft.getMinecraft().displayGuiScreen(current);
     }
 }
