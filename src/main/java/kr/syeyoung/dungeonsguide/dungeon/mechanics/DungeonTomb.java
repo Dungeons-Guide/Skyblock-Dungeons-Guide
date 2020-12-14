@@ -91,4 +91,9 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
             b = secretPoint.getOffsetPointList().get(0).getBlock(dungeonRoom);
         return b == Blocks.air ?"open" :"closed";
     }
+
+    @Override
+    public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
+        return isBlocking(dungeonRoom) ? Collections.singleton("open") : Collections.<String>emptySet();
+    }
 }

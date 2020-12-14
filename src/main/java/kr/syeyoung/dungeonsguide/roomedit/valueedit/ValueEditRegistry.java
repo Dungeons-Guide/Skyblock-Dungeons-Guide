@@ -3,9 +3,7 @@ package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
-import kr.syeyoung.dungeonsguide.roomedit.mechanicedit.ValueEditBreakableWall;
-import kr.syeyoung.dungeonsguide.roomedit.mechanicedit.ValueEditSecret;
-import kr.syeyoung.dungeonsguide.roomedit.mechanicedit.ValueEditTomb;
+import kr.syeyoung.dungeonsguide.roomedit.mechanicedit.*;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -36,8 +34,10 @@ public class ValueEditRegistry {
         valueEditMap.put(DungeonTomb.class.getName(), new ValueEditTomb.Generator());
         valueEditMap.put(DungeonBreakableWall.class.getName(), new ValueEditBreakableWall.Generator());
 
-        valueEditMap.put(DungeonPressurePlate.class.getName(), new ValueEditSecret.Generator());
-        valueEditMap.put(DungeonLever.class.getName(), new ValueEditTomb.Generator());
-        valueEditMap.put(DungeonDoor.class.getName(), new ValueEditBreakableWall.Generator());
+        valueEditMap.put(DungeonPressurePlate.class.getName(), new ValueEditPressurePlate.Generator());
+        valueEditMap.put(DungeonOnewayLever.class.getName(), new ValueEditOnewayLever.Generator());
+        valueEditMap.put(DungeonLever.class.getName(), new ValueEditLever.Generator());
+        valueEditMap.put(DungeonDoor.class.getName(), new ValueEditDoor.Generator());
+        valueEditMap.put(DungeonOnewayDoor.class.getName(), new ValueEditOnewayDoor.Generator());
     }
 }

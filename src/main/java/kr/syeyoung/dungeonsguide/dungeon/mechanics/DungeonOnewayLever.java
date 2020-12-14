@@ -1,21 +1,18 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.Action;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionClick;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionMove;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.List;
 import java.util.*;
+import java.util.List;
 
 @Data
-public class DungeonLever implements DungeonMechanic {
+public class DungeonOnewayLever implements DungeonMechanic {
     private OffsetPoint leverPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
     private String triggering;
@@ -25,7 +22,7 @@ public class DungeonLever implements DungeonMechanic {
         if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
-        if (!state.equalsIgnoreCase(getCurrentState(dungeonRoom))){
+        {
             ActionClick actionClick;
             preRequisites.add(actionClick = new ActionClick(leverPoint));
             preRequisites = actionClick.getPreRequisite();
@@ -52,8 +49,8 @@ public class DungeonLever implements DungeonMechanic {
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
-    public DungeonLever clone() throws CloneNotSupportedException {
-        DungeonLever dungeonSecret = new DungeonLever();
+    public DungeonOnewayLever clone() throws CloneNotSupportedException {
+        DungeonOnewayLever dungeonSecret = new DungeonOnewayLever();
         dungeonSecret.leverPoint = (OffsetPoint) leverPoint.clone();
         dungeonSecret.triggering = triggering;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
@@ -83,8 +80,6 @@ public class DungeonLever implements DungeonMechanic {
         String currentStatus = getCurrentState(dungeonRoom);
         if (currentStatus.equalsIgnoreCase("untriggered"))
             return Collections.singleton("triggered");
-        else if (currentStatus.equalsIgnoreCase("triggered"))
-            return Collections.singleton("untriggered");
         return Collections.emptySet();
     }
 }

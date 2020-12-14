@@ -88,4 +88,9 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
         return b == Blocks.air ?"open" :"closed";
     }
+
+    @Override
+    public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
+        return isBlocking(dungeonRoom) ? Collections.singleton("open") : Collections.<String>emptySet();
+    }
 }

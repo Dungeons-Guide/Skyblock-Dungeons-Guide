@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
-import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
@@ -19,20 +18,20 @@ import java.util.List;
 import java.util.*;
 
 @Data
-public class DungeonDoor implements DungeonMechanic, RouteBlocker {
+public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<String>();
 
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
+        if (!("open".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
-        if (!state.equalsIgnoreCase(getCurrentState(dungeonRoom))) {
+        {
             ActionClickSet actionClick;
             preRequisites.add(actionClick = new ActionClickSet(secretPoint));
             actionClick.setPredicate(PredicateSuperBoom.INSTANCE);
@@ -73,8 +72,8 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
         return false;
     }
 
-    public DungeonDoor clone() throws CloneNotSupportedException {
-        DungeonDoor dungeonSecret = new DungeonDoor();
+    public DungeonOnewayDoor clone() throws CloneNotSupportedException {
+        DungeonOnewayDoor dungeonSecret = new DungeonOnewayDoor();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
@@ -91,8 +90,6 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
         String currentStatus = getCurrentState(dungeonRoom);
         if (currentStatus.equalsIgnoreCase("closed"))
             return Collections.singleton("open");
-        else if (currentStatus.equalsIgnoreCase("open"))
-            return Collections.singleton("closed");
         return Collections.emptySet();
     }
 }

@@ -1,12 +1,14 @@
 package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonLever;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayLever;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MValue;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
@@ -15,22 +17,22 @@ import scala.actors.threadpool.Arrays;
 import java.awt.*;
 import java.util.Collections;
 
-public class ValueEditLever extends MPanel implements ValueEdit<DungeonLever> {
+public class ValueEditOnewayLever extends MPanel implements ValueEdit<DungeonOnewayLever> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private DungeonLever dungeonLever;
+    private DungeonOnewayLever dungeonLever;
 
     private MLabel label;
     private MValue<OffsetPoint> value;
     private MTextField preRequisite;
     private MLabelAndElement preRequisite2;
 
-    public ValueEditLever(final Parameter parameter2) {
+    public ValueEditOnewayLever(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonLever = (DungeonLever) parameter2.getNewData();
+        this.dungeonLever = (DungeonOnewayLever) parameter2.getNewData();
 
 
         label = new MLabel();
@@ -75,22 +77,22 @@ public class ValueEditLever extends MPanel implements ValueEdit<DungeonLever> {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditLever> {
+    public static class Generator implements ValueEditCreator<ValueEditOnewayLever> {
 
         @Override
-        public ValueEditLever createValueEdit(Parameter parameter) {
-            return new ValueEditLever(parameter);
+        public ValueEditOnewayLever createValueEdit(Parameter parameter) {
+            return new ValueEditOnewayLever(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonLever();
+            return new DungeonOnewayLever();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonLever)object).clone();
+                return ((DungeonOnewayLever)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

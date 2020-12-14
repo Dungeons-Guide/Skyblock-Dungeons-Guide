@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonLever;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonPressurePlate;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;

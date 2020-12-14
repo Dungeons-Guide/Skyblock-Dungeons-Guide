@@ -18,10 +18,8 @@ import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class DungeonSecret implements DungeonMechanic {
@@ -52,7 +50,7 @@ public class DungeonSecret implements DungeonMechanic {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"claimed".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+        if (!"found".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         if (secretType == SecretType.CHEST) {
@@ -108,5 +106,12 @@ public class DungeonSecret implements DungeonMechanic {
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
         return getSecretStatus(dungeonRoom).name();
+    }
+
+    @Override
+    public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
+        SecretStatus status = getSecretStatus(dungeonRoom);
+        if (status == SecretStatus.FOUND) return Collections.emptySet();
+        else return Collections.singleton("found");
     }
 }

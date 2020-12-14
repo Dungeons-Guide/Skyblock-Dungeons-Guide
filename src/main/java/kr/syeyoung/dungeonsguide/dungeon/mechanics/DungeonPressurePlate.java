@@ -8,10 +8,8 @@ import lombok.Data;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 
 @Data
 public class DungeonPressurePlate implements DungeonMechanic {
@@ -22,6 +20,8 @@ public class DungeonPressurePlate implements DungeonMechanic {
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
         if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
+        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
+
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         if ("triggered".equalsIgnoreCase(state)) {
@@ -75,5 +75,15 @@ public class DungeonPressurePlate implements DungeonMechanic {
                 return "untriggered";
             }
         }
+    }
+
+    @Override
+    public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
+        String currentStatus = getCurrentState(dungeonRoom);
+        if (currentStatus.equalsIgnoreCase("triggered"))
+            return Collections.singleton("untriggered");
+        else if (currentStatus.equalsIgnoreCase("untriggered"))
+            return Collections.singleton("triggered");
+        return Collections.emptySet();
     }
 }
