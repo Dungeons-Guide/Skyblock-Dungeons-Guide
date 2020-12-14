@@ -23,8 +23,9 @@ public class a extends URLConnection {
             String path = url.getPath().substring(1);
             if (!a.d().containsKey(path)) throw new FileNotFoundException();
             return new ByteArrayInputStream(a.d().get(path));
-        } else {
+        } else if (url.getPath().contains("roomdata")){
             return a.class.getResourceAsStream(url.getPath());
         }
+        throw new FileNotFoundException();
     }
 }

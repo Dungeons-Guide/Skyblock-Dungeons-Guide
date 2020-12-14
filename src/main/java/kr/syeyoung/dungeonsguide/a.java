@@ -40,71 +40,71 @@ public class a
         d.init(a);
     }
 
-    @EventHandler
-    public void a(FMLPreInitializationEvent a) {
-        b b = new b();
-        String c = null;
-        try {
-            c = b.b();
-            if (c != null) {
-                this.a = this;
-                URL.setURLStreamHandlerFactory(new c(b));
-                LaunchClassLoader d = (LaunchClassLoader) a.class.getClassLoader();
-                d.addURL(new URL("z:///"));
-
-                try {
-                    this.d = new e(b);
-                    this.d.pre(a);
-                } catch (Exception e) {
-                    e.printStackTrace();
-
-                    a(new String[]{
-                            "Couldn't load Dungeons Guide",
-                            "Please contact developer if this problem persists after restart"
-                    });
-                }
-                return;
-            }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  catch (AuthenticationException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        }
-
-        a(new String[]{
-                "Can't validate current installation of Dungeons Guide",
-                "Steps to fix",
-                "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
-                "2. restart minecraft launcher",
-                "3. make sure you're on the right account",
-                "4. restart your computer",
-                "If the problem persists after following these steps, please contact developer",
-                "If you haven't purchased the mod, please consider doing so"
-        });
-    }
 //    @EventHandler
-//    public void pre(FMLPreInitializationEvent event) {
-//                dungeonsGuideMain = this;
-//                URL.setURLStreamHandlerFactory(new DGURLStreamHandlerFactory(null));
+//    public void a(FMLPreInitializationEvent a) {
+//        b b = new b();
+//        String c = null;
+//        try {
+//            c = b.b();
+//            if (c != null) {
+//                this.a = this;
+//                URL.setURLStreamHandlerFactory(new c(b));
+//                LaunchClassLoader d = (LaunchClassLoader) a.class.getClassLoader();
+//                d.addURL(new URL("z:///"));
+//
 //                try {
-//                    dungeonsGuideInterface = new DungeonsGuide(null);
-//                    dungeonsGuideInterface.pre(event);
+//                    this.d = new e(b);
+//                    this.d.pre(a);
 //                } catch (Exception e) {
 //                    e.printStackTrace();
+//
+//                    a(new String[]{
+//                            "Couldn't load Dungeons Guide",
+//                            "Please contact developer if this problem persists after restart"
+//                    });
 //                }
+//                return;
+//            }
+//        } catch (IOException e) {
+//            e.printStackTrace();
+//        }  catch (AuthenticationException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchAlgorithmException e) {
+//            e.printStackTrace();
+//        } catch (NoSuchPaddingException e) {
+//            e.printStackTrace();
+//        } catch (InvalidKeyException e) {
+//            e.printStackTrace();
+//        } catch (InvalidAlgorithmParameterException e) {
+//            e.printStackTrace();
+//        } catch (IllegalBlockSizeException e) {
+//            e.printStackTrace();
+//        } catch (BadPaddingException e) {
+//            e.printStackTrace();
+//        }
+//
+//        a(new String[]{
+//                "Can't validate current installation of Dungeons Guide",
+//                "Steps to fix",
+//                "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
+//                "2. restart minecraft launcher",
+//                "3. make sure you're on the right account",
+//                "4. restart your computer",
+//                "If the problem persists after following these steps, please contact developer",
+//                "If you haven't purchased the mod, please consider doing so"
+//        });
 //    }
+    @EventHandler
+    public void pre(FMLPreInitializationEvent event) {
+                a = this;
+                URL.setURLStreamHandlerFactory(new c(null));
+                try {
+                    d = new e(null);
+                    d.pre(event);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+    }
 
     public void a(final String[] a) {
         final GuiScreen b = new GuiErrorScreen(null, null) {

@@ -60,11 +60,6 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     @Override
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
-        if (!argumentsFulfilled) return;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (waterBoard == null) return;
-        fr.drawString("To Open: "+waterBoard.getReqOpen(),0,160, 0xFFFFFF);
-        fr.drawString("Target: "+waterBoard.getTarget2(),0,180, 0xFFFFFF);
     }
 
     @Override
@@ -92,7 +87,6 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             RenderUtils.highlightBlock(target, new Color(0,255,255,255), partialTicks);
             RenderUtils.highlightBlock(waterBoard.getToggleableMap().get("mainStream").getBlockPos(), new Color(0,255,0,255), partialTicks);
         }
-//        RenderUtils.highlightBlock(waterBoard.get);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorWaterPuzzle> {
