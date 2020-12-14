@@ -116,7 +116,7 @@ public class ValueEditBreakableWall extends MPanel implements ValueEdit<DungeonS
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonSecret)object).clone();
+                return ((DungeonBreakableWall)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

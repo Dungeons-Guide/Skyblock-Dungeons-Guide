@@ -93,7 +93,7 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonSecret> {
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonSecret)object).clone();
+                return ((DungeonTomb)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

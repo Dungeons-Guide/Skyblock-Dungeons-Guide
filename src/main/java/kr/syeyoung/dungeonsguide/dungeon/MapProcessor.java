@@ -45,7 +45,7 @@ public class MapProcessor {
     private void buildMap(final byte[] mapData) {
         final Point startroom = MapUtils.findFirstColorWithIn(mapData, (byte) 30, new Rectangle(0,0,128,128));
         if (startroom == null){
-            e.sendDebugChat(new ChatComponentText("BUGGED MAP"));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't retrieve map data, disabling mod for this dungeon run"));
             bugged = true;
             return;
         }
@@ -69,7 +69,7 @@ public class MapProcessor {
             }
 
             if (doorDir == null) {
-                e.sendDebugChat(new ChatComponentText("BUGGED MAP, no connected door found"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't determine door of the room, disabling mod for this dungeon run"));
                 bugged = true;
                 return;
             }
@@ -81,7 +81,7 @@ public class MapProcessor {
             int gap = MapUtils.getLengthOfColorExtending(mapData, (byte) 0, basePoint, doorDir);
             Point pt = MapUtils.findFirstColorWithInNegate(mapData, (byte)0, new Rectangle(basePoint.x, basePoint.y, (int)Math.abs(doorDir.y) * unitRoomDimension.width + 1, (int)Math.abs(doorDir.x) * unitRoomDimension.height + 1));
             if (pt == null) {
-                e.sendDebugChat(new ChatComponentText("BUGGED MAP, can't find door"));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't determine door of the room, disabling mod for this dungeon run"));
                 bugged = true;
                 return;
             }
@@ -100,13 +100,13 @@ public class MapProcessor {
         {
             StartDoorFinder doorFinder = DoorFinderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
             if (doorFinder == null) {
-                e.sendDebugChat(new ChatComponentText("Couldn't find door finder for :: "+((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find door processor for "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
                 bugged = true;
                 return;
             }
             BlockPos door = doorFinder.find(context.getWorld());
             if (door == null) {
-                e.sendDebugChat(new ChatComponentText("Couldn't find door :: "+((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName()));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't determine door of the room, disabling mod for this dungeon run"));
                 bugged = true;
                 return;
             }

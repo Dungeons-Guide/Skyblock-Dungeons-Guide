@@ -90,7 +90,7 @@ public class SkyblockStatus {
                 foundDungeon = true;
             }
             if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
-                dungeonName = strippedLine;
+                dungeonName = strippedLine.trim();
             }
         }
 

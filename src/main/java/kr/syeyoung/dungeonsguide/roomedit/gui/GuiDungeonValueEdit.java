@@ -48,41 +48,43 @@ public class GuiDungeonValueEdit extends GuiScreen {
     private Object editingObj;
 
     public GuiDungeonValueEdit(final Object object, final List<MPanel> addons) {
-        dungeonRoom = EditingContext.getEditingContext().getRoom();
-        this.addons = addons;
-        this.editingObj = object;
-        mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
-        {
-            currentValueEdit = new MPanel(){
-                @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0, 0, parentWidth,parentHeight - 20 - addons.size() * 20));
-                }
-            };
-            mainPanel.add(currentValueEdit);
-        }
+        try {
+            dungeonRoom = EditingContext.getEditingContext().getRoom();
+            this.addons = addons;
+            this.editingObj = object;
+            mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
+            {
+                currentValueEdit = new MPanel() {
+                    @Override
+                    public void resize(int parentWidth, int parentHeight) {
+                        setBounds(new Rectangle(0, 0, parentWidth, parentHeight - 20 - addons.size() * 20));
+                    }
+                };
+                mainPanel.add(currentValueEdit);
+            }
 
             for (MPanel addon : addons) {
                 mainPanel.add(addon);
             }
-        {
-            save = new MButton(){
-                @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(0 ,parentHeight - 20, parentWidth, 20));
-                }
-            };
-            save.setText("Go back");
-            save.setBackgroundColor(Color.green);
-            save.setOnActionPerformed(new Runnable() {
-                @Override
-                public void run() {
-                    EditingContext.getEditingContext().goBack();
-                }
-            });
-            mainPanel.add(save);
-        }
-        updateClassSelection();
+            {
+                save = new MButton() {
+                    @Override
+                    public void resize(int parentWidth, int parentHeight) {
+                        setBounds(new Rectangle(0, parentHeight - 20, parentWidth, 20));
+                    }
+                };
+                save.setText("Go back");
+                save.setBackgroundColor(Color.green);
+                save.setOnActionPerformed(new Runnable() {
+                    @Override
+                    public void run() {
+                        EditingContext.getEditingContext().goBack();
+                    }
+                });
+                mainPanel.add(save);
+            }
+            updateClassSelection();
+        } catch (Exception e){}
     }
 
     public void updateClassSelection() {
@@ -118,34 +120,56 @@ public class GuiDungeonValueEdit extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GL11.glPushMatrix();
-        GlStateManager.pushAttrib();
-        mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
-        GlStateManager.popAttrib();
-        GL11.glPopMatrix();
+        try {
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            GL11.glPushMatrix();
+            GlStateManager.pushAttrib();
+            mainPanel.render0(scaledResolution, new Point(0, 0), new Rectangle(0, 0, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
+            GlStateManager.popAttrib();
+            GL11.glPopMatrix();
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        mainPanel.keyTyped0(typedChar, keyCode);
+
+        try {
+            super.keyTyped(typedChar, keyCode);
+            mainPanel.keyTyped0(typedChar, keyCode);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        try {
         super.mouseClicked(mouseX, mouseY, mouseButton);
         mainPanel.mouseClicked0(mouseX, mouseY,mouseX,mouseY, mouseButton);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
     public void mouseReleased(int mouseX, int mouseY, int state) {
+        try {
         mainPanel.mouseReleased0(mouseX, mouseY,mouseX,mouseY, state);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
     public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
+        try {
+            mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
+
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override
@@ -157,7 +181,11 @@ public class GuiDungeonValueEdit extends GuiScreen {
 
         int wheel = Mouse.getDWheel();
         if (wheel != 0) {
-            mainPanel.mouseScrolled0(i, j,i,j, wheel);
+            try {
+                mainPanel.mouseScrolled0(i, j,i,j, wheel);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
     }
 }
