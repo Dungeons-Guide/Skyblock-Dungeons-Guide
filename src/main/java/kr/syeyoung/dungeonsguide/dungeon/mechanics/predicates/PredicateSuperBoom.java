@@ -12,4 +12,9 @@ public class PredicateSuperBoom implements Predicate<ItemStack> {
     public boolean apply(@Nullable ItemStack input) {
         return false;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o != null && (o.getClass() == this.getClass());
+    }
 }

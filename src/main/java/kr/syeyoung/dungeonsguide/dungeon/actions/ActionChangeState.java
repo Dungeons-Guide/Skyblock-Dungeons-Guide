@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 
@@ -22,11 +23,13 @@ public class ActionChangeState implements Action{
     public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
         Set<Action> set = new HashSet<Action>();
         set.addAll(preRequisite2);
-        set.addAll(dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName).getAction(state, dungeonRoom));
+        DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName);
+        if (mechanic!= null)
+            set.addAll(mechanic.getAction(state, dungeonRoom));
         return set;
     }
     @Override
     public String toString() {
-        return "ChangeState\n\ttarget: "+mechanicName+"\n\tstate: "+state;
+        return "ChangeState\n- target: "+mechanicName+"\n- state: "+state;
     }
 }

@@ -27,6 +27,6 @@ public class ActionKill implements Action {
 
     @Override
     public String toString() {
-        return "KillEntity\n\ttarget: "+target.toString()+"\n\tradius: "+radius+"\n\tpredicate: "+(predicate == null ? "null" : predicate.getClass().getSimpleName());
+        return "KillEntity\n- target: "+target.toString()+"\n- radius: "+radius+"\n- predicate: "+(predicate == null ? "null" : predicate.getClass().getSimpleName());
     }
 }

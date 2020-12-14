@@ -20,7 +20,8 @@ import java.util.*;
 @Data
 public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     private OffsetPointSet secretPoint = new OffsetPointSet();
-    private List<String> preRequisite = new ArrayList<String>();
+    private List<String> openPreRequisite = new ArrayList<String>();
+    private List<String> closePreRequisite = new ArrayList<String>();
 
 
     @Override
@@ -43,9 +44,18 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
             preRequisites = actionMove.getPreRequisite();
         }
         {
-            for (String str : preRequisite) {
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+            if (state.equalsIgnoreCase("open")) {
+                for (String str : openPreRequisite) {
+                    if (str.isEmpty()) continue;
+                    ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                    preRequisites.add(actionChangeState);
+                }
+            } else {
+                for (String str : closePreRequisite) {
+                    if (str.isEmpty()) continue;
+                    ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                    preRequisites.add(actionChangeState);
+                }
             }
         }
         return base;
@@ -75,7 +85,8 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     public DungeonDoor clone() throws CloneNotSupportedException {
         DungeonDoor dungeonSecret = new DungeonDoor();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();
-        dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
+        dungeonSecret.openPreRequisite = new ArrayList<String>(openPreRequisite);
+        dungeonSecret.closePreRequisite = new ArrayList<String>(closePreRequisite);
         return dungeonSecret;
     }
 

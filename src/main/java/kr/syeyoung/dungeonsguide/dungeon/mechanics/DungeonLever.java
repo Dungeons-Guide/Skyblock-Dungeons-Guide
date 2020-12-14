@@ -37,6 +37,7 @@ public class DungeonLever implements DungeonMechanic {
         }
         {
             for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
                 ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
                 preRequisites.add(actionChangeState);
             }

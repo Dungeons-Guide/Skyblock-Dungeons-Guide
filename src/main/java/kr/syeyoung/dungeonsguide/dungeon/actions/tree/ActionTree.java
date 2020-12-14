@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionRoot;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -12,9 +13,13 @@ import java.util.Set;
 
 @Data
 public class ActionTree {
+    @EqualsAndHashCode.Exclude
     private ActionTree parent;
     private Action current;
     private Set<ActionTree> children;
+
+    @Override
+    public int hashCode() { return current == null ? 0 : current.hashCode(); }
 
 
     public static ActionTree buildActionTree(Set<Action> actions, DungeonRoom dungeonRoom) {
@@ -30,6 +35,7 @@ public class ActionTree {
         tree.setChildren(set);
         return tree;
     }
+
 
     private static ActionTree buildActionTree(ActionTree parent, Action action, DungeonRoom dungeonRoom, Map<Action, ActionTree> alreadyBuilt) {
         if (action == null) return null;

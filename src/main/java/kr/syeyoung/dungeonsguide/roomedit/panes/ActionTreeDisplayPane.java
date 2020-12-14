@@ -41,7 +41,8 @@ public class ActionTreeDisplayPane extends MPanel {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
         GL11.glPushMatrix();
-        GL11.glTranslated(-offsetX, -offsetY, 0);
+        GL11.glTranslated(offsetX, offsetY, 0);
+        GL11.glScaled(0.5,0.5,1);
         renderTree(tree, 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionTree, Point>());
         GL11.glPopMatrix();
     }
@@ -53,12 +54,23 @@ public class ActionTreeDisplayPane extends MPanel {
 
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
-            GlStateManager.color(255,0,0, 255);
-            renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-            renderer.pos(pt.x, pt.y, 0).endVertex();
-            renderer.pos(drawLineFrom.x, drawLineFrom.y, 0).endVertex();
-            Tessellator.getInstance().draw();
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_LINE_SMOOTH);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBlendFunc(770, 771);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glLineWidth(1);
+            GL11.glColor4f(1, 0, 0, 1);
+            GL11.glBegin(2);
+            GL11.glVertex2d(drawLineFrom.x, drawLineFrom.y);
+            GL11.glVertex2d(pt.x, pt.y);
+            GL11.glEnd();
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_LINE_SMOOTH);
+            GL11.glDisable(GL11.GL_BLEND);
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
             return 0;
@@ -68,12 +80,24 @@ public class ActionTreeDisplayPane extends MPanel {
         if (drawLineFrom != null) {
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            WorldRenderer renderer = Tessellator.getInstance().getWorldRenderer();
-            GlStateManager.color(255,255,255, 255);
-            renderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
-            renderer.pos(x + dim.width, y, 0).endVertex();
-            renderer.pos(drawLineFrom.x, drawLineFrom.y, 0).endVertex();
-            Tessellator.getInstance().draw();
+
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_LINE_SMOOTH);
+            GL11.glDisable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_TEXTURE_2D);
+            GL11.glBlendFunc(770, 771);
+            GL11.glEnable(GL11.GL_BLEND);
+            GL11.glLineWidth(1);
+            GL11.glColor4f(1, 1, 1, 1);
+            GL11.glBegin(2);
+            GL11.glVertex2d(drawLineFrom.x, drawLineFrom.y);
+            GL11.glVertex2d(x + dim.width / 2, y);
+            GL11.glEnd();
+            GL11.glDisable(GL11.GL_BLEND);
+            GL11.glEnable(GL11.GL_TEXTURE_2D);
+            GL11.glEnable(GL11.GL_DEPTH_TEST);
+            GL11.glDisable(GL11.GL_LINE_SMOOTH);
+            GL11.glDisable(GL11.GL_BLEND);
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
         }
@@ -84,7 +108,7 @@ public class ActionTreeDisplayPane extends MPanel {
         for (ActionTree tree:actionTree.getChildren()) {
             xOff += renderTree(tree, x + xOff, y + dim.height + 10, fr, pt, drawmPoints) + 10;
         }
-        return xOff;
+        return Math.max(xOff, dim.width);
     }
 
     public Dimension renderAction(Action action, int x, int y, FontRenderer fr) {
@@ -99,7 +123,7 @@ public class ActionTreeDisplayPane extends MPanel {
         Gui.drawRect(x,y,x + maxWidth +10, y + height + 10, 0xff000000);
         Gui.drawRect(x+1,y+1,x + maxWidth +8, y + height + 8, 0xff4d4d4d);
         for (int i = 0; i < lines.length; i++) {
-            fr.drawString(lines[i], 5, 5 + i*(fr.FONT_HEIGHT + offset), 0xffffffff);
+            fr.drawString(lines[i], x + 5, y + 5 + i*(fr.FONT_HEIGHT + offset), 0xffffffff);
         }
 
         return new Dimension(maxWidth + 10, height + 10);

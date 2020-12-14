@@ -23,6 +23,6 @@ public class ActionMoveNearestAir implements Action {
 
     @Override
     public String toString() {
-        return "MoveNearestAir\n\ttarget: "+target.toString();
+        return "MoveNearestAir\n- target: "+target.toString();
     }
 }

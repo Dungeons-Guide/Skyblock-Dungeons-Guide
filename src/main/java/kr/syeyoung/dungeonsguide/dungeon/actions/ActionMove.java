@@ -24,6 +24,6 @@ public class ActionMove implements Action {
 
     @Override
     public String toString() {
-        return "Move\n\ttarget: "+target.toString();
+        return "Move\n- target: "+target.toString();
     }
 }

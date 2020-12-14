@@ -14,4 +14,9 @@ public class PredicateBat implements Predicate<Entity> {
     public boolean apply(@Nullable Entity input) {
         return input instanceof EntityBat;
     }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o != null && (o.getClass() == this.getClass());
+    }
 }

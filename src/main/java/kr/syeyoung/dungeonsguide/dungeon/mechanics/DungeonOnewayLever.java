@@ -22,7 +22,7 @@ public class DungeonOnewayLever implements DungeonMechanic {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
+        if (!("triggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
@@ -37,6 +37,7 @@ public class DungeonOnewayLever implements DungeonMechanic {
         }
         {
             for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
                 ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
                 preRequisites.add(actionChangeState);
             }

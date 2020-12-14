@@ -27,6 +27,6 @@ public class ActionClick implements Action {
 
     @Override
     public String toString() {
-        return "Click\n\ttarget: "+target.toString()+"\n\tpredicate: "+predicate.getClass().getSimpleName();
+        return "Click\n- target: "+target.toString()+"\n- predicate: "+predicate.getClass().getSimpleName();
     }
 }

@@ -29,7 +29,9 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
     private MLabel label;
     private MValue<OffsetPointSet> value;
     private MTextField preRequisite;
-    private MLabelAndElement preRequisite2;
+    private MLabelAndElement preRequisite_par;
+    private MTextField preRequisite2;
+    private MLabelAndElement preRequisite2_par;
     private MButton updateOnlyAir;
 
     public ValueEditDoor(final Parameter parameter2) {
@@ -67,13 +69,24 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         preRequisite = new MTextField() {
             @Override
             public void edit(String str) {
-                dungeonDoor.setPreRequisite(Arrays.asList(str.split(",")));
+                dungeonDoor.setOpenPreRequisite(Arrays.asList(str.split(",")));
             }
         };
-        preRequisite.setText(TextUtils.join(dungeonDoor.getPreRequisite(), ","));
-        preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,60,bounds.width,20));
-        add(preRequisite2);
+        preRequisite.setText(TextUtils.join(dungeonDoor.getOpenPreRequisite(), ","));
+        preRequisite_par = new MLabelAndElement("Open Req.",preRequisite);
+        preRequisite_par.setBounds(new Rectangle(0,60,bounds.width,20));
+        add(preRequisite_par);
+
+        preRequisite2 = new MTextField() {
+            @Override
+            public void edit(String str) {
+                dungeonDoor.setClosePreRequisite(Arrays.asList(str.split(",")));
+            }
+        };
+        preRequisite2.setText(TextUtils.join(dungeonDoor.getClosePreRequisite(), ","));
+        preRequisite2_par = new MLabelAndElement("Close Req.",preRequisite2);
+        preRequisite2_par.setBounds(new Rectangle(0,80,bounds.width,20));
+        add(preRequisite2_par);
     }
 
     @Override
@@ -81,7 +94,8 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         label.setBounds(new Rectangle(0,0,bounds.width, 20));
         value.setBounds(new Rectangle(0,20,bounds.width, 20));
         updateOnlyAir.setBounds(new Rectangle(0,40,bounds.width, 20));
-        preRequisite2.setBounds(new Rectangle(0,60,bounds.width,20));
+        preRequisite_par.setBounds(new Rectangle(0,60,bounds.width,20));
+        preRequisite2_par.setBounds(new Rectangle(0,80,bounds.width,20));
     }
 
     @Override

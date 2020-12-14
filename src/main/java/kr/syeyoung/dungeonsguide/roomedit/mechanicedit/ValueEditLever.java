@@ -62,7 +62,7 @@ public class ValueEditLever extends MPanel implements ValueEdit<DungeonLever> {
             }
         };
         target.setText(dungeonLever.getTriggering());
-        target2 = new MLabelAndElement("Req.",target);
+        target2 = new MLabelAndElement("Target",target);
         target2.setBounds(new Rectangle(0,60,bounds.width,20));
         add(target2);
     }

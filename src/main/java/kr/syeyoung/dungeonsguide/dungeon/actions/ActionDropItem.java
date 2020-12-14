@@ -27,6 +27,6 @@ public class ActionDropItem implements Action {
 
     @Override
     public String toString() {
-        return "DropItem\n\ttarget: "+target.toString()+"\n\tpredicate: "+predicate.getClass().getSimpleName();
+        return "DropItem\n- target: "+target.toString()+"\n- predicate: "+predicate.getClass().getSimpleName();
     }
 }

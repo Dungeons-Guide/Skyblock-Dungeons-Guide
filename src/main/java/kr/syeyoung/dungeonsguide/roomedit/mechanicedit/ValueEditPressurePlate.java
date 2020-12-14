@@ -65,7 +65,7 @@ public class ValueEditPressurePlate extends MPanel implements ValueEdit<DungeonP
             }
         };
         target.setText(dungeonPressureplate.getTriggering());
-        target2 = new MLabelAndElement("Req.",target);
+        target2 = new MLabelAndElement("Target",target);
         target2.setBounds(new Rectangle(0,60,bounds.width,20));
         add(target2);
     }

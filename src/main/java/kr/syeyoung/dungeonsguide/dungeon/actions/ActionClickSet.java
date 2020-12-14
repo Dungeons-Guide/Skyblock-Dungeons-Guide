@@ -27,6 +27,6 @@ public class ActionClickSet implements Action {
 
     @Override
     public String toString() {
-        return "ClickSet\n\ttargets size: "+target.getOffsetPointList().size()+"\n\tpredicate: "+predicate.getClass().getSimpleName();
+        return "ClickSet\n- targets size: "+target.getOffsetPointList().size()+"\n- predicate: "+predicate.getClass().getSimpleName();
     }
 }
