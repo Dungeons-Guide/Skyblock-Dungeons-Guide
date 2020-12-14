@@ -4,9 +4,10 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.Action;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 
 import java.awt.*;
+import java.io.Serializable;
 import java.util.Set;
 
-public interface DungeonMechanic {
+public interface DungeonMechanic extends Serializable {
     Set<Action> getAction(String state, DungeonRoom dungeonRoom);
 
     void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
