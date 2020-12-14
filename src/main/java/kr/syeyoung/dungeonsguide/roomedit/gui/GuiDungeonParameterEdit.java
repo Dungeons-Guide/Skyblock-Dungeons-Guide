@@ -61,6 +61,12 @@ public class GuiDungeonParameterEdit extends GuiScreen {
                 public void resize(int parentWidth, int parentHeight) {
                     setBounds(new Rectangle(0, 20, parentWidth,20));
                 }
+
+                @Override
+                public String selectionToDisplay(String selection) {
+                    String[] split = selection.split("\\.");
+                    return super.selectionToDisplay(split[split.length - 1]);
+                }
             };
 
             mStringSelectionButton.setOnUpdate(new Runnable() {

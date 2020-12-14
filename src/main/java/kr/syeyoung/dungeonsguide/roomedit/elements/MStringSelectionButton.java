@@ -51,6 +51,10 @@ public class MStringSelectionButton extends MPanel {
         });
     }
 
+    public String selectionToDisplay(String selection) {
+        return selection;
+    }
+
     public String getSelected() {
         if (possible.size() == 0) return null;
         return possible.get(selectedIndex);
@@ -58,7 +62,7 @@ public class MStringSelectionButton extends MPanel {
 
     private void updateSelected() {
         if (possible.size() == 0) selected.setText("-Empty-");
-        else selected.setText(possible.get(selectedIndex));
+        else selected.setText(selectionToDisplay(possible.get(selectedIndex)));
     }
 
     @Override
