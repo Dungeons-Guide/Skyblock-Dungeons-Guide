@@ -57,8 +57,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (secretPoint.getOffsetPointList().isEmpty()) return;
         OffsetPoint firstpt = secretPoint.getOffsetPointList().get(0);
         BlockPos pos = firstpt.getBlockPos(dungeonRoom);
-        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
         for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
             RenderUtils.highlightBlock(offsetPoint.getBlockPos(dungeonRoom), color,partialTicks);
