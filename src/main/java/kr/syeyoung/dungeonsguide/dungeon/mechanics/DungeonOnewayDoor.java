@@ -32,17 +32,6 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
-            ActionClickSet actionClick;
-            preRequisites.add(actionClick = new ActionClickSet(secretPoint));
-            actionClick.setPredicate(PredicateSuperBoom.INSTANCE);
-            preRequisites = actionClick.getPreRequisite();
-        }
-        {
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(secretPoint.getOffsetPointList().get(0));
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
-        {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
                 ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);

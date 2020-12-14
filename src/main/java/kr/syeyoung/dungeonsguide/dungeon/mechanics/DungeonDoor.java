@@ -32,17 +32,6 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
         }
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
-        if (!state.equalsIgnoreCase(getCurrentState(dungeonRoom))) {
-            ActionClickSet actionClick;
-            preRequisites.add(actionClick = new ActionClickSet(secretPoint));
-            actionClick.setPredicate(PredicateSuperBoom.INSTANCE);
-            preRequisites = actionClick.getPreRequisite();
-        }
-        {
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(secretPoint.getOffsetPointList().get(0));
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
         {
             if (state.equalsIgnoreCase("open")) {
                 for (String str : openPreRequisite) {
