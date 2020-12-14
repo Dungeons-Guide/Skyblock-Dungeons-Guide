@@ -15,7 +15,7 @@ import java.util.List;
 public class DungeonPressurePlate implements DungeonMechanic {
     private OffsetPoint platePoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
-    private String triggering;
+    private String triggering = "";
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
@@ -62,7 +62,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-
+        if (triggering == null) triggering = "null";
         DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(triggering);
         if (mechanic == null)
         {

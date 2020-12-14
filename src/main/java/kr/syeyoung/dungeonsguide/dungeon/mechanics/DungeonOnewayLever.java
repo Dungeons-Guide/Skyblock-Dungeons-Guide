@@ -15,7 +15,7 @@ import java.util.List;
 public class DungeonOnewayLever implements DungeonMechanic {
     private OffsetPoint leverPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
-    private String triggering;
+    private String triggering = "";
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
@@ -60,7 +60,7 @@ public class DungeonOnewayLever implements DungeonMechanic {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-
+        if (triggering == null) triggering = "null";
         DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(triggering);
         if (mechanic == null)
         {
