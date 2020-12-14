@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 
 import java.awt.*;

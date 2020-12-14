@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.dungeon.mechanics.action;
+package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
@@ -24,5 +24,9 @@ public class ActionChangeState implements Action{
         set.addAll(preRequisite2);
         set.addAll(dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName).getAction(state, dungeonRoom));
         return set;
+    }
+    @Override
+    public String toString() {
+        return "ChangeState\n\ttarget: "+mechanicName+"\n\tstate: "+state;
     }
 }

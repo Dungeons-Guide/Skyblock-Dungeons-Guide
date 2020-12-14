@@ -2,10 +2,10 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.Action;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionClickSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClickSet;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;

@@ -1,24 +1,28 @@
-package kr.syeyoung.dungeonsguide.dungeon.mechanics.action;
+package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-public class ActionMove implements Action {
+public class ActionMoveNearestAir implements Action {
     private Set<Action> preRequisite = new HashSet<Action>();
     private OffsetPoint target;
 
-    public ActionMove(OffsetPoint target) {
+    public ActionMoveNearestAir(OffsetPoint target) {
         this.target = target;
     }
 
     @Override
     public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
         return preRequisite;
+    }
+
+    @Override
+    public String toString() {
+        return "MoveNearestAir\n\ttarget: "+target.toString();
     }
 }

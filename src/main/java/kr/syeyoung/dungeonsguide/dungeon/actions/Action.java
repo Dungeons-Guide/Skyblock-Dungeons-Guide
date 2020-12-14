@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.dungeon.mechanics.action;
+package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 

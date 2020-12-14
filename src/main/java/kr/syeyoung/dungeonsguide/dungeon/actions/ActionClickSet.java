@@ -1,8 +1,7 @@
-package kr.syeyoung.dungeonsguide.dungeon.mechanics.action;
+package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
@@ -24,5 +23,10 @@ public class ActionClickSet implements Action {
     @Override
     public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
         return preRequisite;
+    }
+
+    @Override
+    public String toString() {
+        return "ClickSet\n\ttargets size: "+target.getOffsetPointList().size()+"\n\tpredicate: "+predicate.getClass().getSimpleName();
     }
 }

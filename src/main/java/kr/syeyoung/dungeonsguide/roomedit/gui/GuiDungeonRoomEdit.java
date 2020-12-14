@@ -6,10 +6,7 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
-import kr.syeyoung.dungeonsguide.roomedit.panes.GeneralEditPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.ProcessorParameterEditPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.RoomDataDisplayPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.SecretEditPane;
+import kr.syeyoung.dungeonsguide.roomedit.panes.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -39,6 +36,7 @@ public class GuiDungeonRoomEdit extends GuiScreen {
         tabbedPane.addTab("General", new GeneralEditPane(room));
         tabbedPane.addTab("Match", new RoomDataDisplayPane(room));
         tabbedPane.addTab("Secrets", new SecretEditPane(room));
+        tabbedPane.addTab("Actions", new ActionDisplayPane(room));
         tabbedPane.addTab("Proc.Params", new ProcessorParameterEditPane(room));
         this.tabbedPane = tabbedPane;
     }

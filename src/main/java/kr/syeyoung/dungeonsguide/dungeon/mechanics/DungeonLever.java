@@ -1,10 +1,10 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.Action;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionClick;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.action.ActionMove;
+import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClick;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
