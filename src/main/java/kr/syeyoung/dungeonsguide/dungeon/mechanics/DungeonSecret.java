@@ -8,6 +8,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
@@ -82,8 +83,9 @@ public class DungeonSecret implements DungeonMechanic {
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, color,partialTicks);
-        RenderUtils.drawTextAtWorld(getSecretType().name(), pos.getX() +0.5f, pos.getY()+1f, pos.getZ()+0.5f, 0xFF000000, 2f, true, false, partialTicks);
-        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFF000000, 2f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(getSecretType().name(), pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
     public static enum SecretType {
@@ -100,5 +102,11 @@ public class DungeonSecret implements DungeonMechanic {
         dungeonSecret.secretType = secretType;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
+    }
+
+
+    @Override
+    public String getCurrentState(DungeonRoom dungeonRoom) {
+        return getSecretStatus(dungeonRoom).name();
     }
 }

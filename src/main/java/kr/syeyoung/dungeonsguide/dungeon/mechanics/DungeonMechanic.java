@@ -10,4 +10,6 @@ public interface DungeonMechanic {
     Set<Action> getAction(String state, DungeonRoom dungeonRoom);
 
     void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
+
+    String getCurrentState(DungeonRoom dungeonRoom);
 }

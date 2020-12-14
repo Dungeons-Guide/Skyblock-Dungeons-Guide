@@ -59,7 +59,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
                 @Override
                 public void run() {
                     DungeonRoomInfo dungeonRoomInfo = dungeonRoom.getDungeonRoomInfo();
-                    dungeonRoomInfo.getProperties().clear();
+                    dungeonRoomInfo.getMechanics().clear();
 
                     for (MParameter parameter : parameters) {
                         Parameter real = parameter.getParameter();

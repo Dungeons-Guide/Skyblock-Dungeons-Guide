@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
+import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
@@ -56,7 +57,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (secretPoint.getOffsetPointList().isEmpty()) return;
         OffsetPoint firstpt = secretPoint.getOffsetPointList().get(0);
         BlockPos pos = firstpt.getBlockPos(dungeonRoom);
-        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFF000000, 2f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 
         for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
             RenderUtils.highlightBlock(offsetPoint.getBlockPos(dungeonRoom), color,partialTicks);
@@ -76,5 +78,14 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
+    }
+
+    @Override
+    public String getCurrentState(DungeonRoom dungeonRoom) {
+        Block b = Blocks.air;
+        if (!secretPoint.getOffsetPointList().isEmpty())
+            b = secretPoint.getOffsetPointList().get(0).getBlock(dungeonRoom);
+
+        return b == Blocks.air ?"broken" :"blocking";
     }
 }
