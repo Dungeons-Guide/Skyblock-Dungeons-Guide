@@ -15,18 +15,18 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 @Data
-public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
+public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<String>();
 
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"open".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for breakable wall");
+        if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
@@ -73,8 +73,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         return false;
     }
 
-    public DungeonBreakableWall clone() throws CloneNotSupportedException {
-        DungeonBreakableWall dungeonSecret = new DungeonBreakableWall();
+    public DungeonDoor clone() throws CloneNotSupportedException {
+        DungeonDoor dungeonSecret = new DungeonDoor();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
@@ -82,10 +82,6 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-        Block b = Blocks.air;
-        if (!secretPoint.getOffsetPointList().isEmpty())
-            b = secretPoint.getOffsetPointList().get(0).getBlock(dungeonRoom);
-
-        return b == Blocks.air ?"open" :"closed";
+        return isBlocking(dungeonRoom) ?"closed":"open";
     }
 }

@@ -30,7 +30,7 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"broken".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for tomb");
+        if (!"open".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for tomb");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
@@ -89,6 +89,6 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
         Block b = Blocks.air;
         if (!secretPoint.getOffsetPointList().isEmpty())
             b = secretPoint.getOffsetPointList().get(0).getBlock(dungeonRoom);
-        return b == Blocks.air ?"broken" :"blocking";
+        return b == Blocks.air ?"open" :"closed";
     }
 }

@@ -69,7 +69,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
             return "undeterminable";
         } else {
             String state = mechanic.getCurrentState(dungeonRoom);
-            if ("broken".equalsIgnoreCase(state)) {
+            if ("open".equalsIgnoreCase(state)) {
                 return "triggered";
             } else {
                 return "untriggered";
