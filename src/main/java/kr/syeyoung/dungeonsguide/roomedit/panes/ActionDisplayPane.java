@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionTree;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -12,6 +13,7 @@ import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Set;
 
 public class ActionDisplayPane extends MPanel {
@@ -42,10 +44,8 @@ public class ActionDisplayPane extends MPanel {
                         String text = textField.getText();
                         String target = text.split(":")[0];
                         String state = text.split(":")[1];
-
-                        DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(target);
-                        Set<Action> actionSet = mechanic.getAction(state, dungeonRoom);
-                        ActionTree tree= ActionTree.buildActionTree(actionSet, dungeonRoom);
+                        ActionChangeState actionChangeState = new ActionChangeState(target, state);
+                        ActionTree tree= ActionTree.buildActionTree(actionChangeState, dungeonRoom);
 
                         displayPane = new ActionTreeDisplayPane(dungeonRoom, tree);
                         displayPane.setBounds(new Rectangle(0,25,bounds.width,bounds.height-25));

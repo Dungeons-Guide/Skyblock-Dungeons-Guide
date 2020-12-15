@@ -35,6 +35,10 @@ public class ActionTree {
         tree.setChildren(set);
         return tree;
     }
+    public static ActionTree buildActionTree(Action actions, DungeonRoom dungeonRoom) {
+        return buildActionTree(null, actions, dungeonRoom, new HashMap<Action, ActionTree>());
+    }
+
 
 
     private static ActionTree buildActionTree(ActionTree parent, Action action, DungeonRoom dungeonRoom, Map<Action, ActionTree> alreadyBuilt) {

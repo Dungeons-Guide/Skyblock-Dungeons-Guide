@@ -27,6 +27,8 @@ public class ActionTreeDisplayPane extends MPanel {
     private int offsetX = 0;
     private int offsetY = 0;
 
+    private float scale;
+
     private DungeonRoom dungeonRoom;
     private ActionTree tree;
     public ActionTreeDisplayPane(DungeonRoom dungeonRoom, ActionTree tree) {
@@ -42,7 +44,7 @@ public class ActionTreeDisplayPane extends MPanel {
 
         GL11.glPushMatrix();
         GL11.glTranslated(offsetX, offsetY, 0);
-        GL11.glScaled(0.5,0.5,1);
+        GL11.glScaled(scale,scale,1);
         renderTree(tree, 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionTree, Point>());
         GL11.glPopMatrix();
     }
@@ -151,5 +153,11 @@ public class ActionTreeDisplayPane extends MPanel {
         offsetY += dY;
         lastX = absMouseX;
         lastY = absMouseY;
+    }
+
+    @Override
+    public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+        if (scrollAmount > 0) scale += 0.1;
+        if (scrollAmount < 0) scale -= 0.1;
     }
 }

@@ -5,6 +5,7 @@ import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
 
 import java.util.HashSet;

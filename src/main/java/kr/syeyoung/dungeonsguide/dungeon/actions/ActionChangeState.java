@@ -3,12 +3,14 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 public class ActionChangeState implements Action{
+    @EqualsAndHashCode.Exclude
     private Set<Action> preRequisite2 = new HashSet<Action>();
 
     private String mechanicName;
