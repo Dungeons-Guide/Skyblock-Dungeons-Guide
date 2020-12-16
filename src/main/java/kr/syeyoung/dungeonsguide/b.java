@@ -8,6 +8,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
+import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -51,8 +52,8 @@ public class b {
         String c = a(a.getProfile());
         MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getMinecraft().getSessionService();
         JsonObject d = a(c);
-        String hash = a(DatatypeConverter.parseBase64Binary(d.get("sharedSecret").getAsString()),
-                DatatypeConverter.parseBase64Binary(d.get("publicKey").getAsString()));
+        String hash = a(Base64.decodeBase64(d.get("sharedSecret").getAsString()),
+                Base64.decodeBase64(d.get("publicKey").getAsString()));
         yggdrasilMinecraftSessionService.joinServer(a.getProfile(), b, hash);
         this.b = a(c, this.a.getPublic());
         b(this.b);
@@ -61,7 +62,7 @@ public class b {
 
     public JsonObject a(String c) {
         String a = c.split("\\.")[1].replace("+", "-").replace("/", "_");
-        String b = new String(DatatypeConverter.parseBase64Binary(a));
+        String b = new String(Base64.decodeBase64(a)); // padding
         return (JsonObject) new JsonParser().parse(b);
     }
 
@@ -89,7 +90,7 @@ public class b {
         c.setDoInput(true);
         c.setDoOutput(true);
 
-        c.getOutputStream().write(("{\"jwt\":\""+a+"\",\"publicKey\":\""+DatatypeConverter.printBase64Binary(b.getEncoded())+"\"}").getBytes());
+        c.getOutputStream().write(("{\"jwt\":\""+a+"\",\"publicKey\":\""+Base64.encodeBase64URLSafeString(b.getEncoded())+"\"}").getBytes());
         InputStreamReader d = new InputStreamReader(c.getInputStream());
         JsonObject e = (JsonObject) new JsonParser().parse(d);
         if (!"ok".equals(e.get("status").getAsString())) {

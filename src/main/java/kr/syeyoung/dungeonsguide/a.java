@@ -4,6 +4,7 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.d.c;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -39,7 +40,7 @@ public class a
         this.a = this;
         d.init(a);
     }
-
+//
 //    @EventHandler
 //    public void a(FMLPreInitializationEvent a) {
 //        b b = new b();
@@ -86,7 +87,7 @@ public class a
 //        a(new String[]{
 //                "Can't validate current installation of Dungeons Guide",
 //                "Steps to fix",
-//                "1. check if other people can't join minecraft servers. If they can't it's impossible to validate",
+//                "1. check if other people can't join minecraft servers.",
 //                "2. restart minecraft launcher",
 //                "3. make sure you're on the right account",
 //                "4. restart your computer",
@@ -108,21 +109,24 @@ public class a
 
     public void a(final String[] a) {
         final GuiScreen b = new GuiErrorScreen(null, null) {
-
-            @Override
-            public void handleMouseInput() {
-            }
-
-            @Override
-            public void handleKeyboardInput() {
-            }
-
             @Override
             public void drawScreen(int par1, int par2, float par3) {
-                drawDefaultBackground();
+                super.drawScreen(par1, par2, par3);
                 for (int i = 0; i < a.length; ++i) {
                     drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
                 }
+            }
+
+            @Override
+            public void initGui() {
+                super.initGui();
+                this.buttonList.clear();
+                this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100,20, "close"));
+            }
+
+            @Override
+            protected void actionPerformed(GuiButton button) throws IOException {
+                System.exit(-1);
             }
         };
         @SuppressWarnings("serial") CustomModLoadingErrorDisplayException e = new CustomModLoadingErrorDisplayException() {

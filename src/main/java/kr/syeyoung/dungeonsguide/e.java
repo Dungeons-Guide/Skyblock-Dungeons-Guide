@@ -7,14 +7,18 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import org.apache.commons.io.IOUtils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
+import java.io.FileOutputStream;
 import java.io.IOException;
+import java.io.InputStream;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -29,6 +33,10 @@ public class e implements c {
 
     @Getter
     private b authenticator;
+
+    @Getter
+    private Configuration configuration;
+
     public e(b authenticator) {
         this.authenticator = authenticator;
     }
@@ -68,7 +76,25 @@ public class e implements c {
         Keybinds.register();
     }
     public void pre(FMLPreInitializationEvent event) {
-        configDir = new File(event.getModConfigurationDirectory(),"z");
+        configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
+        File configFile = new File(configDir, "config.conf");
+        if (!configFile.exists()) {
+            configDir.mkdirs();
+            try {
+                copy(e.class.getResourceAsStream("defaultConfig.conf"), configFile);
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        configuration = new Configuration(configFile);
+        configuration.load();
+    }
+    private void copy(InputStream inputStream, File f) throws IOException {
+        FileOutputStream fos = new FileOutputStream(f);
+        IOUtils.copy(inputStream, fos);
+        fos.flush();
+        fos.close();
+        inputStream.close();
     }
 
     @Getter

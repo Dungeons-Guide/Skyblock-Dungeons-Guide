@@ -18,7 +18,8 @@ public class CommandSaveData extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        DungeonRoomInfoRegistry.saveAll(e.getDungeonsGuide().getConfigDir());
+        if (e.DEBUG)
+            DungeonRoomInfoRegistry.saveAll(e.getDungeonsGuide().getConfigDir());
     }
     @Override
     public int getRequiredPermissionLevel() {
