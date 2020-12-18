@@ -10,7 +10,7 @@ config/*
 crash-reports/*
 run/*
 gradle/*
-
+screenshots/*
 # Ignore Gradle GUI config
 gradle-app.setting
 
