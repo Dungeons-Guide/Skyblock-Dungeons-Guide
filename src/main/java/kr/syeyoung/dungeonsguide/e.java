@@ -29,7 +29,7 @@ public class e implements c {
 
     private static e dungeonsGuide;
 
-    public static final boolean DEBUG = true;
+    public static final boolean DEBUG = false;
 
     @Getter
     private b authenticator;
