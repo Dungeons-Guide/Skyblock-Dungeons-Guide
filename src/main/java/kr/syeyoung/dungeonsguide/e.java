@@ -81,7 +81,7 @@ public class e implements c {
         if (!configFile.exists()) {
             configDir.mkdirs();
             try {
-                copy(e.class.getResourceAsStream("defaultConfig.conf"), configFile);
+                copy(e.class.getResourceAsStream("/defaultConfig.conf"), configFile);
             } catch (IOException e) {
                 e.printStackTrace();
             }
