@@ -153,8 +153,9 @@ public class b {
         return c;
     }
 
-    private void b(String a) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException {
-        HttpURLConnection b = (HttpURLConnection) new URL("https://dungeonsguide.kro.kr/resource/jar").openConnection();
+    private void b(String a) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, KeyManagementException {
+        HttpsURLConnection b = (HttpsURLConnection) new URL("https://dungeonsguide.kro.kr/resource/jar").openConnection();
+        b.setSSLSocketFactory(e());
         b.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         b.setRequestProperty("Content-Type", "application/json");
         b.setRequestMethod("GET");
