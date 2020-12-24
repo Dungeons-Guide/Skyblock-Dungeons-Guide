@@ -5,10 +5,9 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MParameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MValue;
+import kr.syeyoung.dungeonsguide.roomedit.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.panes.DynamicEditor;
+import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
 import net.minecraftforge.common.config.ConfigCategory;
@@ -23,7 +22,8 @@ public class CategoryEditPane extends MPanel implements DynamicEditor {
     private ConfigCategory category;
 
     private MButton save;
-    private Map<String, MValue> parameters = new HashMap<String, MValue>();
+    private Map<String, Parameter> parameters = new HashMap<String, Parameter>();
+    private List<MLabelAndElement> le = new ArrayList<MLabelAndElement>();
 
     public CategoryEditPane(ConfigCategory category) {
         this.category = category;
@@ -53,9 +53,9 @@ public class CategoryEditPane extends MPanel implements DynamicEditor {
             save.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    for (Map.Entry<String,MValue> parameter:parameters.entrySet()) {
-                        if (parameter.getValue().getData() != null)
-                        category.get(parameter.getKey()).setValue(parameter.getValue().getData().toString());
+                    for (Map.Entry<String,Parameter> parameter:parameters.entrySet()) {
+                        if (parameter.getValue() != null)
+                        category.get(parameter.getKey()).setValue(String.valueOf(parameter.getValue().getNewData()));
                     }
                     Config.syncConfig(false);
                 }
@@ -64,10 +64,42 @@ public class CategoryEditPane extends MPanel implements DynamicEditor {
         {
             for (Map.Entry<String, Property> en : category.entrySet()) {
                 ValueEditCreator vec = ValueEditRegistry.getValueEditMap(typeToclass(en.getValue().getType()));
+                final Parameter parameter;
+                vec.createDefaultValue(parameter = new Parameter(en.getValue().comment, getValue(en.getValue()), getValue(en.getValue())));
 
-                MValue mParameter = new MValue(getValue(en.getValue()), Collections.emptyList());
-                mParameter.setBounds(new Rectangle(0,0,bounds.width,20));
-                parameters.put(en.getKey(), mParameter);
+                MPanel element = null;
+                if (en.getValue().getType() == Property.Type.STRING) {
+                    element = new MTextField() {
+                        @Override
+                        public void edit(String str) {
+                            parameter.setNewData(str);
+                        }
+                    };
+                    ((MTextField)element).setText(en.getValue().getString());
+                } else if (en.getValue().getType() == Property.Type.INTEGER) {
+                    element = new MIntegerSelectionButton(en.getValue().getInt());
+                    final MPanel finalElement = element;
+                    ((MIntegerSelectionButton)element).setOnUpdate(new Runnable() {
+                        @Override
+                        public void run() {
+                            parameter.setNewData(((MIntegerSelectionButton) finalElement).getData());
+                        }
+                    });
+                }else if (en.getValue().getType() == Property.Type.BOOLEAN) {
+                    element = new MStringSelectionButton(Arrays.asList(new String[] {"on", "off"}), en.getValue().getBoolean() ? "on":"off");
+                    final MPanel finalElement1 = element;
+                    ((MStringSelectionButton)element).setOnUpdate(new Runnable() {
+                        @Override
+                        public void run() {
+                            parameter.setNewData(((MStringSelectionButton) finalElement1).getSelected().equals("on") ? true : false);
+                        }
+                    });
+                }
+
+                MLabelAndElement labelAndElement = new MLabelAndElement(en.getValue().comment, element);
+                labelAndElement.setBounds(new Rectangle(0,0,bounds.width,20));
+                parameters.put(en.getKey(), parameter);
+                le.add(labelAndElement);
             }
         }
     }
@@ -108,7 +140,7 @@ public class CategoryEditPane extends MPanel implements DynamicEditor {
 
     @Override
     public List<MPanel> getChildComponents() {
-        ArrayList<MPanel> panels = new ArrayList<MPanel>(parameters.values());
+        ArrayList<MPanel> panels = new ArrayList<MPanel>(le);
         panels.add(save);
         return panels;
     }

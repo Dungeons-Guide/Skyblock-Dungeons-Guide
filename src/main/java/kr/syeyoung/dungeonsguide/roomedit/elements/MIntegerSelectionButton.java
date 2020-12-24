@@ -31,6 +31,7 @@ public class MIntegerSelectionButton extends MPanel {
             public void edit(String str) {
                 try {
                     data = Integer.parseInt(str);
+                    onUpdate.run();
                 } catch (Exception e) {}
             }
         }; updateSelected(); add(selected);

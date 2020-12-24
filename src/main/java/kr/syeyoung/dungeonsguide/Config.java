@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide;
 
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 
 public class Config {
     public static Configuration configuration;
@@ -28,18 +29,20 @@ public class Config {
                 configuration.load();
 
             // Read props from config
-            DEBUG = configuration.get(Config.CATEGORY_ADVANCED, "debug","false", "Enable debug mode").getBoolean(); // Comment
+            solver_riddle = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "riddle", "true", "Riddle puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_kahoot = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "kahoot", "true", "Omnicrescent puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_teleport = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "teleport", "true", "Teleport puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_creeper = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "creeper", "true", "Creeper puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_blaze = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "blaze", "true", "Blaze puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_tictactoe = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "tictactoe", "true", "Tictactoe puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_icepath = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "icepath", "true", "Icepath puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_icesilverfish = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "silverfish", "true", "Silverfish puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_waterpuzzle = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "water", "true", "Water puzzle solver", Property.Type.BOOLEAN).getBoolean();
+            solver_box = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "box", "true", "Box puzzle solver", Property.Type.BOOLEAN).getBoolean();
 
-            solver_riddle = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "riddle", "true", "Riddle puzzle solver").getBoolean();
-            solver_kahoot = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "kahoot", "true", "Omnicrescent puzzle solver").getBoolean();
-            solver_teleport = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "teleport", "true", "Teleport puzzle solver").getBoolean();
-            solver_creeper = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "creeper", "true", "Creeper puzzle solver (Advanced)").getBoolean();
-            solver_blaze = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "blaze", "true", "Blaze puzzle solver").getBoolean();
-            solver_tictactoe = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "tictactoe", "true", "Tictactoe puzzle solver (Advanced)").getBoolean();
-            solver_icepath = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "icepath", "true", "Icepath puzzle solver (Advanced)").getBoolean();
-            solver_icesilverfish = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "silverfish", "true", "Silverfish puzzle solver (Advanced)").getBoolean();
-            solver_waterpuzzle = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "water", "true", "Water puzzle solver (Advanced)").getBoolean();
-            solver_box = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "box", "true", "Box puzzle solver (Advanced)").getBoolean();
+
+
+            DEBUG = configuration.get(Config.CATEGORY_ADVANCED, "debug","false", "Enable debug mode", Property.Type.BOOLEAN).getBoolean(); // Comment
         } catch (Exception e) {
             // Failed reading/writing, just continue
         } finally {

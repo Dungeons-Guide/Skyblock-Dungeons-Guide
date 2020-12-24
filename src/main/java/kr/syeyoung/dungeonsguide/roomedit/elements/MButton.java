@@ -39,11 +39,11 @@ public class MButton extends MPanel {
             Gui.drawRect(0,0,bounds.width, bounds.height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
-        int width = renderer.getStringWidth(text);
+        int width = renderer.getStringWidth(getText());
         int x = (bounds.width - width) / 2;
         int y = (bounds.height - renderer.FONT_HEIGHT) / 2;
 
-        renderer.drawString(text, x,y, foreground.getRGB());
+        renderer.drawString(getText(), x,y, foreground.getRGB());
     }
 
     @Override
