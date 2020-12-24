@@ -2,6 +2,8 @@ package kr.syeyoung.dungeonsguide.utils;
 
 import java.text.DecimalFormat;
 import java.util.List;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.regex.Pattern;
 
 public class TextUtils {
@@ -31,6 +33,33 @@ public class TextUtils {
         }
         stringBuilder.append(list.get(list.size() - 1).toString());
         return stringBuilder.toString();
+    }
+
+
+
+    private static final TreeMap<Long, String> suffixes = new TreeMap<Long, String>();
+
+    static {
+        suffixes.put(1000L, "k");
+        suffixes.put(1000000L, "m");
+        suffixes.put(1000000000L, "b");
+    }
+
+    public static String format(long value) {
+//        return String.valueOf(value);
+
+        if (value == Long.MIN_VALUE)
+            return format(-9223372036854775807L);
+        if (value < 0L)
+            return "-" + format(-value);
+        if (value < 1000L)
+            return Long.toString(value);
+        Map.Entry<Long, String> e = suffixes.floorEntry(value);
+        Long divideBy = e.getKey();
+        String suffix = e.getValue();
+        long truncated = value * 10 / divideBy ;
+        boolean hasDecimal = (truncated < 100L && (truncated / 10.0D) != (truncated / 10L));
+        return hasDecimal ? ((truncated / 10.0D) + suffix) : ((truncated / 10L) + suffix);
     }
 
 }

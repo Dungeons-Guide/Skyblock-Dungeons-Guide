@@ -12,7 +12,7 @@ import java.util.UUID;
 @Getter
 @Setter
 public class DungeonRoomInfo implements Serializable {
-    private static final long serialVersionUID = 42L;
+    private static final long serialVersionUID = -8291811286448196640L;
 
     public DungeonRoomInfo(short shape, byte color) {
         this.uuid = UUID.randomUUID();

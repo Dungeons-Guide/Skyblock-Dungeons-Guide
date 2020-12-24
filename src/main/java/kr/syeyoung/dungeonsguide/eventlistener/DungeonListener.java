@@ -1,8 +1,12 @@
-package kr.syeyoung.dungeonsguide;
+package kr.syeyoung.dungeonsguide.eventlistener;
 
+import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.Keybinds;
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
@@ -29,7 +33,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.awt.*;
 
-public class EventListener {
+public class DungeonListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         try {
@@ -204,7 +208,7 @@ public class EventListener {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
-        if (Config.DEBUG &&Keybinds.editingSession.isKeyDown() ){
+        if (Config.DEBUG && Keybinds.editingSession.isKeyDown() ){
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
                 DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();

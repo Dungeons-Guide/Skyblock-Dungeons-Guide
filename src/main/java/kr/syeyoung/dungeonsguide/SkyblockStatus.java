@@ -71,6 +71,7 @@ public class SkyblockStatus {
         for (String skyblock : SKYBLOCK_IN_ALL_LANGUAGES) {
             if (objectiveName.startsWith(skyblock)) {
                 skyblockFound = true;
+                isOnSkyblock = true;
                 break;
             }
         }

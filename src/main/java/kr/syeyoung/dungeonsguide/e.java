@@ -2,14 +2,15 @@ package kr.syeyoung.dungeonsguide;
 
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
+import kr.syeyoung.dungeonsguide.eventlistener.ItemGuiListener;
+import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.commons.io.IOUtils;
@@ -49,10 +50,13 @@ public class e implements c {
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
 
-        MinecraftForge.EVENT_BUS.register(new EventListener());
+        MinecraftForge.EVENT_BUS.register(new DungeonListener());
+        MinecraftForge.EVENT_BUS.register(new ItemGuiListener());
         CommandDungeonsGuide commandDungeonsGuide;
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide = new CommandDungeonsGuide());
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
+
+        AhUtils.registerTimer();
 
         try {
             DungeonRoomInfoRegistry.loadAll(configDir);

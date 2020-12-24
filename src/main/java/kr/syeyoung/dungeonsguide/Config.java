@@ -6,8 +6,9 @@ import net.minecraftforge.common.config.Property;
 public class Config {
     public static Configuration configuration;
 
-    public static final String CATEGORY_ADVANCED = "advanced";
-    public static final String CATEGORY_PUZZLE_SOLVER = "solver";
+    public static final String CATEGORY_ADVANCED = "Advanced";
+    public static final String CATEGORY_PUZZLE_SOLVER = "Solver";
+    public static final String CATEGORY_QOL = "Tooltips";
 
     public static boolean DEBUG = true;
 
@@ -21,6 +22,10 @@ public class Config {
     public static boolean solver_box;
     public static boolean solver_creeper;
     public static boolean solver_teleport;
+
+
+    public static boolean itemtooltip_dungeonstat;
+    public static boolean itemtooltip_price;
 
     public static void syncConfig(boolean load) { // Gets called from preInit
         try {
@@ -40,7 +45,8 @@ public class Config {
             solver_waterpuzzle = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "water", "true", "Water puzzle solver", Property.Type.BOOLEAN).getBoolean();
             solver_box = configuration.get(Config.CATEGORY_PUZZLE_SOLVER, "box", "true", "Box puzzle solver", Property.Type.BOOLEAN).getBoolean();
 
-
+            itemtooltip_dungeonstat = configuration.get(Config.CATEGORY_QOL, "dungeonstat", "true", "Show what floor dungeon item was obtained", Property.Type.BOOLEAN).getBoolean();
+            itemtooltip_price = configuration.get(Config.CATEGORY_QOL, "price", "true", "Show prices of any item", Property.Type.BOOLEAN).getBoolean();
 
             DEBUG = configuration.get(Config.CATEGORY_ADVANCED, "debug","false", "Enable debug mode", Property.Type.BOOLEAN).getBoolean(); // Comment
         } catch (Exception e) {
