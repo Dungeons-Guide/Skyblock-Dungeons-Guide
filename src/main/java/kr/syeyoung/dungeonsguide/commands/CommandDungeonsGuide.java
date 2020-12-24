@@ -1,10 +1,14 @@
 package kr.syeyoung.dungeonsguide.commands;
 
+import kr.syeyoung.dungeonsguide.config.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
+import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -29,6 +33,7 @@ public class CommandDungeonsGuide extends CommandBase {
     public void processCommand(ICommandSender sender, String[] args) {
         if (args.length == 0) {
             // open config
+            openConfig = true;
         } else if (args[0].equalsIgnoreCase("saverooms")) {
             DungeonRoomInfoRegistry.saveAll(e.getDungeonsGuide().getConfigDir());
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
@@ -60,6 +65,21 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
         }
     }
+
+    private boolean openConfig = false;
+
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent e) {
+        try {
+            if (openConfig && e.phase == TickEvent.Phase.START ) {
+                openConfig = false;
+                Minecraft.getMinecraft().displayGuiScreen(new GuiConfig());
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
     @Override
     public int getRequiredPermissionLevel() {
         return 0;

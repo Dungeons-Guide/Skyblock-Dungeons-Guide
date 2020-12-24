@@ -21,11 +21,11 @@ public class Config {
     public static boolean solver_creeper;
     public static boolean solver_teleport;
 
-    public static void syncConfig(Configuration configuration) { // Gets called from preInit
+    public static void syncConfig(boolean load) { // Gets called from preInit
         try {
-            Config.configuration = configuration;
             // Load config
-            configuration.load();
+            if (load)
+                configuration.load();
 
             // Read props from config
             DEBUG = configuration.get(Config.CATEGORY_ADVANCED, "debug","false", "Enable debug mode").getBoolean(); // Comment

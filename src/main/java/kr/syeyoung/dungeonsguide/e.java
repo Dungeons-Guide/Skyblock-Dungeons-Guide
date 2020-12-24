@@ -50,7 +50,9 @@ public class e implements c {
         skyblockStatus = new SkyblockStatus();
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
-        ClientCommandHandler.instance.registerCommand(new CommandDungeonsGuide());
+        CommandDungeonsGuide commandDungeonsGuide;
+        ClientCommandHandler.instance.registerCommand(commandDungeonsGuide = new CommandDungeonsGuide());
+        MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         try {
             DungeonRoomInfoRegistry.loadAll(configDir);
@@ -78,7 +80,8 @@ public class e implements c {
         if (!configFile.exists()) {
             configDir.mkdirs();
         }
-        Config.syncConfig( new Configuration(configFile) );
+        Config.configuration = new Configuration(configFile);
+        Config.syncConfig( true );
     }
     private void copy(InputStream inputStream, File f) throws IOException {
         FileOutputStream fos = new FileOutputStream(f);
