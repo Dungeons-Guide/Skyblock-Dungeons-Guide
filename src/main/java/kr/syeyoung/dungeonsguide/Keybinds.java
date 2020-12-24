@@ -11,9 +11,7 @@ public class Keybinds
 
     public static void register()
     {
-        if (e.DEBUG) {
-            editingSession = new KeyBinding("start editing session", Keyboard.KEY_NONE, "key.categories.misc");
-            ClientRegistry.registerKeyBinding(editingSession);
-        }
+        editingSession = new KeyBinding("start editing session", Keyboard.KEY_NONE, "key.categories.misc");
+        ClientRegistry.registerKeyBinding(editingSession);
     }
 }

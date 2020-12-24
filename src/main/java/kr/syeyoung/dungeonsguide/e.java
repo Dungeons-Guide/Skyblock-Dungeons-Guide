@@ -7,7 +7,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.config.ConfigCategory;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.commons.io.IOUtils;
@@ -29,20 +31,16 @@ public class e implements c {
 
     private static e dungeonsGuide;
 
-    public static final boolean DEBUG = false;
 
     @Getter
     private b authenticator;
-
-    @Getter
-    private Configuration configuration;
 
     public e(b authenticator) {
         this.authenticator = authenticator;
     }
 
     public static void sendDebugChat(IChatComponent iChatComponent) {
-        if (DEBUG)
+        if (Config.DEBUG)
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
     }
 
@@ -52,11 +50,10 @@ public class e implements c {
         skyblockStatus = new SkyblockStatus();
 
         MinecraftForge.EVENT_BUS.register(new EventListener());
-        ClientCommandHandler.instance.registerCommand(new CommandLoadData());
-        ClientCommandHandler.instance.registerCommand(new CommandSaveData());
+        ClientCommandHandler.instance.registerCommand(new CommandDungeonsGuide());
 
         try {
-            DungeonRoomInfoRegistry.loadAll();
+            DungeonRoomInfoRegistry.loadAll(configDir);
         } catch (BadPaddingException e) {
             e.printStackTrace();
         } catch (InvalidAlgorithmParameterException e) {
@@ -80,14 +77,8 @@ public class e implements c {
         File configFile = new File(configDir, "config.conf");
         if (!configFile.exists()) {
             configDir.mkdirs();
-            try {
-                copy(e.class.getResourceAsStream("/defaultConfig.conf"), configFile);
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
         }
-        configuration = new Configuration(configFile);
-        configuration.load();
+        Config.syncConfig( new Configuration(configFile) );
     }
     private void copy(InputStream inputStream, File f) throws IOException {
         FileOutputStream fos = new FileOutputStream(f);
@@ -95,6 +86,9 @@ public class e implements c {
         fos.flush();
         fos.close();
         inputStream.close();
+    }
+
+    private void combineConfig(Configuration saved, Configuration newest) {
     }
 
     @Getter

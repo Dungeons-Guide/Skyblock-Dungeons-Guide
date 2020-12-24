@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.boxpuzzle;
 
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
@@ -78,6 +79,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
+        if (!Config.solver_box) return;
         if (bugged) return;
         byte[][] currboard = buildCurrentState();
         if (puzzleSolvingThread == null) {
@@ -294,6 +296,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     @Override
     public void chatReceived(IChatComponent chat) {
+        if (!Config.solver_box) return;
         if (chat.getFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
@@ -308,6 +311,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
+        if (!Config.solver_box) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF);
     }
@@ -315,6 +319,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_box) return;
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;

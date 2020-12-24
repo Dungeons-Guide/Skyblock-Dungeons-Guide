@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -72,6 +73,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
+        if (!Config.solver_kahoot) return;
         String ch2 = chat.getUnformattedText();
         if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
             questionDialogStart = true;
@@ -147,6 +149,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_kahoot) return;
         if (correctAnswer == null) return;
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);

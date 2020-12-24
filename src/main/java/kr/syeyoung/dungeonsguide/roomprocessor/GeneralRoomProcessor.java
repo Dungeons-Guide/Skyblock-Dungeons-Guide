@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -33,7 +34,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (e.DEBUG && (EditingContext.getEditingContext() == null || EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
+        if (Config.DEBUG && (EditingContext.getEditingContext() == null || EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() == null) continue;;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);

@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
@@ -77,6 +78,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_blaze) return;
         if (next == null) return;
         Vec3 pos = next.getPositionEyes(partialTicks);
         RenderUtils.highlightBox(next, new Color(0,255,0,100), partialTicks, false);

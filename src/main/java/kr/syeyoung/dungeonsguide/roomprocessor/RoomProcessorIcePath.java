@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -118,6 +119,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_icesilverfish) return;
         if (!err)
         RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, false);
     }

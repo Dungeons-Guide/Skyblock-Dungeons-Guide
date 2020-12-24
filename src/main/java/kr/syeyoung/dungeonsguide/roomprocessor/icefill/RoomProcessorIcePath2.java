@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.icefill;
 
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
@@ -87,6 +88,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
 
     @Override
     public void drawWorld(float partialTicks) {
+        if (!Config.solver_icepath) return;
         for (List<BlockPos> solution:this.solution)
             RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, true);
     }

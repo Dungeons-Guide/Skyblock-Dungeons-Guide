@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -138,6 +139,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
+        if (!Config.solver_tictactoe) return;
         if (board == null) return;
         if (gameEnded) return;
         byte[][] board = buildBoardState();
@@ -168,6 +170,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_tictactoe) return;
         if (chosePos != -1) {
             BlockPos block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
             RenderUtils.highlightBlock(block, new Color(0,255,255,50), partialTicks);

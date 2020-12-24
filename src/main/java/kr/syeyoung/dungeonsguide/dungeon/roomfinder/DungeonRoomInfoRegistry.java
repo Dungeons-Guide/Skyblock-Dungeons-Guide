@@ -50,10 +50,10 @@ public class DungeonRoomInfoRegistry {
     }
 
     public static void saveAll(File dir) {
-        if (!e.DEBUG) return;
         dir.mkdirs();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
+                if (!dungeonRoomInfo.isUserMade()) continue;
                 FileOutputStream fos = new FileOutputStream(new File(dir, dungeonRoomInfo.getUuid().toString() + ".roomdata"));
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(dungeonRoomInfo);
@@ -63,7 +63,7 @@ public class DungeonRoomInfoRegistry {
         }
     }
 
-    public static void loadAll() throws BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException {
+    public static void loadAll(File dir) throws BadPaddingException, InvalidAlgorithmParameterException, NoSuchAlgorithmException, IOException, IllegalBlockSizeException, NoSuchPaddingException, InvalidKeyException {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
@@ -80,5 +80,17 @@ public class DungeonRoomInfoRegistry {
                 register(dri);
             } catch (Exception e) {e.printStackTrace();}
         }
+        for (File f : dir.listFiles()) {
+            if (!f.getName().endsWith(".roomdata")) continue;
+            try {
+                InputStream fis = new FileInputStream(f);
+                ObjectInputStream ois = new ObjectInputStream(fis);
+                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
+                ois.close();
+                fis.close();
+                register(dri);
+            } catch (Exception e) {e.printStackTrace();}
+        }
     }
+
 }

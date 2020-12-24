@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -38,6 +39,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
+        if (!Config.solver_riddle) return;
         String ch2 = chat.getUnformattedText();
         if (!ch2.startsWith("§e[NPC] ")) {
             return;
@@ -86,6 +88,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_riddle) return;
         if (chest != null) {
             RenderUtils.highlightBlock(chest, new Color(0,255,0, 50),partialTicks);
         }

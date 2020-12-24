@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
+import kr.syeyoung.dungeonsguide.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -115,6 +116,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
+        if (!Config.solver_creeper) return;
         World w = getDungeonRoom().getContext().getWorld();
         for (int i = 0; i < poses.size(); i++) {
             BlockPos[] poset = poses.get(i);
