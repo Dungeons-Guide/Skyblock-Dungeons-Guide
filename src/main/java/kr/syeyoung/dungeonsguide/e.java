@@ -85,7 +85,7 @@ public class e implements c {
         }
         try {
             Config.loadConfig( configFile );
-        } catch (FileNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
     }

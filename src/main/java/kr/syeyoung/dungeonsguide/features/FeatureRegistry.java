@@ -44,6 +44,9 @@ public class FeatureRegistry {
     public static final AbstractFeature TOOLTIP_DUNGEONSTAT = register(new SimpleFeature("tooltip", "Dungeon Item Stats", "Shows quality of dungeon items (floor, percentage)", "tooltip.dungeonitem"));
     public static final AbstractFeature TOOLTIP_PRICE = register(new SimpleFeature("tooltip", "Item Price", "Shows price of items", "tooltip.price"));
 
-    public static final AbstractFeature DEBUG = register(new SimpleFeature("advanced", "Debug", "Toggles debug mode", "debug"));
+    public static final AbstractFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
+
+
+    public static final AbstractFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
 
 }

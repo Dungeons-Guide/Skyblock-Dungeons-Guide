@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.config;
 
+import kr.syeyoung.dungeonsguide.features.AbstractFeature;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
 import net.minecraft.client.Minecraft;
@@ -11,6 +13,8 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.List;
+import java.util.Map;
 
 public class GuiConfig extends GuiScreen {
 
@@ -23,8 +27,9 @@ public class GuiConfig extends GuiScreen {
         mainPanel.add(tabbedPane);
         tabbedPane.setBackground2(new Color(17, 17, 17, 179));
 
-//        for (String cate:Config.configuration.getCategoryNames())
-//            tabbedPane.addTab(cate, new CategoryEditPane(Config.configuration.getCategory(cate)));
+        for (Map.Entry<String, List<AbstractFeature>> cate: FeatureRegistry.getFeaturesByCategory().entrySet())
+            if (!cate.getKey().equals("hidden"))
+                tabbedPane.addTab(cate.getKey(), new FeatureEditPane(cate.getValue()));
         this.tabbedPane = tabbedPane;
     }
 
@@ -38,8 +43,10 @@ public class GuiConfig extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+
         GL11.glPushMatrix();
         GlStateManager.pushAttrib();
+        GlStateManager.color(0,0,0,0);
         mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
         GlStateManager.popAttrib();
         GL11.glPopMatrix();

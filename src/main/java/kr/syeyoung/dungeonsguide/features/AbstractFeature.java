@@ -32,7 +32,7 @@ public abstract class AbstractFeature {
 
     @Getter
     @Setter
-    private boolean enabled = false;
+    private boolean enabled = true;
 
     public void drawWorld(float partialTicks) {}
     public void drawScreen(float partialTicks) {}
