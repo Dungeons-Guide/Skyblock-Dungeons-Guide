@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.eventlistener;
 
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.item.ItemStack;
@@ -15,7 +16,7 @@ public class ItemGuiListener {
     @SubscribeEvent
     public void dungeonTooltip(ItemTooltipEvent event) {
         if (!e.getDungeonsGuide().getSkyblockStatus().isOnSkyblock()) return;
-        if (!Config.itemtooltip_dungeonstat) return;
+        if (!FeatureRegistry.TOOLTIP_DUNGEONSTAT.isEnabled()) return;
 
         ItemStack hoveredItem = event.itemStack;
         NBTTagCompound compound = hoveredItem.getTagCompound();
@@ -36,7 +37,7 @@ public class ItemGuiListener {
     @SubscribeEvent
     public void priceTooltip(ItemTooltipEvent event) {
         if (!e.getDungeonsGuide().getSkyblockStatus().isOnSkyblock()) return;
-        if (!Config.itemtooltip_price) return;
+        if (!FeatureRegistry.TOOLTIP_PRICE.isEnabled()) return;
 
         ItemStack hoveredItem = event.itemStack;
         NBTTagCompound compound = hoveredItem.getTagCompound();
