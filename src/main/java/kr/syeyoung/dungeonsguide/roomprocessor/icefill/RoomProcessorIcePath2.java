@@ -1,8 +1,9 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.icefill;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -12,7 +13,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Queue;
 import java.util.Arrays;
 import java.util.LinkedList;
@@ -81,6 +81,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
+        if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
         while (!messageQueue.isEmpty()){
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(messageQueue.poll()));
         }
@@ -88,7 +89,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (!Config.solver_icepath) return;
+        if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
         for (List<BlockPos> solution:this.solution)
             RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, true);
     }

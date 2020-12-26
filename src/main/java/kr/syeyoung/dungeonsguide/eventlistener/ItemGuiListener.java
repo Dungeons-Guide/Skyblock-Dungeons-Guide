@@ -1,14 +1,11 @@
 package kr.syeyoung.dungeonsguide.eventlistener;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 

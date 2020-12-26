@@ -1,12 +1,13 @@
 package kr.syeyoung.dungeonsguide.eventlistener;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
@@ -78,7 +79,7 @@ public class DungeonListener {
             if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
-            if (Config.DEBUG) {
+            if (FeatureRegistry.DEBUG.isEnabled()) {
                 int[] textureData = dynamicTexture.getTextureData();
                 MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
                 dynamicTexture.updateDynamicTexture();
@@ -95,10 +96,10 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
                 if (dungeonRoom == null) {
-                    if (Config.DEBUG)
+                    if (FeatureRegistry.DEBUG.isEnabled())
                         fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
                 } else {
-                    if (Config.DEBUG) {
+                    if (FeatureRegistry.DEBUG.isEnabled()) {
                         fontRenderer.drawString("you're in the room... " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
                         fontRenderer.drawString("room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)"), 5, 138, 0xFFFFFF);
                         fontRenderer.drawString("room name: " + dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
@@ -162,7 +163,7 @@ public class DungeonListener {
 
             DungeonContext context = skyblockStatus.getContext();
             if (context == null) return;
-            if (Config.DEBUG) {
+            if (FeatureRegistry.DEBUG.isEnabled()) {
                 for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                     for(DungeonDoor door : dungeonRoom.getDoors()) {
                         RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
@@ -208,7 +209,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
-        if (Config.DEBUG && Keybinds.editingSession.isKeyDown() ){
+        if (FeatureRegistry.DEBUG.isEnabled() && Keybinds.editingSession.isKeyDown() ){
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
                 DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();

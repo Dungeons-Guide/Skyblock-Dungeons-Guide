@@ -1,20 +1,18 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.entity.item.EntityItemFrame;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MinecraftError;
 import net.minecraft.world.World;
 import net.minecraft.world.storage.MapData;
 
@@ -139,7 +137,6 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
-        if (!Config.solver_tictactoe) return;
         if (board == null) return;
         if (gameEnded) return;
         byte[][] board = buildBoardState();
@@ -170,7 +167,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!Config.solver_tictactoe) return;
+        if (!FeatureRegistry.SOLVER_TICTACTOE.isEnabled()) return;
         if (chosePos != -1) {
             BlockPos block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
             RenderUtils.highlightBlock(block, new Color(0,255,255,50), partialTicks);

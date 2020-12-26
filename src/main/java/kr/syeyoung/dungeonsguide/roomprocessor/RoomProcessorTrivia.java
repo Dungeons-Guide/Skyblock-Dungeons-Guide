@@ -1,8 +1,9 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
@@ -73,7 +74,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
-        if (!Config.solver_kahoot) return;
+        if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         String ch2 = chat.getUnformattedText();
         if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
             questionDialogStart = true;
@@ -149,7 +150,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!Config.solver_kahoot) return;
+        if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         if (correctAnswer == null) return;
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);

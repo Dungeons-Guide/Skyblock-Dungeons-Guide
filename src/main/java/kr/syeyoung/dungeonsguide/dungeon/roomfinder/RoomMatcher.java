@@ -95,6 +95,7 @@ public class RoomMatcher {
         }
 
         roomInfo.setBlocks(data);
+        roomInfo.setUserMade(true);
         return roomInfo;
     }
 }

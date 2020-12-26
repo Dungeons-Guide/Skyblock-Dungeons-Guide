@@ -1,16 +1,13 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
-import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorBlazeSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -50,7 +47,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
-        if (!Config.solver_waterpuzzle) return;
+        if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         try {
             waterBoard.tick();
@@ -67,7 +64,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!Config.solver_waterpuzzle) return;
+        if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         if (waterBoard == null) return;
 

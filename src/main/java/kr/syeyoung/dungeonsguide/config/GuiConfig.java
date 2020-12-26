@@ -1,10 +1,7 @@
 package kr.syeyoung.dungeonsguide.config;
 
-import kr.syeyoung.dungeonsguide.Config;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
-import kr.syeyoung.dungeonsguide.roomedit.panes.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -26,8 +23,8 @@ public class GuiConfig extends GuiScreen {
         mainPanel.add(tabbedPane);
         tabbedPane.setBackground2(new Color(17, 17, 17, 179));
 
-        for (String cate:Config.configuration.getCategoryNames())
-            tabbedPane.addTab(cate, new CategoryEditPane(Config.configuration.getCategory(cate)));
+//        for (String cate:Config.configuration.getCategoryNames())
+//            tabbedPane.addTab(cate, new CategoryEditPane(Config.configuration.getCategory(cate)));
         this.tabbedPane = tabbedPane;
     }
 

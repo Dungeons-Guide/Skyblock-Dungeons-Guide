@@ -1,9 +1,11 @@
 package kr.syeyoung.dungeonsguide;
 
 import kr.syeyoung.dungeonsguide.commands.*;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.ItemGuiListener;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -18,10 +20,7 @@ import org.apache.commons.io.IOUtils;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -41,7 +40,7 @@ public class e implements c {
     }
 
     public static void sendDebugChat(IChatComponent iChatComponent) {
-        if (Config.DEBUG)
+        if (FeatureRegistry.DEBUG.isEnabled())
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
     }
 
@@ -80,12 +79,15 @@ public class e implements c {
     }
     public void pre(FMLPreInitializationEvent event) {
         configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
-        File configFile = new File(configDir, "config.conf");
+        File configFile = new File(configDir, "config.json");
         if (!configFile.exists()) {
             configDir.mkdirs();
         }
-        Config.configuration = new Configuration(configFile);
-        Config.syncConfig( true );
+        try {
+            Config.loadConfig( configFile );
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        }
     }
     private void copy(InputStream inputStream, File f) throws IOException {
         FileOutputStream fos = new FileOutputStream(f);

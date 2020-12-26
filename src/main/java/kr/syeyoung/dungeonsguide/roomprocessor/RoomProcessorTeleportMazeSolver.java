@@ -1,7 +1,8 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.Config;
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
@@ -63,7 +64,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!Config.solver_teleport) return;
+        if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (BlockPos bpos:visitedPortals) {
             RenderUtils.highlightBlock(bpos, new Color(255,0,0,100), partialTicks);
         }
