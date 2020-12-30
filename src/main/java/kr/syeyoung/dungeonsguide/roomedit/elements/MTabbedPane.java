@@ -37,7 +37,7 @@ public class MTabbedPane extends MPanel {
         panel2.add(panel);
         panel2.setBackgroundColor(background2);
         tabs.put(tab, panel2);
-        panel2.setBounds(new Rectangle(0,15,bounds.width, bounds.height-15));
+        panel2.setBounds(new Rectangle(0,15,getBounds().width, getBounds().height-15));
 
         MTabButton button = new MTabButton(this, tab);
         button.setBackgroundColor(background2.brighter());
@@ -64,9 +64,9 @@ public class MTabbedPane extends MPanel {
     @Override
     public void setBounds(Rectangle bounds) {
         if (bounds == null) return;
-        this.bounds.x = bounds.x;
-        this.bounds.y = bounds.y;
-        this.bounds.width = bounds.width;
-        this.bounds.height = bounds.height;
+        this.bounds.x = getBounds().x;
+        this.bounds.y = getBounds().y;
+        this.bounds.width = getBounds().width;
+        this.bounds.height = getBounds().height;
     }
 }

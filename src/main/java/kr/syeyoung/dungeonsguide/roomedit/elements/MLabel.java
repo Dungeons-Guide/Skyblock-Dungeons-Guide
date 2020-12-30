@@ -32,14 +32,14 @@ public class MLabel extends MPanel {
         int width = renderer.getStringWidth(getText());
         int x,y;
         if (alignment == Alignment.CENTER) {
-            x = (bounds.width - width) / 2;
-             y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+            x = (getBounds().width - width) / 2;
+             y = (getBounds().height - renderer.FONT_HEIGHT) / 2;
         } else if (alignment == Alignment.LEFT) {
              x = 0;
-             y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+             y = (getBounds().height - renderer.FONT_HEIGHT) / 2;
         } else if (alignment == Alignment.RIGHT) {
-            x = bounds.width - width;
-            y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+            x = getBounds().width - width;
+            y = (getBounds().height - renderer.FONT_HEIGHT) / 2;
         } else{
             return;
         }

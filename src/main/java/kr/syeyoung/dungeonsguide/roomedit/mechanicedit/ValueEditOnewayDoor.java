@@ -50,7 +50,7 @@ public class ValueEditOnewayDoor extends MPanel implements ValueEdit<DungeonOnew
         updateOnlyAir.setText("Update Air");
         updateOnlyAir.setBackgroundColor(Color.green);
         updateOnlyAir.setForeground(Color.black);
-        updateOnlyAir.setBounds(new Rectangle(0,40,bounds.width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
         add(updateOnlyAir);
         updateOnlyAir.setOnActionPerformed(new Runnable() {
             @Override
@@ -73,16 +73,16 @@ public class ValueEditOnewayDoor extends MPanel implements ValueEdit<DungeonOnew
         };
         preRequisite.setText(TextUtils.join(dungeonDoor.getPreRequisite(), ","));
         preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,60,bounds.width,20));
+        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
         add(preRequisite2);
     }
 
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,bounds.width, 20));
-        value.setBounds(new Rectangle(0,20,bounds.width, 20));
-        updateOnlyAir.setBounds(new Rectangle(0,40,bounds.width, 20));
-        preRequisite2.setBounds(new Rectangle(0,60,bounds.width,20));
+        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
+        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
     }
 
     @Override

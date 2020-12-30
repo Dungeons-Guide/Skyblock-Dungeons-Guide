@@ -28,12 +28,12 @@ public class ActionDisplayPane extends MPanel {
 
         {
             textField = new MTextField();
-            textField.setBounds(new Rectangle(0,0,bounds.width - 100, 20));
+            textField.setBounds(new Rectangle(0,0,getBounds().width - 100, 20));
             add(textField);
         }
         {
             calculate = new MButton();
-            calculate.setBounds(new Rectangle(bounds.width - 100,0,100, 20));
+            calculate.setBounds(new Rectangle(getBounds().width - 100,0,100, 20));
             calculate.setText("calculate");
             calculate.setOnActionPerformed(new Runnable() {
                 @Override
@@ -48,7 +48,7 @@ public class ActionDisplayPane extends MPanel {
                         ActionTree tree= ActionTree.buildActionTree(actionChangeState, dungeonRoom);
 
                         displayPane = new ActionTreeDisplayPane(dungeonRoom, tree);
-                        displayPane.setBounds(new Rectangle(0,25,bounds.width,bounds.height-25));
+                        displayPane.setBounds(new Rectangle(0,25,getBounds().width,getBounds().height-25));
                         add(displayPane);
                     } catch (Throwable t) {
                         t.printStackTrace();
@@ -66,7 +66,7 @@ public class ActionDisplayPane extends MPanel {
 
     @Override
     public void onBoundsUpdate() {
-        textField.setBounds(new Rectangle(0,0,bounds.width - 100, 20));
-        calculate.setBounds(new Rectangle(bounds.width - 100,0,100, 20));
+        textField.setBounds(new Rectangle(0,0,getBounds().width - 100, 20));
+        calculate.setBounds(new Rectangle(getBounds().width - 100,0,100, 20));
     }
 }

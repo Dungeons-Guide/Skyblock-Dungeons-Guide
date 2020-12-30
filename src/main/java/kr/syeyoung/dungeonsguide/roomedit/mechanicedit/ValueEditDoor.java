@@ -51,7 +51,7 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         updateOnlyAir.setText("Update Air");
         updateOnlyAir.setBackgroundColor(Color.green);
         updateOnlyAir.setForeground(Color.black);
-        updateOnlyAir.setBounds(new Rectangle(0,40,bounds.width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
         add(updateOnlyAir);
         updateOnlyAir.setOnActionPerformed(new Runnable() {
             @Override
@@ -74,7 +74,7 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         };
         preRequisite.setText(TextUtils.join(dungeonDoor.getOpenPreRequisite(), ","));
         preRequisite_par = new MLabelAndElement("Open Req.",preRequisite);
-        preRequisite_par.setBounds(new Rectangle(0,60,bounds.width,20));
+        preRequisite_par.setBounds(new Rectangle(0,60,getBounds().width,20));
         add(preRequisite_par);
 
         preRequisite2 = new MTextField() {
@@ -85,17 +85,17 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         };
         preRequisite2.setText(TextUtils.join(dungeonDoor.getClosePreRequisite(), ","));
         preRequisite2_par = new MLabelAndElement("Close Req.",preRequisite2);
-        preRequisite2_par.setBounds(new Rectangle(0,80,bounds.width,20));
+        preRequisite2_par.setBounds(new Rectangle(0,80,getBounds().width,20));
         add(preRequisite2_par);
     }
 
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,bounds.width, 20));
-        value.setBounds(new Rectangle(0,20,bounds.width, 20));
-        updateOnlyAir.setBounds(new Rectangle(0,40,bounds.width, 20));
-        preRequisite_par.setBounds(new Rectangle(0,60,bounds.width,20));
-        preRequisite2_par.setBounds(new Rectangle(0,80,bounds.width,20));
+        label.setBounds(new Rectangle(0,0,getBounds().width, 20));
+        value.setBounds(new Rectangle(0,20,getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        preRequisite_par.setBounds(new Rectangle(0,60,getBounds().width,20));
+        preRequisite2_par.setBounds(new Rectangle(0,80,getBounds().width,20));
     }
 
     @Override

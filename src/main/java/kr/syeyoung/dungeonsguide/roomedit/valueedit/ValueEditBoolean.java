@@ -24,7 +24,7 @@ public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
                 }
             };
             MLabelAndElement mLabelAndElement = new MLabelAndElement("Prev",label);
-            mLabelAndElement.setBounds(new Rectangle(0,0,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,0,getBounds().width,20));
             add(mLabelAndElement);
         }
         {
@@ -37,7 +37,7 @@ public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("New",textField);
-            mLabelAndElement.setBounds(new Rectangle(0,20,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,20,getBounds().width,20));
             add(mLabelAndElement);
         }
     }
@@ -45,7 +45,7 @@ public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
     @Override
     public void onBoundsUpdate() {
         for (MPanel panel :getChildComponents()){
-            panel.setSize(new Dimension(bounds.width, 20));
+            panel.setSize(new Dimension(getBounds().width, 20));
         }
     }
 

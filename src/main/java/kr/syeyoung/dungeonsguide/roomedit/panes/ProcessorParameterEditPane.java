@@ -38,7 +38,7 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
                 public void run() {
                     MParameter parameter;
                     parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null, null), ProcessorParameterEditPane.this));
-                    parameter.setBounds(new Rectangle(0,0,bounds.width, 20));
+                    parameter.setBounds(new Rectangle(0,0,getBounds().width, 20));
                 }
             });
 
@@ -68,7 +68,7 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
                 ValueEditCreator vec = ValueEditRegistry.getValueEditMap(en.getValue() == null ? "null" :en.getValue().getClass().getName());
 
                 MParameter mParameter = new MParameter(new Parameter(en.getKey(), vec.cloneObj(en.getValue()), vec.cloneObj(en.getValue())), this);
-                mParameter.setBounds(new Rectangle(0,0,bounds.width,20));
+                mParameter.setBounds(new Rectangle(0,0,getBounds().width,20));
                 parameters.add(mParameter);
             }
         }
@@ -77,7 +77,7 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
     @Override
     public void onBoundsUpdate() {
         for (MPanel panel :getChildComponents()){
-            panel.setSize(new Dimension(bounds.width, 20));
+            panel.setSize(new Dimension(getBounds().width, 20));
         }
     }
     @Override

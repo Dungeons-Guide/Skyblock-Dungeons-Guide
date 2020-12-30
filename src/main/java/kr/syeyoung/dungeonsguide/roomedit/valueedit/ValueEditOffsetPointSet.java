@@ -65,12 +65,12 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
 
                 @Override
                 public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
-                    if (!bounds.contains(relMouseX0, relMouseY0)) {
+                    if (!getBounds().contains(relMouseX0, relMouseY0)) {
                         return false;
                     }
 
-                    int relMousex = relMouseX0 - bounds.x;
-                    int relMousey = relMouseY0 - bounds.y;
+                    int relMousex = relMouseX0 - getBounds().x;
+                    int relMousey = relMouseY0 - getBounds().y;
 
                     boolean noClip = true;
                     boolean focusedOverall = false;
@@ -81,7 +81,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                         }
                     }
 
-                    if (bounds.contains(relMouseX0, relMouseY0) && noClip) {
+                    if (getBounds().contains(relMouseX0, relMouseY0) && noClip) {
                         isFocused = true;
                         focusedOverall = true;
                     } else {
@@ -95,7 +95,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                 @Override
                 public void onBoundsUpdate() {
                     for (MPanel panel :getChildComponents()){
-                        panel.setSize(new Dimension(bounds.width, 20));
+                        panel.setSize(new Dimension(getBounds().width, 20));
                     }
                 }
                 @Override
@@ -112,7 +112,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                     }
                 }
             };
-            scroll.setBounds(new Rectangle(0,0,bounds.width, bounds.height-20));
+            scroll.setBounds(new Rectangle(0,0,getBounds().width, getBounds().height-20));
             add(scroll);
         }
 
@@ -132,7 +132,7 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
                     MValue mValue;
                     MParameters.add(mValue = new MValue(offsetPoint, buildAddonsFor(offsetPoint)));
                     ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().add(offsetPoint);
-                    mValue.setSize(new Dimension(bounds.width, 20));
+                    mValue.setSize(new Dimension(getBounds().width, 20));
                 }
             });
 
@@ -176,9 +176,9 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
 
     @Override
     public void onBoundsUpdate() {
-        scroll.setBounds(new Rectangle(0,0,bounds.width, bounds.height-20));
-        add.setBounds(new Rectangle(0,bounds.height-20,bounds.width / 2, 20));
-        addSet.setBounds(new Rectangle(bounds.width / 2,bounds.height-20,bounds.width / 2, 20));
+        scroll.setBounds(new Rectangle(0,0,getBounds().width, getBounds().height-20));
+        add.setBounds(new Rectangle(0,getBounds().height-20,getBounds().width / 2, 20));
+        addSet.setBounds(new Rectangle(getBounds().width / 2,getBounds().height-20,getBounds().width / 2, 20));
     }
 
     @Override

@@ -3815,7 +3815,7 @@ Build 1.7.2-10.12.0.1003:
 	Christian:
 		Add exception logging to forge channel handlers as well
 		
-		MinecraftForge/FML@53557dcd0582e09f7f35eb3bc2fd130fba3be4a0 Put logging exception handlers on all channel inbounds. Fix problem with failure to login. Closes #350
+		MinecraftForge/FML@53557dcd0582e09f7f35eb3bc2fd130fba3be4a0 Put logging exception handlers on all channel ingetBounds(). Fix problem with failure to login. Closes #350
 
 Build 1.7.2-10.12.0.1002:
 	Christian: MinecraftForge/FML@9c96ca4402e4c231285f170281dd543bfffa191a Fire a custom packet channel registration/deregistration event, for any mods that care about that kind of thing

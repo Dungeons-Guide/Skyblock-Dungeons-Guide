@@ -39,26 +39,26 @@ public class MValue<T> extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        if (hover != null && new Rectangle(new Point(0,0),bounds.getSize()).contains(relMousex0, relMousey0)) {
-            Gui.drawRect(0,0,bounds.width, bounds.height, hover.getRGB());
+        if (hover != null && new Rectangle(new Point(0,0),getBounds().getSize()).contains(relMousex0, relMousey0)) {
+            Gui.drawRect(0,0,getBounds().width, getBounds().height, hover.getRGB());
         }
     }
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (this.bounds.x > -20 && lastAbsClip.contains(absMouseX, absMouseY)) {
+        if (this.getBounds().x > -20 && lastAbsClip.contains(absMouseX, absMouseY)) {
             EditingContext.getEditingContext().openGui(new GuiDungeonValueEdit(data, addons));
         }
     }
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setSize(new Dimension(parentWidth, bounds.height));
-        dataLab.setBounds(new Rectangle(0,0,parentWidth, bounds.height));
+        this.setSize(new Dimension(parentWidth, getBounds().height));
+        dataLab.setBounds(new Rectangle(0,0,parentWidth, getBounds().height));
     }
 
     @Override
     public void onBoundsUpdate() {
-        dataLab.setBounds(new Rectangle(0,0,bounds.width, bounds.height));
+        dataLab.setBounds(new Rectangle(0,0,getBounds().width, getBounds().height));
     }
 }

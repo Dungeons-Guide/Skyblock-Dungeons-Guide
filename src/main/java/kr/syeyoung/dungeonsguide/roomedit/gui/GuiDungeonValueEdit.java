@@ -27,9 +27,9 @@ public class GuiDungeonValueEdit extends GuiScreen {
         @Override
         public void onBoundsUpdate() {
             for (int i = 0; i < addons.size(); i++) {
-                addons.get(i).setBounds(new Rectangle(0, bounds.height - (i+1) * 20 - 20, bounds.width, 20));
+                addons.get(i).setBounds(new Rectangle(0, getBounds().height - (i+1) * 20 - 20, getBounds().width, 20));
             }
-            save.setBounds(new Rectangle(0 ,bounds.height - 20, bounds.width, 20));
+            save.setBounds(new Rectangle(0 ,getBounds().height - 20, getBounds().width, 20));
         }
     };
 

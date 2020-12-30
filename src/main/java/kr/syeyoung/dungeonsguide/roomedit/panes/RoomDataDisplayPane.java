@@ -36,12 +36,12 @@ public class RoomDataDisplayPane extends MPanel {
         // draw Axis;
         Gui.drawRect(0,0,10,10,0x77777777);
         clip(sr, clip.x + 10, clip.y, clip.width - 10, 10);
-        Gui.drawRect(0,0,bounds.width, bounds.height, 0x77777777);
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, 0x77777777);
         for (int x = 0; x < blocks[0].length; x++) {
             fr.drawString(x+"", x * 16 +10 + offsetX, 0, 0xFFFFFFFF);
         }
         clip(sr, clip.x, clip.y +10, 10, clip.height-10);
-        Gui.drawRect(0,0,bounds.width, bounds.height, 0x77777777);
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, 0x77777777);
         for (int z = 0; z < blocks.length; z++) {
             fr.drawString(z+"", 2, z * 16 + 10 + offsetY, 0xFFFFFFFF);
         }

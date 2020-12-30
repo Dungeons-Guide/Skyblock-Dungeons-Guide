@@ -33,7 +33,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 }
             };
             MLabelAndElement mLabelAndElement = new MLabelAndElement("Prev",label);
-            mLabelAndElement.setBounds(new Rectangle(0,0,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,0,getBounds().width,20));
             add(mLabelAndElement);
         }
         OffsetPoint newData = (OffsetPoint) parameter.getNewData();
@@ -46,7 +46,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("x",textField);
-            mLabelAndElement.setBounds(new Rectangle(0,20,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,20,getBounds().width,20));
             add(mLabelAndElement);
         }
         {
@@ -58,7 +58,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("y",textField);
-            mLabelAndElement.setBounds(new Rectangle(0,40,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,40,getBounds().width,20));
             add(mLabelAndElement);
         }
         {
@@ -70,7 +70,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("z",textField);
-            mLabelAndElement.setBounds(new Rectangle(0,60,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,60,getBounds().width,20));
             add(mLabelAndElement);
         }
         {
@@ -83,7 +83,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 }
             };
             MLabelAndElement mLabelAndElement = new MLabelAndElement("newPt",setToHEre);
-            mLabelAndElement.setBounds(new Rectangle(0,80,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,80,getBounds().width,20));
             add(mLabelAndElement);
         }
         {
@@ -99,7 +99,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
                 }
             });
             MLabelAndElement mLabelAndElement = new MLabelAndElement("set",setToHEre2);
-            mLabelAndElement.setBounds(new Rectangle(0,100,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,100,getBounds().width,20));
             add(mLabelAndElement);
         }
     }
@@ -107,7 +107,7 @@ public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
     @Override
     public void onBoundsUpdate() {
         for (MPanel panel :getChildComponents()){
-            panel.setSize(new Dimension(bounds.width, 20));
+            panel.setSize(new Dimension(getBounds().width, 20));
         }
     }
 

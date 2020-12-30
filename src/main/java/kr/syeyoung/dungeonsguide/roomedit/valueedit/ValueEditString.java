@@ -26,7 +26,7 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
                 }
             };
             MLabelAndElement mLabelAndElement = new MLabelAndElement("Prev",label);
-            mLabelAndElement.setBounds(new Rectangle(0,0,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,0,getBounds().width,20));
             add(mLabelAndElement);
         }
         {
@@ -39,7 +39,7 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
             };
             textField.setText(newData);
             MLabelAndElement mLabelAndElement = new MLabelAndElement("New",textField);
-            mLabelAndElement.setBounds(new Rectangle(0,20,bounds.width,20));
+            mLabelAndElement.setBounds(new Rectangle(0,20,getBounds().width,20));
             add(mLabelAndElement);
         }
     }
@@ -47,7 +47,7 @@ public class ValueEditString extends MPanel implements ValueEdit<String> {
     @Override
     public void onBoundsUpdate() {
         for (MPanel panel :getChildComponents()){
-            panel.setSize(new Dimension(bounds.width, 20));
+            panel.setSize(new Dimension(getBounds().width, 20));
         }
     }
 

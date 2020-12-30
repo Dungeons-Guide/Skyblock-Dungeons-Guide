@@ -67,8 +67,8 @@ public class MStringSelectionButton extends MPanel {
 
     @Override
     public void onBoundsUpdate() {
-        dec.setBounds(new Rectangle(0,0,bounds.height, bounds.height));
-        inc.setBounds(new Rectangle(bounds.width - bounds.height, 0, bounds.height, bounds.height));
-        selected.setBounds(new Rectangle(bounds.height, 0, bounds.width - bounds.height - bounds.height, bounds.height));
+        dec.setBounds(new Rectangle(0,0,getBounds().height, getBounds().height));
+        inc.setBounds(new Rectangle(getBounds().width - getBounds().height, 0, getBounds().height, getBounds().height));
+        selected.setBounds(new Rectangle(getBounds().height, 0, getBounds().width - getBounds().height - getBounds().height, getBounds().height));
     }
 }

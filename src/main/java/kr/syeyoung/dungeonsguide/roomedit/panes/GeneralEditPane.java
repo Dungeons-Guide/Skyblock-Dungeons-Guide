@@ -31,7 +31,7 @@ public class GeneralEditPane extends MPanel {
             MLabel la;
             uuid = new MLabelAndElement("Room UUID: ", la = new MLabel());
             la.setText(dungeonRoom.getDungeonRoomInfo().getUuid().toString());
-            uuid.setBounds(new Rectangle(0,0,bounds.width, 20));
+            uuid.setBounds(new Rectangle(0,0,getBounds().width, 20));
             add(uuid);
         }
         {
@@ -43,7 +43,7 @@ public class GeneralEditPane extends MPanel {
             };
             name = new MLabelAndElement("Room Name: ", la);
             la.setText(dungeonRoom.getDungeonRoomInfo().getName());
-            name.setBounds(new Rectangle(0,20,bounds.width, 20));
+            name.setBounds(new Rectangle(0,20,getBounds().width, 20));
             add(name);
         }
 
@@ -51,7 +51,7 @@ public class GeneralEditPane extends MPanel {
             MLabel la;
             shape = new MLabelAndElement("Room Shape: ", la = new MLabel());
             la.setText(dungeonRoom.getDungeonRoomInfo().getShape()+"");
-            shape.setBounds(new Rectangle(0,40,bounds.width, 20));
+            shape.setBounds(new Rectangle(0,40,getBounds().width, 20));
             add(shape);
         }
 
@@ -59,20 +59,20 @@ public class GeneralEditPane extends MPanel {
             MLabel la;
             rotation = new MLabelAndElement("Found Room Rotation: ", la = new MLabel());
             la.setText(dungeonRoom.getRoomMatcher().getRotation()+"");
-            rotation.setBounds(new Rectangle(0,60,bounds.width, 20));
+            rotation.setBounds(new Rectangle(0,60,getBounds().width, 20));
             add(rotation);
         }
         {
             MLabel la;
             shape2 = new MLabelAndElement("Found Room Shape: ", la = new MLabel());
             la.setText(dungeonRoom.getShape()+"");
-            shape2.setBounds(new Rectangle(0,80,bounds.width, 20));
+            shape2.setBounds(new Rectangle(0,80,getBounds().width, 20));
             add(shape2);
         }
         {
             final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(new ArrayList<String>(ProcessorFactory.getProcessors()), dungeonRoom.getDungeonRoomInfo().getProcessorId());
             roomProcessor = new MLabelAndElement("Room Processor: ", mStringSelectionButton);
-            roomProcessor.setBounds(new Rectangle(0,100,bounds.width, 20));
+            roomProcessor.setBounds(new Rectangle(0,100,getBounds().width, 20));
             add(roomProcessor);
 
             mStringSelectionButton.setOnUpdate(new Runnable() {
@@ -93,7 +93,7 @@ public class GeneralEditPane extends MPanel {
                 }
             });
             end.setBackgroundColor(Color.green);
-            end.setBounds(new Rectangle(0,120,bounds.width, 20));
+            end.setBounds(new Rectangle(0,120,getBounds().width, 20));
             add(end);
         }
         {
@@ -108,7 +108,7 @@ public class GeneralEditPane extends MPanel {
                 }
             });
             save.setBackgroundColor(Color.green);
-            save.setBounds(new Rectangle(0,140,bounds.width, 20));
+            save.setBounds(new Rectangle(0,140,getBounds().width, 20));
             add(save);
         }
     }
@@ -121,7 +121,7 @@ public class GeneralEditPane extends MPanel {
     @Override
     public void onBoundsUpdate() {
         if (save != null)
-            save.setBounds(new Rectangle(0,140,bounds.width, 20));
-        end.setBounds(new Rectangle(1,120,bounds.width-2, 20));
+            save.setBounds(new Rectangle(0,140,getBounds().width, 20));
+        end.setBounds(new Rectangle(1,120,getBounds().width-2, 20));
     }
 }

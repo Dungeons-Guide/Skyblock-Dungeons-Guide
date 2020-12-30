@@ -42,13 +42,13 @@ public class MTextField extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
-        Gui.drawRect(0,0,bounds.width, bounds.height, isFocused ? Color.white.getRGB() : Color.gray.getRGB());
-        Gui.drawRect(1,1,bounds.width - 2, bounds.height - 2, Color.black.getRGB());
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, isFocused ? Color.white.getRGB() : Color.gray.getRGB());
+        Gui.drawRect(1,1,getBounds().width - 2, getBounds().height - 2, Color.black.getRGB());
 
         Minecraft mc = Minecraft.getMinecraft();
         clip(new ScaledResolution(mc), clip.x + 1, clip.y + 1, clip.width - 2, clip.height - 2);
         FontRenderer fr = mc.fontRendererObj;
-        int y = (bounds.height - fr.FONT_HEIGHT) / 2;
+        int y = (getBounds().height - fr.FONT_HEIGHT) / 2;
         fr.drawString(text, 3 - xOffset, y, foreground.getRGB());
         // draw selection
         if (isFocused) {
@@ -72,7 +72,7 @@ public class MTextField extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        Rectangle actualField = new Rectangle(1, 3,bounds.width - 2, bounds.height - 6);
+        Rectangle actualField = new Rectangle(1, 3,getBounds().width - 2, getBounds().height - 6);
         if (!actualField.contains(relMouseX, relMouseY)) return;
         if (!lastAbsClip.contains(absMouseX, absMouseY)) return;
 
@@ -139,11 +139,11 @@ public class MTextField extends MPanel {
             xOffset = 0;
         }
         int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text);
-        int overflow = bounds.width - 3 - width;
+        int overflow = getBounds().width - 3 - width;
         if (overflow >= 0) {
             xOffset = 0;
-        } else if (width - xOffset + 10 < bounds.width) {
-            xOffset = width - bounds.width+10;
+        } else if (width - xOffset + 10 < getBounds().width) {
+            xOffset = width - getBounds().width+10;
         }
     }
 

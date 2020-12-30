@@ -35,30 +35,26 @@ public class MPanel {
     }
 
     public void setPosition(Point pt) {
-        this.bounds.x = pt.x;
-        this.bounds.y = pt.y;
-        onBoundsUpdate();
+        this.setBounds(new Rectangle(pt.x, pt.y, getBounds().width, getBounds().height));
     }
 
     public void setSize(Dimension dim) {
-        this.bounds.width = dim.width;
-        this.bounds.height = dim.height;
-        onBoundsUpdate();
+        this.setBounds(new Rectangle(getBounds().x, getBounds().y, dim.width, dim.height));
     }
 
     public Dimension getSize() {
-        return bounds.getSize();
+        return getBounds().getSize();
     }
 
     public void setBounds(Rectangle bounds) {
         if (bounds == null) return;
-        this.bounds.x = bounds.x;
-        this.bounds.y = bounds.y;
-        this.bounds.width = bounds.width;
-        this.bounds.height = bounds.height;
+        this.bounds.x = getBounds().x;
+        this.bounds.y = getBounds().y;
+        this.bounds.width = getBounds().width;
+        this.bounds.height = getBounds().height;
 
         for (MPanel childComponent : childComponents) {
-            childComponent.resize0(bounds.width, bounds.height);
+            childComponent.resize0(getBounds().width, getBounds().height);
         }
         onBoundsUpdate();
     }
@@ -78,12 +74,12 @@ public class MPanel {
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
 
 
-        int relMousex = relMousex0 - bounds.x;
-        int relMousey = relMousey0 - bounds.y;
+        int relMousex = relMousex0 - getBounds().x;
+        int relMousey = relMousey0 - getBounds().y;
 
-        GL11.glTranslated(bounds.x, bounds.y, 0);
+        GL11.glTranslated(getBounds().x, getBounds().y, 0);
 
-        Rectangle absBound = bounds.getBounds();
+        Rectangle absBound = getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
         lastAbsClip = clip;
@@ -96,7 +92,7 @@ public class MPanel {
         OpenGlHelper.glBlendFunc(770, 771, 1, 0);
         GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
-        GuiScreen.drawRect(0,0, bounds.width, bounds.height, backgroundColor.getRGB());
+        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height, backgroundColor.getRGB());
 
         GL11.glPushMatrix();
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
@@ -106,7 +102,7 @@ public class MPanel {
         GL11.glPopAttrib();
 
 
-        Point newPt = new Point(parentPoint.x + bounds.x, parentPoint.y + bounds.y);
+        Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
 
         for (MPanel mPanel : getChildComponents()){
             GL11.glPushMatrix();
@@ -150,8 +146,8 @@ public class MPanel {
     public void keyTyped(char typedChar, int keyCode) {}
 
     public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
-        int relMousex = relMouseX0 - bounds.x;
-        int relMousey = relMouseY0 - bounds.y;
+        int relMousex = relMouseX0 - getBounds().x;
+        int relMousey = relMouseY0 - getBounds().y;
 
         boolean noClip = true;
         boolean focusedOverall = false;
@@ -162,7 +158,7 @@ public class MPanel {
             }
         }
 
-        if (bounds.contains(relMouseX0, relMouseY0) && noClip) {
+        if (getBounds().contains(relMouseX0, relMouseY0) && noClip) {
             isFocused = true;
             focusedOverall = true;
         } else {
@@ -176,8 +172,8 @@ public class MPanel {
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {}
 
     public void mouseReleased0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int state) {
-        int relMousex = relMouseX0 - bounds.x;
-        int relMousey = relMouseY0 - bounds.y;
+        int relMousex = relMouseX0 - getBounds().x;
+        int relMousey = relMouseY0 - getBounds().y;
 
         for (MPanel childComponent : getChildComponents()) {
             childComponent.mouseReleased0(absMouseX, absMouseY, relMousex, relMousey, state);
@@ -187,8 +183,8 @@ public class MPanel {
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {}
 
     public void mouseClickMove0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
-        int relMousex = relMouseX0 - bounds.x;
-        int relMousey = relMouseY0 - bounds.y;
+        int relMousex = relMouseX0 - getBounds().x;
+        int relMousey = relMouseY0 - getBounds().y;
 
         for (MPanel childComponent  : getChildComponents()) {
             childComponent.mouseClickMove0(absMouseX, absMouseY, relMousex, relMousey, clickedMouseButton, timeSinceLastClick);
@@ -198,8 +194,8 @@ public class MPanel {
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
 
     public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
-        int relMousex = relMouseX0 - bounds.x;
-        int relMousey = relMouseY0 - bounds.y;
+        int relMousex = relMouseX0 - getBounds().x;
+        int relMousey = relMouseY0 - getBounds().y;
 
         for (MPanel childComponent  : getChildComponents()) {
             childComponent.mouseScrolled0(absMouseX, absMouseY, relMousex, relMousey, scrollAmount);

@@ -42,12 +42,12 @@ public class MTabButton extends MPanel {
             bg = hover;
         }
         if (bg != null)
-            Gui.drawRect(0,0,bounds.width, bounds.height, bg.getRGB());
+            Gui.drawRect(0,0,getBounds().width, getBounds().height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(text);
-        int x = (bounds.width - width) / 2;
-        int y = (bounds.height - renderer.FONT_HEIGHT) / 2;
+        int x = (getBounds().width - width) / 2;
+        int y = (getBounds().height - renderer.FONT_HEIGHT) / 2;
 
         renderer.drawString(text, x,y, foreground.getRGB());
     }

@@ -63,7 +63,7 @@ public class FeatureEditPane extends MPanel {
     @Override
     public void onBoundsUpdate() {
         for (MPanel panel :getChildComponents()){
-            panel.setSize(new Dimension(bounds.width, 20));
+            panel.setSize(new Dimension(getBounds().width, 20));
         }
     }
     @Override
