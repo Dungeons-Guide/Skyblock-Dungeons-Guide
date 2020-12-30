@@ -46,7 +46,7 @@ public class MValue<T> extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (this.bounds.x > -20 && new Rectangle(new Point(0,0),bounds.getSize()).contains(relMouseX, relMouseY)) {
+        if (this.bounds.x > -20 && lastAbsClip.contains(absMouseX, absMouseY)) {
             EditingContext.getEditingContext().openGui(new GuiDungeonValueEdit(data, addons));
         }
     }

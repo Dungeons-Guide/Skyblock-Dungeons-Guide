@@ -91,7 +91,7 @@ public class RoomDataDisplayPane extends MPanel {
         lastX = absMouseX;
         lastY = absMouseY;
 
-        if (new Rectangle(new Point(0,0),getSize()).contains(relMouseX, relMouseY)) {
+        if (lastAbsClip.contains(absMouseX, absMouseY)) {
             selectedX = (relMouseX - offsetX - 10) / 16;
             selectedY = (relMouseY - offsetY - 10) / 16;
         }

@@ -24,6 +24,8 @@ public class MPanel {
 
     protected Color backgroundColor = new Color(0,0,0,0);
 
+    protected Rectangle lastAbsClip = new Rectangle(0,0,0,0);
+
     @Getter(AccessLevel.PUBLIC)
     protected boolean isFocused;
 
@@ -84,6 +86,7 @@ public class MPanel {
         Rectangle absBound = bounds.getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
+        lastAbsClip = clip;
 
         clip(resolution, clip.x, clip.y, clip.width, clip.height);
         GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);

@@ -32,7 +32,7 @@ public class MLabelAndElement extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (onClick!= null && new Rectangle(new Point(0,0),bounds.getSize()).contains(relMouseX, relMouseY)) {
+        if (onClick!= null && lastAbsClip.contains(absMouseX, absMouseY)) {
             onClick.run();
         }
     }

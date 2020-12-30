@@ -54,7 +54,7 @@ public class MTabButton extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (new Rectangle(new Point(0,0),getSize()).contains(relMouseX, relMouseY)) {
+        if (lastAbsClip.contains(absMouseX, absMouseY)) {
             tabbedPane.setSelectedKey(text);
         }
     }

@@ -74,6 +74,8 @@ public class MTextField extends MPanel {
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         Rectangle actualField = new Rectangle(1, 3,bounds.width - 2, bounds.height - 6);
         if (!actualField.contains(relMouseX, relMouseY)) return;
+        if (!lastAbsClip.contains(absMouseX, absMouseY)) return;
+
 
 
 
