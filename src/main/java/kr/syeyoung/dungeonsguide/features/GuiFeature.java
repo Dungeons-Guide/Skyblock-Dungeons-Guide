@@ -50,8 +50,12 @@ public abstract class GuiFeature extends AbstractFeature {
         GL11.glPopAttrib();
     }
 
+
     public abstract void drawHUD(float partialTicks);
 
+    public void drawDemo(float partialTicks) {
+        drawHUD(partialTicks);
+    }
 
     private void clip(ScaledResolution resolution, int x, int y, int width, int height) {
         int scale = resolution.getScaleFactor();

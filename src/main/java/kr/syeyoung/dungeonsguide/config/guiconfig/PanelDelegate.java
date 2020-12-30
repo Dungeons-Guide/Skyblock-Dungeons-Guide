@@ -18,6 +18,21 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        super.render(absMousex, absMousey, relMousex0, relMousey0, partialTicks, scissor);
+        guiFeature.drawDemo(partialTicks);
+    }
+
+    @Override
+    public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+
+    }
+
+    @Override
+    public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
+
+    }
+
+    @Override
+    public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
+
     }
 }
