@@ -34,9 +34,6 @@ public abstract class AbstractFeature {
     @Setter
     private boolean enabled = true;
 
-    public void drawWorld(float partialTicks) {}
-    public void drawScreen(float partialTicks) {}
-
     public List<FeatureParameter> getParameters() { return new ArrayList<FeatureParameter>(parameters.values()); }
 
 

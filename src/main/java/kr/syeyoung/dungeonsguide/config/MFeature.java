@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.config;
 
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
@@ -8,6 +9,7 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MStringSelectionButton;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import scala.actors.threadpool.Arrays;
 
@@ -35,6 +37,12 @@ public class MFeature extends MPanel {
         if (abstractFeature instanceof GuiFeature) {
             MButton button = new MButton();
             button.setText("GUI");
+            button.setOnActionPerformed(new Runnable() {
+                @Override
+                public void run() {
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig());
+                }
+            });
             addons.add(button);
             add(button);
         }

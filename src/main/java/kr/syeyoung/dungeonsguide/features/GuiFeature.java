@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.features;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
+import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -13,7 +14,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 
 @Getter
-public abstract class GuiFeature extends AbstractFeature {
+public abstract class GuiFeature extends AbstractFeature implements ScreenRenderListener {
     @Setter
     private Rectangle featureRect;
     @Setter(value = AccessLevel.PROTECTED)
@@ -22,17 +23,21 @@ public abstract class GuiFeature extends AbstractFeature {
     private int defaultWidth;
     @Setter(value = AccessLevel.PROTECTED)
     private int defaultHeight;
+    private double defaultRatio;
 
     protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key);
         this.keepRatio = keepRatio;
         this.defaultWidth = width;
         this.defaultHeight = height;
+        this.defaultRatio = defaultWidth / (double)defaultHeight;
         this.featureRect = new Rectangle(0, 0, width, height);
     }
 
     @Override
     public void drawScreen(float partialTicks) {
+        if (!isEnabled()) return;
+
         clip(new ScaledResolution(Minecraft.getMinecraft()), featureRect.x, featureRect.y, featureRect.width, featureRect.height);
         GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);

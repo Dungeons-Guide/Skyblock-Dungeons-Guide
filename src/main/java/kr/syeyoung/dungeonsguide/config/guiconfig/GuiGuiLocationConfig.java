@@ -1,8 +1,11 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import kr.syeyoung.dungeonsguide.config.GuiConfig;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -21,7 +24,27 @@ public class GuiGuiLocationConfig extends GuiScreen {
     private MPanel mainPanel = new MPanel();
 
     public GuiGuiLocationConfig() {
-
+        for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
+            if (feature instanceof GuiFeature) {
+                mainPanel.add(new PanelDelegate((GuiFeature) feature));
+            }
+        }
+        {
+            MButton button = new MButton() {
+                @Override
+                public void resize(int parentWidth, int parentHeight) {
+                    setBounds(new Rectangle(parentWidth-100,parentHeight-30,100,30));
+                }
+            };
+            button.setText("back");
+            button.setOnActionPerformed(new Runnable() {
+                @Override
+                public void run() {
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiConfig());
+                }
+            });
+            mainPanel.add(button);
+        }
     }
 
     @Override

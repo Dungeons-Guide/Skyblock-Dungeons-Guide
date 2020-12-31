@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
+import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.ItemGuiListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
@@ -54,6 +55,7 @@ public class e implements c {
         CommandDungeonsGuide commandDungeonsGuide;
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide = new CommandDungeonsGuide());
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
+        MinecraftForge.EVENT_BUS.register(new FeatureListener());
 
         AhUtils.registerTimer();
 
