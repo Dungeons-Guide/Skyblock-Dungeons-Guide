@@ -16,7 +16,7 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
-            if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
+            if (postRender.type != RenderGameOverlayEvent.ElementType.ALL) return;
             SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnSkyblock()) return;
 
