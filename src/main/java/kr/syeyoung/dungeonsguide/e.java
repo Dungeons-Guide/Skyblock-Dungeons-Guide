@@ -47,11 +47,6 @@ public class e implements c {
     public void init(FMLInitializationEvent event)
     {
 
-        try {
-            Config.loadConfig( null );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
 
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
@@ -83,6 +78,12 @@ public class e implements c {
         }
 
         Keybinds.register();
+
+        try {
+            Config.loadConfig( null );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
     public void pre(FMLPreInitializationEvent event) {
         configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");

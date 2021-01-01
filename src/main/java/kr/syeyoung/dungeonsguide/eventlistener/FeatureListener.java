@@ -82,7 +82,7 @@ public class FeatureListener {
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent tick) {
-        if (tick.phase == TickEvent.Phase.END && tick.type == TickEvent.Type.PLAYER ) {
+        if (tick.phase == TickEvent.Phase.END && tick.type == TickEvent.Type.CLIENT ) {
             try {
                 SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
                 if (!skyblockStatus.isOnSkyblock()) return;

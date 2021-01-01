@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.features.impl;
 
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
@@ -15,12 +17,15 @@ public class FeatureCooldownCounter extends GuiFeature implements TickListener {
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color"));
     }
 
+    private long leftDungeonTime = 0L;
+    private boolean wasInDungeon = false;
     @Override
     public void drawHUD(float partialTicks) {
+        if (System.currentTimeMillis() - leftDungeonTime > 10000) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
         GL11.glScaled(scale, scale, 0);
-        fr.drawString("Cooldown: 1s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
+        fr.drawString("Cooldown: "+(10 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 
     @Override
@@ -31,8 +36,15 @@ public class FeatureCooldownCounter extends GuiFeature implements TickListener {
         fr.drawString("Cooldown: 10s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 
+    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
     @Override
     public void onTick() {
-
+        if (wasInDungeon && !skyblockStatus.isOnDungeon()) {
+            if (skyblockStatus.isOnSkyblock())
+                leftDungeonTime = System.currentTimeMillis();
+            else return;
+            System.out.println("think he left");
+        }
+        wasInDungeon = skyblockStatus.isOnDungeon();
     }
 }
