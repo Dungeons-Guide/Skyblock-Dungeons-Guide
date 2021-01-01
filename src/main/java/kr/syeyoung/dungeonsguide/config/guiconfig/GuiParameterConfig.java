@@ -18,7 +18,14 @@ import java.util.Arrays;
 
 public class GuiParameterConfig extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
+    private MPanel mainPanel = new MPanel() {
+        @Override
+        public void onBoundsUpdate() {
+            for (MPanel childComponent : getChildComponents()) {
+                childComponent.setSize(new Dimension(getBounds().width - 10, childComponent.getSize().height));
+            }
+        }
+    };
     private GuiScreen before;
     private AbstractFeature feature;
 
@@ -38,6 +45,7 @@ public class GuiParameterConfig extends GuiScreen {
             }
         });
         mainPanel.add(save);
+        mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
 
     }
 
@@ -58,12 +66,15 @@ public class GuiParameterConfig extends GuiScreen {
         int heights = 0;
         within = null;
         for (MPanel panel:mainPanel.getChildComponents()) {
-            panel.setPosition(new Point(0, -offsetY + heights));
+            panel.setPosition(new Point(5, -offsetY + heights + 5));
             heights += panel.getBounds().height;
 
             if (panel.getBounds().contains(mouseX - mainPanel.getBounds().x, mouseY - mainPanel.getBounds().y)) within = panel;
         }
         mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
+        GL11.glPopMatrix();
+        GL11.glPushMatrix();
+        GlStateManager.color(1,1,1,1);
         if (within instanceof MParameter) {
             FeatureParameter feature = ((MParameter) within).getParameter();
             GlStateManager.pushAttrib();

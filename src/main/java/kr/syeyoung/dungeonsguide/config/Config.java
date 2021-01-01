@@ -15,7 +15,7 @@ public class Config {
 
     public static void loadConfig(File f) throws IOException {
         try {
-            configuration = (JsonObject) new JsonParser().parse(new InputStreamReader(new FileInputStream(Config.f = f)));
+            configuration = (JsonObject) new JsonParser().parse(new InputStreamReader(new FileInputStream(Config.f = f == null ? Config.f : f)));
         } catch (Exception e) {
             configuration = new JsonObject();
         }

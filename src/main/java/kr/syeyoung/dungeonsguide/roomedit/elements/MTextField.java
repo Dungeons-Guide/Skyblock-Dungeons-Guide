@@ -36,6 +36,9 @@ public class MTextField extends MPanel {
     
     public void setText(String text) {
         this.text = text;
+    }
+    private void setText0(String text) {
+        this.text = text;
         edit(text);
     }
 
@@ -177,14 +180,14 @@ public class MTextField extends MPanel {
 
             // backspace
             if (keycode == 14 && cursor > 0) {
-                setText(this.text.substring(0, cursor - 1) + this.text.substring(cursor));
+                setText0(this.text.substring(0, cursor - 1) + this.text.substring(cursor));
                 cursor--;
                 return;
             }
 
             //del
             if (keycode == 211 && cursor < text.length()) {
-                setText(this.text.substring(0, cursor) + this.text.substring(cursor+1));
+                setText0(this.text.substring(0, cursor) + this.text.substring(cursor+1));
                 return;
             }
 
@@ -206,7 +209,7 @@ public class MTextField extends MPanel {
                 if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     try {
                         Object theText = transferable.getTransferData(DataFlavor.stringFlavor);
-                        setText(
+                        setText0(
                                 this.text.substring(0, this.cursor)
                                         + theText
                                         + this.text.substring(this.cursor));
@@ -223,7 +226,7 @@ public class MTextField extends MPanel {
 
             // text
             if (isPrintableChar(typedChar)) {
-                setText(
+                setText0(
                         this.text.substring(0, this.cursor)
                                 + typedChar
                                 + this.text.substring(this.cursor));
@@ -257,7 +260,7 @@ public class MTextField extends MPanel {
 
             // backspace
             if (keycode == 14 && cursor > 0) {
-                setText(this.text.substring(0, selectionStart) + this.text.substring(selectionEnd));
+                setText0(this.text.substring(0, selectionStart) + this.text.substring(selectionEnd));
                 cursor = selectionStart;
                 selectionStart = -1;
                 return;
@@ -265,7 +268,7 @@ public class MTextField extends MPanel {
 
             //del
             if (keycode == 211 && cursor < text.length()) {
-                setText(this.text.substring(0, selectionStart) + this.text.substring(selectionEnd));
+                setText0(this.text.substring(0, selectionStart) + this.text.substring(selectionEnd));
                 cursor = selectionStart;
                 selectionStart = -1;
                 return;
@@ -289,7 +292,7 @@ public class MTextField extends MPanel {
                 if (transferable != null && transferable.isDataFlavorSupported(DataFlavor.stringFlavor)) {
                     try {
                         Object theText = transferable.getTransferData(DataFlavor.stringFlavor);
-                        setText(
+                        setText0(
                                 this.text.substring(0, this.selectionStart)
                                         + theText
                                         + this.text.substring(this.selectionEnd));
@@ -324,7 +327,7 @@ public class MTextField extends MPanel {
 
             // text
             if (isPrintableChar(typedChar)) {
-                setText(
+                setText0(
                         this.text.substring(0, this.selectionStart)
                                 + typedChar
                                 + this.text.substring(this.selectionEnd));

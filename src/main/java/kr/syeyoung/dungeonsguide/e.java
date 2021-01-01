@@ -46,6 +46,13 @@ public class e implements c {
 
     public void init(FMLInitializationEvent event)
     {
+
+        try {
+            Config.loadConfig( null );
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
 
@@ -83,11 +90,7 @@ public class e implements c {
         if (!configFile.exists()) {
             configDir.mkdirs();
         }
-        try {
-            Config.loadConfig( configFile );
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        Config.f = configFile;
     }
     private void copy(InputStream inputStream, File f) throws IOException {
         FileOutputStream fos = new FileOutputStream(f);

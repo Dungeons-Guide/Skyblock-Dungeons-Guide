@@ -32,8 +32,6 @@ public class GuiParameterValueEdit extends GuiScreen {
         }
     };
 
-    private DungeonRoom dungeonRoom;
-
 
     private MPanel currentValueEdit;
 
@@ -52,15 +50,13 @@ public class GuiParameterValueEdit extends GuiScreen {
 
     public GuiParameterValueEdit(final Object object, final GuiParameterConfig prev) {
         try {
-            this.onUpdate = onUpdate;
-            dungeonRoom = EditingContext.getEditingContext().getRoom();
             this.editingObj = object;
             mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
             {
                 currentValueEdit = new MPanel() {
                     @Override
                     public void resize(int parentWidth, int parentHeight) {
-                        setBounds(new Rectangle(0, 0, parentWidth, parentHeight - 20));
+                        setBounds(new Rectangle(5, 5, parentWidth-10, parentHeight - 25));
                     }
                 };
                 mainPanel.add(currentValueEdit);

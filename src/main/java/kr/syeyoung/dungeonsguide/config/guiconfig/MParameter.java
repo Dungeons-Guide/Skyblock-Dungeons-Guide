@@ -76,6 +76,7 @@ public class MParameter extends MPanel {
             add(button);
             label2 = button;
         }
+        setSize(new Dimension(100,20));
     }
 
     @Override

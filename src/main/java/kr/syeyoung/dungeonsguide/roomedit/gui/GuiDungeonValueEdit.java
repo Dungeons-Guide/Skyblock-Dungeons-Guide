@@ -123,6 +123,7 @@ public class GuiDungeonValueEdit extends GuiScreen {
         try {
             ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
             GL11.glPushMatrix();
+            GlStateManager.color(1,1,1,1);
             GlStateManager.pushAttrib();
             mainPanel.render0(scaledResolution, new Point(0, 0), new Rectangle(0, 0, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
             GlStateManager.popAttrib();
