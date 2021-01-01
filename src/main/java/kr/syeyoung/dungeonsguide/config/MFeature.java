@@ -34,24 +34,6 @@ public class MFeature extends MPanel {
         this.add(this.label = new MLabel());
         this.label.setText(abstractFeature.getName());
 
-        if (abstractFeature instanceof GuiFeature) {
-            MButton button = new MButton();
-            button.setText("GUI");
-            button.setOnActionPerformed(new Runnable() {
-                @Override
-                public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig());
-                }
-            });
-            addons.add(button);
-            add(button);
-        }
-        if (!abstractFeature.getParameters().isEmpty()) {
-            MButton button = new MButton();
-            button.setText("Edit");
-            addons.add(button);
-            add(button);
-        }
         {
             final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(new ArrayList<String>(Arrays.asList(new String[] {"on", "off"})), abstractFeature.isEnabled() ? "on" : "off");
             mStringSelectionButton.setOnUpdate(new Runnable() {
@@ -63,6 +45,24 @@ public class MFeature extends MPanel {
             });
             addons.add(mStringSelectionButton);
             add(mStringSelectionButton);
+        }
+        if (!abstractFeature.getParameters().isEmpty()) {
+            MButton button = new MButton();
+            button.setText("Edit");
+            addons.add(button);
+            add(button);
+        }
+        if (abstractFeature instanceof GuiFeature) {
+            MButton button = new MButton();
+            button.setText("GUI");
+            button.setOnActionPerformed(new Runnable() {
+                @Override
+                public void run() {
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig());
+                }
+            });
+            addons.add(button);
+            add(button);
         }
     }
 
@@ -80,10 +80,10 @@ public class MFeature extends MPanel {
 
     @Override
     public void onBoundsUpdate() {
-        int x = getBounds().width - 70;
+        int x = getBounds().width - 50;
         for (MPanel panel : addons) {
-            panel.setBounds(new Rectangle(x, 0, 70, getBounds().height));
-            x -= 70;
+            panel.setBounds(new Rectangle(x, 3, 50, getBounds().height - 6));
+            x -= 50;
         }
         label.setBounds(new Rectangle(0,0,x, getBounds().height));
     }

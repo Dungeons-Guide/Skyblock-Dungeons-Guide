@@ -1,11 +1,12 @@
-package kr.syeyoung.dungeonsguide.features;
+package kr.syeyoung.dungeonsguide.features.impl;
 
+import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import org.lwjgl.opengl.GL11;
 
 public class FeatureCooldownCounter extends GuiFeature {
-    protected FeatureCooldownCounter() {
+    public FeatureCooldownCounter() {
         super("QoL", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, 100, 50);
     }
 

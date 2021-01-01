@@ -48,10 +48,10 @@ public class MPanel {
 
     public void setBounds(Rectangle bounds) {
         if (bounds == null) return;
-        this.bounds.x = getBounds().x;
-        this.bounds.y = getBounds().y;
-        this.bounds.width = getBounds().width;
-        this.bounds.height = getBounds().height;
+        this.bounds.x = bounds.x;
+        this.bounds.y = bounds.y;
+        this.bounds.width = bounds.width;
+        this.bounds.height = bounds.height;
 
         for (MPanel childComponent : childComponents) {
             childComponent.resize0(getBounds().width, getBounds().height);
@@ -79,23 +79,23 @@ public class MPanel {
 
         GL11.glTranslated(getBounds().x, getBounds().y, 0);
 
-        Rectangle absBound = getBounds();
+        Rectangle absBound = getBounds().getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
         lastAbsClip = clip;
 
         clip(resolution, clip.x, clip.y, clip.width, clip.height);
-        GL11.glPushAttrib(GL11.GL_SCISSOR_BIT);
+        GlStateManager.pushAttrib();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        GL11.glEnable(GL11.GL_BLEND);
-        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
+        GlStateManager.pushAttrib();
         GuiScreen.drawRect(0,0, getBounds().width, getBounds().height, backgroundColor.getRGB());
+        GlStateManager.popAttrib();
 
         GL11.glPushMatrix();
+        GlStateManager.pushAttrib();
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
+        GlStateManager.popAttrib();
         GL11.glPopMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -106,7 +106,9 @@ public class MPanel {
 
         for (MPanel mPanel : getChildComponents()){
             GL11.glPushMatrix();
+            GlStateManager.pushAttrib();
             mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
+            GlStateManager.popAttrib();
             GL11.glPopMatrix();
         }
     }

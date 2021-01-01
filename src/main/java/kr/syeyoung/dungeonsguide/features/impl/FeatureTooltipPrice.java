@@ -1,43 +1,26 @@
-package kr.syeyoung.dungeonsguide.eventlistener;
+package kr.syeyoung.dungeonsguide.features.impl;
 
-import kr.syeyoung.dungeonsguide.config.Config;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.TooltipListener;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-import java.util.*;
+import java.util.Comparator;
+import java.util.Set;
+import java.util.TreeSet;
 
-public class ItemGuiListener {
-    @SubscribeEvent
-    public void dungeonTooltip(ItemTooltipEvent event) {
-        if (!e.getDungeonsGuide().getSkyblockStatus().isOnSkyblock()) return;
-        if (!FeatureRegistry.TOOLTIP_DUNGEONSTAT.isEnabled()) return;
-
-        ItemStack hoveredItem = event.itemStack;
-        NBTTagCompound compound = hoveredItem.getTagCompound();
-        if (compound == null)
-            return;
-        if (!compound.hasKey("ExtraAttributes"))
-            return;
-        NBTTagCompound nbtTagCompound = compound.getCompoundTag("ExtraAttributes");
-
-        int floor = nbtTagCompound.getInteger("item_tier");
-        int percentage = nbtTagCompound.getInteger("baseStatBoostPercentage");
-
-        if (nbtTagCompound.hasKey("item_tier"))
-            event.toolTip.add("§7Obtained in: §c"+(floor == 0 ? "Entrance" : "Floor "+floor));
-        if (nbtTagCompound.hasKey("baseStatBoostPercentage"))
-            event.toolTip.add("§7Stat Percentage: §"+(percentage == 50 ? "6§l":"c")+(percentage * 2)+"%");
+public class FeatureTooltipPrice extends SimpleFeature implements TooltipListener {
+    public FeatureTooltipPrice() {
+        super("tooltip", "Item Price", "Shows price of items", "tooltip.price");
     }
-    @SubscribeEvent
-    public void priceTooltip(ItemTooltipEvent event) {
-        if (!e.getDungeonsGuide().getSkyblockStatus().isOnSkyblock()) return;
-        if (!FeatureRegistry.TOOLTIP_PRICE.isEnabled()) return;
+
+    @Override
+    public void onTooltip(ItemTooltipEvent event) {
+        if (!isEnabled()) return;
 
         ItemStack hoveredItem = event.itemStack;
         NBTTagCompound compound = hoveredItem.getTagCompound();
@@ -79,7 +62,7 @@ public class ItemGuiListener {
                 }
                 if (iterations < 10)
                     event.toolTip.add("§f"+ key + " " + enchants.getInteger(key) + "§7: §e"+ TextUtils.format((Integer) auctionData.prices.first()) + " §7to§e "+ TextUtils.format(auctionData.prices.last()));
-                            totalLowestPrice += auctionData.prices.first();
+                totalLowestPrice += auctionData.prices.first();
                 totalHighestPrice += auctionData.prices.last();
             }
             if (iterations >= 10)

@@ -64,9 +64,9 @@ public class MTabbedPane extends MPanel {
     @Override
     public void setBounds(Rectangle bounds) {
         if (bounds == null) return;
-        this.bounds.x = getBounds().x;
-        this.bounds.y = getBounds().y;
-        this.bounds.width = getBounds().width;
-        this.bounds.height = getBounds().height;
+        this.bounds.x = bounds.x;
+        this.bounds.y = bounds.y;
+        this.bounds.width = bounds.width;
+        this.bounds.height = bounds.height;
     }
 }

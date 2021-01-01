@@ -4,6 +4,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import lombok.Getter;
 import lombok.Setter;
 

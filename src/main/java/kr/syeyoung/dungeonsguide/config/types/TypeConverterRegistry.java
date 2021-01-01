@@ -18,4 +18,11 @@ public class TypeConverterRegistry {
     public static <T> TypeConverter<T> getTypeConverter(String type_string, Class<T> t) {
         return (TypeConverter<T>)typeConverterMap.get(type_string);
     }
+
+    static {
+        register(new TCBoolean());
+        register(new TCInteger());
+        register(new TCRectangle());
+        register(new TCString());
+    }
 }

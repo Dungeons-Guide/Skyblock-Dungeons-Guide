@@ -2,22 +2,15 @@ package kr.syeyoung.dungeonsguide.config;
 
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.*;
-import kr.syeyoung.dungeonsguide.roomedit.panes.DynamicEditor;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.common.config.ConfigCategory;
-import net.minecraftforge.common.config.Property;
 
 import java.awt.*;
 import java.io.IOException;
@@ -96,10 +89,11 @@ public class FeatureEditPane extends MPanel {
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
         super.render0(resolution, parentPoint, parentClip, absMousex, absMousey, relMousex0, relMousey0, partialTicks);
 
-
         if (within instanceof MFeature) {
             AbstractFeature feature = ((MFeature) within).getFeature();
+            GlStateManager.pushAttrib();
             drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), relMousex0, relMousey0, Minecraft.getMinecraft().fontRendererObj);
+            GlStateManager.popAttrib();
         }
     }
 

@@ -6,7 +6,6 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -16,8 +15,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.List;
-import java.util.Map;
 
 public class GuiGuiLocationConfig extends GuiScreen {
 
@@ -25,15 +22,17 @@ public class GuiGuiLocationConfig extends GuiScreen {
 
     public GuiGuiLocationConfig() {
         for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
-            if (feature instanceof GuiFeature) {
+            if (feature instanceof GuiFeature && feature.isEnabled()) {
                 mainPanel.add(new PanelDelegate((GuiFeature) feature));
             }
         }
+
+        mainPanel.setBackgroundColor(new Color(0,0,0, 60));
         {
             MButton button = new MButton() {
                 @Override
                 public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(parentWidth-100,parentHeight-30,100,30));
+                    setBounds(new Rectangle(parentWidth-50,parentHeight-20,50,20));
                 }
             };
             button.setText("back");
@@ -59,10 +58,10 @@ public class GuiGuiLocationConfig extends GuiScreen {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
 
         GL11.glPushMatrix();
-        GlStateManager.pushAttrib();
+        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
         GlStateManager.color(0,0,0,0);
         mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
-        GlStateManager.popAttrib();
+        GL11.glPopAttrib();
         GL11.glPopMatrix();
     }
 
