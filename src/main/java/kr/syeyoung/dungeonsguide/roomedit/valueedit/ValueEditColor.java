@@ -53,7 +53,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsv);
 
         {
-            h = new MFloatSelectionButton(hsv[0]);
+            h = new MFloatSelectionButton(hsv[0] * 360);
             h.setOnUpdate(new Runnable() {
                 @Override
                 public void run() {
@@ -66,7 +66,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
             add(mLabelAndElement);
         }
         {
-            s = new MFloatSelectionButton(hsv[0]);
+            s = new MFloatSelectionButton(hsv[1] * 100);
             s.setOnUpdate(new Runnable() {
                 @Override
                 public void run() {
@@ -79,7 +79,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
             add(mLabelAndElement);
         }
         {
-            v = new MFloatSelectionButton(hsv[0]);
+            v = new MFloatSelectionButton(hsv[2] * 100);
             v.setOnUpdate(new Runnable() {
                 @Override
                 public void run() {

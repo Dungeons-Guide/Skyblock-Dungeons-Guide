@@ -96,8 +96,8 @@ public class MParameter extends MPanel {
         int x = getBounds().width - 50;
         for (MPanel panel : addons) {
             panel.setBounds(new Rectangle(x, 3, 50, getBounds().height - 6));
-            x -= 50;
         }
-        label.setBounds(new Rectangle(0,0,x, getBounds().height));
+        label2.setBounds(new Rectangle(x/2,0,x/2,getBounds().height));
+        label.setBounds(new Rectangle(0,0,x/2, getBounds().height));
     }
 }
