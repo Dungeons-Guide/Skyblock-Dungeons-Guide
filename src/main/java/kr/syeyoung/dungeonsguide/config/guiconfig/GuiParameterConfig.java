@@ -1,8 +1,7 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
 import net.minecraft.client.Minecraft;
@@ -14,53 +13,63 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Arrays;
 
-public class GuiGuiLocationConfig extends GuiScreen {
+public class GuiParameterConfig extends GuiScreen {
 
     private MPanel mainPanel = new MPanel();
     private GuiScreen before;
+    private AbstractFeature feature;
 
-    public GuiGuiLocationConfig(final GuiScreen before) {
+    public GuiParameterConfig(final GuiScreen before, AbstractFeature feature) {
         this.before = before;
-        for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
-            if (feature instanceof GuiFeature && feature.isEnabled()) {
-                mainPanel.add(new PanelDelegate((GuiFeature) feature));
+        for (FeatureParameter parameter: feature.getParameters()) {
+            mainPanel.add(new MParameter(feature, parameter, this));
+        }
+        MButton  save = new MButton();
+        save.setText("Back");
+        save.setBackgroundColor(Color.green);
+        save.setBounds(new Rectangle(0,0,100,20));
+        save.setOnActionPerformed(new Runnable() {
+            @Override
+            public void run() {
+                Minecraft.getMinecraft().displayGuiScreen(before);
             }
-        }
+        });
+        mainPanel.add(save);
 
-        mainPanel.setBackgroundColor(new Color(0,0,0, 60));
-        {
-            MButton button = new MButton() {
-                @Override
-                public void resize(int parentWidth, int parentHeight) {
-                    setBounds(new Rectangle(parentWidth-50,parentHeight-20,50,20));
-                }
-            };
-            button.setText("back");
-            button.setOnActionPerformed(new Runnable() {
-                @Override
-                public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(before);
-                }
-            });
-            mainPanel.add(button);
-        }
     }
 
     @Override
     public void initGui() {
         super.initGui();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()));
+        mainPanel.setBounds(new Rectangle(Math.min((scaledResolution.getScaledWidth() - 500) / 2, scaledResolution.getScaledWidth()), Math.min((scaledResolution.getScaledHeight() - 300) / 2, scaledResolution.getScaledHeight()),500,300));
     }
 
+    MPanel within;
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GL11.glPushMatrix();
         GlStateManager.color(1,1,1,1);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+        int heights = 0;
+        within = null;
+        for (MPanel panel:mainPanel.getChildComponents()) {
+            panel.setPosition(new Point(0, -offsetY + heights));
+            heights += panel.getBounds().height;
+
+            if (panel.getBounds().contains(mouseX - mainPanel.getBounds().x, mouseY - mainPanel.getBounds().y)) within = panel;
+        }
         mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
+        if (within instanceof MParameter) {
+            FeatureParameter feature = ((MParameter) within).getParameter();
+            GlStateManager.pushAttrib();
+            drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), mouseX, mouseY, Minecraft.getMinecraft().fontRendererObj);
+            GlStateManager.popAttrib();
+        }
         GL11.glPopMatrix();
     }
 
@@ -86,6 +95,7 @@ public class GuiGuiLocationConfig extends GuiScreen {
         mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
     }
 
+    public int offsetY = 0;
     @Override
     public void handleMouseInput() throws IOException {
         super.handleMouseInput();
@@ -97,5 +107,9 @@ public class GuiGuiLocationConfig extends GuiScreen {
         if (wheel != 0) {
             mainPanel.mouseScrolled0(i, j,i,j, wheel);
         }
+
+        if (wheel > 0) offsetY -= 20;
+        else if (wheel < 0) offsetY += 20;
+        if (offsetY < 0) offsetY = 0;
     }
 }

@@ -24,5 +24,6 @@ public class TypeConverterRegistry {
         register(new TCInteger());
         register(new TCRectangle());
         register(new TCString());
+        register(new TCColor());
     }
 }

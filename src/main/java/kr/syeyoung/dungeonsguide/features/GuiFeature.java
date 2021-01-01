@@ -7,10 +7,12 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
+import javax.sound.midi.MidiEvent;
 import java.awt.*;
 
 @Getter
@@ -64,6 +66,11 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     private void clip(ScaledResolution resolution, int x, int y, int width, int height) {
         int scale = resolution.getScaleFactor();
         GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
+    }
+
+    public static FontRenderer getFontRenderer() {
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        return fr;
     }
 
     @Override

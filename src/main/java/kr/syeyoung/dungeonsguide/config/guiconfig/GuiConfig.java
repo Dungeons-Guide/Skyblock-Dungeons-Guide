@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.config;
+package kr.syeyoung.dungeonsguide.config.guiconfig;
 
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -31,7 +31,7 @@ public class GuiConfig extends GuiScreen {
 
         for (Map.Entry<String, List<AbstractFeature>> cate: FeatureRegistry.getFeaturesByCategory().entrySet())
             if (!cate.getKey().equals("hidden"))
-                tabbedPane.addTab(cate.getKey(), new FeatureEditPane(cate.getValue()));
+                tabbedPane.addTab(cate.getKey(), new FeatureEditPane(cate.getValue(), this));
         this.tabbedPane = tabbedPane;
     }
 

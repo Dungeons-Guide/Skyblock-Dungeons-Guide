@@ -37,7 +37,9 @@ public abstract class AbstractFeature {
 
     public List<FeatureParameter> getParameters() { return new ArrayList<FeatureParameter>(parameters.values()); }
 
-
+    public <T> FeatureParameter<T> getParameter(String key) {
+        return parameters.get(key);
+    }
 
     public void loadConfig(JsonObject jsonObject) { // gets key, calls it
         enabled = jsonObject.get("$enabled").getAsBoolean();

@@ -74,11 +74,11 @@ public class PanelDelegate extends MPanel {
             int minWidth;
             int minHeight;
             if (guiFeature.isKeepRatio()) {
-                minHeight = (int) Math.max(10, 10 / guiFeature.getDefaultRatio());
+                minHeight = (int) Math.max(8, 8 / guiFeature.getDefaultRatio());
                 minWidth = (int) (guiFeature.getDefaultRatio() * minHeight);
             } else {
-                minWidth = 10;
-                minHeight = 10;
+                minWidth = 8;
+                minHeight = 8;
             }
             Rectangle rectangle = guiFeature.getFeatureRect().getBounds();
             if (rectangle.width < minWidth || rectangle.height < minHeight) {

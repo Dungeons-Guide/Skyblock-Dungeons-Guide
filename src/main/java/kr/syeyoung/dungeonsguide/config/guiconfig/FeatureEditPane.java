@@ -1,5 +1,6 @@
-package kr.syeyoung.dungeonsguide.config;
+package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.*;
@@ -23,8 +24,10 @@ public class FeatureEditPane extends MPanel {
     private MButton save;
     private List<MFeature> le = new ArrayList<MFeature>();
 
-    public FeatureEditPane(List<AbstractFeature> features) {
+    private GuiConfig config;
+    public FeatureEditPane(List<AbstractFeature> features, GuiConfig config) {
         this.features = features;
+        this.config = config;
         buildElements();
     }
 
@@ -47,7 +50,7 @@ public class FeatureEditPane extends MPanel {
             });
         }
         for (AbstractFeature feature : features) {
-            MFeature mFeature = new MFeature(feature);
+            MFeature mFeature = new MFeature(feature, config);
             mFeature.setHover(new Color(100,100,100,200));
             le.add(mFeature);
             add(mFeature);
@@ -97,8 +100,8 @@ public class FeatureEditPane extends MPanel {
         }
     }
 
-    private float zLevel = 0;
-    protected void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font)
+    private static float zLevel = 0;
+    public static void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font)
     {
         if (!textLines.isEmpty())
         {
@@ -127,19 +130,19 @@ public class FeatureEditPane extends MPanel {
                 k += 2 + (textLines.size() - 1) * 10;
             }
 
-            this.zLevel = 300.0F;
+            zLevel = 300.0F;
             int l = -267386864;
-            this.drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
-            this.drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
-            this.drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
-            this.drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
-            this.drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
+            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
+            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
+            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
+            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
             int i1 = 1347420415;
             int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
-            this.drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
-            this.drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
-            this.drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
-            this.drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
+            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
+            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
+            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
+            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
 
             for (int k1 = 0; k1 < textLines.size(); ++k1)
             {
@@ -154,14 +157,14 @@ public class FeatureEditPane extends MPanel {
                 i2 += 10;
             }
 
-            this.zLevel = 0.0F;
+            zLevel = 0.0F;
             GlStateManager.enableLighting();
             GlStateManager.enableDepth();
             RenderHelper.enableStandardItemLighting();
             GlStateManager.enableRescaleNormal();
         }
     }
-    protected void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
+    protected static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
     {
         float f = (float)(startColor >> 24 & 255) / 255.0F;
         float f1 = (float)(startColor >> 16 & 255) / 255.0F;
@@ -179,10 +182,10 @@ public class FeatureEditPane extends MPanel {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos((double)right, (double)top, (double)this.zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)top, (double)this.zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)bottom, (double)this.zLevel).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos((double)right, (double)bottom, (double)this.zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos((double)right, (double)top, (double)zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos((double)left, (double)top, (double)zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos((double)left, (double)bottom, (double)zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos((double)right, (double)bottom, (double)zLevel).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();

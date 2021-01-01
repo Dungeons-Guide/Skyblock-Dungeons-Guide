@@ -4,15 +4,13 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
-import kr.syeyoung.dungeonsguide.features.listener.TooltipListener;
-import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
+import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 public class FeatureListener {
     @SubscribeEvent
@@ -79,6 +77,24 @@ public class FeatureListener {
             }
         } catch (Throwable t) {
             t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent tick) {
+        if (tick.phase == TickEvent.Phase.END && tick.type == TickEvent.Type.PLAYER ) {
+            try {
+                SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+                if (!skyblockStatus.isOnSkyblock()) return;
+
+                for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                    if (abstractFeature instanceof TickListener) {
+                        ((TickListener) abstractFeature).onTick();
+                    }
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         }
     }
 }
