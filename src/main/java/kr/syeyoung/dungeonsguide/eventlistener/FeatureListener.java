@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
@@ -96,5 +97,20 @@ public class FeatureListener {
                 t.printStackTrace();
             }
         }
+    }
+    @SubscribeEvent
+    public void onTick(GuiOpenEvent tick) {
+            try {
+                SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+                if (!skyblockStatus.isOnSkyblock()) return;
+
+                for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                    if (abstractFeature instanceof GuiOpenListener) {
+                        ((GuiOpenListener) abstractFeature).onGuiOpen(tick);
+                    }
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
     }
 }

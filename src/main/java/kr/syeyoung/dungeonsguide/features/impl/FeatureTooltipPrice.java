@@ -67,7 +67,7 @@ public class FeatureTooltipPrice extends SimpleFeature implements TooltipListene
             }
             if (iterations >= 10)
                 event.toolTip.add("§7"+ (iterations - 10) + " more enchants... ");
-            event.toolTip.add("§fTotal§7 §e:"+ TextUtils.format(totalLowestPrice) + " §7to§e "+ TextUtils.format(totalHighestPrice));
+            event.toolTip.add("§fTotal§7: §e"+ TextUtils.format(totalLowestPrice) + " §7to§e "+ TextUtils.format(totalHighestPrice));
         } else {
             AhUtils.AuctionData auctionData = AhUtils.auctions.get(id);
             event.toolTip.add("");

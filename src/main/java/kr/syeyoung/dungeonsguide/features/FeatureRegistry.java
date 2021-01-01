@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.features;
 
 import kr.syeyoung.dungeonsguide.features.impl.FeatureCooldownCounter;
+import kr.syeyoung.dungeonsguide.features.impl.FeatureInstaCloseChest;
 import kr.syeyoung.dungeonsguide.features.impl.FeatureTooltipDungeonStat;
 import kr.syeyoung.dungeonsguide.features.impl.FeatureTooltipPrice;
 import lombok.Getter;
@@ -52,5 +53,6 @@ public class FeatureRegistry {
 
     public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
 
-    public static final FeatureCooldownCounter QOL_COOLDOWN = (FeatureCooldownCounter) register(new FeatureCooldownCounter());
+    public static final FeatureCooldownCounter QOL_COOLDOWN =  register(new FeatureCooldownCounter());
+    public static final FeatureInstaCloseChest QOL_INSTACLOSE = register(new FeatureInstaCloseChest());
 }
