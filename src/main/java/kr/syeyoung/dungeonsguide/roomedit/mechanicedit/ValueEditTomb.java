@@ -13,9 +13,9 @@ import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.util.BlockPos;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTomb> {

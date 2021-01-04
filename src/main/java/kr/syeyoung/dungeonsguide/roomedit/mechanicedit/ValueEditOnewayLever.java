@@ -12,9 +12,9 @@ import kr.syeyoung.dungeonsguide.roomedit.elements.MValue;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class ValueEditOnewayLever extends MPanel implements ValueEdit<DungeonOnewayLever> {

@@ -8,7 +8,6 @@ import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;

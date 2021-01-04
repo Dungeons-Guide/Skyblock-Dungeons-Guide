@@ -43,7 +43,6 @@ public class FeatureCooldownCounter extends GuiFeature implements TickListener {
             if (skyblockStatus.isOnSkyblock())
                 leftDungeonTime = System.currentTimeMillis();
             else return;
-            System.out.println("think he left");
         }
         wasInDungeon = skyblockStatus.isOnDungeon();
     }

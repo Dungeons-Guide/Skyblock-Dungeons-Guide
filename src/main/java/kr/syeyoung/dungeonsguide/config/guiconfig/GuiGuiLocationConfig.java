@@ -58,6 +58,8 @@ public class GuiGuiLocationConfig extends GuiScreen {
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GL11.glPushMatrix();
+        GlStateManager.disableLighting();
+        GlStateManager.disableFog();
         GlStateManager.color(1,1,1,1);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
         mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);

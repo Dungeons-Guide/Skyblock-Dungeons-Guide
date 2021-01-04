@@ -12,10 +12,10 @@ import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.init.Blocks;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 

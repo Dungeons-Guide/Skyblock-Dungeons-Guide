@@ -8,12 +8,10 @@ import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import net.minecraft.util.BlockPos;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 
 public class ValueEditSecret extends MPanel implements ValueEdit<DungeonSecret> {

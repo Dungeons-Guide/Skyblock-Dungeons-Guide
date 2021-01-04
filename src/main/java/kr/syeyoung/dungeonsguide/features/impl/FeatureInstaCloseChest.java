@@ -11,7 +11,9 @@ import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.inventory.ContainerChest;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -22,26 +24,24 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenListener {
+public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenListener, TickListener {
     public FeatureInstaCloseChest() {
         super("QoL", "Auto-Close Secret Chest", "Automatically closes Secret Chest as soon as you open it\nCan put item price threshold by clicking edit", "qol.autoclose", false);
         parameters.put("threshold", new FeatureParameter<Integer>("threshold", "Price Threshold", "The maximum price of item for chest to be closed. Default 1m", 1000000, "integer"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private boolean check;
     @Override
     public void onGuiOpen(GuiOpenEvent event) {
+        if (!this.isEnabled()) return;
+
         if (!skyblockStatus.isOnDungeon()) return;
         if (!(event.gui instanceof GuiChest)) return;
 
-        int threshold = this.<Integer>getParameter("threshold").getValue();
-
-        int priceSum = 0;
-        for (ItemStack inventoryItemStack : ((GuiChest) event.gui).inventorySlots.inventoryItemStacks) {
-            priceSum += getPrice(inventoryItemStack);
-        }
-
-        if (priceSum < threshold) Minecraft.getMinecraft().thePlayer.closeScreen();
+        ContainerChest ch = (ContainerChest) ((GuiChest)event.gui).inventorySlots;
+        if (!"container.chest".equals(ch.getLowerChestInventory().getName())) return;
+        check = true;
     }
 
     public int getPrice(ItemStack itemStack) {
@@ -89,6 +89,27 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
                     int ahPrice = auctionData.prices.first();
                     if (ahPrice > auctionData.sellPrice) return ahPrice;
                     else return auctionData.sellPrice;
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onTick() {
+        if (!this.isEnabled()) return;
+        if (check) {
+            check = false;
+
+            GuiScreen screen = Minecraft.getMinecraft().currentScreen;
+            if (screen instanceof GuiChest){
+                int priceSum = 0;
+                for (ItemStack inventoryItemStack : ((GuiChest) screen).inventorySlots.inventoryItemStacks) {
+                    priceSum += getPrice(inventoryItemStack);
+                }
+
+                int threshold = this.<Integer>getParameter("threshold").getValue();
+                if (priceSum < threshold) {
+                    Minecraft.getMinecraft().thePlayer.closeScreen();
                 }
             }
         }

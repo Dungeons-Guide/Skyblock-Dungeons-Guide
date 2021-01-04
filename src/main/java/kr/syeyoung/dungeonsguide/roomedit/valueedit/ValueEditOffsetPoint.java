@@ -10,8 +10,6 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
-import scala.actors.threadpool.Arrays;
-
 import java.awt.*;
 
 public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {

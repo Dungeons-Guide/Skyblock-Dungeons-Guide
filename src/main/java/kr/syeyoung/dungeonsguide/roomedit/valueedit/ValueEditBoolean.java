@@ -5,10 +5,9 @@ import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.roomedit.elements.MStringSelectionButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.Arrays;
 
 public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
     private Parameter parameter;
