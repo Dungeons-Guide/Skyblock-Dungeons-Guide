@@ -4,9 +4,10 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DoorFinderRegistry;
-import kr.syeyoung.dungeonsguide.dungeon.doorfinder.StartDoorFinder;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
@@ -35,11 +36,20 @@ public class MapProcessor {
 
     private boolean axisMatch = false;
 
+    @Getter
+    private int undiscoveredRoom = 0;
+
     public MapProcessor(DungeonContext context) {
         this.context = context;
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
+
+    public boolean isInBossRoom() {
+        Point roomPt = worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition());
+        Point mapPt = roomPointToMapPoint(roomPt);
+        return mapPt.x < 0 || mapPt.y < 0 || mapPt.x > 128 || mapPt.y > 128;
+    }
 
     private int waitCnt = 0;
     private void buildMap(final byte[] mapData) {
@@ -98,13 +108,13 @@ public class MapProcessor {
         }
         // determine door location based on npc, and determine map min from there
         {
-            StartDoorFinder doorFinder = DoorFinderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
             if (doorFinder == null) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find door processor for "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
                 bugged = true;
                 return;
             }
-            BlockPos door = doorFinder.find(context.getWorld());
+            BlockPos door = doorFinder.findDoor(context.getWorld(), e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (door == null) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't determine door of the room, disabling mod for this dungeon run"));
                 bugged = true;
@@ -117,7 +127,7 @@ public class MapProcessor {
             unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1);
             unitPoint.translate((int)doorDir.x, (int)doorDir.y);
 
-            Vector2d offset = doorFinder.offset(context.getWorld());
+            Vector2d offset = doorFinder.findDoorOffset(context.getWorld(), e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             axisMatch = doorDir.equals(offset);
 
             int worldX = unitPoint.x * 16;
@@ -155,14 +165,34 @@ public class MapProcessor {
     private void processMap(byte[] mapData) {
         int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
         int width = (int) ((128.0 - topLeftMapPoint.x) / (unitRoomDimension.width + doorDimension.height));
+        undiscoveredRoom = 0;
         if (MapUtils.getMapColorAt(mapData,0,0) != 0) return;
         for (int y = 0; y <= height; y++){
             for (int x = 0; x <= width; x++) {
-                if (roomsFound.contains(new Point(x,y))) continue;
-
                 Point mapPoint = roomPointToMapPoint(new Point(x,y));
                 byte color = MapUtils.getMapColorAt(mapData, mapPoint.x, mapPoint.y);
                 MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(255,255,0,80));
+                if (roomsFound.contains(new Point(x,y))) {
+                    DungeonRoom dungeonRoom = context.getRoomMapper().get(new Point(x,y));
+                    if (color == 30 || color == 18) {
+                        dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
+                    } else {
+                        byte centerColor = MapUtils.getMapColorAt(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2);
+                        MapUtils.record(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2, new Color(0,255,0,80));
+                        if (centerColor == 34) {
+                            dungeonRoom.setCurrentState(DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS);
+                        } else if (centerColor == 30) {
+                            dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
+                        } else if (centerColor == 18) { // red
+                            dungeonRoom.setCurrentState(DungeonRoom.RoomState.FAILED);
+                        }
+                    }
+                    if (dungeonRoom.getTotalSecrets() == -1) {
+                        MapUtils.record(mapData, mapPoint.x, mapPoint.y +1, new Color(0,255,0,80));
+                    }
+                    continue;
+                }
+
                 if (color != 0 && color != 85) {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
@@ -185,11 +215,12 @@ public class MapProcessor {
                     }
                     if (rooms.getRoomProcessor() != null && rooms.getRoomProcessor().readGlobalChat())
                         context.getGlobalRoomProcessors().add(rooms.getRoomProcessor());
+                } else if (color == 85){
+                    undiscoveredRoom++;
                 }
 
             }
         }
-
     }
 
     private DungeonRoom buildRoom(byte[] mapData, Point unitPoint) {

@@ -38,4 +38,5 @@ public class DungeonRoomInfo implements Serializable {
     private Map<String, Object> properties = new HashMap<String, Object>();
 
     private Map<String, DungeonMechanic> mechanics = new HashMap<String, DungeonMechanic>();
+    private int totalSecrets = -1;
 }

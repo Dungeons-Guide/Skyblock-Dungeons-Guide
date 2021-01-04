@@ -62,4 +62,23 @@ public class TextUtils {
         return hasDecimal ? ((truncated / 10.0D) + suffix) : ((truncated / 10L) + suffix);
     }
 
+    public static String formatTime(long ms) {
+        long seconds = ms / 1000;
+        long hr = seconds / (60 * 60); seconds -= hr * 60 * 60;
+        long min = seconds / 60; seconds -= min * 60;
+
+        StringBuilder stringBuilder = new StringBuilder();
+        if (hr > 0) {
+            stringBuilder.append(hr).append("h ");
+        }
+        if (hr > 0 || min > 0) {
+            stringBuilder.append(min).append("m ");
+        }
+        if (hr > 0 || min > 0 || seconds > 0) {
+            stringBuilder.append(seconds).append("s ");
+        }
+
+        return stringBuilder.toString();
+    }
+
 }

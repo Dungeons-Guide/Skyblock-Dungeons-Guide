@@ -8,7 +8,9 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
 
@@ -36,6 +38,17 @@ public class DungeonRoom {
     private final int unitWidth; // X
     private final int unitHeight; // Z
 
+    @Setter
+    private int totalSecrets = -1;
+    @Setter
+    private RoomState currentState = RoomState.DISCOVERED;
+
+    @AllArgsConstructor
+    @Getter
+    public static enum RoomState {
+        DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-14);
+        private int scoreModifier;
+    }
 
     private RoomProcessor roomProcessor;
 
@@ -54,7 +67,6 @@ public class DungeonRoom {
         }
         unitWidth = (int) Math.ceil(max.getX() - min.getX() / 32.0);
         unitHeight = (int) Math.ceil(max.getZ() - min.getZ() / 32.0);
-
 
         buildDoors();
         buildRoom();
@@ -88,6 +100,7 @@ public class DungeonRoom {
             dungeonRoomInfo = roomMatcher.createNew();
 
         this.dungeonRoomInfo = dungeonRoomInfo;
+        totalSecrets = dungeonRoomInfo.getTotalSecrets();
     }
 
     public void updateRoomProcessor() {

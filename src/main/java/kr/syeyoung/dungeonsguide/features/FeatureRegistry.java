@@ -30,6 +30,9 @@ public class FeatureRegistry {
 
         return abstractFeature;
     }
+    public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
+
+    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
 
     public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("solver", "Riddle Puzzle (3 weirdo) Solver", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
     public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("solver", "Trivia Puzzle (Omnicrescent) Solver", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));
@@ -42,17 +45,21 @@ public class FeatureRegistry {
     public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("solver", "Creeper Puzzle Solver", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
     public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("solver", "Teleport Puzzle Solver", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
 
-    public static final FeatureTooltipDungeonStat TOOLTIP_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
-    public static final FeatureTooltipPrice TOOLTIP_PRICE = register(new FeatureTooltipPrice());
+    public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
+    public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
+    public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
 
-    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
+    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
 
+    public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
 
-    public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
-
-    public static final FeatureCooldownCounter HUD_COOLDOWN =  register(new FeatureCooldownCounter());
     public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
-    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
-    public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
+    public static final FeatureDungeonDeaths DUNGEON_DEATHS = register(new FeatureDungeonDeaths());
+    public static final FeatureDungeonMilestone DUNGEON_MILESTONE = register(new FeatureDungeonMilestone());
+    public static final FeatureDungeonRealTime DUNGEON_REALTIME = register(new FeatureDungeonRealTime());
+    public static final FeatureDungeonSBTime DUNGEON_SBTIME = register(new FeatureDungeonSBTime());
+    public static final FeatureDungeonSecrets DUNGEON_SECRETS = register(new FeatureDungeonSecrets());
+    public static final FeatureDungeonTombs DUNGEON_TOMBS = register(new FeatureDungeonTombs());
+    public static final FeatureDungeonScore DUNGEON_SCORE = register(new FeatureDungeonScore());
 }

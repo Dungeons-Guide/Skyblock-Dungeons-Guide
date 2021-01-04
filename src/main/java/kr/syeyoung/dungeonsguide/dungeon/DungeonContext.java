@@ -5,12 +5,11 @@ import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.IntegerCache;
 import net.minecraft.world.World;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
@@ -31,6 +30,14 @@ public class DungeonContext {
 
     @Getter
     private List<RoomProcessor> globalRoomProcessors = new ArrayList<RoomProcessor>();
+
+    @Getter
+    private Map<String, Integer> deaths = new HashMap<String, Integer>();
+    @Getter
+    private List<String[]> milestoneReached = new ArrayList<String[]>();
+    @Getter
+    @Setter
+    private int BossRoomEnterSeconds;
 
     public DungeonContext(World world) {
         this.world = world;

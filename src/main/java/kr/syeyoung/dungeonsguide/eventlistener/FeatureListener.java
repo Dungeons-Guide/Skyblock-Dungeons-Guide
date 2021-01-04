@@ -1,10 +1,12 @@
 package kr.syeyoung.dungeonsguide.eventlistener;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -14,12 +16,14 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
+            boolean isLocConfig = Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig;
+
             if (postRender.type != RenderGameOverlayEvent.ElementType.ALL) return;
             SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
-                if (abstractFeature instanceof ScreenRenderListener) {
+                if (abstractFeature instanceof ScreenRenderListener && (!isLocConfig || !(abstractFeature instanceof GuiFeature))) {
                     ((ScreenRenderListener) abstractFeature).drawScreen(postRender.partialTicks);
                 }
             }

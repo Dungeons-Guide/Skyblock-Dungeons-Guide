@@ -9,6 +9,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -39,21 +40,18 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     @Override
     public void drawScreen(float partialTicks) {
         if (!isEnabled()) return;
-        GL11.glPushAttrib(GL11.GL_ALL_ATTRIB_BITS);
+        GL11.glPushMatrix();
+//        GL11.glColor4f(1,1,1,1);
+        GlStateManager.disableFog();
+        GlStateManager.disableLighting();
         clip(new ScaledResolution(Minecraft.getMinecraft()), featureRect.x, featureRect.y, featureRect.width, featureRect.height);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-//        GL11.glEnable(GL11.GL_BLEND);
-//        OpenGlHelper.glBlendFunc(770, 771, 1, 0);
-//        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
-
-        GL11.glPushMatrix();
         GL11.glTranslated(featureRect.x, featureRect.y, 0);
         drawHUD(partialTicks);
-        GL11.glPopMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GL11.glPopAttrib();
+        GL11.glPopMatrix();
     }
 
 

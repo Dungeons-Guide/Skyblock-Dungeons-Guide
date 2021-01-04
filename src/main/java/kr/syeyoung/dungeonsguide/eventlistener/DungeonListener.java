@@ -31,6 +31,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -80,12 +81,14 @@ public class DungeonListener {
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
             if (FeatureRegistry.DEBUG.isEnabled()) {
+                GL11.glPushMatrix();
                 int[] textureData = dynamicTexture.getTextureData();
                 MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
                 dynamicTexture.updateDynamicTexture();
                 Minecraft.getMinecraft().getTextureManager().bindTexture(location);
                 GlStateManager.enableAlpha();
                 GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
+                GL11.glPopMatrix();
             }
 
             if (skyblockStatus.getContext() != null) {
@@ -100,9 +103,10 @@ public class DungeonListener {
                         fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
                 } else {
                     if (FeatureRegistry.DEBUG.isEnabled()) {
-                        fontRenderer.drawString("you're in the room... " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
+                        fontRenderer.drawString("you're in the room... color/shape " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
                         fontRenderer.drawString("room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)"), 5, 138, 0xFFFFFF);
                         fontRenderer.drawString("room name: " + dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
+                        fontRenderer.drawString("room state / max secret: " + dungeonRoom.getCurrentState() + " / "+dungeonRoom.getTotalSecrets(), 5, 158, 0xFFFFFF);
                     }
                     if (dungeonRoom.getRoomProcessor() != null) {
                             dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
@@ -118,7 +122,6 @@ public class DungeonListener {
     @SubscribeEvent
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
-            if (clientChatReceivedEvent.type == 2) return;
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
@@ -133,13 +136,19 @@ public class DungeonListener {
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                     if (dungeonRoom != null) {
                         if (dungeonRoom.getRoomProcessor() != null) {
+                            if (clientChatReceivedEvent.type == 2) {
+                                dungeonRoom.getRoomProcessor().actionbarReceived(clientChatReceivedEvent.message);
+                                roomProcessor = dungeonRoom.getRoomProcessor();
+                            } else {
                                 dungeonRoom.getRoomProcessor().chatReceived(clientChatReceivedEvent.message);
                                 roomProcessor = dungeonRoom.getRoomProcessor();
+                            }
                         }
                     }
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
+                if (clientChatReceivedEvent.type == 2) return;
                 for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
                     if (globalRoomProcessor == roomProcessor) continue;;
                     try {

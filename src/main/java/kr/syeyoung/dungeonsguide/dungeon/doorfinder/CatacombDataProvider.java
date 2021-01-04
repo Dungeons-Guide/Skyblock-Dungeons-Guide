@@ -2,23 +2,21 @@ package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
 import java.util.Collection;
 import java.util.Set;
 
-public class CatacombDoorFinder implements StartDoorFinder {
+public class CatacombDataProvider implements DungeonSpecificDataProvider {
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
     @Override
-    public BlockPos find(World w) {
+    public BlockPos findDoor(World w, String dungeonName) {
         Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
             @Override
             public boolean apply(EntityArmorStand input) {
@@ -43,7 +41,7 @@ public class CatacombDoorFinder implements StartDoorFinder {
     }
 
     @Override
-    public Vector2d offset(World w) {
+    public Vector2d findDoorOffset(World w, String dungeonName) {
         Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
             @Override
             public boolean apply(EntityArmorStand input) {

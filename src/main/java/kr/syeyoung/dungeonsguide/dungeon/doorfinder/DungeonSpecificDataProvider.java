@@ -5,7 +5,7 @@ import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
 
-public interface StartDoorFinder {
-    BlockPos find(World w);
-    Vector2d offset(World w);
+public interface DungeonSpecificDataProvider {
+    BlockPos findDoor(World w, String dungeonName);
+    Vector2d findDoorOffset(World w, String dungeonName);
 }
