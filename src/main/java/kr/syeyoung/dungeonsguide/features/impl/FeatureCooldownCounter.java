@@ -13,7 +13,7 @@ import java.awt.*;
 
 public class FeatureCooldownCounter extends GuiFeature implements TickListener {
     public FeatureCooldownCounter() {
-        super("HUD", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
+        super("ETC", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color"));
     }
 

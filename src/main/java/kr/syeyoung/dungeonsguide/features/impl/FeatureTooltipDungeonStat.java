@@ -9,7 +9,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 
 public class FeatureTooltipDungeonStat extends SimpleFeature implements TooltipListener {
     public FeatureTooltipDungeonStat() {
-        super("tooltip", "Dungeon Item Stats", "Shows quality of dungeon items (floor, percentage)", "tooltip.dungeonitem");
+        super("ETC", "Dungeon Item Stats", "Shows quality of dungeon items (floor, percentage)", "tooltip.dungeonitem");
     }
 
     @Override

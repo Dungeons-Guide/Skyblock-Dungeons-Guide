@@ -54,4 +54,5 @@ public class FeatureRegistry {
     public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
+    public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
 }

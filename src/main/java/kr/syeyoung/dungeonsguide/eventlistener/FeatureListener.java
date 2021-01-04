@@ -5,10 +5,7 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -99,7 +96,7 @@ public class FeatureListener {
         }
     }
     @SubscribeEvent
-    public void onTick(GuiOpenEvent tick) {
+    public void onGuiOpen(GuiOpenEvent tick) {
             try {
                 SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
                 if (!skyblockStatus.isOnSkyblock()) return;
@@ -112,5 +109,50 @@ public class FeatureListener {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
+    }
+    @SubscribeEvent
+    public void onGuiRender(GuiScreenEvent.DrawScreenEvent.Post render) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiPostRenderListener) {
+                    ((GuiPostRenderListener) abstractFeature).onGuiPostRender(render);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onGuiRender(GuiScreenEvent.DrawScreenEvent.Pre render) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiPreRenderListener) {
+                    ((GuiPreRenderListener) abstractFeature).onGuiPreRender(render);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onGuiRender(GuiScreenEvent.BackgroundDrawnEvent render) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiBackgroundRenderListener) {
+                    ((GuiBackgroundRenderListener) abstractFeature).onGuiBGRender(render);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 }

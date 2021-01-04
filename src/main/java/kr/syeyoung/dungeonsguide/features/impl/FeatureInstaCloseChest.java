@@ -14,6 +14,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
+import net.minecraft.inventory.IInventory;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -21,6 +22,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.Comparator;
+import java.util.HashMap;
 import java.util.Set;
 import java.util.TreeSet;
 
@@ -35,7 +37,6 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
     @Override
     public void onGuiOpen(GuiOpenEvent event) {
         if (!this.isEnabled()) return;
-
         if (!skyblockStatus.isOnDungeon()) return;
         if (!(event.gui instanceof GuiChest)) return;
 
@@ -46,7 +47,7 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
         check = true;
     }
 
-    public int getPrice(ItemStack itemStack) {
+    public static int getPrice(ItemStack itemStack) {
         if (itemStack == null) return 0;
         NBTTagCompound compound = itemStack.getTagCompound();
         if (compound == null)
@@ -104,9 +105,13 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
 
             GuiScreen screen = Minecraft.getMinecraft().currentScreen;
             if (screen instanceof GuiChest){
+
+                ContainerChest chest = (ContainerChest) ((GuiChest) screen).inventorySlots;
+                IInventory actualChest = chest.getLowerChestInventory();
+
                 int priceSum = 0;
-                for (ItemStack inventoryItemStack : ((GuiChest) screen).inventorySlots.inventoryItemStacks) {
-                    priceSum += getPrice(inventoryItemStack);
+                for (int i = 0; i < actualChest.getSizeInventory(); i++) {
+                    priceSum += getPrice(actualChest.getStackInSlot(i));
                 }
 
                 int threshold = this.<Integer>getParameter("threshold").getValue();

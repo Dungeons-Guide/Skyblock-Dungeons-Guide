@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.features.impl;
 
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.TooltipListener;
@@ -8,6 +9,7 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import org.lwjgl.input.Keyboard;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -15,12 +17,15 @@ import java.util.TreeSet;
 
 public class FeatureTooltipPrice extends SimpleFeature implements TooltipListener {
     public FeatureTooltipPrice() {
-        super("tooltip", "Item Price", "Shows price of items", "tooltip.price");
+        super("ETC", "Item Price", "Shows price of items", "tooltip.price");
+        parameters.put("reqShift", new FeatureParameter<Boolean>("reqShift", "Require Shift", "If shift needs to be pressed in order for this feature to be activated", false, "boolean"));
     }
 
     @Override
     public void onTooltip(ItemTooltipEvent event) {
         if (!isEnabled()) return;
+
+        boolean activated = !this.<Boolean>getParameter("reqShift").getValue() || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 
         ItemStack hoveredItem = event.itemStack;
         NBTTagCompound compound = hoveredItem.getTagCompound();
@@ -28,6 +33,11 @@ public class FeatureTooltipPrice extends SimpleFeature implements TooltipListene
             return;
         if (!compound.hasKey("ExtraAttributes"))
             return;
+        if (!activated) {
+            event.toolTip.add("§7Shift to view price");
+            return;
+        }
+
         final String id = compound.getCompoundTag("ExtraAttributes").getString("id");
         if (id.equals("ENCHANTED_BOOK")) {
             final NBTTagCompound enchants = compound.getCompoundTag("ExtraAttributes").getCompoundTag("enchantments");
