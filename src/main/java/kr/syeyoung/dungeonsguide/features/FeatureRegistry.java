@@ -1,9 +1,6 @@
 package kr.syeyoung.dungeonsguide.features;
 
-import kr.syeyoung.dungeonsguide.features.impl.FeatureCooldownCounter;
-import kr.syeyoung.dungeonsguide.features.impl.FeatureInstaCloseChest;
-import kr.syeyoung.dungeonsguide.features.impl.FeatureTooltipDungeonStat;
-import kr.syeyoung.dungeonsguide.features.impl.FeatureTooltipPrice;
+import kr.syeyoung.dungeonsguide.features.impl.*;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -53,6 +50,8 @@ public class FeatureRegistry {
 
     public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
 
-    public static final FeatureCooldownCounter QOL_COOLDOWN =  register(new FeatureCooldownCounter());
-    public static final FeatureInstaCloseChest QOL_INSTACLOSE = register(new FeatureInstaCloseChest());
+    public static final FeatureCooldownCounter HUD_COOLDOWN =  register(new FeatureCooldownCounter());
+    public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
+    public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
+    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
 }

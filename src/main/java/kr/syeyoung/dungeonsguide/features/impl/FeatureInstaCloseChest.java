@@ -26,7 +26,7 @@ import java.util.TreeSet;
 
 public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenListener, TickListener {
     public FeatureInstaCloseChest() {
-        super("QoL", "Auto-Close Secret Chest", "Automatically closes Secret Chest as soon as you open it\nCan put item price threshold by clicking edit", "qol.autoclose", false);
+        super("Dungeon", "Auto-Close Secret Chest", "Automatically closes Secret Chest as soon as you open it\nCan put item price threshold by clicking edit", "qol.autoclose", false);
         parameters.put("threshold", new FeatureParameter<Integer>("threshold", "Price Threshold", "The maximum price of item for chest to be closed. Default 1m", 1000000, "integer"));
     }
 
@@ -40,7 +40,9 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
         if (!(event.gui instanceof GuiChest)) return;
 
         ContainerChest ch = (ContainerChest) ((GuiChest)event.gui).inventorySlots;
-        if (!"container.chest".equals(ch.getLowerChestInventory().getName())) return;
+        System.out.println(ch.getLowerChestInventory().getName());
+        if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
+            || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
         check = true;
     }
 
