@@ -63,9 +63,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
 
 
+        BlockPos pos2 = dungeonRoom.getMin().add(5,0,5);
+
         String text = chat.getFormattedText();
         int secretsIndex = text.indexOf("Secrets");
         if (secretsIndex == -1) {
+            if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
+                Minecraft.getMinecraft().thePlayer.sendChatMessage("/ac $DG-Comm "+pos2.getX() + "/"+pos2.getZ() + " "+0);
             dungeonRoom.setTotalSecrets(0);
             return;
         }
@@ -78,6 +82,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
         String it = text.substring(theindex + 2, secretsIndex- 1);
         int maxSecret = Integer.parseInt(it.split("/")[1]);
         dungeonRoom.setTotalSecrets(maxSecret);
+        if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
+            Minecraft.getMinecraft().thePlayer.sendChatMessage("/ac $DG-Comm "+pos2.getX() + "/"+pos2.getZ() + " "+maxSecret);
     }
 
     @Override

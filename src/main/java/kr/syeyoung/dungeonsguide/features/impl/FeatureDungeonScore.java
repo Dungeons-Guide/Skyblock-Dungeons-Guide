@@ -41,7 +41,7 @@ public class FeatureDungeonScore extends GuiFeature {
             double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
             GL11.glScaled(scale, scale, 0);
             String letter = getLetter(sum);
-            fr.drawString("Score: "+score + "("+letter+")", 0,0, this.<Color>getParameter("color").getValue().getRGB());
+            fr.drawString("Score: "+sum + "("+letter+")", 0,0, this.<Color>getParameter("color").getValue().getRGB());
         }
    }
 

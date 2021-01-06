@@ -131,6 +131,11 @@ public class DungeonListener {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
+                try {
+                    context.onChat(clientChatReceivedEvent);
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
                 RoomProcessor roomProcessor = null;
                 try {
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);

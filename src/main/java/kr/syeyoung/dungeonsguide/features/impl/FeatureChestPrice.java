@@ -36,7 +36,6 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
         if (!(rendered.gui instanceof GuiChest)) return;
         if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
-        GL11.glColor4f(1,1,1,1);
         GlStateManager.disableLighting();
 
         ContainerChest chest = (ContainerChest) ((GuiChest) rendered.gui).inventorySlots;

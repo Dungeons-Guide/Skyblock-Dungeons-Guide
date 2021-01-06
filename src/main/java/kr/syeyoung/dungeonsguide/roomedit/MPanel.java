@@ -78,6 +78,7 @@ public class MPanel {
         int relMousey = relMousey0 - getBounds().y;
 
         GL11.glTranslated(getBounds().x, getBounds().y, 0);
+        GL11.glColor4f(1,1,1,0);
 
         Rectangle absBound = getBounds().getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);

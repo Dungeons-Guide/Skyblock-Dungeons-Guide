@@ -173,6 +173,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
         GL11.glDisable(GL11.GL_BLEND);
+        GL11.glColor4f(1,1,1,1);
         GlStateManager.color(1,1,1,1);
     }
     private int selected = 0;

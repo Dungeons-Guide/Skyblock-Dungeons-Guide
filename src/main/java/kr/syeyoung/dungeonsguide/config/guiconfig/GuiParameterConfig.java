@@ -65,6 +65,7 @@ public class GuiParameterConfig extends GuiScreen {
         GlStateManager.disableFog();
         GlStateManager.color(1,1,1,1);
         GL11.glDisable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(false);
         int heights = 0;
         within = null;
         for (MPanel panel:mainPanel.getChildComponents()) {
@@ -83,6 +84,8 @@ public class GuiParameterConfig extends GuiScreen {
             drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), mouseX, mouseY, Minecraft.getMinecraft().fontRendererObj);
             GlStateManager.popAttrib();
         }
+        GL11.glEnable(GL11.GL_DEPTH_TEST);
+        GL11.glDepthMask(true);
         GL11.glPopMatrix();
     }
 
