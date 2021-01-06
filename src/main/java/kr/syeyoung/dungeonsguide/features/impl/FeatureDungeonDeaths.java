@@ -71,7 +71,6 @@ public class FeatureDungeonDeaths extends GuiFeature implements ChatListener {
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
-        System.out.println("HUH");
         if (!skyblockStatus.isOnDungeon()) return;
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return;

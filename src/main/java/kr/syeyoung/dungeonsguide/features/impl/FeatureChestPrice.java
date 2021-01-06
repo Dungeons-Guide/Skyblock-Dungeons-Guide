@@ -48,7 +48,7 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
             if (item != null) {
                 if (item.getDisplayName() != null && item.getDisplayName().contains("Reward")) {
                     NBTTagCompound tagCompound = item.serializeNBT().getCompoundTag("tag");
-                    if (tagCompound.hasKey("display", 10)) {
+                    if (tagCompound != null && tagCompound.hasKey("display", 10)) {
                         NBTTagCompound nbttagcompound = tagCompound.getCompoundTag("display");
 
                         if (nbttagcompound.getTagId("Lore") == 9) {

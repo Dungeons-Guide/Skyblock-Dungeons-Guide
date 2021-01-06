@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
@@ -12,6 +13,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.awt.*;
@@ -51,39 +53,51 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     }
 
+    private int stack = 0;
+    private long secrets2 = 0;
     @Override
     public void actionbarReceived(IChatComponent chat) {
-        if (dungeonRoom.getTotalSecrets() != -1) return;
+        if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (chat.getFormattedText().contains("-")) return;
+        if (dungeonRoom.getTotalSecrets() == -1) {
+            e.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
+        }
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
         DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
-        Point pt1 = context.getMapProcessor().worldPointToRoomPoint(pos.add(2,0,2));
-        Point pt2 = context.getMapProcessor().worldPointToRoomPoint(pos.add(-2,0,-2));
+        Point pt1 = context.getMapProcessor().worldPointToRoomPoint(pos.add(2, 0, 2));
+        Point pt2 = context.getMapProcessor().worldPointToRoomPoint(pos.add(-2, 0, -2));
         if (!pt1.equals(pt2)) {
+            stack = 0;
+            secrets2 = -1;
             return;
         }
-
-
-        BlockPos pos2 = dungeonRoom.getMin().add(5,0,5);
+        BlockPos pos2 = dungeonRoom.getMin().add(5, 0, 5);
 
         String text = chat.getFormattedText();
         int secretsIndex = text.indexOf("Secrets");
-        if (secretsIndex == -1) {
-            if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/ac $DG-Comm "+pos2.getX() + "/"+pos2.getZ() + " "+0);
-            dungeonRoom.setTotalSecrets(0);
-            return;
-        }
-        int theindex = 0;
-        for (int i = secretsIndex; i > 0; i--) {
-            if (text.startsWith("§7", i)) {
-                theindex = i;
+        int secrets = 0;
+        if (secretsIndex != -1) {
+            int theindex = 0;
+            for (int i = secretsIndex; i >= 0; i--) {
+                if (text.startsWith("§7", i)) {
+                    theindex = i;
+                }
             }
+            String it = text.substring(theindex + 2, secretsIndex - 1);
+            secrets = Integer.parseInt(it.split("/")[1]);
         }
-        String it = text.substring(theindex + 2, secretsIndex- 1);
-        int maxSecret = Integer.parseInt(it.split("/")[1]);
-        dungeonRoom.setTotalSecrets(maxSecret);
-        if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/ac $DG-Comm "+pos2.getX() + "/"+pos2.getZ() + " "+maxSecret);
+
+        if (secrets2 == secrets) stack++;
+        else {
+            stack = 0;
+            secrets2 = secrets;
+        }
+
+        if (stack == 4 && dungeonRoom.getTotalSecrets() != secrets) {
+            dungeonRoom.setTotalSecrets(secrets);
+            if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
+                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
+        }
     }
 
     @Override
