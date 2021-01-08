@@ -50,6 +50,8 @@ public class FeatureRegistry {
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
 
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
+    public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
+
 
     public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
 

@@ -8,7 +8,7 @@ import java.awt.*;
 public class TCAColor implements TypeConverter<Color> {
     @Override
     public String getTypeString() {
-        return "color";
+        return "acolor";
     }
 
     @Override
