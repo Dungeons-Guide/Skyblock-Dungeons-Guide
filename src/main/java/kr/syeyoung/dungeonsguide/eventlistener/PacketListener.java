@@ -40,12 +40,6 @@ public class PacketListener extends ChannelDuplexHandler {
 
     @SubscribeEvent
     public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-        if (event.manager.channel().pipeline().get("dg_packet_handler") != null)
-            event.manager.channel().pipeline().remove(this);
-        try {
-            event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
     }
 }

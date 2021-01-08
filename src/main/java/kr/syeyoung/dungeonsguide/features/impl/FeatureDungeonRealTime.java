@@ -5,6 +5,8 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.features.listener.DungeonEndListener;
+import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.gui.FontRenderer;
@@ -14,7 +16,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.text.SimpleDateFormat;
 
-public class FeatureDungeonRealTime extends GuiFeature implements TickListener {
+public class FeatureDungeonRealTime extends GuiFeature implements DungeonStartListener, DungeonEndListener {
     public FeatureDungeonRealTime() {
         super("Dungeon", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime", true, getFontRenderer().getStringWidth("Time(Real): 59m 59s"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
@@ -43,15 +45,13 @@ public class FeatureDungeonRealTime extends GuiFeature implements TickListener {
         fr.drawString("Time(Real): -42h", 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 
-    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
-    private boolean wasInDungeon = false;
     @Override
-    public void onTick() {
-        if (wasInDungeon && !skyblockStatus.isOnDungeon()) {
-            if (skyblockStatus.isOnSkyblock()) started = -1;
-        } else if (!wasInDungeon && skyblockStatus.isOnDungeon()) {
-            started = System.currentTimeMillis();
-        }
-        wasInDungeon = skyblockStatus.isOnDungeon();
+    public void onDungeonEnd() {
+    started = -1;
+    }
+
+    @Override
+    public void onDungeonStart() {
+    started= System.currentTimeMillis();
     }
 }

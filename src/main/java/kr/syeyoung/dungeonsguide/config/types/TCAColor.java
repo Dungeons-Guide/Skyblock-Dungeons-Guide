@@ -13,7 +13,7 @@ public class TCAColor implements TypeConverter<Color> {
 
     @Override
     public Color deserialize(JsonElement element) {
-        return new Color(element.getAsInt());
+        return new AColor(element.getAsInt(), true);
     }
 
     @Override

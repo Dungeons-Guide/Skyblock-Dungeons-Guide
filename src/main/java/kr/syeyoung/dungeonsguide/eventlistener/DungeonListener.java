@@ -7,6 +7,10 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.events.DungeonStartedEvent;
+import kr.syeyoung.dungeonsguide.events.SkyblockJoinedEvent;
+import kr.syeyoung.dungeonsguide.events.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
@@ -28,11 +32,13 @@ import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
+import scala.collection.parallel.ParIterableLike;
 
 import java.awt.*;
 
@@ -44,8 +50,17 @@ public class DungeonListener {
                 SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
                  {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
+                    boolean isOnSkyblock = skyblockStatus.isOnSkyblock();
                     skyblockStatus.updateStatus();
-                    if (!skyblockStatus.isOnDungeon()) {
+
+                    if (isOnSkyblock && !skyblockStatus.isOnSkyblock()) {
+                        MinecraftForge.EVENT_BUS.post(new SkyblockLeftEvent());
+                    } else if (!isOnSkyblock && skyblockStatus.isOnSkyblock()) {
+                        MinecraftForge.EVENT_BUS.post(new SkyblockJoinedEvent());
+                    }
+
+                    if (isOnDungeon && !skyblockStatus.isOnDungeon()) {
+                        MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
                         skyblockStatus.setContext(null);
                         MapUtils.clearMap();
                         return;
@@ -53,7 +68,10 @@ public class DungeonListener {
                             if (isOnDungeon) {
                                     skyblockStatus.getContext().tick();
                             }
-                            else skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
+                            else {
+                                skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
+                                MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                            }
                 }
 
                 if (!skyblockStatus.isOnDungeon()) return;

@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
+import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -14,6 +15,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.storage.MapData;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -35,6 +37,9 @@ public class MapProcessor {
     private List<Point> roomsFound = new ArrayList<Point>();
 
     private boolean axisMatch = false;
+
+    @Getter
+    private boolean initialized = false;
 
     @Getter
     private int undiscoveredRoom = 0;
@@ -143,6 +148,8 @@ public class MapProcessor {
         e.sendDebugChat(new ChatComponentText("Dimension:"+unitRoomDimension));
         e.sendDebugChat(new ChatComponentText("top Left:"+topLeftMapPoint));
         e.sendDebugChat(new ChatComponentText("door dimension:"+doorDimension));
+        initialized = true;
+        MinecraftForge.EVENT_BUS.post(new DungeonContextInitializationEvent());
     }
 
     public Point mapPointToRoomPoint(Point mapPoint) {
@@ -176,6 +183,7 @@ public class MapProcessor {
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(new Point(x,y));
                     if (color == 30 || color == 18) {
                         dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
+                        dungeonRoom.setTotalSecrets(0);
                     } else {
                         byte centerColor = MapUtils.getMapColorAt(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2);
                         MapUtils.record(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2, new Color(0,255,0,80));

@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.listener.DungeonQuitListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -11,7 +12,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class FeatureCooldownCounter extends GuiFeature implements TickListener {
+public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitListener {
     public FeatureCooldownCounter() {
         super("ETC", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color"));
@@ -21,11 +22,11 @@ public class FeatureCooldownCounter extends GuiFeature implements TickListener {
     private boolean wasInDungeon = false;
     @Override
     public void drawHUD(float partialTicks) {
-        if (System.currentTimeMillis() - leftDungeonTime > 10000) return;
+        if (System.currentTimeMillis() - leftDungeonTime > 20000) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
         GL11.glScaled(scale, scale, 0);
-        fr.drawString("Cooldown: "+(10 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
+        fr.drawString("Cooldown: "+(20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 
     @Override
@@ -33,17 +34,13 @@ public class FeatureCooldownCounter extends GuiFeature implements TickListener {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
         GL11.glScaled(scale, scale, 0);
-        fr.drawString("Cooldown: 10s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
+        fr.drawString("Cooldown: 20s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+
     @Override
-    public void onTick() {
-        if (wasInDungeon && !skyblockStatus.isOnDungeon()) {
-            if (skyblockStatus.isOnSkyblock())
-                leftDungeonTime = System.currentTimeMillis();
-            else return;
-        }
-        wasInDungeon = skyblockStatus.isOnDungeon();
+    public void onDungeonQuit() {
+        leftDungeonTime = System.currentTimeMillis();
     }
 }

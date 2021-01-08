@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.eventlistener;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.*;
 import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
@@ -153,6 +154,70 @@ public class FeatureListener {
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof GuiBackgroundRenderListener) {
                     ((GuiBackgroundRenderListener) abstractFeature).onGuiBGRender(render);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onSkyblockJoin(SkyblockJoinedEvent joinedEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof SkyblockJoinListener) {
+                    ((SkyblockJoinListener) abstractFeature).onSkyblockJoin();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onSkyblockQuit(SkyblockLeftEvent leftEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof SkyblockLeaveListener) {
+                    ((SkyblockLeaveListener) abstractFeature).onSkyblockQuit();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onDungeonStart(DungeonStartedEvent leftEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DungeonStartListener) {
+                    ((DungeonStartListener) abstractFeature).onDungeonStart();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onDungeonLeft(DungeonLeftEvent leftEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DungeonQuitListener) {
+                    ((DungeonQuitListener) abstractFeature).onDungeonQuit();
+                }
+                if (abstractFeature instanceof DungeonEndListener) {
+                    ((DungeonEndListener) abstractFeature).onDungeonEnd();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onDungeonInitialize(DungeonContextInitializationEvent leftEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DungeonContextInitializationListener) {
+                    ((DungeonContextInitializationListener) abstractFeature).onDungeonInitialize();
                 }
             }
         } catch (Throwable t) {

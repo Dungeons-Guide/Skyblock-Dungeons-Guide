@@ -6,4 +6,8 @@ public class AColor extends Color {
     public AColor(int r, int g, int b, int a) {
         super(r, g, b, a);
     }
+
+    public AColor(int rgba, boolean hasalpha) {
+        super(rgba, hasalpha);
+    }
 }
