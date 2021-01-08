@@ -39,6 +39,7 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
         GlStateManager.disableLighting();
 
         ContainerChest chest = (ContainerChest) ((GuiChest) rendered.gui).inventorySlots;
+        if (!chest.getLowerChestInventory().getName().endsWith("Chest")) return;
         IInventory actualChest = chest.getLowerChestInventory();
 
         int chestPrice = 0;

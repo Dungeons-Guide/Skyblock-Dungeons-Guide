@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.features.impl;
 
 import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
@@ -21,7 +22,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderL
     public FeatureBoxSkelemaster() {
         super("Dungeon", "Box Skeleton Masters", "Box skeleton masters in dungeons", "dungeon.skeletonmasterbox", true);
         parameters.put("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and skeletonmaster to be boxed", 20, "integer"));
-        parameters.put("color", new FeatureParameter<Color>("color", "Highlight Color", "Highlight Color of Skeleton master", Color.red, "color"));
+        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(255,0,0,50), "acolor"));
     }
 
 
@@ -43,9 +44,8 @@ public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderL
             }
         });
         Color c = this.<Color>getParameter("color").getValue();
-        Color real = new Color(c.getRGB() & 0xFFFFFF | 0x44000000, true);
         for (EntityArmorStand entitySkeleton : skeletonList) {
-            RenderUtils.highlightBox(entitySkeleton, real, partialTicks, false);
+            RenderUtils.highlightBox(entitySkeleton, c, partialTicks, false);
         }
     }
 }

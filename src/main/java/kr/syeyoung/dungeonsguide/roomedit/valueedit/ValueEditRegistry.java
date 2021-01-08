@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
@@ -30,6 +31,7 @@ public class ValueEditRegistry {
         valueEditMap.put(OffsetPoint.class.getName(), new ValueEditOffsetPoint.Generator());
         valueEditMap.put(OffsetPointSet.class.getName(), new ValueEditOffsetPointSet.Generator());
         valueEditMap.put(Color.class.getName(), new ValueEditColor.Generator());
+        valueEditMap.put(AColor.class.getName(), new ValueEditAColor.Generator());
 
 
         valueEditMap.put(DungeonSecret.class.getName(), new ValueEditSecret.Generator());

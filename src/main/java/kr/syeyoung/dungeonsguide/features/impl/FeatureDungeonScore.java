@@ -29,6 +29,7 @@ public class FeatureDungeonScore extends GuiFeature {
         if (!skyblockStatus.isOnDungeon()) return;
         FontRenderer fr = getFontRenderer();
         ScoreCalculation score = calculateScore();
+        if (score == null) return;
         int sum = score.time + score.skill + score.explorer + score.bonus;
         if (this.<Boolean>getParameter("verbose").getValue()) {
             String req = buildRequirement(score);
