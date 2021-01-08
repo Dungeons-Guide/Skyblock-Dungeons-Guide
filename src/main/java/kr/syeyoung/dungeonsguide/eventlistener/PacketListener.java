@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.eventlistener;
 
 import io.netty.channel.ChannelDuplexHandler;
+import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -14,6 +15,7 @@ import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 import java.lang.reflect.Field;
 
+@ChannelHandler.Sharable
 public class PacketListener extends ChannelDuplexHandler {
     private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();;
     @Override
@@ -33,30 +35,17 @@ public class PacketListener extends ChannelDuplexHandler {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
-//        if (ToggleCommand.itemFrameOnSeaLanternsToggled && Utils.inDungeons && msg instanceof Packet && msg.getClass().getName().endsWith("C02PacketUseEntity")) {
-//            Minecraft mc = Minecraft.getMinecraft();
-//            C02PacketUseEntity packet = (C02PacketUseEntity) msg;
-//            Entity entityHit = packet.getEntityFromWorld(mc.theWorld);
-//            if (entityHit instanceof EntityItemFrame) {
-//                EntityItemFrame itemFrame = (EntityItemFrame) entityHit;
-//                ItemStack item = itemFrame.getDisplayedItem();
-//                if (item != null && item.getItem() == Items.arrow) {
-//                    BlockPos blockPos = Utils.getBlockUnderItemFrame(itemFrame);
-//                    if (mc.theWorld.getBlockState(blockPos).getBlock() == Blocks.sea_lantern) {
-//                        return;
-//                    }
-//                }
-//            }
-//        }
-
         super.write(ctx, msg, promise);
     }
 
     @SubscribeEvent
     public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
         if (event.manager.channel().pipeline().get("dg_packet_handler") != null)
-        event.manager.channel().pipeline().remove(this);
-
-        event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
+            event.manager.channel().pipeline().remove(this);
+        try {
+            event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 }
