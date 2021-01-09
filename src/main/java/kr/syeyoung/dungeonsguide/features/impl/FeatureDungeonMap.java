@@ -184,7 +184,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         }
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
-        GlStateManager.disableAlpha();
 
         List<NetworkPlayerInfo> list = field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
         if (list.size() < 40) return;
