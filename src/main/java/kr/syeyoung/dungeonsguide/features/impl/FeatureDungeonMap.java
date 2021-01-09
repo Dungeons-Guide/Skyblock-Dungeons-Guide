@@ -154,6 +154,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         FontRenderer fr = getFontRenderer();
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
             GL11.glPushMatrix();
+            GlStateManager.pushAttrib();
             Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
             GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
 
@@ -168,18 +169,22 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 str += " ";
             }
             if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-                str += "●";
+                str += "✔";
             } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
-                str += "◎";
+                str += "☑";
             } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
-                str += "○";
+                str += "☐";
             } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
                 str += "❌";
             }
 
             fr.drawString(str, -(fr.getStringWidth(str) / 2) ,  - (fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
+            GlStateManager.popAttrib();
             GL11.glPopMatrix();
         }
+        GlStateManager.enableBlend();
+        GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
+        GlStateManager.disableAlpha();
 
         List<NetworkPlayerInfo> list = field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
         if (list.size() < 40) return;
@@ -199,7 +204,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYaw - entityplayer.prevRotationYawHead) * partialTicks;
             } else {
                 String iconName = mapProcessor.getMapIconToPlayerMap().get(actual);
-                System.out.println("Player is null "+actual+ " - connected with "+iconName);
                 if (iconName == null) continue;
                 Vec4b vec = mapData.mapDecorations.get(iconName);
                 if (vec == null) {
@@ -213,6 +217,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
                 GL11.glPushMatrix();
                 boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE);
+                GlStateManager.enableTexture2D();
                 Minecraft.getMinecraft().getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
                 int l2 = 8 + (flag1 ? 8 : 0);
                 int i3 = 8 * (flag1 ? -1 : 1);
@@ -225,12 +230,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 float s = this.<Float>getParameter("playerheadscale").getValue();
                 GL11.glScaled(s,s,0);
                 Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
-
-                if (entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.HAT)) {
-                    int j3 = 8 + (flag1 ? 8 : 0);
-                    int k3 = 8 * (flag1 ? -1 : 1);
-                    Gui.drawScaledCustomSizeModalRect(-4, -4, 40.0F, (float) j3, 8, k3, 8, 8, 64.0F, 64.0F);
-                }
                 RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue().getRGB(), this.<Boolean>getParameter("player_chroma").getValue());
             }
             GL11.glPopMatrix();

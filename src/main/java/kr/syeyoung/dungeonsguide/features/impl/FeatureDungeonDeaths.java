@@ -76,7 +76,6 @@ public class FeatureDungeonDeaths extends GuiFeature implements ChatListener {
         if (context == null) return;
 
         String txt = clientChatReceivedEvent.message.getFormattedText();
-        System.out.println(txt);
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));

@@ -67,7 +67,8 @@ public class DungeonContext {
 
     public void tick() {
         mapProcessor.tick();
-        if (mapProcessor.isInitialized() && BossRoomEnterSeconds != -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
+
+        if (mapProcessor.isInitialized() && BossRoomEnterSeconds == -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
             BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
         }

@@ -62,7 +62,6 @@ public class FeatureDungeonMilestone extends GuiFeature implements ChatListener 
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return;
         String txt = clientChatReceivedEvent.message.getFormattedText();
-        System.out.println(txt);
         if (milestone_pattern.matcher(txt).matches()) {
             context.getMilestoneReached().add(new String[] {
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),
