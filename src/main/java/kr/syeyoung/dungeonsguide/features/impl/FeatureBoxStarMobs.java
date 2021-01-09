@@ -10,7 +10,6 @@ import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.monster.EntitySkeleton;
 import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
@@ -18,11 +17,11 @@ import java.awt.*;
 import java.util.List;
 
 
-public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderListener {
-    public FeatureBoxSkelemaster() {
-        super("Dungeon", "Box Skeleton Masters", "Box skeleton masters in dungeons", "dungeon.skeletonmasterbox", true);
+public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderListener {
+    public FeatureBoxStarMobs() {
+        super("Dungeon", "Box Starred mobs", "Box Starred mobs in dungeons", "dungeon.starmobbox", false);
         parameters.put("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and skeletonmaster to be boxed", 20, "integer"));
-        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(255,0,0,50), "acolor"));
+        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(0,255,255,50), "acolor"));
     }
 
 
@@ -40,7 +39,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderL
             @Override
             public boolean apply(@Nullable EntityArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;
-                return input.getName().contains("Skeleton Master");
+                return input.getName().contains("✯");
             }
         });
         Color c = this.<Color>getParameter("color").getValue();

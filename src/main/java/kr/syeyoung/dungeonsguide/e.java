@@ -44,15 +44,19 @@ public class e implements c {
         if (FeatureRegistry.DEBUG.isEnabled())
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
     }
+    @Getter
+    CommandReparty commandReparty;
 
     public void init(FMLInitializationEvent event) {
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
 
-        MinecraftForge.EVENT_BUS.register(new DungeonListener());
         CommandDungeonsGuide commandDungeonsGuide;
+        MinecraftForge.EVENT_BUS.register(new DungeonListener());
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide = new CommandDungeonsGuide());
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
+        ClientCommandHandler.instance.registerCommand(commandReparty = new CommandReparty());
+        MinecraftForge.EVENT_BUS.register(commandReparty);
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
 
