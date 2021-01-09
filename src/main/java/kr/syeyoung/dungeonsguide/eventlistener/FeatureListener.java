@@ -236,4 +236,16 @@ public class FeatureListener {
             t.printStackTrace();
         }
     }
+    @SubscribeEvent
+    public void onDungeonInitialize(DungeonEndedEvent endedEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DungeonEndListener) {
+                    ((DungeonEndListener) abstractFeature).onDungeonEnd();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
 }

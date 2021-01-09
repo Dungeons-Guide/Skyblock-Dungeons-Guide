@@ -13,11 +13,13 @@ import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec4b;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -35,6 +37,7 @@ public class MapProcessor {
     @Getter
     private MapData lastMapData2;
 
+    @Getter
     private BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
 
     @Getter
@@ -162,6 +165,11 @@ public class MapProcessor {
         int x = (int)((mapPoint.x - topLeftMapPoint.x) / ((double)unitRoomDimension.width + doorDimension.height));
         int y = (int)((mapPoint.y - topLeftMapPoint.y) / ((double)unitRoomDimension.height + doorDimension.height));
         return new Point(x,y);
+    }
+    public BlockPos mapPointToWorldPoint(Point mapPoint) {
+        int x = (int)((mapPoint.x - topLeftMapPoint.x) / ((double)unitRoomDimension.width + doorDimension.height) * 32 + context.getDungeonMin().getX());
+        int y = (int)((mapPoint.y - topLeftMapPoint.y) / ((double)unitRoomDimension.height + doorDimension.height) * 32 + context.getDungeonMin().getZ());
+        return new BlockPos(x,70,y);
     }
     public Point roomPointToMapPoint(Point roomPoint) {
         return new Point(roomPoint.x * (unitRoomDimension.width +doorDimension.height) + topLeftMapPoint.x,
@@ -322,9 +330,38 @@ public class MapProcessor {
         else if (mapData != null) processMap(mapData);
 
         if (lastMapData2 != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
+            label: for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
+                if (mapIconToPlayerMap.containsValue(stringVec4bEntry.getKey())) continue;
+                int x = stringVec4bEntry.getValue().func_176112_b() /2 + 64;
+                int y = stringVec4bEntry.getValue().func_176113_c() /2 + 64;
+                BlockPos mapPos = mapPointToWorldPoint(new Point(x, y));
+                String potentialPlayer = null;
+                for (String player : context.getPlayers()) { // check nearby players
+                    if (mapIconToPlayerMap.containsKey(player)) continue;
+                    EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+                    if (entityPlayer == null) continue;
+                    BlockPos pos = entityPlayer.getPosition();
+                    int dx = mapPos.getX() - pos.getX();
+                    int dz = mapPos.getZ() - pos.getZ();
+                    if (dx * dx + dz * dz < 81) {
+                        if (potentialPlayer != null) continue label;
+                        potentialPlayer = player;
+                    }
+                }
+                if (potentialPlayer == null) continue;
 
-            for (String player : context.getPlayers()) {
-
+                for (Map.Entry<String, Vec4b> stringVec4bEntry2 : lastMapData2.mapDecorations.entrySet()) { // check nearby markers
+                    if (mapIconToPlayerMap.containsValue(stringVec4bEntry.getKey())) continue;
+                    if (stringVec4bEntry.getKey().equals(stringVec4bEntry2.getKey())) continue;
+                    int x2 = stringVec4bEntry2.getValue().func_176112_b() /2 + 64;
+                    int y2 = stringVec4bEntry2.getValue().func_176113_c() /2 + 64;
+                    int dx = x2 - x;
+                    int dy = y2 - y;
+                    if (dx * dx + dy * dy < 81) {
+                        continue label;
+                    }
+                }
+                mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
             }
         }
 

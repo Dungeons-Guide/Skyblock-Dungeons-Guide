@@ -4,6 +4,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -14,6 +15,7 @@ import kr.syeyoung.dungeonsguide.features.listener.BossroomEnterListener;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonEndListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
@@ -58,6 +60,13 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         parameters.put("rotate", new FeatureParameter<Boolean>("rotate", "Rotate map centered at player", "Only works with Center map at player enabled", false, "boolean"));
         parameters.put("postScale", new FeatureParameter<Float>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0f, "float"));
         parameters.put("showotherplayers", new FeatureParameter<Boolean>("showotherplayers", "Show other players", "Option to show other players in map", true, "boolean"));
+        parameters.put("showtotalsecrets", new FeatureParameter<Boolean>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, "boolean"));
+        parameters.put("playerheadscale", new FeatureParameter<Float>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, "float"));
+        parameters.put("border_color", new FeatureParameter<AColor>("border_color", "Color of the border", "Same as name", new AColor(255,255,255,255), "acolor"));
+        parameters.put("background_color", new FeatureParameter<AColor>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), "acolor"));
+        parameters.put("chromaborder", new FeatureParameter<Boolean>("chromaborder", "Chroma border", "Rainbow!!! (Overrides border color option)", false, "boolean"));
+        parameters.put("player_color", new FeatureParameter<AColor>("player_color", "Color of the player border", "Same as name", new AColor(255,255,255,0), "acolor"));
+        parameters.put("player_chroma", new FeatureParameter<Boolean>("player_chroma", "Chroma border for player", "Rainbow!!! (Overrides border color option)", false, "boolean"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -98,111 +107,135 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
     public void drawHUD(float partialTicks) {
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null | !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
-
-        GL11.glPushMatrix();;
-        float postScale = this.<Boolean>getParameter("playerCenter").getValue() ? this.<Float>getParameter("postScale").getValue() : 1;
+        if (!on) return;;
 
         DungeonContext context = skyblockStatus.getContext();
         MapProcessor mapProcessor = context.getMapProcessor();
         MapData mapData = mapProcessor.getLastMapData2();
-        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, 0x22000000);
+        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("background_color").getValue().getRGB());
         GlStateManager.color(1,1,1,1);
+        GL11.glPushMatrix();;
         if (mapData == null) {
             Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, 0xFFFF0000);
         } else {
-            int width = getFeatureRect().width;
-            float scale = (this.<Boolean>getParameter("scale").getValue() ? width / 128.0f : 1);
-            GL11.glTranslated(width / 2, width / 2, 0);
-            GL11.glScaled(scale, scale, 0);
-            GL11.glScaled(postScale, postScale,0);
-            EntityPlayer p = Minecraft.getMinecraft().thePlayer;
-            Point pt = mapProcessor.worldPointToMapPoint(p.getPositionEyes(partialTicks));
-            double yaw = p.prevRotationYawHead + (p.rotationYaw - p.prevRotationYawHead) * partialTicks;
-            if (this.<Boolean>getParameter("playerCenter").getValue()) {
-                if (this.<Boolean>getParameter("rotate").getValue()) {
-                    GL11.glRotated((180 - yaw), 0,0,1);
-                }
-                GL11.glTranslated( -pt.x, -pt.y, 0);
-            } else {
-                GL11.glTranslated( -64, -64, 0);
-            }
-            updateMapTexture(mapData.colors, mapProcessor, context.getDungeonRoomList());
-            render(mapData, false);
-
-            for (Map.Entry<String, Vec4b> stringVec4bEntry : mapData.mapDecorations.entrySet()) {
-                System.out.println(stringVec4bEntry.getKey() + " - "+stringVec4bEntry.getValue());
-            }
-
-                List<NetworkPlayerInfo> list = field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
-                for (int i = 1; i < 10; i++) {
-                    NetworkPlayerInfo networkPlayerInfo = list.get(i);
-                    String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
-                    if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
-                    EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(TextUtils.stripColor(name).trim().split(" ")[0]);
-                    if (entityplayer == null) continue;
-                    if (entityplayer == Minecraft.getMinecraft().thePlayer || this.<Boolean>getParameter("showotherplayers").getValue())
-                    {
-
-                        GL11.glPushMatrix();
-                        boolean flag1 = entityplayer.isWearing(EnumPlayerModelParts.CAPE);
-                        Minecraft.getMinecraft().getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
-                        int l2 = 8 + (flag1 ? 8 : 0);
-                        int i3 = 8 * (flag1 ? -1 : 1);
-
-                        Point pt2 = mapProcessor.worldPointToMapPoint(entityplayer.getPositionEyes(partialTicks));
-                        double yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYaw - entityplayer.prevRotationYawHead) * partialTicks;
-
-
-                        GL11.glTranslated(pt2.x, pt2.y, 0);
-                        GL11.glRotated(yaw2 - 180, 0, 0, 1);
-
-                        GL11.glScaled(1 / scale, 1 / scale, 0);
-                        GL11.glScaled(1 / postScale, 1 / postScale, 0);
-                        Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
-
-                        if (entityplayer.isWearing(EnumPlayerModelParts.HAT)) {
-                            int j3 = 8 + (flag1 ? 8 : 0);
-                            int k3 = 8 * (flag1 ? -1 : 1);
-                            Gui.drawScaledCustomSizeModalRect(-4, -4, 40.0F, (float) j3, 8, k3, 8, 8, 64.0F, 64.0F);
-                        }
-                    }
-                    GL11.glPopMatrix();
-                }
-
-            FontRenderer fr = getFontRenderer();
-            if (true) {
-                for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                    GL11.glPushMatrix();
-                    Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
-                    GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
-
-                    if (this.<Boolean>getParameter("rotate").getValue()) {
-                        GL11.glRotated(yaw - 180, 0, 0, 1);
-                    }
-                    GL11.glScaled(1 / scale, 1 / scale, 0);
-                    GL11.glScaled(1 / postScale, 1 / postScale, 0);
-                    String str = dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
-                    str += " ";
-                    if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-                        str += "●";
-                    } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
-                        str += "◎";
-                    } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
-                        str += "○";
-                    } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
-                        str += "❌";
-                    }
-
-                    fr.drawString(str, -(fr.getStringWidth(str) / 2) ,  - (fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
-                    GL11.glPopMatrix();
-                }
-            }
+            renderMap(partialTicks,mapProcessor,mapData,context);
         }
         GL11.glPopMatrix();
+
+        RenderUtils.drawUnfilledBox(1,0,getFeatureRect().width, getFeatureRect().height-1, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
     }
 
     @Override
     public void drawDemo(float partialTicks) {
+
+    }
+
+    public void renderMap(float partialTicks, MapProcessor mapProcessor, MapData mapData, DungeonContext context){
+        float postScale = this.<Boolean>getParameter("playerCenter").getValue() ? this.<Float>getParameter("postScale").getValue() : 1;
+        int width = getFeatureRect().width;
+        float scale = (this.<Boolean>getParameter("scale").getValue() ? width / 128.0f : 1);
+        GL11.glTranslated(width / 2, width / 2, 0);
+        GL11.glScaled(scale, scale, 0);
+        GL11.glScaled(postScale, postScale,0);
+        EntityPlayer p = Minecraft.getMinecraft().thePlayer;
+        Point pt = mapProcessor.worldPointToMapPoint(p.getPositionEyes(partialTicks));
+        double yaw = p.prevRotationYawHead + (p.rotationYaw - p.prevRotationYawHead) * partialTicks;
+        if (this.<Boolean>getParameter("playerCenter").getValue()) {
+            if (this.<Boolean>getParameter("rotate").getValue()) {
+                GL11.glRotated((180 - yaw), 0,0,1);
+            }
+            GL11.glTranslated( -pt.x, -pt.y, 0);
+        } else {
+            GL11.glTranslated( -64, -64, 0);
+        }
+        updateMapTexture(mapData.colors, mapProcessor, context.getDungeonRoomList());
+        render(mapData, false);
+
+        FontRenderer fr = getFontRenderer();
+        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            GL11.glPushMatrix();
+            Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
+            GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
+
+            if (this.<Boolean>getParameter("playerCenter").getValue() && this.<Boolean>getParameter("rotate").getValue()) {
+                GL11.glRotated(yaw - 180, 0, 0, 1);
+            }
+            GL11.glScaled(1 / scale, 1 / scale, 0);
+            GL11.glScaled(1 / postScale, 1 / postScale, 0);
+            String str= "";
+            if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
+                str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
+                str += " ";
+            }
+            if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
+                str += "●";
+            } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
+                str += "◎";
+            } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
+                str += "○";
+            } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
+                str += "❌";
+            }
+
+            fr.drawString(str, -(fr.getStringWidth(str) / 2) ,  - (fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
+            GL11.glPopMatrix();
+        }
+
+        List<NetworkPlayerInfo> list = field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
+        if (list.size() < 40) return;
+        for (int i = 1; i < 20; i++) {
+            NetworkPlayerInfo networkPlayerInfo = list.get(i);
+            String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
+            if (TextUtils.stripColor(name).endsWith("(DEAD)")) {
+                continue;
+            }
+            if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
+            String actual = TextUtils.stripColor(name).trim().split(" ")[0];
+            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(actual);
+            Point pt2;
+            double yaw2;
+            if (entityplayer != null) {
+                pt2 = mapProcessor.worldPointToMapPoint(entityplayer.getPositionEyes(partialTicks));
+                yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYaw - entityplayer.prevRotationYawHead) * partialTicks;
+            } else {
+                String iconName = mapProcessor.getMapIconToPlayerMap().get(actual);
+                System.out.println("Player is null "+actual+ " - connected with "+iconName);
+                if (iconName == null) continue;
+                Vec4b vec = mapData.mapDecorations.get(iconName);
+                if (vec == null) {
+                    continue;
+                }
+                pt2 = new Point(vec.func_176112_b() /2 + 64, vec.func_176113_c() / 2 + 64);
+                yaw2 = vec.func_176111_d() * 360 / 16.0f + 180;
+            }
+            if (entityplayer == Minecraft.getMinecraft().thePlayer || this.<Boolean>getParameter("showotherplayers").getValue())
+            {
+
+                GL11.glPushMatrix();
+                boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
+                int l2 = 8 + (flag1 ? 8 : 0);
+                int i3 = 8 * (flag1 ? -1 : 1);
+
+                GL11.glTranslated(pt2.x, pt2.y, 0);
+                GL11.glRotated(yaw2 - 180, 0, 0, 1);
+
+                GL11.glScaled(1 / scale, 1 / scale, 0);
+                GL11.glScaled(1 / postScale, 1 / postScale, 0);
+                float s = this.<Float>getParameter("playerheadscale").getValue();
+                GL11.glScaled(s,s,0);
+                Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
+
+                if (entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.HAT)) {
+                    int j3 = 8 + (flag1 ? 8 : 0);
+                    int k3 = 8 * (flag1 ? -1 : 1);
+                    Gui.drawScaledCustomSizeModalRect(-4, -4, 40.0F, (float) j3, 8, k3, 8, 8, 64.0F, 64.0F);
+                }
+                RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue().getRGB(), this.<Boolean>getParameter("player_chroma").getValue());
+            }
+            GL11.glPopMatrix();
+        }
+
     }
 
 
@@ -216,7 +249,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             int j = colors[i] & 255;
 
             if (j / 4 == 0) {
-                this.mapTextureData[i] = (i + i / 128 & 1) * 8 + 16 << 24;
+                this.mapTextureData[i] = 0x00000000;
             } else {
                 this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
             }
@@ -232,7 +265,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                         int j = dungeonRoom.getColor();
 
                         if (j / 4 == 0) {
-                            this.mapTextureData[i] = (i + i / 128 & 1) * 8 + 16 << 24;
+                            this.mapTextureData[i] = 0x00000000;
                         } else {
                             this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
                         }
@@ -263,34 +296,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         tessellator.draw();
         GlStateManager.enableAlpha();
         GlStateManager.disableBlend();
-//        Minecraft.getMinecraft().getTextureManager().bindTexture(MapItemRenderer.mapIcons);
-//        int k = 0;
-//
-//        for (Vec4b vec4b : this.mapData.mapDecorations.values())
-//        {
-//            if (!noOverlayRendering || vec4b.func_176110_a() == 1)
-//            {
-//                GlStateManager.pushMatrix();
-//                GlStateManager.translate((float)i + (float)vec4b.func_176112_b() / 2.0F + 64.0F, (float)j + (float)vec4b.func_176113_c() / 2.0F + 64.0F, -0.02F);
-//                GlStateManager.rotate((float)(vec4b.func_176111_d() * 360) / 16.0F, 0.0F, 0.0F, 1.0F);
-//                GlStateManager.scale(4.0F, 4.0F, 3.0F);
-//                GlStateManager.translate(-0.125F, 0.125F, 0.0F);
-//                byte b0 = vec4b.func_176110_a();
-//                float f1 = (float)(b0 % 4 + 0) / 4.0F;
-//                float f2 = (float)(b0 / 4 + 0) / 4.0F;
-//                float f3 = (float)(b0 % 4 + 1) / 4.0F;
-//                float f4 = (float)(b0 / 4 + 1) / 4.0F;
-//                worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-//                float f5 = -0.001F;
-//                worldrenderer.pos(-1.0D, 1.0D, (double)((float)k * -0.001F)).tex((double)f1, (double)f2).endVertex();
-//                worldrenderer.pos(1.0D, 1.0D, (double)((float)k * -0.001F)).tex((double)f3, (double)f2).endVertex();
-//                worldrenderer.pos(1.0D, -1.0D, (double)((float)k * -0.001F)).tex((double)f3, (double)f4).endVertex();
-//                worldrenderer.pos(-1.0D, -1.0D, (double)((float)k * -0.001F)).tex((double)f1, (double)f4).endVertex();
-//                tessellator.draw();
-//                GlStateManager.popMatrix();
-//                ++k;
-//            }
-//        }
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(0.0F, 0.0F, -0.04F);

@@ -53,21 +53,13 @@ public class DungeonContext {
     private int BossRoomEnterSeconds = -1;
 
     @Getter
-    private List<String> players = new ArrayList<String>();
+    private Set<String> players = new HashSet<String>();
 
     public DungeonContext(World world) {
         this.world = world;
         mapProcessor = new MapProcessor(this);
 
-        List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
-        for (int i = 1; i < 10; i++) {
-            NetworkPlayerInfo networkPlayerInfo = list.get(i);
-            String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
-            if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(TextUtils.stripColor(name).trim().split(" ")[0]);
-            if (entityplayer == null) continue;
-            players.add(entityplayer.getName());
-        }
+
     }
 
 
@@ -79,6 +71,15 @@ public class DungeonContext {
             BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
         }
+        List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
+        try {
+            for (int i = 1; i < 20; i++) {
+                NetworkPlayerInfo networkPlayerInfo = list.get(i);
+                String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
+                if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
+                players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
+            }
+        } catch (Exception e) {}
     }
 
     public void onChat(ClientChatReceivedEvent event) {

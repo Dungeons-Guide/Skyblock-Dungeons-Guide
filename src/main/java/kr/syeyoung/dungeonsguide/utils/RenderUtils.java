@@ -20,6 +20,57 @@ import java.awt.*;
 import java.util.List;
 
 public class RenderUtils {
+    public static void drawUnfilledBox(int left, int top, int right, int bottom, int color, boolean chroma)
+    {
+        if (left < right)
+        {
+            int i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom)
+        {
+            int j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = (float)(color >> 24 & 255) / 255.0F;
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        if (!chroma) {
+            GlStateManager.color(f, f1, f2, f3);
+            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
+            worldrenderer.pos((double) left, (double) bottom, 0.0D).endVertex();
+            worldrenderer.pos((double) right, (double) bottom, 0.0D).endVertex();
+            worldrenderer.pos((double) right, (double) top, 0.0D).endVertex();
+            worldrenderer.pos((double) left, (double) top, 0.0D).endVertex();
+        } else {
+            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+            float blah = (System.currentTimeMillis()  / 10) % 360;
+            ;
+            GL11.glShadeModel(GL11.GL_SMOOTH);
+            color(worldrenderer.pos((double) left, (double) bottom, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
+            color(worldrenderer.pos((double) right, (double) bottom, 0.0D), Color.HSBtoRGB((((blah + 40) % 360)  / 360.0f), 1, 1)).endVertex();
+            color(worldrenderer.pos((double) right, (double) top, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
+            color(worldrenderer.pos((double) left, (double) top, 0.0D), Color.HSBtoRGB(blah / 360.0f, 1, 1)).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+    public static WorldRenderer color(WorldRenderer worldRenderer, int color ){
+        return worldRenderer.color(((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f, (color &0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f);
+    }
+
     public static void renderDoor(DungeonDoor dungeonDoor, float partialTicks) {
         Entity player = Minecraft.getMinecraft().thePlayer;
         double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;

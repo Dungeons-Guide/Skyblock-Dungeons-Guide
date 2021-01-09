@@ -7,10 +7,7 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
-import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
-import kr.syeyoung.dungeonsguide.events.DungeonStartedEvent;
-import kr.syeyoung.dungeonsguide.events.SkyblockJoinedEvent;
-import kr.syeyoung.dungeonsguide.events.SkyblockLeftEvent;
+import kr.syeyoung.dungeonsguide.events.*;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
@@ -144,6 +141,10 @@ public class DungeonListener {
         try {
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
+
+            if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
+                MinecraftForge.EVENT_BUS.post(new DungeonEndedEvent());
+            }
 
             DungeonContext context = skyblockStatus.getContext();
 
