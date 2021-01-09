@@ -46,10 +46,10 @@ public class FeatureTooltipPrice extends SimpleFeature implements TooltipListene
                 public int compare(String o1, String o2) {
                     String id2 = id + "::" + o1 + "-" + enchants.getInteger(o1);
                     AhUtils.AuctionData auctionData = AhUtils.auctions.get(id2);
-                    int price1 = (auctionData == null) ? 0 : ((Integer)auctionData.prices.first()).intValue();
+                    int price1 = (auctionData == null) ? 0 : auctionData.lowestBin;
                     String id3 = id + "::" + o2 + "-" + enchants.getInteger(o2);
                     AhUtils.AuctionData auctionData2 = AhUtils.auctions.get(id3);
-                    int price2 = (auctionData2 == null) ? 0 : ((Integer)auctionData2.prices.first()).intValue();
+                    int price2 = (auctionData2 == null) ? 0 : auctionData2.lowestBin;
                     return (compare2(price1, price2) == 0) ? o1.compareTo(o2) : compare2(price1, price2);
                 }
 
@@ -59,7 +59,6 @@ public class FeatureTooltipPrice extends SimpleFeature implements TooltipListene
             });
             actualKeys.addAll(keys);
             int totalLowestPrice = 0;
-            int totalHighestPrice = 0;
             int iterations = 0;
             for (String key : actualKeys) {
                 iterations++;
@@ -71,24 +70,21 @@ public class FeatureTooltipPrice extends SimpleFeature implements TooltipListene
                     continue;
                 }
                 if (iterations < 10)
-                    event.toolTip.add("§f"+ key + " " + enchants.getInteger(key) + "§7: §e"+ TextUtils.format((Integer) auctionData.prices.first()) + " §7to§e "+ TextUtils.format(auctionData.prices.last()));
-                totalLowestPrice += auctionData.prices.first();
-                totalHighestPrice += auctionData.prices.last();
+                    event.toolTip.add("§f"+ key + " " + enchants.getInteger(key) + "§7: §e"+ TextUtils.format( auctionData.lowestBin));
+                totalLowestPrice += auctionData.lowestBin;
             }
             if (iterations >= 10)
                 event.toolTip.add("§7"+ (iterations - 10) + " more enchants... ");
-            event.toolTip.add("§fTotal§7: §e"+ TextUtils.format(totalLowestPrice) + " §7to§e "+ TextUtils.format(totalHighestPrice));
+            event.toolTip.add("§fTotal Lowest§7: §e"+ TextUtils.format(totalLowestPrice));
         } else {
             AhUtils.AuctionData auctionData = AhUtils.auctions.get(id);
             event.toolTip.add("");
             if (auctionData == null) {
                 event.toolTip.add("§fLowest ah §7: §cn/a");
-                event.toolTip.add("§fHighest ah §7: §cn/a");
                 event.toolTip.add("§fBazaar sell price §7: §cn/a");
                 event.toolTip.add("§fBazaar buy price §7: §cn/a");
             } else {
-                event.toolTip.add("§fLowest ah §7: " + ((auctionData.prices.size() != 0) ? ("§e"+ TextUtils.format(auctionData.prices.first().intValue())) : "§cn/a"));
-                event.toolTip.add("§fHighest ah §7: " + ((auctionData.prices.size() != 0) ? ("§e"+ TextUtils.format((auctionData.prices.last()).intValue())) : "§cn/a"));
+                event.toolTip.add("§fLowest ah §7: " + ((auctionData.lowestBin != -1) ? ("§e"+ TextUtils.format(auctionData.lowestBin)) : "§cn/a"));
                 event.toolTip.add("§fBazaar sell price §7: " + ((auctionData.sellPrice == -1) ? "§cn/a": ("§e"+ TextUtils.format(auctionData.sellPrice))));
                 event.toolTip.add("§fBazaar buy price §7: " + ((auctionData.buyPrice == -1) ? "§cn/a": ("§e"+ TextUtils.format(auctionData.buyPrice))));
             }

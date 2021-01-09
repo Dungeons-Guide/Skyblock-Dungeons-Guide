@@ -2,16 +2,24 @@ package kr.syeyoung.dungeonsguide.dungeon;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.BossroomEnterEvent;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.IntegerCache;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.MinecraftForge;
 
 import java.awt.*;
 import java.util.*;
@@ -42,16 +50,35 @@ public class DungeonContext {
     private List<String[]> milestoneReached = new ArrayList<String[]>();
     @Getter
     @Setter
-    private int BossRoomEnterSeconds;
+    private int BossRoomEnterSeconds = -1;
+
+    @Getter
+    private List<String> players = new ArrayList<String>();
 
     public DungeonContext(World world) {
         this.world = world;
         mapProcessor = new MapProcessor(this);
+
+        List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
+        for (int i = 1; i < 10; i++) {
+            NetworkPlayerInfo networkPlayerInfo = list.get(i);
+            String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
+            if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
+            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(TextUtils.stripColor(name).trim().split(" ")[0]);
+            if (entityplayer == null) continue;
+            players.add(entityplayer.getName());
+        }
     }
 
 
+    private final Rectangle roomBoundary = new Rectangle(0,0,128,128);
+
     public void tick() {
         mapProcessor.tick();
+        if (mapProcessor.isInitialized() && BossRoomEnterSeconds != -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
+            BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
+            MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
+        }
     }
 
     public void onChat(ClientChatReceivedEvent event) {

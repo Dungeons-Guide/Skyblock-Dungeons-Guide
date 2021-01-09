@@ -76,6 +76,8 @@ public class FeatureDungeonScore extends GuiFeature {
         if (!skyblockStatus.isOnDungeon()) return null;
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return null;
+        if (!context.getMapProcessor().isInitialized()) return null;
+
         int skill = 100;
         int deaths = 0;
         {
@@ -107,7 +109,7 @@ public class FeatureDungeonScore extends GuiFeature {
         int time = 0;
         {
             double timeModifier;
-            if (context.getMapProcessor().isInBossRoom()) {
+            if (context.getBossRoomEnterSeconds() != -1) {
                 timeModifier = Math.max(0, context.getBossRoomEnterSeconds() - 1200);
             } else {
                 timeModifier = Math.max(0, FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - 1200);

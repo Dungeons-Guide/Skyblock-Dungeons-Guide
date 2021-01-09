@@ -45,10 +45,7 @@ public class e implements c {
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
     }
 
-    public void init(FMLInitializationEvent event)
-    {
-
-
+    public void init(FMLInitializationEvent event) {
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
 

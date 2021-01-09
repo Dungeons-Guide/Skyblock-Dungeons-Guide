@@ -28,6 +28,8 @@ public class FeatureWarnLowHealth extends GuiFeature {
     public FeatureWarnLowHealth() {
         super("Dungeon", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn", false, 200, 50);
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of playername", Color.yellow, "color"));
+        parameters.put("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, "integer"));
+
     }
 
 
@@ -64,7 +66,7 @@ public class FeatureWarnLowHealth extends GuiFeature {
                 }
             }
         }
-        if (lowestHealth > 500) return;
+        if (lowestHealth > this.<Integer>getParameter("threshold").getValue()) return;
         fr.drawString(lowestHealthName+": ", 0,0,this.<Color>getParameter("color").getValue().getRGB());
         fr.drawString(lowestHealth+"hp", fr.getStringWidth(lowestHealthName+"DungeonsGuide: "), 0, Color.red.getRGB());
     }

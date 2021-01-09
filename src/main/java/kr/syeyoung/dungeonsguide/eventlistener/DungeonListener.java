@@ -65,13 +65,14 @@ public class DungeonListener {
                         MapUtils.clearMap();
                         return;
                     }
-                            if (isOnDungeon) {
-                                    skyblockStatus.getContext().tick();
-                            }
-                            else {
-                                skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
-                                MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
-                            }
+                    if (isOnSkyblock) {
+                        if (isOnDungeon && skyblockStatus.isOnDungeon()) {
+                            skyblockStatus.getContext().tick();
+                        } else if (skyblockStatus.isOnDungeon()){
+                            skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
+                            MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                        }
+                    }
                 }
 
                 if (!skyblockStatus.isOnDungeon()) return;

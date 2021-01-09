@@ -66,4 +66,5 @@ public class FeatureRegistry {
     public static final FeatureDungeonScore DUNGEON_SCORE = register(new FeatureDungeonScore());
     public static final FeatureWarnLowHealth DUNGEON_LOWHEALTH_WARN = register(new FeatureWarnLowHealth());
     public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Dungeon", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run", "dungeon.intermodcomm", true));
+    public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
 }

@@ -1,5 +1,8 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
+import com.google.common.collect.BiMap;
+import com.google.common.collect.EnumHashBiMap;
+import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -14,6 +17,7 @@ import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
 
@@ -28,8 +32,16 @@ public class MapProcessor {
 
     private byte[] lastMapData;
 
+    @Getter
+    private MapData lastMapData2;
+
+    private BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
+
+    @Getter
     private Dimension unitRoomDimension;
+    @Getter
     private Dimension doorDimension; // width: width of door, height: gap between rooms
+    @Getter
     private Point topLeftMapPoint;
 
     private boolean bugged = false;
@@ -49,12 +61,6 @@ public class MapProcessor {
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
-
-    public boolean isInBossRoom() {
-        Point roomPt = worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition());
-        Point mapPt = roomPointToMapPoint(roomPt);
-        return mapPt.x < 0 || mapPt.y < 0 || mapPt.x > 128 || mapPt.y > 128;
-    }
 
     private int waitCnt = 0;
     private void buildMap(final byte[] mapData) {
@@ -168,6 +174,10 @@ public class MapProcessor {
         if (context.getDungeonMin() == null) return null;
         return new Point((worldPoint.getX() - context.getDungeonMin().getX()) / 32, (worldPoint.getZ() - context.getDungeonMin().getZ()) / 32);
     }
+    public Point worldPointToMapPoint(Vec3 worldPoint) {
+        if (context.getDungeonMin() == null) return null;
+        return new Point(topLeftMapPoint.x + (int)((worldPoint.xCoord - context.getDungeonMin().getX()) / 32.0f * (unitRoomDimension.width + doorDimension.height)), topLeftMapPoint.y + (int)((worldPoint.zCoord - context.getDungeonMin().getZ()) / 32.0f * (unitRoomDimension.height + doorDimension.height)));
+    }
 
     private void processMap(byte[] mapData) {
         int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
@@ -184,7 +194,7 @@ public class MapProcessor {
                     if (color == 30 || color == 18) {
                         dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
                         dungeonRoom.setTotalSecrets(0);
-                    } else {
+                    } else if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FINISHED){
                         byte centerColor = MapUtils.getMapColorAt(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2);
                         MapUtils.record(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2, new Color(0,255,0,80));
                         if (centerColor == 34) {
@@ -302,11 +312,21 @@ public class MapProcessor {
         } else {
             MapData mapData1 = ((ItemMap)stack.getItem()).getMapData(stack, context.getWorld());
             if (mapData1 == null) mapData = lastMapData;
-            else mapData = mapData1.colors;
+            else {
+                mapData = mapData1.colors;
+                lastMapData2 = mapData1;
+            }
         }
 
         if (lastMapData == null && mapData != null) buildMap(mapData);
         else if (mapData != null) processMap(mapData);
+
+        if (lastMapData2 != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
+
+            for (String player : context.getPlayers()) {
+
+            }
+        }
 
         lastMapData = mapData;
     }

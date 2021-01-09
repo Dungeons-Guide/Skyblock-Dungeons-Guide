@@ -224,4 +224,16 @@ public class FeatureListener {
             t.printStackTrace();
         }
     }
+    @SubscribeEvent
+    public void onDungeonInitialize(BossroomEnterEvent enterEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof BossroomEnterListener) {
+                    ((BossroomEnterListener) abstractFeature).onBossroomEnter();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
 }

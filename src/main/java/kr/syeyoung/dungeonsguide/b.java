@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide;
 
+import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
@@ -89,7 +90,7 @@ public class b {
         return d.getSocketFactory();
     }
 
-    public String b() throws IOException, AuthenticationException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchPaddingException, CertificateException, KeyStoreException, KeyManagementException {
+    public String b(boolean jars) throws IOException, AuthenticationException, NoSuchAlgorithmException, IllegalBlockSizeException, InvalidKeyException, BadPaddingException, InvalidAlgorithmParameterException, NoSuchPaddingException, CertificateException, KeyStoreException, KeyManagementException {
         Session a = Minecraft.getMinecraft().getSession();
         String b = a.getToken();
 
@@ -100,7 +101,9 @@ public class b {
                 Base64.decodeBase64(d.get("publicKey").getAsString()));
         yggdrasilMinecraftSessionService.joinServer(a.getProfile(), b, hash);
         this.b = a(c, this.a.getPublic());
-        b(this.b);
+        if (jars)
+            b(this.b, "https://dungeonsguide.kro.kr/resource/latest");
+        b(this.b, "https://dungeonsguide.kro.kr/resource/roomdata");
         return this.b;
     }
 
@@ -153,8 +156,8 @@ public class b {
         return c;
     }
 
-    private void b(String a) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, KeyManagementException {
-        HttpsURLConnection b = (HttpsURLConnection) new URL("https://dungeonsguide.kro.kr/resource/jar").openConnection();
+    private void b(String a, String u) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, KeyManagementException {
+        HttpsURLConnection b = (HttpsURLConnection) new URL(u).openConnection();
         b.setSSLSocketFactory(e());
         b.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         b.setRequestProperty("Content-Type", "application/json");
@@ -197,6 +200,46 @@ public class b {
             this.c.put(m.getName(), o.toByteArray());
         }
         b.disconnect();
+    }
+    public JsonElement d(String u) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, KeyManagementException {
+        HttpsURLConnection b = (HttpsURLConnection) new URL(u).openConnection();
+        b.setSSLSocketFactory(e());
+        b.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        b.setRequestProperty("Content-Type", "application/json");
+        b.setRequestMethod("GET");
+        b.setRequestProperty("Authorization", this.b);
+        b.setDoInput(true);
+        b.setDoOutput(true);
+
+        InputStream c = b.getInputStream();
+        byte[] d = new byte[4];
+        c.read(d);
+        int f = ((d[0] & 0xFF) << 24) |
+                ((d[1] & 0xFF) << 16) |
+                ((d[2] & 0xFF) << 8) |
+                ((d[3] & 0xFF));
+        while (c.available() < f) ;
+        byte[] e = new byte[f];
+        c.read(e);
+
+        Cipher g = Cipher.getInstance("RSA/ECB/PKCS1Padding");
+        g.init(Cipher.DECRYPT_MODE, this.a.getPrivate());
+        byte[] h = g.doFinal(e);
+
+        g = Cipher.getInstance("AES/CBC/PKCS5Padding");
+        SecretKeySpec i = new SecretKeySpec(h, "AES");
+        IvParameterSpec j = new IvParameterSpec(h);
+        g.init(Cipher.DECRYPT_MODE, i, j);
+        CipherInputStream k = new CipherInputStream(c, g);
+        k.read(d);
+        f = ((d[0] & 0xFF) << 24) |
+                ((d[1] & 0xFF) << 16) |
+                ((d[2] & 0xFF) << 8) |
+                ((d[3] & 0xFF));
+        System.out.println("waiting for "+f+" bytes");
+        JsonElement l = new JsonParser().parse(new InputStreamReader(k));
+        b.disconnect();
+        return l;
     }
 
     public String a(byte[] a, byte[] b) throws NoSuchAlgorithmException {

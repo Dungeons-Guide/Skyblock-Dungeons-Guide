@@ -28,6 +28,7 @@ public class ValueEditRegistry {
         valueEditMap.put(String.class.getName(), new ValueEditString.Generator());
         valueEditMap.put(Boolean.class.getName(), new ValueEditBoolean.Generator());
         valueEditMap.put(Integer.class.getName(), new ValueEditInteger.Generator());
+        valueEditMap.put(Float.class.getName(), new ValueEditFloat.Generator());
         valueEditMap.put(OffsetPoint.class.getName(), new ValueEditOffsetPoint.Generator());
         valueEditMap.put(OffsetPointSet.class.getName(), new ValueEditOffsetPointSet.Generator());
         valueEditMap.put(Color.class.getName(), new ValueEditColor.Generator());

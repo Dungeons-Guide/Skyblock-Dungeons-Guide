@@ -54,6 +54,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
 
         Color color = (Color) parameter2.getNewData();
         Color.RGBtoHSB(color.getRed(), color.getGreen(), color.getBlue(), hsv);
+        alpha = color.getAlpha() / 255.0f;
 
         {
             h = new MFloatSelectionButton(hsv[0] * 360);
@@ -99,31 +100,33 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
             a.setOnUpdate(new Runnable() {
                 @Override
                 public void run() {
-                    alpha = v.getData() / 100;
+                    alpha = a.getData() / 100;
                     update();
                 }
             });
-            MLabelAndElement mLabelAndElement = new MLabelAndElement("V", v);
+            MLabelAndElement mLabelAndElement = new MLabelAndElement("A", a);
             mLabelAndElement.setBounds(new Rectangle(0,20,getBounds().width,20));
             add(mLabelAndElement);
         }
     }
 
     private float[] hsv = new float[3];
-    private float alpha;
+    private float alpha = 0;
 
     public void update() {
         if (hsv[2] > 1) hsv[2] = 1;
         if (hsv[2] < 0) hsv[2] = 0;
         if (hsv[1] > 1) hsv[1] = 1;
         if (hsv[1] < 0) hsv[1] = 0;
-        parameter.setNewData(new Color(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2])));
+        parameter.setNewData(new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | ((int)(alpha * 255)) << 24, true ));
         h.setData((float) Math.floor(hsv[0] * 360));
         s.setData((float) Math.floor(hsv[1] * 100));
         v.setData((float) Math.floor(hsv[2] * 100));
+        a.setData((float) Math.floor(alpha * 100));
         h.updateSelected();
         s.updateSelected();
         v.updateSelected();
+        a.updateSelected();
     }
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
@@ -144,15 +147,18 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         float g = (rgb >> 8 & 255) / 255.0f;
         float b = (rgb & 255) / 255.0f;
         GL11.glBegin(GL11.GL_TRIANGLES);
-        GL11.glColor4f(0,0,0,1);GL11.glVertex3i(25+width ,45, 0);
-        GL11.glColor4f(0,0,0,1);GL11.glVertex3i(10+width , 45, 0);
-        GL11.glColor4f(r,g,b,1);GL11.glVertex3i(25+width , 45+width, 0);
+        GL11.glColor4f(0,0,0,alpha);GL11.glVertex3i(25+width ,45, 0);
+        GL11.glColor4f(0,0,0,alpha);GL11.glVertex3i(10+width , 45, 0);
+        GL11.glColor4f(r,g,b,alpha);GL11.glVertex3i(25+width , 45+width, 0);
 
-        GL11.glColor4f(0,0,0,1); GL11.glVertex3i(10+width , 45, 0);
-        GL11.glColor4f(r,g,b,1);GL11.glVertex3i(10+width , 45 + width, 0);
-        GL11.glColor4f(r,g,b,1);GL11.glVertex3i(25+width , 45+width, 0);
+        GL11.glColor4f(0,0,0,alpha); GL11.glVertex3i(10+width , 45, 0);
+        GL11.glColor4f(r,g,b,alpha);GL11.glVertex3i(10+width , 45 + width, 0);
+        GL11.glColor4f(r,g,b,alpha);GL11.glVertex3i(25+width , 45+width, 0);
         GL11.glEnd();
-
+        rgb = Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]);
+        r = (rgb >> 16 & 255) / 255.0f;
+        g = (rgb >> 8 & 255) / 255.0f;
+        b = (rgb & 255) / 255.0f;
         GL11.glBegin(GL11.GL_TRIANGLES);
         GL11.glColor4f(r,g,b,0);GL11.glVertex3i(50+width ,45, 0);
         GL11.glColor4f(r,g,b,0);GL11.glVertex3i(35+width , 45, 0);
@@ -169,7 +175,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         float cy = 45 + radius;
 
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-        GL11.glColor4f(1,1,1,1);
+        GL11.glColor4f(1,1,1,alpha);
         GL11.glVertex3f(cx,cy,0);
         for (int i = 0; i <= 360; i++) {
             float rad = 3.141592653f * i / 180;
@@ -177,7 +183,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
             float r2 = (rgb2 >> 16 & 255) / 255.0f;
             float g2 = (rgb2 >> 8 & 255) / 255.0f;
             float b2 = (rgb2 & 255) / 255.0f;
-            GL11.glColor4f(r2,g2,b2, 1);
+            GL11.glColor4f(r2,g2,b2, alpha);
             GL11.glVertex3f(MathHelper.cos(rad) * radius + cx, MathHelper.sin(rad) * radius + cy, 0);
         }
         GL11.glEnd();
@@ -197,6 +203,11 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         worldrenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
         worldrenderer.pos(8+width, 45 + (hsv[2]) * width, 0.5).endVertex();
         worldrenderer.pos(27+width, 45 + (hsv[2]) * width, 0.5).endVertex();
+        tessellator.draw();
+
+        worldrenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION);
+        worldrenderer.pos(33+width, 45 + (alpha) * width, 0.5).endVertex();
+        worldrenderer.pos(52+width, 45 + (alpha) * width, 0.5).endVertex();
         tessellator.draw();
 
         GL11.glEnable(GL11.GL_TEXTURE_2D);
@@ -234,7 +245,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         {
             if (35+width <= relMouseX && relMouseX <= 50 + width &&
                     45 <= relMouseY && relMouseY <= 45 + width) {
-                hsv[2] = (relMouseY - 45) / (float)width;
+                alpha = (relMouseY - 45) / (float)width;
                 selected = 3;
             }
         }
@@ -243,7 +254,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
 
     @Override
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
-        int width = getBounds().width - 30;
+        int width = getBounds().width - 60;
         float radius = width / 2f;
         float circleX = 5 + radius;
         float circleY = 45 + radius;
