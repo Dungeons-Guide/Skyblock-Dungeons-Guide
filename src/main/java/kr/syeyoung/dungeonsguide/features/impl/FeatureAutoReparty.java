@@ -20,7 +20,7 @@ import org.lwjgl.opengl.GL11;
 
 public class FeatureAutoReparty extends SimpleFeature implements DungeonEndListener {
     public FeatureAutoReparty() {
-        super("Bossfight", "Auto reparty when dungeon finishes","Auto reparty on dungeon finish", "bossfight.autoreparty", false);
+        super("Bossfight", "Auto reparty when dungeon finishes","Auto reparty on dungeon finish\n\nThis automates player chatting action, (disbanding, repartying) Thus it might be against hypixel's rules.\nBut mods like auto-gg exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "bossfight.autoreparty", false);
     }
 
     @Override

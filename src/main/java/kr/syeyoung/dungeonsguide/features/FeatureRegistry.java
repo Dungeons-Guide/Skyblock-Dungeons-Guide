@@ -67,6 +67,6 @@ public class FeatureRegistry {
     public static final FeatureDungeonTombs DUNGEON_TOMBS = register(new FeatureDungeonTombs());
     public static final FeatureDungeonScore DUNGEON_SCORE = register(new FeatureDungeonScore());
     public static final FeatureWarnLowHealth DUNGEON_LOWHEALTH_WARN = register(new FeatureWarnLowHealth());
-    public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Dungeon", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run", "dungeon.intermodcomm", true));
+    public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Dungeon", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run\n\nThis automates player chatting action, (chatting data) Thus it might be against hypixel's rules.\nBut mods like auto-gg which also automate player action and is kinda allowed mod exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "dungeon.intermodcomm", false));
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
 }
