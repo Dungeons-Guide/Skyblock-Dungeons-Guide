@@ -53,7 +53,7 @@ import java.util.regex.Pattern;
 
 public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener, DungeonStartListener, BossroomEnterListener {
     public FeatureDungeonMap() {
-        super("Dungeon", "Dungeon Map", "Display dungeon map!", "dungeon.map", true, 512,512);
+        super("Dungeon", "Dungeon Map", "Display dungeon map!", "dungeon.map", true, 128,128);
         this.setEnabled(false);
         parameters.put("scale", new FeatureParameter<Boolean>("scale", "Scale map", "Whether to scale map to fit screen", true, "boolean"));
         parameters.put("playerCenter", new FeatureParameter<Boolean>("playerCenter", "Center map at player", "Render you in the center", false, "boolean"));
@@ -127,7 +127,14 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
     @Override
     public void drawDemo(float partialTicks) {
-
+        if (skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getMapProcessor().isInitialized() && on) {
+            drawHUD(partialTicks);
+            return;
+        }
+        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("background_color").getValue().getRGB());
+        FontRenderer fr = getFontRenderer();
+        fr.drawString("Please join a dungeon to see preview", getFeatureRect().width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, getFeatureRect().height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
+        RenderUtils.drawUnfilledBox(1,0,getFeatureRect().width, getFeatureRect().height-1, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
     }
 
     public void renderMap(float partialTicks, MapProcessor mapProcessor, MapData mapData, DungeonContext context){
