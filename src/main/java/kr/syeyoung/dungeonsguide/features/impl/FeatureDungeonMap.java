@@ -121,8 +121,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             renderMap(partialTicks,mapProcessor,mapData,context);
         }
         GL11.glPopMatrix();
-
-        RenderUtils.drawUnfilledBox(1,0,getFeatureRect().width, getFeatureRect().height-1, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
+        GL11.glLineWidth(2);
+        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
     }
 
     @Override
@@ -134,7 +134,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("background_color").getValue().getRGB());
         FontRenderer fr = getFontRenderer();
         fr.drawString("Please join a dungeon to see preview", getFeatureRect().width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, getFeatureRect().height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
-        RenderUtils.drawUnfilledBox(1,0,getFeatureRect().width, getFeatureRect().height-1, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
+        GL11.glLineWidth(2);
+        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
     }
 
     public void renderMap(float partialTicks, MapProcessor mapProcessor, MapData mapData, DungeonContext context){
@@ -236,6 +237,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 float s = this.<Float>getParameter("playerheadscale").getValue();
                 GL11.glScaled(s,s,0);
                 Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
+                GL11.glLineWidth(1);
                 RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue().getRGB(), this.<Boolean>getParameter("player_chroma").getValue());
             }
             GL11.glPopMatrix();
