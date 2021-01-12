@@ -170,7 +170,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
         if (!FeatureRegistry.SOLVER_TICTACTOE.isEnabled()) return;
         if (chosePos != -1) {
             BlockPos block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
-            RenderUtils.highlightBlock(block, new Color(0,255,255,50), partialTicks);
+            RenderUtils.highlightBlock(block, new Color(0,255,255,50), partialTicks, true);
         }
     }
 

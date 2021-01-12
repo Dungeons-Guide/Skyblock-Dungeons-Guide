@@ -152,35 +152,35 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         render(mapData, false);
 
         FontRenderer fr = getFontRenderer();
-        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-            GL11.glPushMatrix();
-            GlStateManager.pushAttrib();
-            Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
-            GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
+        if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
+            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                GL11.glPushMatrix();
+                GlStateManager.pushAttrib();
+                Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
+                GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
 
-            if (this.<Boolean>getParameter("playerCenter").getValue() && this.<Boolean>getParameter("rotate").getValue()) {
-                GL11.glRotated(yaw - 180, 0, 0, 1);
-            }
-            GL11.glScaled(1 / scale, 1 / scale, 0);
-            GL11.glScaled(1 / postScale, 1 / postScale, 0);
-            String str= "";
-            if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
+                if (this.<Boolean>getParameter("playerCenter").getValue() && this.<Boolean>getParameter("rotate").getValue()) {
+                    GL11.glRotated(yaw - 180, 0, 0, 1);
+                }
+                GL11.glScaled(1 / scale, 1 / scale, 0);
+                GL11.glScaled(1 / postScale, 1 / postScale, 0);
+                String str = "";
                 str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
                 str += " ";
-            }
-            if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-                str += "✔";
-            } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
-                str += "☑";
-            } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
-                str += "☐";
-            } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
-                str += "❌";
-            }
+                if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
+                    str += "✔";
+                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
+                    str += "☑";
+                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
+                    str += "☐";
+                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
+                    str += "❌";
+                }
 
-            fr.drawString(str, -(fr.getStringWidth(str) / 2) ,  - (fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
-            GlStateManager.popAttrib();
-            GL11.glPopMatrix();
+                fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
+                GlStateManager.popAttrib();
+                GL11.glPopMatrix();
+            }
         }
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
@@ -253,19 +253,21 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             }
         }
 
-        for (DungeonRoom dungeonRoom : dungeonRooms) {
-            for (Point pt : dungeonRoom.getUnitPoints()) {
-                for (int y1 = 0; y1 < mapProcessor.getUnitRoomDimension().height; y1++) {
-                    for (int x1 = 0; x1 < mapProcessor.getUnitRoomDimension().width; x1++) {
-                        int x = MathHelper.clamp_int(pt.x * (mapProcessor.getUnitRoomDimension().width + mapProcessor.getDoorDimension().height) + x1 + mapProcessor.getTopLeftMapPoint().x, 0, 128);
-                        int y = MathHelper.clamp_int(pt.y * (mapProcessor.getUnitRoomDimension().height + mapProcessor.getDoorDimension().height)+ y1 + mapProcessor.getTopLeftMapPoint().y, 0, 128);
-                        int i = y * 128 + x;
-                        int j = dungeonRoom.getColor();
+        if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
+            for (DungeonRoom dungeonRoom : dungeonRooms) {
+                for (Point pt : dungeonRoom.getUnitPoints()) {
+                    for (int y1 = 0; y1 < mapProcessor.getUnitRoomDimension().height; y1++) {
+                        for (int x1 = 0; x1 < mapProcessor.getUnitRoomDimension().width; x1++) {
+                            int x = MathHelper.clamp_int(pt.x * (mapProcessor.getUnitRoomDimension().width + mapProcessor.getDoorDimension().height) + x1 + mapProcessor.getTopLeftMapPoint().x, 0, 128);
+                            int y = MathHelper.clamp_int(pt.y * (mapProcessor.getUnitRoomDimension().height + mapProcessor.getDoorDimension().height) + y1 + mapProcessor.getTopLeftMapPoint().y, 0, 128);
+                            int i = y * 128 + x;
+                            int j = dungeonRoom.getColor();
 
-                        if (j / 4 == 0) {
-                            this.mapTextureData[i] = 0x00000000;
-                        } else {
-                            this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
+                            if (j / 4 == 0) {
+                                this.mapTextureData[i] = 0x00000000;
+                            } else {
+                                this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
+                            }
                         }
                     }
                 }

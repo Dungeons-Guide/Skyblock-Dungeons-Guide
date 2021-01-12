@@ -90,7 +90,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
         if (chest != null) {
-            RenderUtils.highlightBlock(chest, new Color(0,255,0, 50),partialTicks);
+            RenderUtils.highlightBlock(chest, new Color(0,255,0, 50),partialTicks, true);
         }
     }
 

@@ -155,7 +155,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);
         if (op != null) {
-            RenderUtils.highlightBlock(op.getBlockPos(getDungeonRoom()), new Color(0,255,0,50), partialTicks);
+            RenderUtils.highlightBlock(op.getBlockPos(getDungeonRoom()), new Color(0,255,0,50), partialTicks, true);
         }
     }
 

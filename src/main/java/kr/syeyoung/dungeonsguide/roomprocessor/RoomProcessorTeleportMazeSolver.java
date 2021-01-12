@@ -66,7 +66,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (BlockPos bpos:visitedPortals) {
-            RenderUtils.highlightBlock(bpos, new Color(255,0,0,100), partialTicks);
+            RenderUtils.highlightBlock(bpos, new Color(255,0,0,100), partialTicks, true);
         }
     }
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTeleportMazeSolver> {

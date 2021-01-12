@@ -74,18 +74,18 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 if (condition == null) continue;
                 SwitchData switchData = waterBoard.getValidSwitches().get(condition.getBlockId());
                 if (switchData.getCurrentState(getDungeonRoom().getContext().getWorld()) != condition.isRequiredState()) {
-                    RenderUtils.highlightBlock(switchData.getSwitchLoc(), new Color(0,255,0,50), partialTicks);
+                    RenderUtils.highlightBlock(switchData.getSwitchLoc(), new Color(0,255,0,50), partialTicks, true);
                     RenderUtils.drawTextAtWorld(condition.isRequiredState() ? "on":"off",switchData.getSwitchLoc().getX(), switchData.getSwitchLoc().getY(), switchData.getSwitchLoc().getZ(),  0xFF000000,0.1f, false, false, partialTicks);
                 }
             }
             for (WaterNode node : route.getNodes()) {
-                RenderUtils.highlightBlock(node.getBlockPos(), new Color(0,255,255,50), partialTicks);
+                RenderUtils.highlightBlock(node.getBlockPos(), new Color(0,255,255,50), partialTicks, true);
             }
         }
         BlockPos target = waterBoard.getTarget();
         if (target != null) {
-            RenderUtils.highlightBlock(target, new Color(0,255,255,255), partialTicks);
-            RenderUtils.highlightBlock(waterBoard.getToggleableMap().get("mainStream").getBlockPos(), new Color(0,255,0,255), partialTicks);
+            RenderUtils.highlightBlock(target, new Color(0,255,255,100), partialTicks, true);
+            RenderUtils.highlightBlock(waterBoard.getToggleableMap().get("mainStream").getBlockPos(), new Color(0,255,0,255), partialTicks, true);
         }
     }
 
