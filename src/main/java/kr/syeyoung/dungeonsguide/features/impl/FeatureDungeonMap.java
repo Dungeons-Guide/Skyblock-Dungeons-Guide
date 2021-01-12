@@ -159,37 +159,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         updateMapTexture(mapData.colors, mapProcessor, context.getDungeonRoomList());
         render(mapData, false);
 
-        FontRenderer fr = getFontRenderer();
-        if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                GL11.glPushMatrix();
-                GlStateManager.pushAttrib();
-                Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
-                GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
 
-                if (this.<Boolean>getParameter("playerCenter").getValue() && this.<Boolean>getParameter("rotate").getValue()) {
-                    GL11.glRotated(yaw - 180, 0, 0, 1);
-                }
-                GL11.glScaled(1 / scale, 1 / scale, 0);
-                GL11.glScaled(1 / postScale, 1 / postScale, 0);
-                String str = "";
-                str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
-                str += " ";
-                if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-                    str += "✔";
-                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
-                    str += "☑";
-                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
-                    str += "☐";
-                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
-                    str += "❌";
-                }
-
-                fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
-                GlStateManager.popAttrib();
-                GL11.glPopMatrix();
-            }
-        }
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
 
@@ -241,6 +211,38 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue().getRGB(), this.<Boolean>getParameter("player_chroma").getValue());
             }
             GL11.glPopMatrix();
+        }
+
+        FontRenderer fr = getFontRenderer();
+        if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
+            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                GL11.glPushMatrix();
+                GlStateManager.pushAttrib();
+                Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
+                GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
+
+                if (this.<Boolean>getParameter("playerCenter").getValue() && this.<Boolean>getParameter("rotate").getValue()) {
+                    GL11.glRotated(yaw - 180, 0, 0, 1);
+                }
+                GL11.glScaled(1 / scale, 1 / scale, 0);
+                GL11.glScaled(1 / postScale, 1 / postScale, 0);
+                String str = "";
+                str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
+                str += " ";
+                if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
+                    str += "✔";
+                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
+                    str += "☑";
+                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
+                    str += "☐";
+                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
+                    str += "❌";
+                }
+
+                fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
+                GlStateManager.popAttrib();
+                GL11.glPopMatrix();
+            }
         }
 
     }
