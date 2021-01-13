@@ -163,6 +163,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
 
+
+
         List<NetworkPlayerInfo> list = field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
         if (list.size() < 40) return;
         for (int i = 1; i < 20; i++) {
@@ -189,10 +191,9 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 pt2 = new Point(vec.func_176112_b() /2 + 64, vec.func_176113_c() / 2 + 64);
                 yaw2 = vec.func_176111_d() * 360 / 16.0f + 180;
             }
+            GL11.glPushMatrix();
             if (entityplayer == Minecraft.getMinecraft().thePlayer || this.<Boolean>getParameter("showotherplayers").getValue())
             {
-
-                GL11.glPushMatrix();
                 boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE);
                 GlStateManager.enableTexture2D();
                 Minecraft.getMinecraft().getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
@@ -212,7 +213,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             }
             GL11.glPopMatrix();
         }
-
         FontRenderer fr = getFontRenderer();
         if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
