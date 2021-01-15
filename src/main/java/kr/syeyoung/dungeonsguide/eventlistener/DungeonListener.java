@@ -98,14 +98,14 @@ public class DungeonListener {
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
             if (FeatureRegistry.DEBUG.isEnabled()) {
-                GL11.glPushMatrix();
+                GlStateManager.pushMatrix();
                 int[] textureData = dynamicTexture.getTextureData();
                 MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
                 dynamicTexture.updateDynamicTexture();
                 Minecraft.getMinecraft().getTextureManager().bindTexture(location);
                 GlStateManager.enableAlpha();
                 GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
-                GL11.glPopMatrix();
+                GlStateManager.popMatrix();
             }
 
             if (skyblockStatus.getContext() != null) {

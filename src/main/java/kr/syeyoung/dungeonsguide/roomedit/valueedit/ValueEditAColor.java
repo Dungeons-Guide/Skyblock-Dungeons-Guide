@@ -118,7 +118,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         if (hsv[2] < 0) hsv[2] = 0;
         if (hsv[1] > 1) hsv[1] = 1;
         if (hsv[1] < 0) hsv[1] = 0;
-        parameter.setNewData(new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | ((int)(alpha * 255)) << 24, true ));
+        parameter.setNewData(new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | (MathHelper.clamp_int((int)(alpha * 255), 0, 255) << 24), true ));
         h.setData((float) Math.floor(hsv[0] * 360));
         s.setData((float) Math.floor(hsv[1] * 100));
         v.setData((float) Math.floor(hsv[2] * 100));
@@ -127,6 +127,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         s.updateSelected();
         v.updateSelected();
         a.updateSelected();
+        System.out.println(((AColor)parameter.getNewData()).getAlpha());
     }
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
@@ -135,11 +136,13 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         int shademodel = GL11.glGetInteger(GL11.GL_SHADE_MODEL);
-        GL11.glShadeModel(GL11.GL_SMOOTH);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_CULL_FACE);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.shadeModel(GL11.GL_SMOOTH);
+        GlStateManager.enableBlend();
+        GlStateManager.disableDepth();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();;
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
 //        worldrenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
         int rgb = Color.HSBtoRGB(hsv[0], hsv[1], 1);
@@ -147,26 +150,26 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         float g = (rgb >> 8 & 255) / 255.0f;
         float b = (rgb & 255) / 255.0f;
         GL11.glBegin(GL11.GL_TRIANGLES);
-        GL11.glColor4f(0,0,0,alpha);GL11.glVertex3i(25+width ,45, 0);
-        GL11.glColor4f(0,0,0,alpha);GL11.glVertex3i(10+width , 45, 0);
-        GL11.glColor4f(r,g,b,alpha);GL11.glVertex3i(25+width , 45+width, 0);
+        GlStateManager.color(0,0,0,alpha);GL11.glVertex3i(25+width ,45, 0);
+        GlStateManager.color(0,0,0,alpha);GL11.glVertex3i(10+width , 45, 0);
+        GlStateManager.color(r,g,b,alpha);GL11.glVertex3i(25+width , 45+width, 0);
 
-        GL11.glColor4f(0,0,0,alpha); GL11.glVertex3i(10+width , 45, 0);
-        GL11.glColor4f(r,g,b,alpha);GL11.glVertex3i(10+width , 45 + width, 0);
-        GL11.glColor4f(r,g,b,alpha);GL11.glVertex3i(25+width , 45+width, 0);
+        GlStateManager.color(0,0,0,alpha); GL11.glVertex3i(10+width , 45, 0);
+        GlStateManager.color(r,g,b,alpha);GL11.glVertex3i(10+width , 45 + width, 0);
+        GlStateManager.color(r,g,b,alpha);GL11.glVertex3i(25+width , 45+width, 0);
         GL11.glEnd();
         rgb = Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]);
         r = (rgb >> 16 & 255) / 255.0f;
         g = (rgb >> 8 & 255) / 255.0f;
         b = (rgb & 255) / 255.0f;
         GL11.glBegin(GL11.GL_TRIANGLES);
-        GL11.glColor4f(r,g,b,0);GL11.glVertex3i(50+width ,45, 0);
-        GL11.glColor4f(r,g,b,0);GL11.glVertex3i(35+width , 45, 0);
-        GL11.glColor4f(r,g,b,1);GL11.glVertex3i(50+width , 45+width, 0);
+        GlStateManager.color(r,g,b,0);GL11.glVertex3i(50+width ,45, 0);
+        GlStateManager.color(r,g,b,0);GL11.glVertex3i(35+width , 45, 0);
+        GlStateManager.color(r,g,b,1);GL11.glVertex3i(50+width , 45+width, 0);
 
-        GL11.glColor4f(r,g,b,0); GL11.glVertex3i(35+width , 45, 0);
-        GL11.glColor4f(r,g,b,1);GL11.glVertex3i(35+width , 45 + width, 0);
-        GL11.glColor4f(r,g,b,1);GL11.glVertex3i(50+width , 45+width, 0);
+//        GlStateManager.color(r,g,b,0); GL11.glVertex3i(35+width , 45, 0);
+//        GlStateManager.color(r,g,b,1);GL11.glVertex3i(35+width , 45 + width, 0);
+//        GlStateManager.color(r,g,b,1);GL11.glVertex3i(50+width , 45+width, 0);
         GL11.glEnd();
 
 
@@ -175,7 +178,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         float cy = 45 + radius;
 
         GL11.glBegin(GL11.GL_TRIANGLE_FAN);
-        GL11.glColor4f(1,1,1,alpha);
+        GlStateManager.color(1,1,1,alpha);
         GL11.glVertex3f(cx,cy,0);
         for (int i = 0; i <= 360; i++) {
             float rad = 3.141592653f * i / 180;
@@ -183,13 +186,13 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
             float r2 = (rgb2 >> 16 & 255) / 255.0f;
             float g2 = (rgb2 >> 8 & 255) / 255.0f;
             float b2 = (rgb2 & 255) / 255.0f;
-            GL11.glColor4f(r2,g2,b2, alpha);
+            GlStateManager.color(r2,g2,b2, alpha);
             GL11.glVertex3f(MathHelper.cos(rad) * radius + cx, MathHelper.sin(rad) * radius + cy, 0);
         }
         GL11.glEnd();
-        GL11.glShadeModel(shademodel);
+        GlStateManager.shadeModel(shademodel);
 
-        GL11.glColor4f(1,1,1,1);
+        GlStateManager.color(1,1,1,1);
         worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         float rad2 = 2 * 3.141592653f * hsv[0] ;
         float x = 5 + radius + (MathHelper.cos(rad2)) * hsv[1] * radius;
@@ -210,9 +213,9 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         worldrenderer.pos(52+width, 45 + (alpha) * width, 0.5).endVertex();
         tessellator.draw();
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_BLEND);
-        GL11.glColor4f(1,1,1,1);
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.color(1,1,1,1);
         GlStateManager.color(1,1,1,1);
     }
     private int selected = 0;

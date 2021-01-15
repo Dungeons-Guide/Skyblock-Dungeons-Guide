@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.features.listener.*;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -33,7 +34,7 @@ public class FeatureDungeonSBTime extends GuiFeature {
         if (!skyblockStatus.isOnDungeon()) return;
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         Scoreboard scoreboard = Minecraft.getMinecraft().theWorld.getScoreboard();
         ScoreObjective objective = scoreboard.getObjectiveInDisplaySlot(1);
         Collection<Score> scores = scoreboard.getSortedScores(objective);
@@ -74,7 +75,7 @@ public class FeatureDungeonSBTime extends GuiFeature {
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
 
         fr.drawString("Time(Ig): -42h", 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }

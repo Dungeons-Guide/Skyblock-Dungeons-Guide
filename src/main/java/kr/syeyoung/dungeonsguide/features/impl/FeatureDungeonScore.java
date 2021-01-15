@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -40,7 +41,7 @@ public class FeatureDungeonScore extends GuiFeature {
             fr.drawString(req, 0, 24, rgb);
         } else {
             double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-            GL11.glScaled(scale, scale, 0);
+            GlStateManager.scale(scale, scale, 0);
             String letter = getLetter(sum);
             fr.drawString("Score: "+sum + "("+letter+")", 0,0, this.<Color>getParameter("color").getValue().getRGB());
         }
@@ -57,7 +58,7 @@ public class FeatureDungeonScore extends GuiFeature {
             fr.drawString("S->S+ (1 Required 1 tomb)", 0, 24, rgb);
         } else {
             double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-            GL11.glScaled(scale, scale, 0);
+            GlStateManager.scale(scale, scale, 0);
             fr.drawString("Score: 305 (S+)", 0,0, this.<Color>getParameter("color").getValue().getRGB());
         }
     }

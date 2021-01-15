@@ -13,6 +13,7 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -34,7 +35,7 @@ public class FeatureDungeonSecrets extends GuiFeature {
         if (!skyblockStatus.isOnDungeon()) return;
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("Secrets: "+getSecretsFound() +"/"+getTotalSecrets(), 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 
@@ -42,7 +43,7 @@ public class FeatureDungeonSecrets extends GuiFeature {
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("Secrets: 999/2+", 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 

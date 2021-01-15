@@ -64,6 +64,7 @@ public class MTextField extends MPanel {
 
             // draw cursor
             if (cursor != -1) {
+                if (cursor > text.length()) cursor = text.length();
                 int x = fr.getStringWidth(text.substring(0, cursor)) - xOffset;
                 cursorBlickTicker++;
                 if (cursorBlickTicker < 10)

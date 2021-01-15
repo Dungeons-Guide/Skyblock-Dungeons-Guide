@@ -77,8 +77,9 @@ public class MPanel {
         int relMousex = relMousex0 - getBounds().x;
         int relMousey = relMousey0 - getBounds().y;
 
-        GL11.glTranslated(getBounds().x, getBounds().y, 0);
-        GL11.glColor4f(1,1,1,0);
+        GlStateManager.translate(getBounds().x, getBounds().y, 0);
+        GlStateManager.color(1,1,1,0);
+
 
         Rectangle absBound = getBounds().getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
@@ -93,11 +94,11 @@ public class MPanel {
         GuiScreen.drawRect(0,0, getBounds().width, getBounds().height, backgroundColor.getRGB());
         GlStateManager.popAttrib();
 
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
         GlStateManager.popAttrib();
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GL11.glPopAttrib();
@@ -106,11 +107,11 @@ public class MPanel {
         Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
 
         for (MPanel mPanel : getChildComponents()){
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
             mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
     }
 

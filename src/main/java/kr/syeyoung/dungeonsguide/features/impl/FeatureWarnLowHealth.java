@@ -11,6 +11,7 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
@@ -39,7 +40,7 @@ public class FeatureWarnLowHealth extends GuiFeature {
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("DungeonsGuide: ", 0,0,this.<Color>getParameter("color").getValue().getRGB());
         fr.drawString("500hp", fr.getStringWidth("DungeonsGuide: "), 0, Color.red.getRGB());
     }
@@ -48,7 +49,7 @@ public class FeatureWarnLowHealth extends GuiFeature {
     public void drawHUD(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         String lowestHealthName = "";
         int lowestHealth = 999999999;
         Scoreboard scoreboard = Minecraft.getMinecraft().thePlayer.getWorldScoreboard();

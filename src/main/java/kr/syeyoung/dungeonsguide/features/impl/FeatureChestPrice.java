@@ -83,8 +83,8 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
 
         int width = 120;
 
-        GL11.glPushMatrix();
-        GL11.glTranslated(left, top, 0);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(left, top, 0);
         Gui.drawRect( 0,0,width, 30, 0xFFDDDDDD);
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
@@ -96,6 +96,6 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
         str = (itemPrice > chestPrice ? "+" : "") +TextUtils.format(itemPrice - chestPrice);
         fr.drawString(str, width - fr.getStringWidth(str) - 5, 15, itemPrice > chestPrice ? 0xFF00CC00 : 0xFFCC0000);
 
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 }

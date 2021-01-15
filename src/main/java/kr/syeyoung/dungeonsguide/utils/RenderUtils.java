@@ -40,6 +40,7 @@ public class RenderUtils {
         float f = (float)(color >> 16 & 255) / 255.0F;
         float f1 = (float)(color >> 8 & 255) / 255.0F;
         float f2 = (float)(color & 255) / 255.0F;
+        if (!chroma && f3 == 0) return;
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         GlStateManager.enableBlend();
@@ -56,7 +57,7 @@ public class RenderUtils {
             worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
             float blah = (System.currentTimeMillis()  / 10) % 360;
             ;
-            GL11.glShadeModel(GL11.GL_SMOOTH);
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
             color(worldrenderer.pos((double) left, (double) bottom, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
             color(worldrenderer.pos((double) right, (double) bottom, 0.0D), Color.HSBtoRGB((((blah + 40) % 360)  / 360.0f), 1, 1)).endVertex();
             color(worldrenderer.pos((double) right, (double) top, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
@@ -78,17 +79,17 @@ public class RenderUtils {
         double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
 //because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
 
-        GL11.glPushAttrib(GL11.GL_ENABLE_BIT);
-        GL11.glPushMatrix();
-        GL11.glTranslated(-playerX, -playerY, -playerZ);
-        GL11.glDisable(GL11.GL_TEXTURE_2D);
-        GL11.glDisable(GL11.GL_CULL_FACE);
+        GlStateManager.pushAttrib();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-playerX, -playerY, -playerZ);
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
         GlStateManager.enableAlpha();
 
         if (dungeonDoor.isExist())
-            GL11.glColor4ub((byte)0,(byte)255,(byte)0, (byte)255);
+            GlStateManager.color(0,1,0,1);
         else
-            GL11.glColor4ub((byte)255,(byte)0,(byte)0, (byte)255);
+            GlStateManager.color(1,0,0,1);
 
         double x = dungeonDoor.getPosition().getX() + 0.5;
         double y = dungeonDoor.getPosition().getY() -0.99;
@@ -105,7 +106,7 @@ public class RenderUtils {
         if (dungeonDoor.isExist()) {
             GL11.glBegin(GL11.GL_QUADS);
 
-            GL11.glColor4ub((byte)0,(byte)0,(byte)255, (byte)255);
+            GlStateManager.color(0,0,1,1);
             if (dungeonDoor.isZDir()) {
                 GL11.glVertex3d(x - 0.5, y + 0.1, z - 2.5);
                 GL11.glVertex3d(x - 0.5, y+ 0.1, z + 2.5);
@@ -138,11 +139,11 @@ public class RenderUtils {
 //        GlStateManager.disableAlpha();
         GlStateManager.disableBlend();
 
-        GL11.glEnable(GL11.GL_TEXTURE_2D);
-        GL11.glEnable(GL11.GL_CULL_FACE);
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableCull();
 
-        GL11.glPopAttrib();
-        GL11.glPopMatrix();
+        GlStateManager.popAttrib();
+        GlStateManager.popMatrix();
 
     }
 
@@ -158,8 +159,8 @@ public class RenderUtils {
         GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
         if (!depth) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(false);
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
         }
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -175,8 +176,8 @@ public class RenderUtils {
         GlStateManager.translate(realX, realY, realZ);
         GlStateManager.disableBlend();
         if (!depth) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask(true);
         }
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
@@ -198,8 +199,8 @@ public class RenderUtils {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         if (!depth) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(false);
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
         }
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GL11.glLineWidth(2);
@@ -215,8 +216,8 @@ public class RenderUtils {
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
         if (!depth) {
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(true);
+            GlStateManager.enableDepth();
+            GlStateManager.depthMask(true);
         }
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
@@ -242,12 +243,12 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
 
         if (!depth) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(false);
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
         }
-        GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
+        GlStateManager.color(c.getRed() /255.0f, c.getGreen() / 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
 
-        GL11.glTranslated(blockpos.getX(), blockpos.getY(), blockpos.getZ());
+        GlStateManager.translate(blockpos.getX(), blockpos.getY(), blockpos.getZ());
 
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex3d(0, 0, 0);
@@ -286,8 +287,8 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(true);
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -317,13 +318,13 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
 
         if (!depth) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(false);
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
         }
-        GL11.glColor4ub((byte)c.getRed(), (byte)c.getGreen(), (byte)c.getBlue(), (byte)c.getAlpha());
+        GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
 
         AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
-        GL11.glTranslated(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
+        GlStateManager.translate(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
 
         double x = 0.8;
         double y = 1.5;
@@ -365,8 +366,8 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDepthMask(true);
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
         GlStateManager.disableBlend();
@@ -392,17 +393,17 @@ public class RenderUtils {
             lScale *= 0.45f * multiplier;
         }
 
-        GL11.glColor4f(1f, 1f, 1f, 0.5f);
-        GL11.glPushMatrix();
-        GL11.glTranslatef(renderPos.x, renderPos.y, renderPos.z);
-        GL11.glRotatef(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
-        GL11.glRotatef(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
-        GL11.glScalef(-lScale, -lScale, lScale);
-        GL11.glDisable(GL11.GL_LIGHTING);
-        GL11.glDepthMask(false);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glEnable(GL11.GL_BLEND);
-        GL11.glBlendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.color(1f, 1f, 1f, 0.5f);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+        GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+        GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
+        GlStateManager.scale(-lScale, -lScale, lScale);
+        GlStateManager.disableLighting();
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         int textWidth = fontRenderer.getStringWidth(text);
 
@@ -422,10 +423,10 @@ public class RenderUtils {
 
         fontRenderer.drawString(text, -textWidth / 2, 0, color);
 
-        GL11.glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
-        GL11.glDepthMask(true);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glPopMatrix();
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.depthMask(true);
+        GlStateManager.enableDepth();
+        GlStateManager.popMatrix();
     }
 
     private static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {

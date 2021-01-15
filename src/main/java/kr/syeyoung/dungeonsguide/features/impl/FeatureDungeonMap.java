@@ -114,13 +114,13 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         MapData mapData = mapProcessor.getLastMapData2();
         Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("background_color").getValue().getRGB());
         GlStateManager.color(1,1,1,1);
-        GL11.glPushMatrix();;
+        GlStateManager.pushMatrix();;
         if (mapData == null) {
             Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, 0xFFFF0000);
         } else {
             renderMap(partialTicks,mapProcessor,mapData,context);
         }
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
         GL11.glLineWidth(2);
         RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
     }
@@ -142,19 +142,19 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         float postScale = this.<Boolean>getParameter("playerCenter").getValue() ? this.<Float>getParameter("postScale").getValue() : 1;
         int width = getFeatureRect().width;
         float scale = (this.<Boolean>getParameter("scale").getValue() ? width / 128.0f : 1);
-        GL11.glTranslated(width / 2, width / 2, 0);
-        GL11.glScaled(scale, scale, 0);
-        GL11.glScaled(postScale, postScale,0);
+        GlStateManager.translate(width / 2, width / 2, 0);
+        GlStateManager.scale(scale, scale, 0);
+        GlStateManager.scale(postScale, postScale,0);
         EntityPlayer p = Minecraft.getMinecraft().thePlayer;
         Point pt = mapProcessor.worldPointToMapPoint(p.getPositionEyes(partialTicks));
         double yaw = p.prevRotationYawHead + (p.rotationYaw - p.prevRotationYawHead) * partialTicks;
         if (this.<Boolean>getParameter("playerCenter").getValue()) {
             if (this.<Boolean>getParameter("rotate").getValue()) {
-                GL11.glRotated((180 - yaw), 0,0,1);
+                GlStateManager.rotate((float) (180.0 - yaw), 0,0,1);
             }
-            GL11.glTranslated( -pt.x, -pt.y, 0);
+            GlStateManager.translate( -pt.x, -pt.y, 0);
         } else {
-            GL11.glTranslated( -64, -64, 0);
+            GlStateManager.translate( -64, -64, 0);
         }
         updateMapTexture(mapData.colors, mapProcessor, context.getDungeonRoomList());
         render(mapData, false);
@@ -191,7 +191,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 pt2 = new Point(vec.func_176112_b() /2 + 64, vec.func_176113_c() / 2 + 64);
                 yaw2 = vec.func_176111_d() * 360 / 16.0f + 180;
             }
-            GL11.glPushMatrix();
+            GlStateManager.pushMatrix();
             if (entityplayer == Minecraft.getMinecraft().thePlayer || this.<Boolean>getParameter("showotherplayers").getValue())
             {
                 boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE);
@@ -200,32 +200,32 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 int l2 = 8 + (flag1 ? 8 : 0);
                 int i3 = 8 * (flag1 ? -1 : 1);
 
-                GL11.glTranslated(pt2.x, pt2.y, 0);
-                GL11.glRotated(yaw2 - 180, 0, 0, 1);
+                GlStateManager.translate(pt2.x, pt2.y, 0);
+                GlStateManager.rotate((float) (yaw2 - 180), 0, 0, 1);
 
-                GL11.glScaled(1 / scale, 1 / scale, 0);
-                GL11.glScaled(1 / postScale, 1 / postScale, 0);
+                GlStateManager.scale(1 / scale, 1 / scale, 0);
+                GlStateManager.scale(1 / postScale, 1 / postScale, 0);
                 float s = this.<Float>getParameter("playerheadscale").getValue();
-                GL11.glScaled(s,s,0);
+                GlStateManager.scale(s,s,0);
                 Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
                 GL11.glLineWidth(1);
                 RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue().getRGB(), this.<Boolean>getParameter("player_chroma").getValue());
             }
-            GL11.glPopMatrix();
+            GlStateManager.popMatrix();
         }
         FontRenderer fr = getFontRenderer();
         if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                GL11.glPushMatrix();
+                GlStateManager.pushMatrix();
                 GlStateManager.pushAttrib();
                 Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
-                GL11.glTranslated(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
+                GlStateManager.translate(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
 
                 if (this.<Boolean>getParameter("playerCenter").getValue() && this.<Boolean>getParameter("rotate").getValue()) {
-                    GL11.glRotated(yaw - 180, 0, 0, 1);
+                    GlStateManager.rotate((float) (yaw - 180), 0, 0, 1);
                 }
-                GL11.glScaled(1 / scale, 1 / scale, 0);
-                GL11.glScaled(1 / postScale, 1 / postScale, 0);
+                GlStateManager.scale(1 / scale, 1 / scale, 0);
+                GlStateManager.scale(1 / postScale, 1 / postScale, 0);
                 String str = "";
                 str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
                 str += " ";
@@ -241,7 +241,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
                 fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
                 GlStateManager.popAttrib();
-                GL11.glPopMatrix();
+                GlStateManager.popMatrix();
             }
         }
 

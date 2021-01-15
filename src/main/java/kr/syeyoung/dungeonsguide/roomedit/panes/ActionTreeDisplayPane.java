@@ -42,11 +42,11 @@ public class ActionTreeDisplayPane extends MPanel {
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
-        GL11.glPushMatrix();
-        GL11.glTranslated(offsetX, offsetY, 0);
-        GL11.glScaled(scale,scale,1);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(offsetX, offsetY, 0);
+        GlStateManager.scale(scale,scale,1);
         renderTree(tree, 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionTree, Point>());
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
     }
 
     public int renderTree(ActionTree actionTree, int x, int y, FontRenderer fr, Point drawLineFrom, HashMap<ActionTree, Point> drawmPoints) {
@@ -56,23 +56,21 @@ public class ActionTreeDisplayPane extends MPanel {
 
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_LINE_SMOOTH);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glBlendFunc(770, 771);
-            GL11.glEnable(GL11.GL_BLEND);
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.disableTexture2D();
+            GlStateManager.blendFunc(770, 771);
+            GlStateManager.enableBlend();
             GL11.glLineWidth(1);
-            GL11.glColor4f(1, 0, 0, 1);
+            GlStateManager.color(1, 0, 0, 1);
             GL11.glBegin(2);
             GL11.glVertex2d(drawLineFrom.x, drawLineFrom.y);
             GL11.glVertex2d(pt.x, pt.y);
             GL11.glEnd();
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
-            GL11.glDisable(GL11.GL_BLEND);
+            GlStateManager.disableBlend();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableDepth();
+            GlStateManager.disableBlend();
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
             return 0;
@@ -83,23 +81,21 @@ public class ActionTreeDisplayPane extends MPanel {
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
 
-            GL11.glEnable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_LINE_SMOOTH);
-            GL11.glDisable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_TEXTURE_2D);
-            GL11.glBlendFunc(770, 771);
-            GL11.glEnable(GL11.GL_BLEND);
+            GlStateManager.enableBlend();
+            GlStateManager.disableDepth();
+            GlStateManager.disableTexture2D();
+            GlStateManager.blendFunc(770, 771);
+            GlStateManager.enableBlend();
             GL11.glLineWidth(1);
-            GL11.glColor4f(1, 1, 1, 1);
+            GlStateManager.color(1, 1, 1, 1);
             GL11.glBegin(2);
             GL11.glVertex2d(drawLineFrom.x, drawLineFrom.y);
             GL11.glVertex2d(x + dim.width / 2, y);
             GL11.glEnd();
-            GL11.glDisable(GL11.GL_BLEND);
-            GL11.glEnable(GL11.GL_TEXTURE_2D);
-            GL11.glEnable(GL11.GL_DEPTH_TEST);
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
-            GL11.glDisable(GL11.GL_BLEND);
+            GlStateManager.disableBlend();
+            GlStateManager.enableTexture2D();
+            GlStateManager.enableDepth();
+            GlStateManager.disableBlend();
             GlStateManager.popMatrix();
             GlStateManager.popAttrib();
         }

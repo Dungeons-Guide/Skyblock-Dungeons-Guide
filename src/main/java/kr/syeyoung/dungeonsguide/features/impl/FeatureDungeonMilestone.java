@@ -12,6 +12,7 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -33,7 +34,7 @@ public class FeatureDungeonMilestone extends GuiFeature implements ChatListener 
         if (!skyblockStatus.isOnDungeon()) return;
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
             if (name.startsWith("§r Milestone: §r")) {
@@ -49,7 +50,7 @@ public class FeatureDungeonMilestone extends GuiFeature implements ChatListener 
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("Milestone: 9", 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
     public static final Pattern milestone_pattern = Pattern.compile("§r§e§l(.+) Milestone §r§e(.)§r§7: .+ §r§a(.+)§r");

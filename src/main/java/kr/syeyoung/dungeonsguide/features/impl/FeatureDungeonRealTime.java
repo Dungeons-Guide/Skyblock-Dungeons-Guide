@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -29,7 +30,7 @@ public class FeatureDungeonRealTime extends GuiFeature implements DungeonStartLi
         if (started == -1) return;
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("Time(Real): "+TextUtils.formatTime(getTimeElapsed()), 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 
@@ -41,7 +42,7 @@ public class FeatureDungeonRealTime extends GuiFeature implements DungeonStartLi
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GL11.glScaled(scale, scale, 0);
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("Time(Real): -42h", 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 

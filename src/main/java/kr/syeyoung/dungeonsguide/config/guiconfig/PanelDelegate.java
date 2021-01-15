@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.config.guiconfig;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 import org.w3c.dom.css.Rect;
 
@@ -21,9 +22,9 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMouseX, int relMouseY, float partialTicks, Rectangle scissor) {
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
         guiFeature.drawDemo(partialTicks);
-        GL11.glPopMatrix();
+        GlStateManager.popMatrix();
 
         Gui.drawRect(0,0, 3, 3, 0xFFBBBBBB);
         Gui.drawRect(0, getBounds().height - 3, 3, getBounds().height, 0xFFBBBBBB);

@@ -57,16 +57,20 @@ public class GuiGuiLocationConfig extends GuiScreen {
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GL11.glPushMatrix();
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
         GlStateManager.disableLighting();
-        GlStateManager.disableFog();
+        GlStateManager.disableDepth();
+        GlStateManager.depthMask(false);
+        GlStateManager.disableFog();GL11.glDisable(GL11.GL_FOG);
         GlStateManager.color(1,1,1,1);
-        GL11.glDisable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(false);
+        GlStateManager.disableDepth();
+        GlStateManager.depthMask(false);
         mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
-        GL11.glEnable(GL11.GL_DEPTH_TEST);
-        GL11.glDepthMask(true);
-        GL11.glPopMatrix();
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
+        GlStateManager.popAttrib();
+        GlStateManager.popMatrix();
     }
 
     @Override
