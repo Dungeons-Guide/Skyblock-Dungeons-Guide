@@ -84,11 +84,24 @@ public class FeatureDungeonScore extends GuiFeature {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
             if (name.startsWith("§r Completed Rooms: §r")) {
-                String milestone = TextUtils.stripColor(name).substring(21);
+                String milestone = TextUtils.stripColor(name).substring(18);
                 return Integer.parseInt(milestone);
             }
         }
         return 0;
+    }
+    public int getTotalRooms() {
+        return (int) (100 * (getCompleteRooms() / (double)getPercentage()));
+    }
+    public int getUndiscoveredPuzzles() {
+        int cnt = 0;
+        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
+            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+            if (name.startsWith("§r ???: ")) {
+                cnt ++;
+            }
+        }
+        return cnt;
     }
 
     public ScoreCalculation calculateScore() {
@@ -97,14 +110,26 @@ public class FeatureDungeonScore extends GuiFeature {
         if (context == null) return null;
         if (!context.getMapProcessor().isInitialized()) return null;
 
-        int skill = getPercentage();
+        int skill = 100;
         int deaths = 0;
         {
             deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
             skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
+            int totalCompRooms= 0;
+            boolean bossroomFound = false;
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                if (dungeonRoom.getColor() == 74) bossroomFound = true;
+                if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+                    totalCompRooms += dungeonRoom.getUnitPoints().size();
+                if (dungeonRoom.getColor() == 66 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
+                    skill -= 10;
+                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
+                    skill += 1;
                 skill += dungeonRoom.getCurrentState().getScoreModifier();
             }
+            if (!bossroomFound) skill += 1;
+            skill -= getUndiscoveredPuzzles() * 10;
+            skill -= (getTotalRooms() - totalCompRooms) * 4;
         }
         int explorer = 0;
         boolean fullyCleared = false;
