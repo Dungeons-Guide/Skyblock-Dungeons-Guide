@@ -1,11 +1,15 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -53,6 +57,10 @@ public class DungeonContext {
     private int BossRoomEnterSeconds = -1;
 
     @Getter
+    @Setter
+    private BossfightProcessor bossfightProcessor;
+
+    @Getter
     private Set<String> players = new HashSet<String>();
 
     public DungeonContext(World world) {
@@ -71,6 +79,12 @@ public class DungeonContext {
         if (mapProcessor.isInitialized() && BossRoomEnterSeconds == -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
             BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+            if (doorFinder != null) {
+                bossfightProcessor = doorFinder.createBossfightProcessor(world, e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            } else {
+                e.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
+            }
         }
         List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
         try {

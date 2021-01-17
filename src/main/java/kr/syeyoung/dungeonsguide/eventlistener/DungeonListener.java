@@ -78,6 +78,7 @@ public class DungeonListener {
                     DungeonContext context = skyblockStatus.getContext();
                     EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                     if (thePlayer == null) return;
+                    if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
                     Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
@@ -113,6 +114,7 @@ public class DungeonListener {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
+                if (context.getBossfightProcessor() != null) context.getBossfightProcessor().drawScreen(postRender.partialTicks);
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
                 if (dungeonRoom == null) {
@@ -156,6 +158,13 @@ public class DungeonListener {
                     context.onChat(clientChatReceivedEvent);
                 } catch (Throwable t) {
                     t.printStackTrace();
+                }
+
+                if (context.getBossfightProcessor() != null) {
+                    if (clientChatReceivedEvent.type == 2)
+                        context.getBossfightProcessor().actionbarReceived(clientChatReceivedEvent.message);
+                    else
+                        context.getBossfightProcessor().chatReceived(clientChatReceivedEvent.message);
                 }
                 RoomProcessor roomProcessor = null;
                 try {
@@ -208,6 +217,11 @@ public class DungeonListener {
 
 
             if (skyblockStatus.getContext() != null) {
+
+                if (context.getBossfightProcessor() != null) {
+                        context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+                }
+
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 

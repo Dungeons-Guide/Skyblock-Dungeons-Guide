@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -62,6 +63,11 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
                 }
             }
         }
+        return null;
+    }
+
+    @Override
+    public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         return null;
     }
 }
