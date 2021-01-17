@@ -130,6 +130,7 @@ public class FeatureDungeonScore extends GuiFeature {
             if (!bossroomFound) skill += 1;
             skill -= getUndiscoveredPuzzles() * 10;
             skill -= (getTotalRooms() - totalCompRooms) * 4;
+            skill = MathHelper.clamp_int(skill, 0, 100);
         }
         int explorer = 0;
         boolean fullyCleared = false;
