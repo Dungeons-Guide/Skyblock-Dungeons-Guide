@@ -62,6 +62,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         parameters.put("showotherplayers", new FeatureParameter<Boolean>("showotherplayers", "Show other players", "Option to show other players in map", true, "boolean"));
         parameters.put("showtotalsecrets", new FeatureParameter<Boolean>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, "boolean"));
         parameters.put("playerheadscale", new FeatureParameter<Float>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, "float"));
+        parameters.put("textScale", new FeatureParameter<Float>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, "float"));
         parameters.put("border_color", new FeatureParameter<AColor>("border_color", "Color of the border", "Same as name", new AColor(255,255,255,255), "acolor"));
         parameters.put("background_color", new FeatureParameter<AColor>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), "acolor"));
         parameters.put("chromaborder", new FeatureParameter<Boolean>("chromaborder", "Chroma border", "Rainbow!!! (Overrides border color option)", false, "boolean"));
@@ -226,6 +227,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 }
                 GlStateManager.scale(1 / scale, 1 / scale, 0);
                 GlStateManager.scale(1 / postScale, 1 / postScale, 0);
+                float s = this.<Float>getParameter("textScale").getValue();
+                GlStateManager.scale(s,s,0);
                 String str = "";
                 str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
                 str += " ";
