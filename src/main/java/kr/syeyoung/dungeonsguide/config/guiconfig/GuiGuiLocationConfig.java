@@ -60,8 +60,6 @@ public class GuiGuiLocationConfig extends GuiScreen {
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
         GlStateManager.disableLighting();
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(false);
         GlStateManager.disableFog();GL11.glDisable(GL11.GL_FOG);
         GlStateManager.color(1,1,1,1);
         GlStateManager.disableDepth();
