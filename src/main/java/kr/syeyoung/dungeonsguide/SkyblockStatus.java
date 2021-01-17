@@ -36,6 +36,10 @@ public class SkyblockStatus {
     private DungeonContext context;
 
     @Getter
+    @Setter
+    private int percentage;
+
+    @Getter
     private String dungeonName;
 
     private final Pattern SERVER_BRAND_PATTERN = Pattern.compile("(.+) <- (?:.+)");
@@ -89,6 +93,7 @@ public class SkyblockStatus {
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
             if (strippedLine.contains("Dungeon Cleared: ")) {
                 foundDungeon = true;
+                percentage = Integer.parseInt(strippedLine.substring(17));
             }
             if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
                 dungeonName = strippedLine.trim();

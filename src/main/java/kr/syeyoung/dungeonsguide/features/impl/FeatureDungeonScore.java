@@ -7,10 +7,14 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -73,13 +77,27 @@ public class FeatureDungeonScore extends GuiFeature {
         private int deaths;
     }
 
+    public int getPercentage() {
+        return skyblockStatus.getPercentage();
+    }
+    public int getCompleteRooms() {
+        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
+            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+            if (name.startsWith("§r Completed Rooms: §r")) {
+                String milestone = TextUtils.stripColor(name).substring(21);
+                return Integer.parseInt(milestone);
+            }
+        }
+        return 0;
+    }
+
     public ScoreCalculation calculateScore() {
         if (!skyblockStatus.isOnDungeon()) return null;
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return null;
         if (!context.getMapProcessor().isInitialized()) return null;
 
-        int skill = 100;
+        int skill = getPercentage();
         int deaths = 0;
         {
             deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
@@ -94,17 +112,13 @@ public class FeatureDungeonScore extends GuiFeature {
         int totalSecrets = 0;
         int secrets = 0;
         {
-            int clearedRooms = 0;
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                if (!(dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)) {
-                    clearedRooms ++;
-                }
                 if (dungeonRoom.getTotalSecrets() != -1)
                     totalSecrets += dungeonRoom.getTotalSecrets();
                 else totalSecretsKnown = false;
             }
-            fullyCleared = clearedRooms == context.getDungeonRoomList().size() && context.getMapProcessor().getUndiscoveredRoom() == 0;
-            explorer += MathHelper.clamp_int((int) Math.floor(60 * (clearedRooms / ((double)context.getDungeonRoomList().size() + context.getMapProcessor().getUndiscoveredRoom()))), 0, 60);
+            fullyCleared = getPercentage() == context.getDungeonRoomList().size() && context.getMapProcessor().getUndiscoveredRoom() == 0;
+            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * getPercentage()), 0, 60);
             explorer += MathHelper.clamp_int((int) Math.floor(40 * ((secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / (double)totalSecrets)),0,40);
         }
         int time = 0;

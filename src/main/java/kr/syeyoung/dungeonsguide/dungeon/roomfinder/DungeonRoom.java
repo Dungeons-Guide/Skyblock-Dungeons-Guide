@@ -46,7 +46,7 @@ public class DungeonRoom {
     @AllArgsConstructor
     @Getter
     public static enum RoomState {
-        DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-14);
+        DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-10);
         private int scoreModifier;
     }
 

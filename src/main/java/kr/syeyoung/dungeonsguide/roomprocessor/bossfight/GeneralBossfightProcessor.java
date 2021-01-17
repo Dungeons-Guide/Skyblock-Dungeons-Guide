@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
 import lombok.Builder;
 import lombok.Data;
+import lombok.Singular;
 import net.minecraft.util.IChatComponent;
 
 import java.util.*;
@@ -43,7 +44,7 @@ public class GeneralBossfightProcessor implements BossfightProcessor {
         for (String nextPhase : currentPhase.getNextPhases()) {
             PhaseData phaseData = phases.get(nextPhase);
             if (phaseData == null) continue;
-            if (phaseData.signatureMsg.contains(chat.getFormattedText())) {
+            if (phaseData.signatureMsgs.contains(chat.getFormattedText())) {
                 currentPhase = phaseData;
                 onPhaseChange();
                 return;
@@ -72,7 +73,9 @@ public class GeneralBossfightProcessor implements BossfightProcessor {
     @Builder
     public static class PhaseData {
         private String phase;
-        private Set<String> signatureMsg;
+        @Singular
+        private Set<String> signatureMsgs;
+        @Singular
         private Set<String> nextPhases;
     }
 }
