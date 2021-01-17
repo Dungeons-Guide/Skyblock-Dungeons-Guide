@@ -171,26 +171,28 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         for (int i = 1; i < 20; i++) {
             NetworkPlayerInfo networkPlayerInfo = list.get(i);
             String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
-            if (TextUtils.stripColor(name).endsWith("(DEAD)")) {
-                continue;
-            }
             if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
             String actual = TextUtils.stripColor(name).trim().split(" ")[0];
             EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(actual);
+            if (TextUtils.stripColor(name).endsWith("(DEAD)") && entityplayer != Minecraft.getMinecraft().thePlayer) {
+                continue;
+            }
             Point pt2;
             double yaw2;
+
             if (entityplayer != null) {
                 pt2 = mapProcessor.worldPointToMapPoint(entityplayer.getPositionEyes(partialTicks));
-                yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYaw - entityplayer.prevRotationYawHead) * partialTicks;
+                yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
             } else {
                 String iconName = mapProcessor.getMapIconToPlayerMap().get(actual);
                 if (iconName == null) continue;
                 Vec4b vec = mapData.mapDecorations.get(iconName);
                 if (vec == null) {
                     continue;
+                } else {
+                    pt2 = new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c() / 2 + 64);
+                    yaw2 = vec.func_176111_d() * 360 / 16.0f ;
                 }
-                pt2 = new Point(vec.func_176112_b() /2 + 64, vec.func_176113_c() / 2 + 64);
-                yaw2 = vec.func_176111_d() * 360 / 16.0f + 180;
             }
             GlStateManager.pushMatrix();
             if (entityplayer == Minecraft.getMinecraft().thePlayer || this.<Boolean>getParameter("showotherplayers").getValue())
