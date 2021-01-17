@@ -25,6 +25,13 @@ public class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
+    public List<String> getNextPhases() {
+        if (currentPhase == null) return Collections.emptyList();
+        List<String> phases = new ArrayList<String>(this.currentPhase.getNextPhases());
+        return phases;
+    }
+
+    @Override
     public String getCurrentPhase() {
         return currentPhase == null ? "unknown" : currentPhase.getPhase();
     }

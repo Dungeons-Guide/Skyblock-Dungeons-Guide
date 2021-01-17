@@ -7,4 +7,5 @@ import java.util.List;
 public interface BossfightProcessor extends RoomProcessor {
     List<String> getPhases();
     String getCurrentPhase();
+    List<String> getNextPhases();
 }

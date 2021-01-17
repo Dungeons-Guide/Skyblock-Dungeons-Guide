@@ -34,6 +34,7 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.opengl.GL11;
 import scala.collection.parallel.ParIterableLike;
 
@@ -118,8 +119,15 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                 FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
                 if (dungeonRoom == null) {
-                    if (FeatureRegistry.DEBUG.isEnabled())
+                    if (FeatureRegistry.DEBUG.isEnabled() && context.getBossfightProcessor() == null) {
                         fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
+                    } else if (FeatureRegistry.DEBUG.isEnabled() && context.getBossfightProcessor() != null){
+                        fontRenderer.drawString("You're prob in bossfight", 5, 128, 0xFFFFFF);
+                        fontRenderer.drawString("processor: "+context.getBossfightProcessor(), 5, 138, 0xFFFFFF);
+                        fontRenderer.drawString("phase: "+context.getBossfightProcessor().getCurrentPhase(), 5, 148, 0xFFFFFF);
+                        fontRenderer.drawString("nextPhase: "+ StringUtils.join(context.getBossfightProcessor().getNextPhases(), ","), 5, 158, 0xFFFFFF);
+                        fontRenderer.drawString("phases: "+ StringUtils.join(context.getBossfightProcessor().getPhases(), ","), 5, 168, 0xFFFFFF);
+                    }
                 } else {
                     if (FeatureRegistry.DEBUG.isEnabled()) {
                         fontRenderer.drawString("you're in the room... color/shape " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
