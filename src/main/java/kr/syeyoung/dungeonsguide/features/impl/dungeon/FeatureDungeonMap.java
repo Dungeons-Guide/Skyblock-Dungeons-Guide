@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.features.impl;
+package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;

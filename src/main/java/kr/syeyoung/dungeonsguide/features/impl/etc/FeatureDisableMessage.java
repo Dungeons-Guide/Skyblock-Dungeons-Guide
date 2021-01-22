@@ -1,22 +1,14 @@
-package kr.syeyoung.dungeonsguide.features.impl;
+package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.util.regex.Pattern;
 
 public class FeatureDisableMessage extends SimpleFeature implements ChatListener {

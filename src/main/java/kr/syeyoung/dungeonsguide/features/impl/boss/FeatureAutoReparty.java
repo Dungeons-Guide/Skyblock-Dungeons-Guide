@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.features.impl;
+package kr.syeyoung.dungeonsguide.features.impl.boss;
 
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;

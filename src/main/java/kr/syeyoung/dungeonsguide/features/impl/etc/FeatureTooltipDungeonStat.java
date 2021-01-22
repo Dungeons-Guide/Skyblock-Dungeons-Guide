@@ -1,6 +1,5 @@
-package kr.syeyoung.dungeonsguide.features.impl;
+package kr.syeyoung.dungeonsguide.features.impl.etc;
 
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.TooltipListener;
 import net.minecraft.item.ItemStack;

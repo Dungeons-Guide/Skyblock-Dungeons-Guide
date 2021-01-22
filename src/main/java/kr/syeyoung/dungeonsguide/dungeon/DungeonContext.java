@@ -7,7 +7,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.FeatureDungeonMap;
+import kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
@@ -15,12 +15,10 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.IntegerCache;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -28,7 +26,6 @@ import net.minecraftforge.common.MinecraftForge;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DungeonContext {
     @Getter
