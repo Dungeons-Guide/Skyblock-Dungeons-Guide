@@ -1,9 +1,10 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
-import lombok.Builder;
-import lombok.Data;
-import lombok.Singular;
+import lombok.*;
+import net.minecraft.entity.boss.BossStatus;
+import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -12,6 +13,15 @@ import java.util.*;
 public class GeneralBossfightProcessor implements BossfightProcessor {
     private Map<String, PhaseData> phases = new HashMap<String, PhaseData>();
     private PhaseData currentPhase = null;
+
+    @Getter
+    @Setter
+    private int bossMaxHealth = 100;
+    @Getter
+    @Setter
+    private String name;
+
+    private World world;
 
     public void addPhase(PhaseData phaseData) {
         if (phaseData == null) return;
@@ -33,6 +43,14 @@ public class GeneralBossfightProcessor implements BossfightProcessor {
         List<String> phases = new ArrayList<String>(this.currentPhase.getNextPhases());
         return phases;
     }
+
+    @Override
+    public List<HealthData> getHealths() {
+        ArrayList<HealthData> arr = new ArrayList<HealthData>();
+        arr.add(new HealthData(name, (int) (bossMaxHealth * BossStatus.healthScale), bossMaxHealth));
+        return arr;
+    }
+
 
     @Override
     public String getCurrentPhase() {

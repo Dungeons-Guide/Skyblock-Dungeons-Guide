@@ -130,6 +130,7 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
                     .phase("final-defeat")
                     .signatureMsg("§r§c[BOSS] Bonzo§r§f: Alright, maybe I'm just weak after all..§r").build()
             );
+            bossfightProcessor.setBossMaxHealth(250000);
             return bossfightProcessor;
         } else if (floor.equals("F3")) {
             GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();

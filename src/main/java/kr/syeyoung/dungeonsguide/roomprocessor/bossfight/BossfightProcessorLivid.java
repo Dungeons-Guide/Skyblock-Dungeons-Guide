@@ -5,9 +5,7 @@ import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
-import java.util.HashSet;
-import java.util.LinkedList;
-import java.util.Set;
+import java.util.*;
 
 @Getter
 public class BossfightProcessorLivid extends GeneralBossfightProcessor {
@@ -30,5 +28,11 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 System.out.println("Think real livid is "+realLividName);
             }
         }
+    }
+
+    @Override
+    public List<HealthData> getHealths() {
+        ArrayList<HealthData> healthData = new ArrayList<HealthData>();
+        return super.getHealths();
     }
 }
