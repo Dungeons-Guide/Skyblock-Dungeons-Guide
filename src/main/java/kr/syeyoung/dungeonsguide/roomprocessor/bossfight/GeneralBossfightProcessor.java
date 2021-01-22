@@ -4,6 +4,8 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.Singular;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.*;
 
@@ -66,6 +68,16 @@ public class GeneralBossfightProcessor implements BossfightProcessor {
 
     @Override
     public boolean readGlobalChat() {return true;}
+
+    @Override
+    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+
+    }
+
+    @Override
+    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+
+    }
 
     public void onPhaseChange() {}
 

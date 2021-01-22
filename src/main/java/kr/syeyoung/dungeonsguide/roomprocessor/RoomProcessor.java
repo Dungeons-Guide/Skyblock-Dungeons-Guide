@@ -2,6 +2,8 @@ package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
 public interface RoomProcessor {
     void tick();
@@ -11,4 +13,7 @@ public interface RoomProcessor {
     void actionbarReceived(IChatComponent chat);
 
     boolean readGlobalChat();
+
+    void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event);
+    void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent);
 }

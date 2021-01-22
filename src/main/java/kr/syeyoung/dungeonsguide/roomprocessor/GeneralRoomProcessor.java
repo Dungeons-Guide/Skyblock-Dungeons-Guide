@@ -15,6 +15,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.awt.*;
 import java.util.Map;
@@ -103,6 +105,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public boolean readGlobalChat() {
         return false;
+    }
+
+    @Override
+    public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+
+    }
+
+    @Override
+    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+
     }
 
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {

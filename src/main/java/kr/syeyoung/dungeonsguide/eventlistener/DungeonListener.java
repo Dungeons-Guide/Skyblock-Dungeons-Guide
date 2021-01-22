@@ -24,12 +24,15 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
+import net.minecraft.entity.EntityLiving;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -41,6 +44,49 @@ import scala.collection.parallel.ParIterableLike;
 import java.awt.*;
 
 public class DungeonListener {
+    @SubscribeEvent
+    public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
+        try {
+                SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+
+                if (!skyblockStatus.isOnDungeon()) return;
+
+                if (skyblockStatus.getContext() != null) {
+                    DungeonContext context = skyblockStatus.getContext();
+                    EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                    if (thePlayer == null) return;
+                    if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onPostGuiRender(e);
+                    Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                    DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                    if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
+                        dungeonRoom.getRoomProcessor().onPostGuiRender(e);
+                    }
+                }
+        } catch (Throwable e2) {e2.printStackTrace();}
+    }
+    @SubscribeEvent
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
+        try {
+            SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+
+            if (!skyblockStatus.isOnDungeon()) return;
+
+            if (skyblockStatus.getContext() != null) {
+                DungeonContext context = skyblockStatus.getContext();
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                if (thePlayer == null) return;
+                if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onEntitySpawn(e);
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
+                    dungeonRoom.getRoomProcessor().onEntitySpawn(e);
+                }
+            }
+        } catch (Throwable e2) {e2.printStackTrace();}
+    }
+
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         try {

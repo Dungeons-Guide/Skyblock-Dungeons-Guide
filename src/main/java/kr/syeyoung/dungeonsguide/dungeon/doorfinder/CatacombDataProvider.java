@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorLivid;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.GeneralBossfightProcessor;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
@@ -167,6 +168,14 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
                     .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
             );
             return bossfightProcessor;
+        } else if (floor.equals("F4")) {
+            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
+            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+                    .phase("fight").build()
+            );
+            return bossfightProcessor;
+        } else if (floor.equals("F5")) {
+            return new BossfightProcessorLivid();
         }
         return null;
     }
