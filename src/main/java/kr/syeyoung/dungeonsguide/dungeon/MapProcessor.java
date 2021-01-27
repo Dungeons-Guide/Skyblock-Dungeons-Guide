@@ -214,6 +214,8 @@ public class MapProcessor {
                         }
                     }
                     if (dungeonRoom.getTotalSecrets() == -1) {
+                        if (dungeonRoom.getColor() == 82) dungeonRoom.setTotalSecrets(0);
+                        else if (dungeonRoom.getColor() == 74) dungeonRoom.setTotalSecrets(0);
                         MapUtils.record(mapData, mapPoint.x, mapPoint.y +1, new Color(0,255,0,80));
                     }
                     continue;
@@ -226,11 +228,11 @@ public class MapProcessor {
                     e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy =0;dy<4;dy++) {
+                        builder.append("\n");
                         for (int dx = 0; dx < 4; dx ++) {
                             boolean isSet = ((rooms.getShape() >> (dy * 4 + dx)) & 0x1) != 0;
                             builder.append(isSet ? "O" : "X");
                         }
-                        builder.append("\n");
                     }
                     e.sendDebugChat(new ChatComponentText("Shape visual: "+builder.toString()));
 

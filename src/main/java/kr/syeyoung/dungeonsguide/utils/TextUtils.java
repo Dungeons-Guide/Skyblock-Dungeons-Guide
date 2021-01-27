@@ -61,6 +61,16 @@ public class TextUtils {
         boolean hasDecimal = (truncated < 100L && (truncated / 10.0D) != (truncated / 10L));
         return hasDecimal ? ((truncated / 10.0D) + suffix) : ((truncated / 10L) + suffix);
     }
+    public static long reverseFormat(String str2) {
+        String str = str2.toLowerCase();
+        String integerPart = str.substring(0, str.length() - 1);
+        long multiplier = 1;
+        if (str.endsWith("k")) multiplier = 1000;
+        else if (str.endsWith("m")) multiplier = 1000000;
+        else if (str.endsWith("b")) multiplier = 1000000000;
+        else integerPart = str;
+        return (long) (Double.parseDouble(integerPart) * multiplier);
+    }
 
     public static String formatTime(long ms) {
         long seconds = ms / 1000;

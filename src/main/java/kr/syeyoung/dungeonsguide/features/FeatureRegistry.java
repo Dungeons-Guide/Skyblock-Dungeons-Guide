@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.features;
 
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureAutoReparty;
+import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureBossHealth;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureBoxRealLivid;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureChestPrice;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
@@ -63,6 +64,7 @@ public class FeatureRegistry {
     public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
     public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());
     public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
+    public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
 
     public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());

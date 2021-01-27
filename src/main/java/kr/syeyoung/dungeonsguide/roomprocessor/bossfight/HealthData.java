@@ -11,4 +11,5 @@ public class HealthData {
     private String name;
     private int health;
     private int maxHealth;
+    private boolean attackable;
 }

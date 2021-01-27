@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorBonzo;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorLivid;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.GeneralBossfightProcessor;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -77,104 +78,80 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
         e.sendDebugChat(new ChatComponentText("Floor: "+floor+ " Building bossfight processor"));
-        if (floor.equals("F2")) {
-            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("start")
-                    .signatureMsg("§r§c[BOSS] Scarf§r§f: This is where the journey ends for you, Adventurers.§r")
-                    .nextPhase("fight-1").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-1")
-                    .signatureMsg("§r§c[BOSS] Scarf§r§f: ARISE, MY CREATIONS!§r")
-                    .nextPhase("first-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("first-defeat")
-                    .signatureMsg("§r§c[BOSS] Scarf§r§f: Those toys are not strong enough I see.§r")
-                    .nextPhase("fight-2").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-2")
-                    .signatureMsg("§r§c[BOSS] Scarf§r§f: Did you forget? I was taught by the best! Let's dance.§r")
-                    .nextPhase("final-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("final-defeat")
-                    .signatureMsg("§r§c[BOSS] Scarf§r§f: Whatever...§r").build()
-            );
-            return bossfightProcessor;
+//        if (floor.equals("F2")) {
+//            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("start")
+//                    .signatureMsg("§r§c[BOSS] Scarf§r§f: This is where the journey ends for you, Adventurers.§r")
+//                    .nextPhase("fight-1").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("fight-1")
+//                    .signatureMsg("§r§c[BOSS] Scarf§r§f: ARISE, MY CREATIONS!§r")
+//                    .nextPhase("first-defeat").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("first-defeat")
+//                    .signatureMsg("§r§c[BOSS] Scarf§r§f: Those toys are not strong enough I see.§r")
+//                    .nextPhase("fight-2").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("fight-2")
+//                    .signatureMsg("§r§c[BOSS] Scarf§r§f: Did you forget? I was taught by the best! Let's dance.§r")
+//                    .nextPhase("final-defeat").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("final-defeat")
+//                    .signatureMsg("§r§c[BOSS] Scarf§r§f: Whatever...§r").build()
+//            );
+//            return bossfightProcessor;
+        if (false) {
         } else if (floor.equals("F1")) {
-            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("start")
-                    .signatureMsg("§r§c[BOSS] Bonzo§r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
-                    .nextPhase("fight-1").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-1")
-                    .signatureMsg("§r§c[BOSS] Bonzo§r§f: I can summon lots of undead! Check this out.§r")
-                    .nextPhase("first-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("first-defeat")
-                    .signatureMsg("§r§c[BOSS] Bonzo§r§f: Oh I'm dead!§r").signatureMsg("§r§c[BOSS] Bonzo§r§f: Hoho, looks like you killed me!§r")
-                    .nextPhase("fight-2").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-2")
-                    .signatureMsg("§r§c[BOSS] Bonzo§r§f: Sike§r").signatureMsg("§r§c[BOSS] Bonzo§r§f: I can revive myself and become much stronger!§r")
-                    .nextPhase("final-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("final-defeat")
-                    .signatureMsg("§r§c[BOSS] Bonzo§r§f: Alright, maybe I'm just weak after all..§r").build()
-            );
-            bossfightProcessor.setBossMaxHealth(250000);
+            GeneralBossfightProcessor bossfightProcessor = new BossfightProcessorBonzo();
             return bossfightProcessor;
-        } else if (floor.equals("F3")) {
-            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("start")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
-                    .nextPhase("fight-1").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-1")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I'll show you real power!§r")
-                    .nextPhase("first-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("first-defeat")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians one weakness?§r")
-                    .nextPhase("fight-2").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-2")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: This time I'll be your opponent!§r")
-                    .nextPhase("second-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("second-defeat")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I see. You have forced me to use my ultimate technique.§r")
-                    .nextPhase("fight-3").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight-3")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: The process is irreversible, but I'll be stronger than a Wither now!§r")
-                    .nextPhase("final-defeat").build()
-            );
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("final-defeat")
-                    .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
-            );
-            return bossfightProcessor;
-        } else if (floor.equals("F4")) {
-            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
-            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-                    .phase("fight").build()
-            );
-            return bossfightProcessor;
+//        } else if (floor.equals("F3")) {
+//            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("start")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
+//                    .nextPhase("fight-1").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("fight-1")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I'll show you real power!§r")
+//                    .nextPhase("first-defeat").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("first-defeat")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians one weakness?§r")
+//                    .nextPhase("fight-2").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("fight-2")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: This time I'll be your opponent!§r")
+//                    .nextPhase("second-defeat").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("second-defeat")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I see. You have forced me to use my ultimate technique.§r")
+//                    .nextPhase("fight-3").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("fight-3")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: The process is irreversible, but I'll be stronger than a Wither now!§r")
+//                    .nextPhase("final-defeat").build()
+//            );
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("final-defeat")
+//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
+//            );
+//            return bossfightProcessor;
+//        } else if (floor.equals("F4")) {
+//            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
+//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
+//                    .phase("fight").build()
+//            );
+//            return bossfightProcessor;
         } else if (floor.equals("F5")) {
             return new BossfightProcessorLivid();
         }

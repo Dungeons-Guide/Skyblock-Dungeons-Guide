@@ -33,6 +33,6 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     @Override
     public List<HealthData> getHealths() {
         ArrayList<HealthData> healthData = new ArrayList<HealthData>();
-        return super.getHealths();
+        return healthData;
     }
 }

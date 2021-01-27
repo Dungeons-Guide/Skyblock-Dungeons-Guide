@@ -10,13 +10,10 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.*;
 
-public class GeneralBossfightProcessor implements BossfightProcessor {
+public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     private Map<String, PhaseData> phases = new HashMap<String, PhaseData>();
     private PhaseData currentPhase = null;
 
-    @Getter
-    @Setter
-    private int bossMaxHealth = 100;
     @Getter
     @Setter
     private String name;
@@ -42,13 +39,6 @@ public class GeneralBossfightProcessor implements BossfightProcessor {
         if (currentPhase == null) return Collections.emptyList();
         List<String> phases = new ArrayList<String>(this.currentPhase.getNextPhases());
         return phases;
-    }
-
-    @Override
-    public List<HealthData> getHealths() {
-        ArrayList<HealthData> arr = new ArrayList<HealthData>();
-        arr.add(new HealthData(name, (int) (bossMaxHealth * BossStatus.healthScale), bossMaxHealth));
-        return arr;
     }
 
 

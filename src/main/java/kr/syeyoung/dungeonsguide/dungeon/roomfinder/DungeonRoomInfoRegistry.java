@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
 
 import javax.crypto.BadPaddingException;
@@ -51,9 +52,11 @@ public class DungeonRoomInfoRegistry {
 
     public static void saveAll(File dir) {
         dir.mkdirs();
+        boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
+        System.out.println(isDev);
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
-                if (!dungeonRoomInfo.isUserMade()) continue;
+                if (!dungeonRoomInfo.isUserMade() && !isDev) continue;
                 FileOutputStream fos = new FileOutputStream(new File(dir, dungeonRoomInfo.getUuid().toString() + ".roomdata"));
                 ObjectOutputStream oos = new ObjectOutputStream(fos);
                 oos.writeObject(dungeonRoomInfo);
