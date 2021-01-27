@@ -180,7 +180,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             Point pt2;
             double yaw2;
 
-            if (entityplayer != null) {
+            if (entityplayer != null && !entityplayer.isInvisible()) {
                 pt2 = mapProcessor.worldPointToMapPoint(entityplayer.getPositionEyes(partialTicks));
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
             } else {

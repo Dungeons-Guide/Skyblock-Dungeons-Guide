@@ -138,12 +138,14 @@ public class FeatureDungeonScore extends GuiFeature {
         int totalSecrets = 0;
         int secrets = 0;
         {
+            int completed = 0;
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 if (dungeonRoom.getTotalSecrets() != -1)
                     totalSecrets += dungeonRoom.getTotalSecrets();
                 else totalSecretsKnown = false;
+                completed += dungeonRoom.getUnitPoints().size();
             }
-            fullyCleared = getPercentage() == context.getDungeonRoomList().size() && context.getMapProcessor().getUndiscoveredRoom() == 0;
+            fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
             explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * getPercentage()), 0, 60);
             explorer += MathHelper.clamp_int((int) Math.floor(40 * ((secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / (double)totalSecrets)),0,40);
         }

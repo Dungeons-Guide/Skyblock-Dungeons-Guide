@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.utils;
 
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -10,6 +11,7 @@ import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
@@ -301,7 +303,7 @@ public class RenderUtils {
 
     }
 
-    public static void highlightBox(Entity entity, Color c, float partialTicks, boolean depth) {
+    public static void highlightBox(Entity entity, AxisAlignedBB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
         double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
@@ -323,7 +325,82 @@ public class RenderUtils {
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
 
+
+        GlStateManager.translate(-0.4 + entity.posX, entity.posY, -0.4 + entity.posZ);
+
+        double x = 0.8;
+        double y = 1.5;
+        double z = 0.8;
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, y, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, 0, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, y, z);
+
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, y, z); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, y, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, 0, 0);
+
+        GL11.glVertex3d(0,y,0);
+        GL11.glVertex3d(0,y,z);
+        GL11.glVertex3d(x,y,z);
+        GL11.glVertex3d(x,y,0);
+
+        GL11.glVertex3d(0,0,z);
+        GL11.glVertex3d(0,0,0);
+        GL11.glVertex3d(x,0,0);
+        GL11.glVertex3d(x,0,z);
+
+
+
+        GL11.glEnd();
+
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(true);
+        }
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+    }
+    public static void highlightBox(Entity entity, Color c, float partialTicks, boolean depth) {
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
+        }
+        GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
         AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
+
+
         GlStateManager.translate(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
 
         double x = 0.8;
