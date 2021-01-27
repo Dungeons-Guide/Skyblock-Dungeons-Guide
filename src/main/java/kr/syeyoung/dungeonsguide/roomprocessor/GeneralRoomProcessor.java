@@ -60,7 +60,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void actionbarReceived(IChatComponent chat) {
         if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
-        if (chat.getFormattedText().contains("-")) return;
         if (dungeonRoom.getTotalSecrets() == -1) {
             e.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }
@@ -86,6 +85,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
             String it = text.substring(theindex + 2, secretsIndex - 1);
+     
             secrets = Integer.parseInt(it.split("/")[1]);
         }
 

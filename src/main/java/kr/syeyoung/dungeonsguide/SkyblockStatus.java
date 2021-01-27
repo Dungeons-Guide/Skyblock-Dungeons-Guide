@@ -42,15 +42,11 @@ public class SkyblockStatus {
     @Getter
     private String dungeonName;
 
-    private final Pattern SERVER_BRAND_PATTERN = Pattern.compile("Hypixel BungeeCord \\(\\d\\.\\d\\.\\d\\)");
-
-
     public boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.thePlayer == null) return false;
         if (!mc.isSingleplayer() && mc.thePlayer.getClientBrand() != null) {
-            Matcher matcher = SERVER_BRAND_PATTERN.matcher(mc.thePlayer.getClientBrand());
-            if (matcher.matches()) return true;
+            if (mc.thePlayer.getClientBrand().startsWith("Hypixel BungeeCord")) return true;
         }
         return false;
     }
