@@ -81,12 +81,8 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
             return new BossfightProcessorBonzo();
         } else if (floor.equals("F3")) {
             return new BossfightProcessorProf();
-//        } else if (floor.equals("F4")) {
-//            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("fight").build()
-//            );
-//            return bossfightProcessor;
+        } else if (floor.equals("F4")) {
+            return new BossfightProcessorThorn();
         } else if (floor.equals("F5")) {
             return new BossfightProcessorLivid();
         }
