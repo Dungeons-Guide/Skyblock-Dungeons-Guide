@@ -75,10 +75,10 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
         e.sendDebugChat(new ChatComponentText("Floor: "+floor+ " Building bossfight processor"));
-        if (floor.equals("F2")) {
-            return new BossfightProcessorScarf();
-        } else if (floor.equals("F1")) {
+        if (floor.equals("F1")) {
             return new BossfightProcessorBonzo();
+        } else if (floor.equals("F2")) {
+            return new BossfightProcessorScarf();
         } else if (floor.equals("F3")) {
             return new BossfightProcessorProf();
         } else if (floor.equals("F4")) {

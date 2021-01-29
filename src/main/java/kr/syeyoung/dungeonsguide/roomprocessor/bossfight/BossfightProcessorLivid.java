@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -10,6 +11,7 @@ import java.util.*;
 @Getter
 public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private String realLividName;
+    private String prefix;
     private EntityOtherPlayerMP realLivid;
 
     private Set<String> knownLivids = new HashSet<String>();
@@ -17,7 +19,17 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     public BossfightProcessorLivid() {
         addPhase(PhaseData.builder().phase("start").build());
     }
-
+    private static final Map<String, String> lividColorPrefix = new HashMap<String, String>() {{
+            put("Vendetta", "§f");
+            put("Crossed", "§d");
+            put("Hockey", "§c");
+            put("Doctor", "§7");
+            put("Frog", "§2");
+            put("Smile", "§a");
+            put("Scream", "§1");
+            put("Purple", "§5");
+            put("Arcade", "§e");
+    }};
     @Override
     public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving.getName().endsWith("Livid") && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
@@ -26,13 +38,28 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 realLividName = updateEvent.entityLiving.getName();
                 realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
                 System.out.println("Think real livid is "+realLividName);
+                prefix = lividColorPrefix.get(realLividName.split(" ")[0]);
             }
+        } else if (updateEvent.entityLiving.getName().startsWith("§a﴾ "+prefix) && updateEvent.entityLiving instanceof EntityArmorStand) {
+            System.out.println(updateEvent.entityLiving.getName());
+            lividStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }
+    private EntityArmorStand lividStand;
 
     @Override
     public List<HealthData> getHealths() {
-        ArrayList<HealthData> healthData = new ArrayList<HealthData>();
-        return healthData;
+        List<HealthData> healths = new ArrayList<HealthData>();
+        long health = 0;
+        if (lividStand != null) {
+            try {
+                String name = TextUtils.stripColor(lividStand.getName());
+                String healthPart = name.split(" ")[2];
+                health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
+                System.out.println(healthPart.substring(0, healthPart.length() - 1) + " / " + health);
+            } catch (Exception e) {e.printStackTrace();}
+        }
+        healths.add(new HealthData(realLividName, (int) health,7000000 , true));
+        return healths;
     }
 }
