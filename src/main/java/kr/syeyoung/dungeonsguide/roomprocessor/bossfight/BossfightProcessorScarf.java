@@ -35,13 +35,6 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
         );
     }
 
-
-/*§6§4§lUndead Archer §e0§c❤
-            §6§4§lUndead Mage §a366k§c❤
-            §6§4§lUndead Priest §e180k§c❤
-            §6§4§lUndead Warrior §e189k§c❤
-            §e﴾ §c§lScarf§r §a1M§c❤ §e﴿*/
-
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
