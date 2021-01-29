@@ -79,43 +79,8 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
             return new BossfightProcessorScarf();
         } else if (floor.equals("F1")) {
             return new BossfightProcessorBonzo();
-//        } else if (floor.equals("F3")) {
-//            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("start")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
-//                    .nextPhase("fight-1").build()
-//            );
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("fight-1")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I'll show you real power!§r")
-//                    .nextPhase("first-defeat").build()
-//            );
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("first-defeat")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians one weakness?§r")
-//                    .nextPhase("fight-2").build()
-//            );
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("fight-2")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: This time I'll be your opponent!§r")
-//                    .nextPhase("second-defeat").build()
-//            );
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("second-defeat")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: I see. You have forced me to use my ultimate technique.§r")
-//                    .nextPhase("fight-3").build()
-//            );
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("fight-3")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: The process is irreversible, but I'll be stronger than a Wither now!§r")
-//                    .nextPhase("final-defeat").build()
-//            );
-//            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
-//                    .phase("final-defeat")
-//                    .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
-//            );
-//            return bossfightProcessor;
+        } else if (floor.equals("F3")) {
+            return new BossfightProcessorProf();
 //        } else if (floor.equals("F4")) {
 //            GeneralBossfightProcessor bossfightProcessor = new GeneralBossfightProcessor();
 //            bossfightProcessor.addPhase(GeneralBossfightProcessor.PhaseData.builder()
