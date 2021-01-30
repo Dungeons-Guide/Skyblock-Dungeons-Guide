@@ -71,7 +71,7 @@ public class ValueEditFloat extends MPanel implements ValueEdit<Float> {
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return 0;
+            return 0.0f;
         }
 
         @Override
