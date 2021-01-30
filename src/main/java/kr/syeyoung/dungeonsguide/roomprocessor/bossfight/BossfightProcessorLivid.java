@@ -37,11 +37,9 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 knownLivids.add(updateEvent.entityLiving.getName());
                 realLividName = updateEvent.entityLiving.getName();
                 realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
-                System.out.println("Think real livid is "+realLividName);
                 prefix = lividColorPrefix.get(realLividName.split(" ")[0]);
             }
         } else if (updateEvent.entityLiving.getName().startsWith("§a﴾ "+prefix) && updateEvent.entityLiving instanceof EntityArmorStand) {
-            System.out.println(updateEvent.entityLiving.getName());
             lividStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }
@@ -56,7 +54,6 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 String name = TextUtils.stripColor(lividStand.getName());
                 String healthPart = name.split(" ")[2];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
-                System.out.println(healthPart.substring(0, healthPart.length() - 1) + " / " + health);
             } catch (Exception e) {e.printStackTrace();}
         }
         healths.add(new HealthData(realLividName, (int) health,7000000 , true));

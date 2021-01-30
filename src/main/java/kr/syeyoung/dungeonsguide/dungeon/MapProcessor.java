@@ -345,7 +345,7 @@ public class MapProcessor {
                     BlockPos pos = entityPlayer.getPosition();
                     int dx = mapPos.getX() - pos.getX();
                     int dz = mapPos.getZ() - pos.getZ();
-                    if (dx * dx + dz * dz < 81) {
+                    if (dx * dx + dz * dz < 100) {
                         if (potentialPlayer != null) continue label;
                         potentialPlayer = player;
                     }
@@ -359,7 +359,7 @@ public class MapProcessor {
                     int y2 = stringVec4bEntry2.getValue().func_176113_c() /2 + 64;
                     int dx = x2 - x;
                     int dy = y2 - y;
-                    if (dx * dx + dy * dy < 81) {
+                    if (dx * dx + dy * dy < 100) {
                         continue label;
                     }
                 }

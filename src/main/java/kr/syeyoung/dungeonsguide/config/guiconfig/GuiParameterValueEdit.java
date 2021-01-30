@@ -87,9 +87,7 @@ public class GuiParameterValueEdit extends GuiScreen {
         currentValueEdit.getChildComponents().clear();
 
         ValueEditCreator valueEditCreator = ValueEditRegistry.getValueEditMap(editingObj == null ?"null":editingObj.getClass().getName());
-        System.out.println(valueEditCreator);
         MPanel valueEdit = (MPanel) valueEditCreator.createValueEdit(parameter= new Parameter("", editingObj, editingObj));
-        System.out.println(valueEdit);
         if (valueEdit == null) {
             MLabel valueEdit2 = new MLabel() {
                 @Override

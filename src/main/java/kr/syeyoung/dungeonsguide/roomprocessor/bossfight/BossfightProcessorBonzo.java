@@ -45,7 +45,6 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
             String name = TextUtils.stripColor(bonzoStand.getName());
             String healthPart = name.split(" ")[2];
             health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
-            System.out.println(healthPart.substring(0, healthPart.length() - 1) + " / "+ health);
         }
         healths.add(new HealthData("Bonzo", (int) health,250000 , this.getCurrentPhase().startsWith("fight-")));
         return healths;
@@ -57,7 +56,6 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
     public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r ") && updateEvent.entityLiving instanceof EntityArmorStand) {
-            System.out.println(updateEvent.entityLiving.getName());
             bonzoStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }

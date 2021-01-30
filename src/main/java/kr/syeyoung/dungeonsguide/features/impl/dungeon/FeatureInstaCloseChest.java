@@ -41,7 +41,6 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
         if (!(event.gui instanceof GuiChest)) return;
 
         ContainerChest ch = (ContainerChest) ((GuiChest)event.gui).inventorySlots;
-        System.out.println(ch.getLowerChestInventory().getName());
         if (!("Large Chest".equals(ch.getLowerChestInventory().getName())
             || "Chest".equals(ch.getLowerChestInventory().getName()))) return;
         check = true;

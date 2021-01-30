@@ -236,7 +236,6 @@ public class b {
                 ((d[1] & 0xFF) << 16) |
                 ((d[2] & 0xFF) << 8) |
                 ((d[3] & 0xFF));
-        System.out.println("waiting for "+f+" bytes");
         JsonElement l = new JsonParser().parse(new InputStreamReader(k));
         b.disconnect();
         return l;
