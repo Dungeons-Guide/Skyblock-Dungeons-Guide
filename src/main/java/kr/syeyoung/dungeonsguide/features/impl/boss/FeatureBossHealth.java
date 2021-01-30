@@ -26,6 +26,7 @@ public class FeatureBossHealth extends GuiFeature {
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
         parameters.put("totalHealth", new FeatureParameter<Boolean>("totalHealth", "show total health", "Show total health along with current health", false, "boolean"));
         parameters.put("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, "boolean"));
+        parameters.put("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, "boolean"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -40,7 +41,9 @@ public class FeatureBossHealth extends GuiFeature {
         FontRenderer fr = getFontRenderer();
         boolean format = this.<Boolean>getParameter("formatHealth").getValue();
         boolean total = this.<Boolean>getParameter("totalHealth").getValue();
+        boolean ignore = this.<Boolean>getParameter("ignoreInattackable").getValue();
         for (HealthData heal : healths) {
+            if (ignore && !heal.isAttackable()) continue;
             fr.drawString(heal.getName() + ": " + (format ? TextUtils.format(heal.getHealth()) : heal.getHealth()) + (total ? "/"+(format ? TextUtils.format(heal.getMaxHealth()) : heal.getMaxHealth()) : ""), 0, i, this.<Color>getParameter("color").getValue().getRGB());
             i += 8;
         }
