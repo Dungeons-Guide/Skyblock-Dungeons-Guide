@@ -19,7 +19,7 @@ public class MapUtils {
 
     public static void record(byte[] colors, int x, int y, Color c) {
         MapUtils.colors = colors;
-        colorMasks[y *128 +x] = new Color(255, 255, 255, 50);
+        colorMasks[y *128 +x] = c;
     }
 
     public static byte getMapColorAt(byte[] colors, int x, int y) {

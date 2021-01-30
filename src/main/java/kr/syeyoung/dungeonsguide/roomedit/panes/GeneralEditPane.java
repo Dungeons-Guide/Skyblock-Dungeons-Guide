@@ -2,13 +2,30 @@ package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.elements.*;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import scala.collection.immutable.List;
 
 import java.awt.*;
+import java.io.DataOutputStream;
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.util.ArrayList;
+import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 public class GeneralEditPane extends MPanel {
     private DungeonRoom dungeonRoom;
@@ -22,6 +39,7 @@ public class GeneralEditPane extends MPanel {
 
     private MButton save;
     private MButton end;
+    private MButton schematic;
 
     private MLabelAndElement roomProcessor;
 
@@ -97,6 +115,32 @@ public class GeneralEditPane extends MPanel {
             add(end);
         }
         {
+            schematic = new MButton();
+            schematic.setText("Save Schematic");
+            schematic.setOnActionPerformed(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                        NBTTagCompound nbtTagCompound2 = createNBT();
+                        NBTTagCompound real = new NBTTagCompound();
+                        real.setTag("Schematic", nbtTagCompound2);
+
+                        File f=new File(e.getDungeonsGuide().getConfigDir(), "schematics/"+
+                                dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
+
+                        CompressedStreamTools.write(nbtTagCompound2, f);
+                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
+                    } catch (Throwable e) {
+                        e.printStackTrace();
+                    }
+
+                }
+            });
+            schematic.setBackgroundColor(Color.orange);
+            schematic.setBounds(new Rectangle(0,160,getBounds().width, 20));
+            add(schematic);
+        }
+        {
             if (dungeonRoom.getDungeonRoomInfo().isRegistered()) return;
             save = new MButton();
             save.setText("Save RoomData");
@@ -123,5 +167,73 @@ public class GeneralEditPane extends MPanel {
         if (save != null)
             save.setBounds(new Rectangle(0,140,getBounds().width, 20));
         end.setBounds(new Rectangle(1,120,getBounds().width-2, 20));
+        if (schematic != null)
+        schematic.setBounds(new Rectangle(0,160,getBounds().width, 20));
+    }
+
+    private NBTTagCompound createNBT() {
+        NBTTagCompound compound = new NBTTagCompound();
+        compound.setShort("Width", (short) (dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1));
+        compound.setShort("Height", (short) 255);
+        compound.setShort("Length", (short) (dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1));
+        int size =compound.getShort("Width") * compound.getShort("Height") * compound.getShort("Length");
+
+        byte[] blocks = new byte[size];
+        byte[] meta = new byte[size];
+        byte[] extra = new byte[size];
+        byte[] extranibble = new byte[(int) Math.ceil(size / 2.0)];
+
+        boolean extraEx = false;
+        NBTTagList tileEntitiesList = new NBTTagList();
+        for (int x = 0; x < compound.getShort("Width"); x++) {
+            for (int y = 0; y <  compound.getShort("Height"); y++) {
+                for (int z = 0; z < compound.getShort("Length"); z++) {
+                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                    BlockPos pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
+                    IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+                    boolean acc = dungeonRoom.canAccessRelative(x,z);
+                    int id = Block.getIdFromBlock(blockState.getBlock());
+                    blocks[index] = acc ? (byte) id : 0;
+                    meta[index] = acc ? (byte) blockState.getBlock().getMetaFromState(blockState) : 0;
+                    if ((extra[index] = (byte) ((acc ? id : 0) >> 8)) > 0) {
+                        extraEx = true;
+                    }
+
+                    if (blockState.getBlock().hasTileEntity(blockState)) {
+                        TileEntity tileEntity = dungeonRoom.getContext().getWorld().getTileEntity(pos);
+                        try {
+                            final NBTTagCompound tileEntityCompound = new NBTTagCompound();
+                            tileEntity.writeToNBT(tileEntityCompound);
+                            tileEntitiesList.appendTag(tileEntityCompound);
+                        } catch (final Exception e) {
+                            final BlockPos tePos = tileEntity.getPos();
+
+                            blocks[index] = (byte) 7;
+                            meta[index] = 0;
+                            extra[index] = 0;
+                        }
+                    }
+                }
+            }
+        }
+        for (int i = 0; i < extranibble.length; i++) {
+            if (i * 2 + 1 < extra.length) {
+                extranibble[i] = (byte) ((extra[i * 2 + 0] << 4) | extra[i * 2 + 1]);
+            } else {
+                extranibble[i] = (byte) (extra[i * 2 + 0] << 4);
+            }
+        }
+
+
+        compound.setByteArray("Blocks", blocks);
+        compound.setByteArray("Data", meta);
+        compound.setString("Materials", "Classic");
+        if (extraEx) {
+            compound.setByteArray("AddBlocks", extranibble);
+        }
+        compound.setTag("Entities", new NBTTagList());
+        compound.setTag("TileEntities", tileEntitiesList);
+
+        return compound;
     }
 }

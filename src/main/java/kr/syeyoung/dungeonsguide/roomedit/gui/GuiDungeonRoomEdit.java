@@ -37,6 +37,7 @@ public class GuiDungeonRoomEdit extends GuiScreen {
         tabbedPane.addTab("Match", new RoomDataDisplayPane(room));
         tabbedPane.addTab("Secrets", new SecretEditPane(room));
         tabbedPane.addTab("Actions", new ActionDisplayPane(room));
+        tabbedPane.addTab("Test", new RoommatchingPane(room));
         tabbedPane.addTab("Proc.Params", new ProcessorParameterEditPane(room));
         this.tabbedPane = tabbedPane;
     }
