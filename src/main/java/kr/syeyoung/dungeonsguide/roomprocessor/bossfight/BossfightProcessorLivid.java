@@ -38,8 +38,10 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 realLividName = updateEvent.entityLiving.getName();
                 realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
                 prefix = lividColorPrefix.get(realLividName.split(" ")[0]);
+            } else if (realLividName.equalsIgnoreCase(updateEvent.entityLiving.getName())) {
+                realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
             }
-        } else if (updateEvent.entityLiving.getName().startsWith("§a﴾ "+prefix) && updateEvent.entityLiving instanceof EntityArmorStand) {
+        } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof EntityArmorStand) {
             lividStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }
