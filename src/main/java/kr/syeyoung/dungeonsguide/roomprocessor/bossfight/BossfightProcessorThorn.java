@@ -36,13 +36,14 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
 
     @Override
     public void tick() {
-        ticksPassed++;
+        ticksPassed ++;
         if (ticksPassed == 20) {
+            progressBar.clear();
             for (int x = -30; x <= 30; x++) {
                 for (int y = -30; y <= 30; y++) {
                     BlockPos newPos = new BlockPos(205 + x, 77, 205 + y);
                     Block b = w.getBlockState(newPos).getBlock();
-                    if (b == Blocks.coal_block || b == Blocks.sea_lantern)
+                    if ((b == Blocks.coal_block || b == Blocks.sea_lantern) && w.getBlockState(newPos.add(0, 1, 0)).getBlock() != Blocks.carpet)
                         progressBar.add(newPos);
                 }
             }
@@ -60,8 +61,9 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
         int total = progressBar.size(), lit = 0;
         if (total == 0) return 0;
         for (BlockPos pos : progressBar) {
-            if (w.getBlockState(pos).getBlock() == Blocks.prismarine) lit++;
+            if (w.getBlockState(pos).getBlock() == Blocks.sea_lantern ) lit++;
         }
+
         return lit / (double)total;
     }
 

@@ -15,7 +15,7 @@ import java.util.List;
 
 public class FeatureThornBearPercentage extends GuiFeature {
     public FeatureThornBearPercentage() {
-        super("Bossfight", "Display Spirit Bear Summon Percentage", "Displays spirit bear summon percentage in hud", "bossfight.spiritbear", true, getFontRenderer().getStringWidth("Spirit Bear: 50%"), getFontRenderer().FONT_HEIGHT);
+        super("Bossfight", "Display Spirit Bear Summon Percentage", "Displays spirit bear summon percentage in hud", "bossfight.spiritbear", true, getFontRenderer().getStringWidth("Spirit Bear: 100%"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(true);
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
      }
