@@ -245,7 +245,7 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.disableDepth(); GL11.glDisable(GL11.GL_DEPTH_TEST);
             GlStateManager.depthMask(false);
         }
         GlStateManager.color(c.getRed() /255.0f, c.getGreen() / 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);

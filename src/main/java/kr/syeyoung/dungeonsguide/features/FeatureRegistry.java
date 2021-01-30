@@ -3,10 +3,7 @@ package kr.syeyoung.dungeonsguide.features;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
-import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureAutoReparty;
-import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureBossHealth;
-import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureBoxRealLivid;
-import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureChestPrice;
+import kr.syeyoung.dungeonsguide.features.impl.boss.*;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureCooldownCounter;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureDisableMessage;
@@ -71,6 +68,7 @@ public class FeatureRegistry {
     public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());
     public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
     public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
+    public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
 
     public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());

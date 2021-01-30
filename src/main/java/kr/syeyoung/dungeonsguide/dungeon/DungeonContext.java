@@ -52,6 +52,9 @@ public class DungeonContext {
     @Getter
     @Setter
     private int BossRoomEnterSeconds = -1;
+    @Getter
+    @Setter
+    private BlockPos bossroomSpawnPos = null;
 
     @Getter
     @Setter
@@ -75,6 +78,7 @@ public class DungeonContext {
 
         if (mapProcessor.isInitialized() && BossRoomEnterSeconds == -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
             BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
+            bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
             if (doorFinder != null) {
