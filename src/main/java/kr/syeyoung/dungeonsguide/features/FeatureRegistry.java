@@ -1,5 +1,8 @@
 package kr.syeyoung.dungeonsguide.features;
 
+import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
+import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
+import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureAutoReparty;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureBossHealth;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureBoxRealLivid;
@@ -41,6 +44,9 @@ public class FeatureRegistry {
     public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
 
     public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
+    public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
+    public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
+    public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
 
     public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("solver", "Riddle Puzzle (3 weirdo) Solver", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
     public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("solver", "Trivia Puzzle (Omnicrescent) Solver", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));

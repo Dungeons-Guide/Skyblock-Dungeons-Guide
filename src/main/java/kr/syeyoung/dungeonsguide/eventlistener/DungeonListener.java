@@ -137,24 +137,12 @@ public class DungeonListener {
         } catch (Throwable e2) {e2.printStackTrace();}
     }
 
-    DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
-    ResourceLocation location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
             if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
-            if (FeatureRegistry.DEBUG.isEnabled()) {
-                GlStateManager.pushMatrix();
-                int[] textureData = dynamicTexture.getTextureData();
-                MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
-                dynamicTexture.updateDynamicTexture();
-                Minecraft.getMinecraft().getTextureManager().bindTexture(location);
-                GlStateManager.enableAlpha();
-                GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
-                GlStateManager.popMatrix();
-            }
 
             if (skyblockStatus.getContext() != null) {
                 DungeonContext context = skyblockStatus.getContext();
@@ -163,24 +151,7 @@ public class DungeonListener {
 
                 if (context.getBossfightProcessor() != null) context.getBossfightProcessor().drawScreen(postRender.partialTicks);
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-                FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-                if (dungeonRoom == null) {
-                    if (FeatureRegistry.DEBUG.isEnabled() && context.getBossfightProcessor() == null) {
-                        fontRenderer.drawString("Where are you?!", 5, 128, 0xFFFFFF);
-                    } else if (FeatureRegistry.DEBUG.isEnabled() && context.getBossfightProcessor() != null){
-                        fontRenderer.drawString("You're prob in bossfight", 5, 128, 0xFFFFFF);
-                        fontRenderer.drawString("processor: "+context.getBossfightProcessor(), 5, 138, 0xFFFFFF);
-                        fontRenderer.drawString("phase: "+context.getBossfightProcessor().getCurrentPhase(), 5, 148, 0xFFFFFF);
-                        fontRenderer.drawString("nextPhase: "+ StringUtils.join(context.getBossfightProcessor().getNextPhases(), ","), 5, 158, 0xFFFFFF);
-                        fontRenderer.drawString("phases: "+ StringUtils.join(context.getBossfightProcessor().getPhases(), ","), 5, 168, 0xFFFFFF);
-                    }
-                } else {
-                    if (FeatureRegistry.DEBUG.isEnabled()) {
-                        fontRenderer.drawString("you're in the room... color/shape " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape(), 5, 128, 0xFFFFFF);
-                        fontRenderer.drawString("room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)"), 5, 138, 0xFFFFFF);
-                        fontRenderer.drawString("room name: " + dungeonRoom.getDungeonRoomInfo().getName(), 5, 148, 0xFFFFFF);
-                        fontRenderer.drawString("room state / max secret: " + dungeonRoom.getCurrentState() + " / "+dungeonRoom.getTotalSecrets(), 5, 158, 0xFFFFFF);
-                    }
+                if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
                             dungeonRoom.getRoomProcessor().drawScreen(postRender.partialTicks);
                     }
