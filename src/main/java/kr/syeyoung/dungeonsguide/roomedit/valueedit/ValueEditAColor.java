@@ -312,7 +312,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return 0;
+            return new AColor(255,0,0,255);
         }
 
         @Override

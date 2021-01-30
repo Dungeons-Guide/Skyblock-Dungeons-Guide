@@ -260,7 +260,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return 0;
+            return Color.red;
         }
 
         @Override
