@@ -157,7 +157,7 @@ public class FeatureDungeonScore extends GuiFeature {
             } else {
                 timeModifier = Math.max(0, FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - 1200);
             }
-            time = (int) Math.floor(100 - 2.2 * timeModifier);
+            time = MathHelper.clamp_int((int) Math.floor(100 - 2.2 * timeModifier), 0, 100);
         }
         int bonus = 0;
         int tombs;
