@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.number;
 
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.ChamberProcessor;
@@ -22,14 +23,13 @@ public class NumberProcessorMatcher implements BombDefuseChamberGenerator {
     public String getName() {
         return "numberMatch";
     }
-
     @Override
-    public ChamberProcessor createLeft(BDChamber left) {
-        return null;
+    public ChamberProcessor createLeft(BDChamber left, RoomProcessorBombDefuseSolver solver) {
+        return new NumberLeftProcessor(solver, left);
     }
 
     @Override
-    public ChamberProcessor createRight(BDChamber right) {
-        return null;
+    public ChamberProcessor createRight(BDChamber right, RoomProcessorBombDefuseSolver solver) {
+        return new NumberRightProcessor(solver, right);
     }
 }

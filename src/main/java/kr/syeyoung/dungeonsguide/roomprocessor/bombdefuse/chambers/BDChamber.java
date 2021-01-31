@@ -1,12 +1,18 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers;
 
+import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
+import org.jetbrains.annotations.Nullable;
+
+import java.util.List;
 
 @AllArgsConstructor
 @Data
@@ -35,9 +41,25 @@ public class BDChamber {
     }
 
     public boolean isWithinAbsolute(int x, int y, int z) {
-        return isWithinAbsolute(new BlockPos(x,y,z));
+        return isWithinAbsolute(new BlockPos(x,68,z));
     }
     public boolean isWithinAbsolute(BlockPos pos) {
-        return chamberBlocks.getOffsetPointList().contains(new OffsetPoint(room, pos));
+        return chamberBlocks.getOffsetPointList().contains(new OffsetPoint(room, new BlockPos(pos.getX(), 68, pos.getZ())));
+    }
+
+
+    public <T extends Entity> T getEntityAt(Class<T> entity, int x, int y, int z) {
+        final BlockPos pos = getBlockPos(x,y,z);
+        return getEntityAt(entity, pos);
+    }
+    public <T extends Entity> T getEntityAt(Class<T> entity, final BlockPos pos) {
+        List<T> entities = room.getContext().getWorld().getEntities(entity, new Predicate<T>() {
+            @Override
+            public boolean apply(@Nullable T input) {
+                return input.getPosition().equals(pos);
+            }
+        });
+        if (entities.size() == 0) return null;
+        return entities.get(0);
     }
 }

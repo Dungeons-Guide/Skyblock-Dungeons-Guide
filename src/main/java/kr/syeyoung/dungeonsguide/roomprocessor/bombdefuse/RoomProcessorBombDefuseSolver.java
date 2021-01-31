@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
@@ -19,6 +20,7 @@ import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.number.Number
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
@@ -38,7 +40,9 @@ import java.util.List;
 
 public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
+    @Getter
     private List<ChamberSet> chambers = new ArrayList<ChamberSet>();
+    @Getter
     private OffsetPointSet doors;
 
     private static final List<BombDefuseChamberGenerator> chamberGenerators = new ArrayList<BombDefuseChamberGenerator>();
@@ -97,15 +101,15 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             for (BombDefuseChamberGenerator bdcg:chamberGenerators) {
                 if (bdcg.match(set.getLeft(), set.getRight())) {
                     set.setChamberGen(bdcg);
-                    set.getLeft().setProcessor(bdcg.createLeft(set.getLeft()));
-                    set.getRight().setProcessor(bdcg.createLeft(set.getRight()));
+                    set.getLeft().setProcessor(bdcg.createLeft(set.getLeft(), this));
+                    set.getRight().setProcessor(bdcg.createLeft(set.getRight(), this));
                     break;
                 }
             }
             if (set.getChamberGen() == null) {
                 set.setChamberGen(null);
-                set.getLeft().setProcessor(new DummyDefuseChamberProcessor());
-                set.getRight().setProcessor(new DummyDefuseChamberProcessor());
+                set.getLeft().setProcessor(new DummyDefuseChamberProcessor(this, set.getLeft()));
+                set.getRight().setProcessor(new DummyDefuseChamberProcessor(this, set.getRight()));
             }
         }
     }
@@ -160,6 +164,21 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
+        if (bugged) return;
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
+        for (ChamberSet ch:chambers) {
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().tick();
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().tick();
+                }
+            }
+        }
     }
 
     @Override
@@ -167,12 +186,19 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.drawScreen(partialTicks);
 
         if (bugged) return;
-
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
-            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
-                ch.getLeft().getProcessor().drawScreen(partialTicks);
-            if (ch.getRight() != null && ch.getRight().getProcessor() != null)
-                ch.getRight().getProcessor().drawScreen(partialTicks);
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().drawScreen(partialTicks);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().drawScreen(partialTicks);
+                }
+            }
         }
     }
 
@@ -181,11 +207,19 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (bugged) return;
 
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
-            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
-                ch.getLeft().getProcessor().drawWorld(partialTicks);
-            if (ch.getRight() != null && ch.getRight().getProcessor() != null)
-                ch.getRight().getProcessor().drawWorld(partialTicks);
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().drawWorld(partialTicks);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().drawWorld(partialTicks);
+                }
+            }
         }
     }
 
@@ -207,11 +241,19 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onPostGuiRender(event);
         if (bugged) return;
 
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
-            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
-                ch.getLeft().getProcessor().onPostGuiRender(event);
-            if (ch.getRight() != null && ch.getRight().getProcessor() != null)
-                ch.getRight().getProcessor().onPostGuiRender(event);
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().onPostGuiRender(event);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().onPostGuiRender(event);
+                }
+            }
         }
     }
 
@@ -220,11 +262,19 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.onEntitySpawn(updateEvent);
         if (bugged) return;
 
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
-            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
-                ch.getLeft().getProcessor().onEntitySpawn(updateEvent);
-            if (ch.getRight() != null && ch.getRight().getProcessor() != null)
-                ch.getRight().getProcessor().onEntitySpawn(updateEvent);
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().onEntitySpawn(updateEvent);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().onEntitySpawn(updateEvent);
+                }
+            }
         }
     }
 

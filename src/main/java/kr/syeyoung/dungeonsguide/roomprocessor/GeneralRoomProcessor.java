@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
@@ -20,6 +21,8 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.EntityInteractEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 import java.awt.*;
 import java.util.Map;
@@ -128,6 +131,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
 //            b0 = (byte)(b0 & -17);
 //            updateEvent.entityLiving.getDataWatcher().updateObject(10, Byte.valueOf(b0));
 //        }
+    }
+
+    @Override
+    public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
+
+    }
+
+    @Override
+    public void onInteract(PlayerInteractEntityEvent event) {
+
     }
 
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {

@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.creeper;
 
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.ChamberProcessor;
@@ -21,14 +22,13 @@ public class CreeperProcessorMatcher implements BombDefuseChamberGenerator {
     public String getName() {
         return "creeperMatch";
     }
-
     @Override
-    public ChamberProcessor createLeft(BDChamber left) {
+    public ChamberProcessor createLeft(BDChamber left, RoomProcessorBombDefuseSolver solver) {
         return null;
     }
 
     @Override
-    public ChamberProcessor createRight(BDChamber right) {
+    public ChamberProcessor createRight(BDChamber right, RoomProcessorBombDefuseSolver solver) {
         return null;
     }
 }

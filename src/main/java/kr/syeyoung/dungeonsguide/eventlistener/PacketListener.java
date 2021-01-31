@@ -6,10 +6,13 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
@@ -35,6 +38,17 @@ public class PacketListener extends ChannelDuplexHandler {
 
     @Override
     public void write(ChannelHandlerContext ctx, Object msg, ChannelPromise promise) throws Exception {
+        Packet packet = (Packet) msg;
+        if (packet instanceof C02PacketUseEntity) {
+            C02PacketUseEntity packet2 = (C02PacketUseEntity) packet;
+            PlayerInteractEntityEvent piee;
+            if (packet2.getAction() == C02PacketUseEntity.Action.ATTACK)
+                piee = new PlayerInteractEntityEvent(true, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
+            else
+                piee = new PlayerInteractEntityEvent(false, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
+
+            if (MinecraftForge.EVENT_BUS.post(piee)) return;
+        }
         super.write(ctx, msg, promise);
     }
 

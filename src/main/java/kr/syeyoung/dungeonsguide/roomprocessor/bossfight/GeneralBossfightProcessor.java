@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import lombok.*;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.boss.EntityDragon;
@@ -7,6 +8,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 import java.util.*;
 
@@ -84,6 +86,16 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
 
     @Override
     public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+
+    }
+
+    @Override
+    public void onInteract(PlayerInteractEntityEvent event) {
+
+    }
+
+    @Override
+    public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
 
     }
 

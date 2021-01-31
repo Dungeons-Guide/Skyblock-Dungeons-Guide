@@ -280,6 +280,68 @@ public class DungeonListener {
             e.printStackTrace();
         }
     }
+    @SubscribeEvent()
+    public void onKey2(InputEvent.KeyInputEvent keyInputEvent) {
+        try {
+            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnDungeon()) return;
+
+            DungeonContext context = skyblockStatus.getContext();
+
+            if (skyblockStatus.getContext() != null) {
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                if (context.getBossfightProcessor() != null) {
+                    context.getBossfightProcessor().onKeyPress(keyInputEvent);
+                }
+                RoomProcessor roomProcessor = null;
+                try {
+                    DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                    if (dungeonRoom != null) {
+                        if (dungeonRoom.getRoomProcessor() != null) {
+                            dungeonRoom.getRoomProcessor().onKeyPress(keyInputEvent);
+                        }
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+    @SubscribeEvent()
+    public void onInteract(PlayerInteractEntityEvent interact) {
+        try {
+            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnDungeon()) return;
+
+            DungeonContext context = skyblockStatus.getContext();
+
+            if (skyblockStatus.getContext() != null) {
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                if (context.getBossfightProcessor() != null) {
+                    context.getBossfightProcessor().onInteract(interact);
+                }
+                RoomProcessor roomProcessor = null;
+                try {
+                    DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                    if (dungeonRoom != null) {
+                        if (dungeonRoom.getRoomProcessor() != null) {
+                            dungeonRoom.getRoomProcessor().onInteract(interact);
+                        }
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
