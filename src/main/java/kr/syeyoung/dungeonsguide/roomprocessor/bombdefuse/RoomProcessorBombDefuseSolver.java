@@ -7,9 +7,15 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorBlazeSolver;
+import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.DummyDefuseChamberProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.arrow.ArrowProcessorMatcher;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.color.ColorProcessorMatcher;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.creeper.CreeperProcessorMatcher;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.number.NumberProcessorMatcher;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -37,7 +43,10 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
     private static final List<BombDefuseChamberGenerator> chamberGenerators = new ArrayList<BombDefuseChamberGenerator>();
     {
-
+        chamberGenerators.add(new ArrowProcessorMatcher());
+        chamberGenerators.add(new ColorProcessorMatcher());
+        chamberGenerators.add(new CreeperProcessorMatcher());
+        chamberGenerators.add(new NumberProcessorMatcher());
     }
 
     private boolean bugged = false;
@@ -229,5 +238,14 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         private BDChamber left;
         private BDChamber right;
         private BombDefuseChamberGenerator chamberGen;
+    }
+
+
+    public static class Generator implements RoomProcessorGenerator<RoomProcessorBombDefuseSolver> {
+        @Override
+        public RoomProcessorBombDefuseSolver createNew(DungeonRoom dungeonRoom) {
+            RoomProcessorBombDefuseSolver defaultRoomProcessor = new RoomProcessorBombDefuseSolver(dungeonRoom);
+            return defaultRoomProcessor;
+        }
     }
 }

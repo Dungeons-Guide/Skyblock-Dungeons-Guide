@@ -12,6 +12,9 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -37,7 +40,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawScreen(float partialTicks) {
-
+//        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+//        Entity e = Minecraft.getMinecraft().objectMouseOver.entityHit;
+//        if (e != null) {
+//            fr.drawString(e.getInventory()[4].serializeNBT() +"", 0, 0, 0xFFFFFFFF);
+//            System.out.println(e.getInventory()[4].serializeNBT());
+//        }
     }
 
     @Override
@@ -114,7 +122,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
-
+//        if (updateEvent.entityLiving instanceof EntityArmorStand) {
+//            updateEvent.entityLiving.setInvisible(false);
+//            byte b0 = updateEvent.entityLiving.getDataWatcher().getWatchableObjectByte(10);
+//            b0 = (byte)(b0 & -17);
+//            updateEvent.entityLiving.getDataWatcher().updateObject(10, Byte.valueOf(b0));
+//        }
     }
 
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {
