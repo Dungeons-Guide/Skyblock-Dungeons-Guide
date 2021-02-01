@@ -41,10 +41,10 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
     public void tick() {
         super.tick();
         if (answer != -1) return;
-        d4 = match(getChamber().getEntityAt(EntityArmorStand.class,d1p));
-        d3 = match(getChamber().getEntityAt(EntityArmorStand.class,d2p));
-        d2 = match(getChamber().getEntityAt(EntityArmorStand.class,d3p));
-        d1 = match(getChamber().getEntityAt(EntityArmorStand.class,d4p));
+        d1 = match(getChamber().getEntityAt(EntityArmorStand.class,d1p));
+        d2 = match(getChamber().getEntityAt(EntityArmorStand.class,d2p));
+        d3 = match(getChamber().getEntityAt(EntityArmorStand.class,d3p));
+        d4 = match(getChamber().getEntityAt(EntityArmorStand.class,d4p));
         if (d1 == -1 || d2 == -1 || d3 == -1 || d4 == -1) return;
 
         answer = d1 * 1000 + d2 * 100 + d3 * 10 + d4;
@@ -59,10 +59,10 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-            RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.5f, d1p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.5f, d2p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.5f, d3p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-            RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.5f, d4p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.5f, d1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.5f, d2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.5f, d3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.5f, d4p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
     }
 
@@ -70,31 +70,29 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (answer == -1) return;
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("type", "numberMatch");
-        nbt.setInteger("d1", d1);
-        nbt.setInteger("d2", d2);
-        nbt.setInteger("d3", d3);
-        nbt.setInteger("d4", d4);
+        nbt.setString("a", "a");
+        nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("numberMatch".equals(compound.getString("type"))) {
-            d1 = compound.getInteger("d1");
-            d2 = compound.getInteger("d2");
-            d3 = compound.getInteger("d3");
-            d4 = compound.getInteger("d4");
-            answer = d1 * 1000 + d2 * 100 + d3 * 10 + d4;
+        if ("a".equals(compound.getString("a"))) {
+            answer = compound.getInteger("b");
+            d1 = answer / 1000;
+            d2 = (answer % 1000) / 100;
+            d3 = (answer % 100) / 10;
+            d4 = (answer % 10);
+            answer = d4 * 1000 + d3 * 100 + d2 * 10 + d1;
         }
     }
 
     private int match(EntityArmorStand armorStand) {
         if (armorStand == null) return -1;
         ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 8);
-        String str = ((NBTTagString)list.get(0)).getString();
-        return integers.containsKey(str) ? -1 : integers.get(str);
+        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 
     private static final BiMap<String, Integer> integers = HashBiMap.create(10);

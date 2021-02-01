@@ -3,10 +3,12 @@ package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse;
 import com.google.common.io.ByteArrayDataOutput;
 import com.google.common.io.ByteStreams;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
+import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorBlazeSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
@@ -22,6 +24,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -29,6 +33,9 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 import java.io.ByteArrayInputStream;
@@ -102,7 +109,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 if (bdcg.match(set.getLeft(), set.getRight())) {
                     set.setChamberGen(bdcg);
                     set.getLeft().setProcessor(bdcg.createLeft(set.getLeft(), this));
-                    set.getRight().setProcessor(bdcg.createLeft(set.getRight(), this));
+                    set.getRight().setProcessor(bdcg.createRight(set.getRight(), this));
+                    System.out.println("Marched "+bdcg.getName()+" with "+set.getRight().getLevel());
                     break;
                 }
             }
@@ -124,11 +132,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         try {
             ByteArrayOutputStream baos = new ByteArrayOutputStream();
             DataOutputStream w = new DataOutputStream(baos);
-            CompressedStreamTools.write(compound, w);
+            CompressedStreamTools.writeCompressed(compound, w);
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encode(bytes);
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc " +str);
+            System.out.println(str);
+            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
         } catch (IOException e2) {
             e2.printStackTrace();
             e.sendDebugChat(new ChatComponentText("Failed to send Bomb Defuse Chat"));
@@ -140,10 +149,11 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.chatReceived(component);
         if (bugged) return;
 
-        if (component.getFormattedText().contains("$DG-BD")) {
+        if (component.getFormattedText().contains("$DG-BD ")) {
             try {
                 String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
-                String actual = TextUtils.stripColor(data);
+                String actual = TextUtils.stripColor(data).trim().split(" ")[1];
+                System.out.println(actual);
                 byte[] data2 = Base64.decode(actual);
                 NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
 
@@ -169,34 +179,44 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getLeft().getProcessor().tick();
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().tick();
                 }
             }
         }
     }
 
+
     @Override
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
-
         if (bugged) return;
         BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
+            if (ch.getChamberGen() == null)continue;
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getLeft().getProcessor().drawScreen(partialTicks);
+
+                    FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                    String str = "Current: "+ch.getChamberGen().getName() + " Specific: "+ch.getLeft().getProcessor().getName();
+                    fr.drawString(str,0,0, 0xFFFFFFFF);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().drawScreen(partialTicks);
+
+                    FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                    if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
+                    String str = "Current: "+ch.getChamberGen().getName() + " Specific: "+ch.getRight().getProcessor().getName();
+                    fr.drawString(str,0,0, 0xFFFFFFFF);
                 }
             }
         }
@@ -211,12 +231,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getLeft().getProcessor().drawWorld(partialTicks);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().drawWorld(partialTicks);
                 }
             }
@@ -245,12 +265,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getLeft().getProcessor().onPostGuiRender(event);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().onPostGuiRender(event);
                 }
             }
@@ -266,19 +286,80 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (!ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getLeft().getProcessor().onEntitySpawn(updateEvent);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (!ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().onEntitySpawn(updateEvent);
                 }
             }
         }
     }
 
+    @Override
+    public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
+        super.onKeyPress(keyInputEvent);
+        if (bugged) return;
 
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
+        for (ChamberSet ch:chambers) {
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().onKeyPress(keyInputEvent);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().onKeyPress(keyInputEvent);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onInteract(PlayerInteractEntityEvent event) {
+        super.onInteract(event);
+        if (bugged) return;
+
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
+        for (ChamberSet ch:chambers) {
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().onInteract(event);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().onInteract(event);
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onInteractBlock(PlayerInteractEvent event) {
+        super.onInteractBlock(event);
+        if (bugged) return;
+
+        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
+        for (ChamberSet ch:chambers) {
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getLeft().getProcessor().onInteractBlock(event);
+                }
+            }
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    ch.getRight().getProcessor().onInteractBlock(event);
+                }
+            }
+        }
+    }
 
     @Override public boolean readGlobalChat() { return true; }
 

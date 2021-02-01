@@ -13,6 +13,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
 
@@ -91,6 +92,11 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     @Override
     public void onInteract(PlayerInteractEntityEvent event) {
+
+    }
+
+    @Override
+    public void onInteractBlock(PlayerInteractEvent event) {
 
     }
 

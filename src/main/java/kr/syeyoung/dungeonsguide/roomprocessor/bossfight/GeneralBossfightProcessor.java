@@ -8,6 +8,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 import java.util.*;
@@ -96,6 +97,11 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
 
     @Override
     public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
+
+    }
+
+    @Override
+    public void onInteractBlock(PlayerInteractEvent event) {
 
     }
 

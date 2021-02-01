@@ -6,6 +6,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 public interface RoomProcessor {
@@ -23,4 +24,5 @@ public interface RoomProcessor {
     void onKeyPress(InputEvent.KeyInputEvent keyInputEvent);
 
     void onInteract(PlayerInteractEntityEvent event);
+    void onInteractBlock(PlayerInteractEvent event);
 }

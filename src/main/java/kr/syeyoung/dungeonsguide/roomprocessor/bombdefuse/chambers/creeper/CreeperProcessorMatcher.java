@@ -24,11 +24,11 @@ public class CreeperProcessorMatcher implements BombDefuseChamberGenerator {
     }
     @Override
     public ChamberProcessor createLeft(BDChamber left, RoomProcessorBombDefuseSolver solver) {
-        return null;
+        return new CreeperLeftProcessor(solver, left);
     }
 
     @Override
     public ChamberProcessor createRight(BDChamber right, RoomProcessorBombDefuseSolver solver) {
-        return null;
+        return new CreeperRightProcessor(solver, right);
     }
 }

@@ -37,25 +37,24 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        a4 = match(getChamber().getEntityAt(EntityArmorStand.class,d1p));
-        a3 = match(getChamber().getEntityAt(EntityArmorStand.class,d2p));
-        a2 = match(getChamber().getEntityAt(EntityArmorStand.class,d3p));
-        a1 = match(getChamber().getEntityAt(EntityArmorStand.class,d4p));
+        a1 = match(getChamber().getEntityAt(EntityArmorStand.class,d1p));
+        a2 = match(getChamber().getEntityAt(EntityArmorStand.class,d2p));
+        a3 = match(getChamber().getEntityAt(EntityArmorStand.class,d3p));
+        a4 = match(getChamber().getEntityAt(EntityArmorStand.class,d4p));
     }
 
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(a1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.6f, d1p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(a2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.6f, d2p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(a3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.6f, d3p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(a4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.6f, d4p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : answer + "", center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-
-        RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.2f, d1p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.2f, d2p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.2f, d3p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.2f, d4p.getZ()+ 0.5f, 0xFFFFFFFF, 1.0F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(a1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.6f, d1p.getZ()+ 0.5f, a1 == d1 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(a2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.6f, d2p.getZ()+ 0.5f, a2 == d2 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(a3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.6f, d3p.getZ()+ 0.5f, a3 == d3 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(a4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.6f, d4p.getZ()+ 0.5f, a4 == d4 ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(answer == -1 ? "Answer not received yet. Visit left room to obtain solution" : ("Solution: "+answer) , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(d1+"", d1p.getX()+ 0.5f, d1p.getY()+ 0.2f, d1p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(d2+"", d2p.getX()+ 0.5f, d2p.getY()+ 0.2f, d2p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(d3+"", d3p.getX()+ 0.5f, d3p.getY()+ 0.2f, d3p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(d4+"", d4p.getX()+ 0.5f, d4p.getY()+ 0.2f, d4p.getZ()+ 0.5f, 0xFFFFFF00, 0.03F, false, false, partialTicks);
     }
 
     @Override
@@ -67,26 +66,31 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
             if (a2 == d2 && pos.equals(d2p)) event.setCanceled(true);
             if (a3 == d3 && pos.equals(d3p)) event.setCanceled(true);
             if (a4 == d4 && pos.equals(d4p)) event.setCanceled(true);
+
+            System.out.println(" block ? "+event.isCanceled());
         }
     }
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("numberMatch".equals(compound.getString("type"))) {
-            d1 = compound.getInteger("d1");
-            d2 = compound.getInteger("d2");
-            d3 = compound.getInteger("d3");
-            d4 = compound.getInteger("d4");
-            answer = d1 * 1000 + d2 * 100 + d3 * 10 + d4;
+        if ("a".equals(compound.getString("a"))) {
+            answer = compound.getInteger("b");
+            d1 = answer / 1000;
+            d2 = (answer % 1000) / 100;
+            d3 = (answer % 100) / 10;
+            d4 = (answer % 10);
+            answer = d4 * 1000 + d3 * 100 + d2 * 10 + d1;
         }
     }
 
     private int match(EntityArmorStand armorStand) {
-        if (armorStand == null) return -1;
+        if (armorStand == null) {
+            return -1;
+        }
         ItemStack item = armorStand.getInventory()[4];
-        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 8);
-        String str = ((NBTTagString)list.get(0)).getString();
-        return integers.containsKey(str) ? -1 : integers.get(str);
+        NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        return !integers.containsKey(str) ? -1 : integers.get(str);
     }
 
     private static final BiMap<String, Integer> integers = HashBiMap.create(10);
