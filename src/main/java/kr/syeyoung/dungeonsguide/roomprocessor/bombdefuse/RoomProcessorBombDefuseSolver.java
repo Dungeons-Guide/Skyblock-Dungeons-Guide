@@ -1,31 +1,30 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse;
 
-import com.google.common.io.ByteArrayDataOutput;
-import com.google.common.io.ByteStreams;
 import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
-import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorBlazeSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.DummyDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.arrow.ArrowProcessorMatcher;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.bugged.ImpossibleMatcher;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.color.ColorProcessorMatcher;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.creeper.CreeperProcessorMatcher;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.goldenpath.GoldenPathProcessorMatcher;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.maze.MazeProcessorMatcher;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.number.NumberProcessorMatcher;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -35,9 +34,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.input.Keyboard;
 
-import java.awt.*;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
@@ -58,9 +55,14 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         chamberGenerators.add(new ColorProcessorMatcher());
         chamberGenerators.add(new CreeperProcessorMatcher());
         chamberGenerators.add(new NumberProcessorMatcher());
+        chamberGenerators.add(new GoldenPathProcessorMatcher());
+        chamberGenerators.add(new MazeProcessorMatcher());
+        chamberGenerators.add(new ImpossibleMatcher());
     }
 
     private boolean bugged = false;
+    private boolean maze = false;
+    private boolean impossible = false;
 
     public RoomProcessorBombDefuseSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
@@ -110,7 +112,9 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                     set.setChamberGen(bdcg);
                     set.getLeft().setProcessor(bdcg.createLeft(set.getLeft(), this));
                     set.getRight().setProcessor(bdcg.createRight(set.getRight(), this));
-                    System.out.println("Marched "+bdcg.getName()+" with "+set.getRight().getLevel());
+                    if (bdcg instanceof ImpossibleMatcher) impossible=true;
+                    if (bdcg instanceof MazeProcessorMatcher) maze = true;
+                    System.out.println("Matched "+bdcg.getName()+" with "+set.getLeft().getLevel());
                     break;
                 }
             }
@@ -120,11 +124,15 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 set.getRight().setProcessor(new DummyDefuseChamberProcessor(this, set.getRight()));
             }
         }
+
+        OffsetPoint warning1 = (OffsetPoint) dungeonRoom.getDungeonRoomInfo().getProperties().get("Warning");
+        if (warning1 != null) warning = warning1.getBlockPos(dungeonRoom);
     }
 
     public BDChamber buildChamber(OffsetPointSet ops, int level, boolean left) {
         return new BDChamber(getDungeonRoom(), ops, left, level, null);
     }
+    BlockPos warning;
 
 
     public void communicate(NBTTagCompound compound) {
@@ -239,6 +247,14 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().drawWorld(partialTicks);
                 }
+            }
+        }
+
+        if ((maze || impossible) && warning != null) {
+            if (impossible) {
+                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse is bugged and Impossible" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+            } else {
+                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse contains maze which can be only done with 2 ppl" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             }
         }
     }

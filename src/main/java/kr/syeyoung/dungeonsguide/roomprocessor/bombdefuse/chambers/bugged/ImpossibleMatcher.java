@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.arrow;
+package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.bugged;
 
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -6,29 +6,24 @@ import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BombDefuseCha
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.ChamberProcessor;
 import net.minecraft.init.Blocks;
 
-public class ArrowProcessorMatcher implements BombDefuseChamberGenerator {
+public class ImpossibleMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(8,1,1).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,2).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,3).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,1).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,2).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,3).getBlock() == Blocks.planks;
+        return left.getBlock(1,1,1).getBlock() == Blocks.barrier;
     }
 
     @Override
     public String getName() {
-        return "arrowMatch";
+        return "buggedMazeMatcher";
     }
 
     @Override
     public ChamberProcessor createLeft(BDChamber left, RoomProcessorBombDefuseSolver solver) {
-        return new ArrowLeftProcessor(solver, left);
+        return null;
     }
 
     @Override
     public ChamberProcessor createRight(BDChamber right, RoomProcessorBombDefuseSolver solver) {
-        return new ArrowRightProcessor(solver, right);
+        return null;
     }
 }

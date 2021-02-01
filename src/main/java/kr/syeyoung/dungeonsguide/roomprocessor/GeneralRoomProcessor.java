@@ -45,11 +45,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void drawScreen(float partialTicks) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        Entity e = Minecraft.getMinecraft().objectMouseOver.entityHit;
-        if (e != null && e instanceof EntityArmorStand) {
-            fr.drawString(e.getInventory()[4].getTagCompound() +"", 0, 0, 0xFFFFFFFF);
+//        Entity e = Minecraft.getMinecraft().objectMouseOver.entityHit;
+//        if (e != null && e instanceof EntityArmorStand) {
+
+//            fr.drawString(
+//                    Minecraft.getMinecraft().objectMouseOver +"", 0, 0, 0xFFFFFFFF);
 //            System.out.println(e.getInventory()[4].getTagCompound());
-        }
+//        }
     }
 
     @Override
@@ -128,9 +130,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
 //            updateEvent.entityLiving.setInvisible(false);
-            byte b0 = updateEvent.entityLiving.getDataWatcher().getWatchableObjectByte(10);
-            b0 = (byte)(b0 & -17);
-            updateEvent.entityLiving.getDataWatcher().updateObject(10, Byte.valueOf(b0));
+//            byte b0 = updateEvent.entityLiving.getDataWatcher().getWatchableObjectByte(10);
+//            b0 = (byte)(b0 & -17);
+//            updateEvent.entityLiving.getDataWatcher().updateObject(10, Byte.valueOf(b0));
         }
     }
 

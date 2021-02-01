@@ -1,34 +1,31 @@
-package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.arrow;
+package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.goldenpath;
 
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.ChamberProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.creeper.CreeperLeftProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.creeper.CreeperRightProcessor;
 import net.minecraft.init.Blocks;
 
-public class ArrowProcessorMatcher implements BombDefuseChamberGenerator {
+public class GoldenPathProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(8,1,1).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,2).getBlock() == Blocks.planks &&
-                left.getBlock(8,1,3).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,1).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,2).getBlock() == Blocks.planks &&
-                right.getBlock(0,1,3).getBlock() == Blocks.planks;
+        return left.getBlock(4,0,0).getBlock() == Blocks.hardened_clay
+                || left.getBlock(4,0,0).getBlock() == Blocks.stained_hardened_clay;
     }
 
     @Override
     public String getName() {
-        return "arrowMatch";
+        return "goldPath";
     }
-
     @Override
     public ChamberProcessor createLeft(BDChamber left, RoomProcessorBombDefuseSolver solver) {
-        return new ArrowLeftProcessor(solver, left);
+        return new GoldenPathLeftProcessor(solver, left);
     }
 
     @Override
     public ChamberProcessor createRight(BDChamber right, RoomProcessorBombDefuseSolver solver) {
-        return new ArrowRightProcessor(solver, right);
+        return new GoldenPathRightProcessor(solver, right);
     }
 }

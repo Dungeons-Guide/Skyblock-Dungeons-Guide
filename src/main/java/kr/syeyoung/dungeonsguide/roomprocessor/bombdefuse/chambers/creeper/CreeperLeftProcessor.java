@@ -59,7 +59,9 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
         super.drawWorld(partialTicks);
         for (int i = 0; i < 9; i++) {
             if (((answer >> i) & 0x01) != 0) {
-                RenderUtils.highlightBlock(poses[answer], Color.green, partialTicks, false);
+                RenderUtils.highlightBlock(poses[i], new Color(255,0,0,100), partialTicks, false);
+            } else {
+                RenderUtils.highlightBlock(poses[i], new Color(0,255,0,100), partialTicks, false);
             }
         }
     }
