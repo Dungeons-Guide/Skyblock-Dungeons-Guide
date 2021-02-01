@@ -56,7 +56,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         Block b = getChamber().getRoom().getContext().getWorld().getBlockState(block).getBlock();
 
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("a", "e");
+        nbt.setByte("a", (byte) 5);
         nbt.setInteger("b", Block.getIdFromBlock(b));
         getSolver().communicate(nbt);
     }

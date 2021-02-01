@@ -70,14 +70,14 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (answer == -1) return;
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("a", "c");
+        nbt.setByte("a", (byte) 3);
         nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("c".equals(compound.getString("a"))) {
+        if (3 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             for (int i = 8; i >= 0; i--) {
                 answers[i] = answer % 10;

@@ -70,14 +70,14 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (answer == -1) return;
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("a", "a");
+        nbt.setByte("a", (byte) 1);
         nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("a".equals(compound.getString("a"))) {
+        if (1 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             d1 = answer / 1000;
             d2 = (answer % 1000) / 100;

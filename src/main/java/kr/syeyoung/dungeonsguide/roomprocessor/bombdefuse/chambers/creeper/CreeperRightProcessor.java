@@ -74,19 +74,9 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
             System.out.println(event.isCanceled());
         }
     }
-
-    @Override
-    public void onSendData() {
-        if (answer == -1) return;
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("a", "b");
-        nbt.setInteger("b", answer);
-        getSolver().communicate(nbt);
-    }
-
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("b".equals(compound.getString("a"))) {
+        if (2 == compound.getByte("a")) {
             answer = compound.getInteger("b");
         }
     }

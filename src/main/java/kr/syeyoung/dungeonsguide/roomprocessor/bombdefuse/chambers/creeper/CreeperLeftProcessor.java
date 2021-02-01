@@ -70,14 +70,14 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (answer == -1) return;
         NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("a", "b");
+        nbt.setByte("a", (byte) 2);
         nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("b".equals(compound.getString("a"))) {
+        if (2 == compound.getByte("a")) {
             answer = compound.getInteger("b");
         }
     }

@@ -65,7 +65,7 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("c".equals(compound.getString("a"))) {
+        if (3 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             for (int i = 8; i >= 0; i--) {
                 correctAnswers[i] = answer % 10;
@@ -79,12 +79,12 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     public void onInteract(PlayerInteractEntityEvent event) {
         if (answer == -1) return;
         if (event.getEntity() instanceof EntityArmorStand) {
-            BlockPos pos = event.getEntity().getPosition();
-            for (int i = 0; i < 9; i++) {
-                if (currentAnswers[i] == correctAnswers[i] && pos.equals(grid[i].add(0, -1, 0))) event.setCanceled(true);
-            }
-
-            System.out.println(" block ? "+event.isCanceled());
+//            BlockPos pos = event.getEntity().getPosition();
+//            for (int i = 0; i < 9; i++) {
+//                if (currentAnswers[i] == correctAnswers[i] && pos.equals(grid[i].add(0, -1, 0))) event.setCanceled(true);
+//            }
+//
+//            System.out.println(" block ? "+event.isCanceled());
         }
     }
 

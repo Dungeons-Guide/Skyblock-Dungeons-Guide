@@ -11,7 +11,8 @@ import net.minecraft.init.Blocks;
 public class MazeProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(1,0,1).getBlock() == Blocks.iron_block;
+        return right.getBlock(1,0,1).getBlock() != Blocks.double_stone_slab &&
+                left.getBlock(1,1,1).getBlock() != Blocks.barrier;
     }
 
     @Override

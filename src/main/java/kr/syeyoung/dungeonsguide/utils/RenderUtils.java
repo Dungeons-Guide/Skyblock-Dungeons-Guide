@@ -200,12 +200,13 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
+        GL11.glLineWidth(2);
         if (!depth) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GL11.glLineWidth(2);
+
         GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
         worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
         for (BlockPos pos:poses) {

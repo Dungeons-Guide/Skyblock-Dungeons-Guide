@@ -4,9 +4,12 @@ import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefus
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.IChatComponent;
 
 import javax.vecmath.Vector2f;
 import java.awt.*;
@@ -25,7 +28,6 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
 
-    private long answer = -1;
     // 1 up 2 right 3 down 4 left
     private static final Point vectors[] = new Point[] {
             new Point(0,1),
@@ -35,10 +37,11 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     };
 
     private LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
+    private String goldenPathsolution;
     @Override
     public void tick() {
         super.tick();
-        if (answer != -1) return;
+        if (goldenPathsolution != null) return;
 
         List<Integer> solution = new ArrayList<Integer>();
         Set<BlockPos> visited = new HashSet<BlockPos>();
@@ -62,50 +65,44 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
             }
         }
 
-        answer = 0;
-        for (Integer inte:solution) {
-            answer *= 4;
-            answer += inte;
-        }
+        goldenPathsolution = "";
+        for (Integer i:solution)
+            goldenPathsolution += i;
     }
 
     @Override
     public void drawScreen(float partialTicks) {
-        if (answer == -1) return;
+        if (goldenPathsolution == null) return;
         drawPressKey();
     }
 
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawLines(blocksolution, Color.green, partialTicks, false);
+        RenderUtils.drawLines(blocksolution, Color.blue, partialTicks, false);
     }
 
     @Override
     public void onSendData() {
-        if (answer == -1) return;
-        NBTTagCompound nbt = new NBTTagCompound();
-        nbt.setString("a", "d");
-        nbt.setLong("b", answer);
-        getSolver().communicate(nbt);
+        if (goldenPathsolution == null) return;
+        Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
     }
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
-        if ("d".equals(compound.getString("a"))) {
-            answer = compound.getInteger("b");
+    public void chatReceived(IChatComponent chat) {
+        super.chatReceived(chat);
+        if (chat.getFormattedText().contains("$DG-BDGP ")) {
+            String data = chat.getFormattedText().substring(chat.getFormattedText().indexOf("$DG-BDGP "));
+            String actual = TextUtils.stripColor(data).trim().split(" ")[1].trim();
 
             blocksolution.clear();
             BlockPos lastLoc = new BlockPos(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
-            while (answer != 0) {
-                int dir = (int) (answer % 4);
+            for (Character c:actual.toCharArray()) {
+                int dir = (int) (Integer.parseInt(c+"") % 4);
                 lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
-                answer /= 4;
             }
-
-            answer = compound.getInteger("b");
         }
     }
 }

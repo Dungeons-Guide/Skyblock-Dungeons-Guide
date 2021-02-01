@@ -73,7 +73,7 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
 
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
-        if ("a".equals(compound.getString("a"))) {
+        if (1 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             d1 = answer / 1000;
             d2 = (answer % 1000) / 100;

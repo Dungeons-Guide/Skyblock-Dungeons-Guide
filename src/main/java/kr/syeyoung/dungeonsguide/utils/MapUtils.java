@@ -62,12 +62,14 @@ public class MapUtils {
     }
 
     public static Point findFirstColorWithIn(byte[] colors, byte color, Rectangle dimension) {
+        boolean found = true;
         for (int y = dimension.y; y < (dimension.y + dimension.height);y++) {
             for (int x = dimension.x; x < (dimension.x + dimension.width); x ++) {
-                if (getMapColorAt(colors, x ,y) == color) {
+                if (getMapColorAt(colors, x ,y) == color && found) {
                     record(colors, x, y, new Color(255, 0, 0, 40));
                     return new Point(x,y);
                 }
+                found = getMapColorAt(colors, x,y) == 0;
             }
         }
         return null;

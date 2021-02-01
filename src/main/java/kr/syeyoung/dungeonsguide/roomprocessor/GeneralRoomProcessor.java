@@ -77,6 +77,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (dungeonRoom.getTotalSecrets() == -1) {
             e.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }
+        if (!chat.getFormattedText().contains("/")) return;
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
         DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
         Point pt1 = context.getMapProcessor().worldPointToRoomPoint(pos.add(2, 0, 2));

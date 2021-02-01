@@ -156,6 +156,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     public void chatReceived(IChatComponent component) {
         super.chatReceived(component);
         if (bugged) return;
+        for (ChamberSet ch:chambers) {
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
+                ch.getLeft().getProcessor().chatReceived(component);
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null)
+                ch.getRight().getProcessor().chatReceived(component);
+        }
 
         if (component.getFormattedText().contains("$DG-BD ")) {
             try {
@@ -235,26 +241,28 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (bugged) return;
 
-        BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
-        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
+        OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos((int)Minecraft.getMinecraft().thePlayer.posX, 68, (int)Minecraft.getMinecraft().thePlayer.posZ));
+        boolean found = false;
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                 if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    found = true;
                     ch.getLeft().getProcessor().drawWorld(partialTicks);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                 if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                    found = true;
                     ch.getRight().getProcessor().drawWorld(partialTicks);
                 }
             }
         }
 
-        if ((maze || impossible) && warning != null) {
+        if ((maze || impossible) && warning != null && !found) {
             if (impossible) {
                 RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse is bugged and Impossible" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             } else {
-                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse contains maze which can be only done with 2 ppl" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
+                RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse must be done with 2 people (maze)" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             }
         }
     }
