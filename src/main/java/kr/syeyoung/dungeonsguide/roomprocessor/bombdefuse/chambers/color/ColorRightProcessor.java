@@ -96,34 +96,6 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         return (byte) (!integers.containsKey(str) ? 0 : integers.get(str));
     }
 
-    private String lastColor = "";
-    private ArrayList<String> knownColors = new ArrayList<String>();
-    @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            try {
-                ItemStack item = updateEvent.entityLiving.getInventory()[4];
-                NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
-                String str = ((NBTTagCompound) list.get(0)).getString("Value");
-
-                if (!lastColor.equals(str) && !knownColors.contains(str)) {
-                    System.out.println("---------------------");
-                    System.out.println(str);
-                    System.out.println(str);
-                    knownColors.add(str);
-                    System.out.println(str);
-                    System.out.println("---------------------2");
-                    for (String str2 : knownColors) {
-                        System.out.println(str2);
-                    }
-                    System.out.println("---------------------3");
-                    e.sendDebugChat(new ChatComponentText("right processor new color detec"));
-                }
-                lastColor = str;
-            } catch (Exception e) {}
-        }
-    }
-
     private static final Map<String, Integer> integers = new HashMap<String, Integer>();
     private static final BiMap<Integer, String> colors = HashBiMap.create();
     static {

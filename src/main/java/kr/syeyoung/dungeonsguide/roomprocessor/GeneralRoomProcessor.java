@@ -128,12 +128,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving instanceof EntityArmorStand) {
-//            updateEvent.entityLiving.setInvisible(false);
-//            byte b0 = updateEvent.entityLiving.getDataWatcher().getWatchableObjectByte(10);
-//            b0 = (byte)(b0 & -17);
-//            updateEvent.entityLiving.getDataWatcher().updateObject(10, Byte.valueOf(b0));
-        }
     }
 
     @Override
@@ -143,9 +137,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onInteract(PlayerInteractEntityEvent event) {
-        if (event.getEntity() != null && event.getEntity() instanceof EntityArmorStand) {
-            System.out.println( event.getEntity().getInventory()[4].getTagCompound());
-        }
     }
 
     @Override

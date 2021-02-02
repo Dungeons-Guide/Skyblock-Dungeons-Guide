@@ -89,7 +89,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(w1 == null ? "Request Not Received Yet" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(w1 == null ? "Request Not Received Yet" : "Building- "+w1.getLocalizedName() +" / "+w2.getLocalizedName() +" / "+w3.getLocalizedName() , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
         RenderUtils.drawTextAtWorld(w1 == null ? "null" : w1.getLocalizedName(), b1p.getX()+ 0.5f, b1p.getY() + 0.2f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld(w2 == null ? "null" : w2.getLocalizedName(), b2p.getX()+ 0.5f, b2p.getY() + 0.2f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
@@ -118,7 +118,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         if (!solutionBuilt) return;
         NBTTagCompound nbt = new NBTTagCompound();
         nbt.setByte("a", (byte) 7);
-        int answer = s1 * 100 + s2 * 10 + s3;
+        int answer = s1 * 10000 + s2 * 100 + s3;
         nbt.setInteger("b", answer);
         getSolver().communicate(nbt);
     }
