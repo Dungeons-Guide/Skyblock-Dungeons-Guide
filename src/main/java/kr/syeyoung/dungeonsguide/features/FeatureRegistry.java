@@ -55,6 +55,7 @@ public class FeatureRegistry {
     public static final SimpleFeature SOLVER_BOX = register(new SimpleFeature("solver", "Box Puzzle Solver (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box"));
     public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("solver", "Creeper Puzzle Solver", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
     public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("solver", "Teleport Puzzle Solver", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
+    public static final SimpleFeature SOLVER_BOMBDEFUSE = register(new SimpleFeature("solver", "Bomb Defuse Puzzle Solver", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse"));
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());

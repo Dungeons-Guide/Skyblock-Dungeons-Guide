@@ -67,6 +67,10 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
     public RoomProcessorBombDefuseSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
+        if (!FeatureRegistry.SOLVER_BOMBDEFUSE.isEnabled()) {
+            bugged = true;
+            return;
+        }
         chambers.add(new ChamberSet(
                 buildChamber((OffsetPointSet) dungeonRoom.getDungeonRoomInfo().getProperties().get("L1"), 1, true),
                 buildChamber((OffsetPointSet) dungeonRoom.getDungeonRoomInfo().getProperties().get("R1"), 1, true), null
