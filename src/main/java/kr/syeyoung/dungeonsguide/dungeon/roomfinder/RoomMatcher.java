@@ -5,6 +5,8 @@ import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.utils.ShortUtils;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.util.BlockPos;
+import net.minecraft.world.World;
 
 import java.util.List;
 
@@ -17,12 +19,26 @@ public class RoomMatcher {
     private int rotation; // how much the "found room" has to rotate to match the given dungeon room info. !
     private boolean triedMatch = false;
 
+    private World w;
+
     public RoomMatcher(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
+        w = dungeonRoom.getContext().getWorld();
     }
 
     public DungeonRoomInfo match() {
         if (triedMatch) return match;
+
+        int zz = dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1;
+        int xx = dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1;
+        for (int z = 0; z < zz; z ++) {
+            for (int x = 0; x < xx; x++) {
+                if (x % 8 == 0 && z % 8 == 0 && dungeonRoom.getContext().getWorld().getChunkFromBlockCoords(dungeonRoom.getRelativeBlockPosAt(x, 0, z)).isEmpty()) {
+                    throw new IllegalStateException("chunk is not loaded");
+                }
+            }
+        }
+
         triedMatch = true;
         for (int rotation = 0; rotation < 4; rotation++) {
             short shape = dungeonRoom.getShape();
@@ -54,6 +70,7 @@ public class RoomMatcher {
                 int data = res[z][x];
                 if (data == -1) continue;
                 Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
+
                 if (b == null || Block.getIdFromBlock(b) != data) {
                     return false;
                 }

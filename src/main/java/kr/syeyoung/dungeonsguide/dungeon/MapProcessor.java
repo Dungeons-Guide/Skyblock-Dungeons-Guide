@@ -224,6 +224,7 @@ public class MapProcessor {
                 if (color != 0 && color != 85) {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
+                    if (rooms == null) continue;
                     e.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
                     e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin()));
                     StringBuilder builder = new StringBuilder();
@@ -286,7 +287,12 @@ public class MapProcessor {
         Point pt2 = roomPointToMapPoint(ayConnected.get(0));
         byte unit1 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
 
-        return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), roomPointToWorldPoint(new Point(maxX+1, maxY+1)).add(-1, 0, -1), context);
+        try{
+            return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), roomPointToWorldPoint(new Point(maxX+1, maxY+1)).add(-1, 0, -1), context);
+        } catch (IllegalStateException ex) {
+            e.sendDebugChat(new ChatComponentText("Failed to load room, retrying later :: "+ex.getLocalizedMessage()));
+            return null;
+        }
     }
 
     private boolean checkIfConnected(byte[] mapData, Point unitPoint1, Point unitPoint2) {
@@ -309,6 +315,14 @@ public class MapProcessor {
         return unit1 == unit2 && unit2 == unit3 && unit1 != 0;
     }
 
+    public boolean isThereDifference(byte[] colors1, byte[] colors) {
+        if (colors1 == null || colors == null) return true;
+        for (int i =0; i < colors.length; i++)
+            if (colors[i] != colors1[i]) return true;
+        return false;
+    }
+    private int stabilizationTick = 0;
+
     public void tick() {
         if (waitCnt < 5) {
             waitCnt++;
@@ -325,11 +339,22 @@ public class MapProcessor {
             else {
                 mapData = mapData1.colors;
                 lastMapData2 = mapData1;
+
+                if (isThereDifference(lastMapData, mapData)) {
+                    stabilizationTick =0;
+                } else {
+                    stabilizationTick++;
+                }
+
+                if (stabilizationTick > 5) {
+                    if (doorDimension == null) buildMap(mapData);
+                    else processMap(mapData);
+                }
+                lastMapData = mapData;
             }
+
         }
 
-        if (lastMapData == null && mapData != null) buildMap(mapData);
-        else if (mapData != null) processMap(mapData);
 
         if (lastMapData2 != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
             label: for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
@@ -341,7 +366,7 @@ public class MapProcessor {
                 for (String player : context.getPlayers()) { // check nearby players
                     if (mapIconToPlayerMap.containsKey(player)) continue;
                     EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
-                    if (entityPlayer == null) continue;
+                    if (entityPlayer == null || entityPlayer.isInvisible()) continue;
                     BlockPos pos = entityPlayer.getPosition();
                     int dx = mapPos.getX() - pos.getX();
                     int dz = mapPos.getZ() - pos.getZ();
@@ -367,6 +392,5 @@ public class MapProcessor {
             }
         }
 
-        lastMapData = mapData;
     }
 }
