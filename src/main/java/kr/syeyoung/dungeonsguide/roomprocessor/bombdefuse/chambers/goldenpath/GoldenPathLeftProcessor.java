@@ -46,9 +46,11 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
         List<Integer> solution = new ArrayList<Integer>();
         Set<BlockPos> visited = new HashSet<BlockPos>();
         BlockPos lastLoc = new BlockPos(4,0,0);
+        visited.add(lastLoc);
         blocksolution.add(getChamber().getBlockPos(4,1,0));
         BlockPos target = new BlockPos(4,0,5);
         while (!lastLoc.equals(target)) {
+            boolean solution2 = false;
             for (int i =0; i<vectors.length; i++) {
                 BlockPos target2 = lastLoc.add(vectors[i].x, 0, vectors[i].y);
                 if (visited.contains(target2)) continue;
@@ -58,10 +60,15 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
                 if (getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.hardened_clay
                 || getChamber().getBlock(target2.getX(), 0, target2.getZ()).getBlock() == Blocks.stained_hardened_clay) {
                     lastLoc = target2;
+
                     blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
                     solution.add(i);
+                    solution2 = true;
                     break;
                 }
+            }
+            if (!solution2){
+                return;
             }
         }
 

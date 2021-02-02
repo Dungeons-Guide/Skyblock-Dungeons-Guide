@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.color;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.Keybinds;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
@@ -22,7 +23,7 @@ import java.util.Map;
 public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     public ColorLeftProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
         super(solver, chamber);
-        center = chamber.getBlockPos(4,4,4);
+        center = chamber.getBlockPos(4,6,4);
         b1p = chamber.getBlockPos(1,1,4);
         b2p = chamber.getBlockPos(4,1,4);
         b3p = chamber.getBlockPos(7,1,4);
@@ -98,18 +99,21 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         RenderUtils.drawTextAtWorld(c2 == null ? "null" : c2.getLocalizedName(), b2p.getX()+ 0.5f, b2p.getY() + 0.6f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld(c3 == null ? "null" : c3.getLocalizedName(), b3p.getX()+ 0.5f, b3p.getY() + 0.6f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(s1 + "", b1p.getX()+ 0.5f, b1p.getY() + 2.6f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(s2 + "", b2p.getX()+ 0.5f, b2p.getY() + 3.6f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(s3 + "", b3p.getX()+ 0.5f, b3p.getY() + 2.6f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        if (FeatureRegistry.DEBUG.isEnabled()) {
+            RenderUtils.drawTextAtWorld(s1 + "", b1p.getX() + 0.5f, b1p.getY() + 2.6f, b1p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(s2 + "", b2p.getX() + 0.5f, b2p.getY() + 3.6f, b2p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(s3 + "", b3p.getX() + 0.5f, b3p.getY() + 2.6f, b3p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        }
 
         RenderUtils.drawTextAtWorld(colors.get(s1), b1p.getX()+ 0.5f, b1p.getY() + 2.2f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld(colors.get(s2), b2p.getX()+ 0.5f, b2p.getY() + 3.2f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld(colors.get(s3), b3p.getX()+ 0.5f, b3p.getY() + 2.2f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(s1t+"", b1p.getX()+ 0.5f, b1p.getY() + 1.5f, b1p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(s2t+"", b2p.getX()+ 0.5f, b2p.getY() + 2f, b2p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld(s3t+"", b3p.getX()+ 0.5f, b3p.getY() + 1.5f, b3p.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-
+        if (FeatureRegistry.DEBUG.isEnabled()) {
+            RenderUtils.drawTextAtWorld(s1t + "", b1p.getX() + 0.5f, b1p.getY() + 1.5f, b1p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(s2t + "", b2p.getX() + 0.5f, b2p.getY() + 2f, b2p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+            RenderUtils.drawTextAtWorld(s3t + "", b3p.getX() + 0.5f, b3p.getY() + 1.5f, b3p.getZ() + 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        }
     }
 
     @Override

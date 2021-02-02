@@ -35,14 +35,6 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        if (answer != -1) return;
-        answer = 0;
-        for (int i = 0; i < poses.length; i++) {
-            BlockPos pos = poses[i];
-            if (getChamber().getRoom().getContext().getWorld().getBlockState(pos).getBlock() == Blocks.air) {
-                answer |= (1 << i);
-            }
-        }
     }
 
     @Override

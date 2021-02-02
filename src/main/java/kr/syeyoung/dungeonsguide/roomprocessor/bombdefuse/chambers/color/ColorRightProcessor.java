@@ -47,22 +47,22 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        c1b = match(getChamber().getEntityAt(EntityArmorStand.class,b1.add(0, -1, 0)));
+        c3b = match(getChamber().getEntityAt(EntityArmorStand.class,b1.add(0, -1, 0)));
         c2b = match(getChamber().getEntityAt(EntityArmorStand.class,b2.add(0, -1, 0)));
-        c3b = match(getChamber().getEntityAt(EntityArmorStand.class,b3.add(0, -1, 0)));
+        c1b = match(getChamber().getEntityAt(EntityArmorStand.class,b3.add(0, -1, 0)));
     }
 
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         RenderUtils.drawTextAtWorld(answer == -1 ? "Press "+ Keyboard.getKeyName(Keybinds.sendBombdefuse.getKeyCode())+" to request solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get(c1b), b1.getX()+ 0.5f, b1.getY()+0.6f, b1.getZ()+ 0.5f,c1b == b1b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get(c2b), b2.getX()+ 0.5f, b2.getY()+0.6f, b2.getZ()+ 0.5f,c2b == b2b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get(c3b), b3.getX()+ 0.5f, b3.getY()+0.6f, b3.getZ()+ 0.5f,c3b == b3b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) c1b), b1.getX()+ 0.5f, b1.getY()+0.6f, b1.getZ()+ 0.5f,c1b == b1b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) c2b), b2.getX()+ 0.5f, b2.getY()+0.6f, b2.getZ()+ 0.5f,c2b == b2b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) c3b), b3.getX()+ 0.5f, b3.getY()+0.6f, b3.getZ()+ 0.5f,c3b == b3b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld( colors.get(b1b), b1.getX()+ 0.5f, b1.getY()+0.2f, b1.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get(b2b), b2.getX()+ 0.5f, b2.getY()+0.2f, b2.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
-        RenderUtils.drawTextAtWorld( colors.get(b3b), b3.getX()+ 0.5f, b3.getY()+0.2f, b3.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) b1b), b1.getX()+ 0.5f, b1.getY()+0.2f, b1.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) b2b), b2.getX()+ 0.5f, b2.getY()+0.2f, b2.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld( colors.get((int) b3b), b3.getX()+ 0.5f, b3.getY()+0.2f, b3.getZ()+ 0.5f,0xFFFFFF00, 0.03F, false, false, partialTicks);
     }
 
     @Override
@@ -79,10 +79,11 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
         if (7 == compound.getByte("a")) {
-            int answer = compound.getInteger("b");
+            answer = compound.getInteger("b");
             b1b = (byte) (answer / 10000);
             b2b = (byte) ((answer % 10000) / 100);
             b3b = (byte) (answer % 100);
+
         }
     }
 
