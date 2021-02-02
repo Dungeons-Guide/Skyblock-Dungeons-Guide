@@ -265,11 +265,11 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             } else {
                 RenderUtils.drawTextAtWorld("Warning: This Bomb Defuse must be done with 2 people (maze)" , warning.getX()+ 0.5f, warning.getY(), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             }
-            if (FeatureRegistry.DEBUG.isEnabled()) {
-                for (int i = 0; i < 4; i++) {
-                    BombDefuseChamberGenerator bdcg = chambers.get(i).getChamberGen();
-                    RenderUtils.drawTextAtWorld((i+1)+". "+(bdcg == null ? "null" : bdcg.getName()) , warning.getX()+ 0.5f, warning.getY() - (i * 0.3f), warning.getZ()+ 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
-                }
+        }
+        if (warning != null) {
+            for (int i = 0; i < 4; i++) {
+                BombDefuseChamberGenerator bdcg = chambers.get(i).getChamberGen();
+                RenderUtils.drawTextAtWorld((i + 1) + ". " + (bdcg == null ? "null" : bdcg.getName()), warning.getX() + 0.5f, warning.getY() - ((i + 1) * 0.3f), warning.getZ() + 0.5f, 0xFF00FF00, 0.03F, false, false, partialTicks);
             }
         }
     }
@@ -322,9 +322,9 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+//                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
                     ch.getRight().getProcessor().onEntitySpawn(updateEvent);
-                }
+//                }
             }
         }
     }

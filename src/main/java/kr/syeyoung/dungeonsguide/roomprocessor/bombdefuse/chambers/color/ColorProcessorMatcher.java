@@ -9,9 +9,7 @@ import net.minecraft.init.Blocks;
 public class ColorProcessorMatcher implements BombDefuseChamberGenerator {
     @Override
     public boolean match(BDChamber left, BDChamber right) {
-        return left.getBlock(8,1,1).getBlock() == Blocks.stonebrick &&
-                left.getBlock(8,1,2).getBlock() == Blocks.stonebrick &&
-                left.getBlock(8,1,3).getBlock() == Blocks.stonebrick &&
+        return
                 right.getBlock(0,1,1).getBlock() == Blocks.stonebrick &&
                 right.getBlock(0,1,2).getBlock() == Blocks.stonebrick &&
                 right.getBlock(0,1,3).getBlock() == Blocks.stonebrick;
@@ -23,11 +21,11 @@ public class ColorProcessorMatcher implements BombDefuseChamberGenerator {
     }
     @Override
     public ChamberProcessor createLeft(BDChamber left, RoomProcessorBombDefuseSolver solver) {
-        return null;
+        return new ColorLeftProcessor(solver,left);
     }
 
     @Override
     public ChamberProcessor createRight(BDChamber right, RoomProcessorBombDefuseSolver solver) {
-        return null;
+        return new ColorRightProcessor(solver,right);
     }
 }
