@@ -47,9 +47,9 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void tick() {
         super.tick();
-        c3b = match(getChamber().getEntityAt(EntityArmorStand.class,b1.add(0, -1, 0)));
+        c1b = match(getChamber().getEntityAt(EntityArmorStand.class,b1.add(0, -1, 0)));
         c2b = match(getChamber().getEntityAt(EntityArmorStand.class,b2.add(0, -1, 0)));
-        c1b = match(getChamber().getEntityAt(EntityArmorStand.class,b3.add(0, -1, 0)));
+        c3b = match(getChamber().getEntityAt(EntityArmorStand.class,b3.add(0, -1, 0)));
     }
 
     @Override
@@ -80,9 +80,9 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     public void onDataRecieve(NBTTagCompound compound) {
         if (7 == compound.getByte("a")) {
             answer = compound.getInteger("b");
-            b1b = (byte) (answer / 10000);
+            b3b = (byte) (answer / 10000);
             b2b = (byte) ((answer % 10000) / 100);
-            b3b = (byte) (answer % 100);
+            b1b = (byte) (answer % 100);
 
         }
     }
@@ -94,6 +94,9 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         ItemStack item = armorStand.getInventory()[4];
         NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
         String str = ((NBTTagCompound)list.get(0)).getString("Value");
+        if (!integers.containsKey(str)) {
+            System.out.println("Cant determine "+str);
+        }
         return (byte) (!integers.containsKey(str) ? 0 : integers.get(str));
     }
 
