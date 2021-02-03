@@ -77,7 +77,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
                     double z = zslope * x + zIntercept;
 
                     if (y > axis.minY && y < axis.maxY && z > axis.minZ && z < axis.maxZ) {
-                        // found pair
+                        // found pairll
                         highestDist = (int) second.distanceSq(first);
                         highestMatch = second;
                         break;
