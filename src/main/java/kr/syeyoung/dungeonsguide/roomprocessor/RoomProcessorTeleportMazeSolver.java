@@ -53,7 +53,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
             posZ1 = entityPlayerSP.posZ;
             slope1 = lookVec.zCoord / lookVec.xCoord;
             times ++;
-        } else if (times % 4 == 3 && intersection == null) {
+        } else if (times % 4 == 3) {
             posX2 = entityPlayerSP.posX;
             posZ2 = entityPlayerSP.posZ;
             slope2 = lookVec.zCoord / lookVec.xCoord;
