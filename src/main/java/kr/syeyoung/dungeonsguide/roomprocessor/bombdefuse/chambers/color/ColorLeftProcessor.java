@@ -16,6 +16,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 import org.lwjgl.input.Keyboard;
+import org.omg.PortableInterceptor.INACTIVE;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -206,5 +207,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         colors.put(18, "dark-red");
         integers.put("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMzM4NmY5YjBiMWQ5ODc5YzNkYTMzYzdhOGNhMjQ0MGMxZTQxMWZlOTNjMjdjOWRiYmZmNTZiZDY5N2JiNzM3NSJ9fX0=", 19);
         colors.put(19, "i-rainbow");
+        integers.put("eyJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvMjdiYmQwYjI5MTFjOTZiNWQ4N2IyZGY3NjY5MWE1MWI4YjEyYzZmZWZkNTIzMTQ2ZDhhYzVlZjFiOGVlIn19fQ==", 20);
+        colors.put(20, "yellow");
     }
 }
