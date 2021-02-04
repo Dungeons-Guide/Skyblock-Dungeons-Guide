@@ -1,41 +1,44 @@
-package kr.syeyoung.dungeonsguide.roomedit.elements;
+package kr.syeyoung.dungeonsguide.gui.elements;
 
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
-import java.util.List;
 
 @Getter
 @Setter
-public class MStringSelectionButton extends MPanel {
+public class MIntegerSelectionButton extends MPanel {
 
-    private List<String> possible;
-    private int selectedIndex;
+    private int data;
 
     private MButton dec;
     private MButton inc;
-    private MLabel selected;
+    private MTextField selected;
 
     @Getter
     @Setter
     private Runnable onUpdate;
 
-    public MStringSelectionButton(final List<String> possible, String defaultValue) {
-        this.possible = possible;
-        selectedIndex = possible.indexOf(defaultValue);
-        if (selectedIndex == -1) selectedIndex = 0;
+    public MIntegerSelectionButton(int data2) {
+        this.data = data2;
 
         dec = new MButton(); dec.setText("<"); add(dec);
         inc = new MButton(); inc.setText(">"); add(inc);
-        selected = new MLabel(); updateSelected(); add(selected);
+        selected = new MTextField() {
+            @Override
+            public void edit(String str) {
+                try {
+                    data = Integer.parseInt(str);
+                    onUpdate.run();
+                } catch (Exception e) {}
+            }
+        }; updateSelected(); add(selected);
 
         dec.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                selectedIndex++;
-                if (selectedIndex >= possible.size()) selectedIndex = 0;
+                data--;
                 updateSelected();
                 onUpdate.run();
             }
@@ -43,26 +46,19 @@ public class MStringSelectionButton extends MPanel {
         inc.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                selectedIndex --;
-                if (selectedIndex < 0) selectedIndex = possible.size() - 1;
+                data ++;
                 updateSelected();
                 onUpdate.run();
             }
         });
     }
 
-    public String selectionToDisplay(String selection) {
-        return selection;
-    }
-
-    public String getSelected() {
-        if (possible.size() == 0) return null;
-        return possible.get(selectedIndex);
+    public int getSelected() {
+        return data;
     }
 
     private void updateSelected() {
-        if (possible.size() == 0) selected.setText("-Empty-");
-        else selected.setText(selectionToDisplay(possible.get(selectedIndex)));
+        selected.setText(data+"");
     }
 
     @Override

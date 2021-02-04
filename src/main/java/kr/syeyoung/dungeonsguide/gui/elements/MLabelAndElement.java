@@ -1,6 +1,6 @@
-package kr.syeyoung.dungeonsguide.roomedit.elements;
+package kr.syeyoung.dungeonsguide.gui.elements;
 
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;

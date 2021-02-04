@@ -1,11 +1,9 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 

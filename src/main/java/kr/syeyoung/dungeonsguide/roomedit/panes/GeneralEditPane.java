@@ -4,8 +4,8 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -16,16 +16,11 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import scala.collection.immutable.List;
 
 import java.awt.*;
-import java.io.DataOutputStream;
 import java.io.File;
-import java.io.FileOutputStream;
-import java.io.IOException;
 import java.util.ArrayList;
 import java.util.UUID;
-import java.util.zip.GZIPOutputStream;
 
 public class GeneralEditPane extends MPanel {
     private DungeonRoom dungeonRoom;

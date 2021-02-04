@@ -1,6 +1,6 @@
-package kr.syeyoung.dungeonsguide.roomedit.elements;
+package kr.syeyoung.dungeonsguide.gui.elements;
 
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -11,33 +11,25 @@ import java.awt.*;
 
 @Getter
 @Setter
-public class MTabButton extends MPanel {
+public class MButton extends MPanel {
     private String text;
 
     private Color foreground = Color.white;
-    private Color hover = new Color(236, 236, 236, 64);
-    private Color clicked = new Color(30,30,30,0);
-    private Color selected = new Color(0,0,0,255);
-    private Color disabled = new Color(0,0,0);
+    private Color hover = Color.gray;
+    private Color clicked = Color.lightGray;
+    private Color disabled = Color.darkGray;
 
     private boolean enabled = true;
 
-    private MTabbedPane tabbedPane;
-
-    public MTabButton(MTabbedPane tabbedPane, String key) {
-        this.tabbedPane = tabbedPane;
-        this.text = key;
-    }
+    private Runnable onActionPerformed;
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
         Dimension bounds = getSize();
 
-        Color bg = null;
+        Color bg = backgroundColor;
         if (!enabled) {
             bg = disabled;
-        } else if (tabbedPane.getSelectedKey().equals(text)) {
-            bg = selected;
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
         }
@@ -45,17 +37,16 @@ public class MTabButton extends MPanel {
             Gui.drawRect(0,0,getBounds().width, getBounds().height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
-        int width = renderer.getStringWidth(text);
+        int width = renderer.getStringWidth(getText());
         int x = (getBounds().width - width) / 2;
         int y = (getBounds().height - renderer.FONT_HEIGHT) / 2;
 
-        renderer.drawString(text, x,y, foreground.getRGB());
+        renderer.drawString(getText(), x,y, foreground.getRGB());
     }
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (lastAbsClip.contains(absMouseX, absMouseY)) {
-            tabbedPane.setSelectedKey(text);
-        }
+        if (onActionPerformed != null && lastAbsClip.contains(absMouseX, absMouseY))
+            onActionPerformed.run();
     }
 }

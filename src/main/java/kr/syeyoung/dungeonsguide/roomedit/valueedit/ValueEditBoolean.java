@@ -1,10 +1,10 @@
 package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MStringSelectionButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MStringSelectionButton;
 
 import java.awt.*;
 import java.util.Arrays;

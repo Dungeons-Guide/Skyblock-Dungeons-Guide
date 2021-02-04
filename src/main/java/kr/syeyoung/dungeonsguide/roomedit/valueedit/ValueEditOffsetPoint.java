@@ -2,9 +2,9 @@ package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

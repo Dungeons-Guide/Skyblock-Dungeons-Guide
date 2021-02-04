@@ -2,8 +2,8 @@ package kr.syeyoung.dungeonsguide.config.guiconfig;
 
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;

@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
-import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MParameter;
+import kr.syeyoung.dungeonsguide.gui.elements.MParameter;
 
 import java.util.List;
 

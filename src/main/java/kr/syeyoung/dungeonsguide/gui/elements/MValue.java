@@ -1,8 +1,7 @@
-package kr.syeyoung.dungeonsguide.roomedit.elements;
+package kr.syeyoung.dungeonsguide.gui.elements;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
 import lombok.Getter;
@@ -10,7 +9,6 @@ import lombok.Setter;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.List;
 public class MValue<T> extends MPanel {
     @Getter

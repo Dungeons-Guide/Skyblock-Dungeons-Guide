@@ -1,11 +1,8 @@
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MTabbedPane;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MTabbedPane;
 import kr.syeyoung.dungeonsguide.roomedit.panes.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;

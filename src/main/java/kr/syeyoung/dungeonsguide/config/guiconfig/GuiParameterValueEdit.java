@@ -1,11 +1,9 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
+import kr.syeyoung.dungeonsguide.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
@@ -15,13 +13,11 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.common.MinecraftForge;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.List;
 
 public class GuiParameterValueEdit extends GuiScreen {
 

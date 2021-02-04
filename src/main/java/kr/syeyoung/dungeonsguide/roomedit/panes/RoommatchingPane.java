@@ -1,11 +1,9 @@
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionTree;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MTextField;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MTextField;
 
 import java.awt.*;
 import java.util.UUID;

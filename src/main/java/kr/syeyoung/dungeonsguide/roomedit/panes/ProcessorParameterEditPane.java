@@ -2,10 +2,10 @@ package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MParameter;
+import kr.syeyoung.dungeonsguide.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MParameter;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditRegistry;
 

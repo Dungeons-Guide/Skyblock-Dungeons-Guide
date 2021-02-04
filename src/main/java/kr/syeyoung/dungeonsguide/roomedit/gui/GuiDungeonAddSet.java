@@ -2,8 +2,8 @@ package kr.syeyoung.dungeonsguide.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;

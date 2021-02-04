@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.roomedit;
+package kr.syeyoung.dungeonsguide.gui;
 
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -6,14 +6,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.List;
-import java.util.ArrayList;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 @Getter

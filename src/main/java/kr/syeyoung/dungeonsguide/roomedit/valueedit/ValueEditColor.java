@@ -1,9 +1,8 @@
 package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
-import net.minecraft.client.gui.Gui;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;

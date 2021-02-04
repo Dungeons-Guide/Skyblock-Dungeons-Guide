@@ -1,18 +1,14 @@
 package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.*;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.Arrays;

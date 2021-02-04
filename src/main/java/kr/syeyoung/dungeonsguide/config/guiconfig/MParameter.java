@@ -1,16 +1,11 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiParameterConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiParameterValueEdit;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MLabel;
+import kr.syeyoung.dungeonsguide.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;

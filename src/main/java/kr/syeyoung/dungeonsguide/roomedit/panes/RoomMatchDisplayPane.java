@@ -3,7 +3,7 @@ package kr.syeyoung.dungeonsguide.roomedit.panes;
 import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;

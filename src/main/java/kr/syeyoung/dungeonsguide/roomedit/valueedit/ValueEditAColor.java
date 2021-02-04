@@ -1,11 +1,11 @@
 package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MColor;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MFloatSelectionButton;
-import kr.syeyoung.dungeonsguide.roomedit.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MColor;
+import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;

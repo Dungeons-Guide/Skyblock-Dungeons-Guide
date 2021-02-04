@@ -1,7 +1,7 @@
-package kr.syeyoung.dungeonsguide.roomedit.elements;
+package kr.syeyoung.dungeonsguide.gui.elements;
 
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.roomedit.MPanel;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.panes.DynamicEditor;
