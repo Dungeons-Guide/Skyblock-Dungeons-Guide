@@ -119,7 +119,7 @@ public class MPanel {
         GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }
 
-    private Rectangle determineClip(Rectangle rect1, Rectangle rect2) {
+    protected Rectangle determineClip(Rectangle rect1, Rectangle rect2) {
         int minX = Math.max(rect1.x, rect2.x);
         int minY = Math.max(rect1.y, rect2.y);
         int maxX = Math.min(rect1.x + rect1.width, rect2.x + rect2.width);

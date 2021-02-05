@@ -24,13 +24,20 @@ import java.util.Map;
 public abstract class TextHUDFeature extends GuiFeature {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
-        this.parameters.put("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textstyle"));
+        this.parameters.put("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
     }
 
     @Override
     public void drawHUD(float partialTicks) {
         drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
     }
+
+    @Override
+    public void drawDemo(float partialTicks) {
+        drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());
+    }
+
+    public abstract boolean isEnabled();
 
     public abstract List<String> getUsedTextStyle();
     public List<StyledText> getDummyText() {
@@ -41,13 +48,21 @@ public abstract class TextHUDFeature extends GuiFeature {
     public List<TextStyle> getStyles() {
         return this.<List<TextStyle>>getParameter("textStyles").getValue();
     }
+    private Map<String, TextStyle> stylesMap;
     public Map<String, TextStyle> getStylesMap() {
-        List<TextStyle> styles = getStyles();
-        Map<String, TextStyle> res = new HashMap<String, TextStyle>();
-        for (TextStyle ts:styles) {
-            res.put(ts.getGroupName(), ts);
+        if (stylesMap == null) {
+            List<TextStyle> styles = getStyles();
+            Map<String, TextStyle> res = new HashMap<String, TextStyle>();
+            for (TextStyle ts : styles) {
+                res.put(ts.getGroupName(), ts);
+            }
+            for (String str : getUsedTextStyle()) {
+                if (!res.containsKey(str))
+                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true)));
+            }
+            stylesMap = res;
         }
-        return res;
+        return stylesMap;
     }
 
     public List<StyleTextAssociated> drawTextWithStylesAssociated(List<StyledText> texts, int x, int y, Map<String, TextStyle> styleMap) {
@@ -57,7 +72,7 @@ public abstract class TextHUDFeature extends GuiFeature {
         int maxHeightForLine = 0;
         List<StyleTextAssociated> associateds = new ArrayList<StyleTextAssociated>();
         for (StyledText st : texts) {
-            TextStyle ts = styleMap.get(st);
+            TextStyle ts = styleMap.get(st.getGroup());
             String[] lines = st.getText().split("\n");
             for (int i = 0; i < lines.length; i++) {
                 String str = lines[i];
@@ -68,10 +83,15 @@ public abstract class TextHUDFeature extends GuiFeature {
                     maxHeightForLine = d.height;
 
                 if (i+1 != lines.length) {
-                    currY += maxHeightForLine;
+                    currY += maxHeightForLine ;
                     currX = x;
                     maxHeightForLine = 0;
                 }
+            }
+            if (st.getText().endsWith("\n")) {
+                currY += maxHeightForLine ;
+                currX = x;
+                maxHeightForLine = 0;
             }
         }
         return associateds;
@@ -84,7 +104,7 @@ public abstract class TextHUDFeature extends GuiFeature {
         int maxHeightForLine = 0;
         List<StyleTextAssociated> associateds = new ArrayList<StyleTextAssociated>();
         for (StyledText st : texts) {
-            TextStyle ts = styleMap.get(st);
+            TextStyle ts = styleMap.get(st.getGroup());
             String[] lines = st.getText().split("\n");
             for (int i = 0; i < lines.length; i++) {
                 String str = lines[i];
@@ -99,6 +119,11 @@ public abstract class TextHUDFeature extends GuiFeature {
                     currX = x;
                     maxHeightForLine = 0;
                 }
+            }
+            if (st.getText().endsWith("\n")) {
+                currY += maxHeightForLine;
+                currX = x;
+                maxHeightForLine = 0;
             }
         }
         return associateds;
@@ -134,7 +159,7 @@ public abstract class TextHUDFeature extends GuiFeature {
         ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelDefaultParameterConfig(config, TextHUDFeature.this);
+                return new PanelTextParameterConfig(config, TextHUDFeature.this);
             }
         });
         return "base." + getKey() ;

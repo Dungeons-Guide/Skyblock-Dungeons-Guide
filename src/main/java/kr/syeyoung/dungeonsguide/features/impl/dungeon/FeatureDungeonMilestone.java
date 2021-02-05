@@ -8,6 +8,8 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
+import kr.syeyoung.dungeonsguide.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -17,11 +19,14 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.lwjgl.opengl.GL11;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
-public class FeatureDungeonMilestone extends GuiFeature implements ChatListener {
+public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListener {
     public FeatureDungeonMilestone() {
         super("Dungeon", "Display Current Class Milestone", "Display current class milestone of yourself", "dungeon.stats.milestone", true, getFontRenderer().getStringWidth("Milestone: 12"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
@@ -29,30 +34,47 @@ public class FeatureDungeonMilestone extends GuiFeature implements ChatListener 
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+
+    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
+    static {
+        dummyText.add(new StyledText("Milestone","title"));
+        dummyText.add(new StyledText(": ","separator"));
+        dummyText.add(new StyledText("9","number"));
+    }
+
     @Override
-    public void drawHUD(float partialTicks) {
-        if (!skyblockStatus.isOnDungeon()) return;
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
+    public boolean isEnabled() {
+        return skyblockStatus.isOnDungeon();
+    }
+
+    @Override
+    public List<String> getUsedTextStyle() {
+        return Arrays.asList(new String[] {
+                "title", "separator", "number"
+        });
+    }
+
+    @Override
+    public List<StyledText> getDummyText() {
+        return dummyText;
+    }
+
+    @Override
+    public List<StyledText> getText() {
+        List<StyledText> actualBit = new ArrayList<StyledText>();
+        actualBit.add(new StyledText("Milestone","title"));
+        actualBit.add(new StyledText(": ","separator"));
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
             if (name.startsWith("§r Milestone: §r")) {
                 String milestone = TextUtils.stripColor(name).substring(13);
-                fr.drawString("Milestone: "+milestone, 0,0, this.<Color>getParameter("color").getValue().getRGB());
-                return;
+                actualBit.add(new StyledText(milestone+"","number"));
+                break;
             }
         }
-        fr.drawString("Milestone: ?", 0,0, this.<Color>getParameter("color").getValue().getRGB());
+        return actualBit;
     }
 
-    @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        fr.drawString("Milestone: 9", 0,0, this.<Color>getParameter("color").getValue().getRGB());
-    }
     public static final Pattern milestone_pattern = Pattern.compile("§r§e§l(.+) Milestone §r§e(.)§r§7: .+ §r§a(.+)§r");
 
 

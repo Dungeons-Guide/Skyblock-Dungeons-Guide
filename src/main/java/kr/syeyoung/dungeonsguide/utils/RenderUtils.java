@@ -71,8 +71,8 @@ public class RenderUtils {
     }
 
     public static int getChromaColorAt(int x, int y, float speed) {
-        float blah = (speed * System.currentTimeMillis()) % 360;
-        return Color.HSBtoRGB((((blah + x * x + y * y) % 360) / 360.0f), 1,1);
+        double blah = ((double)(speed) * (System.currentTimeMillis() / 2)) % 360;
+        return Color.HSBtoRGB((float) (((blah - (x * x + y * y) / 50.0f) % 360) / 360.0f), 1,1);
     }
 
     public static WorldRenderer color(WorldRenderer worldRenderer, int color ){
