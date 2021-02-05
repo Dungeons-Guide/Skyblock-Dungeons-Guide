@@ -11,10 +11,12 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
+import java.util.List;
 import java.awt.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Set;
 
 public class PanelDefaultParameterConfig extends MPanel {
 
@@ -33,9 +35,13 @@ public class PanelDefaultParameterConfig extends MPanel {
     }
 
     private GuiConfig config;
-    public PanelDefaultParameterConfig(final GuiConfig config, AbstractFeature feature) {
+    public PanelDefaultParameterConfig(final GuiConfig config, AbstractFeature feature, List<MPanel> pre, Set<String> ignore) {
         this.config = config;
+        for (MPanel mPanel : pre) {
+            add(mPanel);
+        }
         for (FeatureParameter parameter: feature.getParameters()) {
+            if (ignore.contains(parameter.getKey())) continue;
             add(new MParameter(feature, parameter, config));
         }
         setBackgroundColor(new Color(38, 38, 38, 255));

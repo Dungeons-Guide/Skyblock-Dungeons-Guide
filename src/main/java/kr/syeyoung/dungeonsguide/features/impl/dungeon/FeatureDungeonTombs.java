@@ -4,6 +4,8 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -11,33 +13,19 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import org.lwjgl.opengl.GL11;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FeatureDungeonTombs extends GuiFeature {
+public class FeatureDungeonTombs extends TextHUDFeature {
     public FeatureDungeonTombs() {
         super("Dungeon", "Display #Crypts", "Display how much total crypts have been blown up in a dungeon run", "dungeon.stats.tombs", true, getFontRenderer().getStringWidth("Crypts: 42"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
-    @Override
-    public void drawHUD(float partialTicks) {
-        if (!skyblockStatus.isOnDungeon()) return;
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        fr.drawString("Crypts: "+getTombsFound(), 0,0, this.<Color>getParameter("color").getValue().getRGB());
-    }
-
-    @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        fr.drawString("Crypts: 42", 0,0, this.<Color>getParameter("color").getValue().getRGB());
-    }
 
     public int getTombsFound() {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
@@ -48,4 +36,38 @@ public class FeatureDungeonTombs extends GuiFeature {
         }
         return 0;
     }
+
+    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
+    static {
+        dummyText.add(new StyledText("Crypts","title"));
+        dummyText.add(new StyledText(": ","separator"));
+        dummyText.add(new StyledText("42","number"));
+    }
+
+    @Override
+    public boolean isHUDViewable() {
+        return skyblockStatus.isOnDungeon();
+    }
+
+    @Override
+    public java.util.List<String> getUsedTextStyle() {
+        return Arrays.asList(new String[] {
+                "title", "separator", "number"
+        });
+    }
+
+    @Override
+    public java.util.List<StyledText> getDummyText() {
+        return dummyText;
+    }
+
+    @Override
+    public java.util.List<StyledText> getText() {
+        List<StyledText> actualBit = new ArrayList<StyledText>();
+        actualBit.add(new StyledText("Crypts","title"));
+        actualBit.add(new StyledText(": ","separator"));
+        actualBit.add(new StyledText(getTombsFound()+"","number"));
+        return actualBit;
+    }
+
 }

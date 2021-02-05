@@ -30,7 +30,6 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
     public FeatureDungeonMilestone() {
         super("Dungeon", "Display Current Class Milestone", "Display current class milestone of yourself", "dungeon.stats.milestone", true, getFontRenderer().getStringWidth("Milestone: 12"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -43,7 +42,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
     }
 
     @Override
-    public boolean isEnabled() {
+    public boolean isHUDViewable() {
         return skyblockStatus.isOnDungeon();
     }
 

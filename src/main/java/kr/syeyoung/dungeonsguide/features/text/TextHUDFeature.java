@@ -14,12 +14,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 
 public abstract class TextHUDFeature extends GuiFeature {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
@@ -29,7 +28,9 @@ public abstract class TextHUDFeature extends GuiFeature {
 
     @Override
     public void drawHUD(float partialTicks) {
-        drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
+
+        if (isHUDViewable())
+            drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
     }
 
     @Override
@@ -37,7 +38,7 @@ public abstract class TextHUDFeature extends GuiFeature {
         drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());
     }
 
-    public abstract boolean isEnabled();
+    public abstract boolean isHUDViewable();
 
     public abstract List<String> getUsedTextStyle();
     public List<StyledText> getDummyText() {
@@ -159,7 +160,10 @@ public abstract class TextHUDFeature extends GuiFeature {
         ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelTextParameterConfig(config, TextHUDFeature.this);
+                return new PanelDefaultParameterConfig(config, TextHUDFeature.this,
+                        Arrays.asList(new MPanel[] {
+                                new PanelTextParameterConfig(config, TextHUDFeature.this)
+                        }), Collections.singleton("textStyles"));
             }
         });
         return "base." + getKey() ;

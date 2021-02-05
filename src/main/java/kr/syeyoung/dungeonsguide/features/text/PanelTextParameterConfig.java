@@ -41,7 +41,7 @@ public class PanelTextParameterConfig extends MPanel {
 
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(5,5,parentWidth-10, parentHeight-10));
+        this.setBounds(new Rectangle(5,5,parentWidth-10, 120));
     }
 
     private GuiConfig config;

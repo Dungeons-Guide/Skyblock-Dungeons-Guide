@@ -7,6 +7,8 @@ import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
+import kr.syeyoung.dungeonsguide.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -20,29 +22,41 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.List;
 
 
-public class FeatureWarnLowHealth extends GuiFeature {
+public class FeatureWarnLowHealth extends TextHUDFeature {
     public FeatureWarnLowHealth() {
         super("Dungeon", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn", false, 200, 50);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of playername", Color.yellow, "color"));
         parameters.put("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, "integer"));
-
     }
 
 
     private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+
+
+    @Override
+    public boolean isHUDViewable() {
+        return skyblockStatus.isOnDungeon();
+    }
+
+    @Override
+    public List<String> getUsedTextStyle() {
+        return Arrays.asList(new String[] {
+                "title", "separator", "number", "unit"
+        });
+    }
 
     @Override
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
-        fr.drawString("DungeonsGuide: ", 0,0,this.<Color>getParameter("color").getValue().getRGB());
-        fr.drawString("500hp", fr.getStringWidth("DungeonsGuide: "), 0, Color.red.getRGB());
+        super.drawDemo(partialTicks);
     }
 
     @Override
@@ -50,6 +64,24 @@ public class FeatureWarnLowHealth extends GuiFeature {
         FontRenderer fr = getFontRenderer();
         double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
+        super.drawHUD(partialTicks);
+    }
+
+    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
+    static {
+        dummyText.add(new StyledText("DungeonsGuide","title"));
+        dummyText.add(new StyledText(": ","separator"));
+        dummyText.add(new StyledText("500","number"));
+        dummyText.add(new StyledText("hp","unit"));
+    }
+
+    @Override
+    public List<StyledText> getDummyText() {
+        return dummyText;
+    }
+
+    @Override
+    public List<StyledText> getText() {
         String lowestHealthName = "";
         int lowestHealth = 999999999;
         Scoreboard scoreboard = Minecraft.getMinecraft().thePlayer.getWorldScoreboard();
@@ -67,8 +99,13 @@ public class FeatureWarnLowHealth extends GuiFeature {
                 }
             }
         }
-        if (lowestHealth > this.<Integer>getParameter("threshold").getValue()) return;
-        fr.drawString(lowestHealthName+": ", 0,0,this.<Color>getParameter("color").getValue().getRGB());
-        fr.drawString(lowestHealth+"hp", fr.getStringWidth(lowestHealthName+"DungeonsGuide: "), 0, Color.red.getRGB());
+        if (lowestHealth > this.<Integer>getParameter("threshold").getValue()) return new ArrayList<StyledText>();
+
+        List<StyledText> actualBit = new ArrayList<StyledText>();
+        actualBit.add(new StyledText(lowestHealthName,"title"));
+        actualBit.add(new StyledText(": ","separator"));
+        actualBit.add(new StyledText(lowestHealth+"","number"));
+        actualBit.add(new StyledText("hp","unit"));
+        return actualBit;
     }
 }

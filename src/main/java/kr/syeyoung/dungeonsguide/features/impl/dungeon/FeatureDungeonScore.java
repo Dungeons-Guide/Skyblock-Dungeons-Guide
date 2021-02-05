@@ -7,6 +7,8 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,55 +19,126 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 
-public class FeatureDungeonScore extends GuiFeature {
+public class FeatureDungeonScore extends TextHUDFeature {
     public FeatureDungeonScore() {
         super("Dungeon", "Display Current Score", "Calculate and Display current score\nThis data is from pure calculation and can be different from actual score.", "dungeon.stats.score", false, 200, getFontRenderer().FONT_HEIGHT * 4);
         this.setEnabled(false);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
         parameters.put("verbose", new FeatureParameter<Boolean>("verbose", "Show each score instead of sum", "Skill: 100 Explore: 58 S->S+(5 tombs) instead of Score: 305", true, "boolean"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
     @Override
-    public void drawHUD(float partialTicks) {
-        if (!skyblockStatus.isOnDungeon()) return;
-        FontRenderer fr = getFontRenderer();
-        ScoreCalculation score = calculateScore();
-        if (score == null) return;
-        int sum = score.time + score.skill + score.explorer + score.bonus;
-        if (this.<Boolean>getParameter("verbose").getValue()) {
-            String req = buildRequirement(score);
-            int rgb = this.<Color>getParameter("color").getValue().getRGB();
-            fr.drawString("Skill: "+score.skill+" ("+score.deaths+" Deaths)", 0, 0, rgb);
-            fr.drawString("Explorer: "+score.explorer+" (Rooms "+(score.fullyCleared ? "O" : "X") + " secrets "+score.secrets+"/"+score.totalSecrets+(score.totalSecretsKnown ? "": "?")+")", 0, 8, rgb);
-            fr.drawString("Time: "+score.time+" Bonus: "+score.bonus+" ::: Total: "+sum, 0, 16, rgb);
-            fr.drawString(req, 0, 24, rgb);
-        } else {
-            double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-            GlStateManager.scale(scale, scale, 0);
-            String letter = getLetter(sum);
-            fr.drawString("Score: "+sum + "("+letter+")", 0,0, this.<Color>getParameter("color").getValue().getRGB());
-        }
-   }
+    public boolean isHUDViewable() {
+        return skyblockStatus.isOnDungeon();
+    }
+
+    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
+    private static final java.util.List<StyledText> dummyText2=  new ArrayList<StyledText>();
+    static {
+        dummyText.add(new StyledText("Score","scorename"));
+        dummyText.add(new StyledText(": ","separator"));
+        dummyText.add(new StyledText("305 ","score"));
+        dummyText.add(new StyledText("(","brackets"));
+        dummyText.add(new StyledText("S+","currentScore"));
+        dummyText.add(new StyledText(")","brackets"));
+
+
+
+        dummyText2.add(new StyledText("Skill","scorename"));
+        dummyText2.add(new StyledText(": ","separator"));
+        dummyText2.add(new StyledText("100 ","score"));
+        dummyText2.add(new StyledText("(","brackets"));
+        dummyText2.add(new StyledText("0 Deaths","etc"));
+        dummyText2.add(new StyledText(")\n","brackets"));
+        dummyText2.add(new StyledText("Explorer","scorename"));
+        dummyText2.add(new StyledText(": ","separator"));
+        dummyText2.add(new StyledText("99 ","score"));
+        dummyText2.add(new StyledText("(","brackets"));
+        dummyText2.add(new StyledText("Rooms O Secrets 39/40","etc"));
+        dummyText2.add(new StyledText(")\n","brackets"));
+        dummyText2.add(new StyledText("Time","scorename"));
+        dummyText2.add(new StyledText(": ","separator"));
+        dummyText2.add(new StyledText("100 ","score"));
+        dummyText2.add(new StyledText("Bonus","scorename"));
+        dummyText2.add(new StyledText(": ","separator"));
+        dummyText2.add(new StyledText("0 ","score"));
+        dummyText2.add(new StyledText("Total","scorename"));
+        dummyText2.add(new StyledText(": ","separator"));
+        dummyText2.add(new StyledText("299\n","score"));
+        dummyText2.add(new StyledText("S","currentScore"));
+        dummyText2.add(new StyledText("->","arrow"));
+        dummyText2.add(new StyledText("S+ ","nextScore"));
+        dummyText2.add(new StyledText("(","brackets"));;
+        dummyText2.add(new StyledText("1 Required 1 crypt","required"));
+        dummyText2.add(new StyledText(")","brackets"));
+
+    }
 
     @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
-        if (this.<Boolean>getParameter("verbose").getValue()) {
-            int rgb = this.<Color>getParameter("color").getValue().getRGB();
-            fr.drawString("Skill: 100 (0 Deaths)", 0, 0, rgb);
-            fr.drawString("Explorer: 99 (Rooms O 39/40)", 0, 8, rgb);
-            fr.drawString("Time: 100 Bonus: 0 Total: 299", 0, 16, rgb);
-            fr.drawString("S->S+ (1 Required 1 tomb)", 0, 24, rgb);
-        } else {
-            double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-            GlStateManager.scale(scale, scale, 0);
-            fr.drawString("Score: 305 (S+)", 0,0, this.<Color>getParameter("color").getValue().getRGB());
-        }
+    public java.util.List<String> getUsedTextStyle() {
+        return Arrays.asList(new String[] {
+                "scorename", "separator", "score", "brackets", "etc", "currentScore", "arrow", "nextScore", "required"
+        });
     }
+
+    @Override
+    public java.util.List<StyledText> getDummyText() {
+
+        if (this.<Boolean>getParameter("verbose").getValue()) {return dummyText2;} else return dummyText;
+    }
+
+    @Override
+    public java.util.List<StyledText> getText() {
+        List<StyledText> actualBit = new ArrayList<StyledText>();
+
+        ScoreCalculation score = calculateScore();
+        if (score == null) return new ArrayList<StyledText>();
+        int sum = score.time + score.skill + score.explorer + score.bonus;
+        if (this.<Boolean>getParameter("verbose").getValue()) {
+            actualBit.add(new StyledText("Skill","scorename"));
+            actualBit.add(new StyledText(": ","separator"));
+            actualBit.add(new StyledText(score.skill+" ","score"));
+            actualBit.add(new StyledText("(","brackets"));
+            actualBit.add(new StyledText(score.deaths+" Deaths","etc"));
+            actualBit.add(new StyledText(")\n","brackets"));
+            actualBit.add(new StyledText("Explorer","scorename"));
+            actualBit.add(new StyledText(": ","separator"));
+            actualBit.add(new StyledText(score.explorer+" ","score"));
+            actualBit.add(new StyledText("(","brackets"));
+            actualBit.add(new StyledText("Rooms "+(score.fullyCleared ? "O":"X")+ " Secrets "+score.secrets+"/"+score.totalSecrets+(score.totalSecretsKnown ? "": "?"),"etc"));
+            actualBit.add(new StyledText(")\n","brackets"));
+            actualBit.add(new StyledText("Time","scorename"));
+            actualBit.add(new StyledText(": ","separator"));
+            actualBit.add(new StyledText(score.time+" ","score"));
+            actualBit.add(new StyledText("Bonus","scorename"));
+            actualBit.add(new StyledText(": ","separator"));
+            actualBit.add(new StyledText(score.bonus+" ","score"));
+            actualBit.add(new StyledText("Total","scorename"));
+            actualBit.add(new StyledText(": ","separator"));
+            actualBit.add(new StyledText(sum+"\n","score"));
+            actualBit.addAll(buildRequirement(score));
+        } else {
+            String letter = getLetter(sum);
+            actualBit.add(new StyledText("Score","scorename"));
+            actualBit.add(new StyledText(": ","separator"));
+            actualBit.add(new StyledText(sum+" ","score"));
+            actualBit.add(new StyledText("(","brackets"));
+            actualBit.add(new StyledText(letter,"currentScore"));
+            actualBit.add(new StyledText(")","brackets"));
+        }
+
+        return actualBit;
+    }
+
+
+
+
 
     @Data
     @AllArgsConstructor
@@ -193,11 +266,15 @@ public class FeatureDungeonScore extends GuiFeature {
         if (letter.equals("S")) return "S+";
         else return null;
     }
-    public String buildRequirement(ScoreCalculation calculation) {
+    public List<StyledText> buildRequirement(ScoreCalculation calculation) {
+        List<StyledText> actualBit = new ArrayList<StyledText>();
         int current = calculation.time + calculation.bonus + calculation.explorer + calculation.skill;
         String currentLetter = getLetter(current);
         String nextLetter=  getNextLetter(currentLetter);
-        if (nextLetter == null) return "S+ Expected";
+        if (nextLetter == null) {
+            actualBit.add(new StyledText(nextLetter+" Expected","nextScore"));
+            return actualBit;
+        }
         int req = getScoreRequirement(nextLetter);
         int reqPT2 = req-  current;
         int reqPT = req - current;
@@ -208,6 +285,12 @@ public class FeatureDungeonScore extends GuiFeature {
         double secretPer = 40.0 / calculation.totalSecrets;
         int secrets = (int) Math.ceil(reqPT / secretPer);
 
-        return currentLetter+"->"+nextLetter+" ("+reqPT2+" Req "+tombsBreakable+" crypts "+secrets+" secrets"+(calculation.totalSecretsKnown ? "" : "?")+")";
+        actualBit.add(new StyledText(currentLetter,"currentScore"));
+        actualBit.add(new StyledText("->","arrow"));
+        actualBit.add(new StyledText(nextLetter+" ","nextScore"));
+        actualBit.add(new StyledText("(","brackets"));;
+        actualBit.add(new StyledText(reqPT2+" required "+tombsBreakable+" crypt "+secrets+" secrets","required"));
+        actualBit.add(new StyledText(")","brackets"));
+        return actualBit;
     }
 }

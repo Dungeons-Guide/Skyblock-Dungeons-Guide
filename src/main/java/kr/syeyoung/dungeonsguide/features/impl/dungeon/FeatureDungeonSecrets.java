@@ -9,6 +9,8 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
+import kr.syeyoung.dungeonsguide.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -18,35 +20,20 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.lwjgl.opengl.GL11;
+import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.regex.Pattern;
 
-public class FeatureDungeonSecrets extends GuiFeature {
+public class FeatureDungeonSecrets extends TextHUDFeature {
     public FeatureDungeonSecrets() {
         super("Dungeon", "Display #Secrets", "Display how much total secrets have been found in a dungeon run.\n+ sign means DG does not know the correct number, but it's somewhere above that number.", "dungeon.stats.secrets", true, getFontRenderer().getStringWidth("Secrets: 999/999+"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
-    @Override
-    public void drawHUD(float partialTicks) {
-        if (!skyblockStatus.isOnDungeon()) return;
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        fr.drawString("Secrets: "+getSecretsFound() +"/"+getTotalSecrets(), 0,0, this.<Color>getParameter("color").getValue().getRGB());
-    }
-
-    @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        fr.drawString("Secrets: 999/2+", 0,0, this.<Color>getParameter("color").getValue().getRGB());
-    }
-
     public int getSecretsFound() {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
@@ -69,4 +56,45 @@ public class FeatureDungeonSecrets extends GuiFeature {
         }
         return totalSecrets + (allknown ? "":"+");
     }
+
+
+    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
+    static {
+        dummyText.add(new StyledText("Secrets","title"));
+        dummyText.add(new StyledText(": ","separator"));
+        dummyText.add(new StyledText("999","currentSecrets"));
+        dummyText.add(new StyledText("/","separator2"));
+        dummyText.add(new StyledText("2","totalSecrets"));
+        dummyText.add(new StyledText("+","unknown"));
+    }
+
+    @Override
+    public boolean isHUDViewable() {
+        return skyblockStatus.isOnDungeon();
+    }
+
+    @Override
+    public java.util.List<String> getUsedTextStyle() {
+        return Arrays.asList(new String[] {
+                "title", "separator", "currentSecrets", "separator2", "totalSecrets", "unknown"
+        });
+    }
+
+    @Override
+    public java.util.List<StyledText> getDummyText() {
+        return dummyText;
+    }
+
+    @Override
+    public java.util.List<StyledText> getText() {
+        List<StyledText> actualBit = new ArrayList<StyledText>();
+        actualBit.add(new StyledText("Secrets","title"));
+        actualBit.add(new StyledText(": ","separator"));
+        actualBit.add(new StyledText(getSecretsFound() +"","currentSecrets"));
+        actualBit.add(new StyledText("/","separator2"));
+        actualBit.add(new StyledText(getTotalSecrets().replace("+", ""),"totalSecrets"));
+        actualBit.add(new StyledText(getTotalSecrets().contains("+") ? "+" : "","unknown"));
+        return actualBit;
+    }
+
 }

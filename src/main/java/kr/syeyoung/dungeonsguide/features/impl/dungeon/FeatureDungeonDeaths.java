@@ -27,12 +27,11 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
     public FeatureDungeonDeaths() {
         super("Dungeon", "Display Deaths", "Display names of player and death count in dungeon run", "dungeon.stats.deaths", false, getFontRenderer().getStringWidth("longestplayernamepos: 100"), getFontRenderer().FONT_HEIGHT * 6);
         this.setEnabled(false);
-//        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
     @Override
-    public boolean isEnabled() {
+    public boolean isHUDViewable() {
         if (!skyblockStatus.isOnDungeon()) return false;
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return false;

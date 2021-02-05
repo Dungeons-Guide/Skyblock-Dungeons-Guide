@@ -45,6 +45,7 @@ public class MFeature extends MPanel {
                 }
             });
             addons.add(mStringSelectionButton);
+            mStringSelectionButton.setEnabled(feature.isEnabled());
             mStringSelectionButton.setSize(new Dimension(30, 15));
             add(mStringSelectionButton);
         }
