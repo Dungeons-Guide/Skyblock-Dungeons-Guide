@@ -70,6 +70,11 @@ public class RenderUtils {
         GlStateManager.disableBlend();
     }
 
+    public static int getChromaColorAt(int x, int y, float speed) {
+        float blah = (speed * System.currentTimeMillis()) % 360;
+        return Color.HSBtoRGB((((blah + x * x + y * y) % 360) / 360.0f), 1,1);
+    }
+
     public static WorldRenderer color(WorldRenderer worldRenderer, int color ){
         return worldRenderer.color(((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f, (color &0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f);
     }

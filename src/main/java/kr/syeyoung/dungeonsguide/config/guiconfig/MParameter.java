@@ -31,7 +31,7 @@ public class MParameter extends MPanel {
     private PanelDefaultParameterConfig config;
 
     private MLabel label2;
-    public MParameter(AbstractFeature abstractFeature, final FeatureParameter parameter, final PanelDefaultParameterConfig config, final GuiConfig config2) {
+    public MParameter(AbstractFeature abstractFeature, final FeatureParameter parameter, final GuiConfig config2) {
         this.config = config;
         this.parameter = parameter;
         this.feature = abstractFeature;
