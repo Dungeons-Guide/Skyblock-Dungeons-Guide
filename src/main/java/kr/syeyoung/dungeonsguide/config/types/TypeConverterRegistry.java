@@ -27,5 +27,7 @@ public class TypeConverterRegistry {
         register(new TCColor());
         register(new TCFloat());
         register(new TCAColor());
+        register(new TCTextStyleList());
+        register(new TCTextStyle());
     }
 }
