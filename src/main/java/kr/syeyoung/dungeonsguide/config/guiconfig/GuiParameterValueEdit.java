@@ -44,7 +44,7 @@ public class GuiParameterValueEdit extends GuiScreen {
     @Getter
     private Parameter parameter;
 
-    public GuiParameterValueEdit(final Object object, final GuiParameterConfig prev) {
+    public GuiParameterValueEdit(final Object object, final GuiConfig prev) {
         try {
             this.editingObj = object;
             mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));

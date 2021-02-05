@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
@@ -21,83 +22,76 @@ import java.util.List;
 public class FeatureEditPane extends MPanel {
     private List<AbstractFeature> features;
 
-    private MButton save;
     private List<MFeature> le = new ArrayList<MFeature>();
 
     private GuiConfig config;
+
+    private MTextField textField;
+    private String search = "";
+
     public FeatureEditPane(List<AbstractFeature> features, GuiConfig config) {
         this.features = features;
         this.config = config;
         buildElements();
+
     }
 
 
     public void buildElements() {
-        {
-            save = new MButton();
-            save.setText("Save");
-            save.setBackgroundColor(Color.green);
-            save.setBounds(new Rectangle(0,0,100,20));
-            save.setOnActionPerformed(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        Config.saveConfig();
-                    } catch (IOException e) {
-                        e.printStackTrace();
-                    }
-                }
-            });
-        }
         for (AbstractFeature feature : features) {
             MFeature mFeature = new MFeature(feature, config);
-            mFeature.setHover(new Color(100,100,100,200));
+            mFeature.setHover(new Color(94, 94, 94, 255));
             le.add(mFeature);
             add(mFeature);
         }
+
+        textField = new MTextField() {
+            @Override
+            public void edit(String str) {
+                offsetY = 0;
+                search = str;
+            }
+        };
+        textField.setText("");
+        textField.setBounds(new Rectangle(getBounds().width - 200, 0, 200, 20));
+        add(textField);
     }
     @Override
     public void onBoundsUpdate() {
         for (MPanel panel :getChildComponents()){
-            panel.setSize(new Dimension(getBounds().width, 20));
+            panel.setSize(new Dimension(getBounds().width, panel.getPreferredSize().height));
         }
+        textField.setBounds(new Rectangle(getBounds().width - 200, 0, 200, 20));
     }
     @Override
     public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(5,5,parentWidth-10,parentHeight-10));
+        this.setBounds(new Rectangle(5,1,parentWidth-10,parentHeight-2));
     }
 
     @Override
     public List<MPanel> getChildComponents() {
-        ArrayList<MPanel> panels = new ArrayList<MPanel>(le);
-        panels.add(save);
-        return panels;
+        List<MPanel> comp = new ArrayList<MPanel>();
+        comp.add(textField);
+        for (MFeature feature:le) {
+            if (feature.getFeature().getName().toLowerCase().contains(search.toLowerCase()))
+                comp.add(feature);
+        }
+        return comp;
     }
 
     private int offsetY = 0;
-    private MPanel within;
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         int heights = 0;
-        within = null;
         for (MPanel panel:getChildComponents()) {
-            panel.setPosition(new Point(0, -offsetY + heights));
-            heights += panel.getBounds().height;
-
-            if (panel.getBounds().contains(relMousex0, relMousey0)) within = panel;
+            panel.setPosition(new Point(panel.getBounds().x, -offsetY + heights));
+            heights += panel.getBounds().height + 5;
         }
     }
 
     @Override
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
         super.render0(resolution, parentPoint, parentClip, absMousex, absMousey, relMousex0, relMousey0, partialTicks);
-
-        if (within instanceof MFeature) {
-            AbstractFeature feature = ((MFeature) within).getFeature();
-            GlStateManager.pushAttrib();
-            drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), relMousex0, relMousey0, Minecraft.getMinecraft().fontRendererObj);
-            GlStateManager.popAttrib();
-        }
     }
 
     private static float zLevel = 0;

@@ -43,7 +43,7 @@ public class MTextField extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
         Gui.drawRect(0,0,getBounds().width, getBounds().height, isFocused ? Color.white.getRGB() : Color.gray.getRGB());
-        Gui.drawRect(1,1,getBounds().width - 2, getBounds().height - 2, Color.black.getRGB());
+        Gui.drawRect(1,1,getBounds().width - 1, getBounds().height - 1, Color.black.getRGB());
 
         Minecraft mc = Minecraft.getMinecraft();
         clip(new ScaledResolution(mc), clip.x + 1, clip.y + 1, clip.width - 2, clip.height - 2);

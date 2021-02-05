@@ -24,7 +24,7 @@ chatLinks:true
 chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
-fullscreen:false
+fullscreen:true
 enableVsync:true
 useVbo:true
 hideServerAddress:false
@@ -92,7 +92,7 @@ key_key.hotbar.8:9
 key_key.hotbar.9:10
 key_start editing session:19
 key_send and save bombdefuse solution:33
-soundCategory_master:1.0
+soundCategory_master:0.07284768
 soundCategory_music:0.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

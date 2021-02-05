@@ -1,12 +1,17 @@
 package kr.syeyoung.dungeonsguide.features;
 
+import com.google.common.base.Supplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
-import kr.syeyoung.dungeonsguide.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 
 import java.util.*;
 
@@ -60,5 +65,15 @@ public abstract class AbstractFeature {
         }
         object.addProperty("$enabled", isEnabled());
         return object;
+    }
+
+    public String getEditRoute(final GuiConfig config) {
+        ConfigPanelCreator.map.put("base." + key , new Supplier<MPanel>() {
+            @Override
+            public MPanel get() {
+                return new PanelDefaultParameterConfig(config, AbstractFeature.this);
+            }
+        });
+        return "base." + key ;
     }
 }

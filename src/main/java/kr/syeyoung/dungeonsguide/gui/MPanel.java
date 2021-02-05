@@ -42,6 +42,8 @@ public class MPanel {
         return getBounds().getSize();
     }
 
+    public Dimension getPreferredSize() { return getSize(); }
+
     public void setBounds(Rectangle bounds) {
         if (bounds == null) return;
         this.bounds.x = bounds.x;
@@ -68,7 +70,6 @@ public class MPanel {
     }
 
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
-
 
         int relMousex = relMousex0 - getBounds().x;
         int relMousey = relMousey0 - getBounds().y;
@@ -97,7 +98,7 @@ public class MPanel {
         GlStateManager.popMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GL11.glPopAttrib();
+        GlStateManager.popAttrib();
 
 
         Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
@@ -112,6 +113,8 @@ public class MPanel {
     }
 
     public void clip(ScaledResolution resolution, int x, int y, int width, int height) {
+        if (width < 0 || height < 0) return;
+
         int scale = resolution.getScaleFactor();
         GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }

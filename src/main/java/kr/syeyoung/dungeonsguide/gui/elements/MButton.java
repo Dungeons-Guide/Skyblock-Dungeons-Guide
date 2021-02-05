@@ -39,7 +39,7 @@ public class MButton extends MPanel {
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(getText());
         int x = (getBounds().width - width) / 2;
-        int y = (getBounds().height - renderer.FONT_HEIGHT) / 2;
+        int y = (getBounds().height - renderer.FONT_HEIGHT) / 2 + 1;
 
         renderer.drawString(getText(), x,y, foreground.getRGB());
     }

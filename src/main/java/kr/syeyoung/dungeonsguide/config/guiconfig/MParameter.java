@@ -28,10 +28,10 @@ public class MParameter extends MPanel {
     @Getter @Setter
     private Color hover;
 
-    private GuiParameterConfig config;
+    private PanelDefaultParameterConfig config;
 
     private MLabel label2;
-    public MParameter(AbstractFeature abstractFeature, final FeatureParameter parameter, final GuiParameterConfig config) {
+    public MParameter(AbstractFeature abstractFeature, final FeatureParameter parameter, final PanelDefaultParameterConfig config, final GuiConfig config2) {
         this.config = config;
         this.parameter = parameter;
         this.feature = abstractFeature;
@@ -45,7 +45,7 @@ public class MParameter extends MPanel {
             button.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    final GuiParameterValueEdit guiParameterValueEdit = new GuiParameterValueEdit(parameter.getValue(), config);
+                    final GuiParameterValueEdit guiParameterValueEdit = new GuiParameterValueEdit(parameter.getValue(), config2);
                     guiParameterValueEdit.setOnUpdate(new Runnable() {
                         @Override
                         public void run() {

@@ -1,9 +1,12 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import com.google.common.base.Supplier;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MNavigatingPane;
 import kr.syeyoung.dungeonsguide.gui.elements.MTabbedPane;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -17,21 +20,36 @@ import java.io.IOException;
 import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
+import java.util.Stack;
 
 public class GuiConfig extends GuiScreen {
 
     private MPanel mainPanel = new MPanel();
 
-    private MTabbedPane tabbedPane;
+    @Getter
+    private MNavigatingPane tabbedPane;
+
+    private Stack<String> history = new Stack();
 
     public GuiConfig() {
-        MTabbedPane tabbedPane = new MTabbedPane();
+        MNavigatingPane tabbedPane = new MNavigatingPane();
         mainPanel.add(tabbedPane);
-        tabbedPane.setBackground2(new Color(17, 17, 17, 179));
+        tabbedPane.setBackground2(new Color(38, 38, 38, 255));
 
-        for (Map.Entry<String, List<AbstractFeature>> cate: FeatureRegistry.getFeaturesByCategory().entrySet())
-            if (!cate.getKey().equals("hidden"))
-                tabbedPane.addTab(cate.getKey(), new FeatureEditPane(cate.getValue(), this));
+        tabbedPane.setPageGenerator(ConfigPanelCreator.INSTANCE);
+
+
+        for (final Map.Entry<String, List<AbstractFeature>> cate: FeatureRegistry.getFeaturesByCategory().entrySet())
+            if (!cate.getKey().equals("hidden")) {
+                tabbedPane.addBookmark(cate.getKey(), "base." + cate.getKey());
+
+                ConfigPanelCreator.map.put("base." + cate.getKey(), new Supplier<MPanel>() {
+                    @Override
+                    public MPanel get() {
+                        return new FeatureEditPane(cate.getValue(), GuiConfig.this);
+                    }
+                });
+            }
         this.tabbedPane = tabbedPane;
     }
 

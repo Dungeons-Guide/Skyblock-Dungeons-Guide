@@ -34,6 +34,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -43,8 +44,18 @@ import org.lwjgl.opengl.GL11;
 import scala.collection.parallel.ParIterableLike;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class DungeonListener {
+    @SubscribeEvent
+    public void onWorldLoad(WorldEvent.Unload event) {
+        try {
+            Config.saveConfig();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         try {
