@@ -82,7 +82,7 @@ public class MPortableColorEdit extends MPanel {
 
 
         GL11.glBegin(GL11.GL_TRIANGLES);
-        rgb = RenderUtils.getChromaColorAt(0,0, chromaSpeed);
+        rgb = RenderUtils.getChromaColorAt(0,0, chromaSpeed, hsv[1], hsv[2], alpha);
         r = (rgb >> 16 & 255) / 255.0f;
         g = (rgb >> 8 & 255) / 255.0f;
         b = (rgb & 255) / 255.0f;

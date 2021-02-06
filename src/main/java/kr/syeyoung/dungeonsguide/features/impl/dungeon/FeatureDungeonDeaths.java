@@ -39,6 +39,11 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
     }
 
     @Override
+    public boolean doesScaleWithHeight() {
+        return false;
+    }
+
+    @Override
     public List<String> getUsedTextStyle() {
         return Arrays.asList(new String[] {
                 "username", "separator", "deaths", "total", "totalDeaths"

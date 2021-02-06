@@ -51,22 +51,6 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
         });
     }
 
-    @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        super.drawDemo(partialTicks);
-    }
-
-    @Override
-    public void drawHUD(float partialTicks) {
-        FontRenderer fr = getFontRenderer();
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-        super.drawHUD(partialTicks);
-    }
-
     private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
     static {
         dummyText.add(new StyledText("DungeonsGuide","title"));

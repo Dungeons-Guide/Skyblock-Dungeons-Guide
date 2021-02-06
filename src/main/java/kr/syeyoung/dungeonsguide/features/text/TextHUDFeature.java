@@ -14,6 +14,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
@@ -28,14 +30,44 @@ public abstract class TextHUDFeature extends GuiFeature {
 
     @Override
     public void drawHUD(float partialTicks) {
+        if (isHUDViewable()) {
+            List<StyledText> asd = getText();
 
-        if (isHUDViewable())
+            if (doesScaleWithHeight()) {
+                FontRenderer fr = getFontRenderer();
+                double scale = getFeatureRect().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
+                GlStateManager.scale(scale, scale, 0);
+            }
             drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
+        }
+    }
+
+    public boolean doesScaleWithHeight() {
+        return true;
     }
 
     @Override
     public void drawDemo(float partialTicks) {
+        List<StyledText> asd = getDummyText();
+        if (doesScaleWithHeight()) {
+            FontRenderer fr = getFontRenderer();
+            double scale = getFeatureRect().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
+            GlStateManager.scale(scale, scale, 0);
+        }
         drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());
+    }
+
+    public int countLines(List<StyledText> texts) {
+        StringBuilder things = new StringBuilder();
+        for (StyledText text : texts) {
+            things.append(text.getText());
+        }
+        String things2 = things.toString().trim();
+        int lines = 1;
+        for (char c : things2.toString().toCharArray()) {
+            if (c == '\n') lines++;
+        }
+        return  lines;
     }
 
     public abstract boolean isHUDViewable();
@@ -59,7 +91,7 @@ public abstract class TextHUDFeature extends GuiFeature {
             }
             for (String str : getUsedTextStyle()) {
                 if (!res.containsKey(str))
-                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true)));
+                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true), new AColor(0x00777777, true)));
             }
             stylesMap = res;
         }
@@ -141,6 +173,8 @@ public abstract class TextHUDFeature extends GuiFeature {
         if (stopDraw)
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
 
+        Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
+
         if (!style.getColor().isChroma()) {
             fr.drawString(content, x, y, style.getColor().getRGB());
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
@@ -148,7 +182,7 @@ public abstract class TextHUDFeature extends GuiFeature {
             char[] charArr = content.toCharArray();
             int width = 0;
             for (int i = 0; i < charArr.length; i++) {
-                fr.drawString(String.valueOf(charArr[i]), x + width, y, RenderUtils.getChromaColorAt(x + width, y, style.getColor().getChromaSpeed()));
+                fr.drawString(String.valueOf(charArr[i]), x + width, y, RenderUtils.getColorAt(x + width, y, style.getColor()));
                 width += fr.getCharWidth(charArr[i]);
             }
             return new Dimension(width, fr.FONT_HEIGHT);

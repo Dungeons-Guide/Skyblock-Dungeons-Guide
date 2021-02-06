@@ -18,4 +18,15 @@ public class AColor extends Color {
     public AColor(int rgba, boolean hasalpha) {
         super(rgba, hasalpha);
     }
+
+    @Override
+    public String toString() {
+        return "AColor{" +
+                ", r="+getRed()+
+                ", g="+getGreen()+
+                ", b="+getBlue()+
+                ", a="+getAlpha()+
+                ", chromaSpeed=" + chromaSpeed +
+                '}';
+    }
 }

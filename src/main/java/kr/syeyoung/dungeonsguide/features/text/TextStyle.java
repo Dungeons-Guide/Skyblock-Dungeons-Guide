@@ -13,4 +13,5 @@ import java.awt.*;
 public class TextStyle {
     private String groupName;
     private AColor color;
+    private AColor background;
 }

@@ -17,6 +17,8 @@ public class TCTextStyle implements TypeConverter<TextStyle> {
     public TextStyle deserialize(JsonElement element) {
         TextStyle textStyle = new TextStyle();
         textStyle.setColor(TypeConverterRegistry.getTypeConverter("acolor", AColor.class).deserialize(element.getAsJsonObject().get("color")));
+        textStyle.setBackground(element.getAsJsonObject().has("background") ? TypeConverterRegistry.getTypeConverter("acolor", AColor.class).deserialize(element.getAsJsonObject().get("background"))
+                : new AColor(0x00777777, true));
         textStyle.setGroupName(element.getAsJsonObject().get("group").getAsString());
         return textStyle;
     }
@@ -25,6 +27,7 @@ public class TCTextStyle implements TypeConverter<TextStyle> {
     public JsonElement serialize(TextStyle element) {
         JsonObject jsonObject = new JsonObject();
         jsonObject.add("color", TypeConverterRegistry.getTypeConverter("acolor", AColor.class).serialize(element.getColor()));
+        jsonObject.add("background", TypeConverterRegistry.getTypeConverter("acolor", AColor.class).serialize(element.getBackground()));
         jsonObject.addProperty("group", element.getGroupName());
         return jsonObject;
     }

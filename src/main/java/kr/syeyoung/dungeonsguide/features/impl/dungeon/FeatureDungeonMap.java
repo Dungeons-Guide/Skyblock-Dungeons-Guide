@@ -63,11 +63,10 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         parameters.put("showtotalsecrets", new FeatureParameter<Boolean>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, "boolean"));
         parameters.put("playerheadscale", new FeatureParameter<Float>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, "float"));
         parameters.put("textScale", new FeatureParameter<Float>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, "float"));
+
         parameters.put("border_color", new FeatureParameter<AColor>("border_color", "Color of the border", "Same as name", new AColor(255,255,255,255), "acolor"));
         parameters.put("background_color", new FeatureParameter<AColor>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), "acolor"));
-        parameters.put("chromaborder", new FeatureParameter<Boolean>("chromaborder", "Chroma border", "Rainbow!!! (Overrides border color option)", false, "boolean"));
         parameters.put("player_color", new FeatureParameter<AColor>("player_color", "Color of the player border", "Same as name", new AColor(255,255,255,0), "acolor"));
-        parameters.put("player_chroma", new FeatureParameter<Boolean>("player_chroma", "Chroma border for player", "Rainbow!!! (Overrides border color option)", false, "boolean"));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -113,7 +112,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         DungeonContext context = skyblockStatus.getContext();
         MapProcessor mapProcessor = context.getMapProcessor();
         MapData mapData = mapProcessor.getLastMapData2();
-        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("background_color").getValue().getRGB());
+        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, RenderUtils.getColorAt(getFeatureRect().x, getFeatureRect().y, this.<AColor>getParameter("background_color").getValue()));
         GlStateManager.color(1,1,1,1);
         GlStateManager.pushMatrix();;
         if (mapData == null) {
@@ -123,7 +122,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         }
         GlStateManager.popMatrix();
         GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
+        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue());
     }
 
     @Override
@@ -132,11 +131,11 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             drawHUD(partialTicks);
             return;
         }
-        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("background_color").getValue().getRGB());
+        Gui.drawRect(0,0,getFeatureRect().width, getFeatureRect().height, RenderUtils.getColorAt(getFeatureRect().x, getFeatureRect().y, this.<AColor>getParameter("background_color").getValue()));
         FontRenderer fr = getFontRenderer();
         fr.drawString("Please join a dungeon to see preview", getFeatureRect().width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, getFeatureRect().height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
         GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue().getRGB(), this.<Boolean>getParameter("chromaborder").getValue());
+        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, this.<AColor>getParameter("border_color").getValue());
     }
 
     public void renderMap(float partialTicks, MapProcessor mapProcessor, MapData mapData, DungeonContext context){
@@ -212,7 +211,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 GlStateManager.scale(s,s,0);
                 Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
                 GL11.glLineWidth(1);
-                RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue().getRGB(), this.<Boolean>getParameter("player_chroma").getValue());
+                RenderUtils.drawUnfilledBox(-4,-4,4, 4, this.<AColor>getParameter("player_color").getValue());
             }
             GlStateManager.popMatrix();
         }

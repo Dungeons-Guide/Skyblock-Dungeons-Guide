@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.utils;
 
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
@@ -70,9 +71,70 @@ public class RenderUtils {
         GlStateManager.disableBlend();
     }
 
-    public static int getChromaColorAt(int x, int y, float speed) {
+
+    public static void drawUnfilledBox(int left, int top, int right, int bottom, AColor color)
+    {
+        if (left < right)
+        {
+            int i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom)
+        {
+            int j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = (float)(color.getRGB() >> 24 & 255) / 255.0F;
+        float f = (float)(color.getRGB() >> 16 & 255) / 255.0F;
+        float f1 = (float)(color.getRGB() >> 8 & 255) / 255.0F;
+        float f2 = (float)(color.getRGB() & 255) / 255.0F;
+        if (!color.isChroma() && f3 == 0) return;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        if (!color.isChroma()) {
+            GlStateManager.color(f, f1, f2, f3);
+            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
+            worldrenderer.pos((double) left, (double) bottom, 0.0D).endVertex();
+            worldrenderer.pos((double) right, (double) bottom, 0.0D).endVertex();
+            worldrenderer.pos((double) right, (double) top, 0.0D).endVertex();
+            worldrenderer.pos((double) left, (double) top, 0.0D).endVertex();
+        } else {
+            worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
+            ;
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            color(worldrenderer.pos((double) left, (double) bottom, 0.0D), getColorAt(left, bottom, color)).endVertex();
+            color(worldrenderer.pos((double) right, (double) bottom, 0.0D), getColorAt(right, bottom, color)).endVertex();
+            color(worldrenderer.pos((double) right, (double) top, 0.0D), getColorAt(right, top, color)).endVertex();
+            color(worldrenderer.pos((double) left, (double) top, 0.0D), getColorAt(left, top, color)).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+    public static int getChromaColorAt(int x, int y, float speed, float s, float b, float alpha) {
         double blah = ((double)(speed) * (System.currentTimeMillis() / 2)) % 360;
-        return Color.HSBtoRGB((float) (((blah - (x * x + y * y) / 50.0f) % 360) / 360.0f), 1,1);
+        return (Color.HSBtoRGB((float) (((blah - (x + y) / 2.0f) % 360) / 360.0f), s,b) & 0xffffff)
+                | (((int)(alpha * 255)<< 24) & 0xff000000);
+    }
+    public static int getColorAt(double x, double y, AColor color) {
+        if (!color.isChroma())
+            return color.getRGB();
+
+        double blah = ((double)(color.getChromaSpeed()) * (System.currentTimeMillis() / 2)) % 360;
+        float[] hsv = new float[3];
+        Color.RGBtoHSB(color.getRed(), color.getBlue(), color.getGreen(), hsv);
+
+
+        return (Color.HSBtoRGB((float) (((blah - (x + y) / 2.0f) % 360) / 360.0f), hsv[1],hsv[2]) & 0xffffff)
+                | ((color.getAlpha() << 24) & 0xff000000);
     }
 
     public static WorldRenderer color(WorldRenderer worldRenderer, int color ){
@@ -309,6 +371,82 @@ public class RenderUtils {
 
     }
 
+    public static void highlightBox(Entity entity, AxisAlignedBB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
+        }
+        int rgb = RenderUtils.getColorAt(entity.posX * 10,entity.posY * 10,c);
+        GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
+
+
+        GlStateManager.translate(-0.4 + entity.posX, entity.posY, -0.4 + entity.posZ);
+
+        double x = 0.8;
+        double y = 1.5;
+        double z = 0.8;
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, y, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, 0, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, y, z);
+
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, y, z); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, y, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, 0, 0);
+
+        GL11.glVertex3d(0,y,0);
+        GL11.glVertex3d(0,y,z);
+        GL11.glVertex3d(x,y,z);
+        GL11.glVertex3d(x,y,0);
+
+        GL11.glVertex3d(0,0,z);
+        GL11.glVertex3d(0,0,0);
+        GL11.glVertex3d(x,0,0);
+        GL11.glVertex3d(x,0,z);
+
+
+
+        GL11.glEnd();
+
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(true);
+        }
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+    }
+
     public static void highlightBox(Entity entity, AxisAlignedBB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -404,6 +542,89 @@ public class RenderUtils {
             GlStateManager.depthMask(false);
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
+        AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
+
+
+        GlStateManager.translate(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
+
+        double x = 0.8;
+        double y = 1.5;
+        double z = 0.8;
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, y, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, 0, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, y, z);
+
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, y, z); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, y, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, 0, 0);
+
+        GL11.glVertex3d(0,y,0);
+        GL11.glVertex3d(0,y,z);
+        GL11.glVertex3d(x,y,z);
+        GL11.glVertex3d(x,y,0);
+
+        GL11.glVertex3d(0,0,z);
+        GL11.glVertex3d(0,0,0);
+        GL11.glVertex3d(x,0,0);
+        GL11.glVertex3d(x,0,z);
+
+
+
+        GL11.glEnd();
+
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(true);
+        }
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+
+
+//...
+
+    }
+
+    public static void highlightBox(Entity entity, AColor c, float partialTicks, boolean depth) {
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+        GlStateManager.pushAttrib();
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.disableTexture2D();
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
+        }
+
+        int rgb = RenderUtils.getColorAt(entity.posX % 20,entity.posY % 20,c);
+        GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
+
         AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
 
 

@@ -42,7 +42,7 @@ public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderList
                 return input.getName().contains("✯");
             }
         });
-        Color c = this.<Color>getParameter("color").getValue();
+        AColor c = this.<AColor>getParameter("color").getValue();
         for (EntityArmorStand entitySkeleton : skeletonList) {
             RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }

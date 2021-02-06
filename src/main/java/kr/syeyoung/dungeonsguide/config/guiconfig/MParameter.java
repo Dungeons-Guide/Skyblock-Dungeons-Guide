@@ -1,8 +1,11 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MEditableAColor;
+import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
@@ -40,25 +43,52 @@ public class MParameter extends MPanel {
         this.label.setText(parameter.getName());
 
         {
-            MButton button = new MButton();
-            button.setText("Edit");
-            button.setOnActionPerformed(new Runnable() {
-                @Override
-                public void run() {
-                    final GuiParameterValueEdit guiParameterValueEdit = new GuiParameterValueEdit(parameter.getValue(), config2);
-                    guiParameterValueEdit.setOnUpdate(new Runnable() {
-                        @Override
-                        public void run() {
-                            Parameter parameter1 = guiParameterValueEdit.getParameter();
-                            parameter.setValue(parameter1.getNewData());
-                            label2.setText(parameter.getValue().toString());
-                        }
-                    });
-                    Minecraft.getMinecraft().displayGuiScreen(guiParameterValueEdit);
-                }
-            });
-            addons.add(button);
-            add(button);
+            if (parameter.getValue_type().equalsIgnoreCase("boolean")) {
+                final MToggleButton button = new MToggleButton();
+                button.setOnToggle(new Runnable() {
+                    @Override
+                    public void run() {
+                        parameter.setValue(button.isEnabled());
+                        label2.setText(parameter.getValue().toString());
+                    }
+                });
+                button.setEnabled((Boolean) parameter.getValue());
+                addons.add(button);
+                add(button);
+            } else if (parameter.getValue_type().equalsIgnoreCase("acolor")) {
+                final MEditableAColor button = new MEditableAColor();
+                button.setEnableEdit(true);
+                button.setOnUpdate(new Runnable() {
+                    @Override
+                    public void run() {
+                        parameter.setValue(button.getColor());
+                        label2.setText(parameter.getValue().toString());
+                    }
+                });
+                button.setColor((AColor) parameter.getValue());
+                addons.add(button);
+                add(button);
+            } else {
+                MButton button = new MButton();
+                button.setText("Edit");
+                button.setOnActionPerformed(new Runnable() {
+                    @Override
+                    public void run() {
+                        final GuiParameterValueEdit guiParameterValueEdit = new GuiParameterValueEdit(parameter.getValue(), config2);
+                        guiParameterValueEdit.setOnUpdate(new Runnable() {
+                            @Override
+                            public void run() {
+                                Parameter parameter1 = guiParameterValueEdit.getParameter();
+                                parameter.setValue(parameter1.getNewData());
+                                label2.setText(parameter.getValue().toString());
+                            }
+                        });
+                        Minecraft.getMinecraft().displayGuiScreen(guiParameterValueEdit);
+                    }
+                });
+                addons.add(button);
+                add(button);
+            }
         }
         {
             MLabel button = new MLabel();

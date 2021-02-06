@@ -34,6 +34,7 @@ public class PanelTextParameterConfig extends MPanel {
     private TextHUDFeature feature;
 
     private MEditableAColor currentColor;
+    private MEditableAColor backgroundColor;
 
     @Override
     public void onBoundsUpdate() {
@@ -63,12 +64,28 @@ public class PanelTextParameterConfig extends MPanel {
             }
         });
         add(currentColor);
+        backgroundColor = new MEditableAColor();
+        backgroundColor.setColor(new AColor(0xff555555, true));
+        backgroundColor.setEnableEdit(false);
+        backgroundColor.setSize(new Dimension(15, 10));
+        backgroundColor.setBounds(new Rectangle(415 , 14, 15, 10));
+        backgroundColor.setOnUpdate(new Runnable() {
+            @Override
+            public void run() {
+                for (String se:selected)
+                    feature.getStylesMap().get(se).setBackground(backgroundColor.getColor());
+            }
+        });
+        add(backgroundColor);
+
+
     }
 
     private Set<String> selected = new HashSet<String>();
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
+
         GlStateManager.pushMatrix();
 
         int width = 200, height = 100;
@@ -78,23 +95,28 @@ public class PanelTextParameterConfig extends MPanel {
         Rectangle clip = new Rectangle(scissor.x + 5, scissor.y + 5, width, height);
         clip(new ScaledResolution(Minecraft.getMinecraft()), clip.x, clip.y, clip.width, clip.height);
 
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(offsetX + 5, offsetY + 5, 0);
+        GlStateManager.scale(scale, scale, 0);
+
+
         List<StyledText> texts = feature.getDummyText();
         Map<String, TextStyle> styles = feature.getStylesMap();
-        List<TextHUDFeature.StyleTextAssociated> calc = feature.calculate(texts, 5,5, styles);
+        List<TextHUDFeature.StyleTextAssociated> calc = feature.drawTextWithStylesAssociated(texts, 0,0, styles);
         boolean bool =clip.contains(absMousex, absMousey);
         for (TextHUDFeature.StyleTextAssociated calc3: calc) {
             if (selected.contains(calc3.getStyledText().getGroup())) {
-                Gui.drawRect(calc3.getRectangle().x, calc3.getRectangle().y, calc3.getRectangle().x + calc3.getRectangle().width, calc3.getRectangle().y + calc3.getRectangle().height, 0xFF44A800);
-            } else if (bool && calc3.getRectangle().contains(relMousex0, relMousey0)) {
+                Gui.drawRect(calc3.getRectangle().x, calc3.getRectangle().y, calc3.getRectangle().x + calc3.getRectangle().width, calc3.getRectangle().y + calc3.getRectangle().height, 0x4244A800);
+            } else if (bool && calc3.getRectangle().contains((relMousex0-5 -offsetX) * scale , (relMousey0 - 5 - offsetY) * scale)) {
                 for (TextHUDFeature.StyleTextAssociated calc2 : calc) {
                     if (calc2.getStyledText().getGroup().equals(calc3.getStyledText().getGroup()))
-                        Gui.drawRect(calc2.getRectangle().x, calc2.getRectangle().y, calc2.getRectangle().x + calc2.getRectangle().width, calc2.getRectangle().y + calc2.getRectangle().height, 0xFF777777);
+                        Gui.drawRect(calc2.getRectangle().x, calc2.getRectangle().y, calc2.getRectangle().x + calc2.getRectangle().width, calc2.getRectangle().y + calc2.getRectangle().height, 0x55777777);
                 }
             }
         }
-        feature.drawTextWithStylesAssociated(texts, 5,5, styles);
         clip(new ScaledResolution(Minecraft.getMinecraft()), scissor.x, scissor.y, scissor.width, scissor.height);
 
+        GlStateManager.popMatrix();
 
         GlStateManager.translate(5, height + 7, 0);
         GlStateManager.scale(0.5,0.5,0);
@@ -109,19 +131,27 @@ public class PanelTextParameterConfig extends MPanel {
         fr.drawString("Selected Groups: "+selected, 0, 0, 0xFFBFBFBF);
         GlStateManager.popMatrix();
         fr.drawString("Text Color: ", 0, 10, 0xFFFFFFFF);
+        fr.drawString("Background Color: ", 100, 10, 0xFFFFFFFF);
 
         GlStateManager.popMatrix();
     }
 
+    private int offsetX = 0;
+    private int offsetY = 0;
+    private float scale = 1;
+
+    private int lastX;
+    private int lastY;
+    private boolean dragStart = false;
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         List<StyledText> texts = feature.getDummyText();
         Map<String, TextStyle> styles = feature.getStylesMap();
         boolean existed = selected.isEmpty();
         boolean found = false;
-        List<TextHUDFeature.StyleTextAssociated> calc = feature.calculate(texts, 5,5, styles);
+        List<TextHUDFeature.StyleTextAssociated> calc = feature.calculate(texts, 0,0, styles);
         for (TextHUDFeature.StyleTextAssociated calc3: calc) {
-            if (calc3.getRectangle().contains(relMouseX, relMouseY)) {
+            if (calc3.getRectangle().contains((relMouseX-5 -offsetX) * scale , (relMouseY - 5 - offsetY) * scale)) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                     if (!selected.contains(calc3.getStyledText().getGroup()))
                         selected.add(calc3.getStyledText().getGroup());
@@ -137,16 +167,56 @@ public class PanelTextParameterConfig extends MPanel {
 
         if (!found && !(Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) && relMouseX >= 5 && relMouseX <= 205 && relMouseY >= 5 && relMouseY <= 105) {
             selected.clear();
+            dragStart = true;
+            lastX = absMouseX;
+            lastY = absMouseY;
         }
         currentColor.setEnableEdit(selected.size() != 0);
+        backgroundColor.setEnableEdit(selected.size() != 0);
         if (existed != selected.isEmpty()) {
-            if (selected.size() != 0)
+            if (selected.size() != 0) {
                 currentColor.setColor(styles.get(selected.iterator().next()).getColor());
-            else
+                backgroundColor.setColor(styles.get(selected.iterator().next()).getBackground());
+            } else {
                 currentColor.setColor(new AColor(0xff555555, true));
+                backgroundColor.setColor(new AColor(0xff555555, true));
+            }
         }
 
-        if (selected.size() == 1)
+        if (selected.size() == 1) {
             currentColor.setColor(styles.get(selected.iterator().next()).getColor());
+            backgroundColor.setColor(styles.get(selected.iterator().next()).getBackground());
+        }
+    }
+
+    @Override
+    public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
+        dragStart = false;
+    }
+
+    @Override
+    public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
+        if (dragStart) {
+            offsetX += absMouseX - lastX;
+            offsetY += absMouseY - lastY;
+            lastX = absMouseX;
+            lastY = absMouseY;
+
+            if (offsetX < 0) offsetX = 0;
+            if (offsetY < 0) offsetY =0;
+        }
+    }
+
+    @Override
+    public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+        if ( relMouseX0 >= 5 && relMouseX0 <= 205 && relMouseY0 >= 5 && relMouseY0 <= 105) {
+            if (scrollAmount > 0) {
+                scale += 0.1;
+            } else if (scrollAmount < 0) {
+                scale -= 0.1;
+            }
+            if (scale < 0.1) scale = 0.1f;
+            if (scale > 5) scale = 5.0f;
+        }
     }
 }

@@ -36,7 +36,7 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
         if (!(skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
         EntityOtherPlayerMP playerMP = ((BossfightProcessorLivid) skyblockStatus.getContext().getBossfightProcessor()).getRealLivid();
 
-        Color c = this.<Color>getParameter("color").getValue();
+        AColor c = this.<AColor>getParameter("color").getValue();
         RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4), c, partialTicks, true);
     }
 }

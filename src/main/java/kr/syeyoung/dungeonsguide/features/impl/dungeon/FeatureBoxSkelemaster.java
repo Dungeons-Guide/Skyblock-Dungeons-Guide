@@ -43,7 +43,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderL
                 return input.getName().contains("Skeleton Master");
             }
         });
-        Color c = this.<Color>getParameter("color").getValue();
+        AColor c = this.<AColor>getParameter("color").getValue();
         for (EntityArmorStand entitySkeleton : skeletonList) {
             RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }
