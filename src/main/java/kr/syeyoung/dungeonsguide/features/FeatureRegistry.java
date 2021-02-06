@@ -60,6 +60,7 @@ public class FeatureRegistry {
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
+    public static final SimpleFeature ETC_REMOVE_REPARTY =  register(new SimpleFeature("ETC", "Remove Reparty Command From DG", "/rp will still work, Auto reparty will still work\nRequires Restart to get applied", "qol.noreparty"));
 
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());

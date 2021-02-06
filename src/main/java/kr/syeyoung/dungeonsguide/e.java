@@ -10,10 +10,13 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.command.ICommand;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.commons.io.IOUtils;
@@ -25,6 +28,8 @@ import java.io.*;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.Map;
+import java.util.Set;
 
 public class e implements c {
 
@@ -55,7 +60,15 @@ public class e implements c {
         MinecraftForge.EVENT_BUS.register(new DungeonListener());
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide = new CommandDungeonsGuide());
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
-        ClientCommandHandler.instance.registerCommand(commandReparty = new CommandReparty());
+
+        commandReparty = new CommandReparty();
+        if(!ClientCommandHandler.instance.getCommands().containsKey("rp")) {
+            ((Set<ICommand>) ObfuscationReflectionHelper.getPrivateValue(ClientCommandHandler.class, ClientCommandHandler.instance, "CommandSet")).add(commandReparty);
+            ((Map<String, ICommand>)ObfuscationReflectionHelper.getPrivateValue(ClientCommandHandler.class, ClientCommandHandler.instance, "CommandMap")).put("rp", commandReparty);
+        }
+        if (FeatureRegistry.ETC_REMOVE_REPARTY.isEnabled())
+            ClientCommandHandler.instance.registerCommand(commandReparty);
+
         MinecraftForge.EVENT_BUS.register(commandReparty);
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
