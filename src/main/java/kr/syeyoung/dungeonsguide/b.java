@@ -9,6 +9,7 @@ import com.mojang.authlib.minecraft.MinecraftSessionService;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
+import net.minecraftforge.fml.common.ProgressManager;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.*;
@@ -30,6 +31,7 @@ import java.util.zip.ZipInputStream;
 public class b {
     private KeyPair a;
     private String b;
+    private ProgressManager.ProgressBar p;
 
     public String c() {
         return b;
@@ -45,7 +47,9 @@ public class b {
         return this.a;
     }
 
-    public b() {
+    public b(ProgressManager.ProgressBar p) {
+        this.p = p;
+        p.step("Generating KeyPair...");
         a();
     }
 
@@ -94,13 +98,16 @@ public class b {
         Session a = Minecraft.getMinecraft().getSession();
         String b = a.getToken();
 
+        p.step("Authenticating Dungeons Guide (1/2)");
         String c = a(a.getProfile());
         MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getMinecraft().getSessionService();
         JsonObject d = a(c);
         String hash = a(Base64.decodeBase64(d.get("sharedSecret").getAsString()),
                 Base64.decodeBase64(d.get("publicKey").getAsString()));
         yggdrasilMinecraftSessionService.joinServer(a.getProfile(), b, hash);
+        p.step("Authenticating Dungeons Guide (2/2)");
         this.b = a(c, this.a.getPublic());
+        p.step("Downloading Required Resources");
         if (jars)
             b(this.b, "https://dungeonsguide.kro.kr/resource/latest");
         b(this.b, "https://dungeonsguide.kro.kr/resource/roomdata");

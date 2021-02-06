@@ -43,7 +43,8 @@ public class a
 
     @EventHandler
     public void a(FMLPreInitializationEvent a) {
-        b b = new b();
+        ProgressManager.ProgressBar f = ProgressManager.push("Dungeons Guide", 5);
+        b b = new b(f);
         String c = null;
         try {
             c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null);
@@ -54,8 +55,10 @@ public class a
                 d.addURL(new URL("z:///"));
 
                 try {
+                    f.step("Initializing");
                     this.d = new e(b);
                     this.d.pre(a);
+                    ProgressManager.pop(f);
                 } catch (Exception e) {
                     e.printStackTrace();
 
@@ -101,17 +104,6 @@ public class a
                 "If you haven't purchased the mod, please consider doing so"
         });
     }
-//    @EventHandler
-//    public void pre(FMLPreInitializationEvent event) {
-//                a = this;
-//                URL.setURLStreamHandlerFactory(new c(null));
-//                try {
-//                    d = new e(null);
-//                    d.pre(event);
-//                } catch (Exception e) {
-//                    e.printStackTrace();
-//                }
-//    }
 
     public void a(final String[] a) {
         final GuiScreen b = new GuiErrorScreen(null, null) {
