@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.eventlistener;
 
+import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.a;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -21,6 +23,8 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
@@ -35,6 +39,7 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -100,9 +105,44 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e) {
+    public void onTick(TickEvent.ClientTickEvent ev) throws Throwable {
         try {
-            if (e.phase == TickEvent.Phase.START) {
+            if (ev.phase == TickEvent.Phase.START) {
+                JsonObject obj = e.getDungeonsGuide().getAuthenticator().a(e.getDungeonsGuide().getAuthenticator().c());
+                if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getProfile().getId().toString())) {
+                    if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;
+
+                    final String[] a = new String[]{
+                            "User has changed current Minecraft session.",
+                            "Please restart mc to revalidate Dungeons Guide"
+                    };
+                    final GuiScreen b = new GuiErrorScreen(null, null) {
+                        @Override
+                        public void drawScreen(int par1, int par2, float par3) {
+                            super.drawScreen(par1, par2, par3);
+                            for (int i = 0; i < a.length; ++i) {
+                                drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
+                            }
+                        }
+
+                        @Override
+                        public void initGui() {
+                            super.initGui();
+                            this.buttonList.clear();
+                            this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100,20, "close"));
+                        }
+
+                        @Override
+                        protected void actionPerformed(GuiButton button) throws IOException {
+                            System.exit(-1);
+                        }
+                    };
+                    Minecraft.getMinecraft().displayGuiScreen(b);
+                    return;
+                }
+
+
+
                 SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
                  {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
@@ -146,13 +186,25 @@ public class DungeonListener {
                     }
                 }
             }
-        } catch (Throwable e2) {e2.printStackTrace();}
+        } catch (Throwable e2) {
+            if (e2 instanceof CustomModLoadingErrorDisplayException) throw e2;
+            e2.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
             if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
+
+            JsonObject obj = e.getDungeonsGuide().getAuthenticator().a(e.getDungeonsGuide().getAuthenticator().c());
+            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+            if (obj.get("plan").getAsString().equalsIgnoreCase("TRIAL")) {
+                fr.drawString("Using trial Version of Dungeons Guide", 0,0, 0xFFFFFFFF);
+                fr.drawString("Trial version bound to: "+obj.get("nickname").getAsString(), 0,10, 0xFFFFFFFF);
+            }
+
+
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
