@@ -43,7 +43,7 @@ public class a
 
     @EventHandler
     public void a(FMLPreInitializationEvent a) {
-        ProgressManager.ProgressBar f = ProgressManager.push("Dungeons Guide", 5);
+        ProgressManager.ProgressBar f = ProgressManager.push("DungeonsGuide", 5);
         b b = new b(f);
         String c = null;
         try {

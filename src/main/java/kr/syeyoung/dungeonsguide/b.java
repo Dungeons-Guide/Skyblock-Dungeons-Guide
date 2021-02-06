@@ -49,7 +49,7 @@ public class b {
 
     public b(ProgressManager.ProgressBar p) {
         this.p = p;
-        p.step("Generating KeyPair...");
+        p.step("Generating KeyPair");
         a();
     }
 
@@ -98,16 +98,16 @@ public class b {
         Session a = Minecraft.getMinecraft().getSession();
         String b = a.getToken();
 
-        p.step("Authenticating Dungeons Guide (1/2)");
+        p.step("Authenticating (1/2)");
         String c = a(a.getProfile());
         MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getMinecraft().getSessionService();
         JsonObject d = a(c);
         String hash = a(Base64.decodeBase64(d.get("sharedSecret").getAsString()),
                 Base64.decodeBase64(d.get("publicKey").getAsString()));
         yggdrasilMinecraftSessionService.joinServer(a.getProfile(), b, hash);
-        p.step("Authenticating Dungeons Guide (2/2)");
+        p.step("Authenticating (2/2)");
         this.b = a(c, this.a.getPublic());
-        p.step("Downloading Required Resources");
+        p.step("Downloading");
         if (jars)
             b(this.b, "https://dungeonsguide.kro.kr/resource/latest");
         b(this.b, "https://dungeonsguide.kro.kr/resource/roomdata");
