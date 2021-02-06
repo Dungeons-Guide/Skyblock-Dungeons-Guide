@@ -62,10 +62,6 @@ public class e implements c {
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         commandReparty = new CommandReparty();
-        if(!ClientCommandHandler.instance.getCommands().containsKey("rp")) {
-            ((Set<ICommand>) ObfuscationReflectionHelper.getPrivateValue(ClientCommandHandler.class, ClientCommandHandler.instance, "CommandSet")).add(commandReparty);
-            ((Map<String, ICommand>)ObfuscationReflectionHelper.getPrivateValue(ClientCommandHandler.class, ClientCommandHandler.instance, "CommandMap")).put("rp", commandReparty);
-        }
         if (FeatureRegistry.ETC_REMOVE_REPARTY.isEnabled())
             ClientCommandHandler.instance.registerCommand(commandReparty);
 

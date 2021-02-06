@@ -32,7 +32,6 @@ public class CommandDungeonsGuide extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         if (args.length == 0) {
-            // open config
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("saverooms")) {
             DungeonRoomInfoRegistry.saveAll(e.getDungeonsGuide().getConfigDir());
@@ -84,6 +83,10 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equalsIgnoreCase("brand")) {
             String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+serverBrand));
+        } else if (args[0].equalsIgnoreCase("reparty")) {
+            e.getDungeonsGuide().getCommandReparty().requestReparty();
+        } else if (args[0].equalsIgnoreCase("gui")) {
+            openConfig = true;
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
@@ -92,6 +95,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reloadah §7-§f Reloads price data from server."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
         }
     }
 
