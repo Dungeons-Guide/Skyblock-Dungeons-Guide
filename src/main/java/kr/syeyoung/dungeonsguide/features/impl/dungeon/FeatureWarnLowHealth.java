@@ -22,10 +22,10 @@ import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 

@@ -14,11 +14,11 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.awt.font.TextHitInfo;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.List;

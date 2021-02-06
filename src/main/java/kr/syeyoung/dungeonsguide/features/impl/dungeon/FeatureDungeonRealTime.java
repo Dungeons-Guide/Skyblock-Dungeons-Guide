@@ -18,11 +18,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.lwjgl.opengl.GL11;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FeatureDungeonRealTime extends TextHUDFeature implements DungeonStartListener, DungeonEndListener {
