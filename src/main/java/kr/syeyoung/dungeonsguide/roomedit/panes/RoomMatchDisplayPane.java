@@ -12,9 +12,9 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
+import java.util.Arrays;
 import java.util.UUID;
 
 public class RoomMatchDisplayPane extends MPanel {

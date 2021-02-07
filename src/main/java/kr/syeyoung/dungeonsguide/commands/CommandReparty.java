@@ -11,7 +11,6 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
-import scala.collection.parallel.ParIterableLike;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

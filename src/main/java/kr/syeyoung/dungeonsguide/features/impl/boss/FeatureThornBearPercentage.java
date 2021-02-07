@@ -11,10 +11,10 @@ import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorThorn
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.HealthData;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.gui.FontRenderer;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FeatureThornBearPercentage extends TextHUDFeature {

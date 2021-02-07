@@ -19,10 +19,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FeatureDungeonScore extends TextHUDFeature {

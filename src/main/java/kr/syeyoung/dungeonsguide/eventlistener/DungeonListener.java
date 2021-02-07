@@ -46,7 +46,6 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.opengl.GL11;
-import scala.collection.parallel.ParIterableLike;
 
 import java.awt.*;
 import java.io.IOException;

@@ -13,10 +13,10 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import org.lwjgl.opengl.GL11;
-import scala.actors.threadpool.Arrays;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class FeatureDungeonTombs extends TextHUDFeature {
