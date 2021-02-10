@@ -15,4 +15,5 @@ public interface DungeonMechanic extends Serializable {
     String getCurrentState(DungeonRoom dungeonRoom);
 
     Set<String> getPossibleStates(DungeonRoom dungeonRoom);
+    Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
 }

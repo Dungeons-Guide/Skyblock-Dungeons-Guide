@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
@@ -93,5 +94,10 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         return isBlocking(dungeonRoom) ? Collections.singleton("open") : Collections.<String>emptySet();
+    }
+
+    @Override
+    public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
+        return Sets.newHashSet("open", "closed");
     }
 }

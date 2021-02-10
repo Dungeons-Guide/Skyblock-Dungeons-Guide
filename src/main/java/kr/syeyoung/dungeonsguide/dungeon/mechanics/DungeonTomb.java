@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClickSet;
@@ -92,5 +93,9 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         return isBlocking(dungeonRoom) ? Collections.singleton("open") : Collections.<String>emptySet();
+    }
+    @Override
+    public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
+        return Sets.newHashSet("open", "closed");
     }
 }

@@ -1,11 +1,14 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
@@ -85,8 +88,12 @@ public class DungeonSecret implements DungeonMechanic {
         BAT, CHEST, ITEM_DROP
     }
 
+    @AllArgsConstructor
+    @Getter
     public static enum SecretStatus {
-        DEFINITELY_NOT, NOT_SURE, CREATED, FOUND, ERROR
+        DEFINITELY_NOT("definitely_not"), NOT_SURE("not_sure"), CREATED("created"), FOUND("found"), ERROR("error");
+
+        private String stateName;
     }
 
     public DungeonSecret clone() throws CloneNotSupportedException {
@@ -100,7 +107,7 @@ public class DungeonSecret implements DungeonMechanic {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-        return getSecretStatus(dungeonRoom).name();
+        return getSecretStatus(dungeonRoom).getStateName();
     }
 
     @Override
@@ -108,5 +115,9 @@ public class DungeonSecret implements DungeonMechanic {
         SecretStatus status = getSecretStatus(dungeonRoom);
         if (status == SecretStatus.FOUND) return Collections.emptySet();
         else return Collections.singleton("found");
+    }
+    @Override
+    public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
+        return Sets.newHashSet("found"/*, "definitely_not", "not_sure", "created", "error"*/);
     }
 }

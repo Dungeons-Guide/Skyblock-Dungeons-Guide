@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
@@ -81,5 +82,9 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
         if (currentStatus.equalsIgnoreCase("closed"))
             return Collections.singleton("open");
         return Collections.emptySet();
+    }
+    @Override
+    public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
+        return Sets.newHashSet("open", "closed");
     }
 }

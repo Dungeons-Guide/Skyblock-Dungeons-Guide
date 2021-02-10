@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClick;
@@ -85,5 +86,9 @@ public class DungeonOnewayLever implements DungeonMechanic {
         if (currentStatus.equalsIgnoreCase("untriggered"))
             return Collections.singleton("triggered");
         return Collections.emptySet();
+    }
+    @Override
+    public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
+        return Sets.newHashSet("triggered", "untriggered");
     }
 }
