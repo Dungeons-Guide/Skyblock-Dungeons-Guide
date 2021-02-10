@@ -11,6 +11,7 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -50,6 +51,11 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     @Override
     public void chatReceived(IChatComponent chat) {
+
+    }
+
+    @Override
+    public void onEntityDeath(LivingDeathEvent deathEvent) {
 
     }
 

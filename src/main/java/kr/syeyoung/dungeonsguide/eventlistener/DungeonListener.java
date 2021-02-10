@@ -27,8 +27,11 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.tileentity.TileEntitySkull;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -109,6 +112,8 @@ public class DungeonListener {
     public void onTick(TickEvent.ClientTickEvent ev) throws Throwable {
         try {
             if (ev.phase == TickEvent.Phase.START) {
+
+
                 JsonObject obj = e.getDungeonsGuide().getAuthenticator().a(e.getDungeonsGuide().getAuthenticator().c());
                 if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getProfile().getId().toString())) {
                     if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;

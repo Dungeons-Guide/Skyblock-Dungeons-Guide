@@ -58,6 +58,7 @@ public class DungeonSecret implements DungeonMechanic {
             ActionKill actionKill;
             preRequisites.add(actionKill = new ActionKill(secretPoint));
             actionKill.setPredicate(PredicateBat.INSTANCE);
+            actionKill.setRadius(10);
             preRequisites = actionKill.getPreRequisite();
         }
         {

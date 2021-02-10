@@ -1,12 +1,9 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClickSet;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -34,9 +31,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
-            ActionClickSet actionClick;
-            preRequisites.add(actionClick = new ActionClickSet(secretPoint));
-            actionClick.setPredicate(PredicateSuperBoom.INSTANCE);
+            ActionBreakWithSuperBoom actionClick;
+            preRequisites.add(actionClick = new ActionBreakWithSuperBoom(secretPoint.getOffsetPointList().get(0)));
             preRequisites = actionClick.getPreRequisite();
         }
         {

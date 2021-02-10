@@ -4,11 +4,13 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -42,6 +44,11 @@ public class ActionClick extends AbstractAction {
             clicked = true;
         }
     }
+    @Override
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(0, 255,0,50),partialTicks, true);
+    }
+
 
     @Override
     public String toString() {

@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
@@ -40,21 +41,32 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void tick() {
-
+        if (path != null) path.onTick();
     }
 
     @Override
     public void drawScreen(float partialTicks) {
+        if (path != null) path.onRenderScreen(partialTicks);
+
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        if (path != null) {
+            fr.drawString("Pathfinding " + path.getMechanic() + ":" + path.getState(), 5, 5, 0xffffffff);
+            for (int i = 0; i < path.getActions().size(); i++) {
+                fr.drawString((i == path.getCurrent() ? ">" : " ") + " " + i + ". " + path.getActions().get(i),
+                        5, i * 8 + 13, 0xFF00FF00);
+            }
+        }
     }
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() == null || EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
+        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() == null) continue;;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);
             }
         }
+        if (path != null) path.onRenderWorld(partialTicks);
     }
 
     @Override
@@ -115,8 +127,15 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return false;
     }
 
+    private ActionRoute path;
+
+    public void pathfind(String mechanic, String state) {
+        path = new ActionRoute(getDungeonRoom(), mechanic, state);
+    }
+
     @Override
     public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
+
     }
 
     @Override
@@ -134,12 +153,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
-
+        if (path != null) path.onPlayerInteract(event);
     }
 
     @Override
     public void onEntityDeath(LivingDeathEvent deathEvent) {
-
+        if (path != null) path.onLivingDeath(deathEvent);
     }
 
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {

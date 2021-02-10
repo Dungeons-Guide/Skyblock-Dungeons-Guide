@@ -6,12 +6,14 @@ import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -46,6 +48,10 @@ public class ActionKill extends AbstractAction {
         if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) return;
         if (!predicate.apply(event.entity)) return;
         killed = true;
+    }
+    @Override
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(255, 0,0,50),partialTicks, true);
     }
 
     @Override

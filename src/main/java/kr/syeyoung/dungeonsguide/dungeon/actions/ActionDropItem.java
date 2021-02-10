@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.item.EntityItem;
@@ -11,6 +12,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -37,6 +39,10 @@ public class ActionDropItem extends AbstractAction {
                 AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1));
         if (item.size() == 0) return false;
         return (predicate == null || predicate.apply(item.get(0)));
+    }
+    @Override
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(0, 0,255,50),partialTicks, true);
     }
 
     @Override

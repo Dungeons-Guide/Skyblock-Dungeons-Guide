@@ -2,10 +2,14 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
@@ -15,6 +19,7 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.awt.*;
 import java.io.IOException;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -98,6 +103,20 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fBound to§7: §e" + obj.get("nickname").getAsString()));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fBound uuid§7: §e" + obj.get("uuid").getAsString()));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSession Expire§7: §e" + sdf.format(new Date(obj.get("exp").getAsLong() * 1000))));
+        } else if (args[0].equalsIgnoreCase("pathfind")) {
+            try {
+                DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
+                EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                if (thePlayer == null) return;
+                if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
+                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+                grp.pathfind(args[1], args[2]);
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

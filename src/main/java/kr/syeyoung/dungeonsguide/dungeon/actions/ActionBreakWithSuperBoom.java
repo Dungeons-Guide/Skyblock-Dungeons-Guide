@@ -34,7 +34,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
-        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(255, 0,0,255),partialTicks, true);
+        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(255, 0,0,255),partialTicks, false);
     }
 
     @Override
