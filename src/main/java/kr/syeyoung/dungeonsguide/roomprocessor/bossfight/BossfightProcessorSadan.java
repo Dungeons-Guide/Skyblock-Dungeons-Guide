@@ -104,7 +104,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     private EntityArmorStand bigfootGiant;
     private EntityArmorStand boulderGiant;
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lSadan§r "))
                 sadanStand = (EntityArmorStand) updateEvent.entityLiving;

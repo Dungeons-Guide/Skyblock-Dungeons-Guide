@@ -20,6 +20,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -119,7 +120,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
     }
 
     @Override
@@ -133,6 +134,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
+
+    }
+
+    @Override
+    public void onEntityDeath(LivingDeathEvent deathEvent) {
 
     }
 

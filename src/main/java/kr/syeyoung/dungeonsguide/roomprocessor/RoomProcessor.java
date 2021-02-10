@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -19,7 +20,8 @@ public interface RoomProcessor {
     boolean readGlobalChat();
 
     void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event);
-    void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent);
+    void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent);
+    void onEntityDeath(LivingDeathEvent deathEvent);
 
     void onKeyPress(InputEvent.KeyInputEvent keyInputEvent);
 

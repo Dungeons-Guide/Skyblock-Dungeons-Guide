@@ -31,7 +31,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
             put("Arcade", "§e");
     }};
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving.getName().endsWith("Livid") && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
             if (!knownLivids.contains(updateEvent.entityLiving.getName())) {
                 knownLivids.add(updateEvent.entityLiving.getName());

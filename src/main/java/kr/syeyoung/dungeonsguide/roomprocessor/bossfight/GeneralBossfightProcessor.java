@@ -7,6 +7,7 @@ import net.minecraft.entity.boss.EntityDragon;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -86,7 +87,7 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
 
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
 
     }
 
@@ -102,6 +103,10 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
 
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
+
+    }
+    @Override
+    public void onEntityDeath(LivingDeathEvent deathEvent) {
 
     }
 

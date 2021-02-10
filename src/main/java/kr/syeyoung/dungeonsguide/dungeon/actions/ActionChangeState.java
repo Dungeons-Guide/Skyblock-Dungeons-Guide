@@ -9,7 +9,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-public class ActionChangeState implements Action{
+public class ActionChangeState extends AbstractAction{
     @EqualsAndHashCode.Exclude
     private Set<Action> preRequisite2 = new HashSet<Action>();
 
@@ -33,5 +33,13 @@ public class ActionChangeState implements Action{
     @Override
     public String toString() {
         return "ChangeState\n- target: "+mechanicName+"\n- state: "+state;
+    }
+
+    @Override
+    public boolean isComplete(DungeonRoom dungeonRoom) {
+        DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName);
+        if (mechanic== null)
+            return false;
+        return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
     }
 }

@@ -6,16 +6,20 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.entity.item.EntityItem;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 @Data
-public class ActionDropItem implements Action {
+public class ActionDropItem extends AbstractAction {
     private Set<Action> preRequisite = new HashSet<Action>();
     private OffsetPoint target;
-    private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
+    private Predicate<EntityItem> predicate = Predicates.alwaysTrue();
 
     public ActionDropItem(OffsetPoint target) {
         this.target = target;
@@ -24,6 +28,15 @@ public class ActionDropItem implements Action {
     @Override
     public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
         return preRequisite;
+    }
+
+    @Override
+    public boolean isComplete(DungeonRoom dungeonRoom) {
+        BlockPos pos = target.getBlockPos(dungeonRoom);
+        List<EntityItem> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(EntityItem.class,
+                AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1));
+        if (item.size() == 0) return false;
+        return (predicate == null || predicate.apply(item.get(0)));
     }
 
     @Override

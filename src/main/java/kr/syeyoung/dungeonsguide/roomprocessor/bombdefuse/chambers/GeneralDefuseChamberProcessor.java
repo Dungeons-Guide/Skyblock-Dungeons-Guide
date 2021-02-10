@@ -69,7 +69,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
 
     }
 

@@ -4,23 +4,21 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
+import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
-public class ActionClick extends AbstractAction {
+public class ActionBreakWithSuperBoom extends AbstractAction {
     private Set<Action> preRequisite = new HashSet<Action>();
     private OffsetPoint target;
-    private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
 
-    private boolean clicked = false;
-
-    public ActionClick(OffsetPoint target) {
+    public ActionBreakWithSuperBoom(OffsetPoint target) {
         this.target = target;
     }
 
@@ -31,20 +29,16 @@ public class ActionClick extends AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return clicked;
+        return target.getBlock(dungeonRoom) == Blocks.air;
     }
 
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
-        if (clicked) return;
-        if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
-                (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
-            clicked = true;
-        }
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(255, 0,0,255),partialTicks, true);
     }
 
     @Override
     public String toString() {
-        return "Click\n- target: "+target.toString()+"\n- predicate: "+predicate.getClass().getSimpleName();
+        return "Click\n- target: "+target.toString();
     }
 }

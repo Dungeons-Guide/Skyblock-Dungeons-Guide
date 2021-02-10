@@ -313,8 +313,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
-        super.onEntitySpawn(updateEvent);
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+        super.onEntityUpdate(updateEvent);
         if (bugged) return;
 
         BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
@@ -322,12 +322,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                 if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getLeft().getProcessor().onEntitySpawn(updateEvent);
+                    ch.getLeft().getProcessor().onEntityUpdate(updateEvent);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
 //                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getRight().getProcessor().onEntitySpawn(updateEvent);
+                    ch.getRight().getProcessor().onEntityUpdate(updateEvent);
 //                }
             }
         }

@@ -53,7 +53,7 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     @Override
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving.getName().contains("❤") && updateEvent.entityLiving instanceof EntityArmorStand) {
             System.out.println(updateEvent.entityLiving.getName());
         }

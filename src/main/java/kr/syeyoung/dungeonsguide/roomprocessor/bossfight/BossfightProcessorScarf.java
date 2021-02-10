@@ -94,7 +94,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     private EntityArmorStand berserkStand;
     private EntityArmorStand archerStand;
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r "))
                 scarfStand = (EntityArmorStand) updateEvent.entityLiving;

@@ -7,7 +7,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Data
-public class ActionRoot implements Action {
+public class ActionRoot extends AbstractAction {
     private Set<Action> preRequisite = new HashSet<Action>();
 
     public ActionRoot() {
@@ -16,6 +16,11 @@ public class ActionRoot implements Action {
     @Override
     public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
         return preRequisite;
+    }
+
+    @Override
+    public boolean isComplete(DungeonRoom dungeonRoom) {
+        return true;
     }
 
     @Override

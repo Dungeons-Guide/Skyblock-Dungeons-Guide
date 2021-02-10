@@ -104,7 +104,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     private EntityArmorStand reinforcedGuard;
     private EntityArmorStand healthyGuard;
     @Override
-    public void onEntitySpawn(LivingEvent.LivingUpdateEvent updateEvent) {
+    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
             if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r "))
                 profStand = (EntityArmorStand) updateEvent.entityLiving;
