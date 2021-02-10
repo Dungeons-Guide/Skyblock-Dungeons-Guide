@@ -12,9 +12,9 @@ import java.util.Map;
 import java.util.Set;
 
 @Data
-public class ActionTree {
+public class ActionTree implements Cloneable {
     @EqualsAndHashCode.Exclude
-    private ActionTree parent;
+    private Set<ActionTree> parent;
     private Action current;
     private Set<ActionTree> children;
 
@@ -26,7 +26,7 @@ public class ActionTree {
         ActionRoot root = new ActionRoot();
         root.setPreRequisite(actions);
         ActionTree tree = new ActionTree();
-        tree.setParent(null);
+        tree.setParent(new HashSet<ActionTree>());
         tree.setCurrent(root);
         HashSet<ActionTree> set = new HashSet();
         for (Action action : actions) {
@@ -43,11 +43,17 @@ public class ActionTree {
 
     private static ActionTree buildActionTree(ActionTree parent, Action action, DungeonRoom dungeonRoom, Map<Action, ActionTree> alreadyBuilt) {
         if (action == null) return null;
-        if (alreadyBuilt.containsKey(action)) return alreadyBuilt.get(action);
+        if (alreadyBuilt.containsKey(action))  {
+            ActionTree tree = alreadyBuilt.get(action);
+            tree.getParent().add(parent);
+            return tree;
+        }
 
         ActionTree tree = new ActionTree();
         alreadyBuilt.put(action, tree);
-        tree.setParent(parent);
+        tree.setParent(new HashSet<ActionTree>());
+        if (parent != null)
+            tree.getParent().add(parent);
         tree.setCurrent(action);
         HashSet<ActionTree> set = new HashSet();
         for (Action action2 : action.getPreRequisites(dungeonRoom)) {

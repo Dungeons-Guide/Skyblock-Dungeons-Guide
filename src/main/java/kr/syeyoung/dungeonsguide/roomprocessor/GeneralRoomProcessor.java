@@ -44,13 +44,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawScreen(float partialTicks) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        Entity e = Minecraft.getMinecraft().objectMouseOver.entityHit;
-        if (e != null && e instanceof EntityArmorStand) {
-//            fr.drawString(
-//                    e.getInventory()[4].getTagCompound() +"", 0, 0, 0xFFFFFFFF);
-//            System.out.println(e.getInventory()[4].getTagCompound());
-        }
     }
 
     @Override
@@ -123,7 +116,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onPostGuiRender(GuiScreenEvent.DrawScreenEvent.Post event) {
-
     }
 
     @Override

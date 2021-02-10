@@ -53,7 +53,7 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
     public void onGuiOpen(GuiOpenEvent rendered) {
         if (!(rendered.gui instanceof GuiChest)) return;
         ContainerChest chest = (ContainerChest) ((GuiChest) rendered.gui).inventorySlots;
-        if (chest.getLowerChestInventory().getName().contains("On Cooldown!")) {
+        if (chest.getLowerChestInventory().getName().contains("On cooldown!")) {
             leftDungeonTime = System.currentTimeMillis();
         } else if (chest.getLowerChestInventory().getName().contains("Error")) {
             leftDungeonTime = System.currentTimeMillis();

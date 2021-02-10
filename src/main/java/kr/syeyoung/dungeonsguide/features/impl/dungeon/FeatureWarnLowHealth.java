@@ -74,9 +74,9 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
             ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
             String line = ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).trim();
             String stripped = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(line));
-            if (line.endsWith("❤")) {
-                String name = stripped.split(" ")[1];
-                int health = Integer.parseInt(stripped.split(" ")[2]);
+            if (line.contains("[") && line.endsWith("❤")) {
+                String name = stripped.split(" ")[stripped.split(" ").length - 2];
+                int health = Integer.parseInt(stripped.split(" ")[stripped.split(" ").length - 1]);
                 if (health < lowestHealth) {
                     lowestHealth = health;
                     lowestHealthName = name;

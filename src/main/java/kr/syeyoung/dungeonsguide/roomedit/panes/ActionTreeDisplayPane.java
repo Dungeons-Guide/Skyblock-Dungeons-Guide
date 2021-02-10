@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionTree;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionTreeUtil;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import net.minecraft.client.Minecraft;
@@ -13,6 +14,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class ActionTreeDisplayPane extends MPanel {
 
@@ -23,9 +25,17 @@ public class ActionTreeDisplayPane extends MPanel {
 
     private DungeonRoom dungeonRoom;
     private ActionTree tree;
+    private List<Action> linearified;
     public ActionTreeDisplayPane(DungeonRoom dungeonRoom, ActionTree tree) {
         this.dungeonRoom = dungeonRoom;
         this.tree = tree;
+        try {
+            this.linearified = ActionTreeUtil.linearifyActionTree(tree);
+        } catch (Exception e) {
+            linearified = new ArrayList<Action>();
+            e.printStackTrace();
+        }
+        scale = 1.0f;
     }
 
     @Override
@@ -37,7 +47,8 @@ public class ActionTreeDisplayPane extends MPanel {
         GlStateManager.pushMatrix();
         GlStateManager.translate(offsetX, offsetY, 0);
         GlStateManager.scale(scale,scale,1);
-        renderTree(tree, 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionTree, Point>());
+        int x = renderTree(tree, 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionTree, Point>());
+        renderLinearified(linearified, x, 5, fr);
         GlStateManager.popMatrix();
     }
 
@@ -101,6 +112,40 @@ public class ActionTreeDisplayPane extends MPanel {
         return Math.max(xOff, dim.width);
     }
 
+    public void renderLinearified(List<Action> actions, int x, int y, FontRenderer fr) {
+        Point lastPt = null;
+        int y2 = y;
+
+        for (Action action : actions) {
+            Dimension dim = renderAction(action, x, y2, fr);
+            if (lastPt != null) {
+                GlStateManager.pushMatrix();
+                GlStateManager.pushAttrib();
+
+                GlStateManager.enableBlend();
+                GlStateManager.disableDepth();
+                GlStateManager.disableTexture2D();
+                GlStateManager.blendFunc(770, 771);
+                GlStateManager.enableBlend();
+                GL11.glLineWidth(1);
+                GlStateManager.color(1, 1, 1, 1);
+                GL11.glBegin(2);
+                GL11.glVertex2d(lastPt.x, lastPt.y);
+                GL11.glVertex2d(x + dim.width / 2, y2);
+                GL11.glEnd();
+                GlStateManager.disableBlend();
+                GlStateManager.enableTexture2D();
+                GlStateManager.enableDepth();
+                GlStateManager.disableBlend();
+                GlStateManager.popMatrix();
+                GlStateManager.popAttrib();
+            }
+            lastPt = new Point(x + dim.width / 2, y2 + dim.height);
+
+            y2 += dim.height + 10;
+        }
+    }
+
     public Dimension renderAction(Action action, int x, int y, FontRenderer fr) {
         String[] lines = action.toString().split("\n");
         int maxWidth = 0;
@@ -147,5 +192,7 @@ public class ActionTreeDisplayPane extends MPanel {
     public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         if (scrollAmount > 0) scale += 0.1;
         if (scrollAmount < 0) scale -= 0.1;
+
+        if (scale < 0) scale = 0.1f;
     }
 }
