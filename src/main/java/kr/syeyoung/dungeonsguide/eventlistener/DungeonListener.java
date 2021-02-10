@@ -37,6 +37,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.living.LivingSpawnEvent;
@@ -477,8 +478,9 @@ public class DungeonListener {
     @Getter
     private Map<Integer, Vec3> entityIdToPosMap = new HashMap<Integer, Vec3>();
     @SubscribeEvent
-    public void onEntitySpawn(LivingSpawnEvent spawn) {
-        EntitySpawnManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.x, spawn.y, spawn.z));
+    public void onEntitySpawn(EntityJoinWorldEvent spawn) {
+        System.out.println("Spawned "+spawn.entity);
+        EntitySpawnManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 
 

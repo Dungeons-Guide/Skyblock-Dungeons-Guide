@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -40,6 +41,8 @@ public class ActionChangeState extends AbstractAction{
         DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName);
         if (mechanic== null)
             return false;
+        if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() != DungeonSecret.SecretType.CHEST)
+            return true;
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
     }
 }

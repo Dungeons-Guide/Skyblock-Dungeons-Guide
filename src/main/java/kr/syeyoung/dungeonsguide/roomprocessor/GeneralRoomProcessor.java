@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -15,6 +16,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
@@ -55,6 +57,14 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 fr.drawString((i == path.getCurrent() ? ">" : " ") + " " + i + ". " + path.getActions().get(i),
                         5, i * 8 + 13, 0xFF00FF00);
             }
+        }
+
+
+        Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
+        if (en == null) return;;
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        if (EntitySpawnManager.getSpawnLocation().containsKey(en.getEntityId())) {
+            fr.drawString("Spawned at "+EntitySpawnManager.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
         }
     }
 
