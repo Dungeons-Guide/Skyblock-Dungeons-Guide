@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
@@ -51,7 +52,9 @@ public class ActionKill extends AbstractAction {
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
-        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(255, 0,0,50),partialTicks, true);
+        BlockPos pos = target.getBlockPos(dungeonRoom);
+        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
+        RenderUtils.drawTextAtWorld("Spawn", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     @Override

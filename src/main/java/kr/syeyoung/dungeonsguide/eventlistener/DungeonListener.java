@@ -479,7 +479,6 @@ public class DungeonListener {
     private Map<Integer, Vec3> entityIdToPosMap = new HashMap<Integer, Vec3>();
     @SubscribeEvent
     public void onEntitySpawn(EntityJoinWorldEvent spawn) {
-        System.out.println("Spawned "+spawn.entity);
         EntitySpawnManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 

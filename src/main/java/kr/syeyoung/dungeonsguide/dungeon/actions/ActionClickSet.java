@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
@@ -50,9 +51,19 @@ public class ActionClickSet extends AbstractAction {
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+        float xAcc = 0;
+        float yAcc = 0;
+        float zAcc = 0;
+        int size = target.getOffsetPointList().size();
         for (OffsetPoint offsetPoint : target.getOffsetPointList()) {
-            RenderUtils.highlightBlock(offsetPoint.getBlockPos(dungeonRoom), new Color(0, 255,0,50),partialTicks, true);
+            BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
+            xAcc += pos.getX() + 0.5f;
+            yAcc += pos.getY()+ 0.5f;
+            zAcc += pos.getZ()+ 0.5f;
+            RenderUtils.highlightBlock(offsetPoint.getBlockPos(dungeonRoom), new Color(0, 255,255,50),partialTicks, true);
         }
+
+        RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     @Override

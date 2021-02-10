@@ -5,6 +5,8 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -30,7 +32,9 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
-        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(0, 255,255,50),partialTicks, false);
+        BlockPos pos = target.getBlockPos(dungeonRoom);
+        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.6f, pos.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f", MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
     }
 
     @Override

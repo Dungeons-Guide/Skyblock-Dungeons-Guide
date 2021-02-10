@@ -42,7 +42,9 @@ public class ActionDropItem extends AbstractAction {
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
-        RenderUtils.highlightBlock(target.getBlockPos(dungeonRoom), new Color(0, 0,255,50),partialTicks, true);
+        BlockPos pos = target.getBlockPos(dungeonRoom);
+        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
+        RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     @Override
