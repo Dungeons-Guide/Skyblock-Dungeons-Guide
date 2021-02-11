@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
@@ -12,6 +13,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
+import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.util.BlockPos;
 
 import javax.vecmath.Vector2d;
@@ -43,6 +45,11 @@ public class DungeonRoom {
     @Setter
     private RoomState currentState = RoomState.DISCOVERED;
 
+    @Getter
+    private PathFinder pathFinder;
+    @Getter
+    private NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
+
     @AllArgsConstructor
     @Getter
     public static enum RoomState {
@@ -71,6 +78,8 @@ public class DungeonRoom {
         buildDoors();
         buildRoom();
         updateRoomProcessor();
+        nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
+        pathFinder = new PathFinder(nodeProcessorDungeonRoom);
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));

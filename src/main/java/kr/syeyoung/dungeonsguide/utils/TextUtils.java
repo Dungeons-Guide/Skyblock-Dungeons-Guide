@@ -47,7 +47,6 @@ public class TextUtils {
 
     public static String format(long value) {
 //        return String.valueOf(value);
-
         if (value == Long.MIN_VALUE)
             return format(-9223372036854775807L);
         if (value < 0L)

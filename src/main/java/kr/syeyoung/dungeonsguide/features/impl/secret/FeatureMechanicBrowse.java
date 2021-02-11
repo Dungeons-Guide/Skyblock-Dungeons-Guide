@@ -156,10 +156,10 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
         GlStateManager.popMatrix();;
 
         if (selected != -1) {
+            clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
             GlStateManager.translate(feature.width, selected * fr.FONT_HEIGHT, 0);
             Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT * possibleStates.size() + 4, 0xFF444444);
             Gui.drawRect(-1, 1, feature.width - 1, fr.FONT_HEIGHT  * possibleStates.size() + 3, 0xFF262626);
-            clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
             GlStateManager.translate(2,2, 0);
 
             Point popupStart = new Point(feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy + 2);
@@ -200,7 +200,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
 
         boolean found = false;
         for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
-            if (value.getValue() instanceof DungeonDoor) {
+            if (value.getValue() instanceof DungeonFairySoul) {
                 if (!found) {
                     sortedMechanics.add("Fairy Souls");
                     sortedMechanicsName.add("");

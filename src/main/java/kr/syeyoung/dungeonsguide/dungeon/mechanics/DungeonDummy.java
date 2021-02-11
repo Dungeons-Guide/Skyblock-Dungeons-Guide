@@ -1,10 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionInteract;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStand;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -26,11 +23,15 @@ public class DungeonDummy implements DungeonMechanic {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+//        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
-        {
+        if (state.equalsIgnoreCase("navigate")){
             ActionMove actionMove = new ActionMove(secretPoint);
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+        } else if (state.equalsIgnoreCase("click")) {
+            ActionClick actionMove = new ActionClick(secretPoint);
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
         }
@@ -68,11 +69,11 @@ public class DungeonDummy implements DungeonMechanic {
 
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("navigate");
+        return Sets.newHashSet("navigate", "click");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state","navigate");
+        return Sets.newHashSet("no-state","navigate,click");
     }
     @Override
     public OffsetPoint getRepresentingPoint() {

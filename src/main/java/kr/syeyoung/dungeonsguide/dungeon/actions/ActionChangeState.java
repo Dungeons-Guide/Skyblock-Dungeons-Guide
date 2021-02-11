@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
@@ -46,7 +47,7 @@ public class ActionChangeState extends AbstractAction{
             return false;
         if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() != DungeonSecret.SecretType.CHEST)
             return true;
-        if (mechanic instanceof DungeonFairySoul)
+        if (mechanic instanceof DungeonDummy)
             return true;
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
     }
