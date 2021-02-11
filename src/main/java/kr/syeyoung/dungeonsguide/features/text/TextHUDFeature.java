@@ -90,7 +90,7 @@ public abstract class TextHUDFeature extends GuiFeature {
             }
             for (String str : getUsedTextStyle()) {
                 if (!res.containsKey(str))
-                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true), new AColor(0x00777777, true)));
+                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true), new AColor(0x00777777, true), false));
             }
             stylesMap = res;
         }
@@ -175,13 +175,13 @@ public abstract class TextHUDFeature extends GuiFeature {
         Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
 
         if (!style.getColor().isChroma()) {
-            fr.drawString(content, x, y, style.getColor().getRGB());
+            fr.drawString(content, x, y, style.getColor().getRGB(), style.isShadow());
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
         }else {
             char[] charArr = content.toCharArray();
             int width = 0;
             for (int i = 0; i < charArr.length; i++) {
-                fr.drawString(String.valueOf(charArr[i]), x + width, y, RenderUtils.getColorAt(x + width, y, style.getColor()));
+                fr.drawString(String.valueOf(charArr[i]), x + width, y, RenderUtils.getColorAt(x + width, y, style.getColor()), style.isShadow());
                 width += fr.getCharWidth(charArr[i]);
             }
             return new Dimension(width, fr.FONT_HEIGHT);

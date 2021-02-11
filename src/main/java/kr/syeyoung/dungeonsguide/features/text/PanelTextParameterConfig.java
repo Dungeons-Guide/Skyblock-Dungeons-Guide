@@ -13,6 +13,7 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MColor;
 import kr.syeyoung.dungeonsguide.gui.elements.MEditableAColor;
+import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -35,6 +36,7 @@ public class PanelTextParameterConfig extends MPanel {
 
     private MEditableAColor currentColor;
     private MEditableAColor backgroundColor;
+    private MToggleButton shadow;
 
     @Override
     public void onBoundsUpdate() {
@@ -77,6 +79,17 @@ public class PanelTextParameterConfig extends MPanel {
             }
         });
         add(backgroundColor);
+        shadow = new MToggleButton();
+        shadow.setSize(new Dimension(20, 10));
+        shadow.setBounds(new Rectangle(275 , 30, 20, 10));
+        shadow.setOnToggle(new Runnable() {
+            @Override
+            public void run() {
+                for (String se:selected)
+                    feature.getStylesMap().get(se).setShadow(shadow.isEnabled());
+            }
+        });
+        add(shadow);
 
 
     }
@@ -132,6 +145,7 @@ public class PanelTextParameterConfig extends MPanel {
         GlStateManager.popMatrix();
         fr.drawString("Text Color: ", 0, 10, 0xFFFFFFFF);
         fr.drawString("Background Color: ", 100, 10, 0xFFFFFFFF);
+        fr.drawString("Shadow: ", 0, 26, 0xFFFFFFFF);
 
         GlStateManager.popMatrix();
     }
@@ -177,15 +191,18 @@ public class PanelTextParameterConfig extends MPanel {
             if (selected.size() != 0) {
                 currentColor.setColor(styles.get(selected.iterator().next()).getColor());
                 backgroundColor.setColor(styles.get(selected.iterator().next()).getBackground());
+                shadow.setEnabled(styles.get(selected.iterator().next()).isShadow());
             } else {
                 currentColor.setColor(new AColor(0xff555555, true));
                 backgroundColor.setColor(new AColor(0xff555555, true));
+                shadow.setEnabled(false);
             }
         }
 
         if (selected.size() == 1) {
             currentColor.setColor(styles.get(selected.iterator().next()).getColor());
             backgroundColor.setColor(styles.get(selected.iterator().next()).getBackground());
+            shadow.setEnabled(styles.get(selected.iterator().next()).isShadow());
         }
     }
 

@@ -39,7 +39,7 @@ import java.util.Set;
 public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderListener, GuiClickListener, WorldRenderListener {
 
     public FeatureMechanicBrowse() {
-        super("secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
+        super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -124,11 +124,11 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
             ActionRoute route = grp.getPath();
             fr.drawString(route.getMechanic()+" -> "+route.getState(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
         }
-        clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x, feature.y + fr.FONT_HEIGHT + 4, feature.width , fr.FONT_HEIGHT * 10 + 4);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GlStateManager.translate(0, fr.FONT_HEIGHT + 4, 0);
-        Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT * 9 + 4, 0xFF444444);
-        Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT * 9 + 3, 0xFF262626);
+        Gui.drawRect(0, 0, feature.width, feature.height - fr.FONT_HEIGHT - 4, 0xFF444444);
+        Gui.drawRect(1, 1, feature.width - 1,feature.height - fr.FONT_HEIGHT - 5, 0xFF262626);
+        clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GlStateManager.translate(0, -dy, 0);
 
         GlStateManager.pushMatrix();
@@ -155,11 +155,11 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
         }
         GlStateManager.popMatrix();;
 
-        clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 4, feature.width, fr.FONT_HEIGHT * 10 + 4);
         if (selected != -1) {
             GlStateManager.translate(feature.width, selected * fr.FONT_HEIGHT, 0);
             Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT * possibleStates.size() + 4, 0xFF444444);
             Gui.drawRect(-1, 1, feature.width - 1, fr.FONT_HEIGHT  * possibleStates.size() + 3, 0xFF262626);
+            clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
             GlStateManager.translate(2,2, 0);
 
             Point popupStart = new Point(feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy + 2);
@@ -248,6 +248,18 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
         }
         found = false;
         for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+            if (value.getValue() instanceof DungeonJournal) {
+                if (!found) {
+                    sortedMechanics.add("Journals");
+                    sortedMechanicsName.add("");
+                    found = true;
+                }
+                sortedMechanics.add(value.getValue());
+                sortedMechanicsName.add(value.getKey());
+            }
+        }
+        found = false;
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonDoor || value.getValue() instanceof DungeonBreakableWall || value.getValue() instanceof DungeonLever
             || value.getValue() instanceof DungeonOnewayDoor || value.getValue() instanceof DungeonOnewayLever || value.getValue() instanceof DungeonPressurePlate) {
                 if (!found) {
@@ -263,6 +275,14 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
 
     @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
+                || Minecraft.getMinecraft().currentScreen instanceof GuiConfig
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonAddSet
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonParameterEdit
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonValueEdit) return;
+
+
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
         DungeonContext context = skyblockStatus.getContext();
@@ -319,6 +339,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
                 if (preSelectedState == selectedState && preSelectedState != -1) {
                     ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).pathfind(sortedMechanicsName.get(selected),
                             possibleStates.get(selectedState));
+                    selected = -1;
+                    selectedState = -1;
+                    possibleStates.clear();
                 }
                 selectedState = preSelectedState;
             }

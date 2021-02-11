@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MTabbedPane;
 import kr.syeyoung.dungeonsguide.roomedit.panes.*;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -21,6 +22,8 @@ public class GuiDungeonRoomEdit extends GuiScreen {
     private DungeonRoom room;
 
     private MTabbedPane tabbedPane;
+    @Getter
+    private SecretEditPane sep;
 
     public GuiDungeonRoomEdit(DungeonRoom room) {
         this.room = room;
@@ -32,7 +35,7 @@ public class GuiDungeonRoomEdit extends GuiScreen {
 
         tabbedPane.addTab("General", new GeneralEditPane(room));
         tabbedPane.addTab("Match", new RoomDataDisplayPane(room));
-        tabbedPane.addTab("Secrets", new SecretEditPane(room));
+        tabbedPane.addTab("Secrets", sep = new SecretEditPane(room));
         tabbedPane.addTab("Actions", new ActionDisplayPane(room));
         tabbedPane.addTab("Test", new RoommatchingPane(room));
         tabbedPane.addTab("Proc.Params", new ProcessorParameterEditPane(room));

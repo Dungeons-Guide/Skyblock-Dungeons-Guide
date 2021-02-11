@@ -41,6 +41,7 @@ public class ValueEditRegistry {
         valueEditMap.put(DungeonTomb.class.getName(), new ValueEditTomb.Generator());
         valueEditMap.put(DungeonBreakableWall.class.getName(), new ValueEditBreakableWall.Generator());
         valueEditMap.put(DungeonJournal.class.getName(), new ValueEditJournal.Generator());
+        valueEditMap.put(DungeonDummy.class.getName(), new ValueEditDummy.Generator());
 
         valueEditMap.put(DungeonPressurePlate.class.getName(), new ValueEditPressurePlate.Generator());
         valueEditMap.put(DungeonOnewayLever.class.getName(), new ValueEditOnewayLever.Generator());

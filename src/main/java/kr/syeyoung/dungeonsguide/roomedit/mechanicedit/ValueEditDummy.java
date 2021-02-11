@@ -1,9 +1,8 @@
 package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonNPC;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
@@ -19,26 +18,26 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditNPC extends MPanel implements ValueEdit<DungeonNPC> {
+public class ValueEditDummy extends MPanel implements ValueEdit<DungeonDummy> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private DungeonNPC dungeonSecret;
+    private DungeonDummy dungeonSecret;
 
     private MLabel label;
     private MValue<OffsetPoint> value;
     private MTextField preRequisite;
     private MLabelAndElement preRequisite2;
 
-    public ValueEditNPC(final Parameter parameter2) {
+    public ValueEditDummy(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonSecret = (DungeonNPC) parameter2.getNewData();
+        this.dungeonSecret = (DungeonDummy) parameter2.getNewData();
 
 
         label = new MLabel();
-        label.setText("NPC Point");
+        label.setText("Dummy Point");
         label.setAlignment(MLabel.Alignment.LEFT);
         add(label);
 
@@ -79,22 +78,22 @@ public class ValueEditNPC extends MPanel implements ValueEdit<DungeonNPC> {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditNPC> {
+    public static class Generator implements ValueEditCreator<ValueEditDummy> {
 
         @Override
-        public ValueEditNPC createValueEdit(Parameter parameter) {
-            return new ValueEditNPC(parameter);
+        public ValueEditDummy createValueEdit(Parameter parameter) {
+            return new ValueEditDummy(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonNPC();
+            return new DungeonDummy();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonNPC)object).clone();
+                return ((DungeonDummy)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

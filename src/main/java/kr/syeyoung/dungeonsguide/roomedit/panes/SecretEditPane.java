@@ -36,6 +36,12 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
         }
     }
 
+    public void createNewMechanic(String uid, DungeonMechanic data) {
+        MParameter parameter;
+        parameters.add(parameter = new MParameter(new Parameter(uid, data, data), SecretEditPane.this));
+        parameter.setBounds(new Rectangle(0,0,getBounds().width, 20));
+    }
+
     public void buildElements() {
         {
             create = new MButton();
@@ -45,9 +51,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
             create.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    MParameter parameter;
-                    parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null, null), SecretEditPane.this));
-                    parameter.setBounds(new Rectangle(0,0,getBounds().width, 20));
+                    createNewMechanic(UUID.randomUUID().toString(), null);
                 }
             });
 

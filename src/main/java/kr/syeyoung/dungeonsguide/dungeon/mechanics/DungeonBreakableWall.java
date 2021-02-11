@@ -46,11 +46,11 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
             ActionBreakWithSuperBoom actionClick;
-            preRequisites.add(actionClick = new ActionBreakWithSuperBoom(secretPoint.getOffsetPointList().get(0)));
+            preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint()));
             preRequisites = actionClick.getPreRequisite();
         }
         {
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(secretPoint.getOffsetPointList().get(0));
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
         }
@@ -113,6 +113,6 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
     @Override
     public OffsetPoint getRepresentingPoint() {
-        return secretPoint.getOffsetPointList().size() == 0 ? null : secretPoint.getOffsetPointList().get(0);
+        return secretPoint.getOffsetPointList().size() == 0 ? null : secretPoint.getOffsetPointList().get(secretPoint.getOffsetPointList().size() / 2);
     }
 }

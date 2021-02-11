@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureCooldownCounter;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureDisableMessage;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureTooltipDungeonStat;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureTooltipPrice;
+import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;
 import lombok.Getter;
 
@@ -88,5 +89,6 @@ public class FeatureRegistry {
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
 
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
+    public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
 
 }

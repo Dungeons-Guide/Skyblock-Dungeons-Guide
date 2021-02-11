@@ -5,7 +5,9 @@ import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
@@ -16,9 +18,11 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -31,6 +35,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 import java.awt.*;
 import java.util.Map;
+import java.util.UUID;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -51,14 +56,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (path != null) path.onRenderScreen(partialTicks);
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (path != null) {
-            fr.drawString("Pathfinding " + path.getMechanic() + ":" + path.getState(), 5, 5, 0xffffffff);
-            for (int i = 0; i < path.getActions().size(); i++) {
-                fr.drawString((i == path.getCurrent() ? ">" : " ") + " " + i + ". " + path.getActions().get(i),
-                        5, i * 8 + 13, 0xFF00FF00);
-            }
-        }
-
 
         Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
         if (en == null) return;;
@@ -170,6 +167,21 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onEntityDeath(LivingDeathEvent deathEvent) {
         if (path != null) path.onLivingDeath(deathEvent);
+        if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
+            if (deathEvent.entity instanceof EntityBat) {
+                for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
+                    if (screen instanceof GuiDungeonRoomEdit) {
+                        DungeonSecret secret = new DungeonSecret();
+                        secret.setSecretType(DungeonSecret.SecretType.BAT);
+                        secret.setSecretPoint(new OffsetPoint(dungeonRoom,
+                                EntitySpawnManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                        ));
+                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
+                                new DungeonSecret());
+                    }
+                }
+            }
+        }
     }
 
     public static class Generator implements RoomProcessorGenerator<GeneralRoomProcessor> {

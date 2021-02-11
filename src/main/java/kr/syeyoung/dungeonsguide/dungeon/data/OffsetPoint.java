@@ -6,6 +6,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 import javax.vecmath.Vector2d;
 import java.io.Serializable;
@@ -13,6 +14,8 @@ import java.io.Serializable;
 @Data
 @AllArgsConstructor
 public class OffsetPoint implements Cloneable, Serializable {
+    private static final long serialVersionUID = 3102336358774967540L;
+
     private int x;
     private int y;
     private int z;
@@ -20,6 +23,10 @@ public class OffsetPoint implements Cloneable, Serializable {
     public OffsetPoint(DungeonRoom dungeonRoom, BlockPos pos) {
         setPosInWorld(dungeonRoom, pos);
     }
+    public OffsetPoint(DungeonRoom dungeonRoom, Vec3 pos) {
+        setPosInWorld(dungeonRoom, new BlockPos((int)pos.xCoord, (int)pos.yCoord, (int)pos.zCoord));
+    }
+
 
     public void setPosInWorld(DungeonRoom dungeonRoom, BlockPos pos) {
         Vector2d vector2d = new Vector2d(pos.getX() - dungeonRoom.getMin().getX(), pos.getZ() - dungeonRoom.getMin().getZ());

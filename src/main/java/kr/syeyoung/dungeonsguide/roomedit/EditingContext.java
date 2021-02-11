@@ -37,6 +37,7 @@ public class EditingContext {
     @Getter
     private DungeonRoom room;
 
+    @Getter
     private Stack<GuiScreen> guiStack = new Stack<GuiScreen>();
 
     public boolean isEditingSecrets() {

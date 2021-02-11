@@ -14,4 +14,5 @@ public class TextStyle {
     private String groupName;
     private AColor color;
     private AColor background;
+    private boolean shadow = false;
 }

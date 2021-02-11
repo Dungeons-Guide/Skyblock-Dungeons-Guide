@@ -59,6 +59,8 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
         GlStateManager.disableLighting();
         GlStateManager.enableAlpha();
+        GlStateManager.disableDepth();
+        GlStateManager.depthMask(false);
         GlStateManager.enableBlend();
 
         Tessellator tessellator = Tessellator.getInstance();
@@ -74,7 +76,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
 
-        RenderUtils.highlightBlock(blockpos, new Color(0, 255,255,50), partialTicks, false);
+        RenderUtils.highlightBlock(blockpos, new Color(0, 255,255,50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Superboom", blockpos.getX() + 0.5f, blockpos.getY() + 0.5f, blockpos.getZ() + 0.5f, 0xFFFFFF00, 0.03f, false, false, partialTicks);
     }
 

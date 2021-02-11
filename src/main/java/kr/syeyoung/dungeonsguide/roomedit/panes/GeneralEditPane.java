@@ -27,6 +27,7 @@ public class GeneralEditPane extends MPanel {
 
     private MLabelAndElement uuid;
     private MLabelAndElement name;
+    private MLabelAndElement secrets;
 
     private MLabelAndElement shape;
     private MLabelAndElement rotation;
@@ -59,12 +60,24 @@ public class GeneralEditPane extends MPanel {
             name.setBounds(new Rectangle(0,20,getBounds().width, 20));
             add(name);
         }
+        {
+            final MIntegerSelectionButton la = new MIntegerSelectionButton(dungeonRoom.getDungeonRoomInfo().getTotalSecrets());
+            la.setOnUpdate(new Runnable() {
+                @Override
+                public void run() {
+                    dungeonRoom.getDungeonRoomInfo().setTotalSecrets(la.getData());
+                }
+            });
+            secrets = new MLabelAndElement("Room Secrets: ", la);
+            secrets.setBounds(new Rectangle(0,40,getBounds().width, 20));
+            add(secrets);
+        }
 
         {
             MLabel la;
             shape = new MLabelAndElement("Room Shape: ", la = new MLabel());
             la.setText(dungeonRoom.getDungeonRoomInfo().getShape()+"");
-            shape.setBounds(new Rectangle(0,40,getBounds().width, 20));
+            shape.setBounds(new Rectangle(0,60,getBounds().width, 20));
             add(shape);
         }
 
@@ -72,20 +85,20 @@ public class GeneralEditPane extends MPanel {
             MLabel la;
             rotation = new MLabelAndElement("Found Room Rotation: ", la = new MLabel());
             la.setText(dungeonRoom.getRoomMatcher().getRotation()+"");
-            rotation.setBounds(new Rectangle(0,60,getBounds().width, 20));
+            rotation.setBounds(new Rectangle(0,80,getBounds().width, 20));
             add(rotation);
         }
         {
             MLabel la;
             shape2 = new MLabelAndElement("Found Room Shape: ", la = new MLabel());
             la.setText(dungeonRoom.getShape()+"");
-            shape2.setBounds(new Rectangle(0,80,getBounds().width, 20));
+            shape2.setBounds(new Rectangle(0,100,getBounds().width, 20));
             add(shape2);
         }
         {
             final MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(new ArrayList<String>(ProcessorFactory.getProcessors()), dungeonRoom.getDungeonRoomInfo().getProcessorId());
             roomProcessor = new MLabelAndElement("Room Processor: ", mStringSelectionButton);
-            roomProcessor.setBounds(new Rectangle(0,100,getBounds().width, 20));
+            roomProcessor.setBounds(new Rectangle(0,120,getBounds().width, 20));
             add(roomProcessor);
 
             mStringSelectionButton.setOnUpdate(new Runnable() {
@@ -106,7 +119,7 @@ public class GeneralEditPane extends MPanel {
                 }
             });
             end.setBackgroundColor(Color.green);
-            end.setBounds(new Rectangle(0,120,getBounds().width, 20));
+            end.setBounds(new Rectangle(0,140,getBounds().width, 20));
             add(end);
         }
         {
@@ -132,7 +145,7 @@ public class GeneralEditPane extends MPanel {
                 }
             });
             schematic.setBackgroundColor(Color.orange);
-            schematic.setBounds(new Rectangle(0,160,getBounds().width, 20));
+            schematic.setBounds(new Rectangle(0,180,getBounds().width, 20));
             add(schematic);
         }
         {
@@ -147,7 +160,7 @@ public class GeneralEditPane extends MPanel {
                 }
             });
             save.setBackgroundColor(Color.green);
-            save.setBounds(new Rectangle(0,140,getBounds().width, 20));
+            save.setBounds(new Rectangle(0,10,getBounds().width, 20));
             add(save);
         }
     }
