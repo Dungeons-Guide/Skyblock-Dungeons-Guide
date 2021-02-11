@@ -47,6 +47,19 @@ public class DungeonSecret implements DungeonMechanic {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+        if (state.equalsIgnoreCase("navigate")) {
+            Set<Action> base;
+            Set<Action> preRequisites = base = new HashSet<Action>();
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                preRequisites.add(actionChangeState);
+            }
+            return base;
+        }
         if (!"found".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
@@ -114,8 +127,8 @@ public class DungeonSecret implements DungeonMechanic {
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         SecretStatus status = getSecretStatus(dungeonRoom);
-        if (status == SecretStatus.FOUND) return Collections.emptySet();
-        else return Collections.singleton("found");
+        if (status == SecretStatus.FOUND) return Sets.newHashSet("navigate");
+        else return Sets.newHashSet("found", "navigate");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {

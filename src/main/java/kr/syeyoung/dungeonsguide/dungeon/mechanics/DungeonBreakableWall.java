@@ -24,6 +24,20 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+        if (state.equalsIgnoreCase("navigate")) {
+            Set<Action> base;
+            Set<Action> preRequisites = base = new HashSet<Action>();
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                preRequisites.add(actionChangeState);
+            }
+            return base;
+        }
+
         if (!"open".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for breakable wall");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
@@ -89,7 +103,7 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
-        return isBlocking(dungeonRoom) ? Collections.singleton("open") : Collections.<String>emptySet();
+        return isBlocking(dungeonRoom) ? Sets.newHashSet("navigate", "open") : Sets.newHashSet("navigate");
     }
 
     @Override

@@ -1,10 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClick;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -23,6 +20,19 @@ public class DungeonOnewayLever implements DungeonMechanic {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+        if (state.equalsIgnoreCase("navigate")) {
+            Set<Action> base;
+            Set<Action> preRequisites = base = new HashSet<Action>();
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                preRequisites.add(actionChangeState);
+            }
+            return base;
+        }
         if (!("triggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
@@ -84,8 +94,8 @@ public class DungeonOnewayLever implements DungeonMechanic {
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         String currentStatus = getCurrentState(dungeonRoom);
         if (currentStatus.equalsIgnoreCase("untriggered"))
-            return Collections.singleton("triggered");
-        return Collections.emptySet();
+            return Sets.newHashSet("navigate", "triggered");
+        return Sets.newHashSet("navigate");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {

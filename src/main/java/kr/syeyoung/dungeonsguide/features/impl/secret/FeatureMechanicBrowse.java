@@ -3,7 +3,7 @@ package kr.syeyoung.dungeonsguide.features.impl.secret;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
@@ -115,6 +115,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
 
     private int dy = 0;
     private int selected = -1;
+    private int selectedState = -1;
     private List<Object> sortedMechanics = new ArrayList<Object>();
     private void setupMechanics() {
         sortedMechanics.clear();
@@ -129,13 +130,61 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
 
+        boolean found = false;
         for (DungeonMechanic value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().values()) {
-            value.
+            if (value instanceof DungeonDoor) {
+                if (!found) {
+                    sortedMechanics.add("Fairy Souls");
+                    found = true;
+                }
+                sortedMechanics.add(value);
+            }
+        }
+        found = false;
+        for (DungeonMechanic value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().values()) {
+            if (value instanceof DungeonSecret) {
+                if (!found) {
+                    sortedMechanics.add("Secrets");
+                    found = true;
+                }
+                sortedMechanics.add(value);
+            }
+        }
+        found = false;
+        for (DungeonMechanic value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().values()) {
+            if (value instanceof DungeonTomb) {
+                if (!found) {
+                    sortedMechanics.add("Crypts");
+                    found = true;
+                }
+                sortedMechanics.add(value);
+            }
+        }
+        found = false;
+        for (DungeonMechanic value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().values()) {
+            if (value instanceof DungeonDoor || value instanceof DungeonBreakableWall || value instanceof DungeonLever
+            || value instanceof DungeonOnewayDoor || value instanceof DungeonOnewayLever || value instanceof DungeonPressurePlate) {
+                if (!found) {
+                    sortedMechanics.add("Walls & Doors & Levers & Pressure Plates");
+                    found = true;
+                }
+                sortedMechanics.add(value);
+            }
         }
     }
 
     @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+        if (!skyblockStatus.isOnDungeon()) return;
+        if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
+        DungeonContext context = skyblockStatus.getContext();
+
+        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+        DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+        if (dungeonRoom == null) return;
+        if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
+
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         int width = scaledResolution.getScaledWidth();
         int height = scaledResolution.getScaledHeight();
@@ -144,6 +193,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
 
         Rectangle feature = getFeatureRect();
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        Point popupStart = new Point(feature.x + feature.width, (selected - dy) * fr.FONT_HEIGHT + 7 + feature.y);
         if (feature.contains(mouseX, mouseY)) {
             mouseInputEvent.setCanceled(true);
 
@@ -155,9 +205,14 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
                 int yDiff = mouseY - feature.y - fr.FONT_HEIGHT - 7;
                 selected = yDiff / fr.FONT_HEIGHT + dy;
             }
-        } else if (new Rectangle(feature.x + feature.width, (selected - dy) * fr.FONT_HEIGHT + 7 + feature.y, feature.x + feature.width + feature.width, (selected - dy) * fr.FONT_HEIGHT + 7 + feature.y + fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
+        } else if (sortedMechanics.get(selected) instanceof DungeonMechanic &&
+                new Rectangle(popupStart, new Dimension(feature.width, ((DungeonMechanic) sortedMechanics.get(selected)).getPossibleStates(dungeonRoom).size() * fr.FONT_HEIGHT + 6)).contains(mouseX, mouseY)) {
             mouseInputEvent.setCanceled(true);
+            if (Mouse.getEventButton() != -1) {
+                int yDiff = mouseY - popupStart.y - 2;
+                selected = yDiff / fr.FONT_HEIGHT + dy;
 
+            }
         }
     }
 }

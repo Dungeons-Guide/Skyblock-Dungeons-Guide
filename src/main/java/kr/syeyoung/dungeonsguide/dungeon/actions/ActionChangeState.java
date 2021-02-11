@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -39,9 +40,13 @@ public class ActionChangeState extends AbstractAction{
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName);
+        if (state.equalsIgnoreCase("navigate"))
+            return true;
         if (mechanic== null)
             return false;
         if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() != DungeonSecret.SecretType.CHEST)
+            return true;
+        if (mechanic instanceof DungeonFairySoul)
             return true;
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
     }
