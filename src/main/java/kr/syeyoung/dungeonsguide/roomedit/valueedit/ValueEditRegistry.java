@@ -37,9 +37,10 @@ public class ValueEditRegistry {
 
         valueEditMap.put(DungeonSecret.class.getName(), new ValueEditSecret.Generator());
         valueEditMap.put(DungeonFairySoul.class.getName(), new ValueEditFairySoul.Generator());
-        valueEditMap.put(ValueEditNPC.class.getName(), new ValueEditNPC.Generator());
+        valueEditMap.put(DungeonNPC.class.getName(), new ValueEditNPC.Generator());
         valueEditMap.put(DungeonTomb.class.getName(), new ValueEditTomb.Generator());
         valueEditMap.put(DungeonBreakableWall.class.getName(), new ValueEditBreakableWall.Generator());
+        valueEditMap.put(DungeonJournal.class.getName(), new ValueEditJournal.Generator());
 
         valueEditMap.put(DungeonPressurePlate.class.getName(), new ValueEditPressurePlate.Generator());
         valueEditMap.put(DungeonOnewayLever.class.getName(), new ValueEditOnewayLever.Generator());

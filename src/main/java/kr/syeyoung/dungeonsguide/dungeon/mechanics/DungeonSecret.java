@@ -63,7 +63,7 @@ public class DungeonSecret implements DungeonMechanic {
         if (!"found".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
-        if (secretType == SecretType.CHEST) {
+        if (secretType == SecretType.CHEST || secretType == SecretType.ESSENCE) {
             ActionClick actionClick;
             preRequisites.add(actionClick = new ActionClick(secretPoint));
             preRequisites = actionClick.getPreRequisite();
@@ -99,7 +99,7 @@ public class DungeonSecret implements DungeonMechanic {
     }
 
     public static enum SecretType {
-        BAT, CHEST, ITEM_DROP
+        BAT, CHEST, ITEM_DROP, ESSENCE
     }
 
     @AllArgsConstructor

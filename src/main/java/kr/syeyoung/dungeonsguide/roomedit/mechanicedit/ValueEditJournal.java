@@ -1,11 +1,15 @@
 package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
-import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonJournal;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MTextField;
+import kr.syeyoung.dungeonsguide.gui.elements.MValue;
+import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
@@ -14,41 +18,32 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditSecret extends MPanel implements ValueEdit<DungeonSecret> {
+
+public class ValueEditJournal extends MPanel implements ValueEdit<DungeonJournal> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private DungeonSecret dungeonSecret;
+    private DungeonJournal dungeonSecret;
 
     private MLabel label;
     private MValue<OffsetPoint> value;
-    private MStringSelectionButton selectionButton;
     private MTextField preRequisite;
     private MLabelAndElement preRequisite2;
 
-    public ValueEditSecret(final Parameter parameter2) {
+    public ValueEditJournal(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonSecret = (DungeonSecret) parameter2.getNewData();
+        this.dungeonSecret = (DungeonJournal) parameter2.getNewData();
 
 
         label = new MLabel();
-        label.setText("Secret Point");
+        label.setText("Journal Point");
         label.setAlignment(MLabel.Alignment.LEFT);
         add(label);
 
         value = new MValue(dungeonSecret.getSecretPoint(), Collections.emptyList());
         add(value);
-
-        selectionButton = new MStringSelectionButton(Arrays.asList(new String[] {"CHEST", "BAT", "ITEM_DROP", "ESSENCE"}), "CHEST");
-        selectionButton.setOnUpdate(new Runnable() {
-            @Override
-            public void run() {
-                dungeonSecret.setSecretType(DungeonSecret.SecretType.valueOf(selectionButton.getSelected()));
-            }
-        });
-        add(selectionButton);
 
         preRequisite = new MTextField() {
             @Override
@@ -58,7 +53,7 @@ public class ValueEditSecret extends MPanel implements ValueEdit<DungeonSecret> 
         };
         preRequisite.setText(TextUtils.join(dungeonSecret.getPreRequisite(), ","));
         preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
+        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
         add(preRequisite2);
     }
 
@@ -66,8 +61,7 @@ public class ValueEditSecret extends MPanel implements ValueEdit<DungeonSecret> 
     public void onBoundsUpdate() {
         label.setBounds(new Rectangle(0,0,getBounds().width, 20));
         value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        selectionButton.setBounds(new Rectangle(0,40,getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
+        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
     }
 
     @Override
@@ -85,22 +79,22 @@ public class ValueEditSecret extends MPanel implements ValueEdit<DungeonSecret> 
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditSecret> {
+    public static class Generator implements ValueEditCreator<ValueEditJournal> {
 
         @Override
-        public ValueEditSecret createValueEdit(Parameter parameter) {
-            return new ValueEditSecret(parameter);
+        public ValueEditJournal createValueEdit(Parameter parameter) {
+            return new ValueEditJournal(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonSecret();
+            return new DungeonJournal();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonSecret)object).clone();
+                return ((DungeonJournal)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }
