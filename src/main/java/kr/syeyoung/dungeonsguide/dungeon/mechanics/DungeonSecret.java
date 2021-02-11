@@ -121,4 +121,8 @@ public class DungeonSecret implements DungeonMechanic {
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("found"/*, "definitely_not", "not_sure", "created", "error"*/);
     }
+    @Override
+    public OffsetPoint getRepresentingPoint() {
+        return secretPoint;
+    }
 }

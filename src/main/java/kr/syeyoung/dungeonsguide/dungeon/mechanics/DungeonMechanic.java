@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 
 import java.awt.*;
@@ -16,4 +17,6 @@ public interface DungeonMechanic extends Serializable {
 
     Set<String> getPossibleStates(DungeonRoom dungeonRoom);
     Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
+
+    OffsetPoint getRepresentingPoint();
 }

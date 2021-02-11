@@ -93,4 +93,8 @@ public class DungeonLever implements DungeonMechanic {
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("triggered", "untriggered");
     }
+    @Override
+    public OffsetPoint getRepresentingPoint() {
+        return leverPoint;
+    }
 }

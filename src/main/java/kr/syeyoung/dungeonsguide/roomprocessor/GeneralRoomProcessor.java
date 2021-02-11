@@ -137,6 +137,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return false;
     }
 
+    @Getter
     private ActionRoute path;
 
     public void pathfind(String mechanic, String state) {
