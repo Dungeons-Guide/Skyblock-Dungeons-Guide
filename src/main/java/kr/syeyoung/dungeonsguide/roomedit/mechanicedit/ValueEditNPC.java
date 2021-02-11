@@ -2,9 +2,13 @@ package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonNPC;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.*;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MTextField;
+import kr.syeyoung.dungeonsguide.gui.elements.MValue;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEdit;
@@ -15,22 +19,22 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairySoul> {
+public class ValueEditNPC extends MPanel implements ValueEdit<DungeonNPC> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private DungeonFairySoul dungeonSecret;
+    private DungeonNPC dungeonSecret;
 
     private MLabel label;
     private MValue<OffsetPoint> value;
     private MTextField preRequisite;
     private MLabelAndElement preRequisite2;
 
-    public ValueEditFairySoul(final Parameter parameter2) {
+    public ValueEditNPC(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonSecret = (DungeonFairySoul) parameter2.getNewData();
+        this.dungeonSecret = (DungeonNPC) parameter2.getNewData();
 
 
         label = new MLabel();
@@ -75,22 +79,22 @@ public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairy
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditFairySoul> {
+    public static class Generator implements ValueEditCreator<ValueEditNPC> {
 
         @Override
-        public ValueEditFairySoul createValueEdit(Parameter parameter) {
-            return new ValueEditFairySoul(parameter);
+        public ValueEditNPC createValueEdit(Parameter parameter) {
+            return new ValueEditNPC(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonFairySoul();
+            return new DungeonNPC();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonFairySoul)object).clone();
+                return ((DungeonNPC)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

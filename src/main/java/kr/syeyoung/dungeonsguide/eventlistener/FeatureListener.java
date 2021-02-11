@@ -162,6 +162,21 @@ public class FeatureListener {
     }
 
     @SubscribeEvent
+    public void onGuiEvent(GuiScreenEvent.MouseInputEvent.Pre input) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiClickListener) {
+                    ((GuiClickListener) abstractFeature).onMouseInput(input);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
     public void onSkyblockJoin(SkyblockJoinedEvent joinedEvent) {
         try {
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {

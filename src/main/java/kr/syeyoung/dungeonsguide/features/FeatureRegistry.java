@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureCooldownCounter;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureDisableMessage;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureTooltipDungeonStat;
 import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureTooltipPrice;
+import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -85,5 +86,7 @@ public class FeatureRegistry {
     public static final FeatureWarnLowHealth DUNGEON_LOWHEALTH_WARN = register(new FeatureWarnLowHealth());
     public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Dungeon", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run\n\nThis automates player chatting action, (chatting data) Thus it might be against hypixel's rules.\nBut mods like auto-gg which also automate player action and is kinda allowed mod exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "dungeon.intermodcomm", false));
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
+
+    public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
 
 }
