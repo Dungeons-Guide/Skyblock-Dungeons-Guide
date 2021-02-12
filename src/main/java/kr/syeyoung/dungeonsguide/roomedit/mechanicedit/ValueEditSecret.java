@@ -41,7 +41,7 @@ public class ValueEditSecret extends MPanel implements ValueEdit<DungeonSecret> 
         value = new MValue(dungeonSecret.getSecretPoint(), Collections.emptyList());
         add(value);
 
-        selectionButton = new MStringSelectionButton(Arrays.asList(new String[] {"CHEST", "BAT", "ITEM_DROP", "ESSENCE"}), "CHEST");
+        selectionButton = new MStringSelectionButton(Arrays.asList(new String[] {"CHEST", "BAT", "ITEM_DROP", "ESSENCE"}), dungeonSecret.getSecretType().name());
         selectionButton.setOnUpdate(new Runnable() {
             @Override
             public void run() {

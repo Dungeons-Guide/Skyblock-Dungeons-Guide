@@ -176,6 +176,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onInteract(PlayerInteractEntityEvent event) {
+        if (path != null) path.getCurrentAction().onLivingInteract(getDungeonRoom(), event);
     }
 
     @Override

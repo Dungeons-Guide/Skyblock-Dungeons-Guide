@@ -20,6 +20,7 @@ public class DungeonOnewayLever implements DungeonMechanic {
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+        if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
         if (state.equalsIgnoreCase("navigate")) {
             Set<Action> base;
             Set<Action> preRequisites = base = new HashSet<Action>();

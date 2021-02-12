@@ -31,9 +31,14 @@ public class DungeonDummy implements DungeonMechanic {
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
         } else if (state.equalsIgnoreCase("click")) {
-            ActionClick actionMove = new ActionClick(secretPoint);
+            ActionClick actionClick = new ActionClick(secretPoint);
+            preRequisites.add(actionClick);
+            preRequisites = actionClick.getPreRequisite();
+
+            ActionMove actionMove = new ActionMove(secretPoint);
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
+
         }
         {
             for (String str : preRequisite) {

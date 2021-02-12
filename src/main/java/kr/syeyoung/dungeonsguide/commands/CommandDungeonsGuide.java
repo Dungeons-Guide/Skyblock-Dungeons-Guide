@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.commands;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
@@ -20,7 +21,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
-import java.io.IOException;
+import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
@@ -116,6 +117,36 @@ public class CommandDungeonsGuide extends CommandBase {
                 grp.pathfind(args[1], args[2]);
             } catch (Throwable t) {
                 t.printStackTrace();
+            }
+        } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
+            File root = e.getDungeonsGuide().getConfigDir();
+            File dir = new File(root, "processorinput");
+            File outsecret = new File(root, "processoroutpuzzle");
+            File outpuzzle = new File(root, "processoroutsecret");
+            for (File f : dir.listFiles()) {
+                if (!f.getName().endsWith(".roomdata")) continue;
+                try {
+                    InputStream fis = new FileInputStream(f);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
+                    ois.close();
+                    fis.close();
+                    dri.setUserMade(false);
+
+                    FileOutputStream fos = new FileOutputStream(new File(outsecret, dri.getUuid().toString() + ".roomdata"));
+                    ObjectOutputStream oos = new ObjectOutputStream(fos);
+                    oos.writeObject(dri);
+                    oos.flush();
+                    oos.close();
+
+                    dri.getMechanics().clear();
+
+                    fos = new FileOutputStream(new File(outpuzzle, dri.getUuid().toString() + ".roomdata"));
+                    oos = new ObjectOutputStream(fos);
+                    oos.writeObject(dri);
+                    oos.flush();
+                    oos.close();
+                } catch (Exception e) {e.printStackTrace();}
             }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));

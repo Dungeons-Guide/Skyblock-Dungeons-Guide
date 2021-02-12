@@ -102,6 +102,14 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
 
     @Override
     public OffsetPoint getRepresentingPoint() {
-        return secretPoint.getOffsetPointList().size() == 0 ? null : secretPoint.getOffsetPointList().get(0);
+        int leastY = Integer.MAX_VALUE;
+        OffsetPoint thatPt = null;
+        for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
+            if (offsetPoint.getY() < leastY) {
+                thatPt = offsetPoint;
+                leastY = offsetPoint.getY();
+            }
+        }
+        return thatPt;
     }
 }

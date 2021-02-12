@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
+import com.google.common.io.Files;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import net.minecraft.client.Minecraft;
@@ -10,6 +11,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.net.URL;
+import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
@@ -22,6 +24,7 @@ public class DungeonRoomInfoRegistry {
 
     public static void register(DungeonRoomInfo dungeonRoomInfo) {
         if (dungeonRoomInfo == null) throw new NullPointerException("what the fak parameter is noll?");
+        if (uuidMap.containsKey(dungeonRoomInfo.getUuid())) return;
         dungeonRoomInfo.setRegistered(true);
         registered.add(dungeonRoomInfo);
         uuidMap.put(dungeonRoomInfo.getUuid(), dungeonRoomInfo);
@@ -54,6 +57,7 @@ public class DungeonRoomInfoRegistry {
         dir.mkdirs();
         boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
         System.out.println(isDev);
+        String nameidstring = "name,uuid,processsor,secrets";
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
                 if (!dungeonRoomInfo.isUserMade() && !isDev) continue;
@@ -62,7 +66,15 @@ public class DungeonRoomInfoRegistry {
                 oos.writeObject(dungeonRoomInfo);
                 oos.flush();
                 oos.close();
+
+                nameidstring += "\n"+dungeonRoomInfo.getName()+","+dungeonRoomInfo.getUuid() +","+dungeonRoomInfo.getProcessorId()+","+dungeonRoomInfo.getTotalSecrets();
             } catch (Exception e) {e.printStackTrace();}
+        }
+
+        try {
+            Files.write(nameidstring, new File(dir, "roomidmapping.csv"), Charset.defaultCharset());
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 

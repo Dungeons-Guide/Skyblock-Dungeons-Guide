@@ -84,7 +84,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
     public void tick() {
         super.tick();
-        if (err) {
+        if (err || silverfish.isDead) {
             findSilverFishanddoStuff();
             if (err) return;
         }
