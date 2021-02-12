@@ -73,6 +73,7 @@ public class FeatureRegistry {
     public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
     public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
     public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
+    public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
 
     public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
@@ -90,5 +91,7 @@ public class FeatureRegistry {
 
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
+    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Secret", "Auto browse next secret.", "Auto browse next secret after current one completes.\nYou still need to trigger first pathfinding of first secret, after that this option would start working", "secret.autobrowse", false));
+    public static final SimpleFeature SECRET_DRAW_ARROW = register(new SimpleFeature("Secret", "Draw Arrows on Moving actions", "Overlay arrows over found path", "secret.arrows", false));
 
 }

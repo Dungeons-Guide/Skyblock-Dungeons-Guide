@@ -39,7 +39,6 @@ public class FeatureActions extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        if (Minecraft.getMinecraft().currentScreen != null) return false;
         if (!skyblockStatus.isOnDungeon()) return false;
         if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return false;
         DungeonContext context = skyblockStatus.getContext();
@@ -105,17 +104,22 @@ public class FeatureActions extends TextHUDFeature {
             actualBit.add(new StyledText("-> ","separator"));
             actualBit.add(new StyledText(path.getState()+"\n","state"));
 
-            for (int i = 0; i < path.getActions().size(); i++) {
+            for (int i = Math.max(0,path.getCurrent()-2); i < path.getActions().size(); i++) {
                 actualBit.add(new StyledText((i == path.getCurrent() ? ">" : " ") +" ","current"));
                 actualBit.add(new StyledText(i+"","number"));
                 actualBit.add(new StyledText(". ","dot"));
                 Action action = path.getActions().get(i);
-                String[] str = action.toString().split(" ");
+                String[] str = action.toString().split("\n");
                 actualBit.add(new StyledText(str[0] + " ","action"));
+                actualBit.add(new StyledText("(","afterline"));
                 for (int i1 = 1; i1 < str.length; i1++) {
-                    actualBit.add(new StyledText(str[i1]+" ","afterline"));
+                    String base = str[i1].trim();
+                    if (base.startsWith("-"))
+                        base = base.substring(1);
+                    base = base.trim();
+                    actualBit.add(new StyledText(base+" ","afterline"));
                 }
-                actualBit.add(new StyledText("\n","afterline"));
+                actualBit.add(new StyledText(")\n","afterline"));
             }
         }
         return actualBit;

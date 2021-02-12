@@ -173,10 +173,10 @@ public class GeneralEditPane extends MPanel {
     @Override
     public void onBoundsUpdate() {
         if (save != null)
-            save.setBounds(new Rectangle(0,140,getBounds().width, 20));
-        end.setBounds(new Rectangle(1,120,getBounds().width-2, 20));
+            save.setBounds(new Rectangle(0,160,getBounds().width, 20));
+        end.setBounds(new Rectangle(1,140,getBounds().width-2, 20));
         if (schematic != null)
-        schematic.setBounds(new Rectangle(0,160,getBounds().width, 20));
+        schematic.setBounds(new Rectangle(0,180,getBounds().width, 20));
     }
 
     private NBTTagCompound createNBT() {

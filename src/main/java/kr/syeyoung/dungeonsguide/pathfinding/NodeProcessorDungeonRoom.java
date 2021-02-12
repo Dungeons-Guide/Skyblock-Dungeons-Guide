@@ -31,11 +31,21 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                 (int)z - dungeonRoom.getMin().getZ());
     }
 
+    private static final EnumFacing[] values2 = new EnumFacing[6];
+    static {
+        values2[0] = EnumFacing.DOWN;
+        values2[1] = EnumFacing.NORTH;
+        values2[2] = EnumFacing.SOUTH;
+        values2[3] = EnumFacing.EAST;
+        values2[4] = EnumFacing.WEST;
+        values2[5] = EnumFacing.UP;
+    }
+
     @Override
     public int findPathOptions(PathPoint[] pathOptions, Entity entityIn, PathPoint currentPoint, PathPoint targetPoint, float maxDistance) {
 
         int i = 0;
-        for (EnumFacing ef:EnumFacing.VALUES) {
+        for (EnumFacing ef:values2) {
             Vec3i dir = ef.getDirectionVec();
             int newX = currentPoint.xCoord + dir.getX();
             int newY = currentPoint.yCoord + dir.getY();

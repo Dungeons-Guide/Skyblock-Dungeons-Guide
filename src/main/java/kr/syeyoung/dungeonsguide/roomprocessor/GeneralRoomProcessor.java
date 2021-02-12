@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
@@ -48,7 +49,22 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void tick() {
-        if (path != null) path.onTick();
+        if (path != null) {
+            path.onTick();
+            if (FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled() && path.getCurrentAction() instanceof ActionComplete) {
+                if (!path.getState().equals("found")) return;
+                if (!(dungeonRoom.getDungeonRoomInfo().getMechanics().get(path.getMechanic()) instanceof DungeonSecret)) return;
+                boolean foundcurr = false;
+                for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
+                    if (!(mech.getValue() instanceof DungeonSecret)) continue;
+                    if (foundcurr && ((DungeonSecret) mech.getValue()).getSecretStatus(getDungeonRoom()) != DungeonSecret.SecretStatus.FOUND) {
+                        pathfind(mech.getKey(), "found");
+                        break;
+                    }
+                    if (mech.getKey().equals(path.getMechanic())) foundcurr = true;
+                }
+            }
+        }
     }
 
     @Override
