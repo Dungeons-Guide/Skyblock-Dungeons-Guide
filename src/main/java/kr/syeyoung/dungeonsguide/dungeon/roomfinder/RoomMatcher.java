@@ -61,6 +61,8 @@ public class RoomMatcher {
     private boolean tryMatching(DungeonRoomInfo dungeonRoomInfo, int rotation) {
         if (dungeonRoomInfo.getColor() != dungeonRoom.getColor()) return false;
 
+        System.out.println("Matching "+dungeonRoomInfo.getName()+" At "+rotation);
+
         int[][] res = dungeonRoomInfo.getBlocks();
         for (int i = 0; i < rotation; i++)
             res = ArrayUtils.rotateCounterClockwise(res);
@@ -72,6 +74,7 @@ public class RoomMatcher {
                 Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
 
                 if (b == null || Block.getIdFromBlock(b) != data) {
+                    System.out.println("Failed At "+x+"."+z + " "+data+" found " + Block.getIdFromBlock(b) +" found");
                     return false;
                 }
             }
@@ -93,11 +96,14 @@ public class RoomMatcher {
 
         for (int z = 0; z < data.length; z++) {
             for (int x = 0; x < data[0].length; x++) {
-                if (!(offset <= x && widthX - offset > x && offset <= z && heightZ - offset > z)) {
-                    data[z][x] = -1;
-                    continue;
-                }
-                if (!(dungeonRoom.canAccessRelative(x + offset - 1, z + offset - 1) && dungeonRoom.canAccessRelative(x - offset, z - offset))) {
+//                if (!(offset < x && widthX - offset > x && offset < z && heightZ - offset > z)) {
+//                    data[z][x] = -1;
+//                    continue;
+//                }
+                if (!(dungeonRoom.canAccessRelative(x + offset, z + offset)
+                        && dungeonRoom.canAccessRelative(x - offset -1 , z - offset-1)
+                        && dungeonRoom.canAccessRelative(x + offset , z - offset-1)
+                        && dungeonRoom.canAccessRelative(x - offset -1 , z + offset))) {
                     data[z][x] = -1;
                     continue;
                 }

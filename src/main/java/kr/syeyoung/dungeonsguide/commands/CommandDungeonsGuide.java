@@ -7,13 +7,17 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
+import kr.syeyoung.dungeonsguide.utils.MapUtils;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -118,7 +122,7 @@ public class CommandDungeonsGuide extends CommandBase {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-        } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
+        } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
             File root = e.getDungeonsGuide().getConfigDir();
             File dir = new File(root, "processorinput");
             File outsecret = new File(root, "processoroutpuzzle");
@@ -146,7 +150,17 @@ public class CommandDungeonsGuide extends CommandBase {
                     oos.writeObject(dri);
                     oos.flush();
                     oos.close();
-                } catch (Exception e) {e.printStackTrace();}
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } else if (args[0].equals("reloaddungeon") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")){
+            try {
+                MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
+                e.getDungeonsGuide().getSkyblockStatus().setContext(null);
+                MapUtils.clearMap();
+            } catch (Throwable t) {
+                t.printStackTrace();
             }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));

@@ -54,7 +54,8 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
             if (newX > sub.getX()|| newZ > sub.getZ()) continue;
             IBlockState state = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ));
             if (state.getBlock() == Blocks.air || state.getBlock() == Blocks.water || state.getBlock() == Blocks.lava
-            || state.getBlock() == Blocks.flowing_water || state.getBlock() == Blocks.flowing_lava) {
+            || state.getBlock() == Blocks.flowing_water || state.getBlock() == Blocks.flowing_lava
+            || state.getBlock() == Blocks.vine) {
                 PathPoint pt = openPoint(newX, newY, newZ);
                 if (pt.visited) continue;
                 pathOptions[i++] = pt;

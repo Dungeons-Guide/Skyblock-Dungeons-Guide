@@ -167,6 +167,6 @@ public class DungeonRoom {
         return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
     }
     public boolean canAccessRelative(int x, int z) {
-        return (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
+        return  x>= 0 && z >= 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
     }
 }
