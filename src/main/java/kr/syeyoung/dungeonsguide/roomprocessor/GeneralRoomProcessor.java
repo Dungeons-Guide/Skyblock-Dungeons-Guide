@@ -71,13 +71,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void drawScreen(float partialTicks) {
         if (path != null) path.onRenderScreen(partialTicks);
 
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
+            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
-        Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
-        if (en == null) return;;
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        if (EntitySpawnManager.getSpawnLocation().containsKey(en.getEntityId())) {
-            fr.drawString("Spawned at "+EntitySpawnManager.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
+            Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
+            if (en == null) return;
+
+            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+            if (EntitySpawnManager.getSpawnLocation().containsKey(en.getEntityId())) {
+                fr.drawString("Spawned at " + EntitySpawnManager.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
+            }
         }
     }
 
