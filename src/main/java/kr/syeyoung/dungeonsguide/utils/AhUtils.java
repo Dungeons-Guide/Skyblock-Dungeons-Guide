@@ -74,7 +74,7 @@ public class AhUtils {
     public static class AuctionData {
         public String id;
 
-        public int lowestBin = -1;
+        public long lowestBin = -1;
 
         public int sellPrice = -1;
 

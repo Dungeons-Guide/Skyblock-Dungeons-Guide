@@ -24,7 +24,12 @@ public class DungeonRoomInfoRegistry {
 
     public static void register(DungeonRoomInfo dungeonRoomInfo) {
         if (dungeonRoomInfo == null) throw new NullPointerException("what the fak parameter is noll?");
-        if (uuidMap.containsKey(dungeonRoomInfo.getUuid())) return;
+        if (uuidMap.containsKey(dungeonRoomInfo.getUuid())) {
+            DungeonRoomInfo dri1 = uuidMap.get(dungeonRoomInfo.getUuid());
+            registered.remove(dri1);
+            shapeMap.get(dri1.getShape()).remove(dri1);
+            uuidMap.remove(dri1.getUuid());
+        }
         dungeonRoomInfo.setRegistered(true);
         registered.add(dungeonRoomInfo);
         uuidMap.put(dungeonRoomInfo.getUuid(), dungeonRoomInfo);
@@ -58,6 +63,7 @@ public class DungeonRoomInfoRegistry {
         boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
         System.out.println(isDev);
         String nameidstring = "name,uuid,processsor,secrets";
+        String ids = "";
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
                 if (!dungeonRoomInfo.isUserMade() && !isDev) continue;
@@ -68,11 +74,13 @@ public class DungeonRoomInfoRegistry {
                 oos.close();
 
                 nameidstring += "\n"+dungeonRoomInfo.getName()+","+dungeonRoomInfo.getUuid() +","+dungeonRoomInfo.getProcessorId()+","+dungeonRoomInfo.getTotalSecrets();
+                ids += "roomdata/"+dungeonRoomInfo.getUuid() +".roomdata\n";
             } catch (Exception e) {e.printStackTrace();}
         }
 
         try {
             Files.write(nameidstring, new File(dir, "roomidmapping.csv"), Charset.defaultCharset());
+            Files.write(ids, new File(dir, "datas.txt"), Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }

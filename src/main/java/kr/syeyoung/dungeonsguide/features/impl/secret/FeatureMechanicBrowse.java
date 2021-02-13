@@ -12,6 +12,7 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
+import kr.syeyoung.dungeonsguide.features.listener.GuiPreRenderListener;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
@@ -36,7 +37,7 @@ import java.util.ArrayList;
 import java.util.Map;
 import java.util.Set;
 
-public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderListener, GuiClickListener, WorldRenderListener {
+public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
 
     public FeatureMechanicBrowse() {
         super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
@@ -86,7 +87,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
     }
 
     @Override
-    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
+    public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
         if (Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
         || Minecraft.getMinecraft().currentScreen instanceof GuiConfig
         || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
@@ -108,7 +109,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
         int height = scaledResolution.getScaledHeight();
         int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
         int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
-
+        GlStateManager.pushMatrix();
 
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
 
@@ -171,6 +172,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPostRenderLi
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+        GlStateManager.popMatrix();
     }
 
     private void clip(ScaledResolution resolution, int x, int y, int width, int height) {

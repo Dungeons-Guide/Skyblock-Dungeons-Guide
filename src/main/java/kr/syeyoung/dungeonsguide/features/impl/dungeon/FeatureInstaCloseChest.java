@@ -46,7 +46,7 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
         check = true;
     }
 
-    public static int getPrice(ItemStack itemStack) {
+    public static long getPrice(ItemStack itemStack) {
         if (itemStack == null) return 0;
         NBTTagCompound compound = itemStack.getTagCompound();
         if (compound == null)
@@ -61,14 +61,14 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
                 public int compare(String o1, String o2) {
                     String id2 = id + "::" + o1 + "-" + enchants.getInteger(o1);
                     AhUtils.AuctionData auctionData = AhUtils.auctions.get(id2);
-                    int price1 = (auctionData == null) ? 0 : auctionData.lowestBin;
+                    long price1 = (auctionData == null) ? 0 : auctionData.lowestBin;
                     String id3 = id + "::" + o2 + "-" + enchants.getInteger(o2);
                     AhUtils.AuctionData auctionData2 = AhUtils.auctions.get(id3);
-                    int price2 = (auctionData2 == null) ? 0 : auctionData2.lowestBin;
+                    long price2 = (auctionData2 == null) ? 0 : auctionData2.lowestBin;
                     return (compare2(price1, price2) == 0) ? o1.compareTo(o2) : compare2(price1, price2);
                 }
 
-                public int compare2(int y, int x) {
+                public int compare2(long y, long x) {
                     return (x < y) ? -1 : ((x == y) ? 0 : 1);
                 }
             });
@@ -88,7 +88,7 @@ public class FeatureInstaCloseChest extends SimpleFeature implements GuiOpenList
                 if (auctionData.sellPrice == -1 && auctionData.lowestBin != -1) return auctionData.lowestBin;
                 else if (auctionData.sellPrice != -1 && auctionData.lowestBin == -1) return auctionData.sellPrice;
                 else {
-                    int ahPrice = auctionData.lowestBin;
+                    long ahPrice = auctionData.lowestBin;
                     if (ahPrice > auctionData.sellPrice) return ahPrice;
                     else return auctionData.sellPrice;
                 }

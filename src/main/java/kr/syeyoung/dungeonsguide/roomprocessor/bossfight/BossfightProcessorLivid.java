@@ -58,7 +58,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             } catch (Exception e) {e.printStackTrace();}
         }
-        healths.add(new HealthData(realLividName, (int) health,7000000 , true));
+        healths.add(new HealthData(realLividName == null ? "unknown" : realLividName, (int) health,7000000 , true));
         return healths;
     }
 }

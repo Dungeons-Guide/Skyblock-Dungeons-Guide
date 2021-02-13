@@ -197,7 +197,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                                 EntitySpawnManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
                         ));
                         ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
-                                new DungeonSecret());
+                                secret);
                     }
                 }
             }

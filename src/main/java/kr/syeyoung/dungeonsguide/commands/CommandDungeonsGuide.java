@@ -125,8 +125,8 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
             File root = e.getDungeonsGuide().getConfigDir();
             File dir = new File(root, "processorinput");
-            File outsecret = new File(root, "processoroutpuzzle");
-            File outpuzzle = new File(root, "processoroutsecret");
+            File outpuzzle = new File(root, "processoroutpuzzle");
+            File outsecret = new File(root, "processoroutsecret");
             for (File f : dir.listFiles()) {
                 if (!f.getName().endsWith(".roomdata")) continue;
                 try {

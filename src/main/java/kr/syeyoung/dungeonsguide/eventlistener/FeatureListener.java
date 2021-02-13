@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -161,7 +162,7 @@ public class FeatureListener {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
     public void onGuiEvent(GuiScreenEvent.MouseInputEvent.Pre input) {
         try {
             SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
