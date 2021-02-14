@@ -57,7 +57,7 @@ public class ActionMoveNearestAir extends AbstractAction {
         tick = (tick+1) % 10;
         if (tick == 0) {
             latest = dungeonRoom.getPathFinder().createEntityPathTo(dungeonRoom.getContext().getWorld(),
-                    Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), 100);
+                    Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
         }
     }
     @Override
