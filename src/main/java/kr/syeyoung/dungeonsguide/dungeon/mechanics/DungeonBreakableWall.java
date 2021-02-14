@@ -27,7 +27,16 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (state.equalsIgnoreCase("navigate")) {
             Set<Action> base;
             Set<Action> preRequisites = base = new HashSet<Action>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+
+            int leastY = Integer.MAX_VALUE;
+            OffsetPoint thatPt = null;
+            for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
+                if (offsetPoint.getY() < leastY) {
+                    thatPt = offsetPoint;
+                    leastY = offsetPoint.getY();
+                }
+            }
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(thatPt);
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
             for (String str : preRequisite) {
@@ -50,7 +59,16 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
             preRequisites = actionClick.getPreRequisite();
         }
         {
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+
+            int leastY = Integer.MAX_VALUE;
+            OffsetPoint thatPt = null;
+            for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
+                if (offsetPoint.getY() < leastY) {
+                    thatPt = offsetPoint;
+                    leastY = offsetPoint.getY();
+                }
+            }
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(thatPt);
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
         }

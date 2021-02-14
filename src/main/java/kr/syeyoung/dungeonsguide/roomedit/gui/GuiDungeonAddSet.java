@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -29,7 +30,9 @@ public class GuiDungeonAddSet extends GuiScreen {
     private MButton back;
 
 
+    @Getter
     private OffsetPoint start;
+    @Getter
     private OffsetPoint end;
 
     public void onWorldRender(float partialTicks) {

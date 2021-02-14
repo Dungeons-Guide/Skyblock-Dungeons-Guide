@@ -1,9 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -14,6 +12,7 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,15 +21,14 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.init.Items;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 
@@ -78,8 +76,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (en == null) return;
 
             ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            if (EntitySpawnManager.getSpawnLocation().containsKey(en.getEntityId())) {
-                fr.drawString("Spawned at " + EntitySpawnManager.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
+            if (DungeonActionManager.getSpawnLocation().containsKey(en.getEntityId())) {
+                fr.drawString("Spawned at " + DungeonActionManager.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
             }
         }
     }
@@ -179,9 +177,29 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (path != null) path.getCurrentAction().onLivingInteract(getDungeonRoom(), event);
     }
 
+    private boolean last = false;
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
         if (path != null) path.onPlayerInteract(event);
+
+        System.out.println(event.action);
+        if (event.entityPlayer.getHeldItem() != null &&
+            event.entityPlayer.getHeldItem().getItem() == Items.stick &&
+                FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
+                FeatureRegistry.DEBUG.isEnabled()) {
+            EditingContext ec = EditingContext.getEditingContext();
+            if (ec == null) return;
+            if (!(ec.getCurrent() instanceof GuiDungeonAddSet)) return;
+            GuiDungeonAddSet gdas = (GuiDungeonAddSet) ec.getCurrent();
+            if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+                if (last)
+                    gdas.getEnd().setPosInWorld(getDungeonRoom(), event.pos);
+                else
+                    gdas.getStart().setPosInWorld(getDungeonRoom(), event.pos);
+
+                last = !last;
+            }
+        }
     }
 
     @Override
@@ -194,11 +212,21 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         DungeonSecret secret = new DungeonSecret();
                         secret.setSecretType(DungeonSecret.SecretType.BAT);
                         secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                                EntitySpawnManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                                DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
                         ));
                         ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
                                 secret);
+                        return;
                     }
+                }
+                if (EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit) {
+                    DungeonSecret secret = new DungeonSecret();
+                    secret.setSecretType(DungeonSecret.SecretType.BAT);
+                    secret.setSecretPoint(new OffsetPoint(dungeonRoom,
+                            DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                    ));
+                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
+                            secret);
                 }
             }
         }

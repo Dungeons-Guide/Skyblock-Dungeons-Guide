@@ -2,13 +2,11 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
@@ -44,7 +42,7 @@ public class ActionKill extends AbstractAction {
     public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
         if (killed) return;
 
-        Vec3 spawnLoc = EntitySpawnManager.getSpawnLocation().get(event.entity.getEntityId());
+        Vec3 spawnLoc = DungeonActionManager.getSpawnLocation().get(event.entity.getEntityId());
         if (spawnLoc == null) return;
         if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) return;
         if (!predicate.apply(event.entity)) return;

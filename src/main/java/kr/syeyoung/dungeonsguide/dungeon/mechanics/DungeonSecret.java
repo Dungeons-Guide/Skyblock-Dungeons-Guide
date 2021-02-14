@@ -1,10 +1,12 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.roomedit.panes.SecretEditPane;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -13,6 +15,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.*;
@@ -40,6 +43,23 @@ public class DungeonSecret implements DungeonMechanic {
                     return SecretStatus.CREATED;
                 }
             }
+        } else if (secretType == SecretType.ESSENCE) {
+            BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
+            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            if (blockState.getBlock() == Blocks.skull) {
+                return SecretStatus.DEFINITELY_NOT;
+            } else {
+                return SecretStatus.NOT_SURE;
+            }
+        } else if (secretType == SecretType.BAT) {
+            Vec3 spawn = new Vec3(secretPoint.getBlockPos(dungeonRoom));
+            for (Integer killed : DungeonActionManager.getKilleds()) {
+                if (DungeonActionManager.getSpawnLocation().get(killed) == null) continue;
+                if (DungeonActionManager.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
+                    return SecretStatus.FOUND;
+                }
+            }
+            return SecretStatus.NOT_SURE;
         } else {
             return SecretStatus.NOT_SURE;
         }

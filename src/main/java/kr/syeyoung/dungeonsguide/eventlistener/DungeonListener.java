@@ -5,7 +5,7 @@ import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
@@ -27,11 +27,9 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.tileentity.TileEntity;
-import net.minecraft.tileentity.TileEntitySkull;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
-import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
@@ -40,7 +38,6 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.living.LivingSpawnEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
@@ -49,7 +46,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import javax.swing.text.html.parser.Entity;
 import java.awt.*;
 import java.io.IOException;
 import java.util.HashMap;
@@ -63,7 +59,8 @@ public class DungeonListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        EntitySpawnManager.getSpawnLocation().clear();
+        DungeonActionManager.getSpawnLocation().clear();
+        DungeonActionManager.getKilleds().clear();
     }
 
     @SubscribeEvent
@@ -162,7 +159,7 @@ public class DungeonListener {
                         MinecraftForge.EVENT_BUS.post(new SkyblockJoinedEvent());
                     }
 
-                    if (isOnDungeon && !skyblockStatus.isOnDungeon()) {
+                    if ((isOnDungeon && !skyblockStatus.isOnDungeon())) {
                         MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
                         skyblockStatus.setContext(null);
                         MapUtils.clearMap();
@@ -479,12 +476,15 @@ public class DungeonListener {
     private Map<Integer, Vec3> entityIdToPosMap = new HashMap<Integer, Vec3>();
     @SubscribeEvent
     public void onEntitySpawn(EntityJoinWorldEvent spawn) {
-        EntitySpawnManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
+        DungeonActionManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 
 
     @SubscribeEvent
     public void onEntityDeSpawn(LivingDeathEvent deathEvent) {
+        if (deathEvent.entityLiving instanceof EntityBat)
+            DungeonActionManager.getKilleds().add(deathEvent.entity.getEntityId());
+
         try {
             SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
@@ -514,7 +514,7 @@ public class DungeonListener {
             e.printStackTrace();
         }
 
-        EntitySpawnManager.getSpawnLocation().remove(deathEvent.entity.getEntityId());
+        DungeonActionManager.getSpawnLocation().remove(deathEvent.entity.getEntityId());
     }
 
 }

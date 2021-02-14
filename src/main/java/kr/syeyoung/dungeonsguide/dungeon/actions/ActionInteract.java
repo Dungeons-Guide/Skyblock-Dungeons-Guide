@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.EntitySpawnManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
@@ -43,7 +43,7 @@ public class ActionInteract extends AbstractAction {
         System.out.println("eve");
         if (interacted) return;
 
-        Vec3 spawnLoc = EntitySpawnManager.getSpawnLocation().get(event.getEntity().getEntityId());
+        Vec3 spawnLoc = DungeonActionManager.getSpawnLocation().get(event.getEntity().getEntityId());
         if (spawnLoc == null) return;
         if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) return;
         if (!predicate.apply(event.getEntity())) return;
