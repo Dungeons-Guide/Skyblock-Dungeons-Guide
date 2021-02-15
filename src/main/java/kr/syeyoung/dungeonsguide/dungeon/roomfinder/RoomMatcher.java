@@ -16,7 +16,7 @@ public class RoomMatcher {
     @Getter
     private DungeonRoomInfo match;
     @Getter
-    private int rotation; // how much the "found room" has to rotate to match the given dungeon room info. !
+    private int rotation; // how much the "found room" has to rotate clockwise to match the given dungeon room info. !
     private boolean triedMatch = false;
 
     private World w;

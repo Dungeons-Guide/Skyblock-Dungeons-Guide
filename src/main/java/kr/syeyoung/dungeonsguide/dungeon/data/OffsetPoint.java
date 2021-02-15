@@ -33,9 +33,9 @@ public class OffsetPoint implements Cloneable, Serializable {
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             vector2d = VectorUtils.rotateClockwise(vector2d);
             if (i % 2 == 0) {
-                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 1;
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 1; // + Z
             } else {
-                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 1;
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 1; // + X
             }
         }
 
@@ -50,9 +50,9 @@ public class OffsetPoint implements Cloneable, Serializable {
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot2 = VectorUtils.rotateCounterClockwise(rot2);
             if (i % 2 == 0) {
-                rot2.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1;
+                rot2.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1; // + Z
             } else {
-                rot2.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1;
+                rot2.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1; // + X
             }
         }
 
