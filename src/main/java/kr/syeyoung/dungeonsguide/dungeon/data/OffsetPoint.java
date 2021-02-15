@@ -50,9 +50,9 @@ public class OffsetPoint implements Cloneable, Serializable {
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot2 = VectorUtils.rotateCounterClockwise(rot2);
             if (i % 2 == 0) {
-                rot2.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1;
-            } else {
                 rot2.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1;
+            } else {
+                rot2.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1;
             }
         }
 

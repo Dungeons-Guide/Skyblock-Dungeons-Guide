@@ -55,8 +55,6 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
             }
         }
 
-        System.out.println("prismarins: "+prismarines);
-
         while (prismarines.size() > 1) {
             BlockPos first = prismarines.get(0);
             BlockPos highestMatch = null;

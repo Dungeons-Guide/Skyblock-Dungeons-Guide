@@ -182,7 +182,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void onInteractBlock(PlayerInteractEvent event) {
         if (path != null) path.onPlayerInteract(event);
 
-        System.out.println(event.action);
         if (event.entityPlayer.getHeldItem() != null &&
             event.entityPlayer.getHeldItem().getItem() == Items.stick &&
                 FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&

@@ -28,7 +28,7 @@ public class RoomMatchDisplayPane extends MPanel {
     public RoomMatchDisplayPane(DungeonRoom dungeonRoom, UUID uid, int rotation) {
         this.dungeonRoom = dungeonRoom;
 
-        currentBlocks = dungeonRoom.getDungeonRoomInfo().getBlocks();
+        currentBlocks = dungeonRoom.getRoomMatcher().createNew().getBlocks();
         targetBlocks = DungeonRoomInfoRegistry.getByUUID(uid).getBlocks();
         for (int i = 0; i < rotation; i++)
             targetBlocks = ArrayUtils.rotateCounterClockwise(targetBlocks);

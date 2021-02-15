@@ -40,7 +40,6 @@ public class ActionInteract extends AbstractAction {
     private boolean interacted = false;
     @Override
     public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
-        System.out.println("eve");
         if (interacted) return;
 
         Vec3 spawnLoc = DungeonActionManager.getSpawnLocation().get(event.getEntity().getEntityId());

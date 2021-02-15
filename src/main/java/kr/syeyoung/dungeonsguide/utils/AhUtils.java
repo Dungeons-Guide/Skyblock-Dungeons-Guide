@@ -52,7 +52,6 @@ public class AhUtils {
     }
 
     public static void loadAuctions() throws CertificateException, NoSuchAlgorithmException, InvalidKeyException, InvalidAlgorithmParameterException, NoSuchPaddingException, BadPaddingException, KeyStoreException, IllegalBlockSizeException, KeyManagementException {
-        System.out.println("I think i'm loading ah");
         try {
 
             Map<String, AuctionData> semi_auctions = new HashMap<String, AuctionData>();

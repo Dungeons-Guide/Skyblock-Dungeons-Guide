@@ -127,7 +127,6 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         s.updateSelected();
         v.updateSelected();
         a.updateSelected();
-        System.out.println(((AColor)parameter.getNewData()).getAlpha());
     }
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {

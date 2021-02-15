@@ -226,7 +226,7 @@ public class MapProcessor {
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
                     if (rooms == null) continue;
                     e.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
-                    e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin()));
+                    e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin() + " mapMx: "+rooms.getMax()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy =0;dy<4;dy++) {
                         builder.append("\n");

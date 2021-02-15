@@ -61,7 +61,6 @@ public class DungeonRoomInfoRegistry {
     public static void saveAll(File dir) {
         dir.mkdirs();
         boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
-        System.out.println(isDev);
         String nameidstring = "name,uuid,processsor,secrets";
         String ids = "";
         for (DungeonRoomInfo dungeonRoomInfo : registered) {

@@ -119,7 +119,6 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                     set.getRight().setProcessor(bdcg.createRight(set.getRight(), this));
                     if (bdcg instanceof ImpossibleMatcher) impossible=true;
                     if (bdcg instanceof MazeProcessorMatcher) maze = true;
-                    System.out.println("Matched "+bdcg.getName()+" with "+set.getLeft().getLevel());
                     break;
                 }
             }
@@ -149,7 +148,6 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encode(bytes);
-            System.out.println(str);
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
         } catch (IOException e2) {
             e2.printStackTrace();
@@ -172,7 +170,6 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             try {
                 String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
-                System.out.println(actual);
                 byte[] data2 = Base64.decode(actual);
                 NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
 

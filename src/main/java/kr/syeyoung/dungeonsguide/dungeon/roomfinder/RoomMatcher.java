@@ -35,6 +35,7 @@ public class RoomMatcher {
             for (int x = 0; x < xx; x++) {
                 if (x % 8 == 0 && z % 8 == 0 && dungeonRoom.getContext().getWorld().getChunkFromBlockCoords(dungeonRoom.getRelativeBlockPosAt(x, 0, z)).isEmpty()) {
                     throw new IllegalStateException("chunk is not loaded");
+
                 }
             }
         }
@@ -61,8 +62,6 @@ public class RoomMatcher {
     private boolean tryMatching(DungeonRoomInfo dungeonRoomInfo, int rotation) {
         if (dungeonRoomInfo.getColor() != dungeonRoom.getColor()) return false;
 
-        System.out.println("Matching "+dungeonRoomInfo.getName()+" At "+rotation);
-
         int[][] res = dungeonRoomInfo.getBlocks();
         for (int i = 0; i < rotation; i++)
             res = ArrayUtils.rotateCounterClockwise(res);
@@ -74,7 +73,6 @@ public class RoomMatcher {
                 Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
 
                 if (b == null || Block.getIdFromBlock(b) != data) {
-                    System.out.println("Failed At "+x+"."+z + " "+data+" found " + Block.getIdFromBlock(b) +" found");
                     return false;
                 }
             }

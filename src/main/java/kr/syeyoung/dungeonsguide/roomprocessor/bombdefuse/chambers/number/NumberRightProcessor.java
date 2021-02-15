@@ -66,8 +66,6 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
             if (a2 == d2 && pos.equals(d2p)) event.setCanceled(true);
             if (a3 == d3 && pos.equals(d3p)) event.setCanceled(true);
             if (a4 == d4 && pos.equals(d4p)) event.setCanceled(true);
-
-            System.out.println(" block ? "+event.isCanceled());
         }
     }
 

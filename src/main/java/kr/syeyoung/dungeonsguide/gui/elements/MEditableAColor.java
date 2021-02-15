@@ -66,7 +66,6 @@ public class MEditableAColor extends MPanel {
                 }
             };
             portable.setColor(color);
-            System.out.println(relMouseX+ "  " +relMouseY);
             portable.setBounds(new Rectangle(relMouseX, relMouseY, 100, 60));
             add(portable);
         } else if (portable != null && !portable.getBounds().contains(relMouseX, relMouseY)) {

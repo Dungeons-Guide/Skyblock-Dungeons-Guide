@@ -63,7 +63,6 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
                     event.setCanceled(true);
                 }
             }
-            System.out.println(event.isCanceled());
         }
     }
     @Override
