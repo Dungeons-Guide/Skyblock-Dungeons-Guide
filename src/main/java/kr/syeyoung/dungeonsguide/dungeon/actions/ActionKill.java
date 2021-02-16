@@ -4,6 +4,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
@@ -34,6 +35,14 @@ public class ActionKill extends AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
+        Vec3 spawn = new Vec3(target.getBlockPos(dungeonRoom));
+        for (Integer killed : DungeonActionManager.getKilleds()) {
+            if (DungeonActionManager.getSpawnLocation().get(killed) == null) continue;
+            if (DungeonActionManager.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
+                return true;
+            }
+        }
+
         return killed;
     }
 
