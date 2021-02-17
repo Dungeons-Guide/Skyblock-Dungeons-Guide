@@ -28,9 +28,7 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
         if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
-        if (!isBlocking(dungeonRoom)) {
-            return Collections.emptySet();
-        }
+        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         {

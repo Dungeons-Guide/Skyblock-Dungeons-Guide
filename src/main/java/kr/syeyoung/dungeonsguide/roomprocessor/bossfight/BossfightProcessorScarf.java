@@ -11,27 +11,27 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     public BossfightProcessorScarf() {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
-                .signatureMsg("§r§c[BOSS] Scarf§r§f: This is where the journey ends for you, Adventurers.§r")
+                .signatureMsg("§r§c[BOSS] Scarf §r§f: This is where the journey ends for you, Adventurers.§r")
                 .nextPhase("fight-1").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] Scarf§r§f: ARISE, MY CREATIONS!§r")
+                .signatureMsg("§r§c[BOSS] Scarf §r§f: ARISE, MY CREATIONS!§r")
                 .nextPhase("first-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] Scarf§r§f: Those toys are not strong enough I see.§r")
+                .signatureMsg("§r§c[BOSS] Scarf §r§f: Those toys are not strong enough I see.§r")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] Scarf§r§f: Did you forget? I was taught by the best! Let's dance.§r")
+                .signatureMsg("§r§c[BOSS] Scarf §r§f: Did you forget? I was taught by the best! Let's dance.§r")
                 .nextPhase("final-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] Scarf§r§f: Whatever...§r").build()
+                .signatureMsg("§r§c[BOSS] Scarf §r§f: Whatever...§r").build()
         );
     }
 

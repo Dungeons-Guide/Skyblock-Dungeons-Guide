@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.utils.ShortUtils;
 import lombok.Getter;
 import net.minecraft.block.Block;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
@@ -107,7 +108,7 @@ public class RoomMatcher {
                 }
 
                 Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
-                if (b == null) {
+                if (b == null || b == Blocks.chest || b == Blocks.trapped_chest) {
                     data[z][x] = -1;
                 } else {
                     data[z][x] = Block.getIdFromBlock(b);

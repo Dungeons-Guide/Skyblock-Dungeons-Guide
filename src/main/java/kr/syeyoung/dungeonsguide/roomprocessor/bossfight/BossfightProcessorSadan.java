@@ -16,32 +16,32 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
         );
         addPhase(PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] Sadan§r§f: I am the bridge between this realm and the world below! You shall not pass!§r")
+                .signatureMsg("§r§c[BOSS] Sadan §r§f: I am the bridge between this realm and the world below! You shall not pass!§r")
                 .nextPhase("first-defeat").build()
         );
         addPhase(PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] Sadan§r§f: ENOUGH!§r")
+                .signatureMsg("§r§c[BOSS] Sadan §r§f: ENOUGH!§r")
                 .nextPhase("fight-2").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] Sadan§r§f: My giants! Unleashed!§r")
+                .signatureMsg("§r§c[BOSS] Sadan §r§f: My giants! Unleashed!§r")
                 .nextPhase("second-defeat").build()
         );
         addPhase(PhaseData.builder()
                 .phase("second-defeat")
-                .signatureMsg("§r§c[BOSS] Sadan§r§f: You did it. I understand now, you have earned my respect.§r")
+                .signatureMsg("§r§c[BOSS] Sadan §r§f: You did it. I understand now, you have earned my respect.§r")
                 .nextPhase("fight-3").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-3")
-                .signatureMsg("§r§c[BOSS] Sadan§r§f: I'm sorry but I need to concentrate. I wish it didn't have to come to this.§r")
+                .signatureMsg("§r§c[BOSS] Sadan §r§f: I'm sorry but I need to concentrate. I wish it didn't have to come to this.§r")
                 .nextPhase("final-defeat").build()
         );
         addPhase(PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] Sadan§r§f: NOOOOOOOOO!!! THIS IS IMPOSSIBLE!!§r").build()
+                .signatureMsg("§r§c[BOSS] Sadan §r§f: NOOOOOOOOO!!! THIS IS IMPOSSIBLE!!§r").build()
         );
     }
 

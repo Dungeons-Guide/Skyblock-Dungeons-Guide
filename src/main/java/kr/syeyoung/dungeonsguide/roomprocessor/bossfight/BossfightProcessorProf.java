@@ -11,37 +11,37 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     public BossfightProcessorProf() {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: I was burdened with terrible news recently...§r")
                 .nextPhase("fight-1").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: I'll show you real power!§r")
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: I'll show you real power!§r")
                 .nextPhase("first-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians one weakness?§r")
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: Oh? You found my Guardians one weakness?§r")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: This time I'll be your opponent!§r")
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: This time I'll be your opponent!§r")
                 .nextPhase("second-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("second-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: I see. You have forced me to use my ultimate technique.§r")
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: I see. You have forced me to use my ultimate technique.§r")
                 .nextPhase("fight-3").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-3")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: The process is irreversible, but I'll be stronger than a Wither now!§r")
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: The process is irreversible, but I'll be stronger than a Wither now!§r")
                 .nextPhase("final-defeat").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
+                .signatureMsg("§r§c[BOSS] The Professor §r§f: What?! My Guardian power is unbeatable!§r").build()
         );
     }
 

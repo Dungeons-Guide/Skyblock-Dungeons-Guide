@@ -52,11 +52,30 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
             int newZ = currentPoint.zCoord + dir.getZ();
             if (newX < 0 || newZ < 0) continue;
             if (newX > sub.getX()|| newZ > sub.getZ()) continue;
-            if (isValidBlock(entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)))
-                && isValidBlock( entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY + 1, newZ)))) {
+            IBlockState curr = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ));
+            IBlockState up = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY + 1, newZ));
+            if (isValidBlock(curr)
+                && isValidBlock(up )) {
                 PathPoint pt = openPoint(newX, newY, newZ);
                 if (pt.visited) continue;
                 pathOptions[i++] = pt;
+                continue;
+            }
+
+            if (curr.getBlock() == Blocks.air) {
+                if (up.getBlock() == Blocks.stone_slab
+                || up.getBlock() == Blocks.wooden_slab
+                || up.getBlock() == Blocks.stone_slab2) {
+                    IBlockState up2 = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY -1, newZ));
+                    if (up2.getBlock() == Blocks.stone_slab
+                                || up2.getBlock() == Blocks.wooden_slab
+                                || up2.getBlock() == Blocks.stone_slab2) {
+                        PathPoint pt = openPoint(newX, newY, newZ);
+                        if (pt.visited) continue;
+                        pathOptions[i++] = pt;
+                        continue;
+                    }
+                }
             }
         }
         return i;
@@ -69,7 +88,7 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                 || state.getBlock() == Blocks.standing_sign || state.getBlock() == Blocks.wall_sign
                 || state.getBlock() == Blocks.trapdoor || state.getBlock() == Blocks.iron_trapdoor
                 || state.getBlock() == Blocks.wooden_button || state.getBlock() == Blocks.stone_button
-                || state.getBlock() == Blocks.fire
+                || state.getBlock() == Blocks.fire || state.getBlock() == Blocks.torch
                 || (state == Blocks.stone.getStateFromMeta(2));
     }
 }
