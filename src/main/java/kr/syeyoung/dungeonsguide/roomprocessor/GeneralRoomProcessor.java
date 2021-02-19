@@ -21,6 +21,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.Items;
 import net.minecraft.util.BlockPos;
@@ -165,6 +166,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
+        if (updateEvent.entityLiving instanceof EntityArmorStand &&
+                updateEvent.entityLiving.getName() != null &&
+                updateEvent.entityLiving.getName().contains("Mimic") &&
+                !dungeonRoom.getContext().isGotMimic()) {
+            dungeonRoom.getContext().setGotMimic(true);
+            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-Mimic");
+        }
     }
 
     @Override

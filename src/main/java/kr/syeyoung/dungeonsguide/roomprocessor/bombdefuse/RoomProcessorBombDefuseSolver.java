@@ -149,6 +149,13 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             byte[] bytes = baos.toByteArray();
             String str = Base64.encode(bytes);
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
+
+            for (ChamberSet ch:chambers) {
+                if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
+                    ch.getLeft().getProcessor().onDataRecieve(compound);
+                if (ch.getRight() != null && ch.getRight().getProcessor() != null)
+                    ch.getRight().getProcessor().onDataRecieve(compound);
+            }
         } catch (IOException e2) {
             e2.printStackTrace();
             e.sendDebugChat(new ChatComponentText("Failed to send Bomb Defuse Chat"));

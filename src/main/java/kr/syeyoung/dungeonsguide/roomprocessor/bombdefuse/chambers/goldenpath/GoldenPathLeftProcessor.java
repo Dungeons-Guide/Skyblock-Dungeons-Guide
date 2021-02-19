@@ -9,6 +9,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import javax.vecmath.Vector2f;
@@ -93,6 +94,14 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     public void onSendData() {
         if (goldenPathsolution == null) return;
         Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BDGP "+goldenPathsolution);
+
+        ChatComponentText text = new ChatComponentText("$DG-BDGP "+goldenPathsolution);
+        for (RoomProcessorBombDefuseSolver.ChamberSet ch: getSolver().getChambers()) {
+            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
+                ch.getLeft().getProcessor().chatReceived(text);
+            if (ch.getRight() != null && ch.getRight().getProcessor() != null)
+                ch.getRight().getProcessor().chatReceived(text);
+        }
     }
 
     @Override

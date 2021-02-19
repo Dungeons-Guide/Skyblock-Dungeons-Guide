@@ -80,7 +80,12 @@ public class GuiGuiLocationConfig extends GuiScreen {
     @Override
     public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
         super.mouseClicked(mouseX, mouseY, mouseButton);
-        mainPanel.mouseClicked0(mouseX, mouseY,mouseX,mouseY, mouseButton);
+        try {
+            mainPanel.mouseClicked0(mouseX, mouseY, mouseX, mouseY, mouseButton);
+        } catch (IllegalArgumentException ignored) {
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override

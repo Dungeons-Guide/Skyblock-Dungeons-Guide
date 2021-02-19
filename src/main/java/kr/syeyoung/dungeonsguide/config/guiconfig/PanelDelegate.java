@@ -65,6 +65,8 @@ public class PanelDelegate extends MPanel {
         }
         lastX = absMouseX;
         lastY = absMouseY;
+
+        if (selectedPart != -1) throw new IllegalArgumentException("bruh, a hack to stop event progress");
     }
 
     @Override
