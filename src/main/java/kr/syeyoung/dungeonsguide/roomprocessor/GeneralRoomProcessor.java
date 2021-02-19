@@ -203,7 +203,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 updateEvent.entityLiving.getName().contains("Mimic") &&
                 !dungeonRoom.getContext().isGotMimic()) {
             dungeonRoom.getContext().setGotMimic(true);
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-Mimic");
+//            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-Mimic");
         }
     }
 
