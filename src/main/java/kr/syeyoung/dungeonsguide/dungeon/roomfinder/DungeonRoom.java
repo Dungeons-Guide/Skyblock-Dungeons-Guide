@@ -50,6 +50,9 @@ public class DungeonRoom {
     @Getter
     private NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
+    @Getter
+    private final Map<String, Object> roomContext = new HashMap<String, Object>();
+
     @AllArgsConstructor
     @Getter
     public static enum RoomState {

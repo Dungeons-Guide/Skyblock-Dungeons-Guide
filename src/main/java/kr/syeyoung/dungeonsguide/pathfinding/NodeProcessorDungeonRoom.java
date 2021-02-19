@@ -81,7 +81,7 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
         return i;
     }
 
-    private boolean isValidBlock(IBlockState state) {
+    public static boolean isValidBlock(IBlockState state) {
         return state.getBlock() == Blocks.air || state.getBlock() == Blocks.water || state.getBlock() == Blocks.lava
                 || state.getBlock() == Blocks.flowing_water || state.getBlock() == Blocks.flowing_lava
                 || state.getBlock() == Blocks.vine || state.getBlock() == Blocks.ladder
@@ -91,6 +91,7 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                 || state.getBlock() == Blocks.fire || state.getBlock() == Blocks.torch
                 || state.getBlock() == Blocks.rail || state.getBlock() == Blocks.golden_rail
                 || state.getBlock() == Blocks.activator_rail || state.getBlock() == Blocks.activator_rail
+                || state.getBlock() == Blocks.carpet
                 || (state == Blocks.stone.getStateFromMeta(2));
     }
 }

@@ -6,16 +6,20 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.panes.SecretEditPane;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec3i;
+import net.minecraft.util.Vector3d;
 
 import java.awt.*;
 import java.util.*;
@@ -47,8 +51,11 @@ public class DungeonSecret implements DungeonMechanic {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
+                dungeonRoom.getRoomContext().put("e-"+pos.toString(), true);
                 return SecretStatus.DEFINITELY_NOT;
             } else {
+                if (dungeonRoom.getRoomContext().containsKey("e-"+pos.toString()))
+                    return SecretStatus.FOUND;
                 return SecretStatus.NOT_SURE;
             }
         } else if (secretType == SecretType.BAT) {
@@ -61,6 +68,21 @@ public class DungeonSecret implements DungeonMechanic {
             }
             return SecretStatus.NOT_SURE;
         } else {
+            Vec3 pos = new Vec3(secretPoint.getBlockPos(dungeonRoom));
+            if (dungeonRoom.getRoomContext().containsKey("i-"+pos.toString()))
+                return SecretStatus.FOUND;
+            Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            if (player.squareDistanceTo(pos) < 16) {
+                Vec3 vec3 = pos.subtract(player).normalize();
+                for (int i = 0; i < player.distanceTo(pos); i++) {
+                    Vec3 vec = player.addVector(vec3.xCoord * i, vec3.yCoord * i, vec3.zCoord * i);
+                    BlockPos bpos = new BlockPos(vec);
+                    IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(bpos);
+                    if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
+                        return SecretStatus.NOT_SURE;
+                }
+                dungeonRoom.getRoomContext().put("i-" + pos.toString(), true);
+            }
             return SecretStatus.NOT_SURE;
         }
     }

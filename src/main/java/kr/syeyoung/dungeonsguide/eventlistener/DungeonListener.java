@@ -514,6 +514,7 @@ public class DungeonListener {
             e.printStackTrace();
         }
 
+        if (!(deathEvent.entityLiving instanceof EntityBat))
         DungeonActionManager.getSpawnLocation().remove(deathEvent.entity.getEntityId());
     }
 

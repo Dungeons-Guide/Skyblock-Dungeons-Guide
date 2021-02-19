@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import lombok.Getter;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -70,7 +71,13 @@ public class ActionRoute {
 
         current.onTick(dungeonRoom);
 
+        if (dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanic).getCurrentState(dungeonRoom).equals(state)) {
+            this.current = actions.size() - 1;
+        }
+
         if (current.isComplete(dungeonRoom))
             next();
     }
+
+    public void onLivingInteract(PlayerInteractEntityEvent event) { getCurrentAction().onLivingInteract(dungeonRoom, event); }
 }

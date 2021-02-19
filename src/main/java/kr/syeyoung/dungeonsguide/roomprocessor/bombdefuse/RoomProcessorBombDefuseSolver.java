@@ -221,25 +221,27 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         if (bugged) return;
         BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
-        for (ChamberSet ch:chambers) {
-            if (ch.getChamberGen() == null)continue;
-            if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
-                if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getLeft().getProcessor().drawScreen(partialTicks);
+        if (FeatureRegistry.DEBUG.isEnabled()) {
+            for (ChamberSet ch : chambers) {
+                if (ch.getChamberGen() == null) continue;
+                if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
+                    if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                        ch.getLeft().getProcessor().drawScreen(partialTicks);
 
-                    FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-                    String str = "Current: "+ch.getChamberGen().getName() + " Specific: "+ch.getLeft().getProcessor().getName();
-                    fr.drawString(str,0,0, 0xFFFFFFFF);
+                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                        String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getLeft().getProcessor().getName();
+                        fr.drawString(str, 0, 0, 0xFFFFFFFF);
+                    }
                 }
-            }
-            if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
-                if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getRight().getProcessor().drawScreen(partialTicks);
+                if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
+                    if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
+                        ch.getRight().getProcessor().drawScreen(partialTicks);
 
-                    FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-                    if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
-                    String str = "Current: "+ch.getChamberGen().getName() + " Specific: "+ch.getRight().getProcessor().getName();
-                    fr.drawString(str,0,0, 0xFFFFFFFF);
+                        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                        if (ch.getChamberGen() == null || ch.getRight().getProcessor() == null) continue;
+                        String str = "Current: " + ch.getChamberGen().getName() + " Specific: " + ch.getRight().getProcessor().getName();
+                        fr.drawString(str, 0, 0, 0xFFFFFFFF);
+                    }
                 }
             }
         }
