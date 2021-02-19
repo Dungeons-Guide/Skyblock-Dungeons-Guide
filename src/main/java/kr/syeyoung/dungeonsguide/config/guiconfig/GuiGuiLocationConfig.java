@@ -95,7 +95,12 @@ public class GuiGuiLocationConfig extends GuiScreen {
 
     @Override
     public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        try {
         mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
+        } catch (IllegalArgumentException ignored) {
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 
     @Override

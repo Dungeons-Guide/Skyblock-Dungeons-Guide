@@ -66,7 +66,7 @@ public class PanelDelegate extends MPanel {
         lastX = absMouseX;
         lastY = absMouseY;
 
-        if (selectedPart != -1) throw new IllegalArgumentException("bruh, a hack to stop event progress");
+        throw new IllegalArgumentException("bruh, a hack to stop event progress");
     }
 
     @Override
@@ -151,6 +151,7 @@ public class PanelDelegate extends MPanel {
             }
 
             guiFeature.setFeatureRect(rectangle);
+            throw new IllegalArgumentException("bruh, a hack to stop event progress");
         } else if (selectedPart == -1){
             Rectangle rectangle = guiFeature.getFeatureRect().getBounds();
             rectangle.translate(dx, dy);

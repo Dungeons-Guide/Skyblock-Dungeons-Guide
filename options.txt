@@ -92,6 +92,7 @@ key_key.hotbar.8:9
 key_key.hotbar.9:10
 key_start editing session:19
 key_send and save bombdefuse solution:33
+key_navigate to next secret. (Req option enabled at /dg):34
 soundCategory_master:0.07284768
 soundCategory_music:0.0
 soundCategory_record:1.0

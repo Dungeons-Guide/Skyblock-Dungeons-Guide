@@ -46,12 +46,15 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private DungeonRoom dungeonRoom;
     public GeneralRoomProcessor(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
-        if (FeatureRegistry.SECRET_AUTO_START.isEnabled())
-            searchForNextTarget();
     }
+    private boolean ticked = false;
 
     @Override
     public void tick() {
+        if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled())
+            searchForNextTarget();
+
+        ticked = true;
         if (path != null) {
             path.onTick();
             if (FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled() && path.getCurrentAction() instanceof ActionComplete) {
@@ -183,6 +186,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     public void pathfind(String mechanic, String state) {
         path = new ActionRoute(getDungeonRoom(), mechanic, state);
+    }
+    public void cancel() {
+        path = null;
     }
 
     @Override

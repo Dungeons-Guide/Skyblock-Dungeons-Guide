@@ -24,7 +24,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiIngameMenu;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.gui.inventory.GuiContainer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -46,7 +48,14 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
     @Override
     public void drawHUD(float partialTicks) {
-        if (Minecraft.getMinecraft().currentScreen != null) return;
+        if (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
+                || Minecraft.getMinecraft().currentScreen instanceof GuiConfig
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonAddSet
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonParameterEdit
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonValueEdit
+                || Minecraft.getMinecraft().currentScreen instanceof GuiContainer
+                || Minecraft.getMinecraft().currentScreen instanceof GuiIngameMenu)) return;
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
         DungeonContext context = skyblockStatus.getContext();
@@ -93,7 +102,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
         || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonAddSet
         || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonParameterEdit
-        || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonValueEdit) return;
+        || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonValueEdit
+        || Minecraft.getMinecraft().currentScreen instanceof GuiContainer
+                || Minecraft.getMinecraft().currentScreen instanceof GuiIngameMenu) return;
 
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
@@ -149,6 +160,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                         (((DungeonMechanic) obj).getRepresentingPoint() != null ?
                                 String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) obj).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
                         +"m)",fr.getStringWidth(name) + 3, i * fr.FONT_HEIGHT, 0xFFAAAAAA);
+            } else if ("$SPECIAL-CANCEL".equals(obj)) {
+                fr.drawString("Cancel Current", 3, i * fr.FONT_HEIGHT, 0xFF00FFFF);
             } else {
                 Gui.drawRect(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF444444);
                 fr.drawString((String)obj, 3, i * fr.FONT_HEIGHT, 0xFFEEEEEE);
@@ -200,6 +213,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
+
+        sortedMechanics.add("$SPECIAL-CANCEL");
+        sortedMechanicsName.add("");
 
         boolean found = false;
         for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
@@ -283,7 +299,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonAddSet
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonParameterEdit
-                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonValueEdit) return;
+                || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonValueEdit
+                || Minecraft.getMinecraft().currentScreen instanceof GuiContainer
+                || Minecraft.getMinecraft().currentScreen instanceof GuiIngameMenu) return;
 
 
         if (!skyblockStatus.isOnDungeon()) return;
@@ -309,9 +327,12 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             mouseInputEvent.setCanceled(true);
 
             int wheel = Mouse.getDWheel();
-            if (wheel > 0) dy  += fr.FONT_HEIGHT;
-            else if (wheel < 0) dy -= fr.FONT_HEIGHT;
+            if (wheel > 0) dy  -= fr.FONT_HEIGHT;
+            else if (wheel < 0) dy += fr.FONT_HEIGHT;
+
+            if (-dy + sortedMechanics.size() * fr.FONT_HEIGHT < feature.height - fr.FONT_HEIGHT - 6) dy = -(feature.height - fr.FONT_HEIGHT - 6) + sortedMechanics.size() * fr.FONT_HEIGHT;
             if (dy < 0) dy = 0;
+
 
             if (Mouse.getEventButton() != -1) {
                 int yDiff = mouseY + dy - feature.y - fr.FONT_HEIGHT - 6;
@@ -323,6 +344,11 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                     possibleStates.clear();
                 } else if (sortedMechanics.get(selected) instanceof DungeonMechanic){
                     possibleStates = Lists.newArrayList(((DungeonMechanic) sortedMechanics.get(selected)).getPossibleStates(dungeonRoom));
+                } else if ("$SPECIAL-CANCEL".equals(sortedMechanics.get(selected))) {
+                    ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).cancel();
+                    possibleStates.clear();
+                    selected = -1;
+                    selectedState = -1;
                 } else {
                     possibleStates.clear();
                     selected = -1;
