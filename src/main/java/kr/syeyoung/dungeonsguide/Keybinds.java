@@ -8,7 +8,7 @@ public class Keybinds
 {
     public static KeyBinding editingSession;
     public static KeyBinding sendBombdefuse;
-    public static KeyBinding ringMenuForSecretEdit;
+    public static KeyBinding nextSecret;
 
     public static void register()
     {
@@ -16,5 +16,7 @@ public class Keybinds
         ClientRegistry.registerKeyBinding(editingSession);
         sendBombdefuse = new KeyBinding("send and save bombdefuse solution", Keyboard.KEY_F, "key.categories.misc");
         ClientRegistry.registerKeyBinding(sendBombdefuse);
+        nextSecret = new KeyBinding("navigate to next secret. (Req option enabled at /dg)", Keyboard.KEY_NONE, "key.categories.misc");
+        ClientRegistry.registerKeyBinding(nextSecret);
     }
 }

@@ -80,9 +80,9 @@ public class DungeonRoom {
 
         buildDoors();
         buildRoom();
-        updateRoomProcessor();
         nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
         pathFinder = new PathFinder(nodeProcessorDungeonRoom);
+        updateRoomProcessor();
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));

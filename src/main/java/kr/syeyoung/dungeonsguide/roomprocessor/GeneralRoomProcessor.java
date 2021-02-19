@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
@@ -35,6 +36,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 import java.awt.*;
 import java.util.Map;
+import java.util.PriorityQueue;
 import java.util.UUID;
 
 public class GeneralRoomProcessor implements RoomProcessor {
@@ -44,6 +46,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private DungeonRoom dungeonRoom;
     public GeneralRoomProcessor(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
+        if (FeatureRegistry.SECRET_AUTO_START.isEnabled())
+            searchForNextTarget();
     }
 
     @Override
@@ -53,16 +57,38 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled() && path.getCurrentAction() instanceof ActionComplete) {
                 if (!path.getState().equals("found")) return;
                 if (!(dungeonRoom.getDungeonRoomInfo().getMechanics().get(path.getMechanic()) instanceof DungeonSecret)) return;
-                boolean foundcurr = false;
-                for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
-                    if (!(mech.getValue() instanceof DungeonSecret)) continue;
-                    if (foundcurr && ((DungeonSecret) mech.getValue()).getSecretStatus(getDungeonRoom()) != DungeonSecret.SecretStatus.FOUND) {
-                        pathfind(mech.getKey(), "found");
-                        break;
-                    }
-                    if (mech.getKey().equals(path.getMechanic())) foundcurr = true;
+                searchForNextTarget();
+            }
+        }
+    }
+
+    public void searchForNextTarget() {
+        BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+
+        double lowestCost = 99999999999999.0;
+        Map.Entry<String, DungeonMechanic> lowestWeightMechanic = null;
+        for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
+            if (!(mech.getValue() instanceof DungeonSecret)) continue;
+            if (((DungeonSecret) mech.getValue()).getSecretStatus(getDungeonRoom()) != DungeonSecret.SecretStatus.FOUND) {
+                double cost = 0;
+                if (((DungeonSecret) mech.getValue()).getSecretType() == DungeonSecret.SecretType.BAT &&
+                        ((DungeonSecret) mech.getValue()).getPreRequisite().size() == 0) {
+                    cost += -100000000;
+                }
+                if (mech.getValue().getRepresentingPoint() == null) continue;
+                BlockPos blockpos = mech.getValue().getRepresentingPoint().getBlockPos(getDungeonRoom());
+
+                cost += blockpos.distanceSq(pos);
+                cost += ((DungeonSecret) mech.getValue()).getPreRequisite().size() * 100;
+
+                if (cost < lowestCost) {
+                    lowestCost = cost;
+                    lowestWeightMechanic = mech;
                 }
             }
+        }
+        if (lowestWeightMechanic != null) {
+            pathfind(lowestWeightMechanic.getKey(), "found");
         }
     }
 
@@ -177,7 +203,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
-
+        if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && Keybinds.nextSecret.isKeyDown()) {
+            searchForNextTarget();
+        }
     }
 
     @Override

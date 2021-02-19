@@ -91,5 +91,7 @@ public class FeatureRegistry {
 
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
-    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Secret", "Auto browse next secret.", "Auto browse next secret after current one completes.\nYou still need to trigger first pathfinding of first secret, after that this option would start working", "secret.autobrowse", false));
+    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Secret", "Auto browse next secret.", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
+    public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Secret", "Auto browse secret upon entering room", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
+    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Secret", "Auto browse next secret upon pressing a key", "Auto browse the best next secret when you press key. Change key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
 }
