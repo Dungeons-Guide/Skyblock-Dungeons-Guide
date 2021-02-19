@@ -92,4 +92,21 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
         }
         return null;
     }
+
+    @Override
+    public boolean isTrapSpawn(String dungeonName) {
+        String floor = dungeonName.substring(14).trim();
+        if (floor.equals("F3")) {
+            return true;
+        } else if (floor.equals("F4")) {
+            return true;
+        } else if (floor.equals("F5")) {
+            return true;
+        } else if (floor.equals("F6")) {
+            return true;
+        } else if (floor.equals("F7")) {
+            return true;
+        }
+        return false;
+    }
 }

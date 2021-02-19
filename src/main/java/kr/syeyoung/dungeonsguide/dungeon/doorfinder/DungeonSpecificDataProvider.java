@@ -12,4 +12,6 @@ public interface DungeonSpecificDataProvider {
     Vector2d findDoorOffset(World w, String dungeonName);
 
     BossfightProcessor createBossfightProcessor(World w, String dungeonName);
+
+    boolean isTrapSpawn(String dungeonName);
 }

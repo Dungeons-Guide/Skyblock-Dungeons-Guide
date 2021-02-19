@@ -15,11 +15,6 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
                 .signatureMsg("§r§c[BOSS] Bonzo §r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
                 .nextPhase("fight-1").build()
         );
-        /*
-        * §r§cThis button doesn't seem to do anything...§r
-        * §r§aThis button seems connected to something§r
-        * §r§aClick! you Hear the sound of a door opening§r
-        * */
 
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight-1")

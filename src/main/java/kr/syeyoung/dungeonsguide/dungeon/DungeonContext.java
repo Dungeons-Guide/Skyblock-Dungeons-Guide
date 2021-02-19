@@ -58,6 +58,14 @@ public class DungeonContext {
 
     @Getter
     @Setter
+    private boolean trapRoomGen = false;
+
+    @Getter
+    @Setter
+    private boolean gotMimic = false;
+
+    @Getter
+    @Setter
     private BossfightProcessor bossfightProcessor;
 
     @Getter
@@ -66,7 +74,8 @@ public class DungeonContext {
     public DungeonContext(World world) {
         this.world = world;
         mapProcessor = new MapProcessor(this);
-
+        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+        trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
 
     }
 
@@ -115,6 +124,8 @@ public class DungeonContext {
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);
             }
+        } else if (component.getFormattedText().contains("$DG-Mimic")) {
+            gotMimic = true;
         }
     }
 }

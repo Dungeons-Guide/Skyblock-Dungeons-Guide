@@ -190,17 +190,23 @@ public class FeatureDungeonScore extends TextHUDFeature {
             skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
             int totalCompRooms= 0;
             boolean bossroomFound = false;
+            boolean traproomFound = false;
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 if (dungeonRoom.getColor() == 74) bossroomFound = true;
+                if (dungeonRoom.getColor() == 62) traproomFound = true;
                 if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
                     totalCompRooms += dungeonRoom.getUnitPoints().size();
                 if (dungeonRoom.getColor() == 66 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
                     skill -= 10;
                 if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
                     skill += 1;
+                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
+                    skill += 1;
+
                 skill += dungeonRoom.getCurrentState().getScoreModifier();
             }
             if (!bossroomFound) skill += 1;
+            if (!traproomFound && context.isTrapRoomGen()) skill += 1;
             skill -= getUndiscoveredPuzzles() * 10;
             skill -= (getTotalRooms() - totalCompRooms) * 4;
             skill = MathHelper.clamp_int(skill, 0, 100);
@@ -225,17 +231,24 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int time = 0;
         {
             double timeModifier;
+            int timeModifierModifier =
+                    e.getDungeonsGuide().getSkyblockStatus().getDungeonName().substring(14).trim().equals("F2") ? -120 : 0;
             if (context.getBossRoomEnterSeconds() != -1) {
-                timeModifier = Math.max(0, context.getBossRoomEnterSeconds() - 1200);
+                timeModifier = Math.max(0, context.getBossRoomEnterSeconds() - timeModifierModifier);
             } else {
-                timeModifier = Math.max(0, FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - 1200);
+                timeModifier = Math.max(0, FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - timeModifierModifier);
             }
-            time = MathHelper.clamp_int((int) Math.floor(100 - 2.2 * timeModifier), 0, 100);
+
+            if (timeModifier <= 1320) time = 100;
+            else if (timeModifier <= 1420) time = (int) Math.ceil(232 - 0.1 * timeModifier);
+            else if (timeModifier <= 1820) time = (int) Math.ceil(161 - 0.05 * timeModifier);
+            else if (timeModifier < 3920) time = (int) Math.ceil(392/3.0 - (1/30.0) * timeModifier);
         }
         int bonus = 0;
         int tombs;
         {
             bonus += tombs = MathHelper.clamp_int(FeatureRegistry.DUNGEON_TOMBS.getTombsFound(), 0, 5);
+            if (context.isGotMimic()) bonus += 2;
         }
 
         // amazing thing
@@ -272,7 +285,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         String currentLetter = getLetter(current);
         String nextLetter=  getNextLetter(currentLetter);
         if (nextLetter == null) {
-            actualBit.add(new StyledText(nextLetter+" Expected","nextScore"));
+            actualBit.add(new StyledText("S+ Expected","nextScore"));
             return actualBit;
         }
         int req = getScoreRequirement(nextLetter);

@@ -26,6 +26,7 @@ public class ProcessorFactory {
 
     static {
         registerRoomProcessor("default", new GeneralRoomProcessor.Generator());
+        registerRoomProcessor("button_5", new RoomProcessorButtonSolver.Generator());
         registerRoomProcessor("puzzle_water_solver", new RoomProcessorWaterPuzzle.Generator());
         registerRoomProcessor("puzzle_teleport_solver", new RoomProcessorTeleportMazeSolver.Generator());
         registerRoomProcessor("puzzle_riddle_solver", new RoomProcessorRiddle.Generator());

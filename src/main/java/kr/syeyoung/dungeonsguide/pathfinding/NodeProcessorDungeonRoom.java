@@ -89,6 +89,8 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                 || state.getBlock() == Blocks.trapdoor || state.getBlock() == Blocks.iron_trapdoor
                 || state.getBlock() == Blocks.wooden_button || state.getBlock() == Blocks.stone_button
                 || state.getBlock() == Blocks.fire || state.getBlock() == Blocks.torch
+                || state.getBlock() == Blocks.rail || state.getBlock() == Blocks.golden_rail
+                || state.getBlock() == Blocks.activator_rail || state.getBlock() == Blocks.activator_rail
                 || (state == Blocks.stone.getStateFromMeta(2));
     }
 }
