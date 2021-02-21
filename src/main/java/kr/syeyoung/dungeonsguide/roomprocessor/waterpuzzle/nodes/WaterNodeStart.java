@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.nodes;
 
-import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.WaterCondition;
+import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.LeverState;
 import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.WaterNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -22,8 +22,8 @@ public class WaterNodeStart implements WaterNode {
     }
 
     @Override
-    public WaterCondition getCondition() {
-        return new WaterCondition("mainStream", !isReversed);
+    public LeverState getCondition() {
+        return new LeverState("mainStream", !isReversed);
     }
 
     @Override

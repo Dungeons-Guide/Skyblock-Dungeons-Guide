@@ -5,11 +5,11 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class WaterCondition {
+public class LeverState {
     private String blockId;
     private boolean requiredState;
 
-    public WaterCondition invert() {
-        return new WaterCondition(blockId, !requiredState);
+    public LeverState invert() {
+        return new LeverState(blockId, !requiredState);
     }
 }

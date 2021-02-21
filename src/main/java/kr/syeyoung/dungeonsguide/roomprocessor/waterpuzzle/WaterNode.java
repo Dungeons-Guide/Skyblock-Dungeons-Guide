@@ -7,7 +7,7 @@ public interface WaterNode {
     boolean canWaterGoThrough();
 
     // condition for water go
-    WaterCondition getCondition();
+    LeverState getCondition();
 
     boolean isWaterFilled(World w);
 

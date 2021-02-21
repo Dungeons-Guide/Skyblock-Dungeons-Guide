@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.nodes;
 
-import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.WaterCondition;
+import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.LeverState;
 import kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle.WaterNode;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -23,8 +23,8 @@ public class WaterNodeToggleable implements WaterNode {
     }
 
     @Override
-    public WaterCondition getCondition() {
-        return new WaterCondition(blockId, invert);
+    public LeverState getCondition() {
+        return new LeverState(blockId, invert);
     }
 
 
