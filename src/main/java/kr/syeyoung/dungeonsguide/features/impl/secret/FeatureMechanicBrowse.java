@@ -97,6 +97,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     @Override
     public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
+        if (!isEnabled()) return;
         if (Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
         || Minecraft.getMinecraft().currentScreen instanceof GuiConfig
         || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
@@ -294,6 +295,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+        if (!isEnabled()) return;
         if (Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
                 || Minecraft.getMinecraft().currentScreen instanceof GuiConfig
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
@@ -383,6 +385,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     @Override
     public void drawWorld(float partialTicks) {
+        if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
         DungeonContext context = skyblockStatus.getContext();

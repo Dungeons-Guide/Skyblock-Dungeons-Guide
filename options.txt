@@ -13,7 +13,7 @@ fboEnable:true
 difficulty:3
 fancyGraphics:true
 ao:2
-renderClouds:true
+renderClouds:fast
 resourcePacks:[]
 incompatibleResourcePacks:[]
 lastServer:mc.hyp

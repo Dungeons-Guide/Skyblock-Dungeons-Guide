@@ -45,7 +45,7 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
             String healthPart = name.split(" ")[2];
             health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
         }
-        healths.add(new HealthData("Bonzo", (int) health,250000 , this.getCurrentPhase().startsWith("fight-")));
+//        healths.add(new HealthData("Bonzo", (int) health,250000 , this.getCurrentPhase().startsWith("fight-")));
         return healths;
     }
 
@@ -55,7 +55,7 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving.getName().contains("❤") && updateEvent.entityLiving instanceof EntityArmorStand) {
-            System.out.println(updateEvent.entityLiving.getName());
+//            System.out.println(updateEvent.entityLiving.getName());
         }
     }
 }
