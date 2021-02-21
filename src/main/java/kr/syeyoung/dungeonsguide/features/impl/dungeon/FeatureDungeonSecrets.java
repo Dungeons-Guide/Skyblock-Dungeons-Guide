@@ -45,6 +45,25 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         return 0;
     }
 
+    public int getTotalSecretsInt() {
+        DungeonContext context = skyblockStatus.getContext();
+        int totalSecrets = 0;
+        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            if (dungeonRoom.getTotalSecrets() != -1)
+                totalSecrets += dungeonRoom.getTotalSecrets();
+        }
+        return totalSecrets;
+    }
+    public boolean sureOfTotalSecrets() {
+        DungeonContext context = skyblockStatus.getContext();
+        if (context.getMapProcessor().getUndiscoveredRoom() > 0) return false;
+        boolean allknown = true;
+        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            if (dungeonRoom.getTotalSecrets() == -1) allknown = false;
+        }
+        return allknown;
+    }
+
     public String getTotalSecrets() {
         DungeonContext context = skyblockStatus.getContext();
         int totalSecrets = 0;

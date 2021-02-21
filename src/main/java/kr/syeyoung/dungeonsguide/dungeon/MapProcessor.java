@@ -4,6 +4,9 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.EnumHashBiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonMapUpdateEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonNodataEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonRoomDiscoverEvent;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -157,6 +160,7 @@ public class MapProcessor {
         e.sendDebugChat(new ChatComponentText("Dimension:"+unitRoomDimension));
         e.sendDebugChat(new ChatComponentText("top Left:"+topLeftMapPoint));
         e.sendDebugChat(new ChatComponentText("door dimension:"+doorDimension));
+        context.createEvent(new DungeonNodataEvent("MAP_PROCESSOR_INIT"));
         initialized = true;
         MinecraftForge.EVENT_BUS.post(new DungeonContextInitializationEvent());
     }
@@ -225,6 +229,7 @@ public class MapProcessor {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
                     if (rooms == null) continue;
+                    context.createEvent(new DungeonRoomDiscoverEvent(rooms.getUnitPoints().get(0), rooms.getRoomMatcher().getRotation(), rooms.getMin(), rooms.getShape(),rooms.getColor(), rooms.getDungeonRoomInfo().getUuid(), rooms.getDungeonRoomInfo().getName(), rooms.getDungeonRoomInfo().getProcessorId()));
                     e.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
                     e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin() + " mapMx: "+rooms.getMax()));
                     StringBuilder builder = new StringBuilder();
@@ -342,6 +347,7 @@ public class MapProcessor {
 
                 if (isThereDifference(lastMapData, mapData)) {
                     stabilizationTick =0;
+                    context.createEvent(new DungeonMapUpdateEvent(mapData));
                 } else {
                     stabilizationTick++;
                 }

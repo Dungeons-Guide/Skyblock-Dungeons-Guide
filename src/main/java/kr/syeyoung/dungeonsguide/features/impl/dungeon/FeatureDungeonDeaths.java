@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonDeathEvent;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
@@ -10,6 +11,7 @@ import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -125,6 +127,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
             String nickname = TextUtils.stripColor(m.group(1));
             int deaths = context.getDeaths().containsKey(nickname)  ?  context.getDeaths().get(nickname) : 0;
             context.getDeaths().put(nickname, deaths + 1);
+            context.createEvent(new DungeonDeathEvent(nickname, txt, deaths));
             e.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
         }
         Matcher m2 = meDeathPattern.matcher(txt);
@@ -132,6 +135,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
             String nickname = "me";
             int deaths = context.getDeaths().containsKey(nickname)  ?  context.getDeaths().get(nickname) : 0;
             context.getDeaths().put(nickname, deaths + 1);
+            context.createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
             e.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
         }
     }

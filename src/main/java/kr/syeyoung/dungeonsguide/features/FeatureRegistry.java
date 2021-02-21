@@ -6,10 +6,7 @@ import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
 import kr.syeyoung.dungeonsguide.features.impl.boss.*;
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolvers;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
-import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureCooldownCounter;
-import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureDisableMessage;
-import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureTooltipDungeonStat;
-import kr.syeyoung.dungeonsguide.features.impl.etc.FeatureTooltipPrice;
+import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;
 import lombok.Getter;
@@ -68,6 +65,7 @@ public class FeatureRegistry {
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
 
+    public static final FeatureCopyMessages ETC_COPY_MSG = register(new FeatureCopyMessages());
 
     public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
     public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());

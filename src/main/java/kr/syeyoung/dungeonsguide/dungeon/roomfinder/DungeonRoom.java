@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
@@ -42,8 +43,12 @@ public class DungeonRoom {
 
     @Setter
     private int totalSecrets = -1;
-    @Setter
     private RoomState currentState = RoomState.DISCOVERED;
+
+    public void setCurrentState(RoomState currentState) {
+        context.createEvent(new DungeonStateChangeEvent(unitPoints.get(0), dungeonRoomInfo.getName(), this.currentState, currentState));
+        this.currentState = currentState;
+    }
 
     @Getter
     private PathFinder pathFinder;

@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.dungeon;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
+import kr.syeyoung.dungeonsguide.dungeon.events.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.BossroomEnterEvent;
@@ -61,8 +62,16 @@ public class DungeonContext {
     private boolean trapRoomGen = false;
 
     @Getter
-    @Setter
     private boolean gotMimic = false;
+
+    private int latestSecretCnt = 0;
+    private int latestTotalSecret = 0;
+    private int latestCrypts = 0;
+
+    public void setGotMimic(boolean gotMimic) {
+        this.gotMimic = gotMimic;
+        createEvent(new DungeonNodataEvent("MIMIC_KILLED"));
+    }
 
     @Getter
     @Setter
@@ -71,12 +80,18 @@ public class DungeonContext {
     @Getter
     private Set<String> players = new HashSet<String>();
 
+    private List<DungeonEvent> events = new ArrayList<DungeonEvent>();
+
     public DungeonContext(World world) {
         this.world = world;
+        createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapProcessor = new MapProcessor(this);
         DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
         trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+    }
 
+    public void createEvent(DungeonEventData eventData) {
+        events.add(new DungeonEvent(eventData));
     }
 
 
@@ -89,6 +104,7 @@ public class DungeonContext {
             BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
             bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
+            createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
             DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
             if (doorFinder != null) {
                 bossfightProcessor = doorFinder.createBossfightProcessor(world, e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
@@ -105,11 +121,27 @@ public class DungeonContext {
                 players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
             }
         } catch (Exception e) {}
+
+        if (latestSecretCnt != FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) {
+            int newSecretCnt = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound();
+            createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, newSecretCnt, latestTotalSecret, FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets()));
+            latestSecretCnt = newSecretCnt;
+        }
+        if (latestTotalSecret != FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt()) {
+            latestTotalSecret = FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt();
+            createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, latestSecretCnt, latestTotalSecret, FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets()));
+        }
+        if (latestCrypts != FeatureRegistry.DUNGEON_TOMBS.getTombsFound()) {
+            int newlatestCrypts = FeatureRegistry.DUNGEON_TOMBS.getTombsFound();
+            createEvent(new DungeonCryptBrokenEvent(latestCrypts, newlatestCrypts));
+            this.latestCrypts = newlatestCrypts;
+        }
     }
 
     public void onChat(ClientChatReceivedEvent event) {
         IChatComponent component = event.message;
-        if (component.getFormattedText().contains("$DG-Comm")) {
+        String formatted = component.getFormattedText();
+        if (formatted.contains("$DG-Comm")) {
             event.setCanceled(true);
             String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-Comm"));
             String actual = TextUtils.stripColor(data);
@@ -124,8 +156,12 @@ public class DungeonContext {
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);
             }
-        } else if (component.getFormattedText().contains("$DG-Mimic")) {
-            gotMimic = true;
+        } else if (formatted.contains("$DG-Mimic")) {
+            setGotMimic(true);
+        } else if (formatted.startsWith("§r§c§lPUZZLE FAIL! ") && formatted.endsWith(" §r§4Y§r§ci§r§6k§r§ee§r§as§r§2!§r")) {
+            createEvent(new DungeonPuzzleFailureEvent(TextUtils.stripColor(formatted.split(" ")[2]), formatted));
+        } else if (formatted.contains("§6> §e§lEXTRA STATS §6<")) {
+            createEvent(new DungeonNodataEvent("DUNGEON_END"));
         }
     }
 }
