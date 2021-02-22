@@ -29,7 +29,7 @@ import java.util.regex.Pattern;
 
 public class FeatureDungeonSecrets extends TextHUDFeature {
     public FeatureDungeonSecrets() {
-        super("Dungeon", "Display #Secrets", "Display how much total secrets have been found in a dungeon run.\n+ sign means DG does not know the correct number, but it's somewhere above that number.", "dungeon.stats.secrets", true, getFontRenderer().getStringWidth("Secrets: 999/999+"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon", "Display #Secrets in total", "Display how much total secrets have been found in a dungeon run.\n+ sign means DG does not know the correct number, but it's somewhere above that number.", "dungeon.stats.secrets", true, getFontRenderer().getStringWidth("Secrets: 999/999+"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
     }
 
