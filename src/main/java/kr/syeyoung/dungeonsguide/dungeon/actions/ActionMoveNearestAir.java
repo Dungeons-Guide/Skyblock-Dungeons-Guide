@@ -1,7 +1,9 @@
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
@@ -38,8 +40,14 @@ public class ActionMoveNearestAir extends AbstractAction {
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.6f, pos.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        float distance = MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
+        float multiplier = distance / 120f; //mobs only render ~120 blocks away
+        float scale = 0.45f * multiplier;
+        scale *= 25.0 / 6.0;
+        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, (float) (pos.getY() + 0.5f + scale), pos.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+
+        if (FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() && Keybinds.togglePathfindStatus) return;
         if (latest != null){
             List<BlockPos> poses = new ArrayList<BlockPos>();
             for (int i = 0; i < latest.getCurrentPathLength(); i++) {

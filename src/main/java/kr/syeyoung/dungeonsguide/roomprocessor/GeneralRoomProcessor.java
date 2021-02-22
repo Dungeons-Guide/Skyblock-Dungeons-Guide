@@ -35,9 +35,7 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 import java.awt.*;
-import java.util.Map;
-import java.util.PriorityQueue;
-import java.util.UUID;
+import java.util.*;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -64,6 +62,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
         }
     }
+    private Set<String> visited = new HashSet<String>();
 
     public void searchForNextTarget() {
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
@@ -72,6 +71,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         Map.Entry<String, DungeonMechanic> lowestWeightMechanic = null;
         for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
             if (!(mech.getValue() instanceof DungeonSecret)) continue;
+            if (visited.contains(mech.getKey())) continue;
             if (((DungeonSecret) mech.getValue()).getSecretStatus(getDungeonRoom()) != DungeonSecret.SecretStatus.FOUND) {
                 double cost = 0;
                 if (((DungeonSecret) mech.getValue()).getSecretType() == DungeonSecret.SecretType.BAT &&
@@ -91,6 +91,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
         }
         if (lowestWeightMechanic != null) {
+            visited.add(lowestWeightMechanic.getKey());
             pathfind(lowestWeightMechanic.getKey(), "found");
         }
     }

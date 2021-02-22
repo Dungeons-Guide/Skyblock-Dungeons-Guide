@@ -68,6 +68,7 @@ public class e implements c {
         MinecraftForge.EVENT_BUS.register(commandReparty);
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
+        MinecraftForge.EVENT_BUS.register(new Keybinds());
 
         AhUtils.registerTimer();
 

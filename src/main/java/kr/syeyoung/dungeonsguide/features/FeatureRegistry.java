@@ -94,5 +94,6 @@ public class FeatureRegistry {
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
     public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Secret", "Auto browse next secret.", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
     public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Secret", "Auto browse secret upon entering room", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
-    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Secret", "Auto browse next secret upon pressing a key", "Auto browse the best next secret when you press key. Change key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
+    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Secret", "Auto browse next secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
+    public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Secret", "Press a key to toggle pathfind lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
 }
