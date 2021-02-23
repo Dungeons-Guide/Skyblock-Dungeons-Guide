@@ -95,6 +95,17 @@ public class WaterBoard {
                     ends.add(waterNodeEndMap.get(s));
                 }
                 currentRoute = getBestRoute(ends);
+
+//                {
+//
+//                    Set<LeverState> currentState = new HashSet<LeverState>();
+//                    World w = waterPuzzle.getDungeonRoom().getContext().getWorld();
+//                    for (SwitchData switchDatum : this.switchData) {
+//                        currentState.add(new LeverState(switchDatum.getBlockId(), switchDatum.getCurrentState(w)));
+//                    }
+//                    currentRoute = simulate(currentState);
+//                }
+
                 target = new ArrayList<BlockPos>();
                 target2 = new ArrayList<String>();
                 if (currentRoute != null) {
@@ -131,10 +142,10 @@ public class WaterBoard {
 
             for (LeverState leverState : currentState) {
                 if (!states.contains(leverState))
-                    r.setStateFlops(r.getMatches() + 1);
+                    r.setStateFlops(r.getStateFlops() + 1);
             }
-            for (WaterNodeEnd potentialEnd : potentialEnds) {
-                if (r.getEndingNodes().contains(potentialEnd)) {
+            for (WaterNodeEnd potentialEnd : r.getEndingNodes()) {
+                if (potentialEnds.contains(potentialEnd)) {
                     r.setMatches(r.getMatches() + 1);
                 } else {
                     r.setNotMatches(r.getNotMatches() + 1);
@@ -151,7 +162,7 @@ public class WaterBoard {
     public Route simulate(Set<LeverState> leverStates) {
         leverStates.add(null);
         Route r = new Route();
-        Queue<WaterNode> toGoDownTo = new LinkedList<WaterNode>();
+        final Queue<WaterNode> toGoDownTo = new LinkedList<WaterNode>();
         Set<WaterNode> searched = new HashSet<WaterNode>();
         Set<LeverState> waterBlockingStates = new HashSet<LeverState>();
         World w = waterPuzzle.getDungeonRoom().getContext().getWorld();
@@ -181,13 +192,16 @@ public class WaterBoard {
                     if (followWater && !nodehere.isWaterFilled(w)) break;
                     if (!nodehere.canWaterGoThrough()) break;
                     if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
-                    if (!leverStates.contains(nodehere.getCondition()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition());
+                    if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
                     if (i != asd.getX())
                         followWater = nodehere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
                     r.getNodes().add(nodehere);
                     if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
                         toGoDownTo.add(down);
+                    }
+                    if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
+                        waterBlockingStates.add(down.getCondition().invert());
                     }
                 }
                 followWater = getNodeAt(asd.getX()  +1, asd.getY()) != null && leverStates.contains(getNodeAt(asd.getX() + 1, asd.getY()).getCondition())
@@ -198,13 +212,16 @@ public class WaterBoard {
                     if (followWater && !nodehere.isWaterFilled(w)) break;
                     if (!nodehere.canWaterGoThrough()) break;
                     if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
-                    if (!leverStates.contains(nodehere.getCondition()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition());
+                    if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
                     if (i != asd.getX())
                         followWater = nodehere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
                     r.getNodes().add(nodehere);
                     if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
                         toGoDownTo.add(down);
+                    }
+                    if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
+                        waterBlockingStates.add(down.getCondition().invert());
                     }
                 }
             } else {
@@ -242,35 +259,51 @@ public class WaterBoard {
                 if (minDistToDropRight == min) {
                     for (int i = asd.getX(); i <= asd.getX() + minDistToDropRight; i++) {
                         WaterNode nodehere = getNodeAt(i, asd.getY());
-                        if (leverStates.contains(nodehere.getCondition()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition());
+                        if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
                         r.getNodes().add(nodehere);
                         WaterNode down = getNodeAt(i, asd.getY() + 1);
                         if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
                             toGoDownTo.add(down);
+                        }
+                        if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
+                            waterBlockingStates.add(down.getCondition().invert());
                         }
                     }
                 }
                 if (minDistToDropLeft == min) {
                     for (int i = asd.getX(); i >= asd.getX() - minDistToDropLeft; i--) {
                         WaterNode nodehere = getNodeAt(i, asd.getY());
-                        if (leverStates.contains(nodehere.getCondition()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition());
+                        if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
                         r.getNodes().add(nodehere);
                         WaterNode down = getNodeAt(i, asd.getY() + 1);
                         if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
                             toGoDownTo.add(down);
                         }
+                        if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
+                            waterBlockingStates.add(down.getCondition().invert());
+                        }
                     }
                 }
             }
         }
-        LinkedList<LeverState> states = new LinkedList<LeverState>();
-        states.addAll(waterBlockingStates);
+        ArrayList<LeverState> state = new ArrayList<LeverState>(waterBlockingStates);
+        state.remove(null);
+        Collections.sort(state, new Comparator<LeverState>() {
+            @Override
+            public int compare(LeverState leverState, LeverState t1) {
+                int var0 = toggleableMap.get(leverState.getBlockId()).getY();
+                int var1 = toggleableMap.get(t1.getBlockId()).getY();
+                return var0 < var1 ? -1 : (var0 == var1 ? 0 : 1);
+            }
+        });
+        LinkedList<LeverState> states = new LinkedList<LeverState>(state);
         for (LeverState ls : leverStates) {
             if (!states.contains(ls)) {
                 states.add(ls);
             }
         }
         states.remove(null);
+
 
         r.setConditionList(states);
         return r;

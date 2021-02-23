@@ -39,7 +39,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         final BlockPos low = getDungeonRoom().getMin().add(0,-2,0);
         final BlockPos high = getDungeonRoom().getMax().add(0,20,0);
         final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
-                low.getX() + 15, low.getY(), low.getZ() + 15,
+                low.getX() + 15, low.getY() + 5, low.getZ() + 15,
                 high.getX() - 15, low.getY() + 10.5, high.getZ() - 15
         );
 

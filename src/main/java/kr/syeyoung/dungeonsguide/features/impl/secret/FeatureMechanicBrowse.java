@@ -396,6 +396,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
         if (selected != -1) {
+            if (sortedMechanics.size() <= selected) return;;
             ((DungeonMechanic)sortedMechanics.get(selected)).highlight(new Color(0,255,255,50), sortedMechanicsName.get(selected) +" ("+(((DungeonMechanic)
             sortedMechanics.get(selected)).getRepresentingPoint() != null ?
                     String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) sortedMechanics.get(selected)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")

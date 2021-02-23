@@ -18,7 +18,7 @@ public class Route implements Cloneable, Comparable {
     private int notMatches = 0;
 
     public double calculateCost() {
-        return (1.0/matches) * 50 + stateFlops * 10 + notMatches * 100;
+        return (1.0/matches) * 50 + stateFlops * 20 + notMatches * 10000;
     }
 
     @Override

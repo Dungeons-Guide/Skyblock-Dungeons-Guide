@@ -19,7 +19,7 @@ public class SelectInOrderSolutionProvider implements TerminalSolutionProvider {
         for (Slot inventorySlot : chest.inventorySlots) {
             if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
             if (inventorySlot.getHasStack() && inventorySlot.getStack() != null && inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)
-                    && inventorySlot.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                    && inventorySlot.getStack().getItemDamage() == EnumDyeColor.RED.getMetadata()) {
                 if (inventorySlot.getStack().stackSize < lowest) {
                     lowest = inventorySlot.getStack().stackSize;
                     slotLowest = inventorySlot;
@@ -33,7 +33,7 @@ public class SelectInOrderSolutionProvider implements TerminalSolutionProvider {
         for (Slot inventorySlot : chest.inventorySlots) {
             if (inventorySlot.inventory != chest.getLowerChestInventory()) continue;
             if (inventorySlot.getHasStack() && inventorySlot.getStack() != null && inventorySlot.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane)
-                    && inventorySlot.getStack().getItemDamage() == EnumDyeColor.LIME.getMetadata()) {
+                    && inventorySlot.getStack().getItemDamage() == EnumDyeColor.RED.getMetadata()) {
                 if (inventorySlot.getStack().stackSize == lowest + 1) {
                     next = inventorySlot;
                 }
