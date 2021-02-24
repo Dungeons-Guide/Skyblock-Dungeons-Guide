@@ -93,6 +93,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (lowestWeightMechanic != null) {
             visited.add(lowestWeightMechanic.getKey());
             pathfind(lowestWeightMechanic.getKey(), "found");
+        } else {
+            visited.clear();
         }
     }
 
