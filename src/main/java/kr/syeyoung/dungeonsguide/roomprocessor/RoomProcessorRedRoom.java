@@ -53,7 +53,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             if (dir.getX() > 0) this.dir = 270;
             else if (dir.getX() < 0) this.dir = 90;
             else if (dir.getZ() < 0) this.dir = 0;
-            else if (dir.getZ() > 0) this.dir = 360;
+            else if (dir.getZ() > 0) this.dir = 180;
             else this.dir = Integer.MIN_VALUE;
         } else {
             dir = Integer.MIN_VALUE;
