@@ -243,7 +243,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                     str += "❌";
                 }
 
-                fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF);
+                fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED ? 0xFF00FF00 : (dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF));
                 GlStateManager.popAttrib();
                 GlStateManager.popMatrix();
             }
