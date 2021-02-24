@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
@@ -43,6 +44,11 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     public FeatureMechanicBrowse() {
         super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
+        parameters.put("linecolor", new FeatureParameter<Color>("linecolor", "Color", "Color of Pathfind line", Color.green, "color"));
+    }
+
+    public Color getColor() {
+        return this.<Color>getParameter("linecolor").getValue();
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();

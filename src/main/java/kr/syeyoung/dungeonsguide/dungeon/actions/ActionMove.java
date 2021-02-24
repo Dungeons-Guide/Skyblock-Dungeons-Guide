@@ -56,7 +56,7 @@ public class ActionMove extends AbstractAction {
                 PathPoint pathPoint = latest.getPathPointFromIndex(i);
                 poses.add(dungeonRoom.getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
             }
-            RenderUtils.drawLines(poses, new Color(0,255,0,255), partialTicks, true);
+            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks, true);
         }
     }
 
