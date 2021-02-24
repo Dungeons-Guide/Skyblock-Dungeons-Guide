@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -44,6 +45,21 @@ public class FeatureListener {
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof WorldRenderListener) {
                     ((WorldRenderListener) abstractFeature).drawWorld(postRender.partialTicks);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onInteract(PlayerInteractEvent postRender) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof InteractListener) {
+                    ((InteractListener) abstractFeature).onInteract(postRender);
                 }
             }
         } catch (Throwable t) {

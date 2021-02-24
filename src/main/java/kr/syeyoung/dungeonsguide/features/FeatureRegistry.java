@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
 import kr.syeyoung.dungeonsguide.features.impl.boss.*;
+import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureSimonSaysSolver;
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolvers;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
@@ -75,6 +76,7 @@ public class FeatureRegistry {
     public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
     public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
     public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
+    public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
 
 
     public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
