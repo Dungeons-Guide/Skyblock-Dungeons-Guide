@@ -413,7 +413,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
-        if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && Keybinds.editingSession.isKeyDown() ){
+        if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && Keybinds.editingSession.isKeyDown() ){
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
                 DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
