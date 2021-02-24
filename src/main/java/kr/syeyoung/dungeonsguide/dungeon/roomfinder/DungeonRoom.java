@@ -113,9 +113,10 @@ public class DungeonRoom {
         if (roomMatcher == null)
             roomMatcher = new RoomMatcher(this);
         DungeonRoomInfo dungeonRoomInfo = roomMatcher.match();
-        if (dungeonRoomInfo == null)
+        if (dungeonRoomInfo == null) {
             dungeonRoomInfo = roomMatcher.createNew();
-
+            if (color == 18) dungeonRoomInfo.setProcessorId("bossroom");
+        }
         this.dungeonRoomInfo = dungeonRoomInfo;
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
     }

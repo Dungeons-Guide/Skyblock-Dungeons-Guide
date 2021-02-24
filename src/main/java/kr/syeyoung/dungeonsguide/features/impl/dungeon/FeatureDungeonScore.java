@@ -222,7 +222,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
                 if (dungeonRoom.getTotalSecrets() != -1)
                     totalSecrets += dungeonRoom.getTotalSecrets();
                 else totalSecretsKnown = false;
-                completed += dungeonRoom.getUnitPoints().size();
+                if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+                    completed += dungeonRoom.getUnitPoints().size();
             }
             fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
             explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * getPercentage()), 0, 60);

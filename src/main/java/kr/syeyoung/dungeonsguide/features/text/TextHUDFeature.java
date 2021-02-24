@@ -21,7 +21,7 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 
-public abstract class TextHUDFeature extends GuiFeature {
+public abstract class TextHUDFeature extends GuiFeature implements StyledTextProvider {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
         this.parameters.put("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
@@ -37,7 +37,7 @@ public abstract class TextHUDFeature extends GuiFeature {
                 double scale = getFeatureRect().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
                 GlStateManager.scale(scale, scale, 0);
             }
-            drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
+            StyledTextRenderer.drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
         }
     }
 
@@ -53,7 +53,7 @@ public abstract class TextHUDFeature extends GuiFeature {
             double scale = getFeatureRect().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
             GlStateManager.scale(scale, scale, 0);
         }
-        drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());
+        StyledTextRenderer.drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());
     }
 
     public int countLines(List<StyledText> texts) {
@@ -97,96 +97,6 @@ public abstract class TextHUDFeature extends GuiFeature {
         return stylesMap;
     }
 
-    public List<StyleTextAssociated> drawTextWithStylesAssociated(List<StyledText> texts, int x, int y, Map<String, TextStyle> styleMap) {
-        int currX = x;
-        int currY = y;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        int maxHeightForLine = 0;
-        List<StyleTextAssociated> associateds = new ArrayList<StyleTextAssociated>();
-        for (StyledText st : texts) {
-            TextStyle ts = styleMap.get(st.getGroup());
-            String[] lines = st.getText().split("\n");
-            for (int i = 0; i < lines.length; i++) {
-                String str = lines[i];
-                Dimension d = drawFragmentText(fr, str, ts, currX, currY, false);
-                associateds.add(new StyleTextAssociated(st, new Rectangle(currX, currY, d.width, d.height)));
-                currX += d.width;
-                if (maxHeightForLine < d.height)
-                    maxHeightForLine = d.height;
-
-                if (i+1 != lines.length) {
-                    currY += maxHeightForLine ;
-                    currX = x;
-                    maxHeightForLine = 0;
-                }
-            }
-            if (st.getText().endsWith("\n")) {
-                currY += maxHeightForLine ;
-                currX = x;
-                maxHeightForLine = 0;
-            }
-        }
-        return associateds;
-    }
-
-    public List<StyleTextAssociated> calculate(List<StyledText> texts, int x, int y, Map<String, TextStyle> styleMap) {
-        int currX = x;
-        int currY = y;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        int maxHeightForLine = 0;
-        List<StyleTextAssociated> associateds = new ArrayList<StyleTextAssociated>();
-        for (StyledText st : texts) {
-            TextStyle ts = styleMap.get(st.getGroup());
-            String[] lines = st.getText().split("\n");
-            for (int i = 0; i < lines.length; i++) {
-                String str = lines[i];
-                Dimension d = drawFragmentText(fr, str, ts, currX, currY, true);
-                associateds.add(new StyleTextAssociated(st, new Rectangle(currX, currY, d.width, d.height)));
-                currX += d.width;
-                if (maxHeightForLine < d.height)
-                    maxHeightForLine = d.height;
-
-                if (i+1 != lines.length) {
-                    currY += maxHeightForLine;
-                    currX = x;
-                    maxHeightForLine = 0;
-                }
-            }
-            if (st.getText().endsWith("\n")) {
-                currY += maxHeightForLine;
-                currX = x;
-                maxHeightForLine = 0;
-            }
-        }
-        return associateds;
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class StyleTextAssociated {
-        private StyledText styledText;
-        private Rectangle rectangle;
-    }
-
-    public Dimension drawFragmentText(FontRenderer fr, String content, TextStyle style, int x, int y, boolean stopDraw) {
-        if (stopDraw)
-            return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
-
-        Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
-
-        if (!style.getColor().isChroma()) {
-            fr.drawString(content, x, y, style.getColor().getRGB(), style.isShadow());
-            return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
-        }else {
-            char[] charArr = content.toCharArray();
-            int width = 0;
-            for (int i = 0; i < charArr.length; i++) {
-                fr.drawString(String.valueOf(charArr[i]), x + width, y, RenderUtils.getColorAt(x + width, y, style.getColor()), style.isShadow());
-                width += fr.getCharWidth(charArr[i]);
-            }
-            return new Dimension(width, fr.FONT_HEIGHT);
-        }
-    }
 
     @Override
     public String getEditRoute(final GuiConfig config) {

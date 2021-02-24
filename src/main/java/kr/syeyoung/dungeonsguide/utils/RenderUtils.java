@@ -733,7 +733,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
     }
 
-    private static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
+    public static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
         EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
         return new Vector3f(
                 x - (float) (sp.lastTickPosX + (sp.posX - sp.lastTickPosX) * partialTicks),

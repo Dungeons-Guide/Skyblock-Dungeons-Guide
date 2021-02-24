@@ -32,7 +32,7 @@ import java.util.List;
 
 public class PanelTextParameterConfig extends MPanel {
 
-    private TextHUDFeature feature;
+    private StyledTextProvider feature;
 
     private MEditableAColor currentColor;
     private MEditableAColor backgroundColor;
@@ -48,7 +48,7 @@ public class PanelTextParameterConfig extends MPanel {
     }
 
     private GuiConfig config;
-    public PanelTextParameterConfig(final GuiConfig config, final TextHUDFeature feature) {
+    public PanelTextParameterConfig(final GuiConfig config, final StyledTextProvider feature) {
         this.config = config;
         this.feature = feature;
         setBackgroundColor(new Color(38, 38, 38, 255));
@@ -115,13 +115,13 @@ public class PanelTextParameterConfig extends MPanel {
 
         List<StyledText> texts = feature.getDummyText();
         Map<String, TextStyle> styles = feature.getStylesMap();
-        List<TextHUDFeature.StyleTextAssociated> calc = feature.drawTextWithStylesAssociated(texts, 0,0, styles);
+        List<StyledTextRenderer.StyleTextAssociated> calc = StyledTextRenderer.drawTextWithStylesAssociated(texts, 0,0, styles);
         boolean bool =clip.contains(absMousex, absMousey);
-        for (TextHUDFeature.StyleTextAssociated calc3: calc) {
+        for (StyledTextRenderer.StyleTextAssociated calc3: calc) {
             if (selected.contains(calc3.getStyledText().getGroup())) {
                 Gui.drawRect(calc3.getRectangle().x, calc3.getRectangle().y, calc3.getRectangle().x + calc3.getRectangle().width, calc3.getRectangle().y + calc3.getRectangle().height, 0x4244A800);
             } else if (bool && calc3.getRectangle().contains((relMousex0-5 -offsetX) * scale , (relMousey0 - 5 - offsetY) * scale)) {
-                for (TextHUDFeature.StyleTextAssociated calc2 : calc) {
+                for (StyledTextRenderer.StyleTextAssociated calc2 : calc) {
                     if (calc2.getStyledText().getGroup().equals(calc3.getStyledText().getGroup()))
                         Gui.drawRect(calc2.getRectangle().x, calc2.getRectangle().y, calc2.getRectangle().x + calc2.getRectangle().width, calc2.getRectangle().y + calc2.getRectangle().height, 0x55777777);
                 }
@@ -163,8 +163,8 @@ public class PanelTextParameterConfig extends MPanel {
         Map<String, TextStyle> styles = feature.getStylesMap();
         boolean existed = selected.isEmpty();
         boolean found = false;
-        List<TextHUDFeature.StyleTextAssociated> calc = feature.calculate(texts, 0,0, styles);
-        for (TextHUDFeature.StyleTextAssociated calc3: calc) {
+        List<StyledTextRenderer.StyleTextAssociated> calc = StyledTextRenderer.calculate(texts, 0,0, styles);
+        for (StyledTextRenderer.StyleTextAssociated calc3: calc) {
             if (calc3.getRectangle().contains((relMouseX-5 -offsetX) * scale , (relMouseY - 5 - offsetY) * scale)) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                     if (!selected.contains(calc3.getStyledText().getGroup()))

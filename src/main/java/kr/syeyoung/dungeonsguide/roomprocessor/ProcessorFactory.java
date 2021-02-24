@@ -41,5 +41,7 @@ public class ProcessorFactory {
         registerRoomProcessor("puzzle_box", new RoomProcessorBoxSolver.Generator());
         registerRoomProcessor("puzzle_trivia", new RoomProcessorTrivia.Generator());;
         registerRoomProcessor("puzzle_bombdefuse", new RoomProcessorBombDefuseSolver.Generator());
+
+        registerRoomProcessor("bossroom", new RoomProcessorRedRoom.Generator());
     }
 }
