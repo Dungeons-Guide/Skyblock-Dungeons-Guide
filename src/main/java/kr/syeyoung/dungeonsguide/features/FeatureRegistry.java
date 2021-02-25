@@ -41,29 +41,29 @@ public class FeatureRegistry {
     }
     public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
 
-    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
+    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
 
-    public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("solver", "Riddle Puzzle (3 weirdo) Solver", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
-    public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("solver", "Trivia Puzzle (Omnicrescent) Solver", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));
-    public static final SimpleFeature SOLVER_BLAZE = register(new SimpleFeature("solver", "Blaze Puzzle Solver", "Highlights the blaze that needs to be killed in an blaze room", "solver.blaze"));
-    public static final SimpleFeature SOLVER_TICTACTOE = register(new SimpleFeature("solver", "Tictactoe Solver", "Shows the best move that could be taken by player in the tictactoe room", "solver.tictactoe"));
-    public static final SimpleFeature SOLVER_ICEPATH = register(new SimpleFeature("solver", "Icepath Puzzle Solver (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath"));
-    public static final SimpleFeature SOLVER_SILVERFISH = register(new SimpleFeature("solver", "Silverfish Puzzle Solver (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish"));
-    public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("solver", "Waterboard Puzzle Solver (Advanced)", "Calculates solution for waterboard puzzle and displays it to user",  "solver.waterboard"));
-    public static final SimpleFeature SOLVER_BOX = register(new SimpleFeature("solver", "Box Puzzle Solver (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box"));
-    public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("solver", "Creeper Puzzle Solver", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
-    public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("solver", "Teleport Puzzle Solver", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
-    public static final SimpleFeature SOLVER_BOMBDEFUSE = register(new SimpleFeature("solver", "Bomb Defuse Puzzle Solver", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse"));
+    public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("Solver", "Riddle Puzzle (3 weirdo) Solver", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
+    public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("Solver", "Trivia Puzzle (Omnicrescent) Solver", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));
+    public static final SimpleFeature SOLVER_BLAZE = register(new SimpleFeature("Solver", "Blaze Puzzle Solver", "Highlights the blaze that needs to be killed in an blaze room", "solver.blaze"));
+    public static final SimpleFeature SOLVER_TICTACTOE = register(new SimpleFeature("Solver", "Tictactoe Solver", "Shows the best move that could be taken by player in the tictactoe room", "solver.tictactoe"));
+    public static final SimpleFeature SOLVER_ICEPATH = register(new SimpleFeature("Solver", "Icepath Puzzle Solver (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath"));
+    public static final SimpleFeature SOLVER_SILVERFISH = register(new SimpleFeature("Solver", "Silverfish Puzzle Solver (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish"));
+    public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Solver", "Waterboard Puzzle Solver (Advanced)", "Calculates solution for waterboard puzzle and displays it to user",  "solver.waterboard"));
+    public static final SimpleFeature SOLVER_BOX = register(new SimpleFeature("Solver", "Box Puzzle Solver (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box"));
+    public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Solver", "Creeper Puzzle Solver", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
+    public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("Solver", "Teleport Puzzle Solver", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
+    public static final SimpleFeature SOLVER_BOMBDEFUSE = register(new SimpleFeature("Solver", "Bomb Defuse Puzzle Solver", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse"));
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
     public static final SimpleFeature ETC_REMOVE_REPARTY =  register(new SimpleFeature("ETC", "Remove Reparty Command From DG", "/dg reparty will still work, Auto reparty will still work\nRequires Restart to get applied", "qol.noreparty"));
 
-    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
+    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
 
     public static final FeatureCopyMessages ETC_COPY_MSG = register(new FeatureCopyMessages());

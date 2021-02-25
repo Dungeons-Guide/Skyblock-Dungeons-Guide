@@ -13,6 +13,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.MathHelper;
+import org.apache.commons.lang3.StringUtils;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -26,12 +27,45 @@ public class MPortableColorEdit extends MPanel {
     @Getter
     private AColor color;
 
+    private MTextField textField;
+
+    public MPortableColorEdit() {
+        textField = new MTextField() {
+            @Override
+            public void edit(String str) {
+                if (str.length() >= 7 && str.startsWith("#")) {
+                    String color = str.substring(1);
+                    try {
+                        long colorInt = Long.parseLong(color, 16);
+
+                        Color.RGBtoHSB((int) (colorInt >> 16) & 0xFF, (int) (colorInt >> 8) & 0xFF, (int) colorInt & 0xFF, hsv);
+                        if (color.length() >= 8)
+                            alpha = ((int) ((colorInt >> 24) & 0xFF)) / 255.0f;
+                        update2();
+                    } catch (Exception e) {}
+                }
+            }
+        };
+        add(textField);
+    }
+
+    @Override
+    public void onBoundsUpdate() {
+        super.onBoundsUpdate();
+
+        textField.setBounds(new Rectangle(5, getBounds().height - 25, getBounds().width - 10, 20));
+    }
+
     public void setColor(AColor color) {
         this.color  = color;
 
         alpha = color.getAlpha() / 255.0f;
         chromaSpeed = color.isChroma() ? color.getChromaSpeed() : 0;
         Color.RGBtoHSB(color.getRed(), color.getBlue(), color.getGreen(), hsv);
+
+        int rgb = Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]);
+        rgb = (rgb & 0xFFFFFF) | ((int)(alpha * 255) << 24);
+        textField.setText("#" + StringUtils.leftPad(Integer.toHexString(rgb).toUpperCase(), 8, '0'));
     }
 
     @Override
@@ -40,7 +74,7 @@ public class MPortableColorEdit extends MPanel {
         Gui.drawRect(0,0,getSize().width,getSize().height, 0xff333333);
         Gui.drawRect(1,1,getSize().width-1,getSize().height-1, 0xffa1a1a1);
 
-        int width = getBounds().height- 10;
+        int width = getBounds().height- 35;
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         int shademodel = GL11.glGetInteger(GL11.GL_SHADE_MODEL);
@@ -185,7 +219,7 @@ public class MPortableColorEdit extends MPanel {
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(resolution, newPt, new Rectangle(newPt, new Dimension(getBounds().getSize())), absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }
@@ -195,7 +229,7 @@ public class MPortableColorEdit extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        int width = getBounds().height- 10;
+        int width = getBounds().height- 35;
         float radius = width / 2f;
         float circleX = 5 + radius;
         float circleY = 5 + radius;
@@ -240,7 +274,7 @@ public class MPortableColorEdit extends MPanel {
 
     @Override
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
-        int width = getBounds().height- 10;
+        int width = getBounds().height- 35;
         float radius = width / 2f;
         float circleX = 5 + radius;
         float circleY = 5 + radius;
@@ -270,13 +304,15 @@ public class MPortableColorEdit extends MPanel {
 
 
     public void update() {
-        color = new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | (MathHelper.clamp_int((int)(alpha * 255), 0, 255) << 24), true);
-        color.setChromaSpeed(chromaSpeed);
-        color.setChroma(chromaSpeed != 0);
+        int rgb = Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]);
+        rgb = (rgb & 0xFFFFFF) | ((int)(alpha * 255) << 24);
+        textField.setText("#" + StringUtils.leftPad(Integer.toHexString(rgb).toUpperCase(), 8, '0'));
         update2();
     }
 
     public void update2() {
-
+        color = new AColor(Color.HSBtoRGB(hsv[0], hsv[1], hsv[2]) & 0xffffff | (MathHelper.clamp_int((int)(alpha * 255), 0, 255) << 24), true);
+        color.setChromaSpeed(chromaSpeed);
+        color.setChroma(chromaSpeed != 0);
     }
 }

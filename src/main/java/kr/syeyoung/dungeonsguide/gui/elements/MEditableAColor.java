@@ -60,13 +60,14 @@ public class MEditableAColor extends MPanel {
             portable = new MPortableColorEdit() {
                 @Override
                 public void update2() {
+                    super.update2();
                     MEditableAColor.this.color = portable.getColor();
                     if (onUpdate != null)
                         onUpdate.run();
                 }
             };
             portable.setColor(color);
-            portable.setBounds(new Rectangle(relMouseX, relMouseY, 100, 60));
+            portable.setBounds(new Rectangle(relMouseX, relMouseY, 100, 90));
             add(portable);
         } else if (portable != null && !portable.getBounds().contains(relMouseX, relMouseY)) {
             remove(portable);

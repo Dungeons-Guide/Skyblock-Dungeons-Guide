@@ -20,7 +20,7 @@ import java.awt.*;
 
 public class FeatureRoomCoordDisplay extends GuiFeature {
     public FeatureRoomCoordDisplay() {
-        super("advanced", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords", false, getFontRenderer().getStringWidth("X: 48 Y: 100 Z: 48 Facing: Z+"), 10);
+        super("Advanced", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords", false, getFontRenderer().getStringWidth("X: 48 Y: 100 Z: 48 Facing: Z+"), 10);
         this.setEnabled(false);
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.yellow, "color"));
     }
