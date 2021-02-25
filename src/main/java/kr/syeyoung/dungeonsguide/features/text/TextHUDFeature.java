@@ -106,7 +106,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
                 return new PanelDefaultParameterConfig(config, TextHUDFeature.this,
                         Arrays.asList(new MPanel[] {
                                 new PanelTextParameterConfig(config, TextHUDFeature.this)
-                        }), Collections.singleton("textStyles"));
+                        }), Collections.singleton("textStylesNEW"));
             }
         });
         return "base." + getKey() ;

@@ -629,11 +629,11 @@ public class RenderUtils {
 
         AxisAlignedBB axisAlignedBB;
         if (entity instanceof EntityArmorStand) {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -0.5, -0.4, 0.4, 1.5, 0.4);
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
         } else if (entity instanceof EntityBat) {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -0.4, -0.4, 0.4, 0.4, 0.4);
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
         } else {
-            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -0.5, -0.4, 0.4, 1.5, 0.4);
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
         }
 
         Vec3 renderPos = new Vec3(
@@ -641,7 +641,6 @@ public class RenderUtils {
                  (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks),
                  (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks)
         );
-        System.out.println(renderPos);
         GlStateManager.translate(axisAlignedBB.minX + renderPos.xCoord, axisAlignedBB.minY + renderPos.yCoord, axisAlignedBB.minZ + renderPos.zCoord);
 
         double x = axisAlignedBB.maxX - axisAlignedBB.minX;
