@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
@@ -9,6 +10,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -30,6 +32,16 @@ public class FeatureDungeonScore extends TextHUDFeature {
         super("Dungeon", "Display Current Score", "Calculate and Display current score\nThis data is from pure calculation and can be different from actual score.", "dungeon.stats.score", false, 200, getFontRenderer().FONT_HEIGHT * 4);
         this.setEnabled(false);
         parameters.put("verbose", new FeatureParameter<Boolean>("verbose", "Show each score instead of sum", "Skill: 100 Explore: 58 S->S+(5 tombs) instead of Score: 305", true, "boolean"));
+
+        getStyles().add(new TextStyle("scorename", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("score", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("brackets", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("etc",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("currentScore", new AColor(0xFF, 0xAA,0x00,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("arrow",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("nextScore", new AColor(0xFF, 0xAA,0x00,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("required",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -85,6 +97,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         return Arrays.asList(new String[] {
                 "scorename", "separator", "score", "brackets", "etc", "currentScore", "arrow", "nextScore", "required"
         });
+
     }
 
     @Override

@@ -20,7 +20,7 @@ import java.awt.*;
 public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitListener, GuiOpenListener {
     public FeatureCooldownCounter() {
         super("ETC", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color"));
+        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
     }
 
     private long leftDungeonTime = 0L;

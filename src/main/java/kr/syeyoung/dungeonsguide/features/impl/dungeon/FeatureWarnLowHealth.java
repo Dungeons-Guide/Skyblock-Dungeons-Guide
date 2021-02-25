@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
@@ -9,6 +10,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -31,8 +33,13 @@ import java.util.List;
 
 public class FeatureWarnLowHealth extends TextHUDFeature {
     public FeatureWarnLowHealth() {
-        super("Dungeon", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn", false, 200, 50);
+        super("Dungeon", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn", false, 500, 20);
         parameters.put("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, "integer"));
+        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("number", new AColor(0xFF, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("unit", new AColor(0xFF, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        setEnabled(false);
     }
 
 

@@ -21,8 +21,7 @@ import java.util.List;
 
 public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRenderListener, TickListener, InteractListener {
     public FeatureSimonSaysSolver() {
-        super("Bossfight","Simon Says Solver","Solver for Simon says puzzle", "bossfight.simonsays");
-        setEnabled(false);
+        super("Bossfight","Simon Says Solver","Solver for Simon says puzzle", "bossfight.simonsays2");
     }
 
     private SkyblockStatus ss = e.getDungeonsGuide().getSkyblockStatus();

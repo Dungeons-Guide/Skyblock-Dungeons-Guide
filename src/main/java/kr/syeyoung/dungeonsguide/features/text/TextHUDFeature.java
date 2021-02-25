@@ -24,7 +24,7 @@ import java.util.List;
 public abstract class TextHUDFeature extends GuiFeature implements StyledTextProvider {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
-        this.parameters.put("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
+        this.parameters.put("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
     }
 
     @Override
@@ -78,7 +78,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     public abstract List<StyledText> getText();
 
     public List<TextStyle> getStyles() {
-        return this.<List<TextStyle>>getParameter("textStyles").getValue();
+        return this.<List<TextStyle>>getParameter("textStylesNEW").getValue();
     }
     private Map<String, TextStyle> stylesMap;
     public Map<String, TextStyle> getStylesMap() {

@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
@@ -10,6 +11,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
@@ -28,6 +30,16 @@ import java.util.List;
 public class FeatureActions extends TextHUDFeature {
     public FeatureActions() {
         super("Secret", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview", false, 200, getFontRenderer().FONT_HEIGHT * 10);
+
+        getStyles().add(new TextStyle("pathfinding", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("mechanic", new AColor(0x55, 0xFF,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("state", new AColor(0x55, 0xFF,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("current", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("number",  new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("dot", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("action", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("afterline", new AColor(0xAA, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
