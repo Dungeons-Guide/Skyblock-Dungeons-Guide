@@ -68,7 +68,7 @@ public class MFeature extends MPanel {
             button.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(config));
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(config, abstractFeature));
                 }
             });
             addons.add(button);

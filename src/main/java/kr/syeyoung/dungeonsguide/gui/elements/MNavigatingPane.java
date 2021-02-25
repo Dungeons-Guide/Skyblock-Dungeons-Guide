@@ -76,8 +76,24 @@ public class MNavigatingPane extends MPanel {
             totalX += button1.getBounds().width;
         button.setBounds(new Rectangle(totalX, 0, Math.max(25, fr.getStringWidth(name) + 6), 15));
         bookMarks.add(button);
-        if (bookMarks.size() == 1)
+        if (currentPage.isEmpty())
             currentPage = addr;
+    }
+    public void addBookmarkRunnable(String name, final Runnable toRun) {
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        MTabButton button = new MTabButton(this, name, null) {
+            @Override
+            public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+                if (lastAbsClip.contains(absMouseX, absMouseY)) {
+                    toRun.run();
+                }
+            }
+        };
+        int totalX = 0;
+        for (MTabButton button1:bookMarks)
+            totalX += button1.getBounds().width;
+        button.setBounds(new Rectangle(totalX, 0, Math.max(25, fr.getStringWidth(name) + 6), 15));
+        bookMarks.add(button);
     }
 
     @Override
@@ -86,7 +102,8 @@ public class MNavigatingPane extends MPanel {
         if (!pages.containsKey(currentPage)) {
             MPanel panel = pageGenerator.apply(currentPage);
             MPanel panel2 = new MPanel() ;
-            panel2.add(panel);
+            if (panel != null)
+                panel2.add(panel);
             panel2.setBackgroundColor(background2);
             pages.put(currentPage, panel2);
             panel2.setBounds(new Rectangle(1,30,getBounds().width-2, getBounds().height-31));

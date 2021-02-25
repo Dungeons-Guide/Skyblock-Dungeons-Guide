@@ -20,11 +20,11 @@ public class GuiGuiLocationConfig extends GuiScreen {
     private MPanel mainPanel = new MPanel();
     private GuiScreen before;
 
-    public GuiGuiLocationConfig(final GuiScreen before) {
+    public GuiGuiLocationConfig(final GuiScreen before, AbstractFeature featureWhitelist) {
         this.before = before;
         for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
             if (feature instanceof GuiFeature && feature.isEnabled()) {
-                mainPanel.add(new PanelDelegate((GuiFeature) feature));
+                mainPanel.add(new PanelDelegate((GuiFeature) feature, featureWhitelist == null || feature == featureWhitelist));
             }
         }
 

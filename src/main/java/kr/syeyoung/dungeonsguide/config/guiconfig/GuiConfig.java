@@ -38,6 +38,12 @@ public class GuiConfig extends GuiScreen {
 
         tabbedPane.setPageGenerator(ConfigPanelCreator.INSTANCE);
 
+        tabbedPane.addBookmarkRunnable("GUI Relocate", new Runnable() {
+            @Override
+            public void run() {
+                Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(GuiConfig.this, null));
+            }
+        });
 
         for (final Map.Entry<String, List<AbstractFeature>> cate: FeatureRegistry.getFeaturesByCategory().entrySet())
             if (!cate.getKey().equals("hidden")) {

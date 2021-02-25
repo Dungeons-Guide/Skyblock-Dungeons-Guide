@@ -9,8 +9,10 @@ import java.awt.*;
 
 public class PanelDelegate extends MPanel {
     private GuiFeature guiFeature;
-    public PanelDelegate(GuiFeature guiFeature) {
+    private boolean draggable = false;
+    public PanelDelegate(GuiFeature guiFeature, boolean draggable) {
         this.guiFeature = guiFeature;
+        this.draggable = draggable;
     }
 
     @Override
@@ -24,6 +26,7 @@ public class PanelDelegate extends MPanel {
         guiFeature.drawDemo(partialTicks);
         GlStateManager.popMatrix();
 
+        if (!draggable) return;
         Gui.drawRect(0,0, 3, 3, 0xFFBBBBBB);
         Gui.drawRect(0, getBounds().height - 3, 3, getBounds().height, 0xFFBBBBBB);
         Gui.drawRect(getBounds().width - 3,0, getBounds().width, 3, 0xFFBBBBBB);
@@ -51,6 +54,7 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+        if (!draggable) return;
         if (!lastAbsClip.contains(absMouseX, absMouseY)) return;
         if (relMouseX < 3 && relMouseY < 3) {
             selectedPart = 0;
@@ -71,6 +75,7 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
+        if (!draggable) return;
         if (selectedPart >= -1) {
             int minWidth;
             int minHeight;
@@ -100,6 +105,7 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
+        if (!draggable) return;
         int dx = absMouseX - lastX;
         int dy = absMouseY - lastY;
         if (selectedPart >= 0) {
