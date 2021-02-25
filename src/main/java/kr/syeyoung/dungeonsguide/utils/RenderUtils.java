@@ -13,9 +13,11 @@ import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import net.minecraft.util.Vector3d;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
@@ -625,14 +627,26 @@ public class RenderUtils {
         int rgb = RenderUtils.getColorAt(entity.posX % 20,entity.posY % 20,c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
 
-        AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
+        AxisAlignedBB axisAlignedBB;
+        if (entity instanceof EntityArmorStand) {
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -0.5, -0.4, 0.4, 1.5, 0.4);
+        } else if (entity instanceof EntityBat) {
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -0.4, -0.4, 0.4, 0.4, 0.4);
+        } else {
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -0.5, -0.4, 0.4, 1.5, 0.4);
+        }
 
+        Vec3 renderPos = new Vec3(
+                 (float) (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks),
+                 (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks),
+                 (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks)
+        );
+        System.out.println(renderPos);
+        GlStateManager.translate(axisAlignedBB.minX + renderPos.xCoord, axisAlignedBB.minY + renderPos.yCoord, axisAlignedBB.minZ + renderPos.zCoord);
 
-        GlStateManager.translate(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
-
-        double x = 0.8;
-        double y = 1.5;
-        double z = 0.8;
+        double x = axisAlignedBB.maxX - axisAlignedBB.minX;
+        double y = axisAlignedBB.maxY - axisAlignedBB.minY;
+        double z = axisAlignedBB.maxZ - axisAlignedBB.minZ;
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex3d(0, 0, 0);
         GL11.glVertex3d(0, 0, z);
