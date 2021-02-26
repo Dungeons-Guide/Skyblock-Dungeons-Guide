@@ -30,14 +30,12 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     private double defaultHeight;
     private double defaultRatio;
 
-    protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, double width, double height) {
+    protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key);
         this.keepRatio = keepRatio;
         this.defaultWidth = width;
         this.defaultHeight = height;
         this.defaultRatio = defaultWidth / (double)defaultHeight;
-        if (width > 1) width = width / 720;
-        if (height > 1) height = height / 480;
         this.featureRect = new GUIRectangle(0, 0, width, height);
     }
 
@@ -80,14 +78,14 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
-        GUIRectangle featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds2"));
+        GUIRectangle featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
         if (featureRect != null && featureRect.getWidth() <= 1 && featureRect.getHeight() <= 1) this.featureRect = featureRect;
     }
 
     @Override
     public JsonObject saveConfig() {
         JsonObject object = super.saveConfig();
-        object.add("$bounds2", TypeConverterRegistry.getTypeConverter("guirect", GUIRectangle.class).serialize(featureRect));
+        object.add("$bounds", TypeConverterRegistry.getTypeConverter("guirect", GUIRectangle.class).serialize(featureRect));
         return object;
     }
 }

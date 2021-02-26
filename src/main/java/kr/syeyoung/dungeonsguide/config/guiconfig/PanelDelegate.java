@@ -94,18 +94,12 @@ public class PanelDelegate extends MPanel {
                 rectangle.width = minWidth;
                 rectangle.height= minHeight;
             }
-
+            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
             if (rectangle.x < 0) rectangle.x = 0;
             if (rectangle.y < 0) rectangle.y = 0;
-
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GUIRectangle guiRectangle = new GUIRectangle(
-                    rectangle.x / scaledResolution.getScaledWidth_double(),
-                    rectangle.y / scaledResolution.getScaledHeight_double(),
-                    rectangle.width / scaledResolution.getScaledWidth_double(),
-                    rectangle.height / scaledResolution.getScaledHeight_double()
-            );
-            guiFeature.setFeatureRect(guiRectangle);
+            if (rectangle.x + rectangle.width + 1 >= sr.getScaledWidth()) rectangle.x = sr.getScaledWidth() - rectangle.width - 1;
+            if (rectangle.y + rectangle.height  + 1>= sr.getScaledHeight()) rectangle.y = sr.getScaledHeight() - rectangle.height - 1;
+            guiFeature.setFeatureRect(new GUIRectangle(rectangle));
         }
 
         selectedPart = -2;
@@ -166,26 +160,24 @@ public class PanelDelegate extends MPanel {
                 lastX += revChangeX ? 3 : 3;
             }
 
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GUIRectangle guiRectangle = new GUIRectangle(
-                    rectangle.x / scaledResolution.getScaledWidth_double(),
-                    rectangle.y / scaledResolution.getScaledHeight_double(),
-                    rectangle.width / scaledResolution.getScaledWidth_double(),
-                    rectangle.height / scaledResolution.getScaledHeight_double()
-            );
-            guiFeature.setFeatureRect(guiRectangle);
+            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+            if (rectangle.x < 0) rectangle.x = 0;
+            if (rectangle.y < 0) rectangle.y = 0;
+            if (rectangle.x + rectangle.width + 1 >= sr.getScaledWidth()) rectangle.x = sr.getScaledWidth() - rectangle.width - 1;
+            if (rectangle.y + rectangle.height  + 1>= sr.getScaledHeight()) rectangle.y = sr.getScaledHeight() - rectangle.height - 1;
+
+            guiFeature.setFeatureRect(new GUIRectangle(rectangle));
             throw new IllegalArgumentException("bruh, a hack to stop event progress");
         } else if (selectedPart == -1){
             Rectangle rectangle = guiFeature.getFeatureRect().getRectangle().getBounds();
             rectangle.translate(dx, dy);
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GUIRectangle guiRectangle = new GUIRectangle(
-                    rectangle.x / scaledResolution.getScaledWidth_double(),
-                    rectangle.y / scaledResolution.getScaledHeight_double(),
-                    rectangle.width / scaledResolution.getScaledWidth_double(),
-                    rectangle.height / scaledResolution.getScaledHeight_double()
-            );
-            guiFeature.setFeatureRect(guiRectangle);
+
+            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+            if (rectangle.x < 0) rectangle.x = 0;
+            if (rectangle.y < 0) rectangle.y = 0;
+            if (rectangle.x + rectangle.width + 1 >= sr.getScaledWidth()) rectangle.x = sr.getScaledWidth() - rectangle.width - 1;
+            if (rectangle.y + rectangle.height  + 1>= sr.getScaledHeight()) rectangle.y = sr.getScaledHeight() - rectangle.height - 1;
+            guiFeature.setFeatureRect(new GUIRectangle(rectangle));
             lastX = absMouseX;
             lastY = absMouseY;
         }

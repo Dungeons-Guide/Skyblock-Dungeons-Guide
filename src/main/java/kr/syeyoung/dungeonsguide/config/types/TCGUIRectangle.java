@@ -15,10 +15,10 @@ public class TCGUIRectangle implements TypeConverter<GUIRectangle> {
     public GUIRectangle deserialize(JsonElement element) {
         if (element == null) return null;
         GUIRectangle rectangle = new GUIRectangle();
-        rectangle.setX(((JsonObject)element).get("x").getAsDouble());
-        rectangle.setY(((JsonObject)element).get("y").getAsDouble());
-        rectangle.setWidth(((JsonObject)element).get("width").getAsDouble());
-        rectangle.setHeight(((JsonObject)element).get("height").getAsDouble());
+        rectangle.setX(((JsonObject)element).get("x").getAsInt());
+        rectangle.setY(((JsonObject)element).get("y").getAsInt());
+        rectangle.setWidth(((JsonObject)element).get("width").getAsInt());
+        rectangle.setHeight(((JsonObject)element).get("height").getAsInt());
         return rectangle;
     }
 
