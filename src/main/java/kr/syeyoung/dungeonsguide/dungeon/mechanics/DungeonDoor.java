@@ -17,6 +17,7 @@ import java.util.*;
 
 @Data
 public class DungeonDoor implements DungeonMechanic, RouteBlocker {
+    private static final long serialVersionUID = -1011605722415475761L;
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> openPreRequisite = new ArrayList<String>();
     private List<String> closePreRequisite = new ArrayList<String>();

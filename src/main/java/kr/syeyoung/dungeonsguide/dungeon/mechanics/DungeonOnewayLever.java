@@ -14,6 +14,7 @@ import java.util.List;
 
 @Data
 public class DungeonOnewayLever implements DungeonMechanic {
+    private static final long serialVersionUID = -3203171200265540652L;
     private OffsetPoint leverPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
     private String triggering = "";

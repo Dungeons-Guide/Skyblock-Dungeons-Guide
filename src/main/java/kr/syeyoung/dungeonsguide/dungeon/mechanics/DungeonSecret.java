@@ -24,6 +24,8 @@ import java.util.List;
 
 @Data
 public class DungeonSecret implements DungeonMechanic {
+    private static final long serialVersionUID = 8784808599222706537L;
+
     private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private SecretType secretType = SecretType.CHEST;
     private List<String> preRequisite = new ArrayList<String>();

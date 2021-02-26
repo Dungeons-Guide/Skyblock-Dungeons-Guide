@@ -20,6 +20,7 @@ import java.util.Set;
 
 @Data
 public class DungeonNPC implements DungeonMechanic {
+    private static final long serialVersionUID = -89487601113028763L;
     private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
 

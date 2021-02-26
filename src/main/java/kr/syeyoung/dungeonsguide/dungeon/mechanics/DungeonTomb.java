@@ -17,6 +17,7 @@ import java.util.List;
 
 @Data
 public class DungeonTomb implements DungeonMechanic, RouteBlocker {
+    private static final long serialVersionUID = -7347076019472222115L;
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<String>();
 

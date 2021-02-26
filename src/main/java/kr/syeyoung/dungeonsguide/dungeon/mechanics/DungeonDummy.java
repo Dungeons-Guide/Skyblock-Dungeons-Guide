@@ -16,6 +16,7 @@ import java.util.Set;
 
 @Data
 public class DungeonDummy implements DungeonMechanic {
+    private static final long serialVersionUID = -8449664812034435765L;
     private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
 

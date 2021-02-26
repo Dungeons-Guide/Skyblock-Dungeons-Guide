@@ -15,6 +15,7 @@ import java.util.*;
 
 @Data
 public class DungeonFairySoul implements DungeonMechanic {
+    private static final long serialVersionUID = 156412742320519783L;
     private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
 
