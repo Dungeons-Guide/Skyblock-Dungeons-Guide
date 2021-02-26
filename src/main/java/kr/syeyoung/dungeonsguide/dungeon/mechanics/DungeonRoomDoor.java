@@ -43,7 +43,7 @@ public class DungeonRoomDoor implements DungeonMechanic {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-        return doorfinder.isRequiresKey() ? doorfinder.isOpened() ? "key-open" : "key-closed" : "normal";
+        return doorfinder.isRequiresKey() ?"key" : "normal";
     }
 
     @Override

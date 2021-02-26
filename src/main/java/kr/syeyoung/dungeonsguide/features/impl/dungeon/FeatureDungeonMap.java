@@ -314,7 +314,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                     GlStateManager.scale(1 / scale, 1 / scale, 0);
                     GlStateManager.scale(1 / postScale, 1 / postScale, 0);
                     float s = this.<Float>getParameter("playerheadscale").getValue();
-                    GlStateManager.scale(s,s,0);
+                    GlStateManager.scale(s * 5,s * 5,0);
 
                     GlStateManager.translate(-0.125F, 0.125F, 0.0F);
                     byte b0 = vec4b.func_176110_a();
@@ -332,7 +332,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                     GlStateManager.popMatrix();
                     ++k;
                 }
-            GlStateManager.popMatrix();
         }
     }
 
