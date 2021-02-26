@@ -23,6 +23,7 @@ public class TypeConverterRegistry {
         register(new TCBoolean());
         register(new TCInteger());
         register(new TCRectangle());
+        register(new TCGUIRectangle());
         register(new TCString());
         register(new TCColor());
         register(new TCFloat());
