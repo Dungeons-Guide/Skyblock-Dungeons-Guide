@@ -3,7 +3,6 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStand;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
@@ -81,7 +80,7 @@ public class DungeonDummy implements DungeonMechanic {
         return Sets.newHashSet("no-state","navigate,click");
     }
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;
     }
 }

@@ -2,25 +2,23 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import lombok.Data;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
-@Data
-public class DungeonJournal implements DungeonMechanic {
-    private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
-    private List<String> preRequisite = new ArrayList<String>();
+public class DungeonRoomDoor implements DungeonMechanic {
+    private DungeonDoor doorfinder;
 
+    public DungeonRoomDoor(DungeonDoor doorfinder) {
+        this.doorfinder = doorfinder;
+    }
 
     @Override
     public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
@@ -28,52 +26,38 @@ public class DungeonJournal implements DungeonMechanic {
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
-            ActionMove actionMove = new ActionMove(secretPoint);
+            ActionMove actionMove = new ActionMove(new OffsetPoint(dungeonRoom, doorfinder.getPosition()));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
-        }
-        {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
-            }
         }
         return base;
     }
 
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
+        BlockPos pos = doorfinder.getPosition();
         RenderUtils.highlightBlock(pos, color,partialTicks);
-        RenderUtils.drawTextAtWorld("J-"+name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
-
-
-    public DungeonJournal clone() throws CloneNotSupportedException {
-        DungeonJournal dungeonSecret = new DungeonJournal();
-        dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
-        dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
-        return dungeonSecret;
-    }
-
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-        return "no-state";
+        return doorfinder.isRequiresKey() ? doorfinder.isOpened() ? "key-open" : "key-closed" : "normal";
     }
 
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("navigate");
     }
+
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state","navigate");
+        return Sets.newHashSet("key-open", "key-closed", "normal");
     }
+
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
-        return secretPoint;
+        return new OffsetPoint(dungeonRoom, doorfinder.getPosition());
     }
 }

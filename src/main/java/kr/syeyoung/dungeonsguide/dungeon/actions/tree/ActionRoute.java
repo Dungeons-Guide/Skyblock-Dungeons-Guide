@@ -71,7 +71,7 @@ public class ActionRoute {
 
         current.onTick(dungeonRoom);
 
-        if (dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanic).getCurrentState(dungeonRoom).equals(state)) {
+        if (dungeonRoom.getMechanics().get(mechanic).getCurrentState(dungeonRoom).equals(state)) {
             this.current = actions.size() - 1;
         }
 

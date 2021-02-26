@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
@@ -55,7 +54,7 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
             ActionBreakWithSuperBoom actionClick;
-            preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint()));
+            preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint(dungeonRoom)));
             preRequisites = actionClick.getPreRequisite();
         }
         {
@@ -130,7 +129,7 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
     }
 
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint.getOffsetPointList().size() == 0 ? null : secretPoint.getOffsetPointList().get(secretPoint.getOffsetPointList().size() / 2);
     }
 }

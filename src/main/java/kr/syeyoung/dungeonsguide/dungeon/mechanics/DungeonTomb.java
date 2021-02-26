@@ -4,7 +4,6 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
@@ -27,7 +26,7 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
         if (state.equalsIgnoreCase("navigate")) {
             Set<Action> base;
             Set<Action> preRequisites = base = new HashSet<Action>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
             for (String str : preRequisite) {
@@ -110,7 +109,7 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint.getOffsetPointList().size() == 0 ? null : secretPoint.getOffsetPointList().get(0);
     }
 }

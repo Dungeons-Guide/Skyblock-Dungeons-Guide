@@ -34,6 +34,36 @@ public class FeatureListener {
             t.printStackTrace();
         }
     }
+    @SubscribeEvent
+    public void onRender(RenderPlayerEvent.Pre preRender) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof PlayerRenderListener) {
+                    ((PlayerRenderListener) abstractFeature).onEntityRenderPre(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(RenderPlayerEvent.Post preRender) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof PlayerRenderListener) {
+                    ((PlayerRenderListener) abstractFeature).onEntityRenderPost(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
 
 
     @SubscribeEvent

@@ -6,6 +6,8 @@ import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
@@ -44,6 +46,18 @@ public class DungeonRoom {
     @Setter
     private int totalSecrets = -1;
     private RoomState currentState = RoomState.DISCOVERED;
+
+    private Map<String, DungeonMechanic> cached = null;
+    public Map<String, DungeonMechanic> getMechanics() {
+        if (cached == null) {
+            cached = new HashMap<String, DungeonMechanic>(dungeonRoomInfo.getMechanics());
+            int index = 0;
+            for (DungeonDoor door : doors) {
+                if (door.isExist()) cached.put((door.isRequiresKey() ? "withergate" : "gate")+"-"+(++index), new DungeonRoomDoor(door));
+            }
+        }
+        return cached;
+    }
 
     public void setCurrentState(RoomState currentState) {
         context.createEvent(new DungeonStateChangeEvent(unitPoints.get(0), dungeonRoomInfo.getName(), this.currentState, currentState));

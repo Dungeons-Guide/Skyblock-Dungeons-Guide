@@ -86,7 +86,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
 
         if (!dungeonRoom.getDungeonRoomInfo().getUuid().equals(lastRoomUID)) {
-            for (DungeonMechanic value : dungeonRoom.getDungeonRoomInfo().getMechanics().values()) {
+            for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
                 if (value instanceof DungeonFairySoul)
                     warning = System.currentTimeMillis() + 2500;
             }

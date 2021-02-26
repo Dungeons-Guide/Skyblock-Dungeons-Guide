@@ -7,7 +7,6 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
-import kr.syeyoung.dungeonsguide.roomedit.panes.SecretEditPane;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -18,8 +17,6 @@ import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec3i;
-import net.minecraft.util.Vector3d;
 
 import java.awt.*;
 import java.util.*;
@@ -92,7 +89,7 @@ public class DungeonSecret implements DungeonMechanic {
         if (state.equalsIgnoreCase("navigate")) {
             Set<Action> base;
             Set<Action> preRequisites = base = new HashSet<Action>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
             for (String str : preRequisite) {
@@ -177,7 +174,7 @@ public class DungeonSecret implements DungeonMechanic {
         return Sets.newHashSet("found"/*, "definitely_not", "not_sure", "created", "error"*/);
     }
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;
     }
 }

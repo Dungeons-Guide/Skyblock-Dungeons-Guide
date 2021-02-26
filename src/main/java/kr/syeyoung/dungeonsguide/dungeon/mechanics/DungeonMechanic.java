@@ -18,5 +18,5 @@ public interface DungeonMechanic extends Serializable {
     Set<String> getPossibleStates(DungeonRoom dungeonRoom);
     Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
 
-    OffsetPoint getRepresentingPoint();
+    OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom);
 }

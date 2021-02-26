@@ -24,7 +24,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
         if (state.equalsIgnoreCase("navigate")) {
             Set<Action> base;
             Set<Action> preRequisites = base = new HashSet<Action>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint());
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
             for (String str : preRequisite) {
@@ -79,7 +79,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
         if (triggering == null) triggering = "null";
-        DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(triggering);
+        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(triggering);
         if (mechanic == null)
         {
             return "undeterminable";
@@ -107,7 +107,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
         return Sets.newHashSet("triggered", "untriggered");
     }
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return platePoint;
     }
 }

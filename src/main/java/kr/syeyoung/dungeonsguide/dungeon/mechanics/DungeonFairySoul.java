@@ -4,15 +4,9 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStand;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -83,7 +77,7 @@ public class DungeonFairySoul implements DungeonMechanic {
         return Sets.newHashSet("no-state","navigate");
     }
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;
     }
 }

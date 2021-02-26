@@ -5,9 +5,6 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionClickSet;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateSuperBoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
@@ -99,7 +96,7 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     }
 
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         int leastY = Integer.MAX_VALUE;
         OffsetPoint thatPt = null;
         for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {

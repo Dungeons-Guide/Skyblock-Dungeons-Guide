@@ -82,7 +82,7 @@ public class DungeonNPC implements DungeonMechanic {
         return Sets.newHashSet("no-state","navigate");
     }
     @Override
-    public OffsetPoint getRepresentingPoint() {
+    public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;
     }
 }

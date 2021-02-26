@@ -57,7 +57,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             path.onTick();
             if (FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled() && path.getCurrentAction() instanceof ActionComplete) {
                 if (!path.getState().equals("found")) return;
-                if (!(dungeonRoom.getDungeonRoomInfo().getMechanics().get(path.getMechanic()) instanceof DungeonSecret)) return;
+                if (!(dungeonRoom.getMechanics().get(path.getMechanic()) instanceof DungeonSecret)) return;
                 searchForNextTarget();
             }
         }
@@ -69,7 +69,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
         double lowestCost = 99999999999999.0;
         Map.Entry<String, DungeonMechanic> lowestWeightMechanic = null;
-        for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getMechanics().entrySet()) {
             if (!(mech.getValue() instanceof DungeonSecret)) continue;
             if (visited.contains(mech.getKey())) continue;
             if (((DungeonSecret) mech.getValue()).getSecretStatus(getDungeonRoom()) != DungeonSecret.SecretStatus.FOUND) {
@@ -78,8 +78,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         ((DungeonSecret) mech.getValue()).getPreRequisite().size() == 0) {
                     cost += -100000000;
                 }
-                if (mech.getValue().getRepresentingPoint() == null) continue;
-                BlockPos blockpos = mech.getValue().getRepresentingPoint().getBlockPos(getDungeonRoom());
+                if (mech.getValue().getRepresentingPoint(getDungeonRoom()) == null) continue;
+                BlockPos blockpos = mech.getValue().getRepresentingPoint(getDungeonRoom()).getBlockPos(getDungeonRoom());
 
                 cost += blockpos.distanceSq(pos);
                 cost += ((DungeonSecret) mech.getValue()).getPreRequisite().size() * 100;
@@ -118,7 +118,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
-            for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
+            for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
                 if (value.getValue() == null) continue;;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);
             }

@@ -28,7 +28,7 @@ public class ActionChangeState extends AbstractAction{
     public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
         Set<Action> set = new HashSet<Action>();
         set.addAll(preRequisite2);
-        DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName);
+        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (mechanic!= null)
             set.addAll(mechanic.getAction(state, dungeonRoom));
         return set;
@@ -40,7 +40,7 @@ public class ActionChangeState extends AbstractAction{
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        DungeonMechanic mechanic = dungeonRoom.getDungeonRoomInfo().getMechanics().get(mechanicName);
+        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (state.equalsIgnoreCase("navigate"))
             return true;
         if (mechanic== null)

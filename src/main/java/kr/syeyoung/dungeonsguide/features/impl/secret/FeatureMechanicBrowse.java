@@ -12,7 +12,6 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
-import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPreRenderListener;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
@@ -20,7 +19,6 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -38,7 +36,6 @@ import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
-import java.util.Set;
 
 public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
 
@@ -164,8 +161,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                 String name = sortedMechanicsName.get(i);
                 fr.drawString(name, 3, i * fr.FONT_HEIGHT, 0xFFFFFF00);
                 fr.drawString(" ("+ ((DungeonMechanic) obj).getCurrentState(dungeonRoom) +", "+
-                        (((DungeonMechanic) obj).getRepresentingPoint() != null ?
-                                String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) obj).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+                        (((DungeonMechanic) obj).getRepresentingPoint(dungeonRoom) != null ?
+                                String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) obj).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
                         +"m)",fr.getStringWidth(name) + 3, i * fr.FONT_HEIGHT, 0xFFAAAAAA);
             } else if ("$SPECIAL-CANCEL".equals(obj)) {
                 fr.drawString("Cancel Current", 3, i * fr.FONT_HEIGHT, 0xFF00FFFF);
@@ -225,7 +222,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         sortedMechanicsName.add("");
 
         boolean found = false;
-        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonFairySoul) {
                 if (!found) {
                     sortedMechanics.add("Fairy Souls");
@@ -237,7 +234,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             }
         }
         found = false;
-        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonSecret) {
                 if (!found) {
                     sortedMechanics.add("Secrets");
@@ -249,7 +246,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             }
         }
         found = false;
-        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonTomb) {
                 if (!found) {
                     sortedMechanics.add("Crypts");
@@ -261,7 +258,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             }
         }
         found = false;
-        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonNPC) {
                 if (!found) {
                     sortedMechanics.add("NPC");
@@ -273,7 +270,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             }
         }
         found = false;
-        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonJournal) {
                 if (!found) {
                     sortedMechanics.add("Journals");
@@ -285,7 +282,19 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             }
         }
         found = false;
-        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
+            if (value.getValue() instanceof DungeonRoomDoor){
+                if (!found) {
+                    sortedMechanics.add("Gates");
+                    sortedMechanicsName.add("");
+                    found = true;
+                }
+                sortedMechanics.add(value.getValue());
+                sortedMechanicsName.add(value.getKey());
+            }
+        }
+        found = false;
+        for (Map.Entry<String, DungeonMechanic> value : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getDungeonRoom().getMechanics().entrySet()) {
             if (value.getValue() instanceof DungeonDoor || value.getValue() instanceof DungeonBreakableWall || value.getValue() instanceof DungeonLever
             || value.getValue() instanceof DungeonOnewayDoor || value.getValue() instanceof DungeonOnewayLever || value.getValue() instanceof DungeonPressurePlate) {
                 if (!found) {
@@ -404,8 +413,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (selected != -1) {
             if (sortedMechanics.size() <= selected) return;;
             ((DungeonMechanic)sortedMechanics.get(selected)).highlight(new Color(0,255,255,50), sortedMechanicsName.get(selected) +" ("+(((DungeonMechanic)
-            sortedMechanics.get(selected)).getRepresentingPoint() != null ?
-                    String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) sortedMechanics.get(selected)).getRepresentingPoint().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+            sortedMechanics.get(selected)).getRepresentingPoint(dungeonRoom) != null ?
+                    String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) sortedMechanics.get(selected)).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
                     +"m)", dungeonRoom, partialTicks);
         }
     }
