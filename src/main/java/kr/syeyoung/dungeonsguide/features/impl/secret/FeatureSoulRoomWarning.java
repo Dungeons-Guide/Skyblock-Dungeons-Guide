@@ -60,7 +60,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
     }
 
     private UUID lastRoomUID = UUID.randomUUID();
-    private long warning = Long.MAX_VALUE;
+    private long warning = 0;
 
     private static final List<StyledText> text = new ArrayList<StyledText>();
     static {
