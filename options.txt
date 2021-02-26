@@ -10,13 +10,13 @@ bobView:true
 anaglyph3d:false
 maxFps:120
 fboEnable:true
-difficulty:3
+difficulty:1
 fancyGraphics:true
 ao:2
 renderClouds:fast
 resourcePacks:[]
 incompatibleResourcePacks:[]
-lastServer:mc.hyp
+lastServer:localhost
 lang:en_US
 chatVisibility:0
 chatColors:true
@@ -38,7 +38,7 @@ chatHeightFocused:1.0
 chatHeightUnfocused:0.44366196
 chatScale:1.0
 chatWidth:1.0
-showInventoryAchievementHint:true
+showInventoryAchievementHint:false
 mipmapLevels:4
 streamBytesPerPixel:0.5
 streamMicVolume:1.0
@@ -70,7 +70,7 @@ key_key.drop:0
 key_key.inventory:18
 key_key.chat:20
 key_key.playerlist:15
-key_key.pickItem:-98
+key_key.pickItem:35
 key_key.command:53
 key_key.screenshot:60
 key_key.togglePerspective:63

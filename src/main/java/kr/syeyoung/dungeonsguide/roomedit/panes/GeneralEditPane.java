@@ -18,9 +18,11 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 
 import java.awt.*;
-import java.io.File;
+import java.io.*;
+import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.UUID;
+import java.util.zip.GZIPOutputStream;
 
 public class GeneralEditPane extends MPanel {
     private DungeonRoom dungeonRoom;
@@ -130,13 +132,32 @@ public class GeneralEditPane extends MPanel {
                 public void run() {
                     try {
                         NBTTagCompound nbtTagCompound2 = createNBT();
-                        NBTTagCompound real = new NBTTagCompound();
-                        real.setTag("Schematic", nbtTagCompound2);
 
                         File f=new File(e.getDungeonsGuide().getConfigDir(), "schematics/"+
                                 dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
 
-                        CompressedStreamTools.write(nbtTagCompound2, f);
+                        Method method = null;
+                        try {
+                            method = NBTTagCompound.class.getDeclaredMethod("write", DataOutput.class);
+                            method.setAccessible(true);
+                        } catch (NoSuchMethodException e) {
+                            e.printStackTrace();
+                            return;
+                        }
+                        FileOutputStream fos = new FileOutputStream(f);
+                        DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(fos)));
+
+                        try
+                        {
+                            dataoutputstream.writeByte(nbtTagCompound2.getId());
+
+                            dataoutputstream.writeUTF("Schematic");
+                            method.invoke(nbtTagCompound2, dataoutputstream);
+                        }
+                        finally
+                        {
+                            dataoutputstream.close();
+                        }
                         Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
                     } catch (Throwable e) {
                         e.printStackTrace();
@@ -235,7 +256,7 @@ public class GeneralEditPane extends MPanel {
 
         compound.setByteArray("Blocks", blocks);
         compound.setByteArray("Data", meta);
-        compound.setString("Materials", "Classic");
+        compound.setString("Materials", "Alpha");
         if (extraEx) {
             compound.setByteArray("AddBlocks", extranibble);
         }

@@ -16,20 +16,25 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.Method;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.zip.GZIPOutputStream;
 
 public class CommandDungeonsGuide extends CommandBase {
     @Override
@@ -191,6 +196,42 @@ public class CommandDungeonsGuide extends CommandBase {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
+//        } else if (args[0].equals("fixschematic")) {
+//            File root = new File(e.getDungeonsGuide().getConfigDir(), "schematics");
+//            Method method = null;
+//            try {
+//                method = NBTTagCompound.class.getDeclaredMethod("write", DataOutput.class);
+//                method.setAccessible(true);
+//            } catch (NoSuchMethodException e) {
+//                e.printStackTrace();
+//                return;
+//            }
+//            for (File f : root.listFiles()) {
+//                try {
+//                    NBTTagCompound nbtTagCompound = CompressedStreamTools.readCompressed(new FileInputStream(f));
+//                    if (nbtTagCompound.getKeySet().isEmpty()) {
+//                        System.out.println("ah");
+//                        return;
+//                    }
+//                    nbtTagCompound.setString("Materials","Alpha");
+//                    FileOutputStream fos = new FileOutputStream(f);
+//                    DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(fos)));
+//
+//                    try
+//                    {
+//                        dataoutputstream.writeByte(nbtTagCompound.getId());
+//
+//                            dataoutputstream.writeUTF("Schematic");
+//                            method.invoke(nbtTagCompound, dataoutputstream);
+//                    }
+//                    finally
+//                    {
+//                        dataoutputstream.close();
+//                    }
+//                } catch (Exception e) {
+//                    e.printStackTrace();
+//                }
+//            }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
