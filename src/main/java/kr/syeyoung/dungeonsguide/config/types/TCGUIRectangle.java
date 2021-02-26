@@ -13,6 +13,7 @@ public class TCGUIRectangle implements TypeConverter<GUIRectangle> {
 
     @Override
     public GUIRectangle deserialize(JsonElement element) {
+        if (element == null) return null;
         GUIRectangle rectangle = new GUIRectangle();
         rectangle.setX(((JsonObject)element).get("x").getAsDouble());
         rectangle.setY(((JsonObject)element).get("y").getAsDouble());

@@ -29,7 +29,7 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
     public void drawHUD(float partialTicks) {
         if (System.currentTimeMillis() - leftDungeonTime > 20000) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
+        double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
         fr.drawString("Cooldown: "+(20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
@@ -37,7 +37,7 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
     @Override
     public void drawDemo(float partialTicks) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        double scale = getFeatureRect().getHeight() / fr.FONT_HEIGHT;
+        double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
         fr.drawString("Cooldown: 20s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }

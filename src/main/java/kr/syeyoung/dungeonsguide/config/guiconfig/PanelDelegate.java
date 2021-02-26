@@ -1,8 +1,11 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
@@ -17,7 +20,7 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public Rectangle getBounds() {
-        return guiFeature.getFeatureRect();
+        return guiFeature.getFeatureRect().getRectangle();
     }
 
     @Override
@@ -86,7 +89,7 @@ public class PanelDelegate extends MPanel {
                 minWidth = 8;
                 minHeight = 8;
             }
-            Rectangle rectangle = guiFeature.getFeatureRect().getBounds();
+            Rectangle rectangle = guiFeature.getFeatureRect().getRectangle().getBounds();
             if (rectangle.width < minWidth || rectangle.height < minHeight) {
                 rectangle.width = minWidth;
                 rectangle.height= minHeight;
@@ -95,7 +98,14 @@ public class PanelDelegate extends MPanel {
             if (rectangle.x < 0) rectangle.x = 0;
             if (rectangle.y < 0) rectangle.y = 0;
 
-            guiFeature.setFeatureRect(rectangle);
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            GUIRectangle guiRectangle = new GUIRectangle(
+                    rectangle.x / scaledResolution.getScaledWidth_double(),
+                    rectangle.y / scaledResolution.getScaledHeight_double(),
+                    rectangle.width / scaledResolution.getScaledWidth_double(),
+                    rectangle.height / scaledResolution.getScaledHeight_double()
+            );
+            guiFeature.setFeatureRect(guiRectangle);
         }
 
         selectedPart = -2;
@@ -111,7 +121,7 @@ public class PanelDelegate extends MPanel {
         if (selectedPart >= 0) {
             boolean revChangeX = (selectedPart & 0x1) == 0;
             boolean revChangeY = (selectedPart & 0x2) == 0;
-            Rectangle rectangle = guiFeature.getFeatureRect().getBounds();
+            Rectangle rectangle = guiFeature.getFeatureRect().getRectangle().getBounds();
             int prevWidth = rectangle.width;
             int prevHeight= rectangle.height;
 
@@ -156,12 +166,26 @@ public class PanelDelegate extends MPanel {
                 lastX += revChangeX ? 3 : 3;
             }
 
-            guiFeature.setFeatureRect(rectangle);
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            GUIRectangle guiRectangle = new GUIRectangle(
+                    rectangle.x / scaledResolution.getScaledWidth_double(),
+                    rectangle.y / scaledResolution.getScaledHeight_double(),
+                    rectangle.width / scaledResolution.getScaledWidth_double(),
+                    rectangle.height / scaledResolution.getScaledHeight_double()
+            );
+            guiFeature.setFeatureRect(guiRectangle);
             throw new IllegalArgumentException("bruh, a hack to stop event progress");
         } else if (selectedPart == -1){
-            Rectangle rectangle = guiFeature.getFeatureRect().getBounds();
+            Rectangle rectangle = guiFeature.getFeatureRect().getRectangle().getBounds();
             rectangle.translate(dx, dy);
-            guiFeature.setFeatureRect(rectangle);
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            GUIRectangle guiRectangle = new GUIRectangle(
+                    rectangle.x / scaledResolution.getScaledWidth_double(),
+                    rectangle.y / scaledResolution.getScaledHeight_double(),
+                    rectangle.width / scaledResolution.getScaledWidth_double(),
+                    rectangle.height / scaledResolution.getScaledHeight_double()
+            );
+            guiFeature.setFeatureRect(guiRectangle);
             lastX = absMouseX;
             lastY = absMouseY;
         }

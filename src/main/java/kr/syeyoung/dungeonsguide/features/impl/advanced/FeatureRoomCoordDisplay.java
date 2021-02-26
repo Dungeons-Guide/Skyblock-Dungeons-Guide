@@ -48,7 +48,7 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
-        double scale = getFeatureRect().getHeight() / fontRenderer.FONT_HEIGHT;
+        double scale = getFeatureRect().getRectangle().getHeight() / fontRenderer.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
 
         int color = this.<Color>getParameter("color").getValue().getRGB();
@@ -60,6 +60,8 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
         FontRenderer fr = getFontRenderer();
         int facing = (int) (Minecraft.getMinecraft().thePlayer.rotationYaw + 45) % 360;
         if (facing < 0) facing += 360;
+        double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
+        GlStateManager.scale(scale, scale, 0);
         fr.drawString("X: 0 Y: 3 Z: 5 Facing: "+FeatureRoomCoordDisplay.facing[(facing / 90) % 4], 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 

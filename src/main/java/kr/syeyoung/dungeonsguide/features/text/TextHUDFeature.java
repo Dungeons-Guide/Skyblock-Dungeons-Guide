@@ -34,7 +34,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
 
             if (doesScaleWithHeight()) {
                 FontRenderer fr = getFontRenderer();
-                double scale = getFeatureRect().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
+                double scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
                 GlStateManager.scale(scale, scale, 0);
             }
             StyledTextRenderer.drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
@@ -50,7 +50,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         List<StyledText> asd = getDummyText();
         if (doesScaleWithHeight()) {
             FontRenderer fr = getFontRenderer();
-            double scale = getFeatureRect().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
+            double scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
             GlStateManager.scale(scale, scale, 0);
         }
         StyledTextRenderer.drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());

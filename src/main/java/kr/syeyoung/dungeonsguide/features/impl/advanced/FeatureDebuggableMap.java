@@ -54,8 +54,8 @@ public class FeatureDebuggableMap extends GuiFeature {
     @Override
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
-        fr.drawString("Please join a dungeon to see preview", getFeatureRect().width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, getFeatureRect().height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
+        Rectangle featureRect = getFeatureRect().getRectangle();
         GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0,0,getFeatureRect().width, getFeatureRect().height, 0xff000000, false);
+        RenderUtils.drawUnfilledBox(0,0,featureRect.width, featureRect.height, 0xff000000, false);
     }
 }

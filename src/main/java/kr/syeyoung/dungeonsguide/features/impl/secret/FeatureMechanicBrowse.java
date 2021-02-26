@@ -71,7 +71,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
 
-        Rectangle feature = getFeatureRect();
+        Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = getFontRenderer();
 
         Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
@@ -88,7 +88,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     @Override
     public void drawDemo(float partialTicks) {
-        Rectangle feature = getFeatureRect();
+        Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = getFontRenderer();
 
         Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
@@ -128,7 +128,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
 
-        Rectangle feature = getFeatureRect();
+        Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = getFontRenderer();
         GlStateManager.translate(feature.x, feature.y, 0);
         Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
@@ -337,7 +337,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
         int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
 
-        Rectangle feature = getFeatureRect();
+        Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         Point popupStart = new Point(feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy);
         if (feature.contains(mouseX, mouseY)) {
