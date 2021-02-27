@@ -60,6 +60,12 @@ public class FeatureWatcherWarning extends TextHUDFeature implements ChatListene
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.message.getFormattedText().equals("§r§c[BOSS] The Watcher§r§f: That will be enough for now.§r"))  {
             warning = System.currentTimeMillis() + 2500;
+            DungeonContext context = skyblockStatus.getContext();
+            if (context ==null) return;
+            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                if (dungeonRoom != null && dungeonRoom.getColor() == 18)
+                    dungeonRoom.setCurrentState(DungeonRoom.RoomState.DISCOVERED);
+            }
         }
     }
 

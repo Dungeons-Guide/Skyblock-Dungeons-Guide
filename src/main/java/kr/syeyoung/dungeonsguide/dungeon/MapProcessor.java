@@ -203,7 +203,10 @@ public class MapProcessor {
                 MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(255,255,0,80));
                 if (roomsFound.contains(new Point(x,y))) {
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(new Point(x,y));
-                    if (color == 30 || color == 18) {
+                    if (color == 18 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FINISHED) {
+                        dungeonRoom.setCurrentState(DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS);
+                        dungeonRoom.setTotalSecrets(0);
+                    } if (color == 30) {
                         dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
                         dungeonRoom.setTotalSecrets(0);
                     } else if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FINISHED){
