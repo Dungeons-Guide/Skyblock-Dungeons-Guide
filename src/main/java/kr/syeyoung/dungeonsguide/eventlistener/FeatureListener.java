@@ -35,6 +35,51 @@ public class FeatureListener {
         }
     }
     @SubscribeEvent
+    public void onRender(RenderLivingEvent.Pre preRender) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof EntityLivingRenderListener) {
+                    ((EntityLivingRenderListener) abstractFeature).onEntityRenderPre(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(RenderLivingEvent.Post preRender) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof EntityLivingRenderListener) {
+                    ((EntityLivingRenderListener) abstractFeature).onEntityRenderPost(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(TitleEvent titleEvent) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TitleListener) {
+                    ((TitleListener) abstractFeature).onTitle(titleEvent.getPacketTitle());
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
     public void onRender(RenderPlayerEvent.Pre preRender) {
         try {
             SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();

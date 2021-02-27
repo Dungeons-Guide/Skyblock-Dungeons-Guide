@@ -78,8 +78,7 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
-        GUIRectangle featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
-        if (featureRect != null && featureRect.getWidth() <= 1 && featureRect.getHeight() <= 1) this.featureRect = featureRect;
+        this.featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
     }
 
     @Override

@@ -72,6 +72,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
             text.add(new StyledText(death.getKey(),"username"));
             text.add(new StyledText(": ","separator"));
             text.add(new StyledText(death.getValue()+"\n","deaths"));
+            deathsCnt += death.getValue();
         }
         text.add(new StyledText("Total Deaths","total"));
         text.add(new StyledText(": ","separator"));

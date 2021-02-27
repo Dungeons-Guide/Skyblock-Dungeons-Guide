@@ -62,7 +62,7 @@ public class FeatureRegistry {
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
-    public static final SimpleFeature ETC_REMOVE_REPARTY =  register(new SimpleFeature("ETC", "Remove Reparty Command From DG", "/dg reparty will still work, Auto reparty will still work\nRequires Restart to get applied", "qol.noreparty"));
+    public static final FeatureRepartyCommand ETC_REPARTY =  register(new FeatureRepartyCommand());
 
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
@@ -74,7 +74,9 @@ public class FeatureRegistry {
     public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());
     public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
     public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
+    public static final FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS = register(new FeatureHideAnimals());
     public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
+    public static final FeatureThornSpiritBowTimer BOSSFIGHT_BOW_TIMER = register(new FeatureThornSpiritBowTimer());
     public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
     public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());

@@ -62,7 +62,7 @@ public class e implements c {
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         commandReparty = new CommandReparty();
-        if (FeatureRegistry.ETC_REMOVE_REPARTY.isEnabled())
+        if (FeatureRegistry.ETC_REPARTY.isEnabled())
             ClientCommandHandler.instance.registerCommand(commandReparty);
 
         MinecraftForge.EVENT_BUS.register(commandReparty);

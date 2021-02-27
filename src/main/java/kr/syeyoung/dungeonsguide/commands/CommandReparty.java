@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.commands;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
@@ -23,14 +24,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class CommandReparty extends CommandBase {
+    private String command;
+    public CommandReparty() {
+        command = FeatureRegistry.ETC_REPARTY.<String>getParameter("command").getValue();
+        command = command.replace(" ", "");
+    }
+
     @Override
     public String getCommandName() {
-        return "reparty";
+        return command;
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "reparty";
+        return command;
     }
 
     @Override

@@ -7,12 +7,15 @@ import io.netty.channel.ChannelPromise;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.TitleEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
+import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
@@ -32,6 +35,9 @@ public class PacketListener extends ChannelDuplexHandler {
                 packet2 = new S04PacketEntityEquipment(packet2.getEntityID(), packet2.getEquipmentSlot() + 1, packet2.getItemStack());
                 packet = packet2;
             }
+        }
+        if (packet instanceof S45PacketTitle) {
+            MinecraftForge.EVENT_BUS.post(new TitleEvent((S45PacketTitle) packet));
         }
         super.channelRead(ctx, packet);
     }
