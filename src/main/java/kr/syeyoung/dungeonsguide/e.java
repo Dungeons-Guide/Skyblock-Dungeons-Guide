@@ -105,6 +105,7 @@ public class e implements c {
             configDir.mkdirs();
         }
         Config.f = configFile;
+        Minecraft.getMinecraft().getFramebuffer().enableStencil();
     }
     private void copy(InputStream inputStream, File f) throws IOException {
         FileOutputStream fos = new FileOutputStream(f);

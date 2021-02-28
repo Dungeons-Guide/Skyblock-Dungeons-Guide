@@ -65,6 +65,8 @@ public class FeatureRegistry {
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
     public static final FeatureRepartyCommand ETC_REPARTY =  register(new FeatureRepartyCommand());
     public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND =  register(new FeatureDecreaseExplosionSound());
+    public static final FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY =  register(new FeatureAutoAcceptReparty());
+
 
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
