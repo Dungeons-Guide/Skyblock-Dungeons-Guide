@@ -72,7 +72,7 @@ public class TextUtils {
     }
 
     public static String formatTime(long ms) {
-        long seconds = ms / 1000;
+        long seconds = (long) Math.ceil(ms / 1000.0);
         long hr = seconds / (60 * 60); seconds -= hr * 60 * 60;
         long min = seconds / 60; seconds -= min * 60;
 
