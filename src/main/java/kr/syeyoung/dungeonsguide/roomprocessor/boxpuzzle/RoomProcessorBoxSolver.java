@@ -310,6 +310,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
+        if (FeatureRegistry.SOLVER_BOX_DISABLE_TEXT.isEnabled()) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF);
     }
