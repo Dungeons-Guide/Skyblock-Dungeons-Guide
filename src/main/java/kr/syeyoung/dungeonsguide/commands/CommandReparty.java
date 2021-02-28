@@ -69,10 +69,12 @@ public class CommandReparty extends CommandBase {
         String txt = e.message.getFormattedText();
         if (txt.startsWith("§eParty ") && txt.contains(":")) {
             String playerNames = TextUtils.stripColor(txt.split(":")[1]);
+            String myname = Minecraft.getMinecraft().getSession().getUsername();
             for (String s : playerNames.split(" ")) {
                 if (s.isEmpty()) continue;
                 if (s.equals("●")) continue;
                 if (s.startsWith("[")) continue;
+                if (s.equalsIgnoreCase(myname)) continue;
                 players.add(s);
             }
         }

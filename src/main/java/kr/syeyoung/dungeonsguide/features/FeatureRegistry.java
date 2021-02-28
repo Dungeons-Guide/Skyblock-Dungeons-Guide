@@ -63,6 +63,7 @@ public class FeatureRegistry {
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
     public static final FeatureRepartyCommand ETC_REPARTY =  register(new FeatureRepartyCommand());
+    public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND =  register(new FeatureDecreaseExplosionSound());
 
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
@@ -87,6 +88,7 @@ public class FeatureRegistry {
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
     public static final FeatureBoxBats DUNGEON_BOXBAT = register(new FeatureBoxBats());
     public static final FeatureBoxStarMobs DUNGEON_BOXSTARMOBS = register(new FeatureBoxStarMobs());
+    public static final FeatureWatcherWarning DUNGEON_WATCHERWARNING = register(new FeatureWatcherWarning());
     public static final FeatureDungeonDeaths DUNGEON_DEATHS = register(new FeatureDungeonDeaths());
     public static final FeatureDungeonMilestone DUNGEON_MILESTONE = register(new FeatureDungeonMilestone());
     public static final FeatureDungeonRealTime DUNGEON_REALTIME = register(new FeatureDungeonRealTime());
@@ -97,9 +99,8 @@ public class FeatureRegistry {
     public static final FeatureDungeonScore DUNGEON_SCORE = register(new FeatureDungeonScore());
     public static final FeatureWarnLowHealth DUNGEON_LOWHEALTH_WARN = register(new FeatureWarnLowHealth());
     public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Dungeon", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run\n\nThis automates player chatting action, (chatting data) Thus it might be against hypixel's rules.\nBut mods like auto-gg which also automate player action and is kinda allowed mod exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "dungeon.intermodcomm", false));
-    public static final FeaturePlayerESP DUNGEON_PLEYARESP = register(new FeaturePlayerESP());
-    public static final FeatureWatcherWarning DUNGEON_WATCHERWARNING = register(new FeatureWatcherWarning());
-
+    public static final FeaturePlayerESP DUNGEON_PLAYERESP = register(new FeaturePlayerESP());
+    public static final FeatureHideNameTags DUNGEON_HIDENAMETAGS = register(new FeatureHideNameTags());
 
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());

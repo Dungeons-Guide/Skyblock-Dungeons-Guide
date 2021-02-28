@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -49,6 +50,23 @@ public class FeatureListener {
             t.printStackTrace();
         }
     }
+
+    @SubscribeEvent
+    public void onSound(PlaySoundEvent soundEvent) {
+        try {
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof SoundListener) {
+                    ((SoundListener) abstractFeature).onSound(soundEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
     @SubscribeEvent
     public void onRender(RenderLivingEvent.Post preRender) {
         try {
