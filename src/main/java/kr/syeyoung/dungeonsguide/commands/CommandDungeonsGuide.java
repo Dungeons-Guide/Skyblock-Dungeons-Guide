@@ -4,6 +4,8 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
@@ -34,6 +36,7 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.Map;
 import java.util.zip.GZIPOutputStream;
 
 public class CommandDungeonsGuide extends CommandBase {
@@ -159,7 +162,7 @@ public class CommandDungeonsGuide extends CommandBase {
                     e.printStackTrace();
                 }
             }
-        } else if (args[0].equals("fixmap") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
+        } else if (args[0].equals("check") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
             File root = e.getDungeonsGuide().getConfigDir();
             for (File f : root.listFiles()) {
                 if (!f.getName().endsWith(".roomdata")) continue;
@@ -169,16 +172,14 @@ public class CommandDungeonsGuide extends CommandBase {
                     DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
                     ois.close();
                     fis.close();
-
-                    for (int i = 0; i < dri.getBlocks().length; i++) {
-                        for (int i1 = 0; i1 < dri.getBlocks()[i].length; i1++) {
-                            if (dri.getBlocks()[i][i1] == 54 || dri.getBlocks()[i][i1] == 146) {
-                                dri.getBlocks()[i][i1] = -1;
-                                System.out.println("Fixed the thing at "+i+" - "+i1 +" on "+dri.getName());
+                    for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dri.getMechanics().entrySet()) {
+                        if (stringDungeonMechanicEntry.getValue() instanceof DungeonSecret) {
+                            if (stringDungeonMechanicEntry.getKey().charAt(0) != Character.toLowerCase(((DungeonSecret) stringDungeonMechanicEntry.getValue()).getSecretType().name().charAt(0))) {
+                                System.out.println("Mismatch found at "+dri.getName() + " - "+stringDungeonMechanicEntry.getKey() +" - "+((DungeonSecret) stringDungeonMechanicEntry.getValue()).getSecretType());
+                                System.out.print(' ');
                             }
                         }
                     }
-
                     FileOutputStream fos = new FileOutputStream(f);
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
                     oos.writeObject(dri);
