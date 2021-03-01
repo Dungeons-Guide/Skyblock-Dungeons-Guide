@@ -93,10 +93,7 @@ processResources
 
 shadowJar {
     dependencies {
-        include(dependency('io.vertx:vertx-auth-common:4.0.2'))
-        include(dependency('io.vertx:vertx-bridge-common:4.0.2'))
-        include(dependency('io.vertx:vertx-core:4.0.2'))
-        include(dependency('io.vertx:vertx-stomp:4.0.2'))
+        include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
     }
 }
 
