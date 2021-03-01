@@ -23,7 +23,7 @@ import java.util.List;
 public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxRealLivid() {
         super("Bossfight", "Box Real Livid", "Box Real Livid in bossfight", "bossfight.realLividBox", true);
-        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(0,255,0,150), "acolor"));
+        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Livid", new AColor(0,255,0,150), "acolor"));
     }
 
 
