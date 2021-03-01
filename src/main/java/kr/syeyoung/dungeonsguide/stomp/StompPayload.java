@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.stomp;
 
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import lombok.Data;
 import lombok.Singular;
 import lombok.experimental.Accessors;
@@ -36,11 +37,13 @@ public class StompPayload {
         if (payload != null)
             sb.append(payload);
         sb.append((char) 0);
+        if (FeatureRegistry.DEBUG.isEnabled())
         System.out.println("Probably sending "+sb.toString());
         return sb.toString();
     }
 
     public static StompPayload parse(String payload) {
+        if (FeatureRegistry.DEBUG.isEnabled())
         System.out.println("Parsing "+payload);
         Scanner scanner = new Scanner(payload);
         StompPayload stompPayload = new StompPayload();

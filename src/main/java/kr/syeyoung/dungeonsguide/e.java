@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
+import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
@@ -38,6 +39,9 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 public class e implements c, CloseListener {
 
@@ -66,12 +70,6 @@ public class e implements c, CloseListener {
     public void init(FMLInitializationEvent event) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
-        progressbar.step("Opening connection");
-        try {
-            stompConnection = new StompClient(new URI("wss://dungeonsguide.kro.kr/ws"), authenticator.c(), this);
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
 
 
         progressbar.step("Registering Events & Commands");
@@ -114,7 +112,16 @@ public class e implements c, CloseListener {
         }
         Keybinds.register();
 
-        progressbar.step("Downloading Roomdatas");
+
+        progressbar.step("Opening connection");
+        try {
+            stompConnection = new StompClient(new URI("wss://dungeonsguide.kro.kr/ws"), authenticator.c(), this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        progressbar.step("Loading Config");
         try {
             Config.loadConfig( null );
         } catch (IOException e) {
@@ -154,11 +161,25 @@ public class e implements c, CloseListener {
     public static e getDungeonsGuide() {
         return dungeonsGuide;
     }
-
+    ScheduledExecutorService ex = Executors.newScheduledThreadPool(2);
     @Override
     public void onClose(int code, String reason, boolean remote) {
         System.out.println("Stomp Connection closed, trying to reconnect - "+reason+ " - "+code);
-//        stompConnection = new StompClient(new URL("wss://dungeonsguide.kro.kr/ws").toURI(), authenticator.c(), this);
-//        Minecraft.getMinecraft().
+        connectStomp();
+    }
+
+    public void connectStomp() {
+        ex.schedule(new Runnable() {
+            @Override
+            public void run() {
+                try {
+                    stompConnection = new StompClient(new URI("wss://dungeonsguide.kro.kr/ws"), authenticator.c(), e.this);
+                    MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    connectStomp();
+                }
+            }
+        }, 5L, TimeUnit.SECONDS);
     }
 }

@@ -36,6 +36,18 @@ public class FeatureListener {
         }
     }
     @SubscribeEvent
+    public void onStomp(StompConnectedEvent stompConnectedEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof StompConnectedListener) {
+                    ((StompConnectedListener) abstractFeature).onStompConnected(stompConnectedEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
     public void onRender(RenderLivingEvent.Pre preRender) {
         try {
             SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
