@@ -7,6 +7,9 @@ import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.stomp.CloseListener;
+import kr.syeyoung.dungeonsguide.stomp.StompClient;
+import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -17,6 +20,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
+import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import org.apache.commons.io.IOUtils;
@@ -25,13 +29,17 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.Set;
 
-public class e implements c {
+public class e implements c, CloseListener {
 
     private SkyblockStatus skyblockStatus;
 
@@ -40,6 +48,9 @@ public class e implements c {
 
     @Getter
     private b authenticator;
+
+    @Getter
+    private StompInterface stompConnection;
 
     public e(b authenticator) {
         this.authenticator = authenticator;
@@ -53,6 +64,17 @@ public class e implements c {
     CommandReparty commandReparty;
 
     public void init(FMLInitializationEvent event) {
+        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+
+        progressbar.step("Opening connection");
+        try {
+            stompConnection = new StompClient(new URI("wss://dungeonsguide.kro.kr/ws"), authenticator.c(), this);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+
+        progressbar.step("Registering Events & Commands");
         dungeonsGuide = this;
         skyblockStatus = new SkyblockStatus();
 
@@ -72,6 +94,7 @@ public class e implements c {
 
         AhUtils.registerTimer();
 
+        progressbar.step("Downloading Roomdatas");
         try {
             DungeonRoomInfoRegistry.loadAll(configDir);
         } catch (BadPaddingException e) {
@@ -89,14 +112,16 @@ public class e implements c {
         } catch (InvalidKeyException e) {
             e.printStackTrace();
         }
-
         Keybinds.register();
 
+        progressbar.step("Downloading Roomdatas");
         try {
             Config.loadConfig( null );
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        ProgressManager.pop(progressbar);
     }
     public void pre(FMLPreInitializationEvent event) {
         configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
@@ -128,5 +153,12 @@ public class e implements c {
 
     public static e getDungeonsGuide() {
         return dungeonsGuide;
+    }
+
+    @Override
+    public void onClose(int code, String reason, boolean remote) {
+        System.out.println("Stomp Connection closed, trying to reconnect - "+reason+ " - "+code);
+//        stompConnection = new StompClient(new URL("wss://dungeonsguide.kro.kr/ws").toURI(), authenticator.c(), this);
+//        Minecraft.getMinecraft().
     }
 }

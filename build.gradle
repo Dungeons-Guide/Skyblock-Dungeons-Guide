@@ -42,12 +42,12 @@ minecraft {
 
 dependencies {
     implementation 'org.jetbrains:annotations-java5:19.0.0'
-
+    compile "org.java-websocket:Java-WebSocket:1.5.1"
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
     //compile "some.group:artifact:version"
-      
+
     // real examples
     //compile 'com.mod-buildcraft:buildcraft:6.0.8:dev'  // adds buildcraft to the dev env
     //compile 'com.googlecode.efficient-java-matrix-library:ejml:0.24' // adds ejml to the dev env
@@ -88,5 +88,20 @@ processResources
     // copy everything else, thats not the mcmod.info
     from(sourceSets.main.resources.srcDirs) {
         exclude 'mcmod.info'
+    }
+}
+
+shadowJar {
+    dependencies {
+        include(dependency('io.vertx:vertx-auth-common:4.0.2'))
+        include(dependency('io.vertx:vertx-bridge-common:4.0.2'))
+        include(dependency('io.vertx:vertx-core:4.0.2'))
+        include(dependency('io.vertx:vertx-stomp:4.0.2'))
+    }
+}
+
+reobf {
+    shadowJar {
+        mappingType = 'SEARGE'
     }
 }
