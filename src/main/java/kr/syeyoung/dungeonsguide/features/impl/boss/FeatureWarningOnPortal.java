@@ -90,7 +90,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
             texts.add(new StyledText("There are at least "+context.getMapProcessor().getUndiscoveredRoom()+" undiscovered rooms!\n", "warning"));
         } else if (!scoreCalculation.isFullyCleared()) {
             texts.add(new StyledText("Some rooms are not fully cleared!\n", "warning"));
-        } else if (scoreCalculation.getTombs() <= 5) {
+        } else if (scoreCalculation.getTombs() < 5) {
             texts.add(new StyledText("Only less than 5 crypts are blown up!\n", "warning"));
         } else {
             texts.add(new StyledText("\n", "warning"));

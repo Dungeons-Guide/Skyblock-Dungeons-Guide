@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide;
 
+import com.jagrosh.discordipc.entities.RichPresence;
+import com.jagrosh.discordipc.exceptions.NoDiscordClientException;
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -95,19 +97,7 @@ public class e implements c, CloseListener {
         progressbar.step("Downloading Roomdatas");
         try {
             DungeonRoomInfoRegistry.loadAll(configDir);
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
+        } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         Keybinds.register();
@@ -119,6 +109,12 @@ public class e implements c, CloseListener {
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+        try {
+            RichPresenceManager.INSTANCE.setup();
+        } catch (NoDiscordClientException e) {
+            e.printStackTrace();
+        }
+        MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
 
 
         progressbar.step("Loading Config");
