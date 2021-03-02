@@ -6,9 +6,7 @@ import org.java_websocket.handshake.ServerHandshake;
 import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
 import sun.security.ssl.SSLSocketFactoryImpl;
 
-import javax.net.ssl.SSLContext;
-import javax.net.ssl.SSLSocketFactory;
-import javax.net.ssl.TrustManagerFactory;
+import javax.net.ssl.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.net.URI;
@@ -24,7 +22,7 @@ import java.util.Map;
 
 public class StompClient extends WebSocketClient implements StompInterface {
     private SSLSocketFactory getSocketfactory() throws NoSuchAlgorithmException, KeyManagementException, CertificateException, KeyStoreException, IOException {
-        X509Certificate a = (X509Certificate) CertificateFactory.getInstance("X.509")
+        final X509Certificate a = (X509Certificate) CertificateFactory.getInstance("X.509")
                 .generateCertificate(new ByteArrayInputStream(("-----BEGIN CERTIFICATE-----\n" +
                         "MIIEZTCCA02gAwIBAgIQQAF1BIMUpMghjISpDBbN3zANBgkqhkiG9w0BAQsFADA/\n" +
                         "MSQwIgYDVQQKExtEaWdpdGFsIFNpZ25hdHVyZSBUcnVzdCBDby4xFzAVBgNVBAMT\n" +
@@ -56,11 +54,36 @@ public class StompClient extends WebSocketClient implements StompInterface {
         b.load(null, null);
         b.setCertificateEntry(Integer.toString(1), a);
 
-        TrustManagerFactory c = TrustManagerFactory.getInstance(TrustManagerFactory.getDefaultAlgorithm());
-        c.init(b);
+        X509TrustManager trustManager = new X509TrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    if (x509Certificate.equals(a)) {
+                        return;
+                    }
+                }
+                throw new CertificateException("invalid");
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    if (x509Certificate.equals(a)) {
+                        return;
+                    }
+                }
+                throw new CertificateException("invalid");
+            }
+
+            @Override
+            public X509Certificate[] getAcceptedIssuers() {
+                return new X509Certificate[] {a};
+            }
+        };
 
         SSLContext d = SSLContext.getInstance("TLSv1.2");
-        d.init(null, c.getTrustManagers(), null);
+        d.init(null, new TrustManager[]{ trustManager}, null);
+
         return d.getSocketFactory();
     }
     public StompClient(URI serverUri, final String token, CloseListener closeListener) throws Exception {
@@ -69,8 +92,13 @@ public class StompClient extends WebSocketClient implements StompInterface {
         addHeader("Authorization", token);
         setSocketFactory(getSocketfactory());
 
-        connectBlocking();
+        System.out.println("connecting websocket");
+        if (!connectBlocking()) {
+            throw new RuntimeException("Can't connect to ws");
+        }
+        System.out.println("connected, stomp handshake");
         while(this.stompClientStatus == StompClientStatus.CONNECTING);
+        System.out.println("fully connected");
     }
     private CloseListener closeListener;
 
@@ -134,7 +162,7 @@ public class StompClient extends WebSocketClient implements StompInterface {
 
     @Override
     public void onError(Exception ex) {
-
+        ex.printStackTrace();
     }
 
     private Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<Integer, StompSubscription>();

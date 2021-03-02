@@ -94,6 +94,7 @@ processResources
 shadowJar {
     dependencies {
         include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
+        include(dependency("org.slf4j:slf4j-api:1.7.25"))
     }
 }
 
