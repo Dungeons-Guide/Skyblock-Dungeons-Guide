@@ -7,16 +7,20 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
@@ -24,8 +28,10 @@ import org.lwjgl.input.Mouse;
 import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.image.BufferedImage;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.util.*;
+import java.util.List;
 import java.util.concurrent.*;
 
 public class PartyInviteViewer {
@@ -51,35 +57,39 @@ public class PartyInviteViewer {
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
         try {
             if (clientTickEvent.phase != TickEvent.Phase.START) return;
-            Iterator<PartyJoinRequest> partyJoinRequestIterator = joinRequests.iterator();
-            while (partyJoinRequestIterator.hasNext()) {
-                PartyJoinRequest joinRequest = partyJoinRequestIterator.next();
+            List<PartyJoinRequest> partyJoinRequestList = new ArrayList<>();
+            boolean isOnHypixel = e.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
+            for (PartyJoinRequest joinRequest:joinRequests) {
                 if (joinRequest.getTtl() != -1) {
                     joinRequest.setTtl(joinRequest.getTtl() - 1);
-                    if (joinRequest.getTtl() == 0) {
-                        partyJoinRequestIterator.remove();
+                    if (joinRequest.getTtl() == 0 || !isOnHypixel) {
+                        partyJoinRequestList.add(joinRequest);
                     }
+                } else if (!isOnHypixel){
+                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.NO);
+                    partyJoinRequestList.add(joinRequest);
+                } else if (joinRequest.getExpire() < System.currentTimeMillis()) {
+                    partyJoinRequestList.add(joinRequest);
                 }
             }
+            joinRequests.removeAll(partyJoinRequestList);
         } catch (Throwable e) {e.printStackTrace();}
     }
 
 
 
-    @SubscribeEvent
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
     public void onRender(GuiScreenEvent.MouseInputEvent.Pre mouseInput) {
         int mouseX = Mouse.getX();
         int mouseY = Minecraft.getMinecraft().displayHeight - Mouse.getY() +3;
-        Iterator<PartyJoinRequest> requestIter = joinRequests.iterator();
-        while (requestIter.hasNext()) {
-            PartyJoinRequest joinRequest = requestIter.next();
+        for (PartyJoinRequest joinRequest:joinRequests) {
             if (joinRequest.getWholeRect() != null && joinRequest.getWholeRect().contains(mouseX, mouseY)) {
                 mouseInput.setCanceled(true);
 
                 if (Mouse.getEventButton() == -1) return;
 
                 if (joinRequest.getReply() != null) {
-                    requestIter.remove();
+                    joinRequests.remove(joinRequest);
                     return;
                 }
 
@@ -120,11 +130,18 @@ public class PartyInviteViewer {
         if (imageMap.containsKey(url)) return CompletableFuture.completedFuture(imageMap.get(url));
         if (futureMap.containsKey(url)) return futureMap.get(url);
         Future<LoadedImage> future =  executorService.submit(() -> {
-            BufferedImage bufferedImage = ImageIO.read(new URL(url));
-            LoadedImage loadedImage = new LoadedImage();
-            loadedImage.setImage(bufferedImage);
-            imageMap.put(url, loadedImage);
-            return loadedImage;
+            try {
+                URL urlObj = new URL(url);
+                HttpURLConnection huc = (HttpURLConnection) urlObj.openConnection();
+                huc.addRequestProperty("User-Agent", "DungeonsGuideMod (dungeonsguide.kro.kr, 1.0)");
+                BufferedImage bufferedImage = ImageIO.read(huc.getInputStream());
+                LoadedImage loadedImage = new LoadedImage();
+                loadedImage.setImage(bufferedImage);
+                imageMap.put(url, loadedImage);
+                return loadedImage;
+            } catch (Exception e) {
+                throw e;
+            }
         });
         futureMap.put(url,future);
         return future;
@@ -180,7 +197,20 @@ public class PartyInviteViewer {
                 if (loadedImage.getResourceLocation() == null) loadedImage.buildGLThings();
                 TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
                 textureManager.bindTexture(loadedImage.getResourceLocation());
+                GlStateManager.pushAttrib();
+
+                GlStateManager.disableLighting();
+                GlStateManager.color(1, 1, 1, 1.0F);
+                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+
                 Gui.drawModalRectWithCustomSizedTexture(7, 7, 0, 0, height-14, height-14,loadedImage.getImage().getWidth(),loadedImage.getImage().getHeight());
+
+
+                GlStateManager.enableLighting();
+                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
+                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
+                GlStateManager.popAttrib();
             } else {
                 Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
             }
@@ -202,10 +232,10 @@ public class PartyInviteViewer {
                 GlStateManager.pushMatrix();
                     GlStateManager.translate(0, fr.FONT_HEIGHT * 3 + 5, 0);
                     GlStateManager.scale(1.0,1.0,1.0);
-                    fr.drawString("wants to join your party!", 0,0,0xFFFFFFFF,false);
+                    fr.drawString("wants to join your party! ("+(TextUtils.formatTime(partyJoinRequest.getExpire() - System.currentTimeMillis()))+")", 0,0,0xFFFFFFFF,false);
                 GlStateManager.popMatrix();
             GlStateManager.popMatrix();
-            if (partyJoinRequest == null || partyJoinRequest.getReply() == null) {
+            if (partyJoinRequest.getReply() == null) {
                 GlStateManager.pushMatrix();
                     GlStateManager.translate(height + 3, height - 32, 0);
                     int widthForTheThing = (width - height) / 3;

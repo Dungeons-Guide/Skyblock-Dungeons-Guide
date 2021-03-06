@@ -36,7 +36,7 @@ public class RichPresenceManager implements Runnable {
                 }).setJoinRequestEventHandler(request -> {
                     PartyJoinRequest partyJoinRequest = new PartyJoinRequest();
                     partyJoinRequest.setDiscordUser(request);
-                    partyJoinRequest.setTime(Instant.now());
+                    partyJoinRequest.setExpire(System.currentTimeMillis() + 30000);
 
                     PartyInviteViewer.INSTANCE.joinRequests.add(partyJoinRequest);
                 }).setJoinGameEventHandler(joinSecret -> {
@@ -61,7 +61,7 @@ public class RichPresenceManager implements Runnable {
         } else {
             DiscordRichPresence.Builder richPresenceBuilder = new DiscordRichPresence.Builder(skyblockStatus.getDungeonName());
             richPresenceBuilder.setBigImage("mort", "mort")
-                    .setParty(PartyManager.INSTANCE.getPartyID(), 1, 5);
+                    .setParty(PartyManager.INSTANCE.getPartyID(), PartyManager.INSTANCE.getMemberCount(), 5);
 
             if (skyblockStatus.getContext() != null) {
                 long init = skyblockStatus.getContext().getInit();
@@ -99,7 +99,7 @@ public class RichPresenceManager implements Runnable {
                     lastLoc = skyblockStatus.getDungeonName()+"";
                 }
                 updatePresence();
-                Thread.sleep(1000L);
+                Thread.sleep(300L);
             } catch (Exception e) {e.printStackTrace();}
         }
     }

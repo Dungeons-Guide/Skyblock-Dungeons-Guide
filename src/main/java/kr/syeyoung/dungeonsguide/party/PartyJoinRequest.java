@@ -12,7 +12,7 @@ import java.time.Instant;
 @Data
 public class PartyJoinRequest {
     private DiscordUser discordUser;
-    private Instant time;
+    private long expire;
 
     private Rectangle wholeRect = new Rectangle();
     private Rectangle acceptRect = new Rectangle();
