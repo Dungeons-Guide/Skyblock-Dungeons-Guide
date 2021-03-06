@@ -140,7 +140,7 @@ public final class DiscordRPC {
 		finalPath = "/" + dir + "/" + name;
 
 		try {
-			File f = File.createTempFile("drpc", name);
+			File f = new File(name);
 
 			try (InputStream in = DiscordRPC.class.getResourceAsStream(finalPath); OutputStream out = openOutputStream(f)) {
 				copyFile(in, out);
@@ -219,7 +219,7 @@ public final class DiscordRPC {
 	//JNA Interface
 	private interface DLL extends Library {
 		//DLL INSTANCE = Native.load("discord-rpc", DLL.class);
-		DLL INSTANCE = Native.loadLibrary("discord-rpc", DLL.class);
+		DLL INSTANCE = (DLL) Native.loadLibrary("discord-rpc", DLL.class);
 
 		void Discord_Initialize(String applicationId, DiscordEventHandlers handlers, int autoRegister, String optionalSteamId);
 		void Discord_Register(String applicationId, String command);

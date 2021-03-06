@@ -56,11 +56,6 @@ public class DiscordRichPresence extends Structure {
 	 */
 	public int partyMax;
 	/**
-	 * Unused.
-	 */
-	@Deprecated
-	public String matchSecret;
-	/**
 	 * Unique hashed string for Spectate button.
 	 */
 	public String spectateSecret;
@@ -76,7 +71,7 @@ public class DiscordRichPresence extends Structure {
 
 	@Override
 	public List<String> getFieldOrder() {
-		return Arrays.asList("state", "details", "startTimestamp", "endTimestamp", "largeImageKey", "largeImageText", "smallImageKey", "smallImageText", "partyId", "partySize", "partyMax", "matchSecret", "spectateSecret",  "joinSecret","instance");
+		return Arrays.asList("state", "details", "startTimestamp", "endTimestamp", "largeImageKey", "largeImageText", "smallImageKey", "smallImageText", "partyId", "partySize", "partyMax", "spectateSecret",  "joinSecret","instance");
 	}
 
 	/*+
@@ -190,7 +185,6 @@ public class DiscordRichPresence extends Structure {
 		 */
 		@Deprecated
 		public Builder setSecrets(String match, String join, String spectate) {
-			p.matchSecret = match;
 			p.joinSecret = join;
 			p.spectateSecret = spectate;
 			return this;

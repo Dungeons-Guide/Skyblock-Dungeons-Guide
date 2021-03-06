@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.party;
 import kr.syeyoung.dungeonsguide.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
@@ -14,6 +15,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
 import scala.util.parsing.json.JSON;
@@ -54,8 +56,6 @@ public class PartyManager implements StompMessageHandler {
             StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
             stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
         }
-        this.partyID = partyID;
-        this.askToJoinSecret = null;
 
         if (partyID != null && !partyID.equals(this.partyID)) {
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
@@ -63,6 +63,8 @@ public class PartyManager implements StompMessageHandler {
             canInvite = true;
             allowAskToJoin = false;
         }
+        this.partyID = partyID;
+        this.askToJoinSecret = null;
 
         if (allowAskToJoin) {
             generateNewAskToJoinSecret();
@@ -117,6 +119,7 @@ public class PartyManager implements StompMessageHandler {
                 members.add(player);
             }
         } else if (str.equals("§9§m-----------------------------§r")) {
+            if (checkPlayer == 2) {chatReceivedEvent.setCanceled(true);}
             if (partyJoin) {
                 partyJoin = false;
                 // REQ PARTY JOIN
@@ -129,6 +132,17 @@ public class PartyManager implements StompMessageHandler {
                 object.put("members", jsonArray);
                 StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
                 stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
+            }
+            if (checkPlayer == 2) {
+                checkPlayer = 0;
+                String playerName = theObject.getString("player");
+                String token = theObject.getString("token");
+                Long loong = recentlyJoined.get(playerName);
+                if (!members.contains(playerName)) {
+                    e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                } else if (loong > System.currentTimeMillis() - 2000){
+                    e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                }
             }
         } else if (str.endsWith("§ejoined the party.§r")) {
             String asd = null;
@@ -143,15 +157,17 @@ public class PartyManager implements StompMessageHandler {
         ){
             setPartyID(null);
         } else if (str.startsWith("§6Party Members ")) {
+            if (checkPlayer == 2) {chatReceivedEvent.setCanceled(true);}
             partyJoin = true;
             members.clear();
         } else if (str.startsWith("§cYou are not currently in a party.§r")) {
             members.clear();
             setPartyID(null);
-        } else if (str.startsWith("§cYou are not in a party!§r")) {
+        } else if (str.startsWith("§cYou are not in a party")) {
             members.clear();
             setPartyID(null);
         } else if (str.startsWith("§eParty ") && str.contains(":")) {
+            if (checkPlayer == 2) {chatReceivedEvent.setCanceled(true);}
             String playerNames = TextUtils.stripColor(str.split(":")[1]);
             for (String s : playerNames.split(" ")) {
                 if (s.isEmpty()) continue;
@@ -178,25 +194,31 @@ public class PartyManager implements StompMessageHandler {
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
         }
     }
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
+        if (clientTickEvent.phase == TickEvent.Phase.START) {
+            if (checkPlayer == 1) {
+                checkPlayer = 2;
+                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
+            }
+        }
+    }
 
     @SubscribeEvent
-    public void onSBJoin(SkyblockJoinedEvent skyblockJoinedEvent) {
+    public void onHypixelJoin(HypixelJoinedEvent skyblockJoinedEvent) {
         Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
     }
+
+    private int checkPlayer = 0;
+    private JSONObject theObject;
 
     @Override
     public void handle(StompInterface stompInterface, StompPayload stompPayload) {
         JSONObject object = new JSONObject(stompPayload.payload());
-        if ("/queue/party.check".equals(stompPayload.headers().get("destination"))) {
-            String playerName = object.getString("player");
-            String token = object.getString("token");
-            Long loong = recentlyJoined.get(playerName);
-            if (loong == null) {
-                stompInterface.send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).header("destination", "/app/party.check.resp"));
-            } else if (loong > System.currentTimeMillis() - 2000){
-                stompInterface.send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
-            }
-        } else if ("/queue/party.join".equals(stompPayload.headers().get("destination"))) {
+        if ("/user/queue/party.check".equals(stompPayload.headers().get("destination"))) {
+            checkPlayer = 1;
+            theObject = object;
+        } else if ("/user/queue/party.join".equals(stompPayload.headers().get("destination"))) {
             String playerName = object.getString("player");
             String secret = object.getString("secret");
             if (secret.equals(askToJoinSecret) && partyID != null) {

@@ -8,6 +8,7 @@ import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
@@ -97,6 +98,7 @@ public class e implements c, CloseListener {
         RichPresenceManager.INSTANCE.setup();
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(PartyInviteViewer.INSTANCE);
 
         AhUtils.registerTimer();
 

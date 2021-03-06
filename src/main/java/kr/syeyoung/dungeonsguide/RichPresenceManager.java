@@ -3,6 +3,8 @@ package kr.syeyoung.dungeonsguide;
 import kr.syeyoung.dungeonsguide.events.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
+import kr.syeyoung.dungeonsguide.party.PartyJoinRequest;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
@@ -14,8 +16,9 @@ import org.json.JSONObject;
 
 import java.io.*;
 import java.net.URL;
+import java.time.Instant;
 
-public class RichPresenceManager implements JoinRequestCallback, JoinGameCallback, ErroredCallback, DisconnectedCallback, Runnable {
+public class RichPresenceManager implements Runnable {
     public static RichPresenceManager INSTANCE = new RichPresenceManager();
 
     public RichPresenceManager() {
@@ -30,11 +33,23 @@ public class RichPresenceManager implements JoinRequestCallback, JoinGameCallbac
                     public void apply(DiscordUser user) {
                         updatePresence();
                     }
-                })
-                .setJoinRequestEventHandler(this)
-                .setJoinGameEventHandler(this)
-                .setErroredEventHandler(this)
-                .setDisconnectedEventHandler(this).build(), true);
+                }).setJoinRequestEventHandler(request -> {
+                    PartyJoinRequest partyJoinRequest = new PartyJoinRequest();
+                    partyJoinRequest.setDiscordUser(request);
+                    partyJoinRequest.setTime(Instant.now());
+
+                    PartyInviteViewer.INSTANCE.joinRequests.add(partyJoinRequest);
+                }).setJoinGameEventHandler(joinSecret -> {
+                    e.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
+                            .header("destination", "/app/party.askedtojoin")
+                            .payload(new JSONObject().put("token", joinSecret).toString()));
+                }).setErroredEventHandler((errorCode, message) -> {
+                    System.out.println("ERROR! "+errorCode+ " - "+message);
+                    setup();
+                }).setDisconnectedEventHandler((errorCode, message) -> {
+                    System.out.println("ERROR! "+errorCode+ " - "+message);
+                    setup();
+                }).build(), true);
     }
 
     private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
@@ -75,27 +90,6 @@ public class RichPresenceManager implements JoinRequestCallback, JoinGameCallbac
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent clientTickEvent) {
     }
-
-    @Override
-    public void apply(int errorCode, String message) {
-        System.out.println("ERROR! "+errorCode+ " - "+message);
-        setup();
-    }
-
-    @Override
-    public void apply(String joinSecret) {
-        System.out.println("OK JOINNNNNNNNNNNNNNNNNN "+joinSecret);
-        e.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
-        .header("destination", "/app/party.askedtojoin")
-        .payload(new JSONObject().put("token", joinSecret).toString()));
-    }
-
-    @Override
-    public void apply(DiscordUser user) {
-        System.out.println(user.username+" wants to join");
-        DiscordRPC.discordRespond(user.userId, DiscordRPC.DiscordReply.YES);
-    }
-
     @Override
     public void run() {
         while(true) {
@@ -105,6 +99,7 @@ public class RichPresenceManager implements JoinRequestCallback, JoinGameCallbac
                     lastLoc = skyblockStatus.getDungeonName()+"";
                 }
                 updatePresence();
+                Thread.sleep(1000L);
             } catch (Exception e) {e.printStackTrace();}
         }
     }

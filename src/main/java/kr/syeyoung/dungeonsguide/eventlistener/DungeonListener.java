@@ -106,6 +106,7 @@ public class DungeonListener {
         } catch (Throwable e2) {e2.printStackTrace();}
     }
 
+    boolean wasOnHypixel = false;
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) throws Throwable {
         try {
@@ -152,6 +153,11 @@ public class DungeonListener {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
                     boolean isOnSkyblock = skyblockStatus.isOnSkyblock();
                     skyblockStatus.updateStatus();
+
+                    if (!wasOnHypixel && skyblockStatus.isOnHypixel()) {
+                        MinecraftForge.EVENT_BUS.post(new HypixelJoinedEvent());
+                    }
+                    wasOnHypixel = skyblockStatus.isOnHypixel();
 
                     if (isOnSkyblock && !skyblockStatus.isOnSkyblock()) {
                         MinecraftForge.EVENT_BUS.post(new SkyblockLeftEvent());

@@ -53,7 +53,6 @@ dependencies {
     implementation 'org.jetbrains:annotations-java5:19.0.0'
     compile "org.java-websocket:Java-WebSocket:1.5.1"
     compile "org.json:json:20171018"
-    compile "net.java.dev.jna:jna:4.5.0"
 
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
@@ -107,7 +106,6 @@ shadowJar {
     dependencies {
         include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
         include(dependency("org.json:json:20171018"))
-        include(dependency("net.java.dev.jna:jna:4.5.0"))
     }
 }
 
