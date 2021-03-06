@@ -148,6 +148,9 @@ public class PartyManager implements StompMessageHandler {
         } else if (str.startsWith("§cYou are not currently in a party.§r")) {
             members.clear();
             setPartyID(null);
+        } else if (str.startsWith("§cYou are not in a party!§r")) {
+            members.clear();
+            setPartyID(null);
         } else if (str.startsWith("§eParty ") && str.contains(":")) {
             String playerNames = TextUtils.stripColor(str.split(":")[1]);
             for (String s : playerNames.split(" ")) {
@@ -162,6 +165,8 @@ public class PartyManager implements StompMessageHandler {
             askToJoinSecret = "";
             RichPresenceManager.INSTANCE.updatePresence();
         } else if (str.equals("§cCouldn't find a player with that name!§r")) {
+            canInvite = true;
+        } else if (str.equals("§cYou cannot invite that player since they're not online.")) {
             canInvite = true;
         } else if (str.endsWith("§aenabled All Invite§r")) {
             canInvite = true;

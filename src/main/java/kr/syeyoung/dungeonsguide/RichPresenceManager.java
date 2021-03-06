@@ -6,18 +6,23 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
-import net.arikia.dev.drpc.DiscordEventHandlers;
-import net.arikia.dev.drpc.DiscordRPC;
-import net.arikia.dev.drpc.DiscordRichPresence;
-import net.arikia.dev.drpc.DiscordUser;
+import net.arikia.dev.drpc.*;
 import net.arikia.dev.drpc.callbacks.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
-public class RichPresenceManager implements JoinRequestCallback, JoinGameCallback, ErroredCallback, DisconnectedCallback {
+import java.io.*;
+import java.net.URL;
+
+public class RichPresenceManager implements JoinRequestCallback, JoinGameCallback, ErroredCallback, DisconnectedCallback, Runnable {
     public static RichPresenceManager INSTANCE = new RichPresenceManager();
 
+    public RichPresenceManager() {
+        setup();
+        new Thread(this).start();
+        Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
+    }
     public void setup() {
         DiscordRPC.discordInitialize("816298079732498473", new DiscordEventHandlers.Builder()
                 .setReadyEventHandler(new ReadyCallback() {
@@ -36,7 +41,6 @@ public class RichPresenceManager implements JoinRequestCallback, JoinGameCallbac
 
 
     public void updatePresence() {
-        nextUpdate= System.currentTimeMillis() + 10000L;
         if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.ADVANCED_RICHPRESENCE.isEnabled()) {
             DiscordRPC.discordClearPresence();
         } else {
@@ -67,17 +71,9 @@ public class RichPresenceManager implements JoinRequestCallback, JoinGameCallbac
     }
 
     private String lastLoc = "";
-    private long nextUpdate = System.currentTimeMillis() + 10000L;
+
     @SubscribeEvent
     public void tick(TickEvent.ClientTickEvent clientTickEvent) {
-        try {
-            if (skyblockStatus.isOnSkyblock() && !lastLoc.equalsIgnoreCase(skyblockStatus.getDungeonName())) {
-                lastLoc = skyblockStatus.getDungeonName()+"";
-                updatePresence();
-            } else if (nextUpdate < System.currentTimeMillis()) {
-                updatePresence();
-            }
-        } catch (Exception e) {e.printStackTrace();}
     }
 
     @Override
@@ -98,5 +94,18 @@ public class RichPresenceManager implements JoinRequestCallback, JoinGameCallbac
     public void apply(DiscordUser user) {
         System.out.println(user.username+" wants to join");
         DiscordRPC.discordRespond(user.userId, DiscordRPC.DiscordReply.YES);
+    }
+
+    @Override
+    public void run() {
+        while(true) {
+            try {
+                DiscordRPC.discordRunCallbacks();
+                if (skyblockStatus.isOnSkyblock() && !lastLoc.equalsIgnoreCase(skyblockStatus.getDungeonName())) {
+                    lastLoc = skyblockStatus.getDungeonName()+"";
+                }
+                updatePresence();
+            } catch (Exception e) {e.printStackTrace();}
+        }
     }
 }
