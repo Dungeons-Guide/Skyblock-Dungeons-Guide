@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
@@ -241,6 +242,10 @@ public class CommandDungeonsGuide extends CommandBase {
                 PartyManager.INSTANCE.toggleAllowAskToJoin();
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to "+(PartyManager.INSTANCE.isAllowAskToJoin() ? "§eon" : "§coff")));
             }
+
+            if (!FeatureRegistry.ADVANCED_RICHPRESENCE.isEnabled()) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Advanced "));
+            }
         } else if (args[0].equalsIgnoreCase("partymax") || args[0].equalsIgnoreCase("pm")) {
             if (args.length == 1){
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e"+PartyManager.INSTANCE.getMaxParty()));
@@ -273,7 +278,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets partymax §7(maximum amount people in party, for discord rpc)"));
         }
     }
