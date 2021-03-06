@@ -88,6 +88,11 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
         return healths;
     }
 
+    @Override
+    public String getBossName() {
+        return "Scarf";
+    }
+
     private EntityArmorStand scarfStand;
     private EntityArmorStand priestStand;
     private EntityArmorStand mageStand;

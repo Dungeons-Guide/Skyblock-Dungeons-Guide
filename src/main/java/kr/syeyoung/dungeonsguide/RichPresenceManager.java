@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide;
 
+import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.events.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -61,16 +62,22 @@ public class RichPresenceManager implements Runnable {
         } else {
             DiscordRichPresence.Builder richPresenceBuilder = new DiscordRichPresence.Builder(skyblockStatus.getDungeonName());
             richPresenceBuilder.setBigImage("mort", "mort")
-                    .setParty(PartyManager.INSTANCE.getPartyID(), PartyManager.INSTANCE.getMemberCount(), 5);
+                    .setParty(PartyManager.INSTANCE.getPartyID(), PartyManager.INSTANCE.getMemberCount(), PartyManager.INSTANCE.getMaxParty());
 
             if (skyblockStatus.getContext() != null) {
-                long init = skyblockStatus.getContext().getInit();
+                DungeonContext dungeonContext = skyblockStatus.getContext();
+                long init = dungeonContext.getInit();
                 richPresenceBuilder.setStartTimestamps(init);
-            } else {
-                if (PartyManager.INSTANCE.isAllowAskToJoin())
-                    richPresenceBuilder.setSecrets(PartyManager.INSTANCE.getAskToJoinSecret(), null);
+
+                if (dungeonContext.getBossfightProcessor() != null) {
+                    richPresenceBuilder.setDetails("Fighting "+dungeonContext.getBossfightProcessor().getBossName()+": "+dungeonContext.getBossfightProcessor().getCurrentPhase());
+                } else {
+                    richPresenceBuilder.setDetails("Clearing rooms");
+                }
             }
-            richPresenceBuilder.setDetails("Dungeons Guide RichPresence Test");
+            if (PartyManager.INSTANCE.isAllowAskToJoin())
+                richPresenceBuilder.setSecrets(PartyManager.INSTANCE.getAskToJoinSecret(), null);
+            richPresenceBuilder.setDetails("Dungeons Guide");
             DiscordRPC.discordUpdatePresence(richPresenceBuilder.build());
         }
     }

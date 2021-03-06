@@ -51,6 +51,11 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
         return healths;
     }
 
+    @Override
+    public String getBossName() {
+        return "Bonzo";
+    }
+
     private EntityArmorStand bonzoStand;
     @Override
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿

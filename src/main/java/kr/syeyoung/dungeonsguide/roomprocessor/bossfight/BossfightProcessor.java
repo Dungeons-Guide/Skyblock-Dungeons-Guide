@@ -10,4 +10,6 @@ public interface BossfightProcessor extends RoomProcessor {
     List<String> getNextPhases();
 
     List<HealthData> getHealths();
+
+    String getBossName();
 }

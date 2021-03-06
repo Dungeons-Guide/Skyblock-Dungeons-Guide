@@ -241,6 +241,24 @@ public class CommandDungeonsGuide extends CommandBase {
                 PartyManager.INSTANCE.toggleAllowAskToJoin();
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to "+(PartyManager.INSTANCE.isAllowAskToJoin() ? "§eon" : "§coff")));
             }
+        } else if (args[0].equalsIgnoreCase("partymax") || args[0].equalsIgnoreCase("pm")) {
+            if (args.length == 1){
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e"+PartyManager.INSTANCE.getMaxParty()));
+            } else if (args.length == 2) {
+                try {
+                    int partyMax = Integer.parseInt(args[1]);
+                    if (partyMax < 2) {
+                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
+                        return;
+                    }
+
+                    PartyManager.INSTANCE.setMaxParty(partyMax);
+                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set partymax to §e"+PartyManager.INSTANCE.getMaxParty()));
+                } catch (Exception e) {
+                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §c"+args[1]+" is not valid number."));
+                    return;
+                }
+            }
         } else if (args[0].equals("partyid")) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: "+PartyManager.INSTANCE.getPartyID()));
         } else if (args[0].equalsIgnoreCase("loc")) {

@@ -98,6 +98,11 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         return healths;
     }
 
+    @Override
+    public String getBossName() {
+        return "The Professor";
+    }
+
     private EntityArmorStand profStand;
     private EntityArmorStand laserGuard;
     private EntityArmorStand chaosGuard;

@@ -61,4 +61,9 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         healths.add(new HealthData(realLividName == null ? "unknown" : realLividName, (int) health,7000000 , true));
         return healths;
     }
+
+    @Override
+    public String getBossName() {
+        return realLividName == null ? "Livid" : realLividName;
+    }
 }

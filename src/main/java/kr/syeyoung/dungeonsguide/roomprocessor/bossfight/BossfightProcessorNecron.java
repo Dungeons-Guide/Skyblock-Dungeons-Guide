@@ -49,6 +49,11 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
         return healths;
     }
 
+    @Override
+    public String getBossName() {
+        return "Necron";
+    }
+
     private EntityArmorStand bonzoStand;
     @Override
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿

@@ -12,6 +12,7 @@ import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -43,6 +44,10 @@ public class PartyManager implements StompMessageHandler {
     @Getter
     private boolean canInvite = false;
     private int invitedDash  =0;
+
+    @Getter
+    @Setter
+    private int maxParty = 5;
 
     public void toggleAllowAskToJoin() {
         if (canInvite) allowAskToJoin = !allowAskToJoin;

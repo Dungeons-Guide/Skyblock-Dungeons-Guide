@@ -57,6 +57,11 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
         return healths;
     }
 
+    @Override
+    public String getBossName() {
+        return "Thorn";
+    }
+
     public double calculatePercentage() {
         int total = progressBar.size(), lit = 0;
         if (total == 0) return 0;

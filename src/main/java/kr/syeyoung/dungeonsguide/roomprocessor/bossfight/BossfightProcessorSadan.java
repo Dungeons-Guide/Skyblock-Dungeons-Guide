@@ -98,6 +98,11 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
         return healths;
     }
 
+    @Override
+    public String getBossName() {
+        return "Sadan";
+    }
+
     private EntityArmorStand sadanStand;
     private EntityArmorStand diamondGiant;
     private EntityArmorStand laserGiant;
