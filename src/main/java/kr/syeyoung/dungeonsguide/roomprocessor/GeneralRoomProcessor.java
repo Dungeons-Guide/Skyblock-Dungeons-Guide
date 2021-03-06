@@ -65,6 +65,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private Set<String> visited = new HashSet<String>();
 
     public void searchForNextTarget() {
+        if (getDungeonRoom().getCurrentState() == DungeonRoom.RoomState.FINISHED) {
+            cancel();
+            return;
+        }
+
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
 
         double lowestCost = 99999999999999.0;
