@@ -17,11 +17,6 @@ buildscript {
 apply plugin: 'net.minecraftforge.gradle.forge'
 apply plugin: 'com.github.johnrengelman.shadow'
 
-java {
-    sourceCompatibility = JavaVersion.VERSION_1_8
-    targetCompatibility = JavaVersion.VERSION_1_8
-}
-
 /*
 // for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
 plugins {
@@ -31,6 +26,10 @@ plugins {
 version = "2.0"
 group= "kr.syeyoung.dungeonsguide" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
 archivesBaseName = "dungeonsguide"
+
+sourceCompatibility=1.8
+targetCompatibility=1.8
+
 
 minecraft {
     version = "1.8.9-11.15.1.1722"
@@ -48,11 +47,13 @@ minecraft {
 repositories {
     jcenter()
     mavenCentral()
+    maven { url 'https://jitpack.io' }
 }
 dependencies {
     implementation 'org.jetbrains:annotations-java5:19.0.0'
     compile "org.java-websocket:Java-WebSocket:1.5.1"
-    compile 'com.jagrosh:DiscordIPC:0.4'
+    compile 'com.github.Vatuu:discord-rpc:1.6.2'
+    compile "org.json:json:20171018"
     // you may put jars on which you depend on in ./libs
     // or you may define them like so..
     //compile "some.group:artifact:version:classifier"
@@ -104,11 +105,8 @@ processResources
 shadowJar {
     dependencies {
         include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
-        include(dependency("org.slf4j:slf4j-api:1.7.25"))
-        include(dependency("com.jagrosh:DiscordIPC:0.4"))
         include(dependency("org.json:json:20171018"))
-        include(dependency("com.kohlschutter.junixsocket:junixsocket-common:2.0.4"))
-        include(dependency("com.kohlschutter.junixsocket:junixsocket-native-common:2.0.4"))
+        include(dependency("com.github.Vatuu:discord-rpc:1.6.2"))
     }
 }
 

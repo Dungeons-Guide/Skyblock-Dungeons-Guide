@@ -53,9 +53,8 @@ public class FeatureAutoAcceptReparty extends SimpleFeature implements ChatListe
                     break;
                 }
             }
-            System.out.println(lastDisband + " - "+equals);
 
-            if (equals) {
+            if (equals && isEnabled()) {
                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/p join "+lastDisband);
             }
         }

@@ -52,7 +52,10 @@ public class DungeonContext {
     private List<String[]> milestoneReached = new ArrayList<String[]>();
     @Getter
     @Setter
-    private int BossRoomEnterSeconds = -1;
+    private long BossRoomEnterSeconds = -1;
+    @Getter
+    @Setter
+    private long init = -1;
     @Getter
     @Setter
     private BlockPos bossroomSpawnPos = null;
@@ -88,6 +91,7 @@ public class DungeonContext {
         mapProcessor = new MapProcessor(this);
         DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
         trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        init = System.currentTimeMillis();
     }
 
     public void createEvent(DungeonEventData eventData) {

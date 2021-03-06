@@ -10,6 +10,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
@@ -233,6 +234,17 @@ public class CommandDungeonsGuide extends CommandBase {
 //                    e.printStackTrace();
 //                }
 //            }
+        } else if (args[0].equalsIgnoreCase("asktojoin") || args[0].equalsIgnoreCase("atj")) {
+            if (!PartyManager.INSTANCE.isCanInvite()) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cYou don't have perms in the party to invite people!"));
+            } else {
+                PartyManager.INSTANCE.toggleAllowAskToJoin();
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to "+(PartyManager.INSTANCE.isAllowAskToJoin() ? "§eon" : "§coff")));
+            }
+        } else if (args[0].equals("partyid")) {
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: "+PartyManager.INSTANCE.getPartyID()));
+        } else if (args[0].equalsIgnoreCase("loc")) {
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
@@ -243,6 +255,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join"));
         }
     }
 

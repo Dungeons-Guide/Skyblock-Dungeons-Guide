@@ -10,7 +10,7 @@ bobView:true
 anaglyph3d:false
 maxFps:120
 fboEnable:true
-difficulty:1
+difficulty:3
 fancyGraphics:true
 ao:2
 renderClouds:fast
@@ -24,7 +24,7 @@ chatLinks:true
 chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
-fullscreen:true
+fullscreen:false
 enableVsync:true
 useVbo:true
 hideServerAddress:false
@@ -94,7 +94,7 @@ key_start editing session:19
 key_send and save bombdefuse solution:33
 key_navigate to next secret. (Req option enabled at /dg):34
 key_toggle Pathfind. (Req option enabled at /dg):47
-soundCategory_master:0.07284768
+soundCategory_master:1.0
 soundCategory_music:0.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

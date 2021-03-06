@@ -9,6 +9,7 @@ import sun.security.ssl.SSLSocketFactoryImpl;
 import javax.net.ssl.*;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
+import java.net.Socket;
 import java.net.URI;
 import java.security.KeyManagementException;
 import java.security.KeyStore;
@@ -54,7 +55,50 @@ public class StompClient extends WebSocketClient implements StompInterface {
         b.load(null, null);
         b.setCertificateEntry(Integer.toString(1), a);
 
-        X509TrustManager trustManager = new X509TrustManager() {
+        X509TrustManager trustManager = new X509ExtendedTrustManager() {
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s, Socket socket) throws CertificateException {
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    if (x509Certificate.equals(a)) {
+                        return;
+                    }
+                }
+                throw new CertificateException("invalid");
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s, Socket socket) throws CertificateException {
+
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    if (x509Certificate.equals(a)) {
+                        return;
+                    }
+                }
+                throw new CertificateException("invalid");
+            }
+
+            @Override
+            public void checkClientTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) throws CertificateException {
+
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    if (x509Certificate.equals(a)) {
+                        return;
+                    }
+                }
+                throw new CertificateException("invalid");
+            }
+
+            @Override
+            public void checkServerTrusted(X509Certificate[] x509Certificates, String s, SSLEngine sslEngine) throws CertificateException {
+
+                for (X509Certificate x509Certificate : x509Certificates) {
+                    if (x509Certificate.equals(a)) {
+                        return;
+                    }
+                }
+                throw new CertificateException("invalid");
+            }
+
             @Override
             public void checkClientTrusted(X509Certificate[] x509Certificates, String s) throws CertificateException {
                 for (X509Certificate x509Certificate : x509Certificates) {
@@ -83,7 +127,6 @@ public class StompClient extends WebSocketClient implements StompInterface {
 
         SSLContext d = SSLContext.getInstance("TLSv1.2");
         d.init(null, new TrustManager[]{ trustManager}, null);
-
         return d.getSocketFactory();
     }
     public StompClient(URI serverUri, final String token, CloseListener closeListener) throws Exception {
@@ -107,6 +150,7 @@ public class StompClient extends WebSocketClient implements StompInterface {
 
     @Getter
     private StompPayload errorPayload;
+
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
@@ -137,10 +181,12 @@ public class StompClient extends WebSocketClient implements StompInterface {
                         );
                     }
                 } catch (Exception e) {
-                    send(new StompPayload().method(StompHeader.NACK)
-                            .header("id",payload.headers().get("ack")).getBuilt()
-                    );
                     e.printStackTrace();
+                    if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+                        send(new StompPayload().method(StompHeader.NACK)
+                                .header("id",payload.headers().get("ack")).getBuilt()
+                        );
+                    }
                 }
             } else if (payload.method() == StompHeader.RECEIPT) {
                 String receipt_id = payload.headers().get("receipt-id");
@@ -176,7 +222,7 @@ public class StompClient extends WebSocketClient implements StompInterface {
         payload.method(StompHeader.SEND);
         if (payload.headers().get("receipt") != null)
             receiptMap.put(Integer.parseInt(payload.headers().get("receipt")), payload);
-        send(payload);
+        send(payload.getBuilt());
     }
 
     @Override

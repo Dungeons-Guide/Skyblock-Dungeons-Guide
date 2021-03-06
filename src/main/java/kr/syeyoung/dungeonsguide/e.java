@@ -1,7 +1,5 @@
 package kr.syeyoung.dungeonsguide;
 
-import com.jagrosh.discordipc.entities.RichPresence;
-import com.jagrosh.discordipc.exceptions.NoDiscordClientException;
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -10,6 +8,7 @@ import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
@@ -69,6 +68,9 @@ public class e implements c, CloseListener {
     @Getter
     CommandReparty commandReparty;
 
+
+    private String stompURL = "wss://dungeonsguide.kro.kr/ws";
+//    private String stompURL = "ws://localhost/ws";
     public void init(FMLInitializationEvent event) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
@@ -92,6 +94,10 @@ public class e implements c, CloseListener {
         MinecraftForge.EVENT_BUS.register(new PacketListener());
         MinecraftForge.EVENT_BUS.register(new Keybinds());
 
+        RichPresenceManager.INSTANCE.setup();
+        MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
+
         AhUtils.registerTimer();
 
         progressbar.step("Downloading Roomdatas");
@@ -103,18 +109,14 @@ public class e implements c, CloseListener {
         Keybinds.register();
 
 
+
         progressbar.step("Opening connection");
         try {
-            stompConnection = new StompClient(new URI("wss://dungeonsguide.kro.kr/ws"), authenticator.c(), this);
+            stompConnection = new StompClient(new URI(stompURL), authenticator.c(), this);
+            MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
-        try {
-            RichPresenceManager.INSTANCE.setup();
-        } catch (NoDiscordClientException e) {
-            e.printStackTrace();
-        }
-        MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
 
 
         progressbar.step("Loading Config");
@@ -169,11 +171,10 @@ public class e implements c, CloseListener {
             @Override
             public void run() {
                 try {
-                    stompConnection = new StompClient(new URI("wss://dungeonsguide.kro.kr/ws"), authenticator.c(), e.this);
+                    stompConnection = new StompClient(new URI(stompURL), authenticator.c(), e.this);
                     MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
                 } catch (Exception e) {
                     e.printStackTrace();
-                    connectStomp();
                 }
             }
         }, 5L, TimeUnit.SECONDS);
