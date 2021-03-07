@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -17,16 +18,21 @@ import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.ICommand;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.common.FMLLog;
 import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -75,7 +81,16 @@ public class e implements c, CloseListener {
     public void init(FMLInitializationEvent event) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
-
+        try {
+            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) a.class.getClassLoader(), "invalidClasses");
+            ((LaunchClassLoader)a.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
+            for (String s : invalid) {
+                System.out.println(s+" in invalid");
+            }
+            invalid.clear();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
 
         progressbar.step("Registering Events & Commands");
         dungeonsGuide = this;
@@ -109,8 +124,6 @@ public class e implements c, CloseListener {
             e.printStackTrace();
         }
         Keybinds.register();
-
-
 
         progressbar.step("Opening connection");
         try {

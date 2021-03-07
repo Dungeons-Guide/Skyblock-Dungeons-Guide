@@ -69,6 +69,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
 
     @Override
     public void onInteract(PlayerInteractEvent event) {
+        if (!isEnabled()) return;
+
         DungeonContext dc = ss.getContext();
         if (dc == null) return;
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
