@@ -161,11 +161,11 @@ public class PartyManager implements StompMessageHandler {
                         e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
                     }
                 }
-                if (invitedDash > 0) {
-                    invitedDash++;
+                if (invitedDash == 1 || invitedDash == 3) {
                     chatReceivedEvent.setCanceled(true);
+                    invitedDash++;
                 }
-                if (invitedDash == 3) invitedDash = 0;
+                if (invitedDash == 4) invitedDash = 0;
             } else if (str.endsWith("§ejoined the party.§r")) {
                 String asd = null;
                 for (String s : TextUtils.stripColor(str).split(" ")) {
@@ -212,6 +212,8 @@ public class PartyManager implements StompMessageHandler {
                     partyJoin = 2;
                     chatReceivedEvent.setCanceled(true);
                 }
+                if (invitedDash > 0) invitedDash = 3;
+                if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
                 setPartyID(null);
             } else if (TextUtils.stripColor(str).trim().isEmpty()) {
                 if ((checkPlayer > 0 || partyJoin > 0) && partyJoin != 100) {
@@ -223,6 +225,8 @@ public class PartyManager implements StompMessageHandler {
                     partyJoin = 2;
                     chatReceivedEvent.setCanceled(true);
                 }
+                if (invitedDash > 0) invitedDash = 3;
+                if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
                 setPartyID(null);
             } else if (str.startsWith("§eParty ") && str.contains(":")) {
                 if (checkPlayer > 0 || partyJoin > 0) {
@@ -236,6 +240,7 @@ public class PartyManager implements StompMessageHandler {
                     members.add(s);
                 }
             } else if (str.equals("§cYou are not allowed to invite players.§r")) {
+                if (invitedDash > 0) invitedDash = 3;
                 if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
                 canInvite = false;
                 allowAskToJoin = false;
@@ -243,8 +248,11 @@ public class PartyManager implements StompMessageHandler {
                 RichPresenceManager.INSTANCE.updatePresence();
             } else if (str.equals("§cCouldn't find a player with that name!§r")) {
                 canInvite = true;
+                if (invitedDash > 0) invitedDash = 3;
                 if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
             } else if (str.equals("§cYou cannot invite that player since they're not online.")) {
+                if (invitedDash > 0) invitedDash = 3;
+                if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
                 canInvite = true;
             } else if (str.endsWith("§aenabled All Invite§r")) {
                 canInvite = true;
@@ -269,6 +277,7 @@ public class PartyManager implements StompMessageHandler {
                         } else {
                             Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
                             invitedDash = 1;
+                            break;
                         }
                     } else {
                         seenThings = 0;
@@ -304,6 +313,25 @@ public class PartyManager implements StompMessageHandler {
                         } else {
                             Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
                             invitedDash = 1;
+                            break;
+                        }
+                    } else {
+                        seenThings = 0;
+                    }
+                }
+            } else if (str.endsWith("§r§eto Party Member§r")) {
+                String[] thetext = TextUtils.stripColor(str).split(" ");
+                int seenThings = 0;
+                for (String s : thetext) {
+                    if (s.equals("has") && seenThings == 0) seenThings = 1;
+                    else if (s.equals("demoted") && seenThings == 1) seenThings = 2;
+                    else if (s.equals("[")) continue;
+                    else if (seenThings == 2) {
+                        if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
+                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
+                            invitedDash = 1;
+                            canInvite = false;
+                            break;
                         }
                     } else {
                         seenThings = 0;

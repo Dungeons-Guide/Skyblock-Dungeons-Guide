@@ -1,6 +1,8 @@
 package kr.syeyoung.dungeonsguide.pathfinding;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import net.minecraft.block.Block;
 import net.minecraft.block.state.BlockState;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
@@ -10,6 +12,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3i;
 import net.minecraft.world.pathfinder.NodeProcessor;
+
+import java.util.Set;
 
 public class NodeProcessorDungeonRoom extends NodeProcessor {
     private DungeonRoom dungeonRoom;
@@ -109,17 +113,12 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
         return i;
     }
 
+    public static final Set<Block> allowed = Sets.newHashSet(Blocks.air, Blocks.water, Blocks.lava, Blocks.flowing_water, Blocks.flowing_lava, Blocks.vine, Blocks.ladder
+    , Blocks.standing_sign, Blocks.wall_sign, Blocks.trapdoor, Blocks.iron_trapdoor, Blocks.wooden_button, Blocks.stone_button, Blocks.fire,
+            Blocks.torch, Blocks.rail, Blocks.golden_rail, Blocks.activator_rail, Blocks.detector_rail, Blocks.carpet, Blocks.redstone_torch);
+    public static final IBlockState preBuilt = Blocks.stone.getStateFromMeta(2);
     public static boolean isValidBlock(IBlockState state) {
-        return state.getBlock() == Blocks.air || state.getBlock() == Blocks.water || state.getBlock() == Blocks.lava
-                || state.getBlock() == Blocks.flowing_water || state.getBlock() == Blocks.flowing_lava
-                || state.getBlock() == Blocks.vine || state.getBlock() == Blocks.ladder
-                || state.getBlock() == Blocks.standing_sign || state.getBlock() == Blocks.wall_sign
-                || state.getBlock() == Blocks.trapdoor || state.getBlock() == Blocks.iron_trapdoor
-                || state.getBlock() == Blocks.wooden_button || state.getBlock() == Blocks.stone_button
-                || state.getBlock() == Blocks.fire || state.getBlock() == Blocks.torch
-                || state.getBlock() == Blocks.rail || state.getBlock() == Blocks.golden_rail
-                || state.getBlock() == Blocks.activator_rail || state.getBlock() == Blocks.activator_rail
-                || state.getBlock() == Blocks.carpet || state.getBlock() == Blocks.redstone_torch
-                || (state == Blocks.stone.getStateFromMeta(2));
+        Block b = state.getBlock();
+        return state.equals(preBuilt) || allowed.contains(b);
     }
 }
