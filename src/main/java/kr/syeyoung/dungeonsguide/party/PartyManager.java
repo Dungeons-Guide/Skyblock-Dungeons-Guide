@@ -14,6 +14,7 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -114,190 +115,203 @@ public class PartyManager implements StompMessageHandler {
         String str = chatReceivedEvent.message.getFormattedText();
         System.out.println(str);
 
+        try {
 
-        if (str.startsWith("§eYou have joined ")) {
-            members.clear();
-            String strs[] = TextUtils.stripColor(str).split(" ");
-            for (String s : strs) {
-                if (s.endsWith("'s")) {
-                    members.add(s.substring(0, s.indexOf("'s")));
+            if (str.startsWith("§eYou have joined ")) {
+                members.clear();
+                String strs[] = TextUtils.stripColor(str).split(" ");
+                for (String s : strs) {
+                    if (s.endsWith("'s")) {
+                        members.add(s.substring(0, s.indexOf("'s")));
+                        break;
+                    }
+                }
+                members.add(Minecraft.getMinecraft().getSession().getUsername());
+                partyJoin = 100;
+            } else if (str.startsWith("§eYou'll be partying with: ")) {
+                String[] players = TextUtils.stripColor(str.substring(27)).split(" ");
+                for (String player : players) {
+                    if (player.startsWith("[")) continue;
+                    members.add(player);
+                }
+            } else if (str.equals("§9§m-----------------------------§r")) {
+                if ((checkPlayer > 0 || partyJoin > 0) && partyJoin != 100) {
+                    chatReceivedEvent.setCanceled(true);
+                }
+                if (partyJoin == 2 || partyJoin == 100) {
+                    partyJoin = 0;
+                    // REQ PARTY JOIN
+
+                    JSONArray jsonArray = new JSONArray();
+                    for (String member : members) {
+                        jsonArray.put(member);
+                    }
+                    JSONObject object = new JSONObject();
+                    object.put("members", jsonArray);
+                    StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
+                    stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
+                }
+                if (checkPlayer == 3) {
+                    checkPlayer = 0;
+                    String playerName = theObject.getString("player");
+                    String token = theObject.getString("token");
+                    if (!members.contains(playerName)) {
+                        e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                    } else {
+                        e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                    }
+                }
+                if (invitedDash > 0) {
+                    invitedDash++;
+                    chatReceivedEvent.setCanceled(true);
+                }
+                if (invitedDash == 3) invitedDash = 0;
+            } else if (str.endsWith("§ejoined the party.§r")) {
+                String asd = null;
+                for (String s : TextUtils.stripColor(str).split(" ")) {
+                    if (s.startsWith("[")) continue;
+                    asd = s;
                     break;
                 }
-            }
-            members.add(Minecraft.getMinecraft().getSession().getUsername());
-            partyJoin = 100;
-        } else if (str.startsWith("§eYou'll be partying with: ")) {
-            String[] players = TextUtils.stripColor(str.substring(27)).split(" ");
-            for (String player : players) {
-                if (player.startsWith("[")) continue;
-                members.add(player);
-            }
-        } else if (str.equals("§9§m-----------------------------§r")) {
-            if ((checkPlayer > 0 || partyJoin > 0) && partyJoin != 100) {
-                chatReceivedEvent.setCanceled(true);
-            }
-            if (partyJoin == 2 || partyJoin == 100) {
-                partyJoin = 0;
-                // REQ PARTY JOIN
-
-                JSONArray jsonArray = new JSONArray();
-                for (String member : members) {
-                    jsonArray.put(member);
-                }
-                JSONObject object = new JSONObject();
-                object.put("members", jsonArray);
-                StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
-                stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
-            }
-            if (checkPlayer == 3) {
-                checkPlayer = 0;
-                String playerName = theObject.getString("player");
-                String token = theObject.getString("token");
-                if (!members.contains(playerName)) {
-                    e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                if (asd != null)
+                    members.add(asd);
+            } else if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
+                String username = TextUtils.stripColor(str).split(" ")[3];
+                if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
+                    partyJoin = 1;
                 } else {
-                    e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                    members.add(username);
                 }
-            }
-            if (invitedDash > 0) {
-                invitedDash++;
-                chatReceivedEvent.setCanceled(true);
-            }
-            if (invitedDash == 3) invitedDash = 0;
-        } else if (str.endsWith("§ejoined the party.§r")) {
-            String asd = null;
-            for (String s : TextUtils.stripColor(str).split(" ")) {
-                if (s.startsWith("[")) continue;
-                asd = s;
-                break;
-            }
-            if (asd != null)
-                members.add(asd);
-        } else if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
-            String username = TextUtils.stripColor(str).split(" ")[3];
-            if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
-                partyJoin = 1;
-            } else {
-                members.add(username);
-            }
-        } else if (str.endsWith("§ehas been removed from the party.§r")
-                || str.endsWith("§ehas left the party.§r")) {
-            String asd = null;
-            for (String s : TextUtils.stripColor(str).split(" ")) {
-                if (s.startsWith("[")) continue;
-                asd = s;
-                break;
-            }
-            if (asd != null)
-                members.remove(asd);
-        } else if ((str.equals("§eYou left the party.§r")
-                || str.startsWith("§cThe party was disbanded")
-                || str.endsWith("§ehas disbanded the party!§r"))
-        ) {
-            members.clear();
-            setPartyID(null);
-        } else if (str.startsWith("§6Party Members ")) {
-            if (checkPlayer > 0|| partyJoin > 0) {
-                chatReceivedEvent.setCanceled(true);
-            }
-            if (partyJoin == 1) partyJoin = 2;
-            if (checkPlayer == 2) checkPlayer = 3;
-            members.clear();
-        } else if (str.startsWith("§cYou are not currently in a party.§r")) {
-            members.clear();
-            partyJoin = 0;
-            setPartyID(null);
-        } else if (TextUtils.stripColor(str).trim().isEmpty()) {
-            if ((checkPlayer > 0|| partyJoin > 0) && partyJoin != 100) {chatReceivedEvent.setCanceled(true);}
-        } else if (str.startsWith("§cYou are not in a party")) {
-            members.clear();
-            partyJoin = 0;
-            setPartyID(null);
-        } else if (str.startsWith("§eParty ") && str.contains(":")) {
-            if (checkPlayer > 0|| partyJoin > 0) {chatReceivedEvent.setCanceled(true);}
-            String playerNames = TextUtils.stripColor(str.split(":")[1]);
-            for (String s : playerNames.split(" ")) {
-                if (s.isEmpty()) continue;
-                if (s.equals("●")) continue;
-                if (s.startsWith("[")) continue;
-                members.add(s);
-            }
-        } else if (str.equals("§cYou are not allowed to invite players.§r")) {
-            if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
-            canInvite = false;
-            allowAskToJoin = false;
-            askToJoinSecret = "";
-            RichPresenceManager.INSTANCE.updatePresence();
-        } else if (str.equals("§cCouldn't find a player with that name!§r")) {
-            canInvite = true;
-            if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
-        } else if (str.equals("§cYou cannot invite that player since they're not online.")) {
-            canInvite = true;
-        } else if (str.endsWith("§aenabled All Invite§r")) {
-            canInvite = true;
-        } else if (str.endsWith("§cdisabled All Invite§r")) {
-            canInvite = false;
-            allowAskToJoin = false;
-            askToJoinSecret = "";
-            RichPresenceManager.INSTANCE.updatePresence();
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-            invitedDash = 1;
-        } else if (str.endsWith("§r§eto Party Moderator§r")) {
-            // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r
-            String[] thetext = TextUtils.stripColor(str).split(" ");
-            int seenThings = 0;
-            for (String s : thetext) {
-                if (s.equals("has") && seenThings == 0) seenThings = 1;
-                else if (s.equals("promoted") && seenThings == 1) seenThings = 2;
-                else if (s.equals("[")) continue;
-                else if (seenThings == 2) {
-                    if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
-                        canInvite = true;
-                    } else {
-                        Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                        invitedDash = 1;
-                    }
-                } else {
-                    seenThings = 0;
+            } else if (str.endsWith("§ehas been removed from the party.§r")
+                    || str.endsWith("§ehas left the party.§r")) {
+                String asd = null;
+                for (String s : TextUtils.stripColor(str).split(" ")) {
+                    if (s.startsWith("[")) continue;
+                    asd = s;
+                    break;
                 }
-            }
-        } else if (str.startsWith("§eThe party was transferred to ")) {
-            //§eThe party was transferred to §r§b[MVP§r§f+§r§b] apotato321 §r§eby §r§a[VIP§r§6+§r§a] syeyoung§r
-            String[] thetext = TextUtils.stripColor(str.substring(31)).split(" ");
-            String asd = null;
-            for (String s : thetext) {
-                if (s.startsWith("[")) continue;
-                asd = s;
-                break;
-            }
-            if (asd != null && Minecraft.getMinecraft().getSession().getUsername().equalsIgnoreCase(asd)) {
+                if (asd != null)
+                    members.remove(asd);
+            } else if ((str.equals("§eYou left the party.§r")
+                    || str.startsWith("§cThe party was disbanded")
+                    || str.endsWith("§ehas disbanded the party!§r"))
+            ) {
+                members.clear();
+                setPartyID(null);
+            } else if (str.startsWith("§6Party Members ")) {
+                if (checkPlayer > 0 || partyJoin > 0) {
+                    chatReceivedEvent.setCanceled(true);
+                }
+                if (partyJoin == 1) partyJoin = 2;
+                if (checkPlayer == 2) checkPlayer = 3;
+                members.clear();
+            } else if (str.startsWith("§cYou are not currently in a party.§r")) {
+                members.clear();
+                if (partyJoin > 0) {
+                    partyJoin = 2;
+                    chatReceivedEvent.setCanceled(true);
+                }
+                setPartyID(null);
+            } else if (TextUtils.stripColor(str).trim().isEmpty()) {
+                if ((checkPlayer > 0 || partyJoin > 0) && partyJoin != 100) {
+                    chatReceivedEvent.setCanceled(true);
+                }
+            } else if (str.startsWith("§cYou are not in a party")) {
+                members.clear();
+                if (partyJoin > 0) {
+                    partyJoin = 2;
+                    chatReceivedEvent.setCanceled(true);
+                }
+                setPartyID(null);
+            } else if (str.startsWith("§eParty ") && str.contains(":")) {
+                if (checkPlayer > 0 || partyJoin > 0) {
+                    chatReceivedEvent.setCanceled(true);
+                }
+                String playerNames = TextUtils.stripColor(str.split(":")[1]);
+                for (String s : playerNames.split(" ")) {
+                    if (s.isEmpty()) continue;
+                    if (s.equals("●")) continue;
+                    if (s.startsWith("[")) continue;
+                    members.add(s);
+                }
+            } else if (str.equals("§cYou are not allowed to invite players.§r")) {
+                if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
+                canInvite = false;
+                allowAskToJoin = false;
+                askToJoinSecret = "";
+                RichPresenceManager.INSTANCE.updatePresence();
+            } else if (str.equals("§cCouldn't find a player with that name!§r")) {
                 canInvite = true;
-            } else {
-
+                if (invitedDash > 0) chatReceivedEvent.setCanceled(true);
+            } else if (str.equals("§cYou cannot invite that player since they're not online.")) {
+                canInvite = true;
+            } else if (str.endsWith("§aenabled All Invite§r")) {
+                canInvite = true;
+            } else if (str.endsWith("§cdisabled All Invite§r")) {
+                canInvite = false;
+                allowAskToJoin = false;
+                askToJoinSecret = "";
+                RichPresenceManager.INSTANCE.updatePresence();
                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
                 invitedDash = 1;
-            }
-        } else if (str.endsWith("§eto Party Leader§r")) {
-            // §a[VIP§r§6+§r§a] syeyoung§r§e has promoted §r§b[MVP§r§f+§r§b] apotato321 §r§eto Party Leader§r
-            String[] thetext = TextUtils.stripColor(str).split(" ");
-            int seenThings = 0;
-            for (String s : thetext) {
-                if (s.equals("has") && seenThings == 0) seenThings = 1;
-                else if (s.equals("promoted") && seenThings == 1) seenThings = 2;
-                else if (s.equals("[")) continue;
-                else if (seenThings == 2) {
-                    if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
-                        canInvite = true;
+            } else if (str.endsWith("§r§eto Party Moderator§r")) {
+                // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r
+                String[] thetext = TextUtils.stripColor(str).split(" ");
+                int seenThings = 0;
+                for (String s : thetext) {
+                    if (s.equals("has") && seenThings == 0) seenThings = 1;
+                    else if (s.equals("promoted") && seenThings == 1) seenThings = 2;
+                    else if (s.equals("[")) continue;
+                    else if (seenThings == 2) {
+                        if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
+                            canInvite = true;
+                        } else {
+                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
+                            invitedDash = 1;
+                        }
                     } else {
-                        Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                        invitedDash = 1;
+                        seenThings = 0;
                     }
+                }
+            } else if (str.startsWith("§eThe party was transferred to ")) {
+                //§eThe party was transferred to §r§b[MVP§r§f+§r§b] apotato321 §r§eby §r§a[VIP§r§6+§r§a] syeyoung§r
+                String[] thetext = TextUtils.stripColor(str.substring(31)).split(" ");
+                String asd = null;
+                for (String s : thetext) {
+                    if (s.startsWith("[")) continue;
+                    asd = s;
+                    break;
+                }
+                if (asd != null && Minecraft.getMinecraft().getSession().getUsername().equalsIgnoreCase(asd)) {
+                    canInvite = true;
                 } else {
-                    seenThings = 0;
+
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
+                    invitedDash = 1;
+                }
+            } else if (str.endsWith("§eto Party Leader§r")) {
+                // §a[VIP§r§6+§r§a] syeyoung§r§e has promoted §r§b[MVP§r§f+§r§b] apotato321 §r§eto Party Leader§r
+                String[] thetext = TextUtils.stripColor(str).split(" ");
+                int seenThings = 0;
+                for (String s : thetext) {
+                    if (s.equals("has") && seenThings == 0) seenThings = 1;
+                    else if (s.equals("promoted") && seenThings == 1) seenThings = 2;
+                    else if (s.equals("[")) continue;
+                    else if (seenThings == 2) {
+                        if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
+                            canInvite = true;
+                        } else {
+                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
+                            invitedDash = 1;
+                        }
+                    } else {
+                        seenThings = 0;
+                    }
                 }
             }
-        }
+        } catch (Exception ex) {ex.printStackTrace();
+        e.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ex.toString()));}
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {

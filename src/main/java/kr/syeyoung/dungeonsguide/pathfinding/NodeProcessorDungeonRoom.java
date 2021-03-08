@@ -81,7 +81,7 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
             if (dir.getY() == 0 && curr.getBlock() == Blocks.iron_bars && up.getBlock() == Blocks.air &&
                 entityIn.getEntityWorld().getBlockState(new BlockPos(currentPoint.xCoord, currentPoint.yCoord, currentPoint.zCoord)).getBlock() != Blocks.iron_bars) {
                 boolean theFlag = false;
-                if (newX == 0) {
+                if (dir.getZ() == 0) {
                     if (entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)
                             .add(0,0,1)).getBlock() == Blocks.air) {
                         theFlag = true;
@@ -89,7 +89,7 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                             .add(0,0,-1)).getBlock() == Blocks.air) {
                         theFlag = true;
                     }
-                } else if (newZ == 0) {
+                } else if (dir.getX() == 0) {
                     if (entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)
                             .add(-1,0,0)).getBlock() == Blocks.air) {
                         theFlag = true;
