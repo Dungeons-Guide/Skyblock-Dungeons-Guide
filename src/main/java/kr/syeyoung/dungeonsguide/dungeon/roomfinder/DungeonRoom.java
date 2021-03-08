@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
+import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessorGenerator;
@@ -49,7 +50,7 @@ public class DungeonRoom {
 
     private Map<String, DungeonMechanic> cached = null;
     public Map<String, DungeonMechanic> getMechanics() {
-        if (cached == null) {
+        if (cached == null || EditingContext.getEditingContext() != null) {
             cached = new HashMap<String, DungeonMechanic>(dungeonRoomInfo.getMechanics());
             int index = 0;
             for (DungeonDoor door : doors) {
