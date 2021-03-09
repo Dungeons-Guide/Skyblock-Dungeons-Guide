@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.EntityInteractEvent;

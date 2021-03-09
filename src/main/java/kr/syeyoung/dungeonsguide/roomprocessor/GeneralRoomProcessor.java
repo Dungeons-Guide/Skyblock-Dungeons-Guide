@@ -17,25 +17,33 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.*;
+import java.util.List;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -129,6 +137,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             }
         }
         if (path != null) path.onRenderWorld(partialTicks);
+
     }
 
     @Override

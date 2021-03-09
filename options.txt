@@ -10,7 +10,7 @@ bobView:true
 anaglyph3d:false
 maxFps:120
 fboEnable:true
-difficulty:3
+difficulty:0
 fancyGraphics:true
 ao:2
 renderClouds:fast

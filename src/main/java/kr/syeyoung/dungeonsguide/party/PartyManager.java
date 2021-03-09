@@ -33,7 +33,7 @@ public class PartyManager implements StompMessageHandler {
     public static final PartyManager INSTANCE = new PartyManager();
 
     @Getter
-    private String partyID = null;
+    private String partyID = "GENERATE_PARTYID_PLEASE_POG_THIS_IS_INVALID_ID_THAT_SHOULD_BE_REGENERATED";
     @Getter
     private String askToJoinSecret = null;
 

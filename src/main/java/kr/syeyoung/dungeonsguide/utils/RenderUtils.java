@@ -395,13 +395,26 @@ public class RenderUtils {
         }
         int rgb = RenderUtils.getColorAt(entity.posX * 10,entity.posY * 10,c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
+        if (axisAlignedBB == null) {
+            if (entity instanceof EntityArmorStand) {
+                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            } else if (entity instanceof EntityBat) {
+                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+            } else {
+                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            }
+        }
 
+        Vec3 renderPos = new Vec3(
+                (float) (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks),
+                (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks),
+                (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks)
+        );
+        GlStateManager.translate(axisAlignedBB.minX + renderPos.xCoord, axisAlignedBB.minY + renderPos.yCoord, axisAlignedBB.minZ + renderPos.zCoord);
 
-        GlStateManager.translate(-0.4 + entity.posX, entity.posY, -0.4 + entity.posZ);
-
-        double x = 0.8;
-        double y = 1.5;
-        double z = 0.8;
+        double x = axisAlignedBB.maxX - axisAlignedBB.minX;
+        double y = axisAlignedBB.maxY - axisAlignedBB.minY;
+        double z = axisAlignedBB.maxZ - axisAlignedBB.minZ;
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex3d(0, 0, 0);
         GL11.glVertex3d(0, 0, z);
@@ -470,13 +483,26 @@ public class RenderUtils {
             GlStateManager.depthMask(false);
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
+        if (axisAlignedBB == null) {
+            if (entity instanceof EntityArmorStand) {
+                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            } else if (entity instanceof EntityBat) {
+                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+            } else {
+                axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+            }
+        }
 
+        Vec3 renderPos = new Vec3(
+                (float) (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks),
+                (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks),
+                (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks)
+        );
+        GlStateManager.translate(axisAlignedBB.minX + renderPos.xCoord, axisAlignedBB.minY + renderPos.yCoord, axisAlignedBB.minZ + renderPos.zCoord);
 
-        GlStateManager.translate(-0.4 + entity.posX, entity.posY, -0.4 + entity.posZ);
-
-        double x = 0.8;
-        double y = 1.5;
-        double z = 0.8;
+        double x = axisAlignedBB.maxX - axisAlignedBB.minX;
+        double y = axisAlignedBB.maxY - axisAlignedBB.minY;
+        double z = axisAlignedBB.maxZ - axisAlignedBB.minZ;
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex3d(0, 0, 0);
         GL11.glVertex3d(0, 0, z);
@@ -544,14 +570,25 @@ public class RenderUtils {
             GlStateManager.depthMask(false);
         }
         GlStateManager.color(c.getRed()/ 255.0f, c.getGreen()/ 255.0f, c.getBlue()/ 255.0f, c.getAlpha()/ 255.0f);
-        AxisAlignedBB axisAlignedBB = AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4);
+        AxisAlignedBB axisAlignedBB;
+        if (entity instanceof EntityArmorStand) {
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+        } else if (entity instanceof EntityBat) {
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.4, -0.4, 0.4, 0.4, 0.4);
+        } else {
+            axisAlignedBB = AxisAlignedBB.fromBounds(-0.4, -1.5, -0.4, 0.4, 0, 0.4);
+        }
 
+        Vec3 renderPos = new Vec3(
+                (float) (entity.lastTickPosX + (entity.posX - entity.lastTickPosX) * partialTicks),
+                (float) (entity.lastTickPosY + (entity.posY - entity.lastTickPosY) * partialTicks),
+                (float) (entity.lastTickPosZ + (entity.posZ - entity.lastTickPosZ) * partialTicks)
+        );
+        GlStateManager.translate(axisAlignedBB.minX + renderPos.xCoord, axisAlignedBB.minY + renderPos.yCoord, axisAlignedBB.minZ + renderPos.zCoord);
 
-        GlStateManager.translate(-0.4 + entity.posX, -1.5 + entity.posY, -0.4 + entity.posZ);
-
-        double x = 0.8;
-        double y = 1.5;
-        double z = 0.8;
+        double x = axisAlignedBB.maxX - axisAlignedBB.minX;
+        double y = axisAlignedBB.maxY - axisAlignedBB.minY;
+        double z = axisAlignedBB.maxZ - axisAlignedBB.minZ;
         GL11.glBegin(GL11.GL_QUADS);
         GL11.glVertex3d(0, 0, 0);
         GL11.glVertex3d(0, 0, z);
