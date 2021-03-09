@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.features;
 
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
@@ -50,7 +51,9 @@ public class FeatureRegistry {
 
     public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("Solver", "Riddle Puzzle (3 weirdo) Solver", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
     public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("Solver", "Trivia Puzzle (Omnicrescent) Solver", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));
-    public static final SimpleFeature SOLVER_BLAZE = register(new SimpleFeature("Solver", "Blaze Puzzle Solver", "Highlights the blaze that needs to be killed in an blaze room", "solver.blaze"));
+    public static final SimpleFeature SOLVER_BLAZE = register(new SimpleFeature("Solver", "Blaze Puzzle Solver", "Highlights the blaze that needs to be killed in an blaze room", "solver.blaze") {{
+        parameters.put("blazeborder", new FeatureParameter<AColor>("blazeborder", "Blaze Border Color", "Blaze border color", new AColor(255,255,255,0), "acolor"));
+    }});
     public static final SimpleFeature SOLVER_TICTACTOE = register(new SimpleFeature("Solver", "Tictactoe Solver", "Shows the best move that could be taken by player in the tictactoe room", "solver.tictactoe"));
     public static final SimpleFeature SOLVER_ICEPATH = register(new SimpleFeature("Solver", "Icepath Puzzle Solver (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath"));
     public static final SimpleFeature SOLVER_SILVERFISH = register(new SimpleFeature("Solver", "Silverfish Puzzle Solver (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish"));

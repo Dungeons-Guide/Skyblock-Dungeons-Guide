@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.config.Config;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -138,7 +139,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
 //            Gui.drawRect(-9999,-9999, 9999, 9999, 0xFFFFFFFF);
 
-            boolean border = false;
+            boolean border = true;
 
             if (entity != nextBlaze)
                 RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), new Color(255,255,255,255), partialTicks, false);
@@ -147,28 +148,26 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GlStateManager.color(1,1,1,1);
 
 
-            if (border) {
-                GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
-                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-                GlStateManager.pushMatrix();
-                GlStateManager.pushAttrib();
-                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-                GlStateManager.translate(x, y + 0.7, z);
-                GlStateManager.scale(1.1f, 1.1f, 1.1f);
+            GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
+            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
+            GlStateManager.pushMatrix();
+            GlStateManager.pushAttrib();
+            GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+            GlStateManager.translate(x, y + 0.7, z);
+            GlStateManager.scale(1.1f, 1.1f, 1.1f);
 
-                GlStateManager.colorMask(false, false, false, false);
-                Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
-                GlStateManager.colorMask(true, true, true, true);
+            GlStateManager.colorMask(false, false, false, false);
+            Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
+            GlStateManager.colorMask(true, true, true, true);
 
-                GlStateManager.popMatrix();
-                GlStateManager.popAttrib();
+            GlStateManager.popMatrix();
+            GlStateManager.popAttrib();
 
 
-                GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
-                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+            GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
+            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), new Color(0, 255, 255, 255), partialTicks, false);
-            }
+            RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
 
 
             GL11.glDisable(GL11.GL_STENCIL_TEST);
