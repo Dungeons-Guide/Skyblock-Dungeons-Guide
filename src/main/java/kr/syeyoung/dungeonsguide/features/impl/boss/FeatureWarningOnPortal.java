@@ -111,7 +111,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         texts.add(new StyledText(": ","field_separator"));
         texts.add(new StyledText(scoreCalculation.getDeaths() + "\n","field_value"));
 
-        int sum = scoreCalculation.getTime() + scoreCalculation.getExplorer() + scoreCalculation.getExplorer() + scoreCalculation.getTime() + scoreCalculation.getBonus();
+        int sum = scoreCalculation.getTime() + scoreCalculation.getExplorer() + scoreCalculation.getSkill() + scoreCalculation.getBonus();
         texts.add(new StyledText("Score Estimate","field_name"));
         texts.add(new StyledText(": ","field_separator"));
         texts.add(new StyledText(sum+" ","field_value"));
