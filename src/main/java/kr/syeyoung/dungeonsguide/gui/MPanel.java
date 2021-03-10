@@ -91,7 +91,7 @@ public class MPanel {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GlStateManager.pushAttrib();
-        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height,  0x0000FF00);
+        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height,  backgroundColor.getRGB());
         GlStateManager.enableBlend();
         GlStateManager.popAttrib();
 
