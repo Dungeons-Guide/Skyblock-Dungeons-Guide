@@ -26,6 +26,6 @@ public class MColor extends MPanel {
         int x = (rectangle.width - getSize().width) / 2;
         int y = (rectangle.height - getSize().height) / 2;
 
-        RenderUtils.drawRectSafe(x,y,x+getSize().width,y+getSize().height, getColor().getRGB());
+        Gui.drawRect(x,y,x+getSize().width,y+getSize().height, getColor().getRGB());
     }
 }

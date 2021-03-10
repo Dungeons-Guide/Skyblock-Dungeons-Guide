@@ -95,14 +95,14 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
                 for (Slot currSlot : solution.getCurrSlots()) {
                     int x = currSlot.xDisplayPosition;
                     int y = currSlot.yDisplayPosition;
-                    RenderUtils.drawRectSafe(x, y, x + 16, y + 16, 0x7700FFFF);
+                    Gui.drawRect(x, y, x + 16, y + 16, 0x7700FFFF);
                 }
             }
             if (solution.getNextSlots() != null) {
                 for (Slot nextSlot : solution.getNextSlots()) {
                     int x = nextSlot.xDisplayPosition;
                     int y = nextSlot.yDisplayPosition;
-                    RenderUtils.drawRectSafe(x, y, x + 16, y + 16, 0x77FFFF00);
+                    Gui.drawRect(x, y, x + 16, y + 16, 0x77FFFF00);
                 }
             }
             GlStateManager.colorMask(true, true, true, true);

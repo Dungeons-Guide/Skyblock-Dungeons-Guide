@@ -156,8 +156,8 @@ public class ActionTreeDisplayPane extends MPanel {
         int offset = 2;
         int height = (fr.FONT_HEIGHT + offset) * lines.length;
 
-        RenderUtils.drawRectSafe(x,y,x + maxWidth +10, y + height + 10, 0xff000000);
-        RenderUtils.drawRectSafe(x+1,y+1,x + maxWidth +8, y + height + 8, 0xff4d4d4d);
+        Gui.drawRect(x,y,x + maxWidth +10, y + height + 10, 0xff000000);
+        Gui.drawRect(x+1,y+1,x + maxWidth +8, y + height + 8, 0xff4d4d4d);
         for (int i = 0; i < lines.length; i++) {
             fr.drawString(lines[i], x + 5, y + 5 + i*(fr.FONT_HEIGHT + offset), 0xffffffff);
         }

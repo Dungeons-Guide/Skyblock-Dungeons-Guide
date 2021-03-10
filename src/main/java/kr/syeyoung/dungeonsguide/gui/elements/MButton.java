@@ -35,7 +35,7 @@ public class MButton extends MPanel {
             bg = hover;
         }
         if (bg != null)
-            RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, bg.getRGB());
+            Gui.drawRect(0,0,getBounds().width, getBounds().height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(getText());

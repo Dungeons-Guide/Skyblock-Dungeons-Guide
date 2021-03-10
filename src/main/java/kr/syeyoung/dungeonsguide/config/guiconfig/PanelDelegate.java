@@ -31,23 +31,24 @@ public class PanelDelegate extends MPanel {
         GlStateManager.popMatrix();
 
         if (!draggable) return;
-        RenderUtils.drawRectSafe(0,0, 3, 3, 0xFFBBBBBB);
-        RenderUtils.drawRectSafe(0, getBounds().height - 3, 3, getBounds().height, 0xFFBBBBBB);
-        RenderUtils.drawRectSafe(getBounds().width - 3,0, getBounds().width, 3, 0xFFBBBBBB);
-        RenderUtils.drawRectSafe(getBounds().width - 3,getBounds().height - 3, getBounds().width, getBounds().height, 0xFFBBBBBB);
+        Gui.drawRect(0,0, 3, 3, 0xFFBBBBBB);
+        Gui.drawRect(0, getBounds().height - 3, 3, getBounds().height, 0xFFBBBBBB);
+        Gui.drawRect(getBounds().width - 3,0, getBounds().width, 3, 0xFFBBBBBB);
+        Gui.drawRect(getBounds().width - 3,getBounds().height - 3, getBounds().width, getBounds().height, 0xFFBBBBBB);
         if (lastAbsClip.contains(absMousex, absMousey)) {
             if (relMouseX < 3 && relMouseY < 3) {
-                RenderUtils.drawRectSafe(0,0, 3, 3, 0x55FFFFFF);
+                Gui.drawRect(0,0, 3, 3, 0x55FFFFFF);
             } else if (relMouseX < 3 && relMouseY > getBounds().height - 3) {
-                RenderUtils.drawRectSafe(0, getBounds().height - 3, 3, getBounds().height, 0x55FFFFFF);
+                Gui.drawRect(0, getBounds().height - 3, 3, getBounds().height, 0x55FFFFFF);
             } else if (relMouseX > getBounds().width - 3 && relMouseY > getBounds().height - 3) {
-                RenderUtils.drawRectSafe(getBounds().width - 3,getBounds().height - 3, getBounds().width, getBounds().height, 0x55FFFFFF);
+                Gui.drawRect(getBounds().width - 3,getBounds().height - 3, getBounds().width, getBounds().height, 0x55FFFFFF);
             } else if (relMouseX > getBounds().width - 3 && relMouseY < 3) {
-                RenderUtils.drawRectSafe(getBounds().width - 3,0, getBounds().width, 3, 0x55FFFFFF);
+                Gui.drawRect(getBounds().width - 3,0, getBounds().width, 3, 0x55FFFFFF);
             } else if (selectedPart == -2){
-                RenderUtils.drawRectSafe(0,0, getBounds().width, getBounds().height, 0x55FFFFFF);
+                Gui.drawRect(0,0, getBounds().width, getBounds().height, 0x55FFFFFF);
             }
         }
+        GlStateManager.enableBlend();
     }
 
     private int selectedPart = -2;

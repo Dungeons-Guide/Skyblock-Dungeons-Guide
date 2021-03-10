@@ -78,7 +78,7 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(left, top, 0);
-        RenderUtils.drawRectSafe( 0,0,width, 30, 0xFFDDDDDD);
+        Gui.drawRect( 0,0,width, 30, 0xFFDDDDDD);
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("BIN/AH Price: ", 5,5, 0xFF000000);

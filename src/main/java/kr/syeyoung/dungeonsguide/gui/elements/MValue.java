@@ -38,7 +38,7 @@ public class MValue<T> extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         if (hover != null && new Rectangle(new Point(0,0),getBounds().getSize()).contains(relMousex0, relMousey0)) {
-            RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, hover.getRGB());
+            Gui.drawRect(0,0,getBounds().width, getBounds().height, hover.getRGB());
         }
     }
 

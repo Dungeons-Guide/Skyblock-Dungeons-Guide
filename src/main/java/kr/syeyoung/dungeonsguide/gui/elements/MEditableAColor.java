@@ -45,12 +45,12 @@ public class MEditableAColor extends MPanel {
 
         int x = (rectangle.width - getSize().width) / 2;
         int y = (rectangle.height - getSize().height) / 2;
-        RenderUtils.drawRectSafe(x,y,x+getSize().width,y+getSize().height, RenderUtils.getColorAt(absMousex - relMousex0, absMousey -  relMousey0, color));
+        Gui.drawRect(x,y,x+getSize().width,y+getSize().height, RenderUtils.getColorAt(absMousex - relMousex0, absMousey -  relMousey0, color));
 
-        RenderUtils.drawRectSafe(x,y,x+getSize().width,y+1, 0xff333333);
-        RenderUtils.drawRectSafe(x,y,x+1,y+getSize().height, 0xff333333);
-        RenderUtils.drawRectSafe(x+getSize().width-1,y,x+getSize().width,y+getSize().height, 0xff333333);
-        RenderUtils.drawRectSafe(x,y+getSize().height-1,x+getSize().width,y+getSize().height, 0xff333333);
+        Gui.drawRect(x,y,x+getSize().width,y+1, 0xff333333);
+        Gui.drawRect(x,y,x+1,y+getSize().height, 0xff333333);
+        Gui.drawRect(x+getSize().width-1,y,x+getSize().width,y+getSize().height, 0xff333333);
+        Gui.drawRect(x,y+getSize().height-1,x+getSize().width,y+getSize().height, 0xff333333);
     }
 
     @Override

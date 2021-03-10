@@ -89,7 +89,7 @@ public class StyledTextRenderer {
         if (stopDraw)
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
 
-        RenderUtils.drawRectSafe(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
+        Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
 
         GlStateManager.enableBlend();
         if (!style.getColor().isChroma()) {

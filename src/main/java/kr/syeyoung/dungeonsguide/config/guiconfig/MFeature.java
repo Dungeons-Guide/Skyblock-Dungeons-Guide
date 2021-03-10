@@ -81,13 +81,13 @@ public class MFeature extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height,0xFF444444);
+        Gui.drawRect(0,0,getBounds().width, getBounds().height,0xFF444444);
         if (hover != null && new Rectangle(new Point(0,0),getBounds().getSize()).contains(relMousex0, relMousey0)) {
-            RenderUtils.drawRectSafe(1,18,getBounds().width -1, getBounds().height-1, hover.getRGB());
+            Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, hover.getRGB());
         } else {
-            RenderUtils.drawRectSafe(1,18,getBounds().width -1, getBounds().height-1, 0xFF545454);
+            Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, 0xFF545454);
         }
-        RenderUtils.drawRectSafe(0,17,getBounds().width, 18,0xFF444444);
+        Gui.drawRect(0,17,getBounds().width, 18,0xFF444444);
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

@@ -43,8 +43,8 @@ public class MTextField extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
-        RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, isFocused ? Color.white.getRGB() : Color.gray.getRGB());
-        RenderUtils.drawRectSafe(1,1,getBounds().width - 1, getBounds().height - 1, Color.black.getRGB());
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, isFocused ? Color.white.getRGB() : Color.gray.getRGB());
+        Gui.drawRect(1,1,getBounds().width - 1, getBounds().height - 1, Color.black.getRGB());
 
         Minecraft mc = Minecraft.getMinecraft();
         clip(new ScaledResolution(mc), clip.x + 1, clip.y + 1, clip.width - 2, clip.height - 2);
@@ -56,7 +56,7 @@ public class MTextField extends MPanel {
             if (selectionStart != -1) {
                 int startX = fr.getStringWidth(text.substring(0, selectionStart)) - xOffset;
                 int endX = fr.getStringWidth(text.substring(0, selectionEnd)) - xOffset;
-                RenderUtils.drawRectSafe(3 + startX, y, 3 + endX, y + fr.FONT_HEIGHT, 0xFF00FF00);
+                Gui.drawRect(3 + startX, y, 3 + endX, y + fr.FONT_HEIGHT, 0xFF00FF00);
                 fr.drawString(text.substring(selectionStart, selectionEnd), 3 + startX, y, foreground.getRGB());
             }
 
@@ -66,7 +66,7 @@ public class MTextField extends MPanel {
                 int x = fr.getStringWidth(text.substring(0, cursor)) - xOffset;
                 cursorBlickTicker++;
                 if (cursorBlickTicker < 10)
-                    RenderUtils.drawRectSafe(3 + x, y, 4 + x, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
+                    Gui.drawRect(3 + x, y, 4 + x, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
                 if (cursorBlickTicker == 20) cursorBlickTicker = 0;
             }
         }
