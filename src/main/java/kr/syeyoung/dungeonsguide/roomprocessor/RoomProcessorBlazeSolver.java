@@ -137,7 +137,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
             GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-//            Gui.drawRect(-9999,-9999, 9999, 9999, 0xFFFFFFFF);
+//            RenderUtils.drawRectSafe(-9999,-9999, 9999, 9999, 0xFFFFFFFF);
 
             boolean border = true;
 

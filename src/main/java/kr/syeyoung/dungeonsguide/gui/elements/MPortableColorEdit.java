@@ -71,8 +71,8 @@ public class MPortableColorEdit extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
 
-        Gui.drawRect(0,0,getSize().width,getSize().height, 0xff333333);
-        Gui.drawRect(1,1,getSize().width-1,getSize().height-1, 0xffa1a1a1);
+        RenderUtils.drawRectSafe(0,0,getSize().width,getSize().height, 0xff333333);
+        RenderUtils.drawRectSafe(1,1,getSize().width-1,getSize().height-1, 0xffa1a1a1);
 
         int width = getBounds().height- 35;
         Tessellator tessellator = Tessellator.getInstance();

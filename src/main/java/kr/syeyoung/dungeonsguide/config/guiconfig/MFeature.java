@@ -7,12 +7,14 @@ import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.gui.elements.MStringSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -79,13 +81,13 @@ public class MFeature extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        Gui.drawRect(0,0,getBounds().width, getBounds().height,0xFF444444);
+        RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height,0xFF444444);
         if (hover != null && new Rectangle(new Point(0,0),getBounds().getSize()).contains(relMousex0, relMousey0)) {
-            Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, hover.getRGB());
+            RenderUtils.drawRectSafe(1,18,getBounds().width -1, getBounds().height-1, hover.getRGB());
         } else {
-            Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, 0xFF545454);
+            RenderUtils.drawRectSafe(1,18,getBounds().width -1, getBounds().height-1, 0xFF545454);
         }
-        Gui.drawRect(0,17,getBounds().width, 18,0xFF444444);
+        RenderUtils.drawRectSafe(0,17,getBounds().width, 18,0xFF444444);
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

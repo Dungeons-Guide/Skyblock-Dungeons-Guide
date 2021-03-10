@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.gui.elements;
 
 import com.google.common.base.Function;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -60,8 +61,8 @@ public class MNavigatingPane extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
 
-        Gui.drawRect(0, 15, getBounds().width, getBounds().height, 0xFF444444);
-        Gui.drawRect(1, 16, getBounds().width-1, getBounds().height-1, background2 != null ? background2.getRGB() : 0);
+        RenderUtils.drawRectSafe(0, 15, getBounds().width, getBounds().height, 0xFF444444);
+        RenderUtils.drawRectSafe(1, 16, getBounds().width-1, getBounds().height-1, background2 != null ? background2.getRGB() : 0);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
         fr.drawString(currentPage.replace(".", " > "), 20, 20, 0xFFFFFFFF);
@@ -163,9 +164,9 @@ public class MNavigatingPane extends MPanel {
             } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
                 bg = hover;
             }
-            Gui.drawRect(0, tabbedPane.getCurrentPage().equals(address) ? 0 : 2, getBounds().width, getBounds().height, 0xFF444444);
+            RenderUtils.drawRectSafe(0, tabbedPane.getCurrentPage().equals(address) ? 0 : 2, getBounds().width, getBounds().height, 0xFF444444);
             if (bg != null)
-                Gui.drawRect(1,tabbedPane.getCurrentPage().equals(address) ? 1 : 3,getBounds().width - 1, getBounds().height, bg.getRGB());
+                RenderUtils.drawRectSafe(1,tabbedPane.getCurrentPage().equals(address) ? 1 : 3,getBounds().width - 1, getBounds().height, bg.getRGB());
 
             FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
             int width = renderer.getStringWidth(text);

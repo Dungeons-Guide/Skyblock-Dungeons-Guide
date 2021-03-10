@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -103,7 +104,7 @@ public class MParameter extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         if (hover != null && new Rectangle(new Point(0,0),getBounds().getSize()).contains(relMousex0, relMousey0)) {
-            Gui.drawRect(0,0,getBounds().width, getBounds().height, hover.getRGB());
+            RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, hover.getRGB());
         }
     }
 

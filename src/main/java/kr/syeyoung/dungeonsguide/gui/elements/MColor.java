@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.gui.elements;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -25,6 +26,6 @@ public class MColor extends MPanel {
         int x = (rectangle.width - getSize().width) / 2;
         int y = (rectangle.height - getSize().height) / 2;
 
-        Gui.drawRect(x,y,x+getSize().width,y+getSize().height, getColor().getRGB());
+        RenderUtils.drawRectSafe(x,y,x+getSize().width,y+getSize().height, getColor().getRGB());
     }
 }

@@ -7,6 +7,7 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.Minecraft;
@@ -162,6 +163,7 @@ public class PartyInviteViewer {
                 y += height + gap;
             }
             GlStateManager.popMatrix();
+            GlStateManager.enableBlend();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -180,8 +182,8 @@ public class PartyInviteViewer {
         GlStateManager.pushMatrix();
             GlStateManager.translate(x,y,0);
 
-            Gui.drawRect(0, 0,width,height, 0xFF23272a);
-            Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
+            RenderUtils.drawRectSafe(0, 0,width,height, 0xFF23272a);
+            RenderUtils.drawRectSafe(2, 2, width-2, height-2, 0XFF2c2f33);
         {
             String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().userId+"/"+partyJoinRequest.getDiscordUser().avatar+".png";
             Future<LoadedImage> loadedImageFuture = loadImage(avatar);
@@ -212,7 +214,7 @@ public class PartyInviteViewer {
                 GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
                 GlStateManager.popAttrib();
             } else {
-                Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
+                RenderUtils.drawRectSafe(7, 7, height - 7, height-7, 0xFF4E4E4E);
             }
         }
 
@@ -242,7 +244,7 @@ public class PartyInviteViewer {
                     GlStateManager.pushMatrix();
                         String text = "Accept";
                         partyJoinRequest.getAcceptRect().setBounds(x + height + 3, y + height - 25, widthForTheThing - 10, 25);
-                        Gui.drawRect(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getAcceptRect().contains(mouseX, mouseY) ? 0xFF859DF0 : 0xFF7289da);
+                        RenderUtils.drawRectSafe(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getAcceptRect().contains(mouseX, mouseY) ? 0xFF859DF0 : 0xFF7289da);
                         GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
 
                         GlStateManager.scale(2.0f, 2.0f, 1.0f);
@@ -250,7 +252,7 @@ public class PartyInviteViewer {
                     GlStateManager.popMatrix();
                     GlStateManager.translate(widthForTheThing, 0, 0);
                     partyJoinRequest.getDenyRect().setBounds(x + height + 3 + widthForTheThing, y + height - 25, widthForTheThing - 10, 25);
-                    Gui.drawRect(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getDenyRect().contains(mouseX, mouseY) ? 0xFFAEC0CB : 0xFF99aab5);
+                    RenderUtils.drawRectSafe(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getDenyRect().contains(mouseX, mouseY) ? 0xFFAEC0CB : 0xFF99aab5);
                     GlStateManager.pushMatrix();
                         text = "Deny";
                         GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
@@ -259,7 +261,7 @@ public class PartyInviteViewer {
                     GlStateManager.popMatrix();
                     GlStateManager.translate(widthForTheThing, 0, 0);
                     partyJoinRequest.getIgnoreRect().setBounds(x + height + 3 + widthForTheThing + widthForTheThing, y + height - 25, widthForTheThing - 10, 25);
-                    Gui.drawRect(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getIgnoreRect().contains(mouseX, mouseY) ? 0xFFAEC0CB : 0xFF99aab5); // AEC0CB
+                    RenderUtils.drawRectSafe(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getIgnoreRect().contains(mouseX, mouseY) ? 0xFFAEC0CB : 0xFF99aab5); // AEC0CB
                     GlStateManager.pushMatrix();
                         text = "Ignore";
                         GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);

@@ -42,10 +42,8 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     @Override
     public void drawScreen(float partialTicks) {
         if (!isEnabled()) return;
+        GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        GlStateManager.color(1,1,1,1);
-        GlStateManager.disableFog();GL11.glDisable(GL11.GL_FOG);
-        GlStateManager.disableLighting();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         Rectangle featureRect = this.featureRect.getRectangle(scaledResolution);
         clip(scaledResolution, featureRect.x, featureRect.y, featureRect.width, featureRect.height);
@@ -56,6 +54,9 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.popMatrix();
+        GlStateManager.popAttrib();
+
+        GlStateManager.enableBlend();
     }
 
 

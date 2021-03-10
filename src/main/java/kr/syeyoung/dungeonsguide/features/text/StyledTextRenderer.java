@@ -6,6 +6,7 @@ import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -88,8 +89,9 @@ public class StyledTextRenderer {
         if (stopDraw)
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);
 
-        Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
+        RenderUtils.drawRectSafe(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
 
+        GlStateManager.enableBlend();
         if (!style.getColor().isChroma()) {
             fr.drawString(content, x, y, style.getColor().getRGB(), style.isShadow());
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);

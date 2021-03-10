@@ -79,11 +79,13 @@ public class GuiConfig extends GuiScreen {
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
-            mainPanel.render0(scaledResolution, new Point(0, 0), new Rectangle(0, 0, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
+            mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
             GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.enableLighting();
         } catch (Throwable e) {
             e.printStackTrace();
         }

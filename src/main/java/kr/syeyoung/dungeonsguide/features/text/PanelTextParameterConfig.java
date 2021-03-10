@@ -14,6 +14,7 @@ import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MColor;
 import kr.syeyoung.dungeonsguide.gui.elements.MEditableAColor;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -102,9 +103,9 @@ public class PanelTextParameterConfig extends MPanel {
         GlStateManager.pushMatrix();
 
         int width = 200, height = 100;
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, 0xFF444444);
-        Gui.drawRect(4,4,width+6, height+6, 0xFF222222);
-        Gui.drawRect(5,5,width+5, height+5, 0xFF555555);
+        RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, 0xFF444444);
+        RenderUtils.drawRectSafe(4,4,width+6, height+6, 0xFF222222);
+        RenderUtils.drawRectSafe(5,5,width+5, height+5, 0xFF555555);
         Rectangle clip = new Rectangle(scissor.x + 5, scissor.y + 5, width, height);
         clip(new ScaledResolution(Minecraft.getMinecraft()), clip.x, clip.y, clip.width, clip.height);
 
@@ -119,11 +120,11 @@ public class PanelTextParameterConfig extends MPanel {
         boolean bool =clip.contains(absMousex, absMousey);
         for (StyledTextRenderer.StyleTextAssociated calc3: calc) {
             if (selected.contains(calc3.getStyledText().getGroup())) {
-                Gui.drawRect(calc3.getRectangle().x, calc3.getRectangle().y, calc3.getRectangle().x + calc3.getRectangle().width, calc3.getRectangle().y + calc3.getRectangle().height, 0x4244A800);
+                RenderUtils.drawRectSafe(calc3.getRectangle().x, calc3.getRectangle().y, calc3.getRectangle().x + calc3.getRectangle().width, calc3.getRectangle().y + calc3.getRectangle().height, 0x4244A800);
             } else if (bool && calc3.getRectangle().contains((relMousex0-5 -offsetX) * scale , (relMousey0 - 5 - offsetY) * scale)) {
                 for (StyledTextRenderer.StyleTextAssociated calc2 : calc) {
                     if (calc2.getStyledText().getGroup().equals(calc3.getStyledText().getGroup()))
-                        Gui.drawRect(calc2.getRectangle().x, calc2.getRectangle().y, calc2.getRectangle().x + calc2.getRectangle().width, calc2.getRectangle().y + calc2.getRectangle().height, 0x55777777);
+                        RenderUtils.drawRectSafe(calc2.getRectangle().x, calc2.getRectangle().y, calc2.getRectangle().x + calc2.getRectangle().width, calc2.getRectangle().y + calc2.getRectangle().height, 0x55777777);
                 }
             }
         }

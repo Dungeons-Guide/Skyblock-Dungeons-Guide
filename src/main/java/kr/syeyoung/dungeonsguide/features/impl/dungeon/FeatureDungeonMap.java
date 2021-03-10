@@ -111,11 +111,11 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         MapProcessor mapProcessor = context.getMapProcessor();
         MapData mapData = mapProcessor.getLastMapData2();
         Rectangle featureRect =getFeatureRect().getRectangle();
-        Gui.drawRect(0,0,featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, this.<AColor>getParameter("background_color").getValue()));
+        RenderUtils.drawRectSafe(0,0,featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, this.<AColor>getParameter("background_color").getValue()));
         GlStateManager.color(1,1,1,1);
         GlStateManager.pushMatrix();;
         if (mapData == null) {
-            Gui.drawRect(0,0,featureRect.width, featureRect.height, 0xFFFF0000);
+            RenderUtils.drawRectSafe(0,0,featureRect.width, featureRect.height, 0xFFFF0000);
         } else {
             renderMap(partialTicks,mapProcessor,mapData,context);
         }
@@ -131,7 +131,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             return;
         }
         Rectangle featureRect =getFeatureRect().getRectangle();
-        Gui.drawRect(0,0,featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, this.<AColor>getParameter("background_color").getValue()));
+        RenderUtils.drawRectSafe(0,0,featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, this.<AColor>getParameter("background_color").getValue()));
         FontRenderer fr = getFontRenderer();
         fr.drawString("Please join a dungeon to see preview", featureRect.width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, featureRect.height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
         GL11.glLineWidth(2);

@@ -6,6 +6,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -88,7 +91,8 @@ public class MPanel {
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GlStateManager.pushAttrib();
-        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height, backgroundColor.getRGB());
+        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height,  0x0000FF00);
+        GlStateManager.enableBlend();
         GlStateManager.popAttrib();
 
         GlStateManager.pushMatrix();

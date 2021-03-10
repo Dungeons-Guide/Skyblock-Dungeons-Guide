@@ -56,9 +56,7 @@ public class FeatureDungeonTombs extends TextHUDFeature {
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "number"
-        });
+        return Arrays.asList("title", "separator", "number");
     }
 
     @Override

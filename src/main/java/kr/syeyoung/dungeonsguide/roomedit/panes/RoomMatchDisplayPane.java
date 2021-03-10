@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -44,14 +45,14 @@ public class RoomMatchDisplayPane extends MPanel {
         int width = Math.max(currentBlocks[0].length, targetBlocks[0].length);
 
         // draw Axis;
-        Gui.drawRect(0,0,10,10,0x77777777);
+        RenderUtils.drawRectSafe(0,0,10,10,0x77777777);
         clip(sr, clip.x + 10, clip.y, clip.width - 10, 10);
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, 0x77777777);
+        RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, 0x77777777);
         for (int x = 0; x < width; x++) {
             fr.drawString(x+"", x * 16 +10 + offsetX, 0, 0xFFFFFFFF);
         }
         clip(sr, clip.x, clip.y +10, 10, clip.height-10);
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, 0x77777777);
+        RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, 0x77777777);
         for (int z = 0; z < height; z++) {
             fr.drawString(z+"", 2, z * 16 + 10 + offsetY, 0xFFFFFFFF);
         }
@@ -72,7 +73,7 @@ public class RoomMatchDisplayPane extends MPanel {
                 }
 
                 if (z == hoverY && x == hoverX) {
-                    Gui.drawRect(x *16 +10+offsetX, z *16 +10 + offsetY, x *16 +26 +offsetX, z *16 +26 + offsetY, 0xAA505050);
+                    RenderUtils.drawRectSafe(x *16 +10+offsetX, z *16 +10 + offsetY, x *16 +26 +offsetX, z *16 +26 + offsetY, 0xAA505050);
                 }
 
                 if (data1 == data2) drawItemStack(new ItemStack(Item.getItemFromBlock(Block.getBlockById(data1)), 1), x * 16 +10 + offsetX, z *16 +10 + offsetY);

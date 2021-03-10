@@ -49,6 +49,7 @@ public class FeatureListener {
                     ((ScreenRenderListener) abstractFeature).drawScreen(postRender.partialTicks);
                 }
             }
+            GlStateManager.enableBlend();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -266,6 +267,7 @@ public class FeatureListener {
                     ((GuiPostRenderListener) abstractFeature).onGuiPostRender(render);
                 }
             }
+            GlStateManager.enableBlend();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -281,6 +283,7 @@ public class FeatureListener {
                     ((GuiPreRenderListener) abstractFeature).onGuiPreRender(render);
                 }
             }
+            GlStateManager.enableBlend();
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -296,6 +299,7 @@ public class FeatureListener {
                     ((GuiBackgroundRenderListener) abstractFeature).onGuiBGRender(render);
                 }
             }
+            GlStateManager.enableBlend();
         } catch (Throwable t) {
             t.printStackTrace();
         }

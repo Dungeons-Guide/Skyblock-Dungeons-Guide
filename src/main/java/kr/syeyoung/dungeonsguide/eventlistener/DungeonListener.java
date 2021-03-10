@@ -27,6 +27,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
@@ -82,6 +83,7 @@ public class DungeonListener {
                         dungeonRoom.getRoomProcessor().onPostGuiRender(e);
                     }
                 }
+            GlStateManager.enableBlend();
         } catch (Throwable e2) {e2.printStackTrace();}
     }
     @SubscribeEvent
@@ -232,6 +234,7 @@ public class DungeonListener {
                 }
 
             }
+            GlStateManager.enableBlend();
         } catch (Throwable e) {
             e.printStackTrace();
         }

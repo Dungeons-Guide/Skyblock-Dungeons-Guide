@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureInstaCloseChest;
 import kr.syeyoung.dungeonsguide.features.listener.GuiBackgroundRenderListener;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -77,7 +78,7 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(left, top, 0);
-        Gui.drawRect( 0,0,width, 30, 0xFFDDDDDD);
+        RenderUtils.drawRectSafe( 0,0,width, 30, 0xFFDDDDDD);
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("BIN/AH Price: ", 5,5, 0xFF000000);
@@ -89,5 +90,8 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
         fr.drawString(str, width - fr.getStringWidth(str) - 5, 15, itemPrice > chestPrice ? 0xFF00CC00 : 0xFFCC0000);
 
         GlStateManager.popMatrix();
+
+        GlStateManager.enableLighting();
+        GlStateManager.enableBlend();
     }
 }

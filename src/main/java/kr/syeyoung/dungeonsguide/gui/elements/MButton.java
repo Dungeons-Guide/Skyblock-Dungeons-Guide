@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.gui.elements;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -34,7 +35,7 @@ public class MButton extends MPanel {
             bg = hover;
         }
         if (bg != null)
-            Gui.drawRect(0,0,getBounds().width, getBounds().height, bg.getRGB());
+            RenderUtils.drawRectSafe(0,0,getBounds().width, getBounds().height, bg.getRGB());
 
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(getText());

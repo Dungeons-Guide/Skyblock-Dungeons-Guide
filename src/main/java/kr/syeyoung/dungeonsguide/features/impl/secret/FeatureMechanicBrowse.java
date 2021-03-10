@@ -19,6 +19,7 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -74,8 +75,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = getFontRenderer();
 
-        Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
+        RenderUtils.drawRectSafe(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
+        RenderUtils.drawRectSafe(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         if (grp.getPath() == null)
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
@@ -91,8 +92,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = getFontRenderer();
 
-        Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
+        RenderUtils.drawRectSafe(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
+        RenderUtils.drawRectSafe(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
         fr.drawString("Open any gui to browse", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
@@ -131,8 +132,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = getFontRenderer();
         GlStateManager.translate(feature.x, feature.y, 0);
-        Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
-        Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
+        RenderUtils.drawRectSafe(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
+        RenderUtils.drawRectSafe(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         if (grp.getPath() == null)
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
@@ -141,8 +142,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             fr.drawString(route.getMechanic()+" -> "+route.getState(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
         }
         GlStateManager.translate(0, fr.FONT_HEIGHT + 4, 0);
-        Gui.drawRect(0, 0, feature.width, feature.height - fr.FONT_HEIGHT - 4, 0xFF444444);
-        Gui.drawRect(1, 1, feature.width - 1,feature.height - fr.FONT_HEIGHT - 5, 0xFF262626);
+        RenderUtils.drawRectSafe(0, 0, feature.width, feature.height - fr.FONT_HEIGHT - 4, 0xFF444444);
+        RenderUtils.drawRectSafe(1, 1, feature.width - 1,feature.height - fr.FONT_HEIGHT - 5, 0xFF262626);
         clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         GlStateManager.translate(0, -dy, 0);
@@ -153,9 +154,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         for (int i = 0; i < sortedMechanics.size(); i++) {
             Object obj = sortedMechanics.get(i);
             if (selected == i) {
-                Gui.drawRect(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF444444);
+                RenderUtils.drawRectSafe(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF444444);
             } else if (new Rectangle(feature.x, feature.y + fr.FONT_HEIGHT + 6 - dy + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
-                Gui.drawRect(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
+                RenderUtils.drawRectSafe(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
             }
             if (obj instanceof DungeonMechanic) {
                 String name = sortedMechanicsName.get(i);
@@ -167,7 +168,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             } else if ("$SPECIAL-CANCEL".equals(obj)) {
                 fr.drawString("Cancel Current", 3, i * fr.FONT_HEIGHT, 0xFF00FFFF);
             } else {
-                Gui.drawRect(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF444444);
+                RenderUtils.drawRectSafe(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF444444);
                 fr.drawString((String)obj, 3, i * fr.FONT_HEIGHT, 0xFFEEEEEE);
             }
         }
@@ -176,14 +177,14 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (selected != -1) {
             clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
             GlStateManager.translate(feature.width, selected * fr.FONT_HEIGHT, 0);
-            Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT * possibleStates.size() + 4, 0xFF444444);
-            Gui.drawRect(-1, 1, feature.width - 1, fr.FONT_HEIGHT  * possibleStates.size() + 3, 0xFF262626);
+            RenderUtils.drawRectSafe(0, 0, feature.width, fr.FONT_HEIGHT * possibleStates.size() + 4, 0xFF444444);
+            RenderUtils.drawRectSafe(-1, 1, feature.width - 1, fr.FONT_HEIGHT  * possibleStates.size() + 3, 0xFF262626);
             GlStateManager.translate(2,2, 0);
 
             Point popupStart = new Point(feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy + 2);
             for (int i = 0; i < possibleStates.size(); i++) {
                 if (new Rectangle(feature.x + feature.width, popupStart.y + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
-                    Gui.drawRect(-2, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
+                    RenderUtils.drawRectSafe(-2, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
                 }
                 fr.drawString(possibleStates.get(i), 0, i * fr.FONT_HEIGHT, 0xFFFFFFFF);
             }
@@ -191,6 +192,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         GlStateManager.popMatrix();
+        GlStateManager.enableBlend();
     }
 
     private void clip(ScaledResolution resolution, int x, int y, int width, int height) {
