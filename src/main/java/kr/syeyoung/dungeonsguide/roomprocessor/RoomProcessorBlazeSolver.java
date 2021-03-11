@@ -29,6 +29,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 
 public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
@@ -85,7 +86,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         }
         if (semi_target != null) {
             EntityArmorStand finalSemi_target = semi_target;
-            nextBlaze = blazeList.stream().filter(e -> e.getDistanceSqToEntity(finalSemi_target) < 9).findFirst().orElse(null);
+            nextBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(finalSemi_target))).orElse(null);
         }
 
         next = semi_target;

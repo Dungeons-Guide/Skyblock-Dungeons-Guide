@@ -11,12 +11,14 @@ import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
+import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.command.ICommand;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.launchwrapper.LogWrapper;
@@ -45,6 +47,7 @@ import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
@@ -80,6 +83,7 @@ public class e implements c, CloseListener {
 //    private String stompURL = "ws://localhost/ws";
     public void init(FMLInitializationEvent event) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+
 
         try {
             Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) a.class.getClassLoader(), "invalidClasses");
@@ -141,6 +145,7 @@ public class e implements c, CloseListener {
             e.printStackTrace();
         }
 
+
         ProgressManager.pop(progressbar);
     }
     public void pre(FMLPreInitializationEvent event) {
@@ -151,6 +156,13 @@ public class e implements c, CloseListener {
         }
         Config.f = configFile;
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
+
+        try {
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(),"defaultResourcePacks");
+            resourcePackList.add(new DGTexturePack(authenticator));
+        } catch (Throwable t){
+            t.printStackTrace();
+        }
     }
     private void copy(InputStream inputStream, File f) throws IOException {
         FileOutputStream fos = new FileOutputStream(f);

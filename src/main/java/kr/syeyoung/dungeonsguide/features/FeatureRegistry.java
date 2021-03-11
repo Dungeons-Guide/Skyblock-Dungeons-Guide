@@ -72,11 +72,12 @@ public class FeatureRegistry {
     public static final FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY =  register(new FeatureAutoAcceptReparty());
     public static final FeatureUpdateAlarm ETC_TEST = register(new FeatureUpdateAlarm());
 
-
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Fixes", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
     public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
 
     public static final FeatureCopyMessages ETC_COPY_MSG = register(new FeatureCopyMessages());
+
+    public static final FeaturePenguins ETC_PENGUIN = register(new FeaturePenguins());
 
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
     public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());

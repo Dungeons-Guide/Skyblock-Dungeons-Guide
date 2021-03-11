@@ -24,3 +24,8 @@ gradle-app.setting
 # gradle/wrapper/gradle-wrapper.properties
 
 mods/*
+/modcore/config.toml
+/modcore/Sk1er Modcore-0.1.47 (1.8.9).jar
+/.mixin.out/audit/mixin_implementation_report.csv
+/.mixin.out/audit/mixin_implementation_report.txt
+/modcore/metadata.json

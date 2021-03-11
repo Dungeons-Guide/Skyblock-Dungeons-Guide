@@ -10,7 +10,7 @@ bobView:true
 anaglyph3d:false
 maxFps:120
 fboEnable:true
-difficulty:0
+difficulty:3
 fancyGraphics:true
 ao:2
 renderClouds:fast
@@ -24,7 +24,7 @@ chatLinks:true
 chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
-fullscreen:true
+fullscreen:false
 enableVsync:true
 useVbo:true
 hideServerAddress:false
@@ -90,10 +90,27 @@ key_key.hotbar.6:7
 key_key.hotbar.7:8
 key_key.hotbar.8:9
 key_key.hotbar.9:10
+key_Add item to inventory (Creative-only):38
+key_Set item as favourite:33
+key_Show usages for item:22
+key_Show recipe for item:19
+key_Toggle NEU overlay:0
+key_Close NEU panes:0
+key_Select Item:-98
 key_start editing session:19
 key_send and save bombdefuse solution:33
 key_navigate to next secret. (Req option enabled at /dg):34
 key_toggle Pathfind. (Req option enabled at /dg):47
+key_Settings:0
+key_Edit GUI Locations:0
+key_Lock Slot:38
+key_Freeze Backpack Preview:33
+key_Open Friends Gui:54
+key_Add Friend:0
+key_Flip (Hold):0
+key_Rotate (Hold):0
+key_Flip (Toggle):0
+key_Rotate (Toggle):0
 soundCategory_master:1.0
 soundCategory_music:0.0
 soundCategory_record:1.0
