@@ -158,7 +158,7 @@ public class e implements c, CloseListener {
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
         try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(),"defaultResourcePacks");
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(),"defaultResourcePacks", "aA", "field_110449_ao");
             resourcePackList.add(new DGTexturePack(authenticator));
         } catch (Throwable t){
             t.printStackTrace();

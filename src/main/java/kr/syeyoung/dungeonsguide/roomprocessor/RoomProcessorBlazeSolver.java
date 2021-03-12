@@ -63,7 +63,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         blazeList = new ArrayList<EntityBlaze>(w.getEntities(EntityBlaze.class, input -> {
             BlockPos pos = input.getPosition();
             return low.getX() < pos.getX() && pos.getX() < high.getX()
-                    && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && input.getName().toLowerCase().contains("blaze");
+                    && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
         }));
 
         EntityArmorStand semi_target = null;
@@ -109,6 +109,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
 
         for (EntityBlaze entity : blazeList) {
+            GlStateManager.pushMatrix();
             float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * partialTicks;
             double x = entity.prevPosX + (entity.posX - entity.prevPosX) * partialTicks;
             double y = entity.prevPosY + (entity.posY - entity.prevPosY) * partialTicks;
@@ -149,30 +150,33 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GlStateManager.color(1,1,1,1);
 
 
-            GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
-            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
-            GlStateManager.translate(-x_fix, -y_fix, -z_fix);
-            GlStateManager.translate(x, y + 0.7, z);
-            GlStateManager.scale(1.1f, 1.1f, 1.1f);
+            if (FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
+                GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
+                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
+                GlStateManager.pushMatrix();
+                GlStateManager.pushAttrib();
+                GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+                GlStateManager.translate(x, y + 0.7, z);
+                GlStateManager.scale(1.1f, 1.1f, 1.1f);
 
-            GlStateManager.colorMask(false, false, false, false);
-            Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
-            GlStateManager.colorMask(true, true, true, true);
+                GlStateManager.colorMask(false, false, false, false);
+                Minecraft.getMinecraft().getRenderManager().doRenderEntity(entity, 0, -0.7, 0, f, partialTicks, true);
+                GlStateManager.colorMask(true, true, true, true);
 
-            GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
-
-
-            GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
-            GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
-
-            RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
+                GlStateManager.popMatrix();
+                GlStateManager.popAttrib();
 
 
-            GL11.glDisable(GL11.GL_STENCIL_TEST);
-            GlStateManager.enableDepth();
+                GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
+                GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
+
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
+
+
+                GL11.glDisable(GL11.GL_STENCIL_TEST);
+                GlStateManager.enableDepth();
+                GlStateManager.popMatrix();
+            }
         }
     }
 

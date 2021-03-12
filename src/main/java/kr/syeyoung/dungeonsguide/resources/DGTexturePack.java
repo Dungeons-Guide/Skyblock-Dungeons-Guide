@@ -37,7 +37,7 @@ public class DGTexturePack implements IResourcePack {
 
     @Override
     public Set<String> getResourceDomains() {
-        return Collections.singleton("iamdg");
+        return Collections.singleton("dungeonsguide");
     }
 
     @Override

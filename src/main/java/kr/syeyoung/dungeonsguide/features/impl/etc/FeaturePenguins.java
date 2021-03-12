@@ -30,7 +30,7 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
 
 
     private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
-    private ResourceLocation penguin = new ResourceLocation("iamdg:penguin.png");
+    private ResourceLocation penguin = new ResourceLocation("dungeonsguide:penguin.png");
 
     @Override
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {

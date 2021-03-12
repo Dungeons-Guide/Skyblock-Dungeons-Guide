@@ -116,6 +116,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
         int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
         GlStateManager.pushMatrix();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableLighting();
+        GlStateManager.color(1, 1, 1, 1);
 
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
 
@@ -183,6 +186,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         GlStateManager.popMatrix();
         GlStateManager.enableBlend();
+        GlStateManager.enableTexture2D();
     }
 
     private void clip(ScaledResolution resolution, int x, int y, int width, int height) {
