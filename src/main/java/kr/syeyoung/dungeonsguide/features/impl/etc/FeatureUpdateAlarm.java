@@ -41,5 +41,9 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
                 .destination("/topic/updates")
                 .ackMode(StompSubscription.AckMode.AUTO)
                 .stompMessageHandler(this).build());
+        event.getStompInterface().subscribe(StompSubscription.builder()
+                .destination("/user/queue/messages")
+                .ackMode(StompSubscription.AckMode.AUTO)
+                .stompMessageHandler(this).build());
     }
 }

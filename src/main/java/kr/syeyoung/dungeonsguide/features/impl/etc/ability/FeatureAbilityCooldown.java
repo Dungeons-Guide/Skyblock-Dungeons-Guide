@@ -261,7 +261,6 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) {
-            System.out.println(clientChatReceivedEvent.message.getFormattedText());
             Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
             if (m.find()) {
                 String name = m.group(2)+":"+m.group(1);

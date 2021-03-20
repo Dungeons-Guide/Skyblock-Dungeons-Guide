@@ -5,12 +5,18 @@ import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.stomp.StompInterface;
+import kr.syeyoung.dungeonsguide.stomp.StompMessageHandler;
+import kr.syeyoung.dungeonsguide.stomp.StompPayload;
+import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -19,6 +25,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 
@@ -27,7 +34,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureDungeonScore extends TextHUDFeature {
+public class FeatureDungeonScore extends TextHUDFeature implements StompConnectedListener, StompMessageHandler {
     public FeatureDungeonScore() {
         super("Dungeon", "Display Current Score", "Calculate and Display current score\nThis data is from pure calculation and can be different from actual score.", "dungeon.stats.score", false, 200, getFontRenderer().FONT_HEIGHT * 4);
         this.setEnabled(false);
@@ -149,8 +156,25 @@ public class FeatureDungeonScore extends TextHUDFeature {
         return actualBit;
     }
 
+    @Override
+    public void onStompConnected(StompConnectedEvent event) {
+        event.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/topic/dungeon.bonusscore").build());
+        event.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/dungeon.bonusscore").build());
 
+        event.getStompInterface().send(new StompPayload().header("destination", "/app/dungeon.bonusscore.req"));
+    }
 
+    private int mayorScore = 0;
+    @Override
+    public void handle(StompInterface stompInterface, StompPayload stompPayload) {
+        try {
+            mayorScore = Integer.parseInt(stompPayload.payload().trim());
+            System.out.println("mayor " +mayorScore);
+        } catch (Exception e) {
+        }
+    }
 
 
     @Data
@@ -263,6 +287,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         {
             bonus += tombs = MathHelper.clamp_int(FeatureRegistry.DUNGEON_TOMBS.getTombsFound(), 0, 5);
             if (context.isGotMimic()) bonus += 2;
+            bonus += mayorScore;
         }
 
         // amazing thing
