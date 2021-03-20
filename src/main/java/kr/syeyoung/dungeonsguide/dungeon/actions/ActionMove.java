@@ -50,24 +50,27 @@ public class ActionMove extends AbstractAction {
 
         if (FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() && Keybinds.togglePathfindStatus) return;
 
-        if (latest != null){
-            List<BlockPos> poses = new ArrayList<BlockPos>();
-            for (int i = 0; i < latest.getCurrentPathLength(); i++) {
-                PathPoint pathPoint = latest.getPathPointFromIndex(i);
-                poses.add(dungeonRoom.getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
-            }
-            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks, true);
+        if (poses != null){
+            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks, FeatureRegistry.SECRET_BROWSE.getThickness(), true);
         }
     }
 
     private int tick = -1;
     private PathEntity latest;
+    private List<BlockPos> poses;
     @Override
     public void onTick(DungeonRoom dungeonRoom) {
         tick = (tick+1) % 10;
         if (tick == 0) {
             latest = dungeonRoom.getPathFinder().createEntityPathTo(dungeonRoom.getContext().getWorld(),
                         Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
+            if (latest != null) {
+                poses = new ArrayList<>();
+                for (int i = 0; i < latest.getCurrentPathLength(); i++) {
+                    PathPoint pathPoint = latest.getPathPointFromIndex(i);
+                    poses.add(dungeonRoom.getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
+                }
+            }
         }
     }
 

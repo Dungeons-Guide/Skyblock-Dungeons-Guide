@@ -40,10 +40,14 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     public FeatureMechanicBrowse() {
         super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
         parameters.put("linecolor", new FeatureParameter<Color>("linecolor", "Color", "Color of Pathfind line", Color.green, "color"));
+        parameters.put("linethickness", new FeatureParameter<Float>("linethickness", "Thickness", "Thickness of Pathfind line", 1.0f, "float"));
     }
 
     public Color getColor() {
         return this.<Color>getParameter("linecolor").getValue();
+    }
+    public float getThickness() {
+        return this.<Float>getParameter("linethickness").getValue();
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();

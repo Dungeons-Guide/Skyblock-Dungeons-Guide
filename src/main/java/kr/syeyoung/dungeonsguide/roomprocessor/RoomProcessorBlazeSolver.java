@@ -173,10 +173,10 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
 
 
-                GL11.glDisable(GL11.GL_STENCIL_TEST);
-                GlStateManager.enableDepth();
-                GlStateManager.popMatrix();
             }
+            GL11.glDisable(GL11.GL_STENCIL_TEST);
+            GlStateManager.enableDepth();
+            GlStateManager.popMatrix();
         }
     }
 

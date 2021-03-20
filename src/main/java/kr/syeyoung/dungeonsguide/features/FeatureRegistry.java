@@ -9,6 +9,7 @@ import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureSimonSaysSol
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolvers;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
+import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureSoulRoomWarning;
@@ -66,6 +67,7 @@ public class FeatureRegistry {
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
+    public static final FeatureAbilityCooldown ETC_ABILITY_COOLDOWN = register(new FeatureAbilityCooldown());
     public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
     public static final FeatureRepartyCommand ETC_REPARTY =  register(new FeatureRepartyCommand());
     public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND =  register(new FeatureDecreaseExplosionSound());

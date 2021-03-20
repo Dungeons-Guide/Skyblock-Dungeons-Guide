@@ -4,8 +4,8 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
@@ -174,11 +174,43 @@ public class CommandDungeonsGuide extends CommandBase {
                     DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
                     ois.close();
                     fis.close();
-                    for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dri.getMechanics().entrySet()) {
-                        if (stringDungeonMechanicEntry.getValue() instanceof DungeonSecret) {
-                            if (stringDungeonMechanicEntry.getKey().charAt(0) != Character.toLowerCase(((DungeonSecret) stringDungeonMechanicEntry.getValue()).getSecretType().name().charAt(0))) {
-                                System.out.println("Mismatch found at "+dri.getName() + " - "+stringDungeonMechanicEntry.getKey() +" - "+((DungeonSecret) stringDungeonMechanicEntry.getValue()).getSecretType());
-                                System.out.print(' ');
+                    System.out.println("Starting at "+dri.getName() +" - "+dri.getUuid());
+                    for (Map.Entry<String, DungeonMechanic> value2 : dri.getMechanics().entrySet()) {
+                        DungeonMechanic value = value2.getValue();
+                        if (value instanceof DungeonSecret &&
+                                (((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.BAT
+                        || ((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.CHEST)
+                        && ((DungeonSecret) value).getSecretPoint().getY() == 0) {
+                            OffsetPoint offsetPoint = ((DungeonSecret) value).getSecretPoint();
+                            dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                            System.out.println("Fixing "+value2.getKey()+" - as secret "+((DungeonSecret) value).getSecretType() + " - at "+((DungeonSecret) value).getSecretPoint());
+                        } else if (value instanceof DungeonOnewayDoor) {
+                            for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {
+                                if (offsetPoint.getY() == 0) {
+                                    dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                                    System.out.println("Fixing "+value2.getKey()+" - o-door - at "+offsetPoint);
+                                }
+                            }
+                        } else if (value instanceof DungeonDoor) {
+                            for (OffsetPoint offsetPoint : ((DungeonDoor) value).getSecretPoint().getOffsetPointList()) {
+                                if (offsetPoint.getY() == 0) {
+                                    dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                                    System.out.println("Fixing "+value2.getKey()+" - door - at "+offsetPoint);
+                                }
+                            }
+                        } else if (value instanceof DungeonBreakableWall) {
+                            for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).getSecretPoint().getOffsetPointList()) {
+                                if (offsetPoint.getY() == 0) {
+                                    dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                                    System.out.println("Fixing "+value2.getKey()+" - wall - at "+offsetPoint);
+                                }
+                            }
+                        } else if (value instanceof DungeonTomb) {
+                            for (OffsetPoint offsetPoint : ((DungeonTomb) value).getSecretPoint().getOffsetPointList()) {
+                                if (offsetPoint.getY() == 0) {
+                                    dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                                    System.out.println("Fixing "+value2.getKey()+" - crypt - at "+offsetPoint);
+                                }
                             }
                         }
                     }

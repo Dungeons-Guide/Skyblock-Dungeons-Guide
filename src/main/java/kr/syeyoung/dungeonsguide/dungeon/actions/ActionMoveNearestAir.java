@@ -48,26 +48,30 @@ public class ActionMoveNearestAir extends AbstractAction {
         RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() && Keybinds.togglePathfindStatus) return;
-        if (latest != null){
-            List<BlockPos> poses = new ArrayList<BlockPos>();
-            for (int i = 0; i < latest.getCurrentPathLength(); i++) {
-                PathPoint pathPoint = latest.getPathPointFromIndex(i);
-                poses.add(dungeonRoom.getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
-            }
-            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks, true);
+        if (poses != null){
+            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks, FeatureRegistry.SECRET_BROWSE.getThickness(), true);
         }
     }
 
     private int tick = -1;
     private PathEntity latest;
+    private List<BlockPos> poses;
     @Override
     public void onTick(DungeonRoom dungeonRoom) {
         tick = (tick+1) % 10;
         if (tick == 0) {
             latest = dungeonRoom.getPathFinder().createEntityPathTo(dungeonRoom.getContext().getWorld(),
                     Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
+            if (latest != null) {
+                poses = new ArrayList<>();
+                for (int i = 0; i < latest.getCurrentPathLength(); i++) {
+                    PathPoint pathPoint = latest.getPathPointFromIndex(i);
+                    poses.add(dungeonRoom.getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
+                }
+            }
         }
     }
+
     @Override
     public String toString() {
         return "MoveNearestAir\n- target: "+target.toString();

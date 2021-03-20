@@ -21,7 +21,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONArray;
 import org.json.JSONObject;
-import scala.util.parsing.json.JSON;
 
 import java.security.SecureRandom;
 import java.util.HashMap;
@@ -135,6 +134,7 @@ public class PartyManager implements StompMessageHandler {
                     members.add(player);
                 }
             } else if (str.equals("§9§m-----------------------------§r")) {
+                System.out.println(checkPlayer + " - "+partyJoin + " - "+invitedDash);
                 if ((checkPlayer > 0 || partyJoin > 0) && partyJoin != 100) {
                     chatReceivedEvent.setCanceled(true);
                 }
