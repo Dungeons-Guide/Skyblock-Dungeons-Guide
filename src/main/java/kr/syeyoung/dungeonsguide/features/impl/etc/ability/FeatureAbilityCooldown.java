@@ -221,12 +221,16 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         List<StyledText> cooldowns = new ArrayList<>();
 
         for (UsedAbility usedAbility : usedAbilities) {
-            cooldowns.add(new StyledText(usedAbility.getAbility().getName(), "abilityname"));
-            cooldowns.add(new StyledText(": ", "separator"));
             long end = usedAbility.getCooldownEnd();
             if (System.currentTimeMillis() >= end) {
-                cooldowns.add(new StyledText("READY\n", "ready"));
+                if (System.currentTimeMillis() <= end + 20000) {
+                    cooldowns.add(new StyledText(usedAbility.getAbility().getName(), "abilityname"));
+                    cooldowns.add(new StyledText(": ", "separator"));
+                    cooldowns.add(new StyledText("READY\n", "ready"));
+                }
             } else {
+                cooldowns.add(new StyledText(usedAbility.getAbility().getName(), "abilityname"));
+                cooldowns.add(new StyledText(": ", "separator"));
                 long seconds = (long) Math.ceil((end - System.currentTimeMillis()) / 1000.0);
                 long hr = seconds / (60 * 60); seconds -= hr * 60 * 60;
                 long min = seconds / 60; seconds -= min * 60;
@@ -257,6 +261,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) {
+            System.out.println(clientChatReceivedEvent.message.getFormattedText());
             Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
             if (m.find()) {
                 String name = m.group(2)+":"+m.group(1);
@@ -269,22 +274,26 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
             }
         } else {
             String message = clientChatReceivedEvent.message.getFormattedText();
-            Matcher m = thePattern2.matcher(message);
-            if (m.matches()) {
-                String abilityName = TextUtils.stripColor(m.group(1));
-                String manas = TextUtils.stripColor(m.group(2));
-
-                used(abilityName+":"+manas);
+            if (message.equals("§r§aYour §r§9Bonzo's Mask §r§asaved your life!§r")) {
+                used("Clownin' Around");
             } else {
-                Matcher m2 = thePattern3.matcher(message);
-                if (m2.matches()) {
-                    String abilityName = TextUtils.stripColor(m2.group(1));
-                    used(abilityName);
-                } else if (message.startsWith("§r§aYou used your ") || message.endsWith("§r§aPickaxe Ability!§r")) {
-                    String nocolor = TextUtils.stripColor(message);
-                    String abilityName = nocolor.substring(nocolor.indexOf("your")+5, nocolor.indexOf("Pickaxe")-1);
+                Matcher m = thePattern2.matcher(message);
+                if (m.matches()) {
+                    String abilityName = TextUtils.stripColor(m.group(1));
+                    String manas = TextUtils.stripColor(m.group(2));
 
-                    used(abilityName);
+                    used(abilityName + ":" + manas);
+                } else {
+                    Matcher m2 = thePattern3.matcher(message);
+                    if (m2.matches()) {
+                        String abilityName = TextUtils.stripColor(m2.group(1));
+                        used(abilityName);
+                    } else if (message.startsWith("§r§aYou used your ") || message.endsWith("§r§aPickaxe Ability!§r")) {
+                        String nocolor = TextUtils.stripColor(message);
+                        String abilityName = nocolor.substring(nocolor.indexOf("your") + 5, nocolor.indexOf("Pickaxe") - 1);
+
+                        used(abilityName);
+                    }
                 }
             }
         }
@@ -295,7 +304,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
             SkyblockAbility skyblockAbility = skyblockAbilities.get(ability);
             if (skyblockAbility.getCooldown() > 0) {
                 UsedAbility usedAbility = new UsedAbility(skyblockAbility, System.currentTimeMillis() + skyblockAbility.getCooldown() * 1000);
-                usedAbilities.remove(usedAbility);
+                for (int i = 0; i < 3; i++) usedAbilities.remove(usedAbility);
                 usedAbilities.add(usedAbility);
             }
             System.out.println("known ability: "+ability+": "+skyblockAbility.getCooldown());
