@@ -48,7 +48,7 @@ public class a
         b b = new b(f);
         String c = null;
         try {
-            c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? "latest" : null);
+            c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? System.getProperty("dg.version") == null ? "latest" : System.getProperty("dg.version") : null);
             if (c != null) {
                 this.a = this;
                 URL.setURLStreamHandlerFactory(new c(b));
