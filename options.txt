@@ -3,7 +3,7 @@ mouseSensitivity:0.5
 fov:1.0
 gamma:1.0
 saturation:0.0
-renderDistance:6
+renderDistance:3
 guiScale:2
 particles:0
 bobView:true
@@ -98,7 +98,7 @@ key_Toggle NEU overlay:0
 key_Close NEU panes:0
 key_Select Item:-98
 key_start editing session:19
-key_send and save bombdefuse solution:33
+key_send and save bombdefuse solution:35
 key_navigate to next secret. (Req option enabled at /dg):34
 key_toggle Pathfind. (Req option enabled at /dg):47
 key_Settings:0

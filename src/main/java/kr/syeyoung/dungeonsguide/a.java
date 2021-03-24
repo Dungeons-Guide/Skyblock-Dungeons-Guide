@@ -22,6 +22,7 @@ import java.io.*;
 import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
+import java.security.spec.InvalidKeySpecException;
 
 @Mod(modid = a.b, version = a.c)
 public class a
@@ -43,11 +44,11 @@ public class a
 
     @EventHandler
     public void a(FMLPreInitializationEvent a) {
-        ProgressManager.ProgressBar f = ProgressManager.push("DungeonsGuide", 5);
+        ProgressManager.ProgressBar f = ProgressManager.push("DungeonsGuide", this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? 7 : 6);
         b b = new b(f);
         String c = null;
         try {
-            c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null);
+            c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? "latest" : null);
             if (c != null) {
                 this.a = this;
                 URL.setURLStreamHandlerFactory(new c(b));
@@ -69,27 +70,7 @@ public class a
                 }
                 return;
             }
-        } catch (IOException e) {
-            e.printStackTrace();
-        }  catch (AuthenticationException e) {
-            e.printStackTrace();
-        } catch (NoSuchAlgorithmException e) {
-            e.printStackTrace();
-        } catch (NoSuchPaddingException e) {
-            e.printStackTrace();
-        } catch (InvalidKeyException e) {
-            e.printStackTrace();
-        } catch (InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        } catch (IllegalBlockSizeException e) {
-            e.printStackTrace();
-        } catch (BadPaddingException e) {
-            e.printStackTrace();
-        } catch (CertificateException e) {
-            e.printStackTrace();
-        } catch (KeyStoreException e) {
-            e.printStackTrace();
-        } catch (KeyManagementException e) {
+        } catch (IOException | InvalidAlgorithmParameterException | AuthenticationException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
             e.printStackTrace();
         }
 

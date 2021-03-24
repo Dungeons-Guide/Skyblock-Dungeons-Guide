@@ -79,7 +79,7 @@ public class e implements c, CloseListener {
     CommandReparty commandReparty;
 
 
-    private String stompURL = "wss://dungeonsguide.kro.kr/ws";
+    private String stompURL = "wss://dungeons.guide/ws";
 //    private String stompURL = "ws://localhost/ws";
     public void init(FMLInitializationEvent event) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
