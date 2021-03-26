@@ -119,15 +119,11 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         if (solutionProvider == null) return;
         if (solution == null) return;
         if (solution.getCurrSlots() == null) {
-            mouseInputEvent.setCanceled(true);
             return;
         }
-        mouseInputEvent.setCanceled(true);
         Slot s = ((GuiChest) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
         if (solution.getCurrSlots().contains(s)) {
             clicked.add(s);
-            Minecraft.getMinecraft().playerController.windowClick(((GuiChest)Minecraft.getMinecraft().currentScreen).inventorySlots.windowId, s.getSlotIndex(),
-                    2, 0, Minecraft.getMinecraft().thePlayer);
             return;
         }
     }

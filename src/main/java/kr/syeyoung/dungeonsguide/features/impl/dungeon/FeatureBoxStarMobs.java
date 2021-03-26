@@ -39,12 +39,13 @@ public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderList
             @Override
             public boolean apply(@Nullable EntityArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;
+                if (input.isInvisible() || !input.getAlwaysRenderNameTag()) return false;
                 return input.getName().contains("✯");
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();
         for (EntityArmorStand entitySkeleton : skeletonList) {
-            RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
+                RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }
     }
 }

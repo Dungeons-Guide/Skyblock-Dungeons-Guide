@@ -49,22 +49,6 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
             }
         }
     }
-
-    @Override
-    public void onInteractBlock(PlayerInteractEvent event) {
-        BlockPos pos = event.pos;
-        World w = event.world;
-
-        if (answer == -1) return;
-
-        if (w.getBlockState(pos).getBlock() == Blocks.wooden_button) {
-            for (int i = 0; i < 9; i++) {
-                if (poses[answer] == pos && ((answer >> i) & 0x01) == 0) {
-                    event.setCanceled(true);
-                }
-            }
-        }
-    }
     @Override
     public void onDataRecieve(NBTTagCompound compound) {
         if (2 == compound.getByte("a")) {

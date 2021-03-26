@@ -79,9 +79,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         BlockPos pos = event.pos.add(1,0,0);
         if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 310 && 291 <= pos.getZ() && pos.getZ() <= 294) {
             if (w.getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
-            if (!pos.equals(orderclick.peek())) {
-                if (isEnabled()) event.setCanceled(true);
-            } else {
+            if (pos.equals(orderclick.peek())) {
                 orderclick.poll();
             }
         }

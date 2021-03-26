@@ -40,6 +40,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderL
             @Override
             public boolean apply(@Nullable EntityArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;
+                if (input.isInvisible() || !input.getAlwaysRenderNameTag()) return false;
                 return input.getName().contains("Skeleton Master");
             }
         });

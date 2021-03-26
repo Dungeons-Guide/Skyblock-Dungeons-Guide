@@ -5,9 +5,7 @@ import lombok.Data;
 import lombok.Singular;
 import lombok.experimental.Accessors;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Scanner;
+import java.util.*;
 
 @Data
 @Accessors(chain = true, fluent = true)
@@ -59,12 +57,11 @@ public class StompPayload {
             stompPayload.headers.put(name, value);
         }
 
-        StringBuilder payloadBuilder = new StringBuilder();
+        List<String> lines = new ArrayList<String>();
         while (scanner.hasNextLine() && !(line = scanner.nextLine()).equals("\0")) {
-            payloadBuilder.append(line);
-            payloadBuilder.append("\n");
+            lines.add(line);
         }
-        stompPayload.payload = payloadBuilder.toString();
+        stompPayload.payload = String.join("\n", lines);
         return stompPayload;
     }
 }

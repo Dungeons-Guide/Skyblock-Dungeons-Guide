@@ -58,18 +58,6 @@ public class NumberRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onInteract(PlayerInteractEntityEvent event) {
-        if (answer == -1) return;
-        if (event.getEntity() instanceof EntityArmorStand) {
-            BlockPos pos = event.getEntity().getPosition();
-            if (a1 == d1 && pos.equals(d1p)) event.setCanceled(true);
-            if (a2 == d2 && pos.equals(d2p)) event.setCanceled(true);
-            if (a3 == d3 && pos.equals(d3p)) event.setCanceled(true);
-            if (a4 == d4 && pos.equals(d4p)) event.setCanceled(true);
-        }
-    }
-
-    @Override
     public void onDataRecieve(NBTTagCompound compound) {
         if (1 == compound.getByte("a")) {
             answer = compound.getInteger("b");

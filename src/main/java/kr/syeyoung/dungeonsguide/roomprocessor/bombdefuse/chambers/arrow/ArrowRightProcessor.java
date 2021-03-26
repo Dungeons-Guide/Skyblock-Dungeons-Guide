@@ -75,19 +75,6 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    @Override
-    public void onInteract(PlayerInteractEntityEvent event) {
-        if (answer == -1) return;
-        if (event.getEntity() instanceof EntityArmorStand) {
-//            BlockPos pos = event.getEntity().getPosition();
-//            for (int i = 0; i < 9; i++) {
-//                if (currentAnswers[i] == correctAnswers[i] && pos.equals(grid[i].add(0, -1, 0))) event.setCanceled(true);
-//            }
-//
-//            System.out.println(" block ? "+event.isCanceled());
-        }
-    }
-
     private int match(EntityArmorStand armorStand) {
         if (armorStand == null) return -1;
         ItemStack item = armorStand.getInventory()[4];

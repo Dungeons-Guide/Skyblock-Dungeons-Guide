@@ -39,11 +39,13 @@ public class FeatureBoxBats extends SimpleFeature implements WorldRenderListener
         List<EntityBat> skeletonList = Minecraft.getMinecraft().theWorld.getEntities(EntityBat.class, new Predicate<EntityBat>() {
             @Override
             public boolean apply(@Nullable EntityBat input) {
+                if (input != null && input.isInvisible()) return false;
                 return input != null && input.getDistanceSq(player) < sq;
             }
         });
         AColor c = this.<AColor>getParameter("color").getValue();
         for (EntityBat entitySkeleton : skeletonList) {
+            if (!entitySkeleton.isInvisible())
             RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }
     }
