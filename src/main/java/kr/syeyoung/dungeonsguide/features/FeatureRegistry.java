@@ -94,7 +94,6 @@ public class FeatureRegistry {
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
 
 
-    public static final FeatureInstaCloseChest DUNGEON_INSTACLOSE = register(new FeatureInstaCloseChest());
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
     public static final FeatureBoxBats DUNGEON_BOXBAT = register(new FeatureBoxBats());

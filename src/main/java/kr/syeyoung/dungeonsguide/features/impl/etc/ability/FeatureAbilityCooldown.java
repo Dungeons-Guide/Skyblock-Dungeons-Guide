@@ -9,7 +9,6 @@ import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import scala.Long;
 
 import java.util.*;
 import java.util.regex.Matcher;
