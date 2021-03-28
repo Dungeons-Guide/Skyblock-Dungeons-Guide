@@ -233,11 +233,11 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
                 if (dungeonRoom.getColor() == 62) traproomFound = true;
                 if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
                     totalCompRooms += dungeonRoom.getUnitPoints().size();
-                if (dungeonRoom.getColor() == 66 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
+                if (dungeonRoom.getColor() == 66 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) // INCOMPLETE PUZZLE ON MAP
                     skill -= 10;
-                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
+                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) // INCOMPLETE BOSSROOM YELLOW
                     skill += 1;
-                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
+                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) // INCOMPLETE TRAP ROOM
                     skill += 1;
 
                 skill += dungeonRoom.getCurrentState().getScoreModifier();
@@ -245,7 +245,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
             if (!bossroomFound) skill += 1;
             if (!traproomFound && context.isTrapRoomGen()) skill += 1;
             skill -= getUndiscoveredPuzzles() * 10;
-            skill -= (getTotalRooms() - totalCompRooms) * 4;
+            skill -= Math.max(0, (getTotalRooms() - totalCompRooms) * 4);
             skill = MathHelper.clamp_int(skill, 0, 100);
         }
         int explorer = 0;
@@ -255,15 +255,19 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         int secrets = 0;
         {
             int completed = 0;
+            double total = 0;
+
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 if (dungeonRoom.getTotalSecrets() != -1)
                     totalSecrets += dungeonRoom.getTotalSecrets();
                 else totalSecretsKnown = false;
-                if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+                if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FAILED)
                     completed += dungeonRoom.getUnitPoints().size();
+                total += dungeonRoom.getUnitPoints().size();
             }
+
             fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
-            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * getPercentage()), 0, 60);
+            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? getPercentage() : completed / total * 100)), 0, 60);
             explorer += MathHelper.clamp_int((int) Math.floor(40 * ((secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / (double)totalSecrets)),0,40);
         }
         int time = 0;

@@ -15,15 +15,18 @@ import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -76,7 +79,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
         }
         text.add(new StyledText("Total Deaths","total"));
         text.add(new StyledText(": ","separator"));
-        text.add(new StyledText(deathsCnt+"","totalDeaths"));
+        text.add(new StyledText(getTotalDeaths()+"","totalDeaths"));
 
         return text;
     }
@@ -110,6 +113,12 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
 
     public int getTotalDeaths() {
         if (!skyblockStatus.isOnDungeon()) return 0;
+        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
+            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+            if (name.contains("Deaths")) {
+                return Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.keepScoreboardCharacters(TextUtils.stripColor(name))));
+            }
+        }
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return 0;
         int d = 0;
@@ -133,7 +142,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));
-            int deaths = context.getDeaths().containsKey(nickname)  ?  context.getDeaths().get(nickname) : 0;
+            int deaths = context.getDeaths().getOrDefault(nickname, 0);
             context.getDeaths().put(nickname, deaths + 1);
             context.createEvent(new DungeonDeathEvent(nickname, txt, deaths));
             e.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
@@ -141,7 +150,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
         Matcher m2 = meDeathPattern.matcher(txt);
         if (m2.matches()) {
             String nickname = "me";
-            int deaths = context.getDeaths().containsKey(nickname)  ?  context.getDeaths().get(nickname) : 0;
+            int deaths = context.getDeaths().getOrDefault(nickname, 0);
             context.getDeaths().put(nickname, deaths + 1);
             context.createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
             e.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));

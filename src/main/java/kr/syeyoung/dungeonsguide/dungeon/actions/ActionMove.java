@@ -51,7 +51,7 @@ public class ActionMove extends AbstractAction {
         if (FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() && Keybinds.togglePathfindStatus) return;
 
         if (poses != null){
-            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks, FeatureRegistry.SECRET_BROWSE.getThickness(), true);
+            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), FeatureRegistry.SECRET_BROWSE.getThickness(), partialTicks,  true);
         }
     }
 

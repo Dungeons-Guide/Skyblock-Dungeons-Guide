@@ -38,6 +38,6 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
 
         AColor c = this.<AColor>getParameter("color").getValue();
         if (playerMP != null)
-            RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,-1.5,-0.4,0.4,0,0.4), c, partialTicks, true);
+            RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,0,-0.4,0.4,1.8,0.4), c, partialTicks, true);
     }
 }

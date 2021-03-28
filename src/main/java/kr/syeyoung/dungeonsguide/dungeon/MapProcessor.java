@@ -206,7 +206,7 @@ public class MapProcessor {
                     if (color == 18 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FINISHED) {
                         dungeonRoom.setCurrentState(DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS);
                         dungeonRoom.setTotalSecrets(0);
-                    } if (color == 30) {
+                    } else if (color == 30) {
                         dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
                         dungeonRoom.setTotalSecrets(0);
                     } else if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FINISHED){
