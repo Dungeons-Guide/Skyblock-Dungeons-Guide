@@ -4,17 +4,23 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListener {
+public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListener, TickListener {
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureAbilityCooldown() {
@@ -65,6 +71,8 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
     }
 
     private static final Map<String, SkyblockAbility> skyblockAbilities = new HashMap<>();
+    private static final Map<String, List<SkyblockAbility>> skyblockAbilitiesByItemID = new HashMap<>();
+
     static {
         register(new SkyblockAbility("Disgusting Healing", -1, -1, "REAPER_MASK"));
         register(new SkyblockAbility("Spirit Leap", -1, 5, "SPIRIT_LEAP"));
@@ -194,25 +202,31 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         register(new SkyblockAbility("Pikobulus", -1, 110, null));
         // abilities
 
-        register(new SkyblockAbility("Healing Circle", -1, 2, null));
-        register(new SkyblockAbility("Wish", -1, 120, null));
-        register(new SkyblockAbility("Guided Sheep", -1, 30, null));
-        register(new SkyblockAbility("Thunderstorm", -1, 500, null));
-        register(new SkyblockAbility("Throwing Axe", -1, 10, null));
-        register(new SkyblockAbility("Ragnarok", -1, 60, null));
-        register(new SkyblockAbility("Explosive Shot", -1, 40, null));
-        register(new SkyblockAbility("Rapid Fire", -1, 100, null));
-        register(new SkyblockAbility("Seismic Wave", -1, 60, null));
-        register(new SkyblockAbility("Castle of Stone", -1, 150, null));
+        register(new SkyblockAbility("Healing Circle", -1, 2, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Wish", -1, 120, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Guided Sheep", -1, 30, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Thunderstorm", -1, 500, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Throwing Axe", -1, 10, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Ragnarok", -1, 60, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Explosive Shot", -1, 40, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Rapid Fire", -1, 100, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Seismic Wave", -1, 60, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Castle of Stone", -1, 150, "DUNGEON_STONE"));
     }
 
     static void register(SkyblockAbility skyblockAbility) {
-        skyblockAbilities.put(skyblockAbility.getName()+(skyblockAbility.getManaCost()> 0 ? ":"+skyblockAbility.getManaCost():""), skyblockAbility);
+        if (!skyblockAbilities.containsKey(skyblockAbility.getName()))
+            skyblockAbilities.put(skyblockAbility.getName(), skyblockAbility);
+        if (skyblockAbility.getItemId() != null && skyblockAbility.getCooldown() != -1) {
+            List<SkyblockAbility> skyblockAbility1 = skyblockAbilitiesByItemID.computeIfAbsent(skyblockAbility.getItemId(), (a) -> new ArrayList<>());
+            skyblockAbility1.add(skyblockAbilities.get(skyblockAbility.getName()));
+            skyblockAbilitiesByItemID.put(skyblockAbility.getItemId(), skyblockAbility1);
+        }
     }
 
     private TreeSet<UsedAbility> usedAbilities = new TreeSet<UsedAbility>((c1,c2) -> {
         int a = Comparator.comparingLong(UsedAbility::getCooldownEnd).compare(c1,c2);
-        return c1.getAbility() == c2.getAbility() ? 0 : a;
+        return c1.getAbility().getName().equals(c2.getAbility().getName()) ? 0 : a;
     });
 
     @Override
@@ -262,7 +276,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         if (clientChatReceivedEvent.type == 2) {
             Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
             if (m.find()) {
-                String name = m.group(2)+":"+m.group(1);
+                String name = m.group(2);
                 if (!name.equalsIgnoreCase(lastActionbarAbility)) {
                     used(name);
                 }
@@ -278,9 +292,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
                 Matcher m = thePattern2.matcher(message);
                 if (m.matches()) {
                     String abilityName = TextUtils.stripColor(m.group(1));
-                    String manas = TextUtils.stripColor(m.group(2));
-
-                    used(abilityName + ":" + manas);
+                    used(abilityName);
                 } else {
                     Matcher m2 = thePattern3.matcher(message);
                     if (m2.matches()) {
@@ -289,7 +301,6 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
                     } else if (message.startsWith("§r§aYou used your ") || message.endsWith("§r§aPickaxe Ability!§r")) {
                         String nocolor = TextUtils.stripColor(message);
                         String abilityName = nocolor.substring(nocolor.indexOf("your") + 5, nocolor.indexOf("Pickaxe") - 1);
-
                         used(abilityName);
                     }
                 }
@@ -305,9 +316,57 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
                 for (int i = 0; i < 3; i++) usedAbilities.remove(usedAbility);
                 usedAbilities.add(usedAbility);
             }
-            System.out.println("known ability: "+ability+": "+skyblockAbility.getCooldown());
         } else {
             System.out.println("Unknown ability: "+ability);
+        }
+    }
+
+    public void checkForCooldown(ItemStack itemStack) {
+        if (itemStack == null) return;
+        NBTTagCompound nbt = itemStack.getTagCompound();
+        if (nbt == null) return;
+        NBTTagCompound extra = nbt.getCompoundTag("ExtraAttributes");
+        if (extra == null) return;
+        String id = extra.getString("id");
+        if (!skyblockAbilitiesByItemID.containsKey(id)) return;
+        List<SkyblockAbility> skyblockAbility = skyblockAbilitiesByItemID.get(id);
+
+        NBTTagCompound display = nbt.getCompoundTag("display");
+        if (display == null) return;
+        NBTTagList lore = display.getTagList("Lore", 8);
+        int thecd = -1;
+        SkyblockAbility currentAbility = null;
+        for (int i = 0; i < lore.tagCount(); i++) {
+            String specific = lore.getStringTagAt(i);
+            if (specific.startsWith("§8Cooldown: §a") && currentAbility != null) {
+                String thecdstr = TextUtils.stripColor(specific).substring(10).trim();
+                thecdstr = thecdstr.substring(0, thecdstr.length() - 1);
+                thecd = Integer.parseInt(thecdstr);
+                currentAbility.setCooldown(thecd);
+                currentAbility = null;
+            } else if (specific.startsWith("§6Item Ability: ")) {
+                String ability = TextUtils.stripColor(specific).substring(14).trim();
+
+                for (SkyblockAbility skyblockAbility1 : skyblockAbility) {
+                    if (skyblockAbility1.getName().equals(ability)) {
+                        currentAbility = skyblockAbility1;
+                        break;
+                    }
+                }
+            }
+        }
+    }
+
+    @Override
+    public void onTick() {
+        EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
+        if (sp == null) return;
+        if (sp.inventory == null || sp.inventory.armorInventory == null) return;
+        for (ItemStack itemStack : sp.inventory.armorInventory) {
+            checkForCooldown(itemStack);
+        }
+        for (ItemStack itemStack : sp.inventory.mainInventory) {
+            checkForCooldown(itemStack);
         }
     }
 }
