@@ -9,6 +9,7 @@ public class DungeonSpecificDataProviderRegistry {
 
     static {
         doorFinders.put(Pattern.compile("The Catacombs (?:F[0-9]|E)"), new CatacombDataProvider());
+        doorFinders.put(Pattern.compile("The Catacombs (?:M[0-9]|E)"), new CatacombMasterDataProvider());
     }
 
     public static DungeonSpecificDataProvider getDoorFinder(String dungeonName) {

@@ -3,7 +3,7 @@ mouseSensitivity:0.5
 fov:1.0
 gamma:1.0
 saturation:0.0
-renderDistance:3
+renderDistance:9
 guiScale:2
 particles:0
 bobView:true
@@ -24,7 +24,7 @@ chatLinks:true
 chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
-fullscreen:true
+fullscreen:false
 enableVsync:true
 useVbo:true
 hideServerAddress:false
@@ -70,7 +70,7 @@ key_key.drop:0
 key_key.inventory:18
 key_key.chat:20
 key_key.playerlist:15
-key_key.pickItem:35
+key_key.pickItem:48
 key_key.command:53
 key_key.screenshot:60
 key_key.togglePerspective:63
@@ -111,7 +111,7 @@ key_Flip (Hold):0
 key_Rotate (Hold):0
 key_Flip (Toggle):0
 key_Rotate (Toggle):0
-soundCategory_master:1.0
+soundCategory_master:0.0
 soundCategory_music:0.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

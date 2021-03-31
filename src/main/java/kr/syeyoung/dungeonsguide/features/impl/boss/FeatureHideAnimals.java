@@ -34,6 +34,7 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
+        if (skyblockStatus.getContext() == null) return;
         if (skyblockStatus.getContext().getBossfightProcessor() == null) return;
         if (!(skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
 

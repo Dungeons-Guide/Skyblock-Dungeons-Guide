@@ -90,7 +90,9 @@ public class DungeonContext {
         createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapProcessor = new MapProcessor(this);
         DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
-        trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        if (doorFinder != null)
+            trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        else mapProcessor.setBugged(true);
         init = System.currentTimeMillis();
     }
 

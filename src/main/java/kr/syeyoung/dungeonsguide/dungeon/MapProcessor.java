@@ -15,6 +15,7 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMap;
@@ -50,6 +51,7 @@ public class MapProcessor {
     @Getter
     private Point topLeftMapPoint;
 
+    @Setter
     private boolean bugged = false;
 
     private List<Point> roomsFound = new ArrayList<Point>();

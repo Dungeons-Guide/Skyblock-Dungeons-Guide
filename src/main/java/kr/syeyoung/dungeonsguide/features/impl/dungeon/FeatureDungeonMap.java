@@ -104,7 +104,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
     @Override
     public void drawHUD(float partialTicks) {
         if (!skyblockStatus.isOnDungeon()) return;
-        if (skyblockStatus.getContext() == null | !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
+        if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
         if (!on) return;;
 
         DungeonContext context = skyblockStatus.getContext();

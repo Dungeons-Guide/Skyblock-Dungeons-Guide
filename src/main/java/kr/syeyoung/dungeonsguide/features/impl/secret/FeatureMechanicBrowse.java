@@ -34,6 +34,7 @@ import java.awt.*;
 import java.util.List;
 import java.util.ArrayList;
 import java.util.Map;
+import java.util.UUID;
 
 public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
 
@@ -51,6 +52,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private UUID lastRoomUID = null;
     @Override
     public void drawHUD(float partialTicks) {
         if (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
@@ -69,6 +71,13 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         if (dungeonRoom == null) return;
+        if (!dungeonRoom.getDungeonRoomInfo().getUuid().equals(lastRoomUID)) {
+            selected = -1;
+            selectedState = -1;
+            dy = 0;
+        }
+        lastRoomUID = dungeonRoom.getDungeonRoomInfo().getUuid();
+
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
 
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();

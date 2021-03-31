@@ -74,6 +74,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
 
     public String getTotalSecrets() {
         DungeonContext context = skyblockStatus.getContext();
+        if (context == null) return "?";
         int totalSecrets = 0;
         boolean allknown = true;
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {

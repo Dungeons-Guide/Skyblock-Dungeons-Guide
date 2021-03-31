@@ -32,6 +32,7 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
+        if (skyblockStatus.getContext() == null) return;
         if (skyblockStatus.getContext().getBossfightProcessor() == null) return;
         if (!(skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
         EntityOtherPlayerMP playerMP = ((BossfightProcessorLivid) skyblockStatus.getContext().getBossfightProcessor()).getRealLivid();
