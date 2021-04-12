@@ -1,22 +1,22 @@
 invertYMouse:false
 mouseSensitivity:0.5
 fov:1.0
-gamma:1.0
+gamma:100000.0
 saturation:0.0
-renderDistance:9
+renderDistance:4
 guiScale:2
 particles:0
 bobView:true
 anaglyph3d:false
-maxFps:120
+maxFps:60
 fboEnable:true
 difficulty:3
-fancyGraphics:true
-ao:2
+fancyGraphics:false
+ao:0
 renderClouds:fast
 resourcePacks:[]
 incompatibleResourcePacks:[]
-lastServer:localhost
+lastServer:mc.skyblocksandbox.net
 lang:en_US
 chatVisibility:0
 chatColors:true
@@ -111,7 +111,7 @@ key_Flip (Hold):0
 key_Rotate (Hold):0
 key_Flip (Toggle):0
 key_Rotate (Toggle):0
-soundCategory_master:0.0
+soundCategory_master:1.0
 soundCategory_music:0.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

@@ -29,3 +29,5 @@ mods/*
 /.mixin.out/audit/mixin_implementation_report.csv
 /.mixin.out/audit/mixin_implementation_report.txt
 /modcore/metadata.json
+/.ReAuth.cfg
+/libdiscord-rpc.so
