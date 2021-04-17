@@ -116,7 +116,9 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
             if (name.contains("Deaths")) {
-                return Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.keepScoreboardCharacters(TextUtils.stripColor(name))));
+                String whatever = TextUtils.keepIntegerCharactersOnly(TextUtils.keepScoreboardCharacters(TextUtils.stripColor(name)));
+                if (whatever.isEmpty()) break;
+                return Integer.parseInt(whatever);
             }
         }
         DungeonContext context = skyblockStatus.getContext();

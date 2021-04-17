@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
@@ -8,30 +9,40 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossfightProcessorNecron extends GeneralBossfightProcessor {
+    // \A7 to §
     public BossfightProcessorNecron() {
         addPhase(PhaseData.builder()
-                .phase("start")
-                .signatureMsg("§r§c[BOSS] Bonzo§r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
-                .nextPhase("fight-1").build()
+                .phase("crystals")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cFinally, I heard so much about you. The Eye likes you very much.§r")
+                .nextPhase("laser-attack").nextPhase("lost").build()
+        );
+        addPhase(PhaseData.builder()
+                .phase("laser-attack")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cYou tricked me!§r")
+                .nextPhase("fight-1").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-1")
-                .signatureMsg("§r§c[BOSS] Bonzo§r§f: I can summon lots of undead! Check this out.§r")
-                .nextPhase("first-defeat").build()
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cFINE! LET'S MOVE TO SOMEWHERE ELSE!!§r")
+                .nextPhase("terminals").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
-                .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] Bonzo§r§f: Oh I'm dead!§r").signatureMsg("§r§c[BOSS] Bonzo§r§f: Hoho, looks like you killed me!§r")
-                .nextPhase("fight-2").build()
+                .phase("terminals")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cCRAP!! IT BROKE THE FLOOR!§r")
+                .nextPhase("fight-2").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§c[BOSS] Bonzo§r§f: Sike§r").signatureMsg("§r§c[BOSS] Bonzo§r§f: I can revive myself and become much stronger!§r")
-                .nextPhase("final-defeat").build()
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cTHAT'S IT YOU HAVE DONE IT!§rr")
+                .nextPhase("won").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
-                .phase("final-defeat")
-                .signatureMsg("§r§c[BOSS] Bonzo§r§f: Alright, maybe I'm just weak after all..§r").build()
+                .phase("won")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cAll this, for nothing...§r").build()
+        );
+        addPhase(PhaseData.builder()
+                .phase("lost")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cFINALLY! This took way too long.§r").build()
         );
     }
 
@@ -39,28 +50,13 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
-        long health = 0;
-        if (bonzoStand != null) {
-            String name = TextUtils.stripColor(bonzoStand.getName());
-            String healthPart = name.split(" ")[2];
-            health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
-        }
-//        healths.add(new HealthData("Bonzo", (int) health,250000 , this.getCurrentPhase().startsWith("fight-")));
+        int maxHealth = 1_000_000_000;
+        healths.add(new HealthData("Necron", (int) (BossStatus.healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
         return healths;
     }
 
     @Override
     public String getBossName() {
         return "Necron";
-    }
-
-    private EntityArmorStand bonzoStand;
-    @Override
-    // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿
-    // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
-    public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving.getName().contains("❤") && updateEvent.entityLiving instanceof EntityArmorStand) {
-//            System.out.println(updateEvent.entityLiving.getName());
-        }
     }
 }

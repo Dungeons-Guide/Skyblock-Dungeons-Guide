@@ -12,8 +12,8 @@ maxFps:60
 fboEnable:true
 difficulty:3
 fancyGraphics:false
-ao:0
-renderClouds:fast
+ao:1
+renderClouds:false
 resourcePacks:[]
 incompatibleResourcePacks:[]
 lastServer:mc.skyblocksandbox.net
@@ -25,7 +25,7 @@ chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
 fullscreen:false
-enableVsync:true
+enableVsync:false
 useVbo:true
 hideServerAddress:false
 advancedItemTooltips:true
@@ -101,6 +101,10 @@ key_start editing session:19
 key_send and save bombdefuse solution:35
 key_navigate to next secret. (Req option enabled at /dg):34
 key_toggle Pathfind. (Req option enabled at /dg):47
+key_Open Maddox Menu:50
+key_Regular Ability:75
+key_Start/Stop Skill Tracker:76
+key_Open Room Images in DSG/SBP:24
 key_Settings:0
 key_Edit GUI Locations:0
 key_Lock Slot:38
