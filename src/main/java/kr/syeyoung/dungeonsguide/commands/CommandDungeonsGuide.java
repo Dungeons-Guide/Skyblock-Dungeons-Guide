@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -39,6 +40,7 @@ import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
 public class CommandDungeonsGuide extends CommandBase {
@@ -300,6 +302,34 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: "+PartyManager.INSTANCE.getPartyID()));
         } else if (args[0].equalsIgnoreCase("loc")) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
+        } else if (args[0].equalsIgnoreCase("saverun")) {
+            try {
+                File f = e.getDungeonsGuide().getConfigDir();
+                File runDir = new File(f, "dungeonruns");
+                runDir.mkdirs();
+
+                File runFile = new File(runDir, UUID.randomUUID().toString()+".dgrun");
+
+                DungeonContext dungeonContext = e.getDungeonsGuide().getSkyblockStatus().getContext();
+                if (dungeonContext == null) {
+                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
+                    return;
+                }
+                DungeonEventHolder dungeonEventHolder = new DungeonEventHolder();
+                dungeonEventHolder.setDate(dungeonContext.getInit());
+                dungeonEventHolder.setPlayers(dungeonContext.getPlayers());
+                dungeonEventHolder.setEventDataList(dungeonContext.getEvents());
+
+
+                ObjectOutputStream oos = new ObjectOutputStream(new FileOutputStream(runFile));
+                oos.writeObject(dungeonEventHolder);
+                oos.flush();
+                oos.close();
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to "+runFile.getAbsolutePath()));
+            } catch (Exception e) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata "+e.getMessage()));
+                e.printStackTrace();
+            }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

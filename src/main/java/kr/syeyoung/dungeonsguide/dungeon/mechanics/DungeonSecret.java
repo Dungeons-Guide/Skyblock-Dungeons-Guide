@@ -30,10 +30,46 @@ public class DungeonSecret implements DungeonMechanic {
     private SecretType secretType = SecretType.CHEST;
     private List<String> preRequisite = new ArrayList<String>();
 
+    public void tick(DungeonRoom dungeonRoom) {
+        if (secretType == SecretType.CHEST) {
+            BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
+            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
+                TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
+                if (chest.numPlayersUsing > 0) {
+                    dungeonRoom.getRoomContext().put("c-"+pos.toString(), true);
+                }
+            }
+        } else if (secretType == SecretType.ESSENCE) {
+            BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
+            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            if (blockState.getBlock() == Blocks.skull) {
+                dungeonRoom.getRoomContext().put("e-"+pos.toString(), true);
+            }
+        } else if (secretType == SecretType.ITEM_DROP) {
+            Vec3 pos = new Vec3(secretPoint.getBlockPos(dungeonRoom));
+            Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            if (player.squareDistanceTo(pos) < 16) {
+                Vec3 vec3 = pos.subtract(player).normalize();
+                for (int i = 0; i < player.distanceTo(pos); i++) {
+                    Vec3 vec = player.addVector(vec3.xCoord * i, vec3.yCoord * i, vec3.zCoord * i);
+                    BlockPos bpos = new BlockPos(vec);
+                    IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(bpos);
+                    if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
+                        return;
+                }
+                dungeonRoom.getRoomContext().put("i-" + pos.toString(), true);
+            }
+        }
+    }
+
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            if (dungeonRoom.getRoomContext().containsKey("c-"+pos.toString()))
+                return SecretStatus.FOUND;
+
             if (blockState.getBlock() == Blocks.air) {
                 return SecretStatus.DEFINITELY_NOT;
             } else if (blockState.getBlock() != Blocks.chest && blockState.getBlock() != Blocks.trapped_chest) {

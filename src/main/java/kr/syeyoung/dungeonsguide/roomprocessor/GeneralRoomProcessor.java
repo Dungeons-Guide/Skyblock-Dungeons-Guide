@@ -69,6 +69,10 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 searchForNextTarget();
             }
         }
+
+        for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
+            if (value instanceof DungeonSecret) ((DungeonSecret) value).tick(dungeonRoom);
+        }
     }
     private Set<String> visited = new HashSet<String>();
 

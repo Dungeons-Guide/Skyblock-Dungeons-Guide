@@ -83,6 +83,7 @@ public class DungeonContext {
     @Getter
     private Set<String> players = new HashSet<String>();
 
+    @Getter
     private List<DungeonEvent> events = new ArrayList<DungeonEvent>();
 
     public DungeonContext(World world) {
