@@ -74,7 +74,7 @@ public class ActionMoveNearestAir extends AbstractAction {
             try {
                 if (latestFuture != null) latestFuture.cancel(true);
             } catch (Exception ignored) {}
-            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())
+            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()|| poses == null)
             latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(),
                     Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
         }

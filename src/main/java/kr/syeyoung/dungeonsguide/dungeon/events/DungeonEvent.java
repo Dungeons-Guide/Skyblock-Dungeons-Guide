@@ -3,8 +3,10 @@ package kr.syeyoung.dungeonsguide.dungeon.events;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import lombok.Data;
 
+import java.io.Serializable;
+
 @Data
-public class DungeonEvent {
+public class DungeonEvent implements Serializable {
     private long UTCTime = System.currentTimeMillis();
     private long realTimeElapsed;
     private long skyblockTimeElapsed;

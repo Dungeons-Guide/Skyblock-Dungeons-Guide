@@ -24,7 +24,7 @@ chatLinks:true
 chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
-fullscreen:false
+fullscreen:true
 enableVsync:false
 useVbo:true
 hideServerAddress:false
@@ -101,6 +101,7 @@ key_start editing session:19
 key_send and save bombdefuse solution:35
 key_navigate to next secret. (Req option enabled at /dg):34
 key_toggle Pathfind. (Req option enabled at /dg):47
+key_Toggle freeze pathfind lines:49
 key_Open Maddox Menu:50
 key_Regular Ability:75
 key_Start/Stop Skill Tracker:76

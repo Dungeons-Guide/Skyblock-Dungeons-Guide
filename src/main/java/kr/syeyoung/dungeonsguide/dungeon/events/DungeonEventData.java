@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.events;
 
-public interface DungeonEventData {
+import java.io.Serializable;
+
+public interface DungeonEventData extends Serializable {
     String getEventName();
 }
