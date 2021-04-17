@@ -17,6 +17,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
 
 @Data
 public class ActionMoveNearestAir extends AbstractAction {
@@ -54,23 +56,30 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
 
     private int tick = -1;
-    private PathEntity latest;
     private List<BlockPos> poses;
+    private Future<List<BlockPos>> latestFuture;
     @Override
     public void onTick(DungeonRoom dungeonRoom) {
         tick = (tick+1) % 10;
-        if (tick == 0) {
-            latest = dungeonRoom.getPathFinder().createEntityPathTo(dungeonRoom.getContext().getWorld(),
-                    Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
-            if (latest != null) {
-                poses = new ArrayList<>();
-                for (int i = 0; i < latest.getCurrentPathLength(); i++) {
-                    PathPoint pathPoint = latest.getPathPointFromIndex(i);
-                    poses.add(dungeonRoom.getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
-                }
+        if (latestFuture != null && latestFuture.isDone()) {
+            try {
+                poses = latestFuture.get();
+                latestFuture = null;
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
             }
         }
+
+        if (tick == 0) {
+            try {
+                if (latestFuture != null) latestFuture.cancel(true);
+            } catch (Exception ignored) {}
+            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled())
+            latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(),
+                    Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
+        }
     }
+
 
     @Override
     public String toString() {

@@ -17,13 +17,21 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
+import net.minecraft.entity.Entity;
+import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
+import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
+import net.minecraft.world.IBlockAccess;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 @Getter
 public class DungeonRoom {
@@ -67,6 +75,23 @@ public class DungeonRoom {
 
     @Getter
     private PathFinder pathFinder;
+
+    public ScheduledFuture<List<BlockPos>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
+        return asyncPathFinder.schedule(() -> {
+            PathEntity latest = pathFinder.createEntityPathTo(blockaccess, entityIn, targetPos, dist);
+            if (latest != null) {
+                List<BlockPos> poses = new ArrayList<>();
+                for (int i = 0; i < latest.getCurrentPathLength(); i++) {
+                    PathPoint pathPoint = latest.getPathPointFromIndex(i);
+                    poses.add(getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
+                }
+                return poses;
+            }
+            return new ArrayList<>();
+        }, 0, TimeUnit.MILLISECONDS);
+    }
+
+    private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(2);
     @Getter
     private NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
