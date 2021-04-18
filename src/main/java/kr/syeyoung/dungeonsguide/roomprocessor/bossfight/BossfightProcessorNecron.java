@@ -33,7 +33,7 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
         );
         addPhase(PhaseData.builder()
                 .phase("fight-2")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cTHAT'S IT YOU HAVE DONE IT!§rr")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cTHAT'S IT YOU HAVE DONE IT!§r")
                 .nextPhase("won").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()

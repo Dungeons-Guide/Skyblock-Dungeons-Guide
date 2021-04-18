@@ -21,10 +21,11 @@ import java.time.Instant;
 
 public class RichPresenceManager implements Runnable {
     public static RichPresenceManager INSTANCE = new RichPresenceManager();
+    private Thread t = new Thread(this);
+
 
     public RichPresenceManager() {
-        setup();
-        new Thread(this).start();
+        t.start();
         Runtime.getRuntime().addShutdownHook(new Thread(DiscordRPC::discordShutdown));
     }
     public void setup() {
@@ -46,10 +47,12 @@ public class RichPresenceManager implements Runnable {
                             .payload(new JSONObject().put("token", joinSecret).toString()));
                 }).setErroredEventHandler((errorCode, message) -> {
                     System.out.println("ERROR! "+errorCode+ " - "+message);
-                    setup();
+                    t.interrupt();
+                    (t = new Thread(this)).start();
                 }).setDisconnectedEventHandler((errorCode, message) -> {
                     System.out.println("ERROR! "+errorCode+ " - "+message);
-                    setup();
+                    t.interrupt();
+                    (t = new Thread(this)).start();
                 }).build(), true);
     }
 
@@ -99,15 +102,18 @@ public class RichPresenceManager implements Runnable {
     }
     @Override
     public void run() {
-        while(true) {
-            try {
-                DiscordRPC.discordRunCallbacks();
-                if (skyblockStatus.isOnSkyblock() && !lastLoc.equalsIgnoreCase(skyblockStatus.getDungeonName())) {
-                    lastLoc = skyblockStatus.getDungeonName()+"";
-                }
-                updatePresence();
-                Thread.sleep(300L);
-            } catch (Exception e) {e.printStackTrace();}
-        }
+
+        try {
+            Thread.sleep(300L);
+            setup();
+            while(!Thread.interrupted()) {
+                    DiscordRPC.discordRunCallbacks();
+                    if (skyblockStatus.isOnSkyblock() && !lastLoc.equalsIgnoreCase(skyblockStatus.getDungeonName())) {
+                        lastLoc = skyblockStatus.getDungeonName()+"";
+                    }
+                    updatePresence();
+                    Thread.sleep(300L);
+            }
+        } catch (Exception e) {e.printStackTrace();}
     }
 }

@@ -31,6 +31,12 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
     @Override
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
+        DungeonContext dc = ss.getContext();
+        if (dc == null) {
+            return;
+        }
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!dc.getBossfightProcessor().getCurrentPhase().equals("terminals")) return;
 
         if (orderclick.size() >= 1)
             RenderUtils.highlightBlock(orderclick.get(0), new Color(0, 255 ,255, 100), partialTicks, false);
@@ -46,6 +52,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!dc.getBossfightProcessor().getCurrentPhase().equals("terminals")) return;
+
         World w = dc.getWorld();
 
         if (wasButton && w.getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.air) {
