@@ -1,44 +1,37 @@
 package kr.syeyoung.dungeonsguide.features.impl.party.api;
 
 import com.google.gson.*;
+import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import org.apache.commons.io.IOUtils;
+import scala.tools.cmd.Opt;
 
 import java.io.ByteArrayInputStream;
-import java.io.DataInputStream;
 import java.io.IOException;
 import java.io.InputStreamReader;
-import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
-import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.concurrent.*;
 
 public class ApiFetchur {
     private static final Gson gson = new Gson();
 
-    private static final Map<String, CachedData<PlayerProfile>> playerProfileCache = new HashMap<>();
-    private static final Map<String, CachedData<String>> nicknameToUID = new HashMap<>();
+    private static final Map<String, CachedData<PlayerProfile>> playerProfileCache = new ConcurrentHashMap<>();
+    private static final Map<String, CachedData<String>> nicknameToUID = new ConcurrentHashMap<>();
+    private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
+    private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
+
     private static final ExecutorService ex = Executors.newFixedThreadPool(4);
 
     public static void purgeCache() {
         playerProfileCache.clear();
         nicknameToUID.clear();
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class CachedData<T> {
-        private final long expire;
-        private final T data;
     }
 
     public static JsonObject getJson(String url) throws IOException {
@@ -47,15 +40,65 @@ public class ApiFetchur {
         connection.setReadTimeout(10000);
         return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonObject.class);
     }
+    public static JsonArray getJsonArr(String url) throws IOException {
+        URLConnection connection = new URL(url).openConnection();
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
+        return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
+    }
 
+    private static final Map<String, CompletableFuture<Optional<GameProfile>>> completableFutureMap4 = new ConcurrentHashMap<>();
+    public static CompletableFuture<Optional<GameProfile>> getSkinGameProfileByUUIDAsync(String uid) {
+        if (UIDtoGameProfile.containsKey(uid)) {
+            CachedData<GameProfile> cachedData = UIDtoGameProfile.get(uid);
+            if (cachedData.getExpire() > System.currentTimeMillis()) {
+                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
+            }
+            UIDtoGameProfile.remove(uid);
+        }
+        if (completableFutureMap4.containsKey(uid)) return completableFutureMap4.get(uid);
+
+        CompletableFuture<Optional<GameProfile>> completableFuture = new CompletableFuture<>();
+        fetchNicknameAsync(uid).thenAccept(nick -> {
+            if (!nick.isPresent()) {
+                completableFuture.complete(Optional.empty());
+                return;
+            }
+            ex.submit(() -> {
+                try {
+                    Optional<GameProfile> playerProfile = getSkinGameProfileByUUID(uid,nick.get());
+                    UIDtoGameProfile.put(uid, new CachedData<GameProfile>(System.currentTimeMillis()+1000*60*30, playerProfile.orElse(null)));
+                    completableFuture.complete(playerProfile);
+                    completableFutureMap4.remove(uid);
+                    return;
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+                completableFuture.complete(Optional.empty());
+                completableFutureMap4.remove(uid);
+            });
+        });
+        completableFutureMap4.put(uid, completableFuture);
+        return completableFuture;
+    }
+
+    public static Optional<GameProfile> getSkinGameProfileByUUID(String uid, String nickname) throws IOException {
+        GameProfile gameProfile = new GameProfile(UUID.fromString(uid), nickname);
+        GameProfile newProf = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
+        return newProf == gameProfile ? Optional.empty() : Optional.of(newProf);
+    }
+
+
+    private static final Map<String, CompletableFuture<Optional<PlayerProfile>>> completableFutureMap = new ConcurrentHashMap<>();
     public static CompletableFuture<Optional<PlayerProfile>> fetchMostRecentProfileAsync(String uid, String apiKey) {
         if (playerProfileCache.containsKey(uid)) {
             CachedData<PlayerProfile> cachedData = playerProfileCache.get(uid);
-            if (cachedData.expire > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.data));
+            if (cachedData.getExpire() > System.currentTimeMillis()) {
+                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
             }
             playerProfileCache.remove(uid);
         }
+        if (completableFutureMap.containsKey(uid)) return completableFutureMap.get(uid);
 
         CompletableFuture<Optional<PlayerProfile>> completableFuture = new CompletableFuture<>();
         ex.submit(() -> {
@@ -63,24 +106,62 @@ public class ApiFetchur {
                 Optional<PlayerProfile> playerProfile = fetchMostRecentProfile(uid, apiKey);
                 playerProfileCache.put(uid, new CachedData<PlayerProfile>(System.currentTimeMillis()+1000*60*30, playerProfile.orElse(null)));
                 completableFuture.complete(playerProfile);
+                completableFutureMap.remove(uid);
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            playerProfileCache.put(uid, new CachedData<PlayerProfile>(System.currentTimeMillis()+1000*60*30, null));
             completableFuture.complete(Optional.empty());
+            completableFutureMap.remove(uid);
         });
+        completableFutureMap.put(uid, completableFuture);
         return completableFuture;
     }
 
+    private static final Map<String, CompletableFuture<Optional<String>>> completableFutureMap3 = new ConcurrentHashMap<>();
+    public static CompletableFuture<Optional<String>> fetchNicknameAsync(String uid) {
+        if (UIDtoNickname.containsKey(uid)) {
+            CachedData<String> cachedData = UIDtoNickname.get(uid);
+            if (cachedData.getExpire() > System.currentTimeMillis()) {
+                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
+            }
+            UIDtoNickname.remove(uid);
+        }
+        if (completableFutureMap3.containsKey(uid)) return completableFutureMap3.get(uid);
+
+
+        CompletableFuture<Optional<String>> completableFuture = new CompletableFuture<>();
+
+        ex.submit(() -> {
+            try {
+                Optional<String> playerProfile = fetchNickname(uid);
+                UIDtoNickname.put(uid, new CachedData<String>(System.currentTimeMillis()+1000*60*60*12,playerProfile.orElse(null)));
+                if (playerProfile.isPresent())
+                    nicknameToUID.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis()+1000*60*60*12, uid));
+                completableFuture.complete(playerProfile);
+                completableFutureMap3.remove(uid);
+                return;
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            completableFuture.complete(Optional.empty());
+            completableFutureMap3.remove(uid);
+        });
+        completableFutureMap3.put(uid, completableFuture);
+
+        return completableFuture;
+    }
+
+    private static final Map<String, CompletableFuture<Optional<String>>> completableFutureMap2 = new ConcurrentHashMap<>();
     public static CompletableFuture<Optional<String>> fetchUUIDAsync(String nickname) {
         if (nicknameToUID.containsKey(nickname)) {
             CachedData<String> cachedData = nicknameToUID.get(nickname);
-            if (cachedData.expire > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.data));
+            if (cachedData.getExpire() > System.currentTimeMillis()) {
+                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
             }
             nicknameToUID.remove(nickname);
         }
+        if (completableFutureMap2.containsKey(nickname)) return completableFutureMap2.get(nickname);
 
 
         CompletableFuture<Optional<String>> completableFuture = new CompletableFuture<>();
@@ -88,15 +169,20 @@ public class ApiFetchur {
         ex.submit(() -> {
             try {
                 Optional<String> playerProfile = fetchUUID(nickname);
-                nicknameToUID.put(nickname, new CachedData<String>(System.currentTimeMillis()+1000*60*60,playerProfile.orElse(null)));
+                nicknameToUID.put(nickname, new CachedData<String>(System.currentTimeMillis()+1000*60*60*12,playerProfile.orElse(null)));
+                if (playerProfile.isPresent())
+                    UIDtoNickname.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis()+1000*60*60*12, nickname));
+
                 completableFuture.complete(playerProfile);
+                completableFutureMap2.remove(nickname);
                 return;
             } catch (IOException e) {
                 e.printStackTrace();
             }
-            nicknameToUID.put(nickname, new CachedData<String>(System.currentTimeMillis()+1000*60*30, null));
             completableFuture.complete(Optional.empty());
+            completableFutureMap2.remove(nickname);
         });
+        completableFutureMap2.put(nickname, completableFuture);
 
         return completableFuture;
     }
@@ -105,6 +191,12 @@ public class ApiFetchur {
         JsonObject json = getJson("https://api.mojang.com/users/profiles/minecraft/"+nickname);
         if (json.has("error")) return Optional.empty();
         return Optional.of(TextUtils.insertDashUUID(json.get("id").getAsString()));
+    }
+    public static Optional<String> fetchNickname(String uuid) throws IOException {
+        try {
+            JsonArray json = getJsonArr("https://api.mojang.com/user/profiles/" + uuid.replace("-", "") + "/names");
+            return Optional.of(json.get(json.size()-1).getAsJsonObject().get("name").getAsString());
+        } catch (Exception e) {return Optional.empty();}
     }
 
     public static List<PlayerProfile> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
