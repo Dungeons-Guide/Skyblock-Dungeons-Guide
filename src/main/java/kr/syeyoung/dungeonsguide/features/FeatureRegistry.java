@@ -10,6 +10,8 @@ import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolv
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
+import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
+import kr.syeyoung.dungeonsguide.features.impl.party.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureFreezePathfind;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;
@@ -81,6 +83,9 @@ public class FeatureRegistry {
     public static final FeatureCopyMessages ETC_COPY_MSG = register(new FeatureCopyMessages());
 
     public static final FeaturePenguins ETC_PENGUIN = register(new FeaturePenguins());
+
+    public static final APIKey PARTYKICKER_APIKEY = register(new APIKey());
+    public static final FeatureViewPlayerOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerOnJoin());
 
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
     public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());

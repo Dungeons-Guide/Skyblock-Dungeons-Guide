@@ -12,6 +12,9 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.party.FeatureViewPlayerOnJoin;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
@@ -24,6 +27,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.ChatStyle;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -40,7 +44,9 @@ import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
 import java.util.zip.GZIPOutputStream;
 
 public class CommandDungeonsGuide extends CommandBase {
@@ -330,6 +336,24 @@ public class CommandDungeonsGuide extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata "+e.getMessage()));
                 e.printStackTrace();
             }
+        } else if (args[0].equals("fetch")) {
+            try {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eProfile Viewer Test: ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(args[1])))));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (args[0].equals("fetchbynick")) {
+            try {
+                ApiFetchur.fetchUUIDAsync(args[1])
+                        .thenAccept(a -> {
+                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eProfile Viewer Test: ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                        });
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (args[0].equals("purge")) {
+            ApiFetchur.purgeCache();
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

@@ -209,6 +209,19 @@ public class FeatureListener {
     }
 
     @SubscribeEvent
+    public void onChatGlobal(ClientChatReceivedEvent postRender) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof ChatListenerGlobal) {
+                    ((ChatListenerGlobal) abstractFeature).onChat(postRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
     public void dungeonTooltip(ItemTooltipEvent event) {
         try {
             SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();

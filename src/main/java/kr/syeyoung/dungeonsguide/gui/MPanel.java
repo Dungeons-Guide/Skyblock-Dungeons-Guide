@@ -116,7 +116,7 @@ public class MPanel {
         }
     }
 
-    public void clip(ScaledResolution resolution, int x, int y, int width, int height) {
+    public static void clip(ScaledResolution resolution, int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
         int scale = resolution.getScaleFactor();
