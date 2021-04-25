@@ -350,27 +350,30 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             this.inventory.armorInventory = skyblockProfile.getCurrentArmor().getArmorSlots();
 
             int highestDungeonScore = Integer.MIN_VALUE;
-            ItemStack highestItem = null;
-            for (ItemStack itemStack : skyblockProfile.getInventory()) {
-                if (itemStack == null) continue;
-                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
-                if (display == null) continue;
-                NBTTagList nbtTagList = display.getTagList("Lore", 8);
-                if (nbtTagList == null) continue;
-                for (int i = 0; i < nbtTagList.tagCount(); i++) {
-                    String str = nbtTagList.getStringTagAt(i);
-                    if (str.contains("Gear")) {
-                        int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[3]));
-                        if (dungeonScore > highestDungeonScore) {
-                            highestItem = itemStack;
-                            highestDungeonScore = dungeonScore;
+            if (skyblockProfile.getInventory() != null) {
+                ItemStack highestItem = null;
+                for (ItemStack itemStack : skyblockProfile.getInventory()) {
+                    if (itemStack == null) continue;
+                    NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
+                    if (display == null) continue;
+                    NBTTagList nbtTagList = display.getTagList("Lore", 8);
+                    if (nbtTagList == null) continue;
+                    for (int i = 0; i < nbtTagList.tagCount(); i++) {
+                        String str = nbtTagList.getStringTagAt(i);
+                        if (TextUtils.stripColor(str).startsWith("Gear")) {
+                            System.out.println(str);
+                            int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[2]));
+                            if (dungeonScore > highestDungeonScore) {
+                                highestItem = itemStack;
+                                highestDungeonScore = dungeonScore;
+                            }
                         }
                     }
                 }
-            }
 
-            this.inventory.mainInventory[0] = highestItem;
-            this.inventory.currentItem = 0;
+                this.inventory.mainInventory[0] = highestItem;
+                this.inventory.currentItem = 0;
+            }
         }
 
         public String getSkinType() {

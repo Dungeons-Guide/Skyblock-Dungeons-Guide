@@ -31,7 +31,7 @@ public class DataRendererDungeonLv implements DataRenderer {
             fr.drawString(dungeonType.getFamiliarName(), 0,0, 0xFFFF5555);
             fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(dungeonType.getFamiliarName()+" "),0,0xFFFFFFFF);
 
-            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getNextLvXp() / xpCalcResult.getRemainingXp()));
+            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
 
         return new Dimension(100, fr.FONT_HEIGHT*2);

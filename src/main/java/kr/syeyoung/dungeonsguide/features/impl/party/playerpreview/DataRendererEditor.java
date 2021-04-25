@@ -151,7 +151,7 @@ public class DataRendererEditor extends MPanel {
                 dim = dataRenderer.renderDummy();
                 GlStateManager.popMatrix();
             }
-            clip(sr, scissor.x + 156, scissor.y + 5+fr.FONT_HEIGHT+3, hamburgerWidth, 230);
+            clip(sr, scissor.x + 155, scissor.y + 5+fr.FONT_HEIGHT+3, hamburgerWidth, 230);
             GlStateManager.translate(-hamburgerWidth-1, 0, 0);
             Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFFAAAAAA);
             fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);

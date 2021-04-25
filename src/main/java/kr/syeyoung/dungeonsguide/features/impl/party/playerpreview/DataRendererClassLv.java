@@ -34,7 +34,7 @@ public class DataRendererClassLv implements DataRenderer {
             if (selected)
                 fr.drawString("★", fr.getStringWidth(dungeonClass.getFamilarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
 
-            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getNextLvXp() / xpCalcResult.getRemainingXp()));
+            RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
 
         return new Dimension(100, fr.FONT_HEIGHT*2);
