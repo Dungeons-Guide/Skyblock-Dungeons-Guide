@@ -72,6 +72,9 @@ public class PanelDefaultParameterConfig extends MPanel {
 
     @Override
     public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+        for (MPanel childComponent : getChildComponents()) {
+            if (!(childComponent instanceof MParameter) && childComponent.getBounds().contains(relMouseX0, relMouseY0)) return;
+        }
         if (scrollAmount > 0) offsetY -= 20;
         else if (scrollAmount < 0) offsetY += 20;
         if (offsetY < 0) offsetY = 0;

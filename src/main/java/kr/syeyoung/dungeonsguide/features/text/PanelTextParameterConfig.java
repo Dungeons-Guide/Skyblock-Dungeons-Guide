@@ -121,7 +121,7 @@ public class PanelTextParameterConfig extends MPanel {
         for (StyledTextRenderer.StyleTextAssociated calc3: calc) {
             if (selected.contains(calc3.getStyledText().getGroup())) {
                 Gui.drawRect(calc3.getRectangle().x, calc3.getRectangle().y, calc3.getRectangle().x + calc3.getRectangle().width, calc3.getRectangle().y + calc3.getRectangle().height, 0x4244A800);
-            } else if (bool && calc3.getRectangle().contains((relMousex0-5 -offsetX) * scale , (relMousey0 - 5 - offsetY) * scale)) {
+            } else if (bool && calc3.getRectangle().contains((relMousex0-5 -offsetX) / scale , (relMousey0 - 5 - offsetY) / scale)) {
                 for (StyledTextRenderer.StyleTextAssociated calc2 : calc) {
                     if (calc2.getStyledText().getGroup().equals(calc3.getStyledText().getGroup()))
                         Gui.drawRect(calc2.getRectangle().x, calc2.getRectangle().y, calc2.getRectangle().x + calc2.getRectangle().width, calc2.getRectangle().y + calc2.getRectangle().height, 0x55777777);
@@ -166,7 +166,7 @@ public class PanelTextParameterConfig extends MPanel {
         boolean found = false;
         List<StyledTextRenderer.StyleTextAssociated> calc = StyledTextRenderer.calculate(texts, 0,0, styles);
         for (StyledTextRenderer.StyleTextAssociated calc3: calc) {
-            if (calc3.getRectangle().contains((relMouseX-5 -offsetX) * scale , (relMouseY - 5 - offsetY) * scale)) {
+            if (calc3.getRectangle().contains((relMouseX-5 -offsetX) / scale , (relMouseY - 5 - offsetY) / scale)) {
                 if (Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT)) {
                     if (!selected.contains(calc3.getStyledText().getGroup()))
                         selected.add(calc3.getStyledText().getGroup());

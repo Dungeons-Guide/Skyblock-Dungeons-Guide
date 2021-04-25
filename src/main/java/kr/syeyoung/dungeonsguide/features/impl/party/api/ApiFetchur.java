@@ -32,6 +32,13 @@ public class ApiFetchur {
     public static void purgeCache() {
         playerProfileCache.clear();
         nicknameToUID.clear();
+        UIDtoNickname.clear();
+        UIDtoGameProfile.clear();
+
+        completableFutureMap.clear();
+        completableFutureMap2.clear();
+        completableFutureMap3.clear();
+        completableFutureMap4.clear();
     }
 
     public static JsonObject getJson(String url) throws IOException {

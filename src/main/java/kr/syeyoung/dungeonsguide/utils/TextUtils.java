@@ -36,7 +36,6 @@ public class TextUtils {
     }
 
 
-
     private static final TreeMap<Long, String> suffixes = new TreeMap<Long, String>();
 
     static {

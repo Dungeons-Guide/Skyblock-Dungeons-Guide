@@ -1,19 +1,27 @@
-package kr.syeyoung.dungeonsguide.features.impl.party;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
+import com.google.common.base.Supplier;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import io.github.moulberry.hychat.HyChat;
 import io.github.moulberry.hychat.chat.ChatManager;
 import io.github.moulberry.hychat.gui.GuiChatBox;
+import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.SkinFetchur;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.*;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
+import kr.syeyoung.dungeonsguide.features.text.PanelTextParameterConfig;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.utils.XPUtils;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.SneakyThrows;
@@ -30,6 +38,8 @@ import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -39,16 +49,16 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRenderListener, ChatListener {
+public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRenderListener, ChatListener, GuiClickListener {
 
     public FeatureViewPlayerOnJoin() {
         super("Party Kicker", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
+        this.parameters.put("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers","Datarenderssdasd", new ArrayList<>(), "stringlist"));
     }
 
     private Rectangle popupRect;
@@ -101,7 +111,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
         if (popupRect == null) {
-            popupRect = new Rectangle(mouseX, mouseY, 150, 200);
+            popupRect = new Rectangle(mouseX, mouseY, 190, 220);
             if (popupRect.y + popupRect.height > scaledResolution.getScaledHeight()) {
                 popupRect.y -= popupRect.y + popupRect.height - scaledResolution.getScaledHeight();
             }
@@ -130,8 +140,8 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(popupRect.x, popupRect.y, 0);
-        Gui.drawRect(0,0, popupRect.width, popupRect.height, 0xFF000000);
-        Gui.drawRect(1,1, popupRect.width-1, popupRect.height-1, 0xFFAAAAAA);
+        Gui.drawRect(0,0, popupRect.width, popupRect.height, 0xFF23272a);
+        Gui.drawRect(2,2, popupRect.width-2, popupRect.height-2, 0XFF2c2f33);
         if (playerProfile == null) {
             Minecraft.getMinecraft().fontRendererObj.drawString("Fetching data...", 5,5, 0xFFFFFFFF);
             GlStateManager.popMatrix();
@@ -142,24 +152,49 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             GlStateManager.popMatrix();
             return;
         }
+        int relX = mouseX - popupRect.x;
+        int relY = mouseY - popupRect.y;
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         MPanel.clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
-        Gui.drawRect(0,0, 80, popupRect.height-40, 0xFF000000);
-        Gui.drawRect(1,1, 79, popupRect.height-41, 0xFF444444);
+
+        Gui.drawRect(0,168, 90, 195, 0xFF23272a);
+        Gui.drawRect(2,170, 88, 193, new Rectangle(2,170,86,23).contains(relX, relY) ? 0xFFff7777 : 0xFFFF3333);
+        fr.drawString("Kick", (90 - fr.getStringWidth("Kick")) / 2,(364 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+        Gui.drawRect(0,193, 90, 220, 0xFF23272a);
+        Gui.drawRect(2,195, 88, 218, new Rectangle(2,195,86,23).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
+        fr.drawString("Invite", (90 - fr.getStringWidth("Invite")) / 2,(414 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+
+        GlStateManager.pushMatrix();
+
+        GlStateManager.translate(95, 5, 0);
+        for (String datarenderers : this.<List<String>>getParameter("datarenderers").getValue()) {
+            DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+            if (dataRenderer == null) {
+                fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
+                fr.drawString(datarenderers, 0,fr.FONT_HEIGHT, 0xFFFF0000);
+                GlStateManager.translate(0, fr.FONT_HEIGHT * 2, 0);
+            } else {
+                GlStateManager.pushMatrix();
+                Dimension dimension = dataRenderer.renderData(playerProfile.get());
+                GlStateManager.popMatrix();
+                GlStateManager.translate(0,dimension.height,0);
+            }
+        }
+
+        GlStateManager.popMatrix();
+
+        Gui.drawRect(0,0, 90, 170, 0xFF23272a);
+        Gui.drawRect(2,2, 88, 168, 0xFF444444);
         GlStateManager.color(1, 1, 1, 1.0F);
-
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         if (fakePlayer != null) {
-            GuiInventory.drawEntityOnScreen(40, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
-            fr.drawString(fakePlayer.getName(), (80 - fr.getStringWidth(fakePlayer.getName())) / 2, 15, 0xFFEFFF00);
+            GuiInventory.drawEntityOnScreen(45, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
+            fr.drawString(fakePlayer.getName(), (90 - fr.getStringWidth(fakePlayer.getName())) / 2, 15, 0xFFEFFF00);
 
-            int relX = mouseX - popupRect.x;
-            int relY = mouseY - popupRect.y;
             ItemStack toHover = null;
-            System.out.println(relX + " , "+relY);
-            if (relX > 5 && relX < 75) {
+            if (relX > 20 && relX < 70) {
                 if (33<=relY && relY <= 66) {
                     toHover = fakePlayer.getInventory()[3];
                 } else if (66 <= relY && relY <= 108) {
@@ -169,29 +204,25 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 } else if (130 <= relY && relY <= 154) {
                     toHover = fakePlayer.getInventory()[0];
                 }
+            } else if (relX > 0 && relX <= 20) {
+                if (80 <= relY && relY <= 120) {
+                    toHover = fakePlayer.inventory.mainInventory[fakePlayer.inventory.currentItem];
+                }
             }
 
             if (toHover != null) {
                 List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-
-                for (int i = 0; i < list.size(); ++i)
-                {
-                    if (i == 0)
-                    {
+                for (int i = 0; i < list.size(); ++i) {
+                    if (i == 0) {
                         list.set(i, toHover.getRarity().rarityColor + (String)list.get(i));
-                    }
-                    else
-                    {
+                    } else {
                         list.set(i, EnumChatFormatting.GRAY + (String)list.get(i));
                     }
                 }
-
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
-                System.out.println(list);
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 FontRenderer theRenderer = (font == null ? fr : font);
                 int minY = scaledResolution.getScaledHeight() - (list.size()+4) * theRenderer.FONT_HEIGHT - popupRect.y;
-
                 FeatureEditPane.drawHoveringText(list,relX, Math.min(minY, relY), theRenderer);
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
             }
@@ -201,6 +232,39 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.popMatrix(); // 33 66 108 130 154 // 5 75
+    }
+    @Override
+    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        int width = scaledResolution.getScaledWidth();
+        int height = scaledResolution.getScaledHeight();
+        int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
+        int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
+        if (popupRect == null || !popupRect.contains(mouseX, mouseY)) return;
+
+        mouseInputEvent.setCanceled(true);
+
+        int relX = mouseX - popupRect.x;
+        int relY = mouseY - popupRect.y;
+
+        try {
+            PlayerProfile playerProfile = profileFuture.isDone() ? profileFuture.get().orElse(null) : null;
+            if (playerProfile == null) return;
+            if (Mouse.getEventButton() != -1 && Mouse.isButtonDown(Mouse.getEventButton())) {
+                if (new Rectangle(2, 195, 86, 23).contains(relX, relY)) {
+                    // invite
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"));
+                } else if (new Rectangle(2, 170, 86, 23).contains(relX, relY)) {
+                    // kick
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/p kick " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"));
+                }
+            }
+
+        } catch (InterruptedException | ExecutionException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
     public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
@@ -224,6 +288,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
     }
+
 
     public static class HoverEventRenderPlayer extends HoverEvent {
         @Getter
@@ -273,6 +338,29 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             this.skinSet = skinSet;
             armor=  skyblockProfile.getCurrentArmor();
             this.inventory.armorInventory = skyblockProfile.getCurrentArmor().getArmorSlots();
+
+            int highestDungeonScore = Integer.MIN_VALUE;
+            ItemStack highestItem = null;
+            for (ItemStack itemStack : skyblockProfile.getInventory()) {
+                if (itemStack == null) continue;
+                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
+                if (display == null) continue;
+                NBTTagList nbtTagList = display.getTagList("Lore", 8);
+                if (nbtTagList == null) continue;
+                for (int i = 0; i < nbtTagList.tagCount(); i++) {
+                    String str = nbtTagList.getStringTagAt(i);
+                    if (str.contains("Gear")) {
+                        int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[3]));
+                        if (dungeonScore > highestDungeonScore) {
+                            highestItem = itemStack;
+                            highestDungeonScore = dungeonScore;
+                        }
+                    }
+                }
+            }
+
+            this.inventory.mainInventory[0] = highestItem;
+            this.inventory.currentItem = 0;
         }
 
         public String getSkinType() {
@@ -291,5 +379,21 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         public ItemStack[] getInventory() {
             return this.inventory.armorInventory;
         }
+    }
+
+
+
+    @Override
+    public String getEditRoute(final GuiConfig config) {
+        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
+            @Override
+            public MPanel get() {
+                return new PanelDefaultParameterConfig(config, FeatureViewPlayerOnJoin.this,
+                        Arrays.asList(new MPanel[] {
+                                new DataRendererEditor(config, FeatureViewPlayerOnJoin.this)
+                        }), Collections.singleton("datarenderers"));
+            }
+        });
+        return "base." + getKey() ;
     }
 }

@@ -11,7 +11,7 @@ import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
-import kr.syeyoung.dungeonsguide.features.impl.party.FeatureViewPlayerOnJoin;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureFreezePathfind;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;

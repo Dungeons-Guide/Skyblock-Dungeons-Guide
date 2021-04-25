@@ -30,5 +30,6 @@ public class TypeConverterRegistry {
         register(new TCAColor());
         register(new TCTextStyleList());
         register(new TCTextStyle());
+        register(new TCStringList());
     }
 }
