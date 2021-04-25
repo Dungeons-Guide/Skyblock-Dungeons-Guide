@@ -33,7 +33,7 @@ public class DataRendererEditor extends MPanel {
     private int lastX;
     private int lastY;
     private int scrollY;
-    private final int baseWidth = 100;
+    private final int baseWidth = 120;
     private final int hamburgerWidth = Minecraft.getMinecraft().fontRendererObj.getStringWidth("==");
 
     @Override
@@ -194,7 +194,7 @@ public class DataRendererEditor extends MPanel {
             Set<String> rest = new HashSet<>(DataRendererRegistry.getValidDataRenderer());
             rest.removeAll( feature.<List<String>>getParameter("datarenderers").getValue());
             rest.remove(currentlySelected);
-            int culmutativeY  = 0;
+            int culmutativeY  = -scrollY;
             for (String datarenderers : rest) {
                 DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
                 Dimension dim;
@@ -210,7 +210,7 @@ public class DataRendererEditor extends MPanel {
                 if (legitRelY < culmutativeY) {
                     currentlySelected = datarenderers;
                     selectedX = 155;
-                    selectedY = culmutativeY - dim.height + 5+fr.FONT_HEIGHT + 3 - scrollY;
+                    selectedY = culmutativeY - dim.height + 5+fr.FONT_HEIGHT + 3;
                     break;
                 }
             }
@@ -294,10 +294,13 @@ public class DataRendererEditor extends MPanel {
         super.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (!new Rectangle(155,5+fr.FONT_HEIGHT + 3, hamburgerWidth, 230).contains(relMouseX0, relMouseY0)) return;
+        if (!new Rectangle(155,5+fr.FONT_HEIGHT + 3, hamburgerWidth+baseWidth+1, 230).contains(relMouseX0, relMouseY0)) return;
 
-        if (scrollAmount > 0) scrollY += 20;
-        if (scrollAmount < 0) scrollY -= 20;
+        if (scrollAmount < 0) scrollY += 20;
+        if (scrollAmount > 0) scrollY -= 20;
         if (scrollY < 0) scrollY = 0;
+        System.out.println(scrollY);
+
+
     }
 }

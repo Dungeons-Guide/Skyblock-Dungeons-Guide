@@ -111,7 +111,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
         if (popupRect == null) {
-            popupRect = new Rectangle(mouseX, mouseY, 200, 220);
+            popupRect = new Rectangle(mouseX, mouseY, 220, 220);
             if (popupRect.y + popupRect.height > scaledResolution.getScaledHeight()) {
                 popupRect.y -= popupRect.y + popupRect.height - scaledResolution.getScaledHeight();
             }
