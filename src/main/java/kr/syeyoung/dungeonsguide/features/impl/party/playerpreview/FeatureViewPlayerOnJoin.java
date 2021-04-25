@@ -111,7 +111,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
         if (popupRect == null) {
-            popupRect = new Rectangle(mouseX, mouseY, 190, 220);
+            popupRect = new Rectangle(mouseX, mouseY, 200, 220);
             if (popupRect.y + popupRect.height > scaledResolution.getScaledHeight()) {
                 popupRect.y -= popupRect.y + popupRect.height - scaledResolution.getScaledHeight();
             }
@@ -170,18 +170,25 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         GlStateManager.pushMatrix();
 
         GlStateManager.translate(95, 5, 0);
+        int culmutativeY = 5;
+        DataRenderer dataRendererToHover = null;
         for (String datarenderers : this.<List<String>>getParameter("datarenderers").getValue()) {
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+            Dimension dim;
             if (dataRenderer == null) {
                 fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
                 fr.drawString(datarenderers, 0,fr.FONT_HEIGHT, 0xFFFF0000);
-                GlStateManager.translate(0, fr.FONT_HEIGHT * 2, 0);
+                dim = new Dimension(0, fr.FONT_HEIGHT * 2);
             } else {
                 GlStateManager.pushMatrix();
-                Dimension dimension = dataRenderer.renderData(playerProfile.get());
+                dim = dataRenderer.renderData(playerProfile.get());
                 GlStateManager.popMatrix();
-                GlStateManager.translate(0,dimension.height,0);
             }
+            if (relX >= 95 && relX <= popupRect.width && relY >= culmutativeY && relY < culmutativeY+dim.height && dataRenderer != null) {
+                dataRendererToHover = dataRenderer;
+            }
+            culmutativeY += dim.height;
+            GlStateManager.translate(0,dim.height,0);
         }
 
         GlStateManager.popMatrix();
@@ -231,6 +238,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        if (dataRendererToHover != null) {
+            dataRendererToHover.onHover(playerProfile.get(), relX, relY);
+        }
         GlStateManager.popMatrix(); // 33 66 108 130 154 // 5 75
     }
     @Override
