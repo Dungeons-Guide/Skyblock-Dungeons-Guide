@@ -20,6 +20,7 @@ import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.features.text.PanelTextParameterConfig;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.utils.XPUtils;
 import lombok.Getter;
@@ -71,40 +72,41 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
     @Override
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) {
-            popupRect = null;
-            profileFuture = null;
-            gfFuture = null;
-            skinFuture=  null;
-            fakePlayer= null;
+            cancelRender();
             return;
         }
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        IChatComponent ichatcomponent = getHoveredComponent(scaledResolution);
+        String uid = null;
+        if (ichatcomponent != null && ichatcomponent.getChatStyle().getChatHoverEvent() instanceof HoverEventRenderPlayer) {
+            uid = ((HoverEventRenderPlayer) ichatcomponent.getChatStyle().getChatHoverEvent()).getUuid();
+        }
+        reqRender(uid);
+    }
+
+    public void cancelRender() {
+        popupRect = null;
+        profileFuture = null;
+        lastuid = null;
+        gfFuture = null;
+        skinFuture=  null;
+        fakePlayer= null;
+    }
+
+    public void reqRender(String uid) {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         int width = scaledResolution.getScaledWidth();
         int height = scaledResolution.getScaledHeight();
         int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
         int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
 
-        IChatComponent ichatcomponent = getHoveredComponent(scaledResolution);
-        String uid = null;
-        if (ichatcomponent != null && ichatcomponent.getChatStyle().getChatHoverEvent() instanceof HoverEventRenderPlayer) {
-            uid = ((HoverEventRenderPlayer) ichatcomponent.getChatStyle().getChatHoverEvent()).getUuid();
-        }
 
         if (!((popupRect != null && popupRect.contains(mouseX, mouseY)) || uid != null && uid.equals(lastuid))) {
-            popupRect = null;
-            profileFuture = null;
-            lastuid = null;
-            gfFuture = null;
-            skinFuture=  null;
-            fakePlayer= null;
+            cancelRender();
         }
 
         if (uid != null && !uid.equals(lastuid) && (popupRect==null || !popupRect.contains(mouseX, mouseY))) {
-            popupRect = null;
-            profileFuture = null;
-            gfFuture = null;
-            skinFuture=  null;
-            fakePlayer= null;
+            cancelRender();
             lastuid = uid;
         }
         if (lastuid == null) return;
@@ -124,24 +126,42 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         if (gfFuture == null) {
             gfFuture = ApiFetchur.getSkinGameProfileByUUIDAsync(lastuid);
         }
+        boolean plsSetAPIKEY = false;
         if (skinFuture == null && gfFuture.isDone()) {
-            skinFuture = SkinFetchur.getSkinSet(gfFuture.get().orElse(null));
+            try {
+                skinFuture = SkinFetchur.getSkinSet(gfFuture.get().orElse(null));
+            } catch (InterruptedException | ExecutionException e) {
+                e.printStackTrace();
+            }
         }
 
-        if (fakePlayer == null && skinFuture != null && profileFuture != null && skinFuture.isDone() && profileFuture.isDone()) {
-            fakePlayer = new FakePlayer(gfFuture.get().orElse(null), skinFuture.get(), profileFuture.get().orElse(null));
+        try {
+            if (fakePlayer == null && skinFuture != null && profileFuture != null && skinFuture.isDone() && profileFuture.isDone() && profileFuture.get().isPresent()) {
+                fakePlayer = new FakePlayer(gfFuture.get().orElse(null), skinFuture.get(), profileFuture.get().orElse(null));
+            }
+        } catch (InterruptedException | ExecutionException e) {
+            plsSetAPIKEY = true;
         }
 
 
-        render(popupRect, scaledResolution, mouseX, mouseY, profileFuture.isDone() ? profileFuture.get() : null);
+        try {
+            render(popupRect, scaledResolution, mouseX, mouseY, plsSetAPIKEY ? null : (profileFuture.isDone() ? profileFuture.get() : null), plsSetAPIKEY);
+        } catch (InterruptedException | ExecutionException e) {
+        }
+
     }
 
-    public void render(Rectangle popupRect, ScaledResolution scaledResolution, int mouseX, int mouseY, Optional<PlayerProfile> playerProfile) {
+    private void render(Rectangle popupRect, ScaledResolution scaledResolution, int mouseX, int mouseY, Optional<PlayerProfile> playerProfile, boolean apiKeyPlsSet) {
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(popupRect.x, popupRect.y, 0);
         Gui.drawRect(0,0, popupRect.width, popupRect.height, 0xFF23272a);
         Gui.drawRect(2,2, popupRect.width-2, popupRect.height-2, 0XFF2c2f33);
+        if (apiKeyPlsSet) {
+            Minecraft.getMinecraft().fontRendererObj.drawString("Please set API KEY on /dg -> Party Kicker", 5,5, 0xFFFFFFFF);
+            GlStateManager.popMatrix();
+            return;
+        }
         if (playerProfile == null) {
             Minecraft.getMinecraft().fontRendererObj.drawString("Fetching data...", 5,5, 0xFFFFFFFF);
             GlStateManager.popMatrix();
@@ -271,7 +291,6 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             }
 
         } catch (InterruptedException | ExecutionException e) {
-            e.printStackTrace();
         }
 
 
@@ -297,6 +316,30 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+        String str = clientChatReceivedEvent.message.getFormattedText();
+        if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
+            String username = TextUtils.stripColor(str).split(" ")[3];
+            if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
+                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
+                PartyManager.INSTANCE.getRunOnMembersReceived().add((e) -> {
+                    for (String s : e) {
+                        ApiFetchur.fetchUUIDAsync(s)
+                                .thenAccept(a -> {
+                                    if (a == null) return;
+                                    ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+s+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                                });
+                    }
+                });
+            } else {
+                ApiFetchur.fetchUUIDAsync(username)
+                        .thenAccept(a -> {
+                            if (a == null) return;
+                            ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+username+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                        });
+            }
+        }
     }
 
 

@@ -327,24 +327,18 @@ public class CommandDungeonsGuide extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata "+e.getMessage()));
                 e.printStackTrace();
             }
-        } else if (args[0].equals("fetch")) {
-            try {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eProfile Viewer Test: ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(args[1])))));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (args[0].equals("fetchbynick")) {
+        } else if (args[0].equals("pv")) {
             try {
                 ApiFetchur.fetchUUIDAsync(args[1])
                         .thenAccept(a -> {
-                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eProfile Viewer Test: ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+args[1]+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
                         });
-
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (args[0].equals("purge")) {
             ApiFetchur.purgeCache();
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
@@ -357,6 +351,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets partymax §7(maximum amount people in party, for discord rpc)"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
         }
     }
 

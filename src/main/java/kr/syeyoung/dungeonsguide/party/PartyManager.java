@@ -23,10 +23,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.security.SecureRandom;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.function.Consumer;
 
 public class PartyManager implements StompMessageHandler {
     public static final PartyManager INSTANCE = new PartyManager();
@@ -44,6 +42,10 @@ public class PartyManager implements StompMessageHandler {
     @Getter
     private boolean canInvite = false;
     private int invitedDash  =0;
+
+    @Getter
+    private Queue<Consumer<Set<String>>> runOnMembersReceived = new LinkedList<>();
+
 
     @Getter
     @Setter
@@ -141,6 +143,10 @@ public class PartyManager implements StompMessageHandler {
                 if (partyJoin == 2 || partyJoin == 100) {
                     partyJoin = 0;
                     // REQ PARTY JOIN
+                    Consumer<Set<String>> r;
+                    while ((r = runOnMembersReceived.poll()) != null){
+                        r.accept(members);
+                    }
 
                     JSONArray jsonArray = new JSONArray();
                     for (String member : members) {

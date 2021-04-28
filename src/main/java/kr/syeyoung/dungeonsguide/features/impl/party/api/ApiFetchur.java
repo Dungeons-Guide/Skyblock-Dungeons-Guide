@@ -29,6 +29,7 @@ public class ApiFetchur {
 
     private static final ExecutorService ex = Executors.newFixedThreadPool(4);
 
+    private static final Set<String> invalidKeys = new HashSet<>();
     public static void purgeCache() {
         playerProfileCache.clear();
         nicknameToUID.clear();
@@ -39,6 +40,7 @@ public class ApiFetchur {
         completableFutureMap2.clear();
         completableFutureMap3.clear();
         completableFutureMap4.clear();
+        invalidKeys.clear();
     }
 
     public static JsonObject getJson(String url) throws IOException {
@@ -106,6 +108,11 @@ public class ApiFetchur {
             playerProfileCache.remove(uid);
         }
         if (completableFutureMap.containsKey(uid)) return completableFutureMap.get(uid);
+        if (invalidKeys.contains(apiKey)) {
+            CompletableFuture cf = new CompletableFuture();
+            cf.completeExceptionally(new IOException("403 for url"));
+            return cf;
+        }
 
         CompletableFuture<Optional<PlayerProfile>> completableFuture = new CompletableFuture<>();
         ex.submit(() -> {
@@ -116,10 +123,16 @@ public class ApiFetchur {
                 completableFutureMap.remove(uid);
                 return;
             } catch (IOException e) {
+                if (e.getMessage().contains("403 for URL")) {
+                    completableFuture.completeExceptionally(e);
+                    completableFutureMap.remove(uid);
+                    invalidKeys.add(apiKey);
+                } else {
+                    completableFuture.complete(Optional.empty());
+                    completableFutureMap.remove(uid);
+                }
                 e.printStackTrace();
             }
-            completableFuture.complete(Optional.empty());
-            completableFutureMap.remove(uid);
         });
         completableFutureMap.put(uid, completableFuture);
         return completableFuture;
