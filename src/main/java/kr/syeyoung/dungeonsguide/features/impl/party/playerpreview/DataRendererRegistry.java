@@ -34,6 +34,8 @@ public class DataRendererRegistry {
             }
             dataRendererMap.put("dungeon_"+value.getJsonName()+"_higheststat", new DataRenderDungeonHighestFloorStat(value));
         }
-        dataRendererMap.put("fairyouls", new DataRendererFairySouls());
+        dataRendererMap.put("fairysouls", new DataRendererFairySouls());
+
+        dataRendererMap.put("dummy", new DataRendererSetUrOwn());
     }
 }

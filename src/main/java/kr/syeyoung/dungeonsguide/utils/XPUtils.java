@@ -160,8 +160,13 @@ public class XPUtils {
     public static XPCalcResult getCataXp(double totalXp) {
         Map.Entry<Double, Integer> totalXpEn = catacombXp.floorEntry(totalXp);
         XPCalcResult xpCalcResult = new XPCalcResult();
-        xpCalcResult.level = totalXpEn.getValue();
-        xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
+        if (totalXpEn == null) {
+            xpCalcResult.setLevel(0);
+            xpCalcResult.remainingXp = totalXp;
+        } else {
+            xpCalcResult.level = totalXpEn.getValue();
+            xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
+        }
         Map.Entry<Double, Integer> asdasd = catacombXp.ceilingEntry(totalXp);
         xpCalcResult.nextLvXp = asdasd == null ? 0 : asdasd.getKey();
         return xpCalcResult;
@@ -171,17 +176,27 @@ public class XPUtils {
             case RUNECRAFTING:
                 Map.Entry<Double, Integer> totalXpEn = skillXp2.floorEntry(totalXp);
                 XPCalcResult xpCalcResult = new XPCalcResult();
-                xpCalcResult.level = totalXpEn.getValue();
-                xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
-                Map.Entry<Double, Integer> asdasd = skillXp2.ceilingEntry(totalXp);
+                if (totalXpEn == null) {
+                    xpCalcResult.setLevel(0);
+                    xpCalcResult.remainingXp = totalXp;
+                } else {
+                    xpCalcResult.level = totalXpEn.getValue();
+                    xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
+                }
+                Map.Entry<Double, Integer> asdasd = catacombXp.ceilingEntry(totalXp);
                 xpCalcResult.nextLvXp = asdasd == null ? 0 : asdasd.getKey();
                 return xpCalcResult;
             default:
                 totalXpEn = skillXp.floorEntry(totalXp);
                 xpCalcResult = new XPCalcResult();
-                xpCalcResult.level = totalXpEn.getValue();
-                xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
-                asdasd = skillXp.ceilingEntry(totalXp);
+                if (totalXpEn == null) {
+                    xpCalcResult.setLevel(0);
+                    xpCalcResult.remainingXp = totalXp;
+                } else {
+                    xpCalcResult.level = totalXpEn.getValue();
+                    xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
+                }
+                asdasd = catacombXp.ceilingEntry(totalXp);
                 xpCalcResult.nextLvXp = asdasd == null ? 0 : asdasd.getKey();
                 return xpCalcResult;
         }
