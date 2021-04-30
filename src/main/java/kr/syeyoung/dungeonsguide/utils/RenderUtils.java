@@ -6,6 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.Tessellator;
@@ -16,6 +17,8 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.*;
+import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector3f;
@@ -29,6 +32,10 @@ public class RenderUtils {
         drawTexturedRect(x, y, width, height, 0.0F, 1.0F, 0.0F, 1.0F, filter);
     }
     private static float zLevel = 0;
+    public static int scrollY = 0;
+    public static boolean allowScrolling;
+    public static int scrollX = 0;
+
     public static void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font)
     {
         if (!textLines.isEmpty())
@@ -60,6 +67,30 @@ public class RenderUtils {
 
             zLevel = 300.0F;
             int l = -267386864;
+
+
+            if (!allowScrolling) {
+                scrollX = 0;
+                scrollY = 0;
+            }
+            allowScrolling = (i2 < 0);
+            GlStateManager.pushMatrix();
+            if (allowScrolling) {
+                int eventDWheel = Mouse.getDWheel();
+                if (Keyboard.isKeyDown(42)) {
+                    if (eventDWheel < 0) {
+                        scrollX += 10;
+                    } else if (eventDWheel > 0) {
+                        scrollX -= 10;
+                    }
+                } else if (eventDWheel < 0) {
+                    scrollY -= 10;
+                } else if (eventDWheel > 0) {
+                    scrollY += 10;
+                }
+            }
+            GlStateManager.translate(scrollX, scrollY, 0.0F);
+
             drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
             drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
             drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
@@ -90,6 +121,7 @@ public class RenderUtils {
             GlStateManager.enableDepth();
             RenderHelper.enableStandardItemLighting();
             GlStateManager.enableRescaleNormal();
+            GlStateManager.popMatrix();
         }
     }
     protected static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)

@@ -35,6 +35,7 @@ import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
+import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
@@ -71,6 +72,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
     private Future<Optional<GameProfile>> gfFuture;
     private Future<SkinFetchur.SkinSet> skinFuture;
     private FakePlayer fakePlayer;
+    private boolean drawInv = false;
     @SneakyThrows
     @Override
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
@@ -94,6 +96,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         gfFuture = null;
         skinFuture=  null;
         fakePlayer= null;
+        drawInv = false;
     }
 
     public void reqRender(String uid) {
@@ -104,11 +107,11 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
 
 
-        if (!((popupRect != null && popupRect.contains(mouseX, mouseY)) || uid != null && uid.equals(lastuid))) {
+        if (!((popupRect != null && (popupRect.contains(mouseX, mouseY) || drawInv)) || uid != null && uid.equals(lastuid))) {
             cancelRender();
         }
 
-        if (uid != null && !uid.equals(lastuid) && (popupRect==null || !popupRect.contains(mouseX, mouseY))) {
+        if (uid != null && !uid.equals(lastuid) && (popupRect==null || (!popupRect.contains(mouseX, mouseY) && !drawInv)) ) {
             cancelRender();
             lastuid = uid;
         }
@@ -195,7 +198,6 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         GlStateManager.translate(95, 5, 0);
         int culmutativeY = 5;
         DataRenderer dataRendererToHover = null;
-        System.out.println(this.<List<String>>getParameter("datarenderers").getValue());
         for (String datarenderers : this.<List<String>>getParameter("datarenderers").getValue()) {
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
             Dimension dim;
@@ -219,6 +221,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
         Gui.drawRect(0,0, 90, 170, 0xFF23272a);
         Gui.drawRect(2,2, 88, 168, 0xFF444444);
+        Gui.drawRect(80,159, 90, 170, 0xFF23272a);
+        Gui.drawRect(82,161, 88, 168, 0xFF444444);
+        fr.drawString("§eI", 83,161,-1);
         GlStateManager.color(1, 1, 1, 1.0F);
         if (fakePlayer != null) {
             GuiInventory.drawEntityOnScreen(45, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
@@ -262,9 +267,60 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        if (dataRendererToHover != null) {
+        if (dataRendererToHover != null && !drawInv) {
             dataRendererToHover.onHover(playerProfile.get(), relX, relY);
         }
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
+        if (drawInv) {
+            int startX = 81;
+            int startY = 86;
+            MPanel.clip(scaledResolution, popupRect.x+startX-1, popupRect.y+startY-1, 164, 74);
+            GlStateManager.translate(startX,startY,1);
+            Gui.drawRect(-1,-1,163,73, 0xFF000000);
+            GlStateManager.disableLighting();
+            ItemStack toHover = null;
+            int rx = relX - startX;
+            int ry = relY - startY;
+
+
+            GlStateManager.pushAttrib();
+            GlStateManager.disableRescaleNormal();
+            RenderHelper.enableGUIStandardItemLighting();
+            GlStateManager.disableLighting();
+            for (int i = 0; i < playerProfile.get().getInventory().length; i++) {
+                int x = (i%9) * 18;
+                int y = (i/9) * 18;
+                if (x <= rx && rx<x+18 && y<=ry&&ry<y+18) {
+                    toHover = playerProfile.get().getInventory()[(i+9) % 36];
+                }
+                Gui.drawRect(x,y,x+18,y+18, 0xFF000000);
+                Gui.drawRect(x+1,y+1,x+17,y+17, 0xFF666666);
+                GlStateManager.color(1, 1, 1, 1.0F);
+
+                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.get().getInventory()[(i+9) % 36], (i%9) * 18+1,(i/9) * 18+1);
+            }
+            GlStateManager.popAttrib();
+            if (toHover != null) {
+                List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+                for (int i = 0; i < list.size(); ++i) {
+                    if (i == 0) {
+                        list.set(i, toHover.getRarity().rarityColor + (String)list.get(i));
+                    } else {
+                        list.set(i, EnumChatFormatting.GRAY + (String)list.get(i));
+                    }
+                }
+                FontRenderer font = toHover.getItem().getFontRenderer(toHover);
+                GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                FontRenderer theRenderer = (font == null ? fr : font);
+                int minY = scaledResolution.getScaledHeight() - (list.size()+4) * theRenderer.FONT_HEIGHT - popupRect.y;
+                RenderUtils.drawHoveringText(list,rx, Math.min(minY-startY, ry), theRenderer);
+                GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            }
+        }
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+
+
         GlStateManager.popMatrix(); // 33 66 108 130 154 // 5 75
     }
     @Override
@@ -274,12 +330,15 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         int height = scaledResolution.getScaledHeight();
         int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
         int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
+
+        if (Mouse.getEventButton() != -1 && Mouse.isButtonDown(Mouse.getEventButton()) && drawInv) drawInv = false;
         if (popupRect == null || !popupRect.contains(mouseX, mouseY)) return;
 
         mouseInputEvent.setCanceled(true);
 
         int relX = mouseX - popupRect.x;
         int relY = mouseY - popupRect.y;
+
 
         try {
             PlayerProfile playerProfile = profileFuture.isDone() ? profileFuture.get().orElse(null) : null;
@@ -291,6 +350,8 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 } else if (new Rectangle(2, 170, 86, 23).contains(relX, relY)) {
                     // kick
                     Minecraft.getMinecraft().thePlayer.sendChatMessage("/p kick " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"));
+                } else if (new Rectangle(80,159,10,11).contains(relX, relY)) {
+                    drawInv = true;
                 }
             }
 
