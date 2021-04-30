@@ -116,7 +116,7 @@ key_Flip (Hold):0
 key_Rotate (Hold):0
 key_Flip (Toggle):0
 key_Rotate (Toggle):0
-soundCategory_master:0.0
+soundCategory_master:1.0
 soundCategory_music:0.0
 soundCategory_record:1.0
 soundCategory_weather:1.0

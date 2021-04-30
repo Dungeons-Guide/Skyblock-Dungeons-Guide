@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
 import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.*;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -64,7 +65,7 @@ public class DataRenderDungeonFloorStat implements DataRenderer {
         if (playedFloorFloorSpecificData == null) return;
         String floorName = (dungeonType == DungeonType.CATACOMBS ? "F" : "M") + floor;
 
-        FeatureEditPane.drawHoveringText(Arrays.asList(
+        RenderUtils.drawHoveringText(Arrays.asList(
                 "§bFloor "+floorName,
                 "§bBest Score§7: §f"+playedFloorFloorSpecificData.getData().getBestScore(),
                 "§bTotal Completions§7: §f"+playedFloorFloorSpecificData.getData().getCompletions(),

@@ -84,7 +84,7 @@ public class RoomMatchDisplayPane extends MPanel {
                     fr.drawString("N", x *16 +10 + offsetX, z *16 +10 + offsetY,0xFFFF0000);
                 }
                 if (z == hoverY && x == hoverX) {
-                    FeatureEditPane.drawHoveringText(Arrays.asList(new String[] {"Expected "+data2 +" But found "+data1}), relMousex0, relMousey0, fr);
+                    RenderUtils.drawHoveringText(Arrays.asList(new String[] {"Expected "+data2 +" But found "+data1}), relMousex0, relMousey0, fr);
                 }
             }
         }

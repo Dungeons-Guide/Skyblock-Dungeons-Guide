@@ -35,6 +35,8 @@ public class DataRendererRegistry {
             dataRendererMap.put("dungeon_"+value.getJsonName()+"_higheststat", new DataRenderDungeonHighestFloorStat(value));
         }
         dataRendererMap.put("fairysouls", new DataRendererFairySouls());
+        dataRendererMap.put("secrets", new DataRendererSecrets());
+        dataRendererMap.put("hover4inv", new DataRendererHoverForInv());
 
         dataRendererMap.put("dummy", new DataRendererSetUrOwn());
     }

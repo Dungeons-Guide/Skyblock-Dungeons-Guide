@@ -21,6 +21,7 @@ import kr.syeyoung.dungeonsguide.features.text.PanelTextParameterConfig;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.utils.XPUtils;
 import lombok.Getter;
@@ -253,7 +254,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 FontRenderer theRenderer = (font == null ? fr : font);
                 int minY = scaledResolution.getScaledHeight() - (list.size()+4) * theRenderer.FONT_HEIGHT - popupRect.y;
-                FeatureEditPane.drawHoveringText(list,relX, Math.min(minY, relY), theRenderer);
+                RenderUtils.drawHoveringText(list,relX, Math.min(minY, relY), theRenderer);
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
             }
         } else {
@@ -319,6 +320,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+        if (!isEnabled()) return;
         String str = clientChatReceivedEvent.message.getFormattedText();
         if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
             String username = TextUtils.stripColor(str).split(" ")[3];

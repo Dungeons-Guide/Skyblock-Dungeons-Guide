@@ -27,6 +27,8 @@ public class PlayerProfile {
     private ItemStack[] enderchest;
     private ItemStack[] talismans;
 
+    private int totalSecrets;
+
     @Data
     public static class Armor {
         private final ItemStack[] armorSlots = new ItemStack[4];

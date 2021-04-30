@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -62,7 +63,7 @@ public class PanelDefaultParameterConfig extends MPanel {
         if (within instanceof MParameter) {
             FeatureParameter feature = ((MParameter) within).getParameter();
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            FeatureEditPane.drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), relMousex0,relMousey0, Minecraft.getMinecraft().fontRendererObj);
+            RenderUtils.drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), relMousex0,relMousey0, Minecraft.getMinecraft().fontRendererObj);
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
         }
     }

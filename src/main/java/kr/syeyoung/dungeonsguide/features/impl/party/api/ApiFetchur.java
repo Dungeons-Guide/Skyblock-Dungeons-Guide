@@ -253,8 +253,19 @@ public class ApiFetchur {
         }
 
         if (profile == null) return Optional.empty();
+        PlayerProfile pp = parseProfile(profile, dashTrimmed);
+        json = getJson("https://api.hypixel.net/player?uuid="+uid+"&key="+apiKey);
+        if (json.has("player")) {
+            JsonObject treasures = json.getAsJsonObject("player");
+            if (treasures.has("achievements")) {
+                treasures = treasures.getAsJsonObject("achievements");
+                if (treasures.has("skyblock_treasure_hunter")) {
+                    pp.setTotalSecrets(treasures.get("skyblock_treasure_hunter").getAsInt());
+                }
+            }
+        }
 
-        return Optional.of(parseProfile(profile, dashTrimmed));
+        return Optional.of(pp);
     }
 
     public static int getOrDefault(JsonObject jsonObject, String key, int value) {
