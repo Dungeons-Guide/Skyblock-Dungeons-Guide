@@ -168,7 +168,7 @@ public class XPUtils {
             xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
         }
         Map.Entry<Double, Integer> asdasd = catacombXp.ceilingEntry(totalXp);
-        xpCalcResult.nextLvXp = asdasd == null ? 0 : asdasd.getKey();
+        xpCalcResult.nextLvXp = asdasd == null ? 0 : (asdasd.getKey() - (totalXpEn != null ? totalXpEn.getKey() : 0));
         return xpCalcResult;
     }
     public static XPCalcResult getSkillXp(Skill skill, double totalXp) {
@@ -184,7 +184,7 @@ public class XPUtils {
                     xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
                 }
                 Map.Entry<Double, Integer> asdasd = catacombXp.ceilingEntry(totalXp);
-                xpCalcResult.nextLvXp = asdasd == null ? 0 : asdasd.getKey();
+                xpCalcResult.nextLvXp = asdasd == null ? 0 : (asdasd.getKey() - (totalXpEn != null ? totalXpEn.getKey() : 0));
                 return xpCalcResult;
             default:
                 totalXpEn = skillXp.floorEntry(totalXp);
@@ -197,7 +197,7 @@ public class XPUtils {
                     xpCalcResult.remainingXp = totalXp - totalXpEn.getKey();
                 }
                 asdasd = catacombXp.ceilingEntry(totalXp);
-                xpCalcResult.nextLvXp = asdasd == null ? 0 : asdasd.getKey();
+                xpCalcResult.nextLvXp = asdasd == null ? 0 : (asdasd.getKey() - (totalXpEn != null ? totalXpEn.getKey() : 0));
                 return xpCalcResult;
         }
     }
