@@ -58,10 +58,10 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
         for (String nextPhase : currentPhase.getNextPhases()) {
             PhaseData phaseData = phases.get(nextPhase);
             if (phaseData == null) continue;
-            if (phaseData.signatureMsgs.contains(chat.getFormattedText())) {
-                currentPhase = phaseData;
-                onPhaseChange();
-                return;
+            if (phaseData.signatureMsgs.contains(chat.getFormattedText().replace(" ", ""))) {
+                    currentPhase = phaseData;
+                    onPhaseChange();
+                    return;
             }
         }
     }
@@ -115,10 +115,20 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     @Data
     @Builder
     public static class PhaseData {
+        private PhaseData(String phase, Set<String> signatureMsgs, Set<String> nextPhase) {
+            this.phase = phase;
+            this.nextPhases = new HashSet<>(nextPhase);
+            this.signatureMsgs = new HashSet<>();
+            for (String signatureMsg : signatureMsgs) {
+                this.signatureMsgs.add(signatureMsg.replace(" ", ""));
+            }
+        }
+
         private String phase;
         @Singular
         private Set<String> signatureMsgs;
         @Singular
         private Set<String> nextPhases;
+
     }
 }

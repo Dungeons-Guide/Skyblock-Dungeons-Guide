@@ -52,7 +52,11 @@ public class FeatureRegistry {
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
-    public static final SimpleFeature ADVANCED_RICHPRESENCE = register(new SimpleFeature("Advanced", "Discord Rich presence", "Discord rich presence with ASK-TO-JOIN Support!\n\nSimply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!", "advanced.richpresence", true));
+    public static final SimpleFeature ADVANCED_RICHPRESENCE = register(new SimpleFeature("Advanced", "Discord Rich presence", "Discord rich presence with ASK-TO-JOIN Support!\n\nSimply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!", "advanced.richpresence", true) {
+        {
+            parameters.put("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
+        }
+    });
 
     public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("Solver", "Riddle Puzzle (3 weirdo) Solver", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
     public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("Solver", "Trivia Puzzle (Omnicrescent) Solver", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));
@@ -97,12 +101,14 @@ public class FeatureRegistry {
     public static final FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS = register(new FeatureHideAnimals());
     public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
     public static final FeatureThornSpiritBowTimer BOSSFIGHT_BOW_TIMER = register(new FeatureThornSpiritBowTimer());
+    public static final FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER = register(new FeatureTerracotaTimer());
     public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
     public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
 
 
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
+    public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST = register(new FeaturePressAnyKeyToCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
     public static final FeatureBoxBats DUNGEON_BOXBAT = register(new FeatureBoxBats());
     public static final FeatureBoxStarMobs DUNGEON_BOXSTARMOBS = register(new FeatureBoxStarMobs());

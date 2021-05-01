@@ -60,7 +60,7 @@ public class ActionMoveNearestAir extends AbstractAction {
     private Future<List<BlockPos>> latestFuture;
     @Override
     public void onTick(DungeonRoom dungeonRoom) {
-        tick = (tick+1) % 10;
+        tick = (tick+1) % Math.max(1, FeatureRegistry.SECRET_BROWSE.getRefreshRate());
         if (latestFuture != null && latestFuture.isDone()) {
             try {
                 poses = latestFuture.get();

@@ -5,19 +5,23 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.awt.*;
+import java.util.stream.Collectors;
 
 public class DataRendererSecrets implements DataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§eSecrets §b"+playerProfile.getTotalSecrets(), 0,0,-1);
+        double theint = playerProfile.getTotalSecrets()/ (double)playerProfile.getDungeonStats().values().stream().flatMap(s -> s.getData().getPlays().values().stream())
+                .map(fs -> fs.getData().getWatcherKills()).reduce(0, Integer::sum);
+        fr.drawString("§eSecrets §b"+playerProfile.getTotalSecrets()+" §7("+
+                String.format("%.2f", theint)+"/run)", 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
 
     @Override
     public Dimension renderDummy() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§eSecrets §b99999", 0,0,-1);
+        fr.drawString("§eSecrets §b99999 §7(X/run)", 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
     @Override

@@ -66,18 +66,33 @@ public class FeatureGoodParties extends SimpleFeature implements GuiPostRenderLi
                 int classLvReq = 0;
                 int cataLvReq = 0;
                 boolean Req = false;
+                String note = "";
                 for (int n = 0; n < lore.tagCount(); n++) {
                     String str = lore.getStringTagAt(n);
                     if (str.startsWith("§7Dungeon Level Required: §b")) cataLvReq = Integer.parseInt(str.substring(28));
                     if (str.startsWith("§7Class Level Required: §b")) classLvReq = Integer.parseInt(str.substring(26));
+                    if (str.startsWith("§7§7Note:")) note = TextUtils.stripColor(str.substring(10));
                     if (str.startsWith("§cRequires")) Req = true;
                 }
-                System.out.println(classLvReq + " / "+cataLvReq);
 
+                int x = s.xDisplayPosition;
+                int y = s.yDisplayPosition;
                 if (Req) {
-                    int x = s.xDisplayPosition;
-                    int y = s.yDisplayPosition;
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
+                } else {
+
+                    if (note.toLowerCase().contains("car")) {
+                        fr.drawStringWithShadow("C", x + 1, y + 1, 0xFFFF0000);
+                    } else if (note.toLowerCase().replace(" ", "").contains("s/s+")) {
+                        fr.drawStringWithShadow("S+", x + 1, y + 1, 0xFFFFFF00);
+                    } else if (note.toLowerCase().contains("s+")) {
+                        fr.drawStringWithShadow("S+", x + 1, y + 1, 0xFF00FF00);
+                    } else if (note.toLowerCase().contains(" s") || note.toLowerCase().contains(" s ")) {
+                        fr.drawStringWithShadow("S", x + 1, y + 1, 0xFFFFFF00);
+                    } else if (note.toLowerCase().contains("rush")) {
+                        fr.drawStringWithShadow("R", x + 1, y + 1, 0xFFFF0000);
+                    }
+                    fr.drawStringWithShadow("§e"+Integer.max(classLvReq, cataLvReq), x + 1, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
                 }
 
 

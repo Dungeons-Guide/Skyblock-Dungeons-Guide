@@ -54,7 +54,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         }
         if (foundMatch) {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
-            final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").toLowerCase();
+            final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final BlockPos low = getDungeonRoom().getMin();
             final BlockPos high = getDungeonRoom().getMax();
             World w = getDungeonRoom().getContext().getWorld();
@@ -63,7 +63,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
                 public boolean apply(@Nullable EntityArmorStand input) {
                     BlockPos pos = input.getPosition();
                     return low.getX() < pos.getX() && pos.getX() < high.getX()
-                            && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && input.getName().toLowerCase().contains(name);
+                            && low.getZ() < pos.getZ() && pos.getZ() < high.getZ() && TextUtils.stripColor(input.getName()).equalsIgnoreCase(name);
                 }
             });
 

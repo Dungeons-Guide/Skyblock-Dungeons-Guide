@@ -114,7 +114,6 @@ public class PartyManager implements StompMessageHandler {
         if (chatReceivedEvent.type == 2) return;
 
         String str = chatReceivedEvent.message.getFormattedText();
-        System.out.println(str);
 
         try {
 

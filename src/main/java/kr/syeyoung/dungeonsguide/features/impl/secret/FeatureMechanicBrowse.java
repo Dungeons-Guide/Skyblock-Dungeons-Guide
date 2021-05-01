@@ -42,6 +42,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
         parameters.put("linecolor", new FeatureParameter<Color>("linecolor", "Color", "Color of Pathfind line", Color.green, "color"));
         parameters.put("linethickness", new FeatureParameter<Float>("linethickness", "Thickness", "Thickness of Pathfind line", 1.0f, "float"));
+        parameters.put("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "How many ticks per line refresh?", 10, "integer"));
     }
 
     public Color getColor() {
@@ -49,6 +50,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     }
     public float getThickness() {
         return this.<Float>getParameter("linethickness").getValue();
+    }
+    public int getRefreshRate() {
+        return this.<Integer>getParameter("refreshrate").getValue();
     }
 
     SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();

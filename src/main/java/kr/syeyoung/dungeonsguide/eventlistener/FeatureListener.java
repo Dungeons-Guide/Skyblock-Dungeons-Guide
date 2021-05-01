@@ -27,6 +27,7 @@ import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.opengl.GL11;
 
@@ -351,6 +352,18 @@ public class FeatureListener {
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof SkyblockLeaveListener) {
                     ((SkyblockLeaveListener) abstractFeature).onSkyblockQuit();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onKey(GuiScreenEvent.KeyboardInputEvent event) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof KeyInputListener) {
+                    ((KeyInputListener) abstractFeature).onKeyInput(event);
                 }
             }
         } catch (Throwable t) {
