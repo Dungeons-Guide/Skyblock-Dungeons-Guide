@@ -9,6 +9,7 @@ import net.minecraft.block.BlockLever;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 
 import java.util.*;
@@ -95,7 +96,6 @@ public class WaterBoard {
                     ends.add(waterNodeEndMap.get(s));
                 }
                 currentRoute = getBestRoute(ends);
-
 //                {
 //
 //                    Set<LeverState> currentState = new HashSet<LeverState>();
@@ -166,7 +166,31 @@ public class WaterBoard {
         Set<WaterNode> searched = new HashSet<WaterNode>();
         Set<LeverState> waterBlockingStates = new HashSet<LeverState>();
         World w = waterPuzzle.getDungeonRoom().getContext().getWorld();
-        toGoDownTo.add(getNodeAt(waterNodeStart.getX(), waterNodeStart.getY() + 1));
+//        toGoDownTo.add(getNodeAt(waterNodeStart.getX(), waterNodeStart.getY() + 1));
+        {
+            Queue<Tuple<WaterNode, Boolean>> toGo = new LinkedList<>();
+            toGo.add(new Tuple<>(waterNodeStart, true));
+            toGoDownTo.add(getNodeAt(waterNodeStart.getX(), waterNodeStart.getY() + 1));
+            Set<WaterNode> visited = new HashSet<>();
+            while (!toGo.isEmpty()) {
+                Tuple<WaterNode, Boolean> waterNode = toGo.poll();
+                if (waterNode.getFirst() == null) continue;
+                if (visited.contains(waterNode.getFirst())) continue;
+                if (!waterNode.getFirst().canWaterGoThrough()) continue;
+                if (waterNode.getFirst() instanceof WaterNodeEnd) continue;
+                visited.add(waterNode.getFirst());
+
+                boolean water = waterNode.getFirst().isWaterFilled(w);
+                if (water && !waterNode.getSecond()) {
+                    toGoDownTo.add(getNodeAt(waterNode.getFirst().getX(), waterNode.getFirst().getY()));
+                }
+
+                int x = waterNode.getFirst().getX(), y = waterNode.getFirst().getY();
+                toGo.add(new Tuple<>(getNodeAt(x+1, y), water));
+                toGo.add(new Tuple<>(getNodeAt(x-1, y), water));
+                toGo.add(new Tuple<>(getNodeAt(x, y+1), water));
+            }
+        }
         while (!toGoDownTo.isEmpty()) {
             WaterNode asd = toGoDownTo.poll();
             if (asd == null) continue;
@@ -197,11 +221,12 @@ public class WaterBoard {
                     if (i != asd.getX())
                         followWater = nodehere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
                     r.getNodes().add(nodehere);
-                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
-                        toGoDownTo.add(down);
-                    }
                     if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
                         waterBlockingStates.add(down.getCondition().invert());
+                    }
+                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
+                        toGoDownTo.add(down);
+                        if (!followWater) break;
                     }
                 }
                 followWater = getNodeAt(asd.getX()  +1, asd.getY()) != null && leverStates.contains(getNodeAt(asd.getX() + 1, asd.getY()).getCondition())
@@ -217,11 +242,12 @@ public class WaterBoard {
                     if (i != asd.getX())
                         followWater = nodehere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
                     r.getNodes().add(nodehere);
-                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
-                        toGoDownTo.add(down);
-                    }
                     if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
                         waterBlockingStates.add(down.getCondition().invert());
+                    }
+                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
+                        toGoDownTo.add(down);
+                        if (!followWater) break;
                     }
                 }
             } else {
@@ -232,7 +258,7 @@ public class WaterBoard {
                     if (!nodehere.canWaterGoThrough()) break;
                     if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
-                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
+                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())))) {
                         int dist = i - asd.getX();
                         if (dist < minDistToDropRight)
                             minDistToDropRight = dist;
@@ -246,7 +272,7 @@ public class WaterBoard {
                     if (!nodehere.canWaterGoThrough()) break;
                     if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
-                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
+                    if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())))) {
                         int dist = asd.getX() - i;
                         if (dist < minDistToDropLeft)
                             minDistToDropLeft = dist;

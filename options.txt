@@ -24,7 +24,7 @@ chatLinks:true
 chatLinksPrompt:true
 chatOpacity:1.0
 snooperEnabled:true
-fullscreen:false
+fullscreen:true
 enableVsync:false
 useVbo:true
 hideServerAddress:false
@@ -97,6 +97,7 @@ key_Show recipe for item:19
 key_Toggle NEU overlay:0
 key_Close NEU panes:0
 key_Select Item:-98
+key_Key to Enable Backpack Scrolling:36
 key_start editing session:19
 key_send and save bombdefuse solution:35
 key_navigate to next secret. (Req option enabled at /dg):34
