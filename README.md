@@ -1,59 +1,27 @@
--------------------------------------------
-Source installation information for modders
--------------------------------------------
-This code follows the Minecraft Forge installation methodology. It will apply
-some small patches to the vanilla MCP source code, giving you and it access 
-to some of the data and functions you need to build a successful mod.
+# Dungeons Guide
+The most intelligent Hypixel Skyblock Dungeons Mod
 
-Note also that the patches are built against "unrenamed" MCP source code (aka
-srgnames) - this means that you will not be able to read them directly against
-normal code.
+## Features
+- Dungeon Waypoints
+  - Waypoints for every things that are interactable in dungeon.
+  - NPC, Secret, Door, Lever, Superboom wall, Crypts
+  - Q. Hey is this feature bannable?
+  - A. No.
+    1. It is not Watchdog detectable since it does not modify player behaviour or packet
+    2. It is not an ESP (unlike some other "secret waypoints" mods which are really just ChestESP and ItemESP). This mod bases the waypoints on a static set of coordinates from a corner of the room a player is in. This is similar to fairy soul waypoints (which Simon has confirmed are allowed) since it is not scanning for the secrets but rather displaying a waypoint over a set coordinate.
+    3. It does not break any of the 4 guidelines recently posted by Fr0z3n about disallowed QOL modifications
+    4. It does not provide an unfair advantage. Players who memorized secrets will always be able to find secrets faster than someone who hasn't memorized secrets and is using waypoints. 
+- Puzzle Solvers (ALL)
+  - 3 weirdos
+  - intelligent ice-path solver
+  - intelligent ice-fill solver
+  - intelligent box solver
+  - intelligent water solver (FAST SOLUTION)
+  - blaze solver
+  - creeper solver
+  - Bomb defuse solver (except it does not esp or xray solution)
+  - Teleport-pads solver
+  - Trivia solver
+- Useful Dungeon HUDS
+- All the other features could be found at [here](https://dungeonsguide.gitbook.io/)
 
-Source pack installation information:
-
-Standalone source installation
-==============================
-
-Step 1: Open your command-line and browse to the folder where you extracted the zip file.
-
-Step 2: Once you have a command window up in the folder that the downloaded material was placed, type:
-
-Windows: "gradlew setupDecompWorkspace"
-Linux/Mac OS: "./gradlew setupDecompWorkspace"
-
-Step 3: After all that finished, you're left with a choice.
-For eclipse, run "gradlew eclipse" (./gradlew eclipse if you are on Mac/Linux)
-
-If you preffer to use IntelliJ, steps are a little different.
-1. Open IDEA, and import project.
-2. Select your build.gradle file and have it import.
-3. Once it's finished you must close IntelliJ and run the following command:
-
-"gradlew genIntellijRuns" (./gradlew genIntellijRuns if you are on Mac/Linux)
-
-Step 4: The final step is to open Eclipse and switch your workspace to /eclipse/ (if you use IDEA, it should automatically start on your project)
-
-If at any point you are missing libraries in your IDE, or you've run into problems you can run "gradlew --refresh-dependencies" to refresh the local cache. "gradlew clean" to reset everything {this does not effect your code} and then start the processs again.
-
-Should it still not work, 
-Refer to #ForgeGradle on EsperNet for more information about the gradle environment.
-
-Tip:
-If you do not care about seeing Minecraft's source code you can replace "setupDecompWorkspace" with one of the following:
-"setupDevWorkspace": Will patch, deobfusicated, and gather required assets to run minecraft, but will not generated human readable source code.
-"setupCIWorkspace": Same as Dev but will not download any assets. This is useful in build servers as it is the fastest because it does the least work.
-
-Tip:
-When using Decomp workspace, the Minecraft source code is NOT added to your workspace in a editable way. Minecraft is treated like a normal Library. Sources are there for documentation and research purposes and usually can be accessed under the 'referenced libraries' section of your IDE.
-
-Forge source installation
-=========================
-MinecraftForge ships with this code and installs it as part of the forge
-installation process, no further action is required on your part.
-
-LexManos' Install Video
-=======================
-https://www.youtube.com/watch?v=8VEdtQLuLO0&feature=youtu.be
-
-For more details update more often refer to the Forge Forums:
-http://www.minecraftforge.net/forum/index.php/topic,14048.0.html
