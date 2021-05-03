@@ -228,6 +228,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
             int totalCompRooms= 0;
             boolean bossroomFound = false;
             boolean traproomFound = false;
+            int roomCnt = 0;
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 if (dungeonRoom.getColor() == 74) bossroomFound = true;
                 if (dungeonRoom.getColor() == 62) traproomFound = true;
@@ -241,11 +242,17 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
                     skill += 1;
 
                 skill += dungeonRoom.getCurrentState().getScoreModifier();
+
+                roomCnt += dungeonRoom.getUnitPoints().size();
             }
             if (!bossroomFound) skill += 1;
             if (!traproomFound && context.isTrapRoomGen()) skill += 1;
             skill -= getUndiscoveredPuzzles() * 10;
-            skill -= Math.max(0, (getTotalRooms() - totalCompRooms) * 4);
+            if (context.getMapProcessor().getUndiscoveredRoom() == 0) {
+                skill -= Math.max(0, (roomCnt - totalCompRooms) * 4);
+            } else {
+                skill -= Math.max(0, (getTotalRooms() - totalCompRooms) * 4);
+            }
             skill = MathHelper.clamp_int(skill, 0, 100);
         }
         int explorer = 0;
