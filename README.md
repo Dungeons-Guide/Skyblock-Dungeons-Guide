@@ -1,7 +1,7 @@
 # Dungeons Guide
 The most intelligent Hypixel Skyblock Dungeons Mod
 ## Safety Concerns 
-Moulberry (NEU developer) and Danker (DSM developer) and staff for both discord server (Bhave confirmed that this mod is safe, for further details please check this forum post. You can also read the code yourself if you do not trust us. 
+Moulberry (NEU developer) and Danker (DSM developer) and staff for both discord server (Bestower) have confirmed that this mod is safe, for further details please check this forum post. You can also read the code yourself if you do not trust us. 
 ## Features
 - Dungeon Waypoints
   - Waypoints for every things that are interactable in dungeon.
