@@ -31,3 +31,6 @@ mods/*
 /modcore/metadata.json
 /.ReAuth.cfg
 /libdiscord-rpc.so
+
+options.txt
+servers.dat
