@@ -7,6 +7,8 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.monster.EntitySilverfish;
 import net.minecraft.init.Blocks;
@@ -98,13 +100,13 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
                 List<Point> tempSol = solve(map, silverfish.x, silverfish.y, new Predicate<Point>() {
                     @Override
                     public boolean apply(@Nullable Point input) {
-                        return endNode.contains(map2[input.getY()][input.getX()]);
+                        return endNode.contains(map2[input.y][input.x]);
                     }
                 });
                 {
                     solution.clear();
                     for (Point point : tempSol) {
-                        solution.add(map2[point.getY()][point.getX()].getBlockPos(getDungeonRoom()));
+                        solution.add(map2[point.y][point.x].getBlockPos(getDungeonRoom()));
                     }
                 }
 
@@ -136,32 +138,31 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     }
 
 
-
-    public static List<Point> solve(int[][] iceCave, int startX, int startY, Predicate<Point> isEnd) {
+    // Taken from https://stackoverflow.com/a/55271133 and modified to suit our needs
+    // Answer by ofekp (https://stackoverflow.com/users/4295037/ofekp)
+    public static List<Point> solve(int[][] board, int startX, int startY, Predicate<Point> finishLinePredicate) {
         Point startPoint = new Point(startX, startY);
 
         LinkedList<Point> queue = new LinkedList<Point>();
-        Point[][] iceCaveColors = new Point[iceCave.length][iceCave[0].length];
+        Point[][] boardSearch = new Point[board.length][board[0].length];
 
         queue.addLast(new Point(startX, startY));
-        iceCaveColors[startY][startX] = startPoint;
+        boardSearch[startY][startX] = startPoint;
 
         while (queue.size() != 0) {
             Point currPos = queue.pollFirst();
             for (Direction dir : Direction.values()) {
-                Point nextPos = move(iceCave, iceCaveColors, currPos, dir);
+                Point nextPos = move(board, boardSearch, currPos, dir);
                 if (nextPos != null) {
                     queue.addLast(nextPos);
-                    iceCaveColors[nextPos.getY()][nextPos.getX()] = new Point(currPos.getX(), currPos.getY());
-                    if (isEnd.apply(nextPos)) {
+                    boardSearch[nextPos.y][nextPos.x] = new Point(currPos.x, currPos.y);
+                    if (finishLinePredicate.apply(nextPos)) {
                         List<Point> route = new ArrayList<Point>();
                         Point tmp = currPos;
-                        int count = 0;
                         route.add(nextPos);
                         route.add(currPos);
                         while (tmp != startPoint) {
-                            count++;
-                            tmp = iceCaveColors[tmp.getY()][tmp.getX()];
+                            tmp = boardSearch[tmp.y][tmp.x];
                             route.add(tmp);
                         }
                         return route;
@@ -172,63 +173,37 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
         return Collections.emptyList();
     }
 
-    public static Point move(int[][] iceCave, Point[][] iceCaveColors, Point currPos, Direction dir) {
-        int x = currPos.getX();
-        int y = currPos.getY();
+    public static Point move(int[][] board, Point[][] boardSearch, Point currPos, Direction dir) {
+        int x = currPos.x;
+        int y = currPos.y;
 
-        int diffX = (dir == Direction.LEFT ? -1 : (dir == Direction.RIGHT ? 1 : 0));
-        int diffY = (dir == Direction.UP ? -1 : (dir == Direction.DOWN ? 1 : 0));
+        int diffX = dir.dx;
+        int diffY = dir.dy;
 
         int i = 1;
-        while (x + i * diffX >= 0
-                && x + i * diffX < iceCave[0].length
-                && y + i * diffY >= 0
-                && y + i * diffY < iceCave.length
-                && iceCave[y + i * diffY][x + i * diffX] != 1) {
+        while (x + i * diffX >= 0 && x + i * diffX < board[0].length
+                && y + i * diffY >= 0 && y + i * diffY < board.length
+                && board[y + i * diffY][x + i * diffX] != 1) {
             i++;
         }
+        i--;
 
-        i--;  // reverse the last step
-
-        if (iceCaveColors[y + i * diffY][x + i * diffX] != null) {
-            // we've already seen this point
+        if (boardSearch[y + i * diffY][x + i * diffX] != null) {
             return null;
         }
 
         return new Point(x + i * diffX, y + i * diffY);
     }
 
-    public static class Point {
-        int x;
-        int y;
-
-        public Point(int x, int y) {
-            this.x = x;
-            this.y = y;
-        }
-
-        public int getX() {
-            return x;
-        }
-
-        public int getY() {
-            return y;
-        }
-
-        @Override
-        public String toString() {
-            return "Point{" +
-                    "x=" + x +
-                    ", y=" + y +
-                    '}';
-        }
-    }
-
+    @Getter
+    @AllArgsConstructor
     public enum Direction {
-        LEFT,
-        RIGHT,
-        UP,
-        DOWN
+        LEFT(-1,0),
+        RIGHT(1,0),
+        UP(0,-1),
+        DOWN(0,1);
+
+        int dx, dy;
     }
 
 
