@@ -100,11 +100,15 @@ public class b {
         yggdrasilMinecraftSessionService.joinServer(a.getProfile(), b, hash);
         p.step("Authenticating (2/2)");
         this.b = a(c, this.a.getPublic());
-        p.step("Downloading Jar");
-        if (e != null)
-            b(this.b, "https://dungeons.guide/resource/version?v="+e, true);
-        p.step("Downloading Rooms");
-        b(this.b, "https://dungeons.guide/resource/roomdata", false);
+        try {
+            p.step("Downloading Jar");
+            if (e != null)
+                b(this.b, "https://dungeons.guide/resource/version?v=" + e, true);
+            p.step("Downloading Rooms");
+            b(this.b, "https://dungeons.guide/resource/roomdata", false);
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
         return this.b;
     }
 
