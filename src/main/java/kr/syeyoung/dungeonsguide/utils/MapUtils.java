@@ -55,7 +55,7 @@ public class MapUtils {
         }
         else
         {
-            theColor = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
+            theColor = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
         }
 
         return theColor;

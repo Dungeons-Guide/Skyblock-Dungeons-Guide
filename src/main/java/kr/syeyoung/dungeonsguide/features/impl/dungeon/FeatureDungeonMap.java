@@ -220,7 +220,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
             if (j / 4 == 0) {
                 this.mapTextureData[i] = 0x00000000;
             } else {
-                this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
+                this.mapTextureData[i] = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
             }
         }
 
@@ -237,7 +237,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                             if (j / 4 == 0) {
                                 this.mapTextureData[i] = 0x00000000;
                             } else {
-                                this.mapTextureData[i] = MapColor.mapColorArray[j / 4].func_151643_b(j & 3);
+                                this.mapTextureData[i] = MapColor.mapColorArray[j / 4].getMapColor(j & 3);
                             }
                         }
                     }
