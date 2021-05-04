@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -53,6 +52,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -165,7 +165,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             CompressedStreamTools.writeCompressed(compound, w);
             w.flush();
             byte[] bytes = baos.toByteArray();
-            String str = Base64.encode(bytes);
+            String str = Base64.encodeBase64String(bytes);
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
 
             for (ChamberSet ch:chambers) {
@@ -195,7 +195,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             try {
                 String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
-                byte[] data2 = Base64.decode(actual);
+                byte[] data2 = Base64.decodeBase64(actual);
                 NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
 
                 for (ChamberSet ch:chambers) {
