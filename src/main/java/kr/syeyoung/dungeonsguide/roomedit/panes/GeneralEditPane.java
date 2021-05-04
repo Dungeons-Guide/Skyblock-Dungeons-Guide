@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
-import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -151,7 +150,7 @@ public class GeneralEditPane extends MPanel {
                     try {
                         NBTTagCompound nbtTagCompound2 = createNBT();
 
-                        File f=new File(e.getDungeonsGuide().getConfigDir(), "schematics/"+
+                        File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/"+
                                 dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
 
                         Method method = null;

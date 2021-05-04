@@ -18,14 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.party;
 
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
-import kr.syeyoung.dungeonsguide.e;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.Minecraft;
@@ -34,18 +27,15 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
 
 import javax.imageio.ImageIO;
-import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -77,7 +67,7 @@ public class PartyInviteViewer {
         try {
             if (clientTickEvent.phase != TickEvent.Phase.START) return;
             List<PartyJoinRequest> partyJoinRequestList = new ArrayList<>();
-            boolean isOnHypixel = e.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
+            boolean isOnHypixel = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
             for (PartyJoinRequest joinRequest:joinRequests) {
                 if (joinRequest.getTtl() != -1) {
                     joinRequest.setTtl(joinRequest.getTtl() - 1);

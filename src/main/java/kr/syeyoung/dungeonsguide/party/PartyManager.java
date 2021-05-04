@@ -19,10 +19,8 @@
 package kr.syeyoung.dungeonsguide.party;
 
 import kr.syeyoung.dungeonsguide.RichPresenceManager;
-import kr.syeyoung.dungeonsguide.commands.CommandReparty;
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.events.HypixelJoinedEvent;
-import kr.syeyoung.dungeonsguide.events.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.stomp.StompMessageHandler;
@@ -84,7 +82,7 @@ public class PartyManager implements StompMessageHandler {
         if (this.partyID != null && partyID == null) {
             JSONObject object = new JSONObject();
             object.put("members", new JSONArray());
-            StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
+            StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
             stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
         }
 
@@ -109,7 +107,7 @@ public class PartyManager implements StompMessageHandler {
         if (partyID == null) {
             JSONObject object = new JSONObject();
             object.put("members", new JSONArray());
-            StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
+            StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
             stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
         }
 
@@ -119,7 +117,7 @@ public class PartyManager implements StompMessageHandler {
         }
         this.askToJoinSecret = secretBuilder.toString();
 
-        StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
+        StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
         stompInterface.send(new StompPayload().payload(new JSONObject().put("secret", askToJoinSecret).toString()).header("destination", "/app/party.setjoinsecret"));
         RichPresenceManager.INSTANCE.updatePresence();
     }
@@ -171,7 +169,7 @@ public class PartyManager implements StompMessageHandler {
                     }
                     JSONObject object = new JSONObject();
                     object.put("members", jsonArray);
-                    StompInterface stompInterface = e.getDungeonsGuide().getStompConnection();
+                    StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
                     stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
                 }
                 if (checkPlayer == 3) {
@@ -179,9 +177,9 @@ public class PartyManager implements StompMessageHandler {
                     String playerName = theObject.getString("player");
                     String token = theObject.getString("token");
                     if (!members.contains(playerName)) {
-                        e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).header("destination", "/app/party.check.resp"));
                     } else {
-                        e.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
+                        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).header("destination", "/app/party.check.resp"));
                     }
                 }
                 if (invitedDash == 1 || invitedDash == 3) {
@@ -362,7 +360,7 @@ public class PartyManager implements StompMessageHandler {
                 }
             }
         } catch (Exception ex) {ex.printStackTrace();
-        e.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ ex));}
+        DungeonsGuide.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ ex));}
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {

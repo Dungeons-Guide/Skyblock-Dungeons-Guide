@@ -19,14 +19,12 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import com.google.common.collect.BiMap;
-import com.google.common.collect.EnumHashBiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonMapUpdateEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonRoomDiscoverEvent;
-import kr.syeyoung.dungeonsguide.e;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
@@ -145,26 +143,26 @@ public class MapProcessor {
         }
         // determine door location based on npc, and determine map min from there
         {
-            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (doorFinder == null) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find door processor for "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find door processor for "+ DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
                 bugged = true;
                 return;
             }
-            BlockPos door = doorFinder.findDoor(context.getWorld(), e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            BlockPos door = doorFinder.findDoor(context.getWorld(), DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (door == null) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't determine door of the room, disabling mod for this dungeon run"));
                 bugged = true;
                 return;
             }
 
-            e.sendDebugChat(new ChatComponentText("door Pos:"+door));
+            DungeonsGuide.sendDebugChat(new ChatComponentText("door Pos:"+door));
 
             Point unitPoint = mapPointToRoomPoint(startroom);
             unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1);
             unitPoint.translate((int)doorDir.x, (int)doorDir.y);
 
-            Vector2d offset = doorFinder.findDoorOffset(context.getWorld(), e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            Vector2d offset = doorFinder.findDoorOffset(context.getWorld(), DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             axisMatch = doorDir.equals(offset);
 
             int worldX = unitPoint.x * 16;
@@ -174,12 +172,12 @@ public class MapProcessor {
 
         }
 
-        e.sendDebugChat(new ChatComponentText("Found Green room:"+startroom));
-        e.sendDebugChat(new ChatComponentText("Axis match:"+axisMatch));
-        e.sendDebugChat(new ChatComponentText("World Min:"+context.getDungeonMin()));
-        e.sendDebugChat(new ChatComponentText("Dimension:"+unitRoomDimension));
-        e.sendDebugChat(new ChatComponentText("top Left:"+topLeftMapPoint));
-        e.sendDebugChat(new ChatComponentText("door dimension:"+doorDimension));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("Found Green room:"+startroom));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("Axis match:"+axisMatch));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("World Min:"+context.getDungeonMin()));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("Dimension:"+unitRoomDimension));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("top Left:"+topLeftMapPoint));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("door dimension:"+doorDimension));
         context.createEvent(new DungeonNodataEvent("MAP_PROCESSOR_INIT"));
         initialized = true;
         MinecraftForge.EVENT_BUS.post(new DungeonContextInitializationEvent());
@@ -253,8 +251,8 @@ public class MapProcessor {
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
                     if (rooms == null) continue;
                     context.createEvent(new DungeonRoomDiscoverEvent(rooms.getUnitPoints().get(0), rooms.getRoomMatcher().getRotation(), rooms.getMin(), rooms.getShape(),rooms.getColor(), rooms.getDungeonRoomInfo().getUuid(), rooms.getDungeonRoomInfo().getName(), rooms.getDungeonRoomInfo().getProcessorId()));
-                    e.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
-                    e.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin() + " mapMx: "+rooms.getMax()));
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin() + " mapMx: "+rooms.getMax()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy =0;dy<4;dy++) {
                         builder.append("\n");
@@ -263,7 +261,7 @@ public class MapProcessor {
                             builder.append(isSet ? "O" : "X");
                         }
                     }
-                    e.sendDebugChat(new ChatComponentText("Shape visual: "+ builder));
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("Shape visual: "+ builder));
 
                     context.getDungeonRoomList().add(rooms);
                     for (Point p:rooms.getUnitPoints()) {
@@ -318,7 +316,7 @@ public class MapProcessor {
         try{
             return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), roomPointToWorldPoint(new Point(maxX+1, maxY+1)).add(-1, 0, -1), context);
         } catch (IllegalStateException ex) {
-            e.sendDebugChat(new ChatComponentText("Failed to load room, retrying later :: "+ex.getLocalizedMessage()));
+            DungeonsGuide.sendDebugChat(new ChatComponentText("Failed to load room, retrying later :: "+ex.getLocalizedMessage()));
             return null;
         }
     }

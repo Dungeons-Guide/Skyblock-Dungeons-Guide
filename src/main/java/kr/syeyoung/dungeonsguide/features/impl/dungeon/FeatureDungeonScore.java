@@ -18,15 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
@@ -39,15 +38,10 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.MathHelper;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -69,7 +63,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         getStyles().add(new TextStyle("required",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
     }
 
-    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public boolean isHUDViewable() {
         return skyblockStatus.isOnDungeon();
@@ -297,7 +291,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         {
             double timeModifier;
             int timeModifierModifier =
-                    e.getDungeonsGuide().getSkyblockStatus().getDungeonName().substring(14).trim().equals("F2") ? -120 : 0;
+                    DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName().substring(14).trim().equals("F2") ? -120 : 0;
             if (context.getBossRoomEnterSeconds() != -1) {
                 timeModifier = Math.max(0, context.getBossRoomEnterSeconds() - timeModifierModifier);
             } else {

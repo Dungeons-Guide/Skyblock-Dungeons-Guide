@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.boss.terminal;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.InteractListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
@@ -42,7 +42,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         super("Bossfight","Simon Says Solver","Solver for Simon says puzzle", "bossfight.simonsays2");
     }
 
-    private final SkyblockStatus ss = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus ss = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private final List<BlockPos> orderbuild = new ArrayList<BlockPos>();
     private final LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
 

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
 import com.google.common.collect.Lists;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
@@ -26,7 +27,6 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
@@ -37,7 +37,6 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonParameterEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
@@ -73,7 +72,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         return this.<Integer>getParameter("refreshrate").getValue();
     }
 
-    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private UUID lastRoomUID = null;
     @Override
     public void drawHUD(float partialTicks) {

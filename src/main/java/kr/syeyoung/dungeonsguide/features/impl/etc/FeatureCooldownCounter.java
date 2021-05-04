@@ -18,20 +18,18 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonQuitListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiOpenListener;
-import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -60,7 +58,7 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
         fr.drawString("Cooldown: 20s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 
-    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public void onDungeonQuit() {

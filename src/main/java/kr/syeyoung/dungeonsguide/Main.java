@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.d.c;
+import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiButton;
@@ -42,57 +42,57 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 
-@Mod(modid = a.b, version = a.c)
-public class a
+@Mod(modid = Main.MOD_ID, version = Main.VERSION)
+public class Main
 {
-    public static final String b = "skyblock_dungeons_guide";
-    public static final String c = "1.0";
+    public static final String MOD_ID = "skyblock_dungeons_guide";
+    public static final String VERSION = "1.0";
 
-    private static a a;
+    private static Main main;
 
-    private kr.syeyoung.dungeonsguide.c d;
+    private DGInterface dgInterface;
 
     @EventHandler
-    public void a(FMLInitializationEvent a)
+    public void initEvent(FMLInitializationEvent initializationEvent)
     {
 
-        kr.syeyoung.dungeonsguide.a.a = this;
-        d.init(a);
+        main = this;
+        dgInterface.init(initializationEvent);
     }
 
     @EventHandler
-    public void a(FMLPreInitializationEvent a) {
-        ProgressManager.ProgressBar f = ProgressManager.push("DungeonsGuide", this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? 7 : 6);
-        b b = new b(f);
-        String c = null;
+    public void preInit(FMLPreInitializationEvent preInitializationEvent) {
+        ProgressManager.ProgressBar progressBar = ProgressManager.push("DungeonsGuide", this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? 7 : 6);
+        Authenticator authenticator = new Authenticator(progressBar);
+        String token = null;
         try {
-            c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? System.getProperty("dg.version") == null ? "latest" : System.getProperty("dg.version") : null);
-            if (c != null) {
-                kr.syeyoung.dungeonsguide.a.a = this;
-                URL.setURLStreamHandlerFactory(new c(b));
-                LaunchClassLoader d = (LaunchClassLoader) a.class.getClassLoader();
-                d.addURL(new URL("z:///"));
+            token = authenticator.authenticateAndDownload(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? System.getProperty("dg.version") == null ? "latest" : System.getProperty("dg.version") : null);
+            if (token != null) {
+                main = this;
+                URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory(authenticator));
+                LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
+                classLoader.addURL(new URL("z:///"));
 
                 try {
-                    f.step("Initializing");
-                    this.d = new e(b);
-                    this.d.pre(a);
-                    ProgressManager.pop(f);
+                    progressBar.step("Initializing");
+                    this.dgInterface = new DungeonsGuide(authenticator);
+                    this.dgInterface.pre(preInitializationEvent);
+                    ProgressManager.pop(progressBar);
                 } catch (Exception e) {
                     e.printStackTrace();
 
-                    a(new String[]{
+                    throwError(new String[]{
                             "Couldn't load Dungeons Guide",
                             "Please contact developer if this problem persists after restart"
                     });
                 }
                 return;
             }
-        } catch (IOException | InvalidAlgorithmParameterException | AuthenticationException | NoSuchAlgorithmException | NoSuchPaddingException | InvalidKeyException | IllegalBlockSizeException | BadPaddingException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
+        } catch (IOException  | AuthenticationException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
             e.printStackTrace();
         }
 
-        a(new String[]{
+        throwError(new String[]{
                 "Can't validate current installation of Dungeons Guide",
                 "Steps to fix",
                 "1. check if other people can't join minecraft servers.",
@@ -104,7 +104,7 @@ public class a
         });
     }
 
-    public void a(final String[] a) {
+    public void throwError(final String[] a) {
         final GuiScreen b = new GuiErrorScreen(null, null) {
             @Override
             public void drawScreen(int par1, int par2, float par3) {
@@ -139,7 +139,7 @@ public class a
         };
         throw e;
     }
-    public static a a() {
-        return a;
+    public static Main a() {
+        return main;
     }
 }

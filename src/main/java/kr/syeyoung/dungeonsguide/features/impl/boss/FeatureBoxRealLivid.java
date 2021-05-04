@@ -18,24 +18,16 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.boss;
 
-import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorLivid;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import org.jetbrains.annotations.Nullable;
-
-import java.awt.*;
-import java.util.List;
 
 
 public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderListener {
@@ -45,7 +37,7 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
     }
 
 
-    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;

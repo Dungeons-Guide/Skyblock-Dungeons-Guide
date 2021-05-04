@@ -33,10 +33,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
-import java.io.*;
-import java.net.URL;
-import java.time.Instant;
-
 public class RichPresenceManager implements Runnable {
     public static RichPresenceManager INSTANCE = new RichPresenceManager();
     private Thread t = new Thread(this);
@@ -60,7 +56,7 @@ public class RichPresenceManager implements Runnable {
 
                     PartyInviteViewer.INSTANCE.joinRequests.add(partyJoinRequest);
                 }).setJoinGameEventHandler(joinSecret -> {
-                    e.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
+                    DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
                             .header("destination", "/app/party.askedtojoin")
                             .payload(new JSONObject().put("token", joinSecret).toString()));
                 }).setErroredEventHandler((errorCode, message) -> {
@@ -74,7 +70,7 @@ public class RichPresenceManager implements Runnable {
                 }).build(), true);
     }
 
-    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
 
     public void updatePresence() {

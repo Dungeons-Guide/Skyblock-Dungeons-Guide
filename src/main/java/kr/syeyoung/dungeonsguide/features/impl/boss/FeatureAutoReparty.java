@@ -18,24 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.boss;
 
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.DungeonEndListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonQuitListener;
-import kr.syeyoung.dungeonsguide.features.listener.GuiBackgroundRenderListener;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.inventory.ContainerChest;
-import net.minecraft.inventory.IInventory;
-import net.minecraft.item.ItemStack;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.client.event.GuiScreenEvent;
-import org.lwjgl.opengl.GL11;
 
 public class FeatureAutoReparty extends SimpleFeature implements DungeonQuitListener {
     public FeatureAutoReparty() {
@@ -44,6 +29,6 @@ public class FeatureAutoReparty extends SimpleFeature implements DungeonQuitList
 
     @Override
     public void onDungeonQuit() {
-        if (isEnabled()) e.getDungeonsGuide().getCommandReparty().requestReparty();
+        if (isEnabled()) DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty();
     }
 }

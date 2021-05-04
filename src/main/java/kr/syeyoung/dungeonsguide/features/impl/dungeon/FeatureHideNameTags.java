@@ -18,14 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.e;
-import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.EntityLivingRenderListener;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorThorn;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.*;
 import net.minecraftforge.client.event.RenderLivingEvent;
 
 
@@ -35,7 +32,7 @@ public class FeatureHideNameTags extends SimpleFeature implements EntityLivingRe
     }
 
 
-    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {

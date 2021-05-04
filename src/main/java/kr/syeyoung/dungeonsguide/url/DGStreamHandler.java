@@ -16,8 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.d;
+package kr.syeyoung.dungeonsguide.url;
 
+import kr.syeyoung.dungeonsguide.Authenticator;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
@@ -26,10 +27,10 @@ import java.net.URLConnection;
 import java.net.URLStreamHandler;
 
 @AllArgsConstructor
-public class b extends URLStreamHandler {
-    private final kr.syeyoung.dungeonsguide.b a;
+public class DGStreamHandler extends URLStreamHandler {
+    private final Authenticator auth;
     @Override
-    protected URLConnection openConnection(URL a) throws IOException {
-        return new a(a, this.a);
+    protected URLConnection openConnection(URL url) throws IOException {
+        return new DGConnection(url, this.auth);
     }
 }

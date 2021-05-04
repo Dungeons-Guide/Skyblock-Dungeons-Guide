@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
@@ -61,7 +61,7 @@ public class FeatureDisableMessage extends SimpleFeature implements ChatListener
         }
     }
 
-    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {

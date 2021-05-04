@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
@@ -92,7 +92,7 @@ public class CatacombMasterDataProvider implements DungeonSpecificDataProvider {
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        e.sendDebugChat(new ChatComponentText("Floor: Master mode "+floor+ " Building bossfight processor"));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("Floor: Master mode "+floor+ " Building bossfight processor"));
         return null;
     }
 

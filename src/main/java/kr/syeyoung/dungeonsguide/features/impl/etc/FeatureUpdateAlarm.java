@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
@@ -29,9 +28,6 @@ import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-
-import java.util.Queue;
-import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, StompMessageHandler, TickListener {
     public FeatureUpdateAlarm() {

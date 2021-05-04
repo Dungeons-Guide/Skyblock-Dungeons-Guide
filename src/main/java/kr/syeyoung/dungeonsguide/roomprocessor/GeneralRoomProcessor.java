@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
@@ -27,7 +28,6 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
@@ -35,33 +35,23 @@ import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.passive.EntityBat;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.*;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderLivingEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.util.*;
-import java.util.List;
 
 public class GeneralRoomProcessor implements RoomProcessor {
 
@@ -171,13 +161,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private long secrets2 = 0;
     @Override
     public void actionbarReceived(IChatComponent chat) {
-        if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
         if (dungeonRoom.getTotalSecrets() == -1) {
-            e.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
+            DungeonsGuide.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }
         if (!chat.getFormattedText().contains("/")) return;
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
-        DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
         Point pt1 = context.getMapProcessor().worldPointToRoomPoint(pos.add(2, 0, 2));
         Point pt2 = context.getMapProcessor().worldPointToRoomPoint(pos.add(-2, 0, -2));
         if (!pt1.equals(pt2)) {

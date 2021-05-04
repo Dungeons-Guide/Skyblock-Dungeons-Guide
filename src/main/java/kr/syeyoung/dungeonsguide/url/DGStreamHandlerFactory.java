@@ -16,13 +16,22 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide;
+package kr.syeyoung.dungeonsguide.url;
 
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import kr.syeyoung.dungeonsguide.Authenticator;
+import lombok.AllArgsConstructor;
 
-public interface c {
-    void init(FMLInitializationEvent event);
+import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 
-    void pre(FMLPreInitializationEvent event);
+@AllArgsConstructor
+public class DGStreamHandlerFactory implements URLStreamHandlerFactory {
+    private final Authenticator auth;
+    @Override
+    public URLStreamHandler createURLStreamHandler(String protocol) {
+        if ("z".equals(protocol)) {
+            return new DGStreamHandler(this.auth);
+        }
+        return null;
+    }
 }

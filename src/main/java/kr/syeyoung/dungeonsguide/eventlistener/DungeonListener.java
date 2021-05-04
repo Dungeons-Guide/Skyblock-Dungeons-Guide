@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.eventlistener;
 
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -26,7 +27,6 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.*;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
@@ -85,7 +85,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         try {
-                SkyblockStatus skyblockStatus = kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
                 if (!skyblockStatus.isOnDungeon()) return;
 
@@ -107,7 +107,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
         try {
-            SkyblockStatus skyblockStatus = kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
             if (!skyblockStatus.isOnDungeon()) return;
 
@@ -133,7 +133,7 @@ public class DungeonListener {
             if (ev.phase == TickEvent.Phase.START) {
 
 
-                JsonObject obj = e.getDungeonsGuide().getAuthenticator().a(e.getDungeonsGuide().getAuthenticator().c());
+                JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
                 if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getProfile().getId().toString())) {
                     if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;
 
@@ -168,7 +168,7 @@ public class DungeonListener {
 
 
 
-                SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                  {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
                     boolean isOnSkyblock = skyblockStatus.isOnSkyblock();
@@ -227,7 +227,7 @@ public class DungeonListener {
         try {
             if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
 
-            JsonObject obj = e.getDungeonsGuide().getAuthenticator().a(e.getDungeonsGuide().getAuthenticator().c());
+            JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
             if (obj.get("plan").getAsString().equalsIgnoreCase("TRIAL")) {
                 fr.drawString("Using trial Version of Dungeons Guide", 0,0, 0xFFFFFFFF);
@@ -235,7 +235,7 @@ public class DungeonListener {
             }
 
 
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             if (skyblockStatus.getContext() != null) {
@@ -261,7 +261,7 @@ public class DungeonListener {
     @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
@@ -322,7 +322,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
         try {
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -378,7 +378,7 @@ public class DungeonListener {
     @SubscribeEvent()
     public void onKey2(InputEvent.KeyInputEvent keyInputEvent) {
         try {
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -409,7 +409,7 @@ public class DungeonListener {
     @SubscribeEvent()
     public void onInteract(PlayerInteractEntityEvent interact) {
         try {
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -443,7 +443,7 @@ public class DungeonListener {
         if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && Keybinds.editingSession.isKeyDown() ){
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
-                DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
+                DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
                 if (context == null) {
                     Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Not in dungeons"));
                     return;
@@ -470,7 +470,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
         try {
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -513,7 +513,7 @@ public class DungeonListener {
             DungeonActionManager.getKilleds().add(deathEvent.entity.getEntityId());
 
         try {
-            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();

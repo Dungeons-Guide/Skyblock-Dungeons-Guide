@@ -22,17 +22,14 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
 
@@ -43,7 +40,7 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
         parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.yellow, "color"));
     }
 
-    SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private static final String[] facing = {"Z+", "X-", "Z-", "X+"};
     @Override
     public void drawHUD(float partialTicks) {

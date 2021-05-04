@@ -16,20 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.d;
+package kr.syeyoung.dungeonsguide.url;
 
-import kr.syeyoung.dungeonsguide.b;
+import kr.syeyoung.dungeonsguide.Authenticator;
 
 import java.io.*;
 import java.net.URL;
 import java.net.URLConnection;
 
-public class a extends URLConnection {
-    private final b a;
-    protected a(URL b, b a) {
-        super(b);
+public class DGConnection extends URLConnection {
+    private final Authenticator authenticator;
+    protected DGConnection(URL url, Authenticator a) {
+        super(url);
         connected = false;
-        this.a = a;
+        this.authenticator = a;
     }
 
     @Override
@@ -37,12 +37,12 @@ public class a extends URLConnection {
     }
     @Override
     public InputStream getInputStream() throws IOException {
-        if (a != null) {
+        if (authenticator != null) {
             String path = url.getPath().substring(1);
-            if (!a.d().containsKey(path)) throw new FileNotFoundException();
-            return new ByteArrayInputStream(a.d().get(path));
+            if (!authenticator.getResources().containsKey(path)) throw new FileNotFoundException();
+            return new ByteArrayInputStream(authenticator.getResources().get(path));
         } else if (url.getPath().contains("roomdata")){
-            return a.class.getResourceAsStream(url.getPath());
+            return DGConnection.class.getResourceAsStream(url.getPath());
         }
         throw new FileNotFoundException();
     }

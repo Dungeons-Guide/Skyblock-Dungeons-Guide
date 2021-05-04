@@ -37,55 +37,45 @@ import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.command.ICommand;
 import net.minecraft.launchwrapper.LaunchClassLoader;
-import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
-import net.minecraftforge.fml.common.FMLLog;
-import net.minecraftforge.fml.common.ObfuscationReflectionHelper;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.commons.io.IOUtils;
-import org.apache.logging.log4j.LogManager;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
-import java.net.MalformedURLException;
 import java.net.URI;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class e implements c, CloseListener {
+public class DungeonsGuide implements DGInterface, CloseListener {
 
     private SkyblockStatus skyblockStatus;
 
-    private static e dungeonsGuide;
+    private static DungeonsGuide dungeonsGuide;
 
 
     @Getter
-    private final b authenticator;
+    private final Authenticator authenticator;
 
     @Getter
     private StompInterface stompConnection;
 
-    public e(b authenticator) {
+    public DungeonsGuide(Authenticator authenticator) {
         this.authenticator = authenticator;
     }
 
@@ -104,8 +94,8 @@ public class e implements c, CloseListener {
 
 
         try {
-            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) a.class.getClassLoader(), "invalidClasses");
-            ((LaunchClassLoader)a.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
+            Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
+            ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
             for (String s : invalid) {
                 System.out.println(s+" in invalid");
             }
@@ -149,7 +139,7 @@ public class e implements c, CloseListener {
 
         progressbar.step("Opening connection");
         try {
-            stompConnection = new StompClient(new URI(stompURL), authenticator.c(), this);
+            stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), this);
             MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
         } catch (Exception e) {
             throw new RuntimeException(e);
@@ -201,7 +191,7 @@ public class e implements c, CloseListener {
         return skyblockStatus;
     }
 
-    public static e getDungeonsGuide() {
+    public static DungeonsGuide getDungeonsGuide() {
         return dungeonsGuide;
     }
     ScheduledExecutorService ex = Executors.newScheduledThreadPool(2);
@@ -216,7 +206,7 @@ public class e implements c, CloseListener {
             @Override
             public void run() {
                 try {
-                    stompConnection = new StompClient(new URI(stompURL), authenticator.c(), e.this);
+                    stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), DungeonsGuide.this);
                     MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
                 } catch (Exception e) {
                     e.printStackTrace();

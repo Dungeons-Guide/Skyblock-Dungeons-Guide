@@ -18,9 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.resources;
 
-import kr.syeyoung.dungeonsguide.a;
-import kr.syeyoung.dungeonsguide.b;
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.Authenticator;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.IMetadataSection;
@@ -31,25 +29,24 @@ import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.net.URL;
 import java.util.Collections;
 import java.util.Set;
 
 @AllArgsConstructor
 public class DGTexturePack implements IResourcePack {
 
-    private final b authenticator;
+    private final Authenticator authenticator;
 
     @Override
     public InputStream getInputStream(ResourceLocation location) throws IOException {
         InputStream inputStream = this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath());
         if (inputStream != null) return inputStream;
-        return new ByteArrayInputStream(authenticator.d().get("assets/dg/"+location.getResourcePath()));
+        return new ByteArrayInputStream(authenticator.getResources().get("assets/dg/"+location.getResourcePath()));
     }
 
     @Override
     public boolean resourceExists(ResourceLocation location) {
-        return authenticator.d().containsKey("assets/dg/"+location.getResourcePath())
+        return authenticator.getResources().containsKey("assets/dg/"+location.getResourcePath())
         || this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath()) != null;
     }
 

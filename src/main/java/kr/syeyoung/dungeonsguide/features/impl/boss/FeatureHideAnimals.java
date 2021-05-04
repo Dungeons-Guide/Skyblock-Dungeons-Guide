@@ -18,20 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.boss;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.EntityLivingRenderListener;
-import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorLivid;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorThorn;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.*;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderLivingEvent;
 
 
@@ -46,7 +39,7 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
     }
 
 
-    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {

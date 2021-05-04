@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.io.Files;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;

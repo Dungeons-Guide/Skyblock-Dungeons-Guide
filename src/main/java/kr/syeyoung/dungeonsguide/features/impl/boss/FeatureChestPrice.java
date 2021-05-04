@@ -18,11 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.boss;
 
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.GuiBackgroundRenderListener;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -49,7 +48,7 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
     public void onGuiBGRender(GuiScreenEvent.BackgroundDrawnEvent rendered) {
         if (!isEnabled()) return;
         if (!(rendered.gui instanceof GuiChest)) return;
-        if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
         GlStateManager.disableLighting();
 

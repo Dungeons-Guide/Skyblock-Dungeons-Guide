@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
@@ -27,7 +28,6 @@ import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
@@ -74,11 +74,11 @@ public class CommandDungeonsGuide extends CommandBase {
         if (args.length == 0) {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("saverooms")) {
-            DungeonRoomInfoRegistry.saveAll(e.getDungeonsGuide().getConfigDir());
+            DungeonRoomInfoRegistry.saveAll(DungeonsGuide.getDungeonsGuide().getConfigDir());
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
         } else if (args[0].equalsIgnoreCase("loadrooms")) {
             try {
-                DungeonRoomInfoRegistry.loadAll(e.getDungeonsGuide().getConfigDir());
+                DungeonRoomInfoRegistry.loadAll(DungeonsGuide.getDungeonsGuide().getConfigDir());
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
                 return;
             } catch (BadPaddingException e) {
@@ -124,11 +124,11 @@ public class CommandDungeonsGuide extends CommandBase {
             String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
         } else if (args[0].equalsIgnoreCase("reparty")) {
-            e.getDungeonsGuide().getCommandReparty().requestReparty();
+            DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty();
         } else if (args[0].equalsIgnoreCase("gui")) {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("info")) {
-            JsonObject obj = e.getDungeonsGuide().getAuthenticator().a(e.getDungeonsGuide().getAuthenticator().c());
+            JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent Plan§7: §e" + obj.get("plan").getAsString()));
@@ -137,7 +137,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSession Expire§7: §e" + sdf.format(new Date(obj.get("exp").getAsLong() * 1000))));
         } else if (args[0].equalsIgnoreCase("pathfind")) {
             try {
-                DungeonContext context = e.getDungeonsGuide().getSkyblockStatus().getContext();
+                DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 if (thePlayer == null) return;
                 if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
@@ -150,7 +150,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 t.printStackTrace();
             }
         } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
-            File root = e.getDungeonsGuide().getConfigDir();
+            File root = DungeonsGuide.getDungeonsGuide().getConfigDir();
             File dir = new File(root, "processorinput");
             File outpuzzle = new File(root, "processoroutpuzzle");
             File outsecret = new File(root, "processoroutsecret");
@@ -182,7 +182,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 }
             }
         } else if (args[0].equals("check") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
-            File root = e.getDungeonsGuide().getConfigDir();
+            File root = DungeonsGuide.getDungeonsGuide().getConfigDir();
             for (File f : root.listFiles()) {
                 if (!f.getName().endsWith(".roomdata")) continue;
                 try {
@@ -243,7 +243,7 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("reloaddungeon") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")){
             try {
                 MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
-                e.getDungeonsGuide().getSkyblockStatus().setContext(null);
+                DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setContext(null);
                 MapUtils.clearMap();
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -316,16 +316,16 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("partyid")) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: "+PartyManager.INSTANCE.getPartyID()));
         } else if (args[0].equalsIgnoreCase("loc")) {
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in "+ DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
         } else if (args[0].equalsIgnoreCase("saverun")) {
             try {
-                File f = e.getDungeonsGuide().getConfigDir();
+                File f = DungeonsGuide.getDungeonsGuide().getConfigDir();
                 File runDir = new File(f, "dungeonruns");
                 runDir.mkdirs();
 
                 File runFile = new File(runDir, UUID.randomUUID() +".dgrun");
 
-                DungeonContext dungeonContext = e.getDungeonsGuide().getSkyblockStatus().getContext();
+                DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
                 if (dungeonContext == null) {
                     sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
                     return;

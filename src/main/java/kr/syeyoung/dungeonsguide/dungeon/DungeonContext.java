@@ -18,12 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.dungeon;
 
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.events.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.events.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap;
@@ -108,9 +107,9 @@ public class DungeonContext {
         this.world = world;
         createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapProcessor = new MapProcessor(this);
-        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
         if (doorFinder != null)
-            trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            trapRoomGen = doorFinder.isTrapSpawn(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
         else mapProcessor.setBugged(true);
         init = System.currentTimeMillis();
     }
@@ -130,11 +129,11 @@ public class DungeonContext {
             bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
             createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
-            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (doorFinder != null) {
-                bossfightProcessor = doorFinder.createBossfightProcessor(world, e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+                bossfightProcessor = doorFinder.createBossfightProcessor(world, DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             } else {
-                e.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
+                DungeonsGuide.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
             }
         }
         List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
@@ -176,7 +175,7 @@ public class DungeonContext {
             int z = Integer.parseInt(coords.split("/")[1]);
             int secrets2 = Integer.parseInt(secrets);
             Point roomPt = mapProcessor.worldPointToRoomPoint(new BlockPos(x,70,z));
-            e.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: "+roomPt.x+" / " + roomPt.y + " total secrets "+secrets2));
+            DungeonsGuide.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: "+roomPt.x+" / " + roomPt.y + " total secrets "+secrets2));
             DungeonRoom dr = roomMapper.get(roomPt);
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);

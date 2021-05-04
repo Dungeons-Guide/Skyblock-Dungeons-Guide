@@ -18,18 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.block.Block;
-import net.minecraft.client.Minecraft;
 import net.minecraft.entity.boss.BossStatus;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -45,7 +41,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
                 .phase("fight").build()
         );
 
-        w= e.getDungeonsGuide().getSkyblockStatus().getContext().getWorld();
+        w= DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getWorld();
     }
     private final Set<BlockPos> progressBar = new HashSet<BlockPos>();
     private final World w;

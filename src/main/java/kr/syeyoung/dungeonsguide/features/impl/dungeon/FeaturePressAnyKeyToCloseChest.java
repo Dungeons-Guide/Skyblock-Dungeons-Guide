@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
-import kr.syeyoung.dungeonsguide.e;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureChestPrice;
@@ -30,7 +30,6 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements KeyInputListener, GuiClickListener {
     public FeaturePressAnyKeyToCloseChest() {
@@ -42,7 +41,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements Key
     public void onKeyInput(GuiScreenEvent.KeyboardInputEvent keyboardInputEvent) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if (!isEnabled()) return;
-        if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
         if (screen instanceof GuiChest){
             ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
@@ -66,7 +65,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements Key
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if (!isEnabled()) return;
-        if (!e.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
         if (screen instanceof GuiChest){
             ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
