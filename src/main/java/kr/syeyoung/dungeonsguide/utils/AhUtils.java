@@ -46,23 +46,7 @@ public class AhUtils {
             public void run() {
                 try {
                     AhUtils.loadAuctions();
-                } catch (CertificateException e) {
-                    e.printStackTrace();
-                } catch (NoSuchAlgorithmException e) {
-                    e.printStackTrace();
-                } catch (InvalidKeyException e) {
-                    e.printStackTrace();
-                } catch (InvalidAlgorithmParameterException e) {
-                    e.printStackTrace();
-                } catch (NoSuchPaddingException e) {
-                    e.printStackTrace();
-                } catch (BadPaddingException e) {
-                    e.printStackTrace();
-                } catch (KeyStoreException e) {
-                    e.printStackTrace();
-                } catch (IllegalBlockSizeException e) {
-                    e.printStackTrace();
-                } catch (KeyManagementException e) {
+                } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | KeyStoreException | IllegalBlockSizeException | KeyManagementException e) {
                     e.printStackTrace();
                 }
             }
@@ -73,7 +57,7 @@ public class AhUtils {
         try {
 
             Map<String, AuctionData> semi_auctions = new HashMap<String, AuctionData>();
-            JsonElement object = e.getDungeonsGuide().getAuthenticator().d("https://dungeonsguide.kro.kr/resource/keys");
+            JsonElement object = e.getDungeonsGuide().getAuthenticator().d("https://dungeons.guide/resource/keys");
             for (JsonElement element : object.getAsJsonArray()) {
                 JsonObject object1 = element.getAsJsonObject();
                 AuctionData auctionData = new AuctionData(object1.get("id").getAsString());

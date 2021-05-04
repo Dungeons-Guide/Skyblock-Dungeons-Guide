@@ -152,7 +152,7 @@ public class PartyInviteViewer {
             try {
                 URL urlObj = new URL(url);
                 HttpURLConnection huc = (HttpURLConnection) urlObj.openConnection();
-                huc.addRequestProperty("User-Agent", "DungeonsGuideMod (dungeonsguide.kro.kr, 1.0)");
+                huc.addRequestProperty("User-Agent", "DungeonsGuideMod (dungeons.guide, 1.0)");
                 BufferedImage bufferedImage = ImageIO.read(huc.getInputStream());
                 LoadedImage loadedImage = new LoadedImage();
                 loadedImage.setImage(bufferedImage);
