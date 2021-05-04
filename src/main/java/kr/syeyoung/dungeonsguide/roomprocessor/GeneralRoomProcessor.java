@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.Keybinds;
@@ -74,7 +92,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (value instanceof DungeonSecret) ((DungeonSecret) value).tick(dungeonRoom);
         }
     }
-    private Set<String> visited = new HashSet<String>();
+    private final Set<String> visited = new HashSet<String>();
 
     public void searchForNextTarget() {
         if (getDungeonRoom().getCurrentState() == DungeonRoom.RoomState.FINISHED) {
@@ -136,7 +154,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void drawWorld(float partialTicks) {
         if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
-                if (value.getValue() == null) continue;;
+                if (value.getValue() == null) continue;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);
             }
         }
@@ -276,7 +294,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         secret.setSecretPoint(new OffsetPoint(dungeonRoom,
                                 DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
                         ));
-                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
+                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                                 secret);
                         return;
                     }
@@ -287,7 +305,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     secret.setSecretPoint(new OffsetPoint(dungeonRoom,
                             DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
                     ));
-                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
+                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                             secret);
                 }
             }

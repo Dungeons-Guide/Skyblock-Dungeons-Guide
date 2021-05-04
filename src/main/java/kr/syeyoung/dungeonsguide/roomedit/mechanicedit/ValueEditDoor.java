@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -24,15 +42,15 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
     // scroll pane
     // just create
     // add set
-    private DungeonDoor dungeonDoor;
+    private final DungeonDoor dungeonDoor;
 
-    private MLabel label;
-    private MValue<OffsetPointSet> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite_par;
-    private MTextField preRequisite2;
-    private MLabelAndElement preRequisite2_par;
-    private MButton updateOnlyAir;
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite_par;
+    private final MTextField preRequisite2;
+    private final MLabelAndElement preRequisite2_par;
+    private final MButton updateOnlyAir;
 
     public ValueEditDoor(final Parameter parameter2) {
         this.parameter = parameter2;

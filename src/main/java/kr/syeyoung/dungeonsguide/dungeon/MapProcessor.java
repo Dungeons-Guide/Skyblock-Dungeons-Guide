@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import com.google.common.collect.BiMap;
@@ -42,7 +60,7 @@ public class MapProcessor {
     private MapData lastMapData2;
 
     @Getter
-    private BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
+    private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
 
     @Getter
     private Dimension unitRoomDimension;
@@ -54,7 +72,7 @@ public class MapProcessor {
     @Setter
     private boolean bugged = false;
 
-    private List<Point> roomsFound = new ArrayList<Point>();
+    private final List<Point> roomsFound = new ArrayList<Point>();
 
     private boolean axisMatch = false;
 
@@ -127,7 +145,7 @@ public class MapProcessor {
         }
         // determine door location based on npc, and determine map min from there
         {
-            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (doorFinder == null) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find door processor for "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
                 bugged = true;
@@ -245,7 +263,7 @@ public class MapProcessor {
                             builder.append(isSet ? "O" : "X");
                         }
                     }
-                    e.sendDebugChat(new ChatComponentText("Shape visual: "+builder.toString()));
+                    e.sendDebugChat(new ChatComponentText("Shape visual: "+ builder));
 
                     context.getDungeonRoomList().add(rooms);
                     for (Point p:rooms.getUnitPoints()) {

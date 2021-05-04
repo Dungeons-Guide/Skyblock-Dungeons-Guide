@@ -1,25 +1,32 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.commands;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +52,7 @@ public class CommandReparty extends CommandBase {
         requestReparty();
     }
 
-    public static enum Phase {
+    public enum Phase {
         NOT,
         REQUESTED,
         RECEIVE_PARTYMEMBERS,
@@ -53,7 +60,7 @@ public class CommandReparty extends CommandBase {
         REPARTY
     }
 
-    private List<String> players = new ArrayList<String>();
+    private final List<String> players = new ArrayList<String>();
     private long nextTrigger = Long.MAX_VALUE;
     private Phase phase = Phase.NOT;
     @SubscribeEvent

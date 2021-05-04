@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -25,21 +43,21 @@ import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
 public class GeneralEditPane extends MPanel {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
-    private MLabelAndElement uuid;
-    private MLabelAndElement name;
-    private MLabelAndElement secrets;
+    private final MLabelAndElement uuid;
+    private final MLabelAndElement name;
+    private final MLabelAndElement secrets;
 
-    private MLabelAndElement shape;
-    private MLabelAndElement rotation;
-    private MLabelAndElement shape2;
+    private final MLabelAndElement shape;
+    private final MLabelAndElement rotation;
+    private final MLabelAndElement shape2;
 
     private MButton save;
-    private MButton end;
-    private MButton schematic;
+    private final MButton end;
+    private final MButton schematic;
 
-    private MLabelAndElement roomProcessor;
+    private final MLabelAndElement roomProcessor;
 
     public GeneralEditPane(final DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;

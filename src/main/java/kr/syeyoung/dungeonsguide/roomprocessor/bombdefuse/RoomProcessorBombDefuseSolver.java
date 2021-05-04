@@ -1,6 +1,23 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse;
 
-import com.sun.org.apache.xerces.internal.impl.dv.util.Base64;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -35,6 +52,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
+import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
@@ -46,7 +64,7 @@ import java.util.List;
 public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
     @Getter
-    private List<ChamberSet> chambers = new ArrayList<ChamberSet>();
+    private final List<ChamberSet> chambers = new ArrayList<ChamberSet>();
     @Getter
     private OffsetPointSet doors;
 
@@ -147,7 +165,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             CompressedStreamTools.writeCompressed(compound, w);
             w.flush();
             byte[] bytes = baos.toByteArray();
-            String str = Base64.encode(bytes);
+            String str = Base64.encodeBase64String(bytes);
             Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
 
             for (ChamberSet ch:chambers) {
@@ -177,7 +195,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             try {
                 String data = component.getFormattedText().substring(component.getFormattedText().indexOf("$DG-BD"));
                 String actual = TextUtils.stripColor(data).trim().split(" ")[1];
-                byte[] data2 = Base64.decode(actual);
+                byte[] data2 = Base64.decodeBase64(actual);
                 NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(data2));
 
                 for (ChamberSet ch:chambers) {

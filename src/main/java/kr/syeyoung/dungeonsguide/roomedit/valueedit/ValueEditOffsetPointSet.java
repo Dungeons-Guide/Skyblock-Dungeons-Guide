@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomedit.valueedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -24,11 +42,12 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
     // just create
     // add set
 
-    private MPanel scroll;
+    private final MPanel scroll;
     @Getter
-    private List<MPanel> MParameters = new ArrayList<MPanel>();
+    private final List<MPanel> MParameters = new ArrayList<MPanel>();
 
-    private MButton add, addSet;
+    private final MButton add;
+    private final MButton addSet;
 
     public void delete(OffsetPoint offsetPoint) {
         ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().remove(offsetPoint);

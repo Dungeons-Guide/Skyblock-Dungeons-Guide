@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.arrow;
 
 import com.google.common.collect.BiMap;
@@ -34,10 +52,10 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
 
 
     private int answer = -1;
-    private int[] correctAnswers = new int[9];
-    private int[] currentAnswers = new int[9];
-    private BlockPos[] grid = new BlockPos[9];
-    private BlockPos center;
+    private final int[] correctAnswers = new int[9];
+    private final int[] currentAnswers = new int[9];
+    private final BlockPos[] grid = new BlockPos[9];
+    private final BlockPos center;
     @Override
     public void tick() {
         super.tick();

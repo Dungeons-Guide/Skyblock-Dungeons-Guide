@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.collect.Sets;
@@ -74,7 +92,7 @@ public class DungeonRoom {
     }
 
     @Getter
-    private PathFinder pathFinder;
+    private final PathFinder pathFinder;
 
     public ScheduledFuture<List<BlockPos>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
         return asyncPathFinder.schedule(() -> {
@@ -93,16 +111,16 @@ public class DungeonRoom {
 
     private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(2);
     @Getter
-    private NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
+    private final NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
     @Getter
     private final Map<String, Object> roomContext = new HashMap<String, Object>();
 
     @AllArgsConstructor
     @Getter
-    public static enum RoomState {
+    public enum RoomState {
         DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-14);
-        private int scoreModifier;
+        private final int scoreModifier;
     }
 
     private RoomProcessor roomProcessor;

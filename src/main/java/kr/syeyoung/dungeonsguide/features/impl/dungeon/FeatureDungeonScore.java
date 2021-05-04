@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -93,7 +111,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         dummyText2.add(new StyledText("S","currentScore"));
         dummyText2.add(new StyledText("->","arrow"));
         dummyText2.add(new StyledText("S+ ","nextScore"));
-        dummyText2.add(new StyledText("(","brackets"));;
+        dummyText2.add(new StyledText("(","brackets"));
         dummyText2.add(new StyledText("1 Required 1 crypt","required"));
         dummyText2.add(new StyledText(")","brackets"));
 
@@ -101,9 +119,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "scorename", "separator", "score", "brackets", "etc", "currentScore", "arrow", "nextScore", "required"
-        });
+        return Arrays.asList("scorename", "separator", "score", "brackets", "etc", "currentScore", "arrow", "nextScore", "required");
 
     }
 
@@ -351,7 +367,7 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         actualBit.add(new StyledText(currentLetter,"currentScore"));
         actualBit.add(new StyledText("->","arrow"));
         actualBit.add(new StyledText(nextLetter+" ","nextScore"));
-        actualBit.add(new StyledText("(","brackets"));;
+        actualBit.add(new StyledText("(","brackets"));
         actualBit.add(new StyledText(reqPT2+" required "+tombsBreakable+" crypt "+secrets+" secrets","required"));
         actualBit.add(new StyledText(")","brackets"));
         return actualBit;

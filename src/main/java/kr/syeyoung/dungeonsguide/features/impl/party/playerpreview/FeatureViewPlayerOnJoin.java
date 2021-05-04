@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
 import com.google.common.base.Supplier;
@@ -250,9 +268,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
                 for (int i = 0; i < list.size(); ++i) {
                     if (i == 0) {
-                        list.set(i, toHover.getRarity().rarityColor + (String)list.get(i));
+                        list.set(i, toHover.getRarity().rarityColor + list.get(i));
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + (String)list.get(i));
+                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
                     }
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
@@ -305,9 +323,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
                 for (int i = 0; i < list.size(); ++i) {
                     if (i == 0) {
-                        list.set(i, toHover.getRarity().rarityColor + (String)list.get(i));
+                        list.set(i, toHover.getRarity().rarityColor + list.get(i));
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + (String)list.get(i));
+                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
                     }
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
@@ -411,7 +429,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     public static class HoverEventRenderPlayer extends HoverEvent {
         @Getter
-        private String uuid;
+        private final String uuid;
         public HoverEventRenderPlayer(String uuid) {
             super(Action.SHOW_TEXT, new ChatComponentText(""));
             this.uuid = uuid;
@@ -445,8 +463,8 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         @Setter
         @Getter
         private PlayerProfile skyblockProfile;
-        private SkinFetchur.SkinSet skinSet;
-        private PlayerProfile.Armor armor;
+        private final SkinFetchur.SkinSet skinSet;
+        private final PlayerProfile.Armor armor;
         private FakePlayer(World w) {
             super(w, null);
             throw new UnsupportedOperationException("what");

@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.utils;
 
 import kr.syeyoung.dungeonsguide.features.impl.party.api.Skill;
@@ -14,9 +32,9 @@ public class XPUtils {
         private double nextLvXp;
     }
 
-    private static TreeMap<Double, Integer> catacombXp = new TreeMap<>();
-    private static TreeMap<Double, Integer> skillXp = new TreeMap<>();
-    private static TreeMap<Double, Integer> skillXp2 = new TreeMap<>();
+    private static final TreeMap<Double, Integer> catacombXp = new TreeMap<>();
+    private static final TreeMap<Double, Integer> skillXp = new TreeMap<>();
+    private static final TreeMap<Double, Integer> skillXp2 = new TreeMap<>();
     static {
         catacombXp.put(50.0, 1);
         catacombXp.put(125.0, 2);

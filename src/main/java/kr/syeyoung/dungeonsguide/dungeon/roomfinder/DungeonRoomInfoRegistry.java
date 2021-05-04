@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.io.Files;
@@ -18,9 +36,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class DungeonRoomInfoRegistry {
-    private static List<DungeonRoomInfo> registered = new ArrayList<DungeonRoomInfo>();
-    private static Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
-    private static Map<UUID, DungeonRoomInfo> uuidMap = new HashMap<UUID, DungeonRoomInfo>();
+    private static final List<DungeonRoomInfo> registered = new ArrayList<DungeonRoomInfo>();
+    private static final Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
+    private static final Map<UUID, DungeonRoomInfo> uuidMap = new HashMap<UUID, DungeonRoomInfo>();
 
     public static void register(DungeonRoomInfo dungeonRoomInfo) {
         if (dungeonRoomInfo == null) throw new NullPointerException("what the fak parameter is noll?");
@@ -42,7 +60,7 @@ public class DungeonRoomInfoRegistry {
 
     public static List<DungeonRoomInfo> getByShape(Short shape) {
         List<DungeonRoomInfo> dungeonRoomInfos = shapeMap.get(shape);
-        return dungeonRoomInfos == null ? Collections.<DungeonRoomInfo>emptyList() : dungeonRoomInfos;
+        return dungeonRoomInfos == null ? Collections.emptyList() : dungeonRoomInfos;
     }
 
     public static DungeonRoomInfo getByUUID(UUID uid) {

@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.eventlistener;
 
 import com.google.gson.JsonObject;
@@ -67,7 +85,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         try {
-                SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+                SkyblockStatus skyblockStatus = kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
 
                 if (!skyblockStatus.isOnDungeon()) return;
 
@@ -89,7 +107,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
 
             if (!skyblockStatus.isOnDungeon()) return;
 
@@ -150,7 +168,7 @@ public class DungeonListener {
 
 
 
-                SkyblockStatus skyblockStatus = (SkyblockStatus) kr.syeyoung.dungeonsguide.e.getDungeonsGuide().getSkyblockStatus();
+                SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
                  {
                     boolean isOnDungeon = skyblockStatus.isOnDungeon();
                     boolean isOnSkyblock = skyblockStatus.isOnSkyblock();
@@ -217,7 +235,7 @@ public class DungeonListener {
             }
 
 
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             if (skyblockStatus.getContext() != null) {
@@ -243,7 +261,7 @@ public class DungeonListener {
     @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
@@ -287,7 +305,7 @@ public class DungeonListener {
                 }
                 if (clientChatReceivedEvent.type == 2) return;
                 for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
-                    if (globalRoomProcessor == roomProcessor) continue;;
+                    if (globalRoomProcessor == roomProcessor) continue;
                     try {
                         globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
                     } catch (Throwable t) {
@@ -304,7 +322,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -360,7 +378,7 @@ public class DungeonListener {
     @SubscribeEvent()
     public void onKey2(InputEvent.KeyInputEvent keyInputEvent) {
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -391,7 +409,7 @@ public class DungeonListener {
     @SubscribeEvent()
     public void onInteract(PlayerInteractEntityEvent interact) {
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -452,7 +470,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();
@@ -482,7 +500,7 @@ public class DungeonListener {
     }
 
     @Getter
-    private Map<Integer, Vec3> entityIdToPosMap = new HashMap<Integer, Vec3>();
+    private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<Integer, Vec3>();
     @SubscribeEvent
     public void onEntitySpawn(EntityJoinWorldEvent spawn) {
         DungeonActionManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
@@ -495,7 +513,7 @@ public class DungeonListener {
             DungeonActionManager.getKilleds().add(deathEvent.entity.getEntityId());
 
         try {
-            SkyblockStatus skyblockStatus = (SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus();
+            SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
             DungeonContext context = skyblockStatus.getContext();

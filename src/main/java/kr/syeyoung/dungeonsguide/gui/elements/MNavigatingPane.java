@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.gui.elements;
 
 import com.google.common.base.Function;
@@ -15,8 +33,8 @@ import java.util.List;
 
 public class MNavigatingPane extends MPanel {
 
-    private Map<String, MPanel> pages = new HashMap<String, MPanel>();
-    private List<MTabButton> bookMarks = new ArrayList<MTabButton>();
+    private final Map<String, MPanel> pages = new HashMap<String, MPanel>();
+    private final List<MTabButton> bookMarks = new ArrayList<MTabButton>();
 
     @Getter
     @Setter
@@ -33,9 +51,9 @@ public class MNavigatingPane extends MPanel {
     @Getter
     private Color background2;
 
-    private Stack<String> history = new Stack<String>();
+    private final Stack<String> history = new Stack<String>();
 
-    private MButton back = new MButton();
+    private final MButton back = new MButton();
 
     public MNavigatingPane() {
         back.setText("<");

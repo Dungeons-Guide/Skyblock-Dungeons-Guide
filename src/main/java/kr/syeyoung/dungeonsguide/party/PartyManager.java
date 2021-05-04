@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.party;
 
 import kr.syeyoung.dungeonsguide.RichPresenceManager;
@@ -34,7 +52,7 @@ public class PartyManager implements StompMessageHandler {
     @Getter
     private String askToJoinSecret = null;
 
-    private SecureRandom random = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
     private static final String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 
     @Getter
@@ -44,7 +62,7 @@ public class PartyManager implements StompMessageHandler {
     private int invitedDash  =0;
 
     @Getter
-    private Queue<Consumer<Set<String>>> runOnMembersReceived = new LinkedList<>();
+    private final Queue<Consumer<Set<String>>> runOnMembersReceived = new LinkedList<>();
 
 
     @Getter
@@ -107,8 +125,8 @@ public class PartyManager implements StompMessageHandler {
     }
 
     private int partyJoin =0;
-    private Set<String> members = new HashSet<>();
-    private Map<String, Long> recentlyJoined = new HashMap<>();
+    private final Set<String> members = new HashSet<>();
+    private final Map<String, Long> recentlyJoined = new HashMap<>();
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
@@ -119,7 +137,7 @@ public class PartyManager implements StompMessageHandler {
 
             if (str.startsWith("§eYou have joined ")) {
                 members.clear();
-                String strs[] = TextUtils.stripColor(str).split(" ");
+                String[] strs = TextUtils.stripColor(str).split(" ");
                 for (String s : strs) {
                     if (s.endsWith("'s")) {
                         members.add(s.substring(0, s.indexOf("'s")));
@@ -344,7 +362,7 @@ public class PartyManager implements StompMessageHandler {
                 }
             }
         } catch (Exception ex) {ex.printStackTrace();
-        e.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ex.toString()));}
+        e.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ ex));}
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {

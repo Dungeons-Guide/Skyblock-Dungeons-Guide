@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -29,8 +47,8 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
     }
 
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
-    private ResourceLocation penguin = new ResourceLocation("dungeonsguide:penguin.png");
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final ResourceLocation penguin = new ResourceLocation("dungeonsguide:penguin.png");
 
     @Override
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
@@ -70,7 +88,7 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
                 GlStateManager.scale(0.8,0.8,0.8);
 
 
-                if (((EntityPlayer) entitylivingbaseIn).fishEntity != null)
+                if (entitylivingbaseIn.fishEntity != null)
                 {
                     itemstack = new ItemStack(Items.fishing_rod, 0);
                 }

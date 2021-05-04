@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
 import com.google.common.collect.Lists;
@@ -182,7 +200,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                 fr.drawString((String)obj, 3, i * fr.FONT_HEIGHT, 0xFFEEEEEE);
             }
         }
-        GlStateManager.popMatrix();;
+        GlStateManager.popMatrix();
 
         if (selected != -1) {
             clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
@@ -215,8 +233,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     private int selected = -1;
     private int selectedState = -1;
     private List<String> possibleStates = new ArrayList<String>();
-    private List<Object> sortedMechanics = new ArrayList<Object>();
-    private List<String> sortedMechanicsName = new ArrayList<String>();
+    private final List<Object> sortedMechanics = new ArrayList<Object>();
+    private final List<String> sortedMechanicsName = new ArrayList<String>();
     private void setupMechanics() {
         sortedMechanics.clear();
         sortedMechanicsName.clear();
@@ -417,7 +435,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
         if (selected != -1) {
-            if (sortedMechanics.size() <= selected) return;;
+            if (sortedMechanics.size() <= selected) return;
             ((DungeonMechanic)sortedMechanics.get(selected)).highlight(new Color(0,255,255,50), sortedMechanicsName.get(selected) +" ("+(((DungeonMechanic)
             sortedMechanics.get(selected)).getRepresentingPoint(dungeonRoom) != null ?
                     String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) sortedMechanics.get(selected)).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")

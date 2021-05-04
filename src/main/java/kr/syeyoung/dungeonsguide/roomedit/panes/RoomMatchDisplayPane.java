@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
@@ -23,9 +41,10 @@ public class RoomMatchDisplayPane extends MPanel {
     private int offsetX = 0;
     private int offsetY = 0;
 
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
-    private int[][] currentBlocks, targetBlocks;
+    private final int[][] currentBlocks;
+    private int[][] targetBlocks;
     public RoomMatchDisplayPane(DungeonRoom dungeonRoom, UUID uid, int rotation) {
         this.dungeonRoom = dungeonRoom;
 
@@ -84,7 +103,7 @@ public class RoomMatchDisplayPane extends MPanel {
                     fr.drawString("N", x *16 +10 + offsetX, z *16 +10 + offsetY,0xFFFF0000);
                 }
                 if (z == hoverY && x == hoverX) {
-                    RenderUtils.drawHoveringText(Arrays.asList(new String[] {"Expected "+data2 +" But found "+data1}), relMousex0, relMousey0, fr);
+                    RenderUtils.drawHoveringText(Arrays.asList("Expected "+data2 +" But found "+data1), relMousex0, relMousey0, fr);
                 }
             }
         }

@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -30,26 +48,26 @@ import java.util.List;
 
 public class DungeonContext {
     @Getter
-    private World world;
+    private final World world;
     @Getter
-    private MapProcessor mapProcessor;
+    private final MapProcessor mapProcessor;
 
     @Getter
     @Setter
     private BlockPos dungeonMin;
 
     @Getter
-    private Map<Point, DungeonRoom> roomMapper = new HashMap<Point, DungeonRoom>();
+    private final Map<Point, DungeonRoom> roomMapper = new HashMap<Point, DungeonRoom>();
     @Getter
-    private List<DungeonRoom> dungeonRoomList = new ArrayList<DungeonRoom>();
+    private final List<DungeonRoom> dungeonRoomList = new ArrayList<DungeonRoom>();
 
     @Getter
-    private List<RoomProcessor> globalRoomProcessors = new ArrayList<RoomProcessor>();
+    private final List<RoomProcessor> globalRoomProcessors = new ArrayList<RoomProcessor>();
 
     @Getter
-    private Map<String, Integer> deaths = new HashMap<String, Integer>();
+    private final Map<String, Integer> deaths = new HashMap<String, Integer>();
     @Getter
-    private List<String[]> milestoneReached = new ArrayList<String[]>();
+    private final List<String[]> milestoneReached = new ArrayList<String[]>();
     @Getter
     @Setter
     private long BossRoomEnterSeconds = -1;
@@ -81,16 +99,16 @@ public class DungeonContext {
     private BossfightProcessor bossfightProcessor;
 
     @Getter
-    private Set<String> players = new HashSet<String>();
+    private final Set<String> players = new HashSet<String>();
 
     @Getter
-    private List<DungeonEvent> events = new ArrayList<DungeonEvent>();
+    private final List<DungeonEvent> events = new ArrayList<DungeonEvent>();
 
     public DungeonContext(World world) {
         this.world = world;
         createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapProcessor = new MapProcessor(this);
-        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
         if (doorFinder != null)
             trapRoomGen = doorFinder.isTrapSpawn(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
         else mapProcessor.setBugged(true);
@@ -112,7 +130,7 @@ public class DungeonContext {
             bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
             createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
-            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (doorFinder != null) {
                 bossfightProcessor = doorFinder.createBossfightProcessor(world, e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             } else {

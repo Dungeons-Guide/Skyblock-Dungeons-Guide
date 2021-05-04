@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -10,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProcessorFactory {
-    private static Map<String, RoomProcessorGenerator> map = new HashMap<String, RoomProcessorGenerator>();
+    private static final Map<String, RoomProcessorGenerator> map = new HashMap<String, RoomProcessorGenerator>();
 
     public static RoomProcessorGenerator getRoomProcessorGenerator(String processorId) {
         return map.get(processorId);
@@ -39,7 +57,7 @@ public class ProcessorFactory {
         registerRoomProcessor("puzzle_silverfish", new RoomProcessorIcePath.Generator()); // done
         registerRoomProcessor("puzzle_icefill", new RoomProcessorIcePath2.Generator());
         registerRoomProcessor("puzzle_box", new RoomProcessorBoxSolver.Generator());
-        registerRoomProcessor("puzzle_trivia", new RoomProcessorTrivia.Generator());;
+        registerRoomProcessor("puzzle_trivia", new RoomProcessorTrivia.Generator());
         registerRoomProcessor("puzzle_bombdefuse", new RoomProcessorBombDefuseSolver.Generator());
 
         registerRoomProcessor("bossroom", new RoomProcessorRedRoom.Generator());

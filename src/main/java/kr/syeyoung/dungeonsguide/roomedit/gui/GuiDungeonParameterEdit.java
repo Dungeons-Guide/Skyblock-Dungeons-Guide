@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -22,17 +40,17 @@ import java.io.IOException;
 
 public class GuiDungeonParameterEdit extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
+    private final MPanel mainPanel = new MPanel();
 
-    private Parameter parameter;
-    private DungeonRoom dungeonRoom;
+    private final Parameter parameter;
+    private final DungeonRoom dungeonRoom;
 
     private String classSelection;
 
-    private MPanel currentValueEdit;
+    private final MPanel currentValueEdit;
 
-    private MButton save;
-    private MButton delete;
+    private final MButton save;
+    private final MButton delete;
 
     @Getter
     private ValueEdit valueEdit;

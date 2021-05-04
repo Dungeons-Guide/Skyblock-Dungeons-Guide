@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
@@ -23,9 +41,9 @@ import java.util.Set;
 
 public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
-    private List<BlockPos[]> poses = new ArrayList<BlockPos[]>();
+    private final List<BlockPos[]> poses = new ArrayList<BlockPos[]>();
 
-    private boolean bugged = false;
+    private final boolean bugged = false;
 
     public RoomProcessorCreeperSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
@@ -129,11 +147,8 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         for (int i = 0; i < poses.size(); i++) {
             BlockPos[] poset = poses.get(i);
             Color color = colors[i % colors.length];
-            boolean oneIsConnected = false;
-            if (w.getChunkFromBlockCoords(poset[0]).getBlock(poset[0]) != Blocks.sea_lantern &&
-                w.getChunkFromBlockCoords(poset[1]).getBlock(poset[1]) != Blocks.sea_lantern) {
-                oneIsConnected = true;
-            }
+            boolean oneIsConnected = w.getChunkFromBlockCoords(poset[0]).getBlock(poset[0]) != Blocks.sea_lantern &&
+                    w.getChunkFromBlockCoords(poset[1]).getBlock(poset[1]) != Blocks.sea_lantern;
             RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
                     new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }

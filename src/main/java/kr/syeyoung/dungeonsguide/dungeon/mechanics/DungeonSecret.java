@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
@@ -58,7 +76,7 @@ public class DungeonSecret implements DungeonMechanic {
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return;
                 }
-                dungeonRoom.getRoomContext().put("i-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("i-" + pos, true);
             }
         }
     }
@@ -104,7 +122,7 @@ public class DungeonSecret implements DungeonMechanic {
             return SecretStatus.NOT_SURE;
         } else {
             Vec3 pos = new Vec3(secretPoint.getBlockPos(dungeonRoom));
-            if (dungeonRoom.getRoomContext().containsKey("i-"+pos.toString()))
+            if (dungeonRoom.getRoomContext().containsKey("i-"+ pos))
                 return SecretStatus.FOUND;
             Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
             if (player.squareDistanceTo(pos) < 16) {
@@ -116,7 +134,7 @@ public class DungeonSecret implements DungeonMechanic {
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return SecretStatus.NOT_SURE;
                 }
-                dungeonRoom.getRoomContext().put("i-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("i-" + pos, true);
             }
             return SecretStatus.NOT_SURE;
         }
@@ -175,16 +193,16 @@ public class DungeonSecret implements DungeonMechanic {
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
-    public static enum SecretType {
+    public enum SecretType {
         BAT, CHEST, ITEM_DROP, ESSENCE
     }
 
     @AllArgsConstructor
     @Getter
-    public static enum SecretStatus {
+    public enum SecretStatus {
         DEFINITELY_NOT("definitely_not"), NOT_SURE("not_sure"), CREATED("created"), FOUND("found"), ERROR("error");
 
-        private String stateName;
+        private final String stateName;
     }
 
     public DungeonSecret clone() throws CloneNotSupportedException {

@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.features.text;
 
 import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
@@ -33,11 +51,11 @@ import java.util.List;
 
 public class PanelTextParameterConfig extends MPanel {
 
-    private StyledTextProvider feature;
+    private final StyledTextProvider feature;
 
-    private MEditableAColor currentColor;
-    private MEditableAColor backgroundColor;
-    private MToggleButton shadow;
+    private final MEditableAColor currentColor;
+    private final MEditableAColor backgroundColor;
+    private final MToggleButton shadow;
 
     @Override
     public void onBoundsUpdate() {
@@ -48,7 +66,7 @@ public class PanelTextParameterConfig extends MPanel {
         this.setBounds(new Rectangle(5,5,parentWidth-10, 120));
     }
 
-    private GuiConfig config;
+    private final GuiConfig config;
     public PanelTextParameterConfig(final GuiConfig config, final StyledTextProvider feature) {
         this.config = config;
         this.feature = feature;
@@ -95,7 +113,7 @@ public class PanelTextParameterConfig extends MPanel {
 
     }
 
-    private Set<String> selected = new HashSet<String>();
+    private final Set<String> selected = new HashSet<String>();
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {

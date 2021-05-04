@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.goldenpath;
 
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
@@ -29,16 +47,16 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
 
-    private BlockPos center;
+    private final BlockPos center;
     // 1 up 2 right 3 down 4 left
-    private static final Point vectors[] = new Point[] {
+    private static final Point[] vectors = new Point[] {
             new Point(0,1),
             new Point(-1,0),
             new Point(0, -1),
             new Point(1, 0)
     };
 
-    private LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
+    private final LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
 
     @Override
     public void drawWorld(float partialTicks) {
@@ -60,7 +78,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             BlockPos lastLoc = new BlockPos(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
-                int dir = (int) (Integer.parseInt(c+"") % 4);
+                int dir = Integer.parseInt(c+"") % 4;
                 lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
             }

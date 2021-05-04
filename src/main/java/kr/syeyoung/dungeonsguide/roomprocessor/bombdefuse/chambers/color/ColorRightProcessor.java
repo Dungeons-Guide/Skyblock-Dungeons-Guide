@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.color;
 
 import com.google.common.collect.BiMap;
@@ -33,9 +51,11 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         b3 = chamber.getBlockPos(1,3,1);
     }
 
-    private BlockPos center;
+    private final BlockPos center;
 
-    private BlockPos b1, b2, b3;
+    private final BlockPos b1;
+    private final BlockPos b2;
+    private final BlockPos b3;
     private byte b1b = 0, b2b = 0, b3b = 0, c1b, c2b, c3b;
     private int answer = -1;
 

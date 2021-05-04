@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.roomprocessor.waterpuzzle;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -20,22 +38,22 @@ public class WaterBoard {
     WaterNode[][] board;
     RoomProcessorWaterPuzzle waterPuzzle;
 
-    private OffsetPointSet frontPlate;
-    private OffsetPointSet backPlate;
-    private OffsetPointSet levers;
-    private OffsetPointSet doors;
-    private OffsetPoint lever;
+    private final OffsetPointSet frontPlate;
+    private final OffsetPointSet backPlate;
+    private final OffsetPointSet levers;
+    private final OffsetPointSet doors;
+    private final OffsetPoint lever;
 
     @Getter
-    private List<SwitchData> switchData = new ArrayList<SwitchData>();
+    private final List<SwitchData> switchData = new ArrayList<SwitchData>();
     @Getter
-    private Map<String, SwitchData> validSwitches = new HashMap<String, SwitchData>();
+    private final Map<String, SwitchData> validSwitches = new HashMap<String, SwitchData>();
 
     private WaterNodeStart waterNodeStart;
-    private Map<String, WaterNodeEnd> waterNodeEndMap = new HashMap<String, WaterNodeEnd>();
+    private final Map<String, WaterNodeEnd> waterNodeEndMap = new HashMap<String, WaterNodeEnd>();
 
     @Getter
-    private Map<String, WaterNode> toggleableMap = new HashMap<String, WaterNode>();
+    private final Map<String, WaterNode> toggleableMap = new HashMap<String, WaterNode>();
 
     @Getter
     private Set<String> reqOpen = new HashSet<String>();
@@ -253,7 +271,7 @@ public class WaterBoard {
             } else {
                 int minDistToDropRight = 9999;
                 for (int i = asd.getX(); i < asd.getX() + 8; i++) {
-                    WaterNode nodehere = getNodeAt(i, asd.getY());;
+                    WaterNode nodehere = getNodeAt(i, asd.getY());
                     if (nodehere == null) break;
                     if (!nodehere.canWaterGoThrough()) break;
                     if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;

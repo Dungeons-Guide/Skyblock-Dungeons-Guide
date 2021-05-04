@@ -1,3 +1,21 @@
+/*
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
+ *
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
+ *
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
+ *
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
 package kr.syeyoung.dungeonsguide.pathfinding;
 
 import com.google.common.collect.Sets;
@@ -16,8 +34,8 @@ import net.minecraft.world.pathfinder.NodeProcessor;
 import java.util.Set;
 
 public class NodeProcessorDungeonRoom extends NodeProcessor {
-    private DungeonRoom dungeonRoom;
-    private BlockPos sub;
+    private final DungeonRoom dungeonRoom;
+    private final BlockPos sub;
     public NodeProcessorDungeonRoom(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
         sub = dungeonRoom.getMax().subtract(dungeonRoom.getMin());
