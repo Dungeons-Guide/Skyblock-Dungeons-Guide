@@ -61,12 +61,12 @@ dependencies {
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation "org.json:json:20171018"
 
-    compileOnly "org.projectlombok:lombok:1.18.16"
+    compileOnly "org.projectlombok:lombok:1.18.20"
     compileOnly files("mods/Hychat-1.12.1-BETA.jar")
     annotationProcessor "org.projectlombok:lombok:1.18.16"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.16"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.16"
+    testCompileOnly "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 }
 
 jar {
