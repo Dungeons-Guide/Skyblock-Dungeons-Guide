@@ -62,7 +62,7 @@ public class e implements c, CloseListener {
 
 
     @Getter
-    private b authenticator;
+    private final b authenticator;
 
     @Getter
     private StompInterface stompConnection;
@@ -79,7 +79,7 @@ public class e implements c, CloseListener {
     CommandReparty commandReparty;
 
 
-    private String stompURL = "wss://dungeons.guide/ws";
+    private final String stompURL = "wss://dungeons.guide/ws";
 //    private String stompURL = "ws://localhost/ws";
     public void init(FMLInitializationEvent event) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
@@ -180,7 +180,7 @@ public class e implements c, CloseListener {
 
 
     public SkyblockStatus getSkyblockStatus() {
-        return (SkyblockStatus) skyblockStatus;
+        return skyblockStatus;
     }
 
     public static e getDungeonsGuide() {

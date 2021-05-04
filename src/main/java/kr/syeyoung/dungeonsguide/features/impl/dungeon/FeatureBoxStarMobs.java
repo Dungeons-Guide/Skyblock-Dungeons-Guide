@@ -25,7 +25,7 @@ public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderList
     }
 
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
     @Override
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;

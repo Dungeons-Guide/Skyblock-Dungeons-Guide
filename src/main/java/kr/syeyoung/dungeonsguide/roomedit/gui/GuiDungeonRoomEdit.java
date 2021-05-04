@@ -17,13 +17,13 @@ import java.io.IOException;
 
 public class GuiDungeonRoomEdit extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
+    private final MPanel mainPanel = new MPanel();
 
-    private DungeonRoom room;
+    private final DungeonRoom room;
 
-    private MTabbedPane tabbedPane;
+    private final MTabbedPane tabbedPane;
     @Getter
-    private SecretEditPane sep;
+    private final SecretEditPane sep;
 
     public GuiDungeonRoomEdit(DungeonRoom room) {
         this.room = room;

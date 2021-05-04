@@ -28,7 +28,7 @@ public class ValueEditBoolean extends MPanel implements ValueEdit<Boolean> {
         }
         {
             boolean newData = (Boolean) parameter.getNewData();
-            final MStringSelectionButton textField = new MStringSelectionButton(Arrays.asList(new String[] {"true", "false"}), Boolean.toString(newData));
+            final MStringSelectionButton textField = new MStringSelectionButton(Arrays.asList("true", "false"), Boolean.toString(newData));
             textField.setOnUpdate(new Runnable() {
                 @Override
                 public void run() {

@@ -24,12 +24,12 @@ public class ValueEditDummy extends MPanel implements ValueEdit<DungeonDummy> {
     // scroll pane
     // just create
     // add set
-    private DungeonDummy dungeonSecret;
+    private final DungeonDummy dungeonSecret;
 
-    private MLabel label;
-    private MValue<OffsetPoint> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite2;
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
 
     public ValueEditDummy(final Parameter parameter2) {
         this.parameter = parameter2;

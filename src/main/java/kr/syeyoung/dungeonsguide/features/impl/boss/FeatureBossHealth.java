@@ -56,9 +56,7 @@ public class FeatureBossHealth extends TextHUDFeature {
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "health", "separator2", "maxHealth"
-        });
+        return Arrays.asList("title", "separator", "health", "separator2", "maxHealth");
     }
 
     @Override

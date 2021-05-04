@@ -20,22 +20,22 @@ public class WaterBoard {
     WaterNode[][] board;
     RoomProcessorWaterPuzzle waterPuzzle;
 
-    private OffsetPointSet frontPlate;
-    private OffsetPointSet backPlate;
-    private OffsetPointSet levers;
-    private OffsetPointSet doors;
-    private OffsetPoint lever;
+    private final OffsetPointSet frontPlate;
+    private final OffsetPointSet backPlate;
+    private final OffsetPointSet levers;
+    private final OffsetPointSet doors;
+    private final OffsetPoint lever;
 
     @Getter
-    private List<SwitchData> switchData = new ArrayList<SwitchData>();
+    private final List<SwitchData> switchData = new ArrayList<SwitchData>();
     @Getter
-    private Map<String, SwitchData> validSwitches = new HashMap<String, SwitchData>();
+    private final Map<String, SwitchData> validSwitches = new HashMap<String, SwitchData>();
 
     private WaterNodeStart waterNodeStart;
-    private Map<String, WaterNodeEnd> waterNodeEndMap = new HashMap<String, WaterNodeEnd>();
+    private final Map<String, WaterNodeEnd> waterNodeEndMap = new HashMap<String, WaterNodeEnd>();
 
     @Getter
-    private Map<String, WaterNode> toggleableMap = new HashMap<String, WaterNode>();
+    private final Map<String, WaterNode> toggleableMap = new HashMap<String, WaterNode>();
 
     @Getter
     private Set<String> reqOpen = new HashSet<String>();
@@ -253,7 +253,7 @@ public class WaterBoard {
             } else {
                 int minDistToDropRight = 9999;
                 for (int i = asd.getX(); i < asd.getX() + 8; i++) {
-                    WaterNode nodehere = getNodeAt(i, asd.getY());;
+                    WaterNode nodehere = getNodeAt(i, asd.getY());
                     if (nodehere == null) break;
                     if (!nodehere.canWaterGoThrough()) break;
                     if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;

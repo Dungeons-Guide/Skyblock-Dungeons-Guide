@@ -16,7 +16,7 @@ import java.io.IOException;
 
 @Getter
 public class MTextField extends MPanel {
-    private Color foreground = Color.white;
+    private final Color foreground = Color.white;
 
     private String text = "asdasdasd";
     private int cursorBlickTicker = 0;

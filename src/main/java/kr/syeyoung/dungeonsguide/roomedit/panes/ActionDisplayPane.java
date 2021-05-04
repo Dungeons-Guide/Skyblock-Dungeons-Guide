@@ -9,12 +9,12 @@ import kr.syeyoung.dungeonsguide.gui.elements.*;
 import java.awt.*;
 
 public class ActionDisplayPane extends MPanel {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
     private ActionTreeDisplayPane displayPane;
 
-    private MTextField textField;
-    private MButton calculate;
+    private final MTextField textField;
+    private final MButton calculate;
     public ActionDisplayPane(final DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
 

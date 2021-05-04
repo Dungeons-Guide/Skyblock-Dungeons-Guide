@@ -24,7 +24,7 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
     }
 
     private long leftDungeonTime = 0L;
-    private boolean wasInDungeon = false;
+    private final boolean wasInDungeon = false;
     @Override
     public void drawHUD(float partialTicks) {
         if (System.currentTimeMillis() - leftDungeonTime > 20000) return;

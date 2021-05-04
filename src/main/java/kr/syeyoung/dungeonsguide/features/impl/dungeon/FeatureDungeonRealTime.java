@@ -58,9 +58,7 @@ public class FeatureDungeonRealTime extends TextHUDFeature implements DungeonSta
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "discriminator", "separator", "number"
-        });
+        return Arrays.asList("title", "discriminator", "separator", "number");
     }
 
     @Override

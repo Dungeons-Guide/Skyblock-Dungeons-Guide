@@ -30,10 +30,12 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
         b3p = chamber.getBlockPos(7,1,4);
     }
 
-    private BlockPos center;
+    private final BlockPos center;
 
     private Block w1, w2, w3, c1, c2, c3;
-    private BlockPos b1p, b2p, b3p;
+    private final BlockPos b1p;
+    private final BlockPos b2p;
+    private final BlockPos b3p;
     private int s1, s2, s3;
     private int s1t, s2t, s3t;
     private boolean solutionBuilt;

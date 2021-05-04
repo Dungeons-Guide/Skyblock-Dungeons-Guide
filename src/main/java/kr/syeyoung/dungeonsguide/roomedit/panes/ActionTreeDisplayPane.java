@@ -24,8 +24,8 @@ public class ActionTreeDisplayPane extends MPanel {
 
     private float scale;
 
-    private DungeonRoom dungeonRoom;
-    private ActionTree tree;
+    private final DungeonRoom dungeonRoom;
+    private final ActionTree tree;
     private List<Action> linearified;
     public ActionTreeDisplayPane(DungeonRoom dungeonRoom, ActionTree tree) {
         this.dungeonRoom = dungeonRoom;

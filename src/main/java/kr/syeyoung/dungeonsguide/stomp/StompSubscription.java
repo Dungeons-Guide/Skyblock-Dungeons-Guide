@@ -14,10 +14,10 @@ public class StompSubscription {
     private AckMode ackMode;
 
     @AllArgsConstructor
-    public static enum AckMode {
+    public enum AckMode {
         AUTO("auto"), CLIENT("client"), CLIENT_INDIVIDUAL("client-individual");
 
         @Getter
-        private String value;
+        private final String value;
     }
 }

@@ -20,11 +20,11 @@ import java.util.*;
 import java.util.List;
 
 public class FeatureEditPane extends MPanel {
-    private List<AbstractFeature> features;
+    private final List<AbstractFeature> features;
 
-    private List<MFeature> le = new ArrayList<MFeature>();
+    private final List<MFeature> le = new ArrayList<MFeature>();
 
-    private GuiConfig config;
+    private final GuiConfig config;
 
     private MTextField textField;
     private String search = "";

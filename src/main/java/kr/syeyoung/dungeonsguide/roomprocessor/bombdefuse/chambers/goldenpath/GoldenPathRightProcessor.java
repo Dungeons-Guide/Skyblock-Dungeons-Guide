@@ -29,16 +29,16 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
 
-    private BlockPos center;
+    private final BlockPos center;
     // 1 up 2 right 3 down 4 left
-    private static final Point vectors[] = new Point[] {
+    private static final Point[] vectors = new Point[] {
             new Point(0,1),
             new Point(-1,0),
             new Point(0, -1),
             new Point(1, 0)
     };
 
-    private LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
+    private final LinkedList<BlockPos> blocksolution = new LinkedList<BlockPos>();
 
     @Override
     public void drawWorld(float partialTicks) {
@@ -60,7 +60,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
             BlockPos lastLoc = new BlockPos(4,0,0);
             blocksolution.addFirst(getChamber().getBlockPos(4,1,0));
             for (Character c:actual.toCharArray()) {
-                int dir = (int) (Integer.parseInt(c+"") % 4);
+                int dir = Integer.parseInt(c+"") % 4;
                 lastLoc = lastLoc.add(vectors[dir].x, 0, vectors[dir].y);
                 blocksolution.add(getChamber().getBlockPos(lastLoc.getX(), 1, lastLoc.getZ()));
             }

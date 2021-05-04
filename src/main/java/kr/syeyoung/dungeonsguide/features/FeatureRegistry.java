@@ -26,10 +26,10 @@ import java.util.Map;
 
 public class FeatureRegistry {
     @Getter
-    private static List<AbstractFeature> featureList = new ArrayList<AbstractFeature>();
-    private static Map<String, AbstractFeature> featureByKey = new HashMap<String, AbstractFeature>();
+    private static final List<AbstractFeature> featureList = new ArrayList<AbstractFeature>();
+    private static final Map<String, AbstractFeature> featureByKey = new HashMap<String, AbstractFeature>();
     @Getter
-    private static Map<String, List<AbstractFeature>> featuresByCategory = new HashMap<String, List<AbstractFeature>>();
+    private static final Map<String, List<AbstractFeature>> featuresByCategory = new HashMap<String, List<AbstractFeature>>();
 
     public static AbstractFeature getFeatureByKey(String key) {
         return featureByKey.get(key);

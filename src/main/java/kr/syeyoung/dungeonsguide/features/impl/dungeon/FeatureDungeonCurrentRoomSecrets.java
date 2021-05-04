@@ -51,9 +51,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements 
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "currentSecrets", "separator2", "totalSecrets"
-        });
+        return Arrays.asList("title", "separator", "currentSecrets", "separator2", "totalSecrets");
     }
 
     @Override

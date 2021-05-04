@@ -22,17 +22,17 @@ import java.io.IOException;
 
 public class GuiDungeonParameterEdit extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
+    private final MPanel mainPanel = new MPanel();
 
-    private Parameter parameter;
-    private DungeonRoom dungeonRoom;
+    private final Parameter parameter;
+    private final DungeonRoom dungeonRoom;
 
     private String classSelection;
 
-    private MPanel currentValueEdit;
+    private final MPanel currentValueEdit;
 
-    private MButton save;
-    private MButton delete;
+    private final MButton save;
+    private final MButton delete;
 
     @Getter
     private ValueEdit valueEdit;

@@ -20,7 +20,7 @@ import java.util.Set;
 @AllArgsConstructor
 public class DGTexturePack implements IResourcePack {
 
-    private b authenticator;
+    private final b authenticator;
 
     @Override
     public InputStream getInputStream(ResourceLocation location) throws IOException {

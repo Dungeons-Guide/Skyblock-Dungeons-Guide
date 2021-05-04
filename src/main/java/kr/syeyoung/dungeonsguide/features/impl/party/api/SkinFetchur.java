@@ -18,9 +18,9 @@ import java.util.concurrent.ConcurrentHashMap;
 
 public class SkinFetchur {
 
-    private static Map<String, CachedData<SkinSet>> skinSetMap = new ConcurrentHashMap<>();
+    private static final Map<String, CachedData<SkinSet>> skinSetMap = new ConcurrentHashMap<>();
 
-    private static Map<String, CompletableFuture<SkinSet>> currentReq = new HashMap<>();
+    private static final Map<String, CompletableFuture<SkinSet>> currentReq = new HashMap<>();
 
     public static CompletableFuture<SkinSet> getSkinSet(GameProfile gameProfile) {
         if (gameProfile == null) {

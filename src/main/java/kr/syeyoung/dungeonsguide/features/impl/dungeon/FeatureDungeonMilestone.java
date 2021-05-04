@@ -53,9 +53,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "number"
-        });
+        return Arrays.asList("title", "separator", "number");
     }
 
     @Override
@@ -84,7 +82,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
 
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) return;;
+        if (clientChatReceivedEvent.type == 2) return;
         if (!skyblockStatus.isOnDungeon()) return;
         DungeonContext context = skyblockStatus.getContext();
         if (context == null) return;

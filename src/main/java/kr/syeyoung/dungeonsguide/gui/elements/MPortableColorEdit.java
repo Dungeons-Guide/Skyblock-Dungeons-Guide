@@ -20,14 +20,14 @@ import java.awt.*;
 
 public class MPortableColorEdit extends MPanel {
 
-    private float[] hsv = new float[3];
+    private final float[] hsv = new float[3];
     private float alpha = 0;
     private float chromaSpeed = 0;
 
     @Getter
     private AColor color;
 
-    private MTextField textField;
+    private final MTextField textField;
 
     public MPortableColorEdit() {
         textField = new MTextField() {
@@ -82,7 +82,7 @@ public class MPortableColorEdit extends MPanel {
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
         GlStateManager.disableTexture2D();
-        GlStateManager.disableCull();;
+        GlStateManager.disableCull();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
         //        worldrenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);

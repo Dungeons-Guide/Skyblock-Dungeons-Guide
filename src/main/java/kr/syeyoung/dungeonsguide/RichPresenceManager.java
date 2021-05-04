@@ -56,7 +56,7 @@ public class RichPresenceManager implements Runnable {
                 }).build(), true);
     }
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
 
 
     public void updatePresence() {

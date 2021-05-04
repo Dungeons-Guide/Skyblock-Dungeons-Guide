@@ -22,7 +22,7 @@ import java.io.IOException;
 
 public class GuiDungeonValueEdit extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel() {
+    private final MPanel mainPanel = new MPanel() {
         @Override
         public void onBoundsUpdate() {
             for (int i = 0; i < addons.size(); i++) {

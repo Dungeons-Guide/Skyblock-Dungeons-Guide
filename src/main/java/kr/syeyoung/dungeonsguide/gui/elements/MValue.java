@@ -13,14 +13,14 @@ import java.awt.*;
 import java.util.List;
 public class MValue<T> extends MPanel {
     @Getter
-    private T data;
+    private final T data;
     private ValueEditOffsetPointSet valueEditOffsetPointSet;
-    private MLabel dataLab;
+    private final MLabel dataLab;
 
     @Getter @Setter
     private Color hover = Color.gray;
 
-    private List<MPanel> addons;
+    private final List<MPanel> addons;
 
     public MValue(final T parameter, List<MPanel> addons) {
         this.addons = addons;

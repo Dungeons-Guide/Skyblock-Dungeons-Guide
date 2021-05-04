@@ -12,7 +12,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.awt.*;
 
 public class PanelDelegate extends MPanel {
-    private GuiFeature guiFeature;
+    private final GuiFeature guiFeature;
     private boolean draggable = false;
     public PanelDelegate(GuiFeature guiFeature, boolean draggable) {
         this.guiFeature = guiFeature;

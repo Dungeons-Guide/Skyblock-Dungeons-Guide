@@ -34,7 +34,7 @@ public class PartyManager implements StompMessageHandler {
     @Getter
     private String askToJoinSecret = null;
 
-    private SecureRandom random = new SecureRandom();
+    private final SecureRandom random = new SecureRandom();
     private static final String validChars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-_";
 
     @Getter
@@ -44,7 +44,7 @@ public class PartyManager implements StompMessageHandler {
     private int invitedDash  =0;
 
     @Getter
-    private Queue<Consumer<Set<String>>> runOnMembersReceived = new LinkedList<>();
+    private final Queue<Consumer<Set<String>>> runOnMembersReceived = new LinkedList<>();
 
 
     @Getter
@@ -107,8 +107,8 @@ public class PartyManager implements StompMessageHandler {
     }
 
     private int partyJoin =0;
-    private Set<String> members = new HashSet<>();
-    private Map<String, Long> recentlyJoined = new HashMap<>();
+    private final Set<String> members = new HashSet<>();
+    private final Map<String, Long> recentlyJoined = new HashMap<>();
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
@@ -119,7 +119,7 @@ public class PartyManager implements StompMessageHandler {
 
             if (str.startsWith("§eYou have joined ")) {
                 members.clear();
-                String strs[] = TextUtils.stripColor(str).split(" ");
+                String[] strs = TextUtils.stripColor(str).split(" ");
                 for (String s : strs) {
                     if (s.endsWith("'s")) {
                         members.add(s.substring(0, s.indexOf("'s")));
@@ -344,7 +344,7 @@ public class PartyManager implements StompMessageHandler {
                 }
             }
         } catch (Exception ex) {ex.printStackTrace();
-        e.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ex.toString()));}
+        e.sendDebugChat(new ChatComponentText("ERRORRR!! on chat "+ ex));}
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {

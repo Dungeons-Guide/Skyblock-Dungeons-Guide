@@ -1,25 +1,14 @@
 package kr.syeyoung.dungeonsguide.commands;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.e;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -45,7 +34,7 @@ public class CommandReparty extends CommandBase {
         requestReparty();
     }
 
-    public static enum Phase {
+    public enum Phase {
         NOT,
         REQUESTED,
         RECEIVE_PARTYMEMBERS,
@@ -53,7 +42,7 @@ public class CommandReparty extends CommandBase {
         REPARTY
     }
 
-    private List<String> players = new ArrayList<String>();
+    private final List<String> players = new ArrayList<String>();
     private long nextTrigger = Long.MAX_VALUE;
     private Phase phase = Phase.NOT;
     @SubscribeEvent

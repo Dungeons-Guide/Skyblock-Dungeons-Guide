@@ -12,7 +12,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class DataRendererClassLv implements DataRenderer {
-    private DungeonClass dungeonClass;
+    private final DungeonClass dungeonClass;
     public DataRendererClassLv(DungeonClass dungeonClass) {
         this.dungeonClass = dungeonClass;
     }

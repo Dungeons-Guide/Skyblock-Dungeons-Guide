@@ -6,7 +6,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class TypeConverterRegistry {
-    private static Map<String, TypeConverter> typeConverterMap = new HashMap<String, TypeConverter>();
+    private static final Map<String, TypeConverter> typeConverterMap = new HashMap<String, TypeConverter>();
 
     public static void register(TypeConverter typeConverter) {
         typeConverterMap.put(typeConverter.getTypeString(), typeConverter);

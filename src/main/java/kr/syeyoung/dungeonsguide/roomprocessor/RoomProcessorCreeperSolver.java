@@ -23,9 +23,9 @@ import java.util.Set;
 
 public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
-    private List<BlockPos[]> poses = new ArrayList<BlockPos[]>();
+    private final List<BlockPos[]> poses = new ArrayList<BlockPos[]>();
 
-    private boolean bugged = false;
+    private final boolean bugged = false;
 
     public RoomProcessorCreeperSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
@@ -129,11 +129,8 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         for (int i = 0; i < poses.size(); i++) {
             BlockPos[] poset = poses.get(i);
             Color color = colors[i % colors.length];
-            boolean oneIsConnected = false;
-            if (w.getChunkFromBlockCoords(poset[0]).getBlock(poset[0]) != Blocks.sea_lantern &&
-                w.getChunkFromBlockCoords(poset[1]).getBlock(poset[1]) != Blocks.sea_lantern) {
-                oneIsConnected = true;
-            }
+            boolean oneIsConnected = w.getChunkFromBlockCoords(poset[0]).getBlock(poset[0]) != Blocks.sea_lantern &&
+                    w.getChunkFromBlockCoords(poset[1]).getBlock(poset[1]) != Blocks.sea_lantern;
             RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
                     new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }

@@ -92,7 +92,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
         }
     }
 
-    private float[] hsv = new float[3];
+    private final float[] hsv = new float[3];
 
     public void update() {
         if (hsv[2] > 1) hsv[2] = 1;

@@ -74,7 +74,7 @@ public class DungeonRoom {
     }
 
     @Getter
-    private PathFinder pathFinder;
+    private final PathFinder pathFinder;
 
     public ScheduledFuture<List<BlockPos>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
         return asyncPathFinder.schedule(() -> {
@@ -93,16 +93,16 @@ public class DungeonRoom {
 
     private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(2);
     @Getter
-    private NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
+    private final NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
     @Getter
     private final Map<String, Object> roomContext = new HashMap<String, Object>();
 
     @AllArgsConstructor
     @Getter
-    public static enum RoomState {
+    public enum RoomState {
         DISCOVERED(0), COMPLETE_WITHOUT_SECRETS(0), FINISHED(0), FAILED(-14);
-        private int scoreModifier;
+        private final int scoreModifier;
     }
 
     private RoomProcessor roomProcessor;

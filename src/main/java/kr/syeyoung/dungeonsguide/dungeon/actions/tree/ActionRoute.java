@@ -13,16 +13,16 @@ import java.util.List;
 
 public class ActionRoute {
     @Getter
-    private String mechanic;
+    private final String mechanic;
     @Getter
-    private String state;
+    private final String state;
 
     @Getter
     private int current;
     @Getter
-    private List<Action> actions;
+    private final List<Action> actions;
 
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
     public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state) {
         this.mechanic = mechanic;
@@ -62,10 +62,12 @@ public class ActionRoute {
     }
     public void onRenderWorld(float partialTicks) {
         getCurrentAction().onRenderWorld(dungeonRoom, partialTicks);
-    };
+    }
+
     public void onRenderScreen(float partialTicks) {
         getCurrentAction().onRenderScreen(dungeonRoom, partialTicks);
-    };
+    }
+
     public void onTick() {
         Action current = getCurrentAction();
 

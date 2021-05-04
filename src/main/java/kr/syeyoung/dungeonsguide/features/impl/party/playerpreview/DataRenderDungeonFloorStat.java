@@ -11,8 +11,8 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class DataRenderDungeonFloorStat implements DataRenderer {
-    private DungeonType dungeonType;
-    private int floor;
+    private final DungeonType dungeonType;
+    private final int floor;
     public DataRenderDungeonFloorStat(DungeonType dungeonType, int floor) {
         this.dungeonType = dungeonType;
         this.floor = floor;

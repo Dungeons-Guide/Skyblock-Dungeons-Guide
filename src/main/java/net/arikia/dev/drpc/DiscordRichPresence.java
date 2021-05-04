@@ -81,7 +81,7 @@ public class DiscordRichPresence extends Structure {
 	 */
 	public static class Builder {
 
-		private DiscordRichPresence p;
+		private final DiscordRichPresence p;
 
 		/**
 		 * Initiates a new instance of the Presence builder.

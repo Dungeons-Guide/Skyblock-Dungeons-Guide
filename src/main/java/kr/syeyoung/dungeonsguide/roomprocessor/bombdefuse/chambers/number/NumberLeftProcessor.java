@@ -36,7 +36,10 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
 
 
     private int answer = -1, d1, d2, d3 ,d4;
-    private BlockPos d1p, d2p, d3p, d4p;
+    private final BlockPos d1p;
+    private final BlockPos d2p;
+    private final BlockPos d3p;
+    private final BlockPos d4p;
     @Override
     public void tick() {
         super.tick();

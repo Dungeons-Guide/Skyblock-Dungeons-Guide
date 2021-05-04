@@ -13,15 +13,15 @@ import net.minecraft.client.gui.Gui;
 import java.awt.*;
 
 public class MParameter extends MPanel {
-    private MLabel label;
-    private MLabel data;
+    private final MLabel label;
+    private final MLabel data;
 
     @Getter @Setter
     private Color hover = Color.gray;
 
     @Getter @Setter
     private Parameter parameter;
-    private DynamicEditor processorParameterEditPane;
+    private final DynamicEditor processorParameterEditPane;
 
     public MParameter(final Parameter parameter, DynamicEditor processorParameterEditPane) {
         this.processorParameterEditPane = processorParameterEditPane;

@@ -43,7 +43,7 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
     }
 
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
 
 
     @Override
@@ -53,9 +53,7 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "number", "unit"
-        });
+        return Arrays.asList("title", "separator", "number", "unit");
     }
 
     private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();

@@ -24,11 +24,12 @@ public class ValueEditOffsetPointSet extends MPanel implements ValueEdit<OffsetP
     // just create
     // add set
 
-    private MPanel scroll;
+    private final MPanel scroll;
     @Getter
-    private List<MPanel> MParameters = new ArrayList<MPanel>();
+    private final List<MPanel> MParameters = new ArrayList<MPanel>();
 
-    private MButton add, addSet;
+    private final MButton add;
+    private final MButton addSet;
 
     public void delete(OffsetPoint offsetPoint) {
         ((OffsetPointSet)parameter.getNewData()).getOffsetPointList().remove(offsetPoint);

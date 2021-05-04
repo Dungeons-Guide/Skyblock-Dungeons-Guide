@@ -21,12 +21,12 @@ public class ValueEditFairySoul extends MPanel implements ValueEdit<DungeonFairy
     // scroll pane
     // just create
     // add set
-    private DungeonFairySoul dungeonSecret;
+    private final DungeonFairySoul dungeonSecret;
 
-    private MLabel label;
-    private MValue<OffsetPoint> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite2;
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
 
     public ValueEditFairySoul(final Parameter parameter2) {
         this.parameter = parameter2;

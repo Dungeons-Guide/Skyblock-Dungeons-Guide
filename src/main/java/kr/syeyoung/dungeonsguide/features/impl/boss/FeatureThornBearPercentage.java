@@ -45,9 +45,7 @@ public class FeatureThornBearPercentage extends TextHUDFeature {
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "number", "unit"
-        });
+        return Arrays.asList("title", "separator", "number", "unit");
     }
 
     @Override

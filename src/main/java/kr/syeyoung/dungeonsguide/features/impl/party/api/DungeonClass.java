@@ -12,8 +12,8 @@ public enum DungeonClass {
     MAGE("mage", "Mage"), ARCHER("archer","Archer"), HEALER("healer", "Healer"), TANK("tank", "Tank"), BERSERK("berserk", "Berserk");
 
 
-    private String jsonName;
-    private String familarName;
+    private final String jsonName;
+    private final String familarName;
     private static final Map<String, DungeonClass> jsonNameToClazz = new HashMap<>();
     static {
         for (DungeonClass value : values()) {

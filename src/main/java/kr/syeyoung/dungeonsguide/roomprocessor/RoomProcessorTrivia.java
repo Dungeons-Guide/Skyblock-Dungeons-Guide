@@ -33,7 +33,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     }
 
 
-    private List<String> questionDialog = new ArrayList<String>();
+    private final List<String> questionDialog = new ArrayList<String>();
     private boolean questionDialogStart = false;
 
 //    private static final Map<String, String[]> answers = new HashMap<String,String[]>() {{

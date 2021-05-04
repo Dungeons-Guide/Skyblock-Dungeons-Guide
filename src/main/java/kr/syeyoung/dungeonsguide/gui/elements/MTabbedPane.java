@@ -16,8 +16,8 @@ import java.util.Map;
 
 public class MTabbedPane extends MPanel {
 
-    private Map<String, MPanel> tabs = new HashMap<String, MPanel>();
-    private Map<String, MTabButton> buttons = new HashMap<String, MTabButton>();
+    private final Map<String, MPanel> tabs = new HashMap<String, MPanel>();
+    private final Map<String, MTabButton> buttons = new HashMap<String, MTabButton>();
 
     @Getter
     @Setter

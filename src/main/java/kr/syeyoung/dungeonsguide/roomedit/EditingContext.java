@@ -35,10 +35,10 @@ public class EditingContext {
     }
 
     @Getter
-    private DungeonRoom room;
+    private final DungeonRoom room;
 
     @Getter
-    private Stack<GuiScreen> guiStack = new Stack<GuiScreen>();
+    private final Stack<GuiScreen> guiStack = new Stack<GuiScreen>();
 
     public boolean isEditingSecrets() {
         return guiDungeonRoomEdit.isEditingSelected();

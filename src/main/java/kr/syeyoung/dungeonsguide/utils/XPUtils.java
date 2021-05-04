@@ -14,9 +14,9 @@ public class XPUtils {
         private double nextLvXp;
     }
 
-    private static TreeMap<Double, Integer> catacombXp = new TreeMap<>();
-    private static TreeMap<Double, Integer> skillXp = new TreeMap<>();
-    private static TreeMap<Double, Integer> skillXp2 = new TreeMap<>();
+    private static final TreeMap<Double, Integer> catacombXp = new TreeMap<>();
+    private static final TreeMap<Double, Integer> skillXp = new TreeMap<>();
+    private static final TreeMap<Double, Integer> skillXp2 = new TreeMap<>();
     static {
         catacombXp.put(50.0, 1);
         catacombXp.put(125.0, 2);

@@ -74,7 +74,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (value instanceof DungeonSecret) ((DungeonSecret) value).tick(dungeonRoom);
         }
     }
-    private Set<String> visited = new HashSet<String>();
+    private final Set<String> visited = new HashSet<String>();
 
     public void searchForNextTarget() {
         if (getDungeonRoom().getCurrentState() == DungeonRoom.RoomState.FINISHED) {
@@ -136,7 +136,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void drawWorld(float partialTicks) {
         if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
-                if (value.getValue() == null) continue;;
+                if (value.getValue() == null) continue;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);
             }
         }
@@ -276,7 +276,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         secret.setSecretPoint(new OffsetPoint(dungeonRoom,
                                 DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
                         ));
-                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
+                        ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                                 secret);
                         return;
                     }
@@ -287,7 +287,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     secret.setSecretPoint(new OffsetPoint(dungeonRoom,
                             DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
                     ));
-                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+UUID.randomUUID().toString(),
+                    ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                             secret);
                 }
             }

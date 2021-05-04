@@ -58,7 +58,7 @@ public class DungeonSecret implements DungeonMechanic {
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return;
                 }
-                dungeonRoom.getRoomContext().put("i-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("i-" + pos, true);
             }
         }
     }
@@ -104,7 +104,7 @@ public class DungeonSecret implements DungeonMechanic {
             return SecretStatus.NOT_SURE;
         } else {
             Vec3 pos = new Vec3(secretPoint.getBlockPos(dungeonRoom));
-            if (dungeonRoom.getRoomContext().containsKey("i-"+pos.toString()))
+            if (dungeonRoom.getRoomContext().containsKey("i-"+ pos))
                 return SecretStatus.FOUND;
             Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
             if (player.squareDistanceTo(pos) < 16) {
@@ -116,7 +116,7 @@ public class DungeonSecret implements DungeonMechanic {
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return SecretStatus.NOT_SURE;
                 }
-                dungeonRoom.getRoomContext().put("i-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("i-" + pos, true);
             }
             return SecretStatus.NOT_SURE;
         }
@@ -175,16 +175,16 @@ public class DungeonSecret implements DungeonMechanic {
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
-    public static enum SecretType {
+    public enum SecretType {
         BAT, CHEST, ITEM_DROP, ESSENCE
     }
 
     @AllArgsConstructor
     @Getter
-    public static enum SecretStatus {
+    public enum SecretStatus {
         DEFINITELY_NOT("definitely_not"), NOT_SURE("not_sure"), CREATED("created"), FOUND("found"), ERROR("error");
 
-        private String stateName;
+        private final String stateName;
     }
 
     public DungeonSecret clone() throws CloneNotSupportedException {

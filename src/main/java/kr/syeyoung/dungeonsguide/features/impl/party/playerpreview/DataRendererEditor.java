@@ -14,8 +14,8 @@ import java.util.List;
 import java.util.Set;
 
 public class DataRendererEditor extends MPanel {
-    private FeatureViewPlayerOnJoin feature;
-    private GuiConfig config;
+    private final FeatureViewPlayerOnJoin feature;
+    private final GuiConfig config;
 
     public DataRendererEditor(GuiConfig config, FeatureViewPlayerOnJoin featureViewPlayerOnJoin) {
         this.config = config;

@@ -9,12 +9,12 @@ import java.awt.*;
 import java.util.UUID;
 
 public class RoommatchingPane extends MPanel {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
     private RoomMatchDisplayPane displayPane;
 
-    private MTextField textField;
-    private MButton calculate;
+    private final MTextField textField;
+    private final MButton calculate;
     public RoommatchingPane(final DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
 

@@ -37,9 +37,7 @@ public class FeatureCurrentPhase extends TextHUDFeature {
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "phase"
-        });
+        return Arrays.asList("title", "separator", "phase");
     }
 
     @Override

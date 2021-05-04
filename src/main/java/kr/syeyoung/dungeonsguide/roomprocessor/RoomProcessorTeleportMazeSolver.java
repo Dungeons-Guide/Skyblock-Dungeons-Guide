@@ -26,7 +26,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         yLevel = dungeonRoom.getMin().getY() - 1;
     }
 
-    private List<BlockPos> visitedPortals = new ArrayList<BlockPos>();
+    private final List<BlockPos> visitedPortals = new ArrayList<BlockPos>();
 
     private int yLevel = 0;
     private double slope1, slope2;

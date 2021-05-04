@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class DataRendererSkillLv implements DataRenderer {
-    private Skill skill;
+    private final Skill skill;
     public DataRendererSkillLv(Skill skill) {
         this.skill = skill;
     }

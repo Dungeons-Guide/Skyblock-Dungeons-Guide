@@ -15,7 +15,7 @@ import net.minecraftforge.fml.common.gameevent.InputEvent;
 import java.util.*;
 
 public abstract class GeneralBossfightProcessor implements BossfightProcessor {
-    private Map<String, PhaseData> phases = new HashMap<String, PhaseData>();
+    private final Map<String, PhaseData> phases = new HashMap<String, PhaseData>();
     private PhaseData currentPhase = null;
 
     @Getter

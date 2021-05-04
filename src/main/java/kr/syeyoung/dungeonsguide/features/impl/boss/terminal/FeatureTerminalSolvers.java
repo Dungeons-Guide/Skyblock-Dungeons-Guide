@@ -35,7 +35,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
 
     private TerminalSolutionProvider solutionProvider;
     private TerminalSolution solution;
-    private List<Slot> clicked = new ArrayList<Slot>();
+    private final List<Slot> clicked = new ArrayList<Slot>();
 
     @Override
     public void onGuiOpen(GuiOpenEvent event) {

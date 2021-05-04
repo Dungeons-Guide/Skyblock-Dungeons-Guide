@@ -24,9 +24,9 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         super("Bossfight","Simon Says Solver","Solver for Simon says puzzle", "bossfight.simonsays2");
     }
 
-    private SkyblockStatus ss = e.getDungeonsGuide().getSkyblockStatus();
-    private List<BlockPos> orderbuild = new ArrayList<BlockPos>();
-    private LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
+    private final SkyblockStatus ss = e.getDungeonsGuide().getSkyblockStatus();
+    private final List<BlockPos> orderbuild = new ArrayList<BlockPos>();
+    private final LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
 
     @Override
     public void drawWorld(float partialTicks) {

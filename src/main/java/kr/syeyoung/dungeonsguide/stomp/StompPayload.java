@@ -35,7 +35,7 @@ public class StompPayload {
         if (payload != null)
             sb.append(payload);
         sb.append((char) 0);
-        System.out.println("Probably sending "+sb.toString());
+        System.out.println("Probably sending "+ sb);
         return sb.toString();
     }
 

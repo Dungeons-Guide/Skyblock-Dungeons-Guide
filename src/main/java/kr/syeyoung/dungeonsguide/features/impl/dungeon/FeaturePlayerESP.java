@@ -37,7 +37,7 @@ public class FeaturePlayerESP extends SimpleFeature implements PlayerRenderListe
     }
 
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
 
     private boolean preCalled = false;
     @Override

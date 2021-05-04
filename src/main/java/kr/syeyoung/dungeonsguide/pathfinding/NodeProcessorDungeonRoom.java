@@ -16,8 +16,8 @@ import net.minecraft.world.pathfinder.NodeProcessor;
 import java.util.Set;
 
 public class NodeProcessorDungeonRoom extends NodeProcessor {
-    private DungeonRoom dungeonRoom;
-    private BlockPos sub;
+    private final DungeonRoom dungeonRoom;
+    private final BlockPos sub;
     public NodeProcessorDungeonRoom(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
         sub = dungeonRoom.getMax().subtract(dungeonRoom.getMin());

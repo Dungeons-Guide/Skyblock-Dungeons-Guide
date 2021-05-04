@@ -110,7 +110,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         }
     }
 
-    private float[] hsv = new float[3];
+    private final float[] hsv = new float[3];
     private float alpha = 0;
 
     public void update() {
@@ -139,7 +139,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
         GlStateManager.disableTexture2D();
-        GlStateManager.disableCull();;
+        GlStateManager.disableCull();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 //        worldrenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);

@@ -38,7 +38,7 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
     private long clicked;
     private int clickedButton = -1;
 
-    private int[] result = new int[12];
+    private final int[] result = new int[12];
 
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {

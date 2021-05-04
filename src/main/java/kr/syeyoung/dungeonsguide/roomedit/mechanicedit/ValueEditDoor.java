@@ -24,15 +24,15 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
     // scroll pane
     // just create
     // add set
-    private DungeonDoor dungeonDoor;
+    private final DungeonDoor dungeonDoor;
 
-    private MLabel label;
-    private MValue<OffsetPointSet> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite_par;
-    private MTextField preRequisite2;
-    private MLabelAndElement preRequisite2_par;
-    private MButton updateOnlyAir;
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite_par;
+    private final MTextField preRequisite2;
+    private final MLabelAndElement preRequisite2_par;
+    private final MButton updateOnlyAir;
 
     public ValueEditDoor(final Parameter parameter2) {
         this.parameter = parameter2;

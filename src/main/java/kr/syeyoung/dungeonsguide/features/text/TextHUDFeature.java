@@ -63,7 +63,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         }
         String things2 = things.toString().trim();
         int lines = 1;
-        for (char c : things2.toString().toCharArray()) {
+        for (char c : things2.toCharArray()) {
             if (c == '\n') lines++;
         }
         return  lines;

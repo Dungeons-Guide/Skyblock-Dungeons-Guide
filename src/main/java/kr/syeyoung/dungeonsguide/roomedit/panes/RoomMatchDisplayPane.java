@@ -23,9 +23,10 @@ public class RoomMatchDisplayPane extends MPanel {
     private int offsetX = 0;
     private int offsetY = 0;
 
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
-    private int[][] currentBlocks, targetBlocks;
+    private final int[][] currentBlocks;
+    private int[][] targetBlocks;
     public RoomMatchDisplayPane(DungeonRoom dungeonRoom, UUID uid, int rotation) {
         this.dungeonRoom = dungeonRoom;
 
@@ -84,7 +85,7 @@ public class RoomMatchDisplayPane extends MPanel {
                     fr.drawString("N", x *16 +10 + offsetX, z *16 +10 + offsetY,0xFFFF0000);
                 }
                 if (z == hoverY && x == hoverX) {
-                    RenderUtils.drawHoveringText(Arrays.asList(new String[] {"Expected "+data2 +" But found "+data1}), relMousex0, relMousey0, fr);
+                    RenderUtils.drawHoveringText(Arrays.asList("Expected "+data2 +" But found "+data1), relMousex0, relMousey0, fr);
                 }
             }
         }

@@ -71,7 +71,7 @@ public abstract class AbstractFeature {
         ConfigPanelCreator.map.put("base." + key , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelDefaultParameterConfig(config, AbstractFeature.this, Collections.<MPanel>emptyList(), Collections.<String>emptySet());
+                return new PanelDefaultParameterConfig(config, AbstractFeature.this, Collections.emptyList(), Collections.emptySet());
             }
         });
         return "base." + key ;

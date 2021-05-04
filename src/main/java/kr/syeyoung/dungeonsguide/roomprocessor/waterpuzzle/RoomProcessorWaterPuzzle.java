@@ -17,11 +17,11 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private boolean argumentsFulfilled = false;
 
     private WaterBoard waterBoard;
-    private OffsetPointSet doorsClosed;
-    private OffsetPointSet levers;
-    private OffsetPointSet frontBoard;
-    private OffsetPointSet backBoard;
-    private OffsetPoint water_lever;
+    private final OffsetPointSet doorsClosed;
+    private final OffsetPointSet levers;
+    private final OffsetPointSet frontBoard;
+    private final OffsetPointSet backBoard;
+    private final OffsetPoint water_lever;
 
     public RoomProcessorWaterPuzzle(DungeonRoom dungeonRoom) {
         super(dungeonRoom);

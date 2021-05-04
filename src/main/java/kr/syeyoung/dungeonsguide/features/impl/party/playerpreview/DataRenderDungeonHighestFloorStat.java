@@ -11,7 +11,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class DataRenderDungeonHighestFloorStat implements DataRenderer {
-    private DungeonType dungeonType;
+    private final DungeonType dungeonType;
     public DataRenderDungeonHighestFloorStat(DungeonType dungeonType) {
         this.dungeonType = dungeonType;
     }

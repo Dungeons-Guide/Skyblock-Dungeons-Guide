@@ -12,7 +12,7 @@ import net.minecraft.world.World;
 import java.util.List;
 
 public class RoomMatcher {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
     @Getter
     private DungeonRoomInfo match;
@@ -20,7 +20,7 @@ public class RoomMatcher {
     private int rotation; // how much the "found room" has to rotate clockwise to match the given dungeon room info. !
     private boolean triedMatch = false;
 
-    private World w;
+    private final World w;
 
     public RoomMatcher(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;

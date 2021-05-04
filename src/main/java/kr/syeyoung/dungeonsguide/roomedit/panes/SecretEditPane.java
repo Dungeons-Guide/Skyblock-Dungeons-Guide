@@ -17,13 +17,13 @@ import java.util.Map;
 import java.util.UUID;
 
 public class SecretEditPane extends MPanel implements DynamicEditor {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
     private MButton save;
     private MButton create;
-    private List<MParameter> parameters = new ArrayList<MParameter>();
+    private final List<MParameter> parameters = new ArrayList<MParameter>();
 
-    private List<String> allowedClasses = new ArrayList<String>();
+    private final List<String> allowedClasses = new ArrayList<String>();
 
     public SecretEditPane(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;

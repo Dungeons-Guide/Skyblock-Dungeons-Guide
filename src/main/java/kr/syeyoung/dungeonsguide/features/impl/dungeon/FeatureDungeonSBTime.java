@@ -29,7 +29,7 @@ import java.util.List;
 
 public class FeatureDungeonSBTime extends TextHUDFeature {
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureDungeonSBTime() {
         super("Dungeon", "Display Ingame Dungeon Time", "Display how much time skyblock thinks has passed since dungeon run started", "dungeon.stats.igtime", true, getFontRenderer().getStringWidth("Time(IG): 1h 59m 59s"), getFontRenderer().FONT_HEIGHT);
@@ -78,9 +78,7 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "discriminator", "separator", "number"
-        });
+        return Arrays.asList("title", "discriminator", "separator", "number");
     }
 
     @Override

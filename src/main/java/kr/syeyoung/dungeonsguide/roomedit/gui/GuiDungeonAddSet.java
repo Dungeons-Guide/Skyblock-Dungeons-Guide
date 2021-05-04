@@ -22,18 +22,18 @@ import java.util.List;
 
 public class GuiDungeonAddSet extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
+    private final MPanel mainPanel = new MPanel();
 
-    private ValueEditOffsetPointSet valueEditOffsetPointSet;
+    private final ValueEditOffsetPointSet valueEditOffsetPointSet;
 
-    private MButton add;
-    private MButton back;
+    private final MButton add;
+    private final MButton back;
 
 
     @Getter
-    private OffsetPoint start;
+    private final OffsetPoint start;
     @Getter
-    private OffsetPoint end;
+    private final OffsetPoint end;
 
     public void onWorldRender(float partialTicks) {
         for (OffsetPoint pos:getBlockPoses()) {

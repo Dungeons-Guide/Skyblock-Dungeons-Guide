@@ -33,11 +33,11 @@ import java.util.List;
 
 public class PanelTextParameterConfig extends MPanel {
 
-    private StyledTextProvider feature;
+    private final StyledTextProvider feature;
 
-    private MEditableAColor currentColor;
-    private MEditableAColor backgroundColor;
-    private MToggleButton shadow;
+    private final MEditableAColor currentColor;
+    private final MEditableAColor backgroundColor;
+    private final MToggleButton shadow;
 
     @Override
     public void onBoundsUpdate() {
@@ -48,7 +48,7 @@ public class PanelTextParameterConfig extends MPanel {
         this.setBounds(new Rectangle(5,5,parentWidth-10, 120));
     }
 
-    private GuiConfig config;
+    private final GuiConfig config;
     public PanelTextParameterConfig(final GuiConfig config, final StyledTextProvider feature) {
         this.config = config;
         this.feature = feature;
@@ -95,7 +95,7 @@ public class PanelTextParameterConfig extends MPanel {
 
     }
 
-    private Set<String> selected = new HashSet<String>();
+    private final Set<String> selected = new HashSet<String>();
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {

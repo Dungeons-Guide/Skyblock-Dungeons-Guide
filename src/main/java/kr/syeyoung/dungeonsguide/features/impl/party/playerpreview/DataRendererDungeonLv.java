@@ -15,7 +15,7 @@ import java.awt.*;
 import java.util.Arrays;
 
 public class DataRendererDungeonLv implements DataRenderer {
-    private DungeonType dungeonType;
+    private final DungeonType dungeonType;
     public DataRendererDungeonLv(DungeonType dungeonType) {
         this.dungeonType = dungeonType;
     }

@@ -25,21 +25,21 @@ import java.util.UUID;
 import java.util.zip.GZIPOutputStream;
 
 public class GeneralEditPane extends MPanel {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
-    private MLabelAndElement uuid;
-    private MLabelAndElement name;
-    private MLabelAndElement secrets;
+    private final MLabelAndElement uuid;
+    private final MLabelAndElement name;
+    private final MLabelAndElement secrets;
 
-    private MLabelAndElement shape;
-    private MLabelAndElement rotation;
-    private MLabelAndElement shape2;
+    private final MLabelAndElement shape;
+    private final MLabelAndElement rotation;
+    private final MLabelAndElement shape2;
 
     private MButton save;
-    private MButton end;
-    private MButton schematic;
+    private final MButton end;
+    private final MButton schematic;
 
-    private MLabelAndElement roomProcessor;
+    private final MLabelAndElement roomProcessor;
 
     public GeneralEditPane(final DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;

@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.Map;
 
 public class ValueEditRegistry {
-    private static Map<String, ValueEditCreator> valueEditMap = new HashMap<String, ValueEditCreator>();
+    private static final Map<String, ValueEditCreator> valueEditMap = new HashMap<String, ValueEditCreator>();
 
     public static ValueEditCreator getValueEditMap(String className) {
         return valueEditMap.get(className);

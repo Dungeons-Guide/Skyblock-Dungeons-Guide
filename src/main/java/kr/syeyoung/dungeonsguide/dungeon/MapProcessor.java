@@ -42,7 +42,7 @@ public class MapProcessor {
     private MapData lastMapData2;
 
     @Getter
-    private BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
+    private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
 
     @Getter
     private Dimension unitRoomDimension;
@@ -54,7 +54,7 @@ public class MapProcessor {
     @Setter
     private boolean bugged = false;
 
-    private List<Point> roomsFound = new ArrayList<Point>();
+    private final List<Point> roomsFound = new ArrayList<Point>();
 
     private boolean axisMatch = false;
 
@@ -127,7 +127,7 @@ public class MapProcessor {
         }
         // determine door location based on npc, and determine map min from there
         {
-            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(((SkyblockStatus) e.getDungeonsGuide().getSkyblockStatus()).getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(e.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             if (doorFinder == null) {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find door processor for "+e.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
                 bugged = true;
@@ -245,7 +245,7 @@ public class MapProcessor {
                             builder.append(isSet ? "O" : "X");
                         }
                     }
-                    e.sendDebugChat(new ChatComponentText("Shape visual: "+builder.toString()));
+                    e.sendDebugChat(new ChatComponentText("Shape visual: "+ builder));
 
                     context.getDungeonRoomList().add(rooms);
                     for (Point p:rooms.getUnitPoints()) {

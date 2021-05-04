@@ -21,7 +21,7 @@ import java.io.IOException;
 
 public class GuiParameterValueEdit extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel() {
+    private final MPanel mainPanel = new MPanel() {
         @Override
         public void onBoundsUpdate() {
             save.setBounds(new Rectangle(0 ,getBounds().height - 20, getBounds().width, 20));

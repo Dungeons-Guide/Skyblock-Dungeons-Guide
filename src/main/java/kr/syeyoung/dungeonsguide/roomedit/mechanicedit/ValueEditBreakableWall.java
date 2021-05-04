@@ -24,13 +24,13 @@ public class ValueEditBreakableWall extends MPanel implements ValueEdit<DungeonB
     // scroll pane
     // just create
     // add set
-    private DungeonBreakableWall dungeonBreakableWall;
+    private final DungeonBreakableWall dungeonBreakableWall;
 
-    private MLabel label;
-    private MValue<OffsetPointSet> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite2;
-    private MButton updateOnlyAir;
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
+    private final MButton updateOnlyAir;
 
     public ValueEditBreakableWall(final Parameter parameter2) {
         this.parameter = parameter2;

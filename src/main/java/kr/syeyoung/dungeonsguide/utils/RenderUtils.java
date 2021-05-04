@@ -105,7 +105,7 @@ public class RenderUtils {
 
             for (int k1 = 0; k1 < textLines.size(); ++k1)
             {
-                String s1 = (String)textLines.get(k1);
+                String s1 = textLines.get(k1);
                 font.drawStringWithShadow(s1, (float)l1, (float)i2, -1);
 
                 if (k1 == 0)
@@ -142,10 +142,10 @@ public class RenderUtils {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos((double)right, (double)top, (double)zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)top, (double)zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos((double)left, (double)bottom, (double)zLevel).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos((double)right, (double)bottom, (double)zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex();
+        worldrenderer.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
+        worldrenderer.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
         GlStateManager.disableBlend();
@@ -161,10 +161,10 @@ public class RenderUtils {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos((double)x, (double)(y + height), 0.0D).tex((double)uMin, (double)vMax).endVertex();
-        worldrenderer.pos((double)(x + width), (double)(y + height), 0.0D).tex((double)uMax, (double)vMax).endVertex();
-        worldrenderer.pos((double)(x + width), (double)y, 0.0D).tex((double)uMax, (double)vMin).endVertex();
-        worldrenderer.pos((double)x, (double)y, 0.0D).tex((double)uMin, (double)vMin).endVertex();
+        worldrenderer.pos(x, y + height, 0.0D).tex(uMin, vMax).endVertex();
+        worldrenderer.pos(x + width, y + height, 0.0D).tex(uMax, vMax).endVertex();
+        worldrenderer.pos(x + width, y, 0.0D).tex(uMax, vMin).endVertex();
+        worldrenderer.pos(x, y, 0.0D).tex(uMin, vMin).endVertex();
         tessellator.draw();
         GL11.glTexParameteri(3553, 10241, 9728);
         GL11.glTexParameteri(3553, 10240, 9728);
@@ -228,19 +228,18 @@ public class RenderUtils {
         if (!chroma) {
             GlStateManager.color(f, f1, f2, f3);
             worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
-            worldrenderer.pos((double) left, (double) bottom, 0.0D).endVertex();
-            worldrenderer.pos((double) right, (double) bottom, 0.0D).endVertex();
-            worldrenderer.pos((double) right, (double) top, 0.0D).endVertex();
-            worldrenderer.pos((double) left, (double) top, 0.0D).endVertex();
+            worldrenderer.pos(left, bottom, 0.0D).endVertex();
+            worldrenderer.pos(right, bottom, 0.0D).endVertex();
+            worldrenderer.pos(right, top, 0.0D).endVertex();
+            worldrenderer.pos(left, top, 0.0D).endVertex();
         } else {
             worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
             float blah = (System.currentTimeMillis()  / 10) % 360;
-            ;
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            color(worldrenderer.pos((double) left, (double) bottom, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
-            color(worldrenderer.pos((double) right, (double) bottom, 0.0D), Color.HSBtoRGB((((blah + 40) % 360)  / 360.0f), 1, 1)).endVertex();
-            color(worldrenderer.pos((double) right, (double) top, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
-            color(worldrenderer.pos((double) left, (double) top, 0.0D), Color.HSBtoRGB(blah / 360.0f, 1, 1)).endVertex();
+            color(worldrenderer.pos(left, bottom, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
+            color(worldrenderer.pos(right, bottom, 0.0D), Color.HSBtoRGB((((blah + 40) % 360)  / 360.0f), 1, 1)).endVertex();
+            color(worldrenderer.pos(right, top, 0.0D), Color.HSBtoRGB((((blah + 20) % 360) / 360.0f), 1, 1)).endVertex();
+            color(worldrenderer.pos(left, top, 0.0D), Color.HSBtoRGB(blah / 360.0f, 1, 1)).endVertex();
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
@@ -277,18 +276,17 @@ public class RenderUtils {
         if (!color.isChroma()) {
             GlStateManager.color(f, f1, f2, f3);
             worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
-            worldrenderer.pos((double) left, (double) bottom, 0.0D).endVertex();
-            worldrenderer.pos((double) right, (double) bottom, 0.0D).endVertex();
-            worldrenderer.pos((double) right, (double) top, 0.0D).endVertex();
-            worldrenderer.pos((double) left, (double) top, 0.0D).endVertex();
+            worldrenderer.pos(left, bottom, 0.0D).endVertex();
+            worldrenderer.pos(right, bottom, 0.0D).endVertex();
+            worldrenderer.pos(right, top, 0.0D).endVertex();
+            worldrenderer.pos(left, top, 0.0D).endVertex();
         } else {
             worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION_COLOR);
-            ;
             GlStateManager.shadeModel(GL11.GL_SMOOTH);
-            color(worldrenderer.pos((double) left, (double) bottom, 0.0D), getColorAt(left, bottom, color)).endVertex();
-            color(worldrenderer.pos((double) right, (double) bottom, 0.0D), getColorAt(right, bottom, color)).endVertex();
-            color(worldrenderer.pos((double) right, (double) top, 0.0D), getColorAt(right, top, color)).endVertex();
-            color(worldrenderer.pos((double) left, (double) top, 0.0D), getColorAt(left, top, color)).endVertex();
+            color(worldrenderer.pos(left, bottom, 0.0D), getColorAt(left, bottom, color)).endVertex();
+            color(worldrenderer.pos(right, bottom, 0.0D), getColorAt(right, bottom, color)).endVertex();
+            color(worldrenderer.pos(right, top, 0.0D), getColorAt(right, top, color)).endVertex();
+            color(worldrenderer.pos(left, top, 0.0D), getColorAt(left, top, color)).endVertex();
         }
         tessellator.draw();
         GlStateManager.enableTexture2D();
@@ -980,10 +978,10 @@ public class RenderUtils {
             double j = textWidth / 2;
             GlStateManager.disableTexture2D();
             worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-            worldRenderer.pos((double)(-j - 1), (double)(-1), 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-            worldRenderer.pos((double)(-j - 1), (double)8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-            worldRenderer.pos((double)(j + 1), (double)8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
-            worldRenderer.pos((double)(j + 1), (double)(-1), 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(-j - 1, -1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(-j - 1, 8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(j + 1, 8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(j + 1, -1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
             tessellator.draw();
             GlStateManager.enableTexture2D();
         }

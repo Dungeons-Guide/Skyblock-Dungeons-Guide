@@ -18,9 +18,9 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class DungeonRoomInfoRegistry {
-    private static List<DungeonRoomInfo> registered = new ArrayList<DungeonRoomInfo>();
-    private static Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
-    private static Map<UUID, DungeonRoomInfo> uuidMap = new HashMap<UUID, DungeonRoomInfo>();
+    private static final List<DungeonRoomInfo> registered = new ArrayList<DungeonRoomInfo>();
+    private static final Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
+    private static final Map<UUID, DungeonRoomInfo> uuidMap = new HashMap<UUID, DungeonRoomInfo>();
 
     public static void register(DungeonRoomInfo dungeonRoomInfo) {
         if (dungeonRoomInfo == null) throw new NullPointerException("what the fak parameter is noll?");
@@ -42,7 +42,7 @@ public class DungeonRoomInfoRegistry {
 
     public static List<DungeonRoomInfo> getByShape(Short shape) {
         List<DungeonRoomInfo> dungeonRoomInfos = shapeMap.get(shape);
-        return dungeonRoomInfos == null ? Collections.<DungeonRoomInfo>emptyList() : dungeonRoomInfos;
+        return dungeonRoomInfos == null ? Collections.emptyList() : dungeonRoomInfos;
     }
 
     public static DungeonRoomInfo getByUUID(UUID uid) {

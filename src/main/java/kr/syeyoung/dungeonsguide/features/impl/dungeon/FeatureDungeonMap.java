@@ -105,7 +105,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
     public void drawHUD(float partialTicks) {
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
-        if (!on) return;;
+        if (!on) return;
 
         DungeonContext context = skyblockStatus.getContext();
         MapProcessor mapProcessor = context.getMapProcessor();
@@ -113,7 +113,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         Rectangle featureRect =getFeatureRect().getRectangle();
         Gui.drawRect(0,0,featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, this.<AColor>getParameter("background_color").getValue()));
         GlStateManager.color(1,1,1,1);
-        GlStateManager.pushMatrix();;
+        GlStateManager.pushMatrix();
         if (mapData == null) {
             Gui.drawRect(0,0,featureRect.width, featureRect.height, 0xFFFF0000);
         } else {
@@ -209,9 +209,9 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
 
 
-    private DynamicTexture mapTexture = new DynamicTexture(128, 128);
-    private ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("dungeonmap/map", mapTexture);
-    private int[] mapTextureData = mapTexture.getTextureData();
+    private final DynamicTexture mapTexture = new DynamicTexture(128, 128);
+    private final ResourceLocation location = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("dungeonmap/map", mapTexture);
+    private final int[] mapTextureData = mapTexture.getTextureData();
 
     private void updateMapTexture(byte[] colors, MapProcessor mapProcessor, List<DungeonRoom> dungeonRooms) {
         for (int i = 0; i < 16384; ++i) {
@@ -327,10 +327,10 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                     float f4 = (float)(b0 / 4 + 1) / 4.0F;
                     worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
                     float f5 = -0.001F;
-                    worldrenderer.pos(-1.0D, 1.0D, (double)((float)k * -0.001F)).tex((double)f1, (double)f2).endVertex();
-                    worldrenderer.pos(1.0D, 1.0D, (double)((float)k * -0.001F)).tex((double)f3, (double)f2).endVertex();
-                    worldrenderer.pos(1.0D, -1.0D, (double)((float)k * -0.001F)).tex((double)f3, (double)f4).endVertex();
-                    worldrenderer.pos(-1.0D, -1.0D, (double)((float)k * -0.001F)).tex((double)f1, (double)f4).endVertex();
+                    worldrenderer.pos(-1.0D, 1.0D, (float)k * -0.001F).tex(f1, f2).endVertex();
+                    worldrenderer.pos(1.0D, 1.0D, (float)k * -0.001F).tex(f3, f2).endVertex();
+                    worldrenderer.pos(1.0D, -1.0D, (float)k * -0.001F).tex(f3, f4).endVertex();
+                    worldrenderer.pos(-1.0D, -1.0D, (float)k * -0.001F).tex(f1, f4).endVertex();
                     tessellator.draw();
                     GlStateManager.popMatrix();
                     ++k;
@@ -349,10 +349,10 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         GlStateManager.tryBlendFuncSeparate(1, 771, 0, 1);
         GlStateManager.disableAlpha();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos((float)(i) + f, (double)((float)(j + 128) - f), -0.009999999776482582D).tex(0.0D, 1.0D).endVertex();
-        worldrenderer.pos((float)(i + 128) - f, (double)((float)(j + 128) - f), -0.009999999776482582D).tex(1.0D, 1.0D).endVertex();
-        worldrenderer.pos((float)(i + 128) - f, (double)((float)(j) + f), -0.009999999776482582D).tex(1.0D, 0.0D).endVertex();
-        worldrenderer.pos((float)(i) + f, (double)((float)(j) + f), -0.009999999776482582D).tex(0.0D, 0.0D).endVertex();
+        worldrenderer.pos((float)(i) + f, (float)(j + 128) - f, -0.009999999776482582D).tex(0.0D, 1.0D).endVertex();
+        worldrenderer.pos((float)(i + 128) - f, (float)(j + 128) - f, -0.009999999776482582D).tex(1.0D, 1.0D).endVertex();
+        worldrenderer.pos((float)(i + 128) - f, (float)(j) + f, -0.009999999776482582D).tex(1.0D, 0.0D).endVertex();
+        worldrenderer.pos((float)(i) + f, (float)(j) + f, -0.009999999776482582D).tex(0.0D, 0.0D).endVertex();
         tessellator.draw();
         GlStateManager.enableAlpha();
         GlStateManager.disableBlend();

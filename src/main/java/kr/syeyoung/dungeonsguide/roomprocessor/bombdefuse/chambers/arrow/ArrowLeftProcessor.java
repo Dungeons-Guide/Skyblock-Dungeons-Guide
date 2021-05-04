@@ -31,8 +31,8 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
 
 
     private int answer = -1;
-    private int[] answers = new int[9];
-    private BlockPos[] grid = new BlockPos[9];
+    private final int[] answers = new int[9];
+    private final BlockPos[] grid = new BlockPos[9];
     @Override
     public void tick() {
         super.tick();

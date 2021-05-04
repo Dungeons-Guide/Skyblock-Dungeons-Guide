@@ -21,9 +21,9 @@ import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
-    private List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
+    private final List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
 
-    private Queue<String> messageQueue = new ConcurrentLinkedQueue<String>();
+    private final Queue<String> messageQueue = new ConcurrentLinkedQueue<String>();
 
     public RoomProcessorIcePath2(DungeonRoom dungeonRoom) {
 

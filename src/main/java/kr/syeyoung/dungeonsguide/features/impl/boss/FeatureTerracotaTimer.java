@@ -40,9 +40,7 @@ public class FeatureTerracotaTimer extends TextHUDFeature {
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "number", "unit"
-        });
+        return Arrays.asList("title", "separator", "number", "unit");
     }
 
     @Override

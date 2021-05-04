@@ -34,7 +34,7 @@ public class CreeperLeftProcessor extends GeneralDefuseChamberProcessor {
 
 
     private int answer = -1;
-    private BlockPos[] poses;
+    private final BlockPos[] poses;
     @Override
     public void tick() {
         super.tick();

@@ -23,7 +23,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
     private int[][] map;
     private OffsetPoint[][] map2;
-    private Set<OffsetPoint> endNode = new HashSet<OffsetPoint>();
+    private final Set<OffsetPoint> endNode = new HashSet<OffsetPoint>();
 
     private final List<BlockPos> solution = new ArrayList<BlockPos>();
 
@@ -61,7 +61,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
             buildMap();
             err = false;
         } catch (Exception e) {
-            e.printStackTrace();;
+            e.printStackTrace();
             err = true;
             return;
         }

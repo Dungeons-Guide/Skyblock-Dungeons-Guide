@@ -20,21 +20,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class MParameter extends MPanel {
-    private MLabel label;
+    private final MLabel label;
 
     @Getter
-    private AbstractFeature feature;
+    private final AbstractFeature feature;
     @Getter
-    private FeatureParameter parameter;
+    private final FeatureParameter parameter;
 
-    private List<MPanel> addons =  new ArrayList<MPanel>();
+    private final List<MPanel> addons =  new ArrayList<MPanel>();
 
     @Getter @Setter
     private Color hover;
 
     private PanelDefaultParameterConfig config;
 
-    private MLabel label2;
+    private final MLabel label2;
     public MParameter(AbstractFeature abstractFeature, final FeatureParameter parameter, final GuiConfig config2) {
         this.config = config;
         this.parameter = parameter;

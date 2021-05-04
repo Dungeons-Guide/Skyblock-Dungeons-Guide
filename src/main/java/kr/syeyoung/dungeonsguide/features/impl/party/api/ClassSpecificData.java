@@ -6,6 +6,6 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public class ClassSpecificData<T> {
-    private DungeonClass dungeonClass;
-    private T data;
+    private final DungeonClass dungeonClass;
+    private final T data;
 }

@@ -20,12 +20,12 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTomb> {
     // scroll pane
     // just create
     // add set
-    private DungeonTomb dungeonTomb;
+    private final DungeonTomb dungeonTomb;
 
-    private MLabel label;
-    private MValue<OffsetPointSet> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite2;
+    private final MLabel label;
+    private final MValue<OffsetPointSet> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
 
     public ValueEditTomb(final Parameter parameter2) {
         this.parameter = parameter2;

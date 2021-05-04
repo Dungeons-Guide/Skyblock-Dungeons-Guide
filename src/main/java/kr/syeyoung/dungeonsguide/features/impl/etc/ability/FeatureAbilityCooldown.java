@@ -226,7 +226,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         }
     }
 
-    private TreeSet<UsedAbility> usedAbilities = new TreeSet<UsedAbility>((c1,c2) -> {
+    private final TreeSet<UsedAbility> usedAbilities = new TreeSet<UsedAbility>((c1, c2) -> {
         int a = Comparator.comparingLong(UsedAbility::getCooldownEnd).compare(c1,c2);
         return c1.getAbility().getName().equals(c2.getAbility().getName()) ? 0 : a;
     });

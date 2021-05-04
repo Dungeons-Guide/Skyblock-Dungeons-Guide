@@ -21,7 +21,7 @@ public class RoomDataDisplayPane extends MPanel {
     private int selectedX = -1;
     private int selectedY = -1;
 
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
     public RoomDataDisplayPane(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
     }

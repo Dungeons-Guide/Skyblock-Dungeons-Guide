@@ -53,7 +53,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
-        healths.add(new HealthData("Thorn", (int) Math.round(BossStatus.healthScale * 4),4, true));
+        healths.add(new HealthData("Thorn", Math.round(BossStatus.healthScale * 4),4, true));
         return healths;
     }
 

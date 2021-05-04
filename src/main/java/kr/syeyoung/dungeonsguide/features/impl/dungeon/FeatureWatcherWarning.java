@@ -43,7 +43,7 @@ public class FeatureWatcherWarning extends TextHUDFeature implements ChatListene
         return Collections.singletonList("warning");
     }
 
-    private UUID lastRoomUID = UUID.randomUUID();
+    private final UUID lastRoomUID = UUID.randomUUID();
     private long warning = 0;
 
     private static final List<StyledText> text = new ArrayList<StyledText>();

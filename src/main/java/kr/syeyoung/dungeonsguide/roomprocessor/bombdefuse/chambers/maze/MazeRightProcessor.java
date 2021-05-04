@@ -32,8 +32,8 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
 
-    private BlockPos center;
-    private Map<Block, BlockPos> blockToBlockPosMap = new HashMap<Block, BlockPos>();
+    private final BlockPos center;
+    private final Map<Block, BlockPos> blockToBlockPosMap = new HashMap<Block, BlockPos>();
     @Override
     public String getName() {
         return "mazeRight";

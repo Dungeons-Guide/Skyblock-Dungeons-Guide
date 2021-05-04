@@ -40,9 +40,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "time"
-        });
+        return Arrays.asList("title", "separator", "time");
     }
 
     @Override

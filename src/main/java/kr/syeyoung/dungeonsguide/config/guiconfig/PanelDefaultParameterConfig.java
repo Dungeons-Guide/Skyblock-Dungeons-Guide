@@ -35,7 +35,7 @@ public class PanelDefaultParameterConfig extends MPanel {
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    private GuiConfig config;
+    private final GuiConfig config;
     public PanelDefaultParameterConfig(final GuiConfig config, AbstractFeature feature, List<MPanel> pre, Set<String> ignore) {
         this.config = config;
         for (MPanel mPanel : pre) {

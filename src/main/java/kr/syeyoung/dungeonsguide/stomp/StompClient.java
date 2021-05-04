@@ -35,7 +35,7 @@ public class StompClient extends WebSocketClient implements StompInterface {
         while(this.stompClientStatus == StompClientStatus.CONNECTING);
         System.out.println("fully connected");
     }
-    private CloseListener closeListener;
+    private final CloseListener closeListener;
 
     @Getter
     private volatile StompClientStatus stompClientStatus = StompClientStatus.CONNECTING;
@@ -103,8 +103,8 @@ public class StompClient extends WebSocketClient implements StompInterface {
         ex.printStackTrace();
     }
 
-    private Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<Integer, StompSubscription>();
-    private Map<Integer, StompPayload> receiptMap = new HashMap<Integer, StompPayload>();
+    private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<Integer, StompSubscription>();
+    private final Map<Integer, StompPayload> receiptMap = new HashMap<Integer, StompPayload>();
 
     private int idIncrement = 0;
 

@@ -46,7 +46,7 @@ import java.util.List;
 public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
     @Getter
-    private List<ChamberSet> chambers = new ArrayList<ChamberSet>();
+    private final List<ChamberSet> chambers = new ArrayList<ChamberSet>();
     @Getter
     private OffsetPointSet doors;
 

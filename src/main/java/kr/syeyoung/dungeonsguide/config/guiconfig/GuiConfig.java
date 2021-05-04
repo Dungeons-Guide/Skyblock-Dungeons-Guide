@@ -24,12 +24,12 @@ import java.util.Stack;
 
 public class GuiConfig extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
+    private final MPanel mainPanel = new MPanel();
 
     @Getter
-    private MNavigatingPane tabbedPane;
+    private final MNavigatingPane tabbedPane;
 
-    private Stack<String> history = new Stack();
+    private final Stack<String> history = new Stack();
 
     public GuiConfig() {
         MNavigatingPane tabbedPane = new MNavigatingPane();

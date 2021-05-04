@@ -103,9 +103,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
 
     @Override
     public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "title", "separator", "currentSecrets", "separator2", "totalSecrets", "unknown"
-        });
+        return Arrays.asList("title", "separator", "currentSecrets", "separator2", "totalSecrets", "unknown");
     }
 
     @Override

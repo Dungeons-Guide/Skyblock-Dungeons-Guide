@@ -9,8 +9,8 @@ import net.minecraft.client.gui.Gui;
 import java.awt.*;
 
 public class MLabelAndElement extends MPanel {
-    private MLabel label;
-    private MPanel element;
+    private final MLabel label;
+    private final MPanel element;
 
     @Getter @Setter
     private Color hover;

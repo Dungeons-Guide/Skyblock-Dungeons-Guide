@@ -305,7 +305,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 File runDir = new File(f, "dungeonruns");
                 runDir.mkdirs();
 
-                File runFile = new File(runDir, UUID.randomUUID().toString()+".dgrun");
+                File runFile = new File(runDir, UUID.randomUUID() +".dgrun");
 
                 DungeonContext dungeonContext = e.getDungeonsGuide().getSkyblockStatus().getContext();
                 if (dungeonContext == null) {

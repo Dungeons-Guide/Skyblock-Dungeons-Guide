@@ -29,8 +29,8 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
     }
 
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
-    private ResourceLocation penguin = new ResourceLocation("dungeonsguide:penguin.png");
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final ResourceLocation penguin = new ResourceLocation("dungeonsguide:penguin.png");
 
     @Override
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
@@ -70,7 +70,7 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
                 GlStateManager.scale(0.8,0.8,0.8);
 
 
-                if (((EntityPlayer) entitylivingbaseIn).fishEntity != null)
+                if (entitylivingbaseIn.fishEntity != null)
                 {
                     itemstack = new ItemStack(Items.fishing_rod, 0);
                 }

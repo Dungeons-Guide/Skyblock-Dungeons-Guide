@@ -89,9 +89,6 @@ public class CatacombMasterDataProvider implements DungeonSpecificDataProvider {
             return true;
         } else if (floor.equals("M6")) {
             return true;
-        } else if (floor.equals("M7")) {
-            return true;
-        }
-        return false;
+        } else return floor.equals("M7");
     }
 }

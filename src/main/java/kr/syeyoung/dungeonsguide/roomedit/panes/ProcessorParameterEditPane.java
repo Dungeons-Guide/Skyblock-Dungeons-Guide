@@ -16,11 +16,11 @@ import java.util.Map;
 import java.util.UUID;
 
 public class ProcessorParameterEditPane extends MPanel implements DynamicEditor {
-    private DungeonRoom dungeonRoom;
+    private final DungeonRoom dungeonRoom;
 
     private MButton save;
     private MButton create;
-    private List<MParameter> parameters = new ArrayList<MParameter>();
+    private final List<MParameter> parameters = new ArrayList<MParameter>();
 
     public ProcessorParameterEditPane(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;

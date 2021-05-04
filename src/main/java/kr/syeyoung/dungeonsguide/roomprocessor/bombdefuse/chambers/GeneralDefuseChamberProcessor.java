@@ -20,8 +20,8 @@ import org.lwjgl.input.Keyboard;
 
 @Getter
 public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor{
-    private RoomProcessorBombDefuseSolver solver;
-    private BDChamber chamber;
+    private final RoomProcessorBombDefuseSolver solver;
+    private final BDChamber chamber;
 
     public GeneralDefuseChamberProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {
         this.solver = solver;

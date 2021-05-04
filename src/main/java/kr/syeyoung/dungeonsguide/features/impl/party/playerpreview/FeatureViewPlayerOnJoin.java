@@ -250,9 +250,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
                 for (int i = 0; i < list.size(); ++i) {
                     if (i == 0) {
-                        list.set(i, toHover.getRarity().rarityColor + (String)list.get(i));
+                        list.set(i, toHover.getRarity().rarityColor + list.get(i));
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + (String)list.get(i));
+                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
                     }
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
@@ -305,9 +305,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
                 for (int i = 0; i < list.size(); ++i) {
                     if (i == 0) {
-                        list.set(i, toHover.getRarity().rarityColor + (String)list.get(i));
+                        list.set(i, toHover.getRarity().rarityColor + list.get(i));
                     } else {
-                        list.set(i, EnumChatFormatting.GRAY + (String)list.get(i));
+                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
                     }
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
@@ -411,7 +411,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     public static class HoverEventRenderPlayer extends HoverEvent {
         @Getter
-        private String uuid;
+        private final String uuid;
         public HoverEventRenderPlayer(String uuid) {
             super(Action.SHOW_TEXT, new ChatComponentText(""));
             this.uuid = uuid;
@@ -445,8 +445,8 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         @Setter
         @Getter
         private PlayerProfile skyblockProfile;
-        private SkinFetchur.SkinSet skinSet;
-        private PlayerProfile.Armor armor;
+        private final SkinFetchur.SkinSet skinSet;
+        private final PlayerProfile.Armor armor;
         private FakePlayer(World w) {
             super(w, null);
             throw new UnsupportedOperationException("what");

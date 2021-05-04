@@ -7,7 +7,7 @@ import java.net.URL;
 import java.net.URLConnection;
 
 public class a extends URLConnection {
-    private b a;
+    private final b a;
     protected a(URL b, b a) {
         super(b);
         connected = false;

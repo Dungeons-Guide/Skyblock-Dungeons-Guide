@@ -38,7 +38,7 @@ public class a
     public void a(FMLInitializationEvent a)
     {
 
-        this.a = this;
+        kr.syeyoung.dungeonsguide.a.a = this;
         d.init(a);
     }
 
@@ -50,7 +50,7 @@ public class a
         try {
             c = b.b(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? System.getProperty("dg.version") == null ? "latest" : System.getProperty("dg.version") : null);
             if (c != null) {
-                this.a = this;
+                kr.syeyoung.dungeonsguide.a.a = this;
                 URL.setURLStreamHandlerFactory(new c(b));
                 LaunchClassLoader d = (LaunchClassLoader) a.class.getClassLoader();
                 d.addURL(new URL("z:///"));

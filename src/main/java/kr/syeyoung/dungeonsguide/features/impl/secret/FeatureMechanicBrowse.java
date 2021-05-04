@@ -182,7 +182,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                 fr.drawString((String)obj, 3, i * fr.FONT_HEIGHT, 0xFFEEEEEE);
             }
         }
-        GlStateManager.popMatrix();;
+        GlStateManager.popMatrix();
 
         if (selected != -1) {
             clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
@@ -215,8 +215,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     private int selected = -1;
     private int selectedState = -1;
     private List<String> possibleStates = new ArrayList<String>();
-    private List<Object> sortedMechanics = new ArrayList<Object>();
-    private List<String> sortedMechanicsName = new ArrayList<String>();
+    private final List<Object> sortedMechanics = new ArrayList<Object>();
+    private final List<String> sortedMechanicsName = new ArrayList<String>();
     private void setupMechanics() {
         sortedMechanics.clear();
         sortedMechanicsName.clear();
@@ -417,7 +417,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
         if (selected != -1) {
-            if (sortedMechanics.size() <= selected) return;;
+            if (sortedMechanics.size() <= selected) return;
             ((DungeonMechanic)sortedMechanics.get(selected)).highlight(new Color(0,255,255,50), sortedMechanicsName.get(selected) +" ("+(((DungeonMechanic)
             sortedMechanics.get(selected)).getRepresentingPoint(dungeonRoom) != null ?
                     String.format("%.1f", MathHelper.sqrt_double(((DungeonMechanic) sortedMechanics.get(selected)).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")

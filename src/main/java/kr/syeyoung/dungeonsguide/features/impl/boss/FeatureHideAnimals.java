@@ -28,7 +28,7 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
     }
 
 
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {

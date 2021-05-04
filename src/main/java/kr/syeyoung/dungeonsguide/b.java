@@ -29,7 +29,7 @@ import java.util.zip.ZipInputStream;
 public class b {
     private KeyPair a;
     private String b;
-    private ProgressManager.ProgressBar p;
+    private final ProgressManager.ProgressBar p;
 
     public String c() {
         return b;
@@ -132,7 +132,7 @@ public class b {
         return e.get("data").getAsString();
     }
 
-    private HashMap<String, byte[]> c = new HashMap<String, byte[]>();
+    private final HashMap<String, byte[]> c = new HashMap<String, byte[]>();
 
     public HashMap<String, byte[]> d() {
         return c;

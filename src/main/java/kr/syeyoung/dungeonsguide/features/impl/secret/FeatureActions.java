@@ -59,8 +59,7 @@ public class FeatureActions extends TextHUDFeature {
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         if (dungeonRoom == null) return false;
-        if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return false;
-        return true;
+        return dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor;
     }
 
     private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
@@ -87,9 +86,7 @@ public class FeatureActions extends TextHUDFeature {
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "pathfinding","mechanic","separator","state","current", "number", "dot", "action", "afterline"
-        });
+        return Arrays.asList("pathfinding","mechanic","separator","state","current", "number", "dot", "action", "afterline");
     }
 
     @Override

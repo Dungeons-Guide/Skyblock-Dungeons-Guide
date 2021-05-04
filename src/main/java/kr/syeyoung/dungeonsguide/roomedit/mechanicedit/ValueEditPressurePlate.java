@@ -22,14 +22,14 @@ public class ValueEditPressurePlate extends MPanel implements ValueEdit<DungeonP
     // scroll pane
     // just create
     // add set
-    private DungeonPressurePlate dungeonPressureplate;
+    private final DungeonPressurePlate dungeonPressureplate;
 
-    private MLabel label;
-    private MValue<OffsetPoint> value;
-    private MTextField preRequisite;
-    private MLabelAndElement preRequisite2;
-    private MTextField target;
-    private MLabelAndElement target2;
+    private final MLabel label;
+    private final MValue<OffsetPoint> value;
+    private final MTextField preRequisite;
+    private final MLabelAndElement preRequisite2;
+    private final MTextField target;
+    private final MLabelAndElement target2;
 
 
     public ValueEditPressurePlate(final Parameter parameter2) {

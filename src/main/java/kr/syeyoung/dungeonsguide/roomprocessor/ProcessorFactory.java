@@ -10,7 +10,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProcessorFactory {
-    private static Map<String, RoomProcessorGenerator> map = new HashMap<String, RoomProcessorGenerator>();
+    private static final Map<String, RoomProcessorGenerator> map = new HashMap<String, RoomProcessorGenerator>();
 
     public static RoomProcessorGenerator getRoomProcessorGenerator(String processorId) {
         return map.get(processorId);
@@ -39,7 +39,7 @@ public class ProcessorFactory {
         registerRoomProcessor("puzzle_silverfish", new RoomProcessorIcePath.Generator()); // done
         registerRoomProcessor("puzzle_icefill", new RoomProcessorIcePath2.Generator());
         registerRoomProcessor("puzzle_box", new RoomProcessorBoxSolver.Generator());
-        registerRoomProcessor("puzzle_trivia", new RoomProcessorTrivia.Generator());;
+        registerRoomProcessor("puzzle_trivia", new RoomProcessorTrivia.Generator());
         registerRoomProcessor("puzzle_bombdefuse", new RoomProcessorBombDefuseSolver.Generator());
 
         registerRoomProcessor("bossroom", new RoomProcessorRedRoom.Generator());

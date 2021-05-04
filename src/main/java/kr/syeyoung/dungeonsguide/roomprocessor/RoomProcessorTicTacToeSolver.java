@@ -21,7 +21,7 @@ import java.util.List;
 
 public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
 
-    private OffsetPointSet board;
+    private final OffsetPointSet board;
     private byte[][] lastBoard;
     public RoomProcessorTicTacToeSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);

@@ -14,7 +14,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private String prefix;
     private EntityOtherPlayerMP realLivid;
 
-    private Set<String> knownLivids = new HashSet<String>();
+    private final Set<String> knownLivids = new HashSet<String>();
 
     public BossfightProcessorLivid() {
         addPhase(PhaseData.builder().phase("start").build());

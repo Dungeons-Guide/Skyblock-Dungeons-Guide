@@ -23,10 +23,10 @@ public class PartyJoinRequest {
     private Reply reply;
 
     @AllArgsConstructor
-    public static enum Reply {
+    public enum Reply {
         ACCEPT("Accepted"), DENY("Denied"), IGNORE("Ignored");
 
         @Getter
-        private String past;
+        private final String past;
     }
 }

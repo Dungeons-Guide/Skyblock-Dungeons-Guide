@@ -28,14 +28,14 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     private double defaultWidth;
     @Setter(value = AccessLevel.PROTECTED)
     private double defaultHeight;
-    private double defaultRatio;
+    private final double defaultRatio;
 
     protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key);
         this.keepRatio = keepRatio;
         this.defaultWidth = width;
         this.defaultHeight = height;
-        this.defaultRatio = defaultWidth / (double)defaultHeight;
+        this.defaultRatio = defaultWidth / defaultHeight;
         this.featureRect = new GUIRectangle(0, 0, width, height);
     }
 

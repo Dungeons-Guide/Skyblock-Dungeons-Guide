@@ -24,14 +24,14 @@ import java.util.ArrayList;
 public class MFeature extends MPanel {
 
     @Getter
-    private AbstractFeature feature;
+    private final AbstractFeature feature;
 
-    private List<MPanel> addons =  new ArrayList<MPanel>();
+    private final List<MPanel> addons =  new ArrayList<MPanel>();
 
     @Getter @Setter
     private Color hover;
 
-    private GuiConfig config;
+    private final GuiConfig config;
 
     public MFeature(final AbstractFeature abstractFeature, final GuiConfig config) {
         this.config = config;

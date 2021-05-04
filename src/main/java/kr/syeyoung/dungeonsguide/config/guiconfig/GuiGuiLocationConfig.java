@@ -17,8 +17,8 @@ import java.io.IOException;
 
 public class GuiGuiLocationConfig extends GuiScreen {
 
-    private MPanel mainPanel = new MPanel();
-    private GuiScreen before;
+    private final MPanel mainPanel = new MPanel();
+    private final GuiScreen before;
 
     public GuiGuiLocationConfig(final GuiScreen before, AbstractFeature featureWhitelist) {
         this.before = before;

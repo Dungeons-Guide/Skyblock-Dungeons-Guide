@@ -33,9 +33,11 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         b3 = chamber.getBlockPos(1,3,1);
     }
 
-    private BlockPos center;
+    private final BlockPos center;
 
-    private BlockPos b1, b2, b3;
+    private final BlockPos b1;
+    private final BlockPos b2;
+    private final BlockPos b3;
     private byte b1b = 0, b2b = 0, b3b = 0, c1b, c2b, c3b;
     private int answer = -1;
 

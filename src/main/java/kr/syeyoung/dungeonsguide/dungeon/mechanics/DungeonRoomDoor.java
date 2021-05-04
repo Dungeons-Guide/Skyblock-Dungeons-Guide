@@ -14,7 +14,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DungeonRoomDoor implements DungeonMechanic {
-    private DungeonDoor doorfinder;
+    private final DungeonDoor doorfinder;
 
     public DungeonRoomDoor(DungeonDoor doorfinder) {
         this.doorfinder = doorfinder;

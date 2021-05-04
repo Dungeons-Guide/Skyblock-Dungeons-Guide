@@ -15,8 +15,8 @@ import java.util.List;
 
 public class MNavigatingPane extends MPanel {
 
-    private Map<String, MPanel> pages = new HashMap<String, MPanel>();
-    private List<MTabButton> bookMarks = new ArrayList<MTabButton>();
+    private final Map<String, MPanel> pages = new HashMap<String, MPanel>();
+    private final List<MTabButton> bookMarks = new ArrayList<MTabButton>();
 
     @Getter
     @Setter
@@ -33,9 +33,9 @@ public class MNavigatingPane extends MPanel {
     @Getter
     private Color background2;
 
-    private Stack<String> history = new Stack<String>();
+    private final Stack<String> history = new Stack<String>();
 
-    private MButton back = new MButton();
+    private final MButton back = new MButton();
 
     public MNavigatingPane() {
         back.setText("<");

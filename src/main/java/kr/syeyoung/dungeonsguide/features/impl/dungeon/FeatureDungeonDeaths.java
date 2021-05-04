@@ -46,8 +46,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
     public boolean isHUDViewable() {
         if (!skyblockStatus.isOnDungeon()) return false;
         DungeonContext context = skyblockStatus.getContext();
-        if (context == null) return false;
-        return true;
+        return context != null;
     }
 
     @Override
@@ -57,9 +56,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList(new String[] {
-                "username", "separator", "deaths", "total", "totalDeaths"
-        });
+        return Arrays.asList("username", "separator", "deaths", "total", "totalDeaths");
     }
 
     @Override

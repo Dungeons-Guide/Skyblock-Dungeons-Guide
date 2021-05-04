@@ -23,7 +23,8 @@ import java.lang.reflect.Field;
 
 @ChannelHandler.Sharable
 public class PacketListener extends ChannelDuplexHandler {
-    private SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();;
+    private final SkyblockStatus skyblockStatus = e.getDungeonsGuide().getSkyblockStatus();
+
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Packet packet = (Packet) msg;
