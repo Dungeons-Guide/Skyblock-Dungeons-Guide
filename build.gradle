@@ -17,14 +17,8 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "com.github.johnrengelman.shadow"
 
-/*
-// for people who want stable - not yet functional for MC 1.8.8 - we require the forgegradle 2.1 snapshot
-plugins {
-    id "net.minecraftforge.gradle.forge" version "2.0.2"
-}
-*/
 version = "2.0"
-group = "kr.syeyoung.dungeonsguide" // http://maven.apache.org/guides/mini/guide-naming-conventions.html
+group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
 sourceCompatibility = targetCompatibility = JavaVersion.VERSION_1_8
@@ -58,28 +52,14 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.16"
 }
 
-
-processResources
-        {
-            // this will ensure that this task is redone when the versions change.
-            inputs.property "version", project.version
-            inputs.property "mcversion", project.minecraft.version
-
-            // replace stuff in mcmod.info, nothing else
-            from(sourceSets.main.resources.srcDirs) {
-                include "mcmod.info"
-
-                // replace version and mcversion
-                expand "version": project.version, "mcversion": project.minecraft.version
-            }
-
-            // copy everything else, thats not the mcmod.info
-            from(sourceSets.main.resources.srcDirs) {
-                exclude "mcmod.info"
-            }
-        }
+jar {
+    enabled = false
+}
 
 shadowJar {
+
+    archiveFileName = jar.archiveFileName
+
     relocate "org.java_websocket", "kr.syeyoung.org.java_websocket"
 
     dependencies {
@@ -92,5 +72,24 @@ shadowJar {
 reobf {
     shadowJar {
         mappingType = "SEARGE"
+    }
+}
+
+processResources {
+    // this will ensure that this task is redone when the versions change.
+    inputs.property "version", project.version
+    inputs.property "mcversion", project.minecraft.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        include "mcmod.info"
+
+        // replace version and mcversion
+        expand "version": project.version, "mcversion": project.minecraft.version
+    }
+
+    // copy everything else, thats not the mcmod.info
+    from(sourceSets.main.resources.srcDirs) {
+        exclude "mcmod.info"
     }
 }
