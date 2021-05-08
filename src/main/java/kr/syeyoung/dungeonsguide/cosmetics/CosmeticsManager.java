@@ -106,7 +106,7 @@ public class CosmeticsManager implements StompMessageHandler {
                 List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new ArrayList<>());
                 activeCosmetics.remove(activeCosmetic1);
 
-                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic.getUsername().toLowerCase(), a-> new ArrayList<>());
+                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic1.getUsername().toLowerCase(), a-> new ArrayList<>());
                 activeCosmetics.remove(activeCosmetic1);
 
                 CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
@@ -224,16 +224,17 @@ public class CosmeticsManager implements StompMessageHandler {
     // §r§bCo-op > §a[VIP§6+§a] syeyoung§f: §rwhat§r
 
     public static String substitute(String str) {
-        str = str.replace("{HYPIXEL_RANKED_NAME}", "§.(?:\\[[a-zA-Z\\+§0-9]+\\] )?{MC_NAME}");
-        str = str.replace("{HYPIXEL_RANKED_NAME_PAT}", "(§.(?:\\[[a-zA-Z\\+§0-9]+\\] )?)({MC_NAME})");
+        str = str.replace("{HYPIXEL_RANKED_NAME}", "{ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?{MC_NAME}");
+        str = str.replace("{HYPIXEL_RANKED_NAME_PAT}", "({ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?)({MC_NAME})");
+        str = str.replace("{ISLAND_VISITOR}", "(?:§r§a\\[✌\\] )");
+        str = str.replace("{RANK}", "(?:{ANY_COLOR}\\[.+\\] )");
         str = str.replace("{MC_NAME}", "[a-zA-Z0-9_]+");
         str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])+");
         return str;
     }
-
     private static final Pattern PARTY_MSG = Pattern.compile(substitute("§r§9Party §8> {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2Guild > {HYPIXEL_RANKED_NAME_PAT} ({ANY_COLOR}\\[.+\\]{ANY_COLOR}): (.+)"));
-    private static final Pattern CHAT_MSG = Pattern.compile(substitute("(?:§r)?{HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
+    private static final Pattern CHAT_MSG = Pattern.compile(substitute("({ISLAND_VISITOR}?{RANK}?){HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern COOP_MSG = Pattern.compile(substitute("§r§bCo-op > {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern DM_TO = Pattern.compile(substitute("§dTo §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
     private static final Pattern DM_FROM = Pattern.compile(substitute("§dFrom §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
@@ -262,10 +263,10 @@ public class CosmeticsManager implements StompMessageHandler {
             last = m.group(2)+" "+m.group(3)+": "+m.group(4);
         } else if ((m = CHAT_MSG.matcher(msg)).matches()) {
             match = true;
-            nickname = m.group(2);
-            preRank = "";
-            rank = m.group(1);
-            last = m.group(2)+m.group(3)+": "+m.group(4);
+            nickname = m.group(3);
+            preRank = m.group(1);
+            rank = m.group(2);
+            last = m.group(3)+m.group(4)+": "+m.group(5);
         } else if ((m = COOP_MSG.matcher(msg)).matches()) {
             match = true;
             nickname = m.group(2);
