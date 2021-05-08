@@ -80,7 +80,7 @@ public class Main
                     while (progressBar.getStep() < progressBar.getSteps())
                         progressBar.step("random-"+progressBar.getStep());
                     ProgressManager.pop(progressBar);
-                } catch (Exception e) {
+                } catch (Throwable e) {
                     e.printStackTrace();
 
                     throwError(new String[]{
@@ -95,14 +95,12 @@ public class Main
         }
 
         throwError(new String[]{
-                "Can't validate current installation of Dungeons Guide",
+                "Can't authenticate session",
                 "Steps to fix",
                 "1. check if other people can't join minecraft servers.",
-                "2. restart minecraft launcher",
+                "2. physically click on logout button, then login again",
                 "3. make sure you're on the right account",
-                "4. restart your computer",
-                "If the problem persists after following these steps, please contact developer",
-                "If you haven't purchased the mod, please consider doing so"
+                "If the problem persists after following these steps, please contact developer"
         });
     }
 
