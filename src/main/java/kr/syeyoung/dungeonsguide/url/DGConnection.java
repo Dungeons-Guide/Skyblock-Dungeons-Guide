@@ -37,13 +37,11 @@ public class DGConnection extends URLConnection {
     }
     @Override
     public InputStream getInputStream() throws IOException {
-        if (authenticator != null) {
-            String path = url.getPath().substring(1);
-            if (!authenticator.getResources().containsKey(path)) throw new FileNotFoundException();
-            return new ByteArrayInputStream(authenticator.getResources().get(path));
-        } else if (url.getPath().contains("roomdata")){
-            return DGConnection.class.getResourceAsStream(url.getPath());
-        }
+            if (authenticator != null) {
+                String path = url.getPath().substring(1);
+                if (!authenticator.getResources().containsKey(path)) throw new FileNotFoundException();
+                return new ByteArrayInputStream(authenticator.getResources().get(path));
+            }
         throw new FileNotFoundException();
     }
 }

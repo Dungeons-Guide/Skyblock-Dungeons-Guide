@@ -94,4 +94,8 @@ public abstract class AbstractFeature {
         });
         return "base." + key ;
     }
+
+    public boolean isDisyllable() {
+        return true;
+    }
 }

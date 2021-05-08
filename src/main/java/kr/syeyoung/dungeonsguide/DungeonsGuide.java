@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.config.Config;
+import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
@@ -74,6 +75,8 @@ public class DungeonsGuide implements DGInterface, CloseListener {
 
     @Getter
     private StompInterface stompConnection;
+    @Getter
+    private CosmeticsManager cosmeticsManager;
 
     public DungeonsGuide(Authenticator authenticator) {
         this.authenticator = authenticator;
@@ -96,9 +99,6 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         try {
             Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
             ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
-            for (String s : invalid) {
-                System.out.println(s+" in invalid");
-            }
             invalid.clear();
         } catch (Throwable t) {
             t.printStackTrace();
@@ -138,6 +138,10 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         Keybinds.register();
 
         progressbar.step("Opening connection");
+
+        cosmeticsManager = new CosmeticsManager();
+        MinecraftForge.EVENT_BUS.register(cosmeticsManager);
+
         try {
             stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), this);
             MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));

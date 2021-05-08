@@ -55,7 +55,7 @@ public class MFeature extends MPanel {
         this.config = config;
         this.feature = abstractFeature;
 
-        {
+        if (abstractFeature.isDisyllable()) {
             final MToggleButton mStringSelectionButton = new MToggleButton();
             mStringSelectionButton.setOnToggle(new Runnable() {
                 @Override

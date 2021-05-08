@@ -31,7 +31,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 public class APIKey extends SimpleFeature implements ChatListenerGlobal {
 
     public APIKey() {
-        super("Party Kicker", "API KEY", "Set api key. Disabling this feature does nothing","partykicker.apikey");
+        super("Party Kicker", "API KEY", "Sets api key","partykicker.apikey");
         parameters.put("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "","string"));
     }
 
@@ -49,6 +49,10 @@ public class APIKey extends SimpleFeature implements ChatListenerGlobal {
             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fAutomatically Configured Hypixel API Key"));
             this.<String>getParameter("apikey").setValue(apiKeys);
         }
+    }
 
+    @Override
+    public boolean isDisyllable() {
+        return false;
     }
 }

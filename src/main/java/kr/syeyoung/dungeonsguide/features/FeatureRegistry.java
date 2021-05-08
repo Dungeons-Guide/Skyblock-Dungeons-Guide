@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
 import kr.syeyoung.dungeonsguide.features.impl.boss.*;
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureSimonSaysSolver;
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolvers;
+import kr.syeyoung.dungeonsguide.features.impl.cosmetics.FeatureNicknameColor;
+import kr.syeyoung.dungeonsguide.features.impl.cosmetics.FeatureNicknamePrefix;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
@@ -152,4 +154,7 @@ public class FeatureRegistry {
     public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Secret", "Auto browse next secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
     public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Secret", "Press a key to toggle pathfind lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
     public static final SimpleFeature SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
+
+    public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
+    public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());
 }

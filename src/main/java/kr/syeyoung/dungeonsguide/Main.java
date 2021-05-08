@@ -66,7 +66,7 @@ public class Main
         Authenticator authenticator = new Authenticator(progressBar);
         String token = null;
         try {
-            token = authenticator.authenticateAndDownload(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? System.getProperty("dg.version") == null ? "latest" : System.getProperty("dg.version") : null);
+            token = authenticator.authenticateAndDownload(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") == null ? System.getProperty("dg.version") == null ? "nlatest" : System.getProperty("dg.version") : null);
             if (token != null) {
                 main = this;
                 URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory(authenticator));
@@ -77,6 +77,8 @@ public class Main
                     progressBar.step("Initializing");
                     this.dgInterface = new DungeonsGuide(authenticator);
                     this.dgInterface.pre(preInitializationEvent);
+                    while (progressBar.getStep() < progressBar.getSteps())
+                        progressBar.step("random-"+progressBar.getStep());
                     ProgressManager.pop(progressBar);
                 } catch (Exception e) {
                     e.printStackTrace();
