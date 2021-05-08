@@ -148,15 +148,19 @@ public class PrefixSelectorGUI extends MPanel {
                     selected = value;
                     return;
                 }
-                if (new Rectangle(161,cnt * (fr.FONT_HEIGHT+4) + 2,58,fr.FONT_HEIGHT+1).contains(relX, relY) && cosmeticsManager.getPerms().contains(value.getReqPerm())) {
-                    for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
-                        if (activeCosmetic.getCosmeticData().equals(value.getId())) {
-                            cosmeticsManager.removeCosmetic(activeCosmetic);
-                            return;
+                try {
+                    if (new Rectangle(161, cnt * (fr.FONT_HEIGHT + 4) + 2, 58, fr.FONT_HEIGHT + 1).contains(relX, relY) && cosmeticsManager.getPerms().contains(value.getReqPerm())) {
+                        for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
+                            if (activeCosmetic.getCosmeticData().equals(value.getId())) {
+                                cosmeticsManager.removeCosmetic(activeCosmetic);
+                                return;
+                            }
                         }
+                        cosmeticsManager.setCosmetic(value);
+                        selected = value;
                     }
-                    cosmeticsManager.setCosmetic(value);
-                    selected = value;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 cnt++;
