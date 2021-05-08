@@ -507,7 +507,6 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                     for (int i = 0; i < nbtTagList.tagCount(); i++) {
                         String str = nbtTagList.getStringTagAt(i);
                         if (TextUtils.stripColor(str).startsWith("Gear")) {
-                            System.out.println(str);
                             int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[2]));
                             if (dungeonScore > highestDungeonScore) {
                                 highestItem = itemStack;

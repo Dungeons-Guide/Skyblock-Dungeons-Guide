@@ -181,7 +181,6 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
     public void handle(StompInterface stompInterface, StompPayload stompPayload) {
         try {
             mayorScore = Integer.parseInt(stompPayload.payload().trim());
-            System.out.println("mayor " +mayorScore);
         } catch (Exception e) {
         }
     }

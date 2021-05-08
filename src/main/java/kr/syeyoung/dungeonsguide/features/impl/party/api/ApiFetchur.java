@@ -452,9 +452,7 @@ public class ApiFetchur {
         }
         if (playerData.has("dungeons")) {
             String id = getOrDefault(playerData.getAsJsonObject("dungeons"), "selected_dungeon_class", null);
-            System.out.println(id);
             DungeonClass dungeonClass = DungeonClass.getClassByJsonName(id);
-            System.out.println(dungeonClass);
             playerProfile.setSelectedClass(dungeonClass);
         }
 

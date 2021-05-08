@@ -359,19 +359,6 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("purge")) {
             ApiFetchur.purgeCache();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
-        } else if (args[0].equals("send")) {
-            DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().header("destination", args[1]).method(StompHeader.SEND).payload(args[2]));
-        } else if (args[0].equals("subscribe")) {
-            DungeonsGuide.getDungeonsGuide().getStompConnection().subscribe(StompSubscription.builder().destination(args[1]).ackMode(StompSubscription.AckMode.AUTO).stompMessageHandler(new StompMessageHandler() {
-                @Override
-                public void handle(StompInterface stompInterface, StompPayload stompPayload) {
-
-                }
-            }).build());
-        } else if (args[0].equals("echo")) {
-            for (NetworkPlayerInfo networkPlayerInfo : Minecraft.getMinecraft().getNetHandler().getPlayerInfoMap()) {
-                System.out.println(networkPlayerInfo);
-            }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

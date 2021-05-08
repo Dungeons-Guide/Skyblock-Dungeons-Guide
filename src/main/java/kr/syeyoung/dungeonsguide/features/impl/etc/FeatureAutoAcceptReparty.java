@@ -46,12 +46,10 @@ public class FeatureAutoAcceptReparty extends SimpleFeature implements ChatListe
                 lastDisband = s;
                 break;
             }
-            System.out.println(lastDisband);
         } else if (clientChatReceivedEvent.message.getFormattedText().contains("§ehas invited you to join their party!")) {
             String[] texts = TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()).split(" ");
             boolean equals = false;
             for (String s : texts) {
-                System.out.println(s);
                 if (s.isEmpty()) continue;
                 if (s.startsWith("[")) continue;
                 if (s.equalsIgnoreCase("has")) continue;

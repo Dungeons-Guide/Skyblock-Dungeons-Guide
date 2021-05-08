@@ -78,7 +78,6 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
             double yInt1 = posZ1 - posX1 * slope1;
             double yInt2 = posZ2 - posX2 * slope2;
-            System.out.println("pos1 (" + posX1 + "," + posZ1 + ") pos2 (" + posX2 + "," + posZ2 + ") slope (" + slope1 + "," + slope2 + ") intercept (" + yInt1 + "," + yInt2 + ")");
 
             intersectionX = (yInt2 - yInt1) / (slope1 - slope2);
             intersectionZ = (slope1 * intersectionX + yInt1);

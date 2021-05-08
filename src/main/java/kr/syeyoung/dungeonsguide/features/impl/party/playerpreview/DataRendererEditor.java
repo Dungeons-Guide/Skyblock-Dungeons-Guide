@@ -317,7 +317,6 @@ public class DataRendererEditor extends MPanel {
         if (scrollAmount < 0) scrollY += 20;
         if (scrollAmount > 0) scrollY -= 20;
         if (scrollY < 0) scrollY = 0;
-        System.out.println(scrollY);
 
 
     }
