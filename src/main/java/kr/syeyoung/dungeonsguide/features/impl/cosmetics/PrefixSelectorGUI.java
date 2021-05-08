@@ -34,16 +34,19 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.UUID;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class PrefixSelectorGUI extends MPanel {
     private GuiConfig config;
     private String cosmeticType;
+    private Function<String, String> optionTransformer;
 
-    public PrefixSelectorGUI(GuiConfig config, String cosmeticType, String[] previews) {
+    public PrefixSelectorGUI(GuiConfig config, String cosmeticType, String[] previews, Function<String, String> optionTransformer) {
         this.config = config;
         this.cosmeticType = cosmeticType;
         this.previews = previews;
+        this.optionTransformer = optionTransformer;
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
         List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().thePlayer.getGameProfile().getId(), (a) -> new ArrayList<>());
         for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
@@ -104,7 +107,7 @@ public class PrefixSelectorGUI extends MPanel {
                 if (value.getCosmeticType().equals(cosmeticType)) {
                     Gui.drawRect(0,0,220, fr.FONT_HEIGHT+3, 0xFF222222);
                     Gui.drawRect(1,1, 219, fr.FONT_HEIGHT+2, 0xFF555555);
-                    fr.drawString(value.getData(), 2, 2, -1);
+                    fr.drawString(optionTransformer.apply(value.getData()), 2, 2, -1);
                     Gui.drawRect(120,1,160, fr.FONT_HEIGHT+2, new Rectangle(120,cnt * (fr.FONT_HEIGHT+4) + 2,40,fr.FONT_HEIGHT+1).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
                     fr.drawString("TEST", (280-fr.getStringWidth("TEST"))/2, 2, -1);
 

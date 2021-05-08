@@ -46,7 +46,7 @@ public class FeatureNicknamePrefix extends SimpleFeature {
                 "§dFrom §r%prefix% §r§a[RANK§r§6+§r§a] %name%§r§7: §r§7TEST§r",
                 "§r%prefix% §b[RANK§c+§b] %name%§f: TEST",
                 "§r§bCo-op > §r%prefix% §a[RANK§6+§a] %name%§f: §rTEST§r"
-        }));
+        }, a->a));
         return "base." + getKey();
     }
 
