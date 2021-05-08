@@ -69,10 +69,6 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 }
 
-jar {
-    enabled = false
-}
-
 shadowJar {
 
     archiveFileName = jar.archiveFileName
