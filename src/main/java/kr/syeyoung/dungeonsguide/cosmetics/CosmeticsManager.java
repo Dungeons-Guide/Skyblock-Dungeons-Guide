@@ -41,22 +41,25 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CosmeticsManager implements StompMessageHandler {
     @Getter
-    private Map<UUID, CosmeticData> cosmeticDataMap = new HashMap<>();
+    private Map<UUID, CosmeticData> cosmeticDataMap = new ConcurrentHashMap<>();
     @Getter
-    private Map<UUID, ActiveCosmetic> activeCosmeticMap = new HashMap<>();
+    private Map<UUID, ActiveCosmetic> activeCosmeticMap = new ConcurrentHashMap<>();
     @Getter
-    private Map<String, List<ActiveCosmetic>> activeCosmeticByType = new HashMap<>();
+    private Map<String, List<ActiveCosmetic>> activeCosmeticByType = new ConcurrentHashMap<>();
     @Getter
-    private Map<UUID, List<ActiveCosmetic>> activeCosmeticByPlayer = new HashMap<>();
+    private Map<UUID, List<ActiveCosmetic>> activeCosmeticByPlayer = new ConcurrentHashMap<>();
     @Getter
-    private Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerNameLowerCase = new HashMap<>();
+    private Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerNameLowerCase = new ConcurrentHashMap<>();
     @Getter
-    private Set<String> perms = new HashSet<>();
+    private Set<String> perms = new CopyOnWriteArraySet<>();
 
     public void requestActiveCosmetics() {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
@@ -103,15 +106,15 @@ public class CosmeticsManager implements StompMessageHandler {
             if (jsonObject.isNull("cosmeticUID")) {
                 ActiveCosmetic activeCosmetic1 = activeCosmeticMap.remove(activeCosmetic.getActivityUID());
 
-                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new ArrayList<>());
+                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.remove(activeCosmetic1);
 
-                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic1.getUsername().toLowerCase(), a-> new ArrayList<>());
+                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic1.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.remove(activeCosmetic1);
 
                 CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
                 if (cosmeticData != null) {
-                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new ArrayList<>());
+                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
                     cosmeticsByTypeList.remove(activeCosmetic1);
                 }
             } else {
@@ -123,15 +126,15 @@ public class CosmeticsManager implements StompMessageHandler {
 
                 CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
                 if (cosmeticData != null) {
-                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new ArrayList<>());
+                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
                     cosmeticsByTypeList.add(activeCosmetic);
                     cosmeticsByTypeList.remove(previousThing);
                 }
-                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new ArrayList<>());
+                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.add(activeCosmetic);
                 activeCosmetics.remove(previousThing);
 
-                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic.getUsername().toLowerCase(), a-> new ArrayList<>());
+                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.add(activeCosmetic);
                 activeCosmetics.remove(previousThing);
             }
@@ -185,12 +188,12 @@ public class CosmeticsManager implements StompMessageHandler {
         for (ActiveCosmetic value : activeCosmeticMap.values()) {
             CosmeticData cosmeticData = cosmeticDataMap.get(value.getCosmeticData());
             if (cosmeticData != null) {
-                List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new ArrayList<>());
+                List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
                 cosmeticsByTypeList.add(value);
             }
-            List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(value.getPlayerUID(), a-> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(value.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
             activeCosmetics.add(value);
-            activeCosmetics = activeCosmeticByPlayerName.computeIfAbsent(value.getUsername().toLowerCase(), a-> new ArrayList<>());
+            activeCosmetics = activeCosmeticByPlayerName.computeIfAbsent(value.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
             activeCosmetics.add(value);
         }
 

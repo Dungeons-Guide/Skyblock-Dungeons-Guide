@@ -30,10 +30,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -79,7 +77,13 @@ public class PrefixSelectorGUI extends MPanel {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
 
-        Set<UUID> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().thePlayer.getGameProfile().getId(), (a) -> new ArrayList<>()).stream().map(ActiveCosmetic::getCosmeticData).collect(Collectors.toSet());
+        List<ActiveCosmetic> activeCosmeticList2 = cosmeticsManager.getActiveCosmeticByPlayer().get(Minecraft.getMinecraft().thePlayer.getGameProfile().getId());
+        Set<UUID> activeCosmeticList = new HashSet<>();
+        if (activeCosmeticList2 !=null) {
+            for (ActiveCosmetic activeCosmetic : activeCosmeticList2) {
+                activeCosmeticList.add(activeCosmetic.getCosmeticData());
+            }
+        }
 
 
 
