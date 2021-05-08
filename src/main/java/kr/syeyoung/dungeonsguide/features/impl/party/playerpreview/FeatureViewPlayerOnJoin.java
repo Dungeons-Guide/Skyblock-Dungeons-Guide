@@ -24,10 +24,13 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import io.github.moulberry.hychat.HyChat;
 import io.github.moulberry.hychat.chat.ChatManager;
 import io.github.moulberry.hychat.gui.GuiChatBox;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.cosmetics.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
@@ -245,7 +248,23 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         GlStateManager.color(1, 1, 1, 1.0F);
         if (fakePlayer != null) {
             GuiInventory.drawEntityOnScreen(45, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
-            fr.drawString(fakePlayer.getName(), (90 - fr.getStringWidth(fakePlayer.getName())) / 2, 15, 0xFFEFFF00);
+
+            String toDraw = fakePlayer.getName();
+            List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(UUID.fromString(TextUtils.insertDashUUID(playerProfile.get().getMemberUID())));
+            CosmeticData prefix = null, color = null;
+            if (activeCosmetics != null) {
+                for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+                    CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+                    if (cosmeticData != null) {
+                        if (cosmeticData.getCosmeticType().equals("prefix")) prefix = cosmeticData;
+                        if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
+                    }
+                }
+            }
+            toDraw = (color == null ? "§e" : color.getData().replace("&", "§"))+toDraw;
+            if (prefix != null) toDraw = prefix.getData().replace("&", "§") + " "+toDraw;
+
+            fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 15, -1);
 
             ItemStack toHover = null;
             if (relX > 20 && relX < 70) {

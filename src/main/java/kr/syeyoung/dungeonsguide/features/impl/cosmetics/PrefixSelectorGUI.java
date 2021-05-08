@@ -94,7 +94,7 @@ public class PrefixSelectorGUI extends MPanel {
             GlStateManager.pushMatrix();
             GlStateManager.translate(6,17,0);
             for (int i = 0; i < previews.length; i++) {
-                fr.drawString(previews[i].replace("%name%", Minecraft.getMinecraft().getSession().getUsername()).replace("%prefix%", prefix), 0, i*fr.FONT_HEIGHT, -1);
+                fr.drawString(previews[i].replace("%name%", Minecraft.getMinecraft().getSession().getUsername()).replace("%prefix%", prefix.replace("&", "§")), 0, i*fr.FONT_HEIGHT, -1);
             }
             GlStateManager.popMatrix();
         }

@@ -24,13 +24,16 @@ import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.cosmetics.CustomPacketPlayerListItem;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.events.TitleEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.server.S04PacketEntityEquipment;
+import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -55,7 +58,11 @@ public class PacketListener extends ChannelDuplexHandler {
         if (packet instanceof S45PacketTitle) {
             MinecraftForge.EVENT_BUS.post(new TitleEvent((S45PacketTitle) packet));
         }
+        if (packet instanceof S38PacketPlayerListItem) {
+            packet = new CustomPacketPlayerListItem((S38PacketPlayerListItem) packet);
+        }
         super.channelRead(ctx, packet);
+
     }
 
     @Override
