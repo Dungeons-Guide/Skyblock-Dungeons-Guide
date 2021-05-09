@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.commands;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -358,6 +359,10 @@ public class CommandDungeonsGuide extends CommandBase {
             }
         } else if (args[0].equals("purge")) {
             ApiFetchur.purgeCache();
+            CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
+            cosmeticsManager.requestPerms();
+            cosmeticsManager.requestCosmeticsList();
+            cosmeticsManager.requestActiveCosmetics();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
