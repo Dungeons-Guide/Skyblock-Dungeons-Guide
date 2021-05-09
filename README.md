@@ -15,6 +15,7 @@
     <img alt="discord" src="https://img.shields.io/discord/781913473872560189?color=00FFFF&label=discord&style=for-the-badge" />
   </a>
  </p>
+ 
 # Dungeons Guide
 The most intelligent Hypixel Skyblock Dungeons Mod
 ## Safety Concerns 
