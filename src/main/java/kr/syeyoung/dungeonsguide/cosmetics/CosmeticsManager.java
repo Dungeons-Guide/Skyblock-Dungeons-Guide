@@ -28,11 +28,13 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -139,6 +141,12 @@ public class CosmeticsManager implements StompMessageHandler {
                 activeCosmetics.remove(previousThing);
             }
 
+            try {
+                if (Minecraft.getMinecraft().theWorld != null) {
+                    EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(activeCosmetic.getPlayerUID());
+                    if (entityPlayer != null) entityPlayer.refreshDisplayName();
+                }
+            } catch (Exception e) {e.printStackTrace();}
 
         } else if (destination.equals("/user/queue/reply/user.perms")) {
             JSONArray object = new JSONArray(stompPayload.payload());
@@ -159,6 +167,12 @@ public class CosmeticsManager implements StompMessageHandler {
                 cosmeticData.setUsername(jsonObject.getString("username"));
 
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
+                try {
+                    if (Minecraft.getMinecraft().theWorld != null) {
+                        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+                        if (entityPlayer != null) entityPlayer.refreshDisplayName();
+                    }
+                } catch (Exception e) {e.printStackTrace();}
             }
             this.activeCosmeticMap = activeCosmeticMap;
             rebuildCaches();
@@ -232,18 +246,18 @@ public class CosmeticsManager implements StompMessageHandler {
         str = str.replace("{ISLAND_VISITOR}", "(?:§r§a\\[✌\\] )");
         str = str.replace("{RANK}", "(?:{ANY_COLOR}\\[.+\\] )");
         str = str.replace("{MC_NAME}", "[a-zA-Z0-9_]+");
-        str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])+");
+        str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])*");
         return str;
     }
     private static final Pattern PARTY_MSG = Pattern.compile(substitute("§r§9Party §8> {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
-    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2Guild > {HYPIXEL_RANKED_NAME_PAT} ({ANY_COLOR}\\[.+\\]{ANY_COLOR}): (.+)"));
+    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2Guild > {HYPIXEL_RANKED_NAME_PAT}((?: {ANY_COLOR}\\[.+\\])?{ANY_COLOR}): (.+)"));
     private static final Pattern CHAT_MSG = Pattern.compile(substitute("({ISLAND_VISITOR}?{RANK}?){HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern COOP_MSG = Pattern.compile(substitute("§r§bCo-op > {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern DM_TO = Pattern.compile(substitute("§dTo §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
     private static final Pattern DM_FROM = Pattern.compile(substitute("§dFrom §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
 
 
-    @SubscribeEvent(receiveCanceled = false, priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         Matcher m;
         String msg = clientChatReceivedEvent.message.getFormattedText();
@@ -263,7 +277,7 @@ public class CosmeticsManager implements StompMessageHandler {
             nickname = m.group(2);
             preRank = "§r§2Guild > ";
             rank = m.group(1);
-            last = m.group(2)+" "+m.group(3)+": "+m.group(4);
+            last = m.group(2)+m.group(3)+": "+m.group(4);
         } else if ((m = CHAT_MSG.matcher(msg)).matches()) {
             match = true;
             nickname = m.group(3);
@@ -326,5 +340,28 @@ public class CosmeticsManager implements StompMessageHandler {
                 playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
             }
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
+        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
+        if (activeCosmetics == null) return;
+        CosmeticData color=null, prefix=null;
+        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+            CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
+            if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
+                color = cosmeticData;
+            } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
+                prefix = cosmeticData;
+            }
+        }
+
+
+        if (color != null)
+            nameFormat.displayname = color.getData().replace("&","§")+nameFormat.username;
+
+        if (prefix != null)
+            nameFormat.displayname = prefix.getData().replace("&","§")+" "+nameFormat.displayname;
+
     }
 }

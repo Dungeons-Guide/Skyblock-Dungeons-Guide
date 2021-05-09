@@ -46,6 +46,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
         for (String s : semi_name.split(" ")) {
             if (TextUtils.stripColor(s).startsWith("[")) continue;
             actualName = TextUtils.stripColor(s);
+            break;
         }
         List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
 
