@@ -334,7 +334,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        if (drawInv) {
+        if (drawInv && playerProfile.get().getInventory() != null) {
             int startX = 81;
             int startY = 86;
             MPanel.clip(scaledResolution, popupRect.x+startX-1, popupRect.y+startY-1, 164, 74);
