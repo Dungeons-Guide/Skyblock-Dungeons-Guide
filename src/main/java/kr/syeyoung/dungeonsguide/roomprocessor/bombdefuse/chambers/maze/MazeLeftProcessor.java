@@ -27,11 +27,14 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MovingObjectPosition;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -61,6 +64,9 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         String str = "Press "+ Keyboard.getKeyName(Keybinds.sendBombdefuse.getKeyCode()) + " to request open "+b.getLocalizedName();
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString(str, (sr.getScaledWidth() - fr.getStringWidth(str)) / 2, (sr.getScaledHeight() - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
     }
 

@@ -25,6 +25,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -110,6 +112,8 @@ public class StyledTextRenderer {
         Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, RenderUtils.getColorAt(x,y, style.getBackground()));
 
         GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         if (!style.getColor().isChroma()) {
             fr.drawString(content, x, y, style.getColor().getRGB(), style.isShadow());
             return new Dimension(fr.getStringWidth(content), fr.FONT_HEIGHT);

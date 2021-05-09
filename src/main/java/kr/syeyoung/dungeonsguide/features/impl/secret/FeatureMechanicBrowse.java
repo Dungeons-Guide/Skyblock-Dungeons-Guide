@@ -46,6 +46,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.List;
@@ -108,6 +109,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
         Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         if (grp.getPath() == null)
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
@@ -125,6 +129,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
         Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
         fr.drawString("Open any gui to browse", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
@@ -161,6 +168,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         GlStateManager.translate(feature.x, feature.y, 0);
         Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT + 4, 0xFF444444);
         Gui.drawRect(1, 1, feature.width - 1, fr.FONT_HEIGHT + 3, 0xFF262626);
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Selected: ", 2,2, 0xFFAAAAAA);
         if (grp.getPath() == null)
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
@@ -185,6 +195,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             } else if (new Rectangle(feature.x, feature.y + fr.FONT_HEIGHT + 6 - dy + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
                 Gui.drawRect(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
             }
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             if (obj instanceof DungeonMechanic) {
                 String name = sortedMechanicsName.get(i);
                 fr.drawString(name, 3, i * fr.FONT_HEIGHT, 0xFFFFFF00);

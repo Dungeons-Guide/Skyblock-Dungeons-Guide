@@ -34,7 +34,7 @@ buildscript {
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "com.github.johnrengelman.shadow"
 
-version = "2.0"
+version = "3.0"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
@@ -67,10 +67,6 @@ dependencies {
 
     testCompileOnly "org.projectlombok:lombok:1.18.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
-}
-
-jar {
-    enabled = false
 }
 
 shadowJar {

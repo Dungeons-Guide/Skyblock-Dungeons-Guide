@@ -32,6 +32,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.io.IOException;
@@ -39,6 +40,7 @@ import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
+import java.util.stream.Collectors;
 
 public class GuiConfig extends GuiScreen {
 
@@ -74,6 +76,14 @@ public class GuiConfig extends GuiScreen {
                     }
                 });
             }
+        tabbedPane.addBookmark("All", "base.all");
+
+        ConfigPanelCreator.map.put("base.all", new Supplier<MPanel>() {
+            @Override
+            public MPanel get() {
+                return new FeatureEditPane(FeatureRegistry.getFeatureList().stream().filter( a-> !a.getCategory().equals("hidden")).collect(Collectors.toList()), GuiConfig.this);
+            }
+        });
         this.tabbedPane = tabbedPane;
     }
 

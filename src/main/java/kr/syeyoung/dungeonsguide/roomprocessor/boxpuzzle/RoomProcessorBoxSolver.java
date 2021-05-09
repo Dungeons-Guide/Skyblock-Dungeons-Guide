@@ -28,12 +28,15 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.MathHelper;
 import net.minecraft.world.World;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.*;
@@ -330,6 +333,9 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (FeatureRegistry.SOLVER_BOX_DISABLE_TEXT.isEnabled()) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Type \"recalc\" in chat to recalculate the solution", 0, 0, 0xFFFFFFFF);
     }
 

@@ -25,7 +25,10 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -68,6 +71,9 @@ public class MTextField extends MPanel {
         clip(new ScaledResolution(mc), clip.x + 1, clip.y + 1, clip.width - 2, clip.height - 2);
         FontRenderer fr = mc.fontRendererObj;
         int y = (getBounds().height - fr.FONT_HEIGHT) / 2;
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString(text, 3 - xOffset, y, foreground.getRGB());
         // draw selection
         if (isFocused) {
@@ -75,6 +81,9 @@ public class MTextField extends MPanel {
                 int startX = fr.getStringWidth(text.substring(0, selectionStart)) - xOffset;
                 int endX = fr.getStringWidth(text.substring(0, selectionEnd)) - xOffset;
                 Gui.drawRect(3 + startX, y, 3 + endX, y + fr.FONT_HEIGHT, 0xFF00FF00);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString(text.substring(selectionStart, selectionEnd), 3 + startX, y, foreground.getRGB());
             }
 

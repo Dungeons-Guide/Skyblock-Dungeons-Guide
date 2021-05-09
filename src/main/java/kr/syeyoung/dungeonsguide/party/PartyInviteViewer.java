@@ -34,6 +34,8 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
@@ -226,6 +228,9 @@ public class PartyInviteViewer {
             }
         }
 
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
             GlStateManager.pushMatrix();
                 GlStateManager.translate(height +3,7, 0);
@@ -256,6 +261,9 @@ public class PartyInviteViewer {
                         GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
 
                         GlStateManager.scale(2.0f, 2.0f, 1.0f);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         fr.drawString(text, 0, 0, 0xFFFFFFFF);
                     GlStateManager.popMatrix();
                     GlStateManager.translate(widthForTheThing, 0, 0);
@@ -265,6 +273,9 @@ public class PartyInviteViewer {
                         text = "Deny";
                         GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
                         GlStateManager.scale(2.0f, 2.0f, 1.0f);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         fr.drawString(text, 0, 0, 0xFFFFFFFF);
                     GlStateManager.popMatrix();
                     GlStateManager.translate(widthForTheThing, 0, 0);
@@ -274,6 +285,9 @@ public class PartyInviteViewer {
                         text = "Ignore";
                         GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
                         GlStateManager.scale(2.0f, 2.0f, 1.0f);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         fr.drawString(text, 0, 0, 0xFFFFFFFF);
                     GlStateManager.popMatrix();
                 GlStateManager.popMatrix();
@@ -281,6 +295,9 @@ public class PartyInviteViewer {
                 GlStateManager.pushMatrix();
                     GlStateManager.translate(height + 3, height - 28, 0);
                     GlStateManager.scale(2.0f,2.0f,1.0f);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     fr.drawString(partyJoinRequest.getReply().getPast()+" the invite.",0,0,0xFFFFFFFF);
                 GlStateManager.popMatrix();
             }

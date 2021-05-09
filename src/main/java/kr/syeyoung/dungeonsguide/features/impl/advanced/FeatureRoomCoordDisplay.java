@@ -30,6 +30,8 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.BlockPos;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 
@@ -67,6 +69,10 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
         GlStateManager.scale(scale, scale, 0);
 
         int color = this.<Color>getParameter("color").getValue().getRGB();
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fontRenderer.drawString("X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Facing: "+ FeatureRoomCoordDisplay.facing[real], 0, 0, color);
     }
 
@@ -77,6 +83,10 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
         if (facing < 0) facing += 360;
         double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("X: 0 Y: 3 Z: 5 Facing: "+FeatureRoomCoordDisplay.facing[(facing / 90) % 4], 0,0, this.<Color>getParameter("color").getValue().getRGB());
     }
 

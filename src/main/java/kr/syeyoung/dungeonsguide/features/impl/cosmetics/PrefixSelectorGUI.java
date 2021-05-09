@@ -28,12 +28,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
-import java.util.UUID;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -79,7 +79,13 @@ public class PrefixSelectorGUI extends MPanel {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
 
-        Set<UUID> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().thePlayer.getGameProfile().getId(), (a) -> new ArrayList<>()).stream().map(ActiveCosmetic::getCosmeticData).collect(Collectors.toSet());
+        List<ActiveCosmetic> activeCosmeticList2 = cosmeticsManager.getActiveCosmeticByPlayer().get(Minecraft.getMinecraft().thePlayer.getGameProfile().getId());
+        Set<UUID> activeCosmeticList = new HashSet<>();
+        if (activeCosmeticList2 !=null) {
+            for (ActiveCosmetic activeCosmetic : activeCosmeticList2) {
+                activeCosmeticList.add(activeCosmetic.getCosmeticData());
+            }
+        }
 
 
 
@@ -87,6 +93,10 @@ public class PrefixSelectorGUI extends MPanel {
         Gui.drawRect(0,0,getBounds().width, getBounds().height-2, 0xFF444444);
         Gui.drawRect(5,5,265, getBounds().height-7, 0xFF222222);
         Gui.drawRect(6,17,264, getBounds().height-8, 0xFF555555);
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Preview", (270 - fr.getStringWidth("Preview")) / 2, 7, 0xFFFFFFFF);
 
         {
@@ -105,6 +115,7 @@ public class PrefixSelectorGUI extends MPanel {
             int cnt = 0;
             for (CosmeticData value : cosmeticsManager.getCosmeticDataMap().values()) {
                 if (value.getCosmeticType().equals(cosmeticType)) {
+                    if (!cosmeticsManager.getPerms().contains(value.getReqPerm()) && value.getReqPerm().startsWith("invis_")) continue;
                     Gui.drawRect(0,0,220, fr.FONT_HEIGHT+3, 0xFF222222);
                     Gui.drawRect(1,1, 219, fr.FONT_HEIGHT+2, 0xFF555555);
                     fr.drawString(optionTransformer.apply(value.getData()), 2, 2, -1);
@@ -144,19 +155,24 @@ public class PrefixSelectorGUI extends MPanel {
 
         for (CosmeticData value : cosmeticsManager.getCosmeticDataMap().values()) {
             if (value.getCosmeticType().equals(cosmeticType)) {
+                if (!cosmeticsManager.getPerms().contains(value.getReqPerm()) && value.getReqPerm().startsWith("invis_")) continue;
                 if (new Rectangle(120,cnt * (fr.FONT_HEIGHT+4) + 2,40,fr.FONT_HEIGHT+1).contains(relX, relY)) {
                     selected = value;
                     return;
                 }
-                if (new Rectangle(161,cnt * (fr.FONT_HEIGHT+4) + 2,58,fr.FONT_HEIGHT+1).contains(relX, relY) && cosmeticsManager.getPerms().contains(value.getReqPerm())) {
-                    for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
-                        if (activeCosmetic.getCosmeticData().equals(value.getId())) {
-                            cosmeticsManager.removeCosmetic(activeCosmetic);
-                            return;
+                try {
+                    if (new Rectangle(161, cnt * (fr.FONT_HEIGHT + 4) + 2, 58, fr.FONT_HEIGHT + 1).contains(relX, relY) && cosmeticsManager.getPerms().contains(value.getReqPerm())) {
+                        for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
+                            if (activeCosmetic.getCosmeticData().equals(value.getId())) {
+                                cosmeticsManager.removeCosmetic(activeCosmetic);
+                                return;
+                            }
                         }
+                        cosmeticsManager.setCosmetic(value);
+                        selected = value;
                     }
-                    cosmeticsManager.setCosmetic(value);
-                    selected = value;
+                } catch (Exception e) {
+                    e.printStackTrace();
                 }
 
                 cnt++;

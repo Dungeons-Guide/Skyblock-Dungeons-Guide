@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.io.Files;
+import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
@@ -106,19 +107,22 @@ public class DungeonRoomInfoRegistry {
         registered.clear();
         shapeMap.clear();
         uuidMap.clear();
-        URL url = new URL("z:///roomdata/datas.txt");
-        List<String> lines = IOUtils.readLines(url.openConnection().getInputStream());
-        for (String name : lines) {
-            if (!name.endsWith(".roomdata")) continue;
-            try {
-                InputStream fis = new URL("z:///"+name).openStream();
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
-                ois.close();
-                fis.close();
-                register(dri);
-            } catch (Exception e) {e.printStackTrace();}
-        }
+        try {
+            List<String> lines = IOUtils.readLines(Main.class.getResourceAsStream("/roomdata/datas.txt"));
+            for (String name : lines) {
+                if (!name.endsWith(".roomdata")) continue;
+                try {
+                    InputStream fis = Main.class.getResourceAsStream("/"+name);
+                    ObjectInputStream ois = new ObjectInputStream(fis);
+                    DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
+                    ois.close();
+                    fis.close();
+                    register(dri);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+            }
+        } catch (Exception e) {e.printStackTrace();}
         for (File f : dir.listFiles()) {
             if (!f.getName().endsWith(".roomdata")) continue;
             try {

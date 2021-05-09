@@ -77,7 +77,9 @@ public class RichPresenceManager implements Runnable {
         if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.ADVANCED_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.ADVANCED_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
             DiscordRPC.discordClearPresence();
         } else {
-            DiscordRichPresence.Builder richPresenceBuilder = new DiscordRichPresence.Builder(skyblockStatus.getDungeonName());
+            String name = skyblockStatus.getDungeonName();
+            if (name.trim().equals("Your Island")) name = "Private Island";
+            DiscordRichPresence.Builder richPresenceBuilder = new DiscordRichPresence.Builder(name);
             richPresenceBuilder.setBigImage("mort", "mort")
                     .setParty(PartyManager.INSTANCE.getPartyID(), PartyManager.INSTANCE.getMemberCount(), PartyManager.INSTANCE.getMaxParty());
 

@@ -64,6 +64,8 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.io.IOException;
@@ -230,6 +232,10 @@ public class DungeonListener {
             JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
             if (obj.get("plan").getAsString().equalsIgnoreCase("TRIAL")) {
+
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString("Using trial Version of Dungeons Guide", 0,0, 0xFFFFFFFF);
                 fr.drawString("Trial version bound to: "+obj.get("nickname").getAsString(), 0,10, 0xFFFFFFFF);
             }

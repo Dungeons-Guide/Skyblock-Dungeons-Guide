@@ -60,10 +60,14 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -71,6 +75,7 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.*;
@@ -184,6 +189,10 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         GlStateManager.translate(popupRect.x, popupRect.y, 0);
         Gui.drawRect(0,0, popupRect.width, popupRect.height, 0xFF23272a);
         Gui.drawRect(2,2, popupRect.width-2, popupRect.height-2, 0XFF2c2f33);
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         if (apiKeyPlsSet) {
             Minecraft.getMinecraft().fontRendererObj.drawString("Please set API KEY on /dg -> Party Kicker", 5,5, 0xFFFFFFFF);
             GlStateManager.popMatrix();
@@ -209,9 +218,13 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
         Gui.drawRect(0,168, 90, 195, 0xFF23272a);
         Gui.drawRect(2,170, 88, 193, new Rectangle(2,170,86,23).contains(relX, relY) ? 0xFFff7777 : 0xFFFF3333);
-        fr.drawString("Kick", (90 - fr.getStringWidth("Kick")) / 2,(364 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+
         Gui.drawRect(0,193, 90, 220, 0xFF23272a);
         Gui.drawRect(2,195, 88, 218, new Rectangle(2,195,86,23).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        fr.drawString("Kick", (90 - fr.getStringWidth("Kick")) / 2,(364 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
         fr.drawString("Invite", (90 - fr.getStringWidth("Invite")) / 2,(414 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
 
         GlStateManager.pushMatrix();
@@ -220,6 +233,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         int culmutativeY = 5;
         DataRenderer dataRendererToHover = null;
         for (String datarenderers : this.<List<String>>getParameter("datarenderers").getValue()) {
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
             Dimension dim;
             if (dataRenderer == null) {
@@ -244,6 +260,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         Gui.drawRect(2,2, 88, 168, 0xFF444444);
         Gui.drawRect(80,159, 90, 170, 0xFF23272a);
         Gui.drawRect(82,161, 88, 168, 0xFF444444);
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("§eI", 83,161,-1);
         GlStateManager.color(1, 1, 1, 1.0F);
         if (fakePlayer != null) {
@@ -264,6 +283,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             toDraw = (color == null ? "§e" : color.getData().replace("&", "§"))+toDraw;
             if (prefix != null) toDraw = prefix.getData().replace("&", "§") + " "+toDraw;
 
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 15, -1);
 
             ItemStack toHover = null;
@@ -300,6 +322,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
             }
         } else {
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             fr.drawString("Loading", 5,35, 0xFFEFFF00);
         }
 
@@ -536,6 +561,21 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         @Override
         public ItemStack[] getInventory() {
             return this.inventory.armorInventory;
+        }
+
+        @Override
+        public boolean isInvisibleToPlayer(EntityPlayer player) {
+            return true;
+        }
+
+        @Override
+        public Team getTeam() {
+            return new ScorePlayerTeam(null, null) {
+                @Override
+                public EnumVisible getNameTagVisibility() {
+                    return EnumVisible.NEVER;
+                }
+            };
         }
     }
 

@@ -28,11 +28,13 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -41,22 +43,25 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CosmeticsManager implements StompMessageHandler {
     @Getter
-    private Map<UUID, CosmeticData> cosmeticDataMap = new HashMap<>();
+    private Map<UUID, CosmeticData> cosmeticDataMap = new ConcurrentHashMap<>();
     @Getter
-    private Map<UUID, ActiveCosmetic> activeCosmeticMap = new HashMap<>();
+    private Map<UUID, ActiveCosmetic> activeCosmeticMap = new ConcurrentHashMap<>();
     @Getter
-    private Map<String, List<ActiveCosmetic>> activeCosmeticByType = new HashMap<>();
+    private Map<String, List<ActiveCosmetic>> activeCosmeticByType = new ConcurrentHashMap<>();
     @Getter
-    private Map<UUID, List<ActiveCosmetic>> activeCosmeticByPlayer = new HashMap<>();
+    private Map<UUID, List<ActiveCosmetic>> activeCosmeticByPlayer = new ConcurrentHashMap<>();
     @Getter
-    private Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerNameLowerCase = new HashMap<>();
+    private Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerNameLowerCase = new ConcurrentHashMap<>();
     @Getter
-    private Set<String> perms = new HashSet<>();
+    private Set<String> perms = new CopyOnWriteArraySet<>();
 
     public void requestActiveCosmetics() {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
@@ -103,15 +108,15 @@ public class CosmeticsManager implements StompMessageHandler {
             if (jsonObject.isNull("cosmeticUID")) {
                 ActiveCosmetic activeCosmetic1 = activeCosmeticMap.remove(activeCosmetic.getActivityUID());
 
-                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new ArrayList<>());
+                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.remove(activeCosmetic1);
 
-                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic.getUsername().toLowerCase(), a-> new ArrayList<>());
+                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic1.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.remove(activeCosmetic1);
 
                 CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
                 if (cosmeticData != null) {
-                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new ArrayList<>());
+                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
                     cosmeticsByTypeList.remove(activeCosmetic1);
                 }
             } else {
@@ -123,19 +128,25 @@ public class CosmeticsManager implements StompMessageHandler {
 
                 CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
                 if (cosmeticData != null) {
-                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new ArrayList<>());
+                    List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
                     cosmeticsByTypeList.add(activeCosmetic);
                     cosmeticsByTypeList.remove(previousThing);
                 }
-                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new ArrayList<>());
+                List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(activeCosmetic.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.add(activeCosmetic);
                 activeCosmetics.remove(previousThing);
 
-                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic.getUsername().toLowerCase(), a-> new ArrayList<>());
+                activeCosmetics = activeCosmeticByPlayerNameLowerCase.computeIfAbsent(activeCosmetic.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
                 activeCosmetics.add(activeCosmetic);
                 activeCosmetics.remove(previousThing);
             }
 
+            try {
+                if (Minecraft.getMinecraft().theWorld != null) {
+                    EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(activeCosmetic.getPlayerUID());
+                    if (entityPlayer != null) entityPlayer.refreshDisplayName();
+                }
+            } catch (Exception e) {e.printStackTrace();}
 
         } else if (destination.equals("/user/queue/reply/user.perms")) {
             JSONArray object = new JSONArray(stompPayload.payload());
@@ -156,6 +167,12 @@ public class CosmeticsManager implements StompMessageHandler {
                 cosmeticData.setUsername(jsonObject.getString("username"));
 
                 activeCosmeticMap.put(cosmeticData.getActivityUID(), cosmeticData);
+                try {
+                    if (Minecraft.getMinecraft().theWorld != null) {
+                        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
+                        if (entityPlayer != null) entityPlayer.refreshDisplayName();
+                    }
+                } catch (Exception e) {e.printStackTrace();}
             }
             this.activeCosmeticMap = activeCosmeticMap;
             rebuildCaches();
@@ -185,12 +202,12 @@ public class CosmeticsManager implements StompMessageHandler {
         for (ActiveCosmetic value : activeCosmeticMap.values()) {
             CosmeticData cosmeticData = cosmeticDataMap.get(value.getCosmeticData());
             if (cosmeticData != null) {
-                List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new ArrayList<>());
+                List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
                 cosmeticsByTypeList.add(value);
             }
-            List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(value.getPlayerUID(), a-> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(value.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
             activeCosmetics.add(value);
-            activeCosmetics = activeCosmeticByPlayerName.computeIfAbsent(value.getUsername().toLowerCase(), a-> new ArrayList<>());
+            activeCosmetics = activeCosmeticByPlayerName.computeIfAbsent(value.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
             activeCosmetics.add(value);
         }
 
@@ -224,22 +241,23 @@ public class CosmeticsManager implements StompMessageHandler {
     // §r§bCo-op > §a[VIP§6+§a] syeyoung§f: §rwhat§r
 
     public static String substitute(String str) {
-        str = str.replace("{HYPIXEL_RANKED_NAME}", "§.(?:\\[[a-zA-Z\\+§0-9]+\\] )?{MC_NAME}");
-        str = str.replace("{HYPIXEL_RANKED_NAME_PAT}", "(§.(?:\\[[a-zA-Z\\+§0-9]+\\] )?)({MC_NAME})");
+        str = str.replace("{HYPIXEL_RANKED_NAME}", "{ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?{MC_NAME}");
+        str = str.replace("{HYPIXEL_RANKED_NAME_PAT}", "({ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?)({MC_NAME})");
+        str = str.replace("{ISLAND_VISITOR}", "(?:§r§a\\[✌\\] )");
+        str = str.replace("{RANK}", "(?:{ANY_COLOR}\\[.+\\] )");
         str = str.replace("{MC_NAME}", "[a-zA-Z0-9_]+");
-        str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])+");
+        str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])*");
         return str;
     }
-
     private static final Pattern PARTY_MSG = Pattern.compile(substitute("§r§9Party §8> {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
-    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2Guild > {HYPIXEL_RANKED_NAME_PAT} ({ANY_COLOR}\\[.+\\]{ANY_COLOR}): (.+)"));
-    private static final Pattern CHAT_MSG = Pattern.compile(substitute("(?:§r)?{HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
+    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2Guild > {HYPIXEL_RANKED_NAME_PAT}((?: {ANY_COLOR}\\[.+\\])?{ANY_COLOR}): (.+)"));
+    private static final Pattern CHAT_MSG = Pattern.compile(substitute("({ISLAND_VISITOR}?{RANK}?){HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern COOP_MSG = Pattern.compile(substitute("§r§bCo-op > {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern DM_TO = Pattern.compile(substitute("§dTo §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
     private static final Pattern DM_FROM = Pattern.compile(substitute("§dFrom §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
 
 
-    @SubscribeEvent(receiveCanceled = false, priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         Matcher m;
         String msg = clientChatReceivedEvent.message.getFormattedText();
@@ -259,13 +277,13 @@ public class CosmeticsManager implements StompMessageHandler {
             nickname = m.group(2);
             preRank = "§r§2Guild > ";
             rank = m.group(1);
-            last = m.group(2)+" "+m.group(3)+": "+m.group(4);
+            last = m.group(2)+m.group(3)+": "+m.group(4);
         } else if ((m = CHAT_MSG.matcher(msg)).matches()) {
             match = true;
-            nickname = m.group(2);
-            preRank = "";
-            rank = m.group(1);
-            last = m.group(2)+m.group(3)+": "+m.group(4);
+            nickname = m.group(3);
+            preRank = m.group(1);
+            rank = m.group(2);
+            last = m.group(3)+m.group(4)+": "+m.group(5);
         } else if ((m = COOP_MSG.matcher(msg)).matches()) {
             match = true;
             nickname = m.group(2);
@@ -322,5 +340,28 @@ public class CosmeticsManager implements StompMessageHandler {
                 playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
             }
         }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
+        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
+        if (activeCosmetics == null) return;
+        CosmeticData color=null, prefix=null;
+        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+            CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
+            if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
+                color = cosmeticData;
+            } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
+                prefix = cosmeticData;
+            }
+        }
+
+
+        if (color != null)
+            nameFormat.displayname = color.getData().replace("&","§")+nameFormat.username;
+
+        if (prefix != null)
+            nameFormat.displayname = prefix.getData().replace("&","§")+" "+nameFormat.displayname;
+
     }
 }

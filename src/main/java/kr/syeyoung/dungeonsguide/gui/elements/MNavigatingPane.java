@@ -26,6 +26,9 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.*;
@@ -83,6 +86,9 @@ public class MNavigatingPane extends MPanel {
         Gui.drawRect(1, 16, getBounds().width-1, getBounds().height-1, background2 != null ? background2.getRGB() : 0);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString(currentPage.replace(".", " > "), 20, 20, 0xFFFFFFFF);
 
     }
@@ -191,6 +197,9 @@ public class MNavigatingPane extends MPanel {
             int x = (getBounds().width - width) / 2;
             int y = (getBounds().height - 3 - renderer.FONT_HEIGHT) / 2 + 3;
 
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             renderer.drawString(text, x,y, foreground.getRGB());
         }
 
