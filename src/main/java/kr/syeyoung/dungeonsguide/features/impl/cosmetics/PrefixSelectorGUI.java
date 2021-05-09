@@ -109,6 +109,7 @@ public class PrefixSelectorGUI extends MPanel {
             int cnt = 0;
             for (CosmeticData value : cosmeticsManager.getCosmeticDataMap().values()) {
                 if (value.getCosmeticType().equals(cosmeticType)) {
+                    if (!cosmeticsManager.getPerms().contains(value.getReqPerm()) && value.getReqPerm().startsWith("invis_")) continue;
                     Gui.drawRect(0,0,220, fr.FONT_HEIGHT+3, 0xFF222222);
                     Gui.drawRect(1,1, 219, fr.FONT_HEIGHT+2, 0xFF555555);
                     fr.drawString(optionTransformer.apply(value.getData()), 2, 2, -1);
@@ -148,6 +149,7 @@ public class PrefixSelectorGUI extends MPanel {
 
         for (CosmeticData value : cosmeticsManager.getCosmeticDataMap().values()) {
             if (value.getCosmeticType().equals(cosmeticType)) {
+                if (!cosmeticsManager.getPerms().contains(value.getReqPerm()) && value.getReqPerm().startsWith("invis_")) continue;
                 if (new Rectangle(120,cnt * (fr.FONT_HEIGHT+4) + 2,40,fr.FONT_HEIGHT+1).contains(relX, relY)) {
                     selected = value;
                     return;
