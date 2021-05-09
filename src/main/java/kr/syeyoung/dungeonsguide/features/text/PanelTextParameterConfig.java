@@ -42,6 +42,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.w3c.dom.css.Rect;
 
 import java.awt.*;
@@ -153,6 +154,9 @@ public class PanelTextParameterConfig extends MPanel {
         GlStateManager.translate(5, height + 7, 0);
         GlStateManager.scale(0.5,0.5,0);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Press Shift to multi-select", 0, 0, 0xFFBFBFBF);
         GlStateManager.popMatrix();
 

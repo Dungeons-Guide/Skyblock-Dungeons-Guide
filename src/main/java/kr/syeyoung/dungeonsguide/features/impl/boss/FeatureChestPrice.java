@@ -34,6 +34,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.util.Comparator;
 import java.util.Set;
@@ -101,6 +103,10 @@ public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRen
         GlStateManager.translate(left, top, 0);
         Gui.drawRect( 0,0,width, 30, 0xFFDDDDDD);
 
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("BIN/AH Price: ", 5,5, 0xFF000000);
         String str = TextUtils.format(itemPrice);

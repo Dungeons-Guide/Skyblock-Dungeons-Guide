@@ -39,6 +39,8 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -99,6 +101,10 @@ public class FeatureGoodParties extends SimpleFeature implements GuiPostRenderLi
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
                 } else {
 
+
+                    GlStateManager.enableBlend();
+                    GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     if (note.toLowerCase().contains("car")) {
                         fr.drawStringWithShadow("C", x + 1, y + 1, 0xFFFF0000);
                     } else if (note.toLowerCase().replace(" ", "").contains("s/s+")) {

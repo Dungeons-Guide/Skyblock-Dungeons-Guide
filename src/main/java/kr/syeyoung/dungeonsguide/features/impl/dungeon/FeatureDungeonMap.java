@@ -52,6 +52,7 @@ import net.minecraft.world.storage.MapData;
 import net.minecraftforge.fml.relauncher.Side;
 import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.List;
@@ -142,6 +143,10 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         Rectangle featureRect =getFeatureRect().getRectangle();
         Gui.drawRect(0,0,featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, this.<AColor>getParameter("background_color").getValue()));
         FontRenderer fr = getFontRenderer();
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Please join a dungeon to see preview", featureRect.width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, featureRect.height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
         GL11.glLineWidth(2);
         RenderUtils.drawUnfilledBox(0,0,featureRect.width, featureRect.height, this.<AColor>getParameter("border_color").getValue());
@@ -208,6 +213,10 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                     str += "❌";
                 }
 
+
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED ? 0xFF00FF00 : (dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF));
                 GlStateManager.popAttrib();
                 GlStateManager.popMatrix();

@@ -30,6 +30,8 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 
@@ -47,6 +49,10 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Cooldown: "+(20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 
@@ -55,6 +61,10 @@ public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitLis
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Cooldown: 20s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
     }
 

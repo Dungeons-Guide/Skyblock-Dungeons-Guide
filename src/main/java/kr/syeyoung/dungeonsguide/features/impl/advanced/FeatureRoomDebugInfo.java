@@ -28,7 +28,10 @@ import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 import org.apache.commons.lang3.StringUtils;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 
@@ -51,6 +54,10 @@ public class FeatureRoomDebugInfo extends GuiFeature {
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         int color = this.<Color>getParameter("color").getValue().getRGB();
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         if (dungeonRoom == null) {
             if (context.getBossfightProcessor() == null) {
                 fontRenderer.drawString("Where are you?!", 0, 0, 0xFFFFFF);
@@ -73,6 +80,10 @@ public class FeatureRoomDebugInfo extends GuiFeature {
     @Override
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Line 1", 0,0, this.<Color>getParameter("color").getValue().getRGB());
         fr.drawString("Line 2", 0,10, this.<Color>getParameter("color").getValue().getRGB());
         fr.drawString("Line 3", 0,20, this.<Color>getParameter("color").getValue().getRGB());

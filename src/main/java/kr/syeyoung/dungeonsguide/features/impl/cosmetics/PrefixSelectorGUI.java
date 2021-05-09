@@ -28,6 +28,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.*;
@@ -91,6 +93,10 @@ public class PrefixSelectorGUI extends MPanel {
         Gui.drawRect(0,0,getBounds().width, getBounds().height-2, 0xFF444444);
         Gui.drawRect(5,5,265, getBounds().height-7, 0xFF222222);
         Gui.drawRect(6,17,264, getBounds().height-8, 0xFF555555);
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Preview", (270 - fr.getStringWidth("Preview")) / 2, 7, 0xFFFFFFFF);
 
         {
