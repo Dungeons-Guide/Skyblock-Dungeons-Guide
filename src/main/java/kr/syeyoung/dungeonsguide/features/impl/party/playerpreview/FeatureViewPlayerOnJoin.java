@@ -60,10 +60,14 @@ import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
+import net.minecraft.scoreboard.Team;
 import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -536,6 +540,21 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         @Override
         public ItemStack[] getInventory() {
             return this.inventory.armorInventory;
+        }
+
+        @Override
+        public boolean isInvisibleToPlayer(EntityPlayer player) {
+            return true;
+        }
+
+        @Override
+        public Team getTeam() {
+            return new ScorePlayerTeam(null, null) {
+                @Override
+                public EnumVisible getNameTagVisibility() {
+                    return EnumVisible.NEVER;
+                }
+            };
         }
     }
 
