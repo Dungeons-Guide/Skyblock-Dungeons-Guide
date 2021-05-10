@@ -30,6 +30,7 @@ import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import org.lwjgl.input.Mouse;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements KeyInputListener, GuiClickListener {
     public FeaturePressAnyKeyToCloseChest() {
@@ -66,6 +67,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements Key
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if (!isEnabled()) return;
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (Mouse.getEventButton() == -1) return;
 
         if (screen instanceof GuiChest){
             ContainerChest ch = (ContainerChest) ((GuiChest)screen).inventorySlots;
