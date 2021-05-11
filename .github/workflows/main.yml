@@ -25,7 +25,3 @@ jobs:
       run: mkdir mods && wget https://cdn.discordapp.com/attachments/782825804983566356/791708191519932426/Hychat-1.12.1-BETA.jar -O mods/Hychat-1.12.1-BETA.jar
     - name: Build with Gradle
       run: ./gradlew build
-    - uses: actions/upload-artifact@v2
-      with:
-        name: Compiled-files
-        path: build/libs/*.jar
