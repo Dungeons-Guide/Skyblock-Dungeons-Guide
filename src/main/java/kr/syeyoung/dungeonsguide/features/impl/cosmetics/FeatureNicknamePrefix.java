@@ -40,12 +40,12 @@ public class FeatureNicknamePrefix extends SimpleFeature {
     @Override
     public String getEditRoute(final GuiConfig config) {
         ConfigPanelCreator.map.put("base." + getKey() , () -> new PrefixSelectorGUI(config, "prefix", new String[] {
-                "§9Party §8> §r%prefix% §a[RANK§6+§a] %name%§f: TEST",
-                "§2Guild > §r%prefix% §a[RANK§6+§a] %name% §3[Vet]§f: TEST",
-                "§dTo §r%prefix% §r§a[RANK§r§6+§r§a] %name%§r§7: §r§7TEST§r",
-                "§dFrom §r%prefix% §r§a[RANK§r§6+§r§a] %name%§r§7: §r§7TEST§r",
-                "§r%prefix% §b[RANK§c+§b] %name%§f: TEST",
-                "§r§bCo-op > §r%prefix% §a[RANK§6+§a] %name%§f: §rTEST§r"
+                "§9Party §8> §r§a[RANK§6+§a] §r%prefix% %name%§f: TEST",
+                "§2Guild > §r§a[RANK§6+§a] §r%prefix% %name% §3[Vet]§f: TEST",
+                "§dTo §r§a[RANK§r§6+§r§a] §r%prefix% %name%§r§7: §r§7TEST§r",
+                "§dFrom §r§a[RANK§r§6+§r§a] §r%prefix% %name%§r§7: §r§7TEST§r",
+                "§b[RANK§c+§b] §r%prefix% %name%§f: TEST",
+                "§bCo-op > §r§a[RANK§6+§a] §r%prefix% %name%§f: §rTEST§r"
         }, a->a.replace("&", "§")));
         return "base." + getKey();
     }
