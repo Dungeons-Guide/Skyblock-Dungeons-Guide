@@ -33,7 +33,7 @@ public class FeatureNicknameColor extends SimpleFeature {
     @Override
     public String getEditRoute(final GuiConfig config) {
         ConfigPanelCreator.map.put("base." + getKey() , () -> new PrefixSelectorGUI(config, "color", new String[] {
-                               "§9Party §8> §r§a[RANK§6+§a] %prefix%%name%§f: TEST",
+                "§9Party §8> §r§a[RANK§6+§a] %prefix%%name%§f: TEST",
                 "§2Guild > §r§a[RANK§6+§a] %prefix%%name% §3[Vet]§f: TEST",
                 "§dTo §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
                 "§dFrom §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
