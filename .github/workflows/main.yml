@@ -26,7 +26,7 @@ jobs:
     - name: Build with Gradle
       run: ./gradlew build
     - uses: actions/upload-artifact@v2
-      if: ${{ env.GITHUB_EVENT_NAME == "workflow_dispatch" }}
+      if: ${{ env.GITHUB_EVENT_NAME == 'workflow_dispatch' }}
       with:
         name: Compiled-files
         path: build/libs/*.jar
