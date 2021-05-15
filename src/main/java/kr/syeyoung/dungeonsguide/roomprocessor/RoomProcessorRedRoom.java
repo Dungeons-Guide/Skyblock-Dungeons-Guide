@@ -106,7 +106,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 
-            StyledTextRenderer.drawTextWithStylesAssociated(featureWarningOnPortal.getText(), 0, 0, featureWarningOnPortal.getStylesMap());
+            StyledTextRenderer.drawTextWithStylesAssociated(featureWarningOnPortal.getText(), 0, 0,0, featureWarningOnPortal.getStylesMap(), StyledTextRenderer.Alignment.LEFT);
 
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
             GlStateManager.depthMask(true);
