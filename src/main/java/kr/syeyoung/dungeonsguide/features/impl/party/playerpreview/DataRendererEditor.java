@@ -25,6 +25,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -62,12 +64,15 @@ public class DataRendererEditor extends MPanel {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
 
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        fr.drawString("Available", (310 + baseWidth + hamburgerWidth -fr.getStringWidth("Available")) / 2, 4, 0xFFFFFFFF);
         fr.drawString("Current", (baseWidth + hamburgerWidth+10 -fr.getStringWidth("Current")) /2 , 4, 0xFFFFFFFF);
         Gui.drawRect(4,4 + fr.FONT_HEIGHT + 3,baseWidth + hamburgerWidth+6 + 1, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
         Gui.drawRect(5,5+ fr.FONT_HEIGHT + 3,baseWidth + hamburgerWidth + 5 + 1, 235+ fr.FONT_HEIGHT + 3, 0xFF555555);
         Gui.drawRect(5 + hamburgerWidth,4+ fr.FONT_HEIGHT + 3,6 + hamburgerWidth, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
 
-        fr.drawString("Available", (310 + baseWidth + hamburgerWidth -fr.getStringWidth("Available")) / 2, 4, 0xFFFFFFFF);
         Gui.drawRect(154,4 + fr.FONT_HEIGHT + 3,150 + baseWidth + hamburgerWidth + 6+1, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
         Gui.drawRect(155,5+ fr.FONT_HEIGHT + 3,150 + baseWidth + hamburgerWidth + 5+1, 235+ fr.FONT_HEIGHT + 3, 0xFF555555);
         Gui.drawRect(155 + hamburgerWidth,4 + fr.FONT_HEIGHT + 3,156 + hamburgerWidth, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
@@ -88,6 +93,9 @@ public class DataRendererEditor extends MPanel {
 
                 if (culmutativeY + dim.height > relSelectedY && relSelectedY >= culmutativeY && !drewit) {
                     clip(sr, scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+                    GlStateManager.enableBlend();
+                    GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     if (dataRenderer == null) {
                         fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
                         fr.drawString(currentlySelected, 0,fr.FONT_HEIGHT, 0xFFFF0000);
@@ -100,6 +108,9 @@ public class DataRendererEditor extends MPanel {
                     clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
                     GlStateManager.translate(-hamburgerWidth-1, 0, 0);
                     Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFF777777);
+                    GlStateManager.enableBlend();
+                    GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
                     GlStateManager.translate(hamburgerWidth+1,dim.height,0);
                     drewit = true;
@@ -110,6 +121,9 @@ public class DataRendererEditor extends MPanel {
             clip(sr, scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
 
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             if (dataRenderer == null) {
                 fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
                 fr.drawString(datarenderers, 0,fr.FONT_HEIGHT, 0xFFFF0000);
@@ -122,6 +136,9 @@ public class DataRendererEditor extends MPanel {
             clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
             GlStateManager.translate(-hamburgerWidth-1, 0, 0);
             Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFFAAAAAA);
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
             GlStateManager.translate(hamburgerWidth+1,dim.height,0);
 
@@ -132,6 +149,9 @@ public class DataRendererEditor extends MPanel {
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
             Dimension dim;
                 clip(sr, scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 if (dataRenderer == null) {
                     fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
                     fr.drawString(currentlySelected, 0,fr.FONT_HEIGHT, 0xFFFF0000);
@@ -144,6 +164,9 @@ public class DataRendererEditor extends MPanel {
                 clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
                 GlStateManager.translate(-hamburgerWidth-1, 0, 0);
                 Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFF777777);
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
                 GlStateManager.translate(hamburgerWidth+1,dim.height,0);
         }
@@ -160,6 +183,9 @@ public class DataRendererEditor extends MPanel {
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
             clip(sr, scissor.x + 156 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             if (dataRenderer == null) {
                 fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
                 fr.drawString(datarenderers, 0,fr.FONT_HEIGHT, 0xFFFF0000);
@@ -172,6 +198,9 @@ public class DataRendererEditor extends MPanel {
             clip(sr, scissor.x + 155, scissor.y + 5+fr.FONT_HEIGHT+3, hamburgerWidth, 230);
             GlStateManager.translate(-hamburgerWidth-1, 0, 0);
             Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFFAAAAAA);
+            GlStateManager.enableBlend();
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
             GlStateManager.translate(hamburgerWidth+1,dim.height,0);
         }
@@ -183,6 +212,9 @@ public class DataRendererEditor extends MPanel {
                 GlStateManager.translate(selectedX+hamburgerWidth+1, selectedY, 0);
                 DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
                 Dimension dim;
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 if (dataRenderer == null) {
                     fr.drawString("Couldn't find Datarenderer", 0, 0, 0xFFFF0000);
                     fr.drawString(currentlySelected, 0, fr.FONT_HEIGHT, 0xFFFF0000);
@@ -194,6 +226,9 @@ public class DataRendererEditor extends MPanel {
                 }
                 GlStateManager.translate(-hamburgerWidth-1, 0, 0);
                 Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFFAAAAAA);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
                 GlStateManager.popMatrix();
             }
