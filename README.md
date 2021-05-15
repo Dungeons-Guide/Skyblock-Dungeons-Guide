@@ -1,3 +1,21 @@
+<p align="center">
+<a href="https://github.com/cyoung06/Skyblock-Dungeons-Guide/releases" target="_blank">
+<img alt="release" src="https://img.shields.io/github/v/release/cyoung06/Skyblock-Dungeons-Guide?color=00FFFF&style=for-the-badge" />
+</a>
+<a href="https://github.com/cyoung06/Skyblock-Dungeons-Guide/releases" target="_blank">
+<img alt="downloads" src="https://img.shields.io/github/downloads/cyoung06/Skyblock-Dungeons-Guide/total?color=00FFFF&style=for-the-badge" />
+</a>
+<a href="https://github.com/cyoung06/Skyblock-Dungeons-Guide/blob/master/LICENSE">
+    <img alt="license" src="https://img.shields.io/github/license/cyoung06/Skyblock-Dungeons-Guide?color=00FFFF&style=for-the-badge">
+ </a>
+  <a href="https://github.com/cyoung06/Skyblock-Dungeons-Guide/">
+    <img alt="lines" src="https://img.shields.io/tokei/lines/github/cyoung06/Skyblock-Dungeons-Guide?color=00FFFF&style=for-the-badge">
+ </a>
+    <a href="https://discord.gg/dg" target="_blank">
+    <img alt="discord" src="https://img.shields.io/discord/781913473872560189?color=00FFFF&label=discord&style=for-the-badge" />
+  </a>
+ </p>
+ 
 # Dungeons Guide
 The most intelligent Hypixel Skyblock Dungeons Mod
 ## Safety Concerns 
