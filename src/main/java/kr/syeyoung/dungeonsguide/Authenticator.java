@@ -28,6 +28,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import net.minecraftforge.fml.common.ProgressManager;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.commons.io.IOUtils;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -129,8 +130,12 @@ public class Authenticator {
         connection.setDoOutput(true);
 
         connection.getOutputStream().write(("{\"uuid\":\""+profile.getId().toString()+"\",\"nickname\":\""+profile.getName()+"\"}").getBytes());
-        InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-        JsonObject json = (JsonObject) new JsonParser().parse(inputStreamReader);
+        String payload = String.join("\n", IOUtils.readLines(connection.getErrorStream() == null ? connection.getInputStream() : connection.getErrorStream()));
+        if (connection.getResponseCode() >= 400)
+            System.out.println("https://dungeons.guide/auth/requestAuth :: Received "+connection.getResponseCode()+" along with\n"+payload);
+
+        JsonObject json = (JsonObject) new JsonParser().parse(payload);
+
         if (!"ok".equals(json.get("status").getAsString())) {
             return null;
         }
@@ -145,9 +150,11 @@ public class Authenticator {
         urlConnection.setDoOutput(true);
 
         urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"publicKey\":\""+Base64.encodeBase64URLSafeString(clientKey.getEncoded())+"\"}").getBytes());
-        urlConnection.getResponseCode();
-        InputStreamReader reader = new InputStreamReader(urlConnection.getInputStream());
-        JsonObject jsonObject = (JsonObject) new JsonParser().parse(reader);
+        String payload = String.join("\n", IOUtils.readLines(urlConnection.getErrorStream() == null ? urlConnection.getInputStream() : urlConnection.getErrorStream()));
+        if (urlConnection.getResponseCode() >= 400)
+            System.out.println("https://dungeons.guide/auth/authenticate :: Received "+urlConnection.getResponseCode()+" along with\n"+payload);
+
+        JsonObject jsonObject = (JsonObject) new JsonParser().parse(payload);
         if (!"ok".equals(jsonObject.get("status").getAsString())) {
             return null;
         }

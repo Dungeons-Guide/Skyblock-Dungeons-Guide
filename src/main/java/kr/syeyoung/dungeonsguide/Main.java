@@ -68,7 +68,17 @@ public class Main
         MinecraftForge.EVENT_BUS.register(this);
         if (dgInterface != null) {
             main = this;
-            dgInterface.init(initializationEvent);
+            try {
+                dgInterface.init(initializationEvent);
+            } catch (Exception e) {
+                cause = e;
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                PrintStream printStream = new PrintStream(byteArrayOutputStream);
+                e.printStackTrace(printStream);
+                stacktrace = new String(byteArrayOutputStream.toByteArray());
+
+                e.printStackTrace();
+            }
         }
     }
 
@@ -111,6 +121,8 @@ public class Main
                     while (progressBar.getStep() < progressBar.getSteps())
                         progressBar.step("random-"+progressBar.getStep());
                     ProgressManager.pop(progressBar);
+
+                    e.printStackTrace();
                 }
             }
         } catch (IOException  | AuthenticationException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
@@ -123,6 +135,8 @@ public class Main
             while (progressBar.getStep() < progressBar.getSteps())
                 progressBar.step("random-"+progressBar.getStep());
             ProgressManager.pop(progressBar);
+
+            e.printStackTrace();
         }
     }
 
