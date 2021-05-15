@@ -38,6 +38,10 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 public class StompClient extends WebSocketClient implements StompInterface {
     public StompClient(URI serverUri, final String token, CloseListener closeListener) throws Exception {
@@ -61,11 +65,15 @@ public class StompClient extends WebSocketClient implements StompInterface {
     @Getter
     private StompPayload errorPayload;
 
+    private ScheduledFuture heartbeat = null;
+
+    private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1);
 
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         send(new StompPayload().method(StompHeader.CONNECT)
                 .header("accept-version","1.2")
+                .header("heart-beat", "30000,30000")
                 .header("host",uri.getHost()).getBuilt()
         );
     }
@@ -76,6 +84,19 @@ public class StompClient extends WebSocketClient implements StompInterface {
             StompPayload payload = StompPayload.parse(message);
             if (payload.method() == StompHeader.CONNECTED) {
                 stompClientStatus = StompClientStatus.CONNECTED;
+
+                String heartbeat = payload.headers().get("heart-beat");
+                if (heartbeat != null) {
+                    int sx = Integer.parseInt(heartbeat.split(",")[0]);
+                    int sy = Integer.parseInt(heartbeat.split(",")[1]);
+
+                    if (sy == 0) return;
+                    int heartbeatMS = Integer.max(30000, sy);
+                    this.heartbeat = ex.scheduleAtFixedRate(() -> {
+                        send("\n");
+                    }, heartbeatMS-1000, heartbeatMS-1000, TimeUnit.MILLISECONDS);
+                }
+
             } else if (payload.method() == StompHeader.ERROR) {
                 errorPayload = payload;
                 stompClientStatus = StompClientStatus.ERROR;
@@ -113,6 +134,7 @@ public class StompClient extends WebSocketClient implements StompInterface {
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
+        if (heartbeat != null) heartbeat.cancel(true);
         closeListener.onClose(code, reason, remote);
     }
 
