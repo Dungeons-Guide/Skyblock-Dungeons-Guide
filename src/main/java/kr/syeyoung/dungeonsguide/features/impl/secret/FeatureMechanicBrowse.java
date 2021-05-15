@@ -220,9 +220,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         if (selected != -1) {
 
-            boolean overFlows = new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth() < feature.x + feature.width;
+            boolean overFlows = new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth() < feature.x + 2*feature.width;
 
-            clip(new ScaledResolution(Minecraft.getMinecraft()), overFlows ? feature.x - feature.width : feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
+            clip(new ScaledResolution(Minecraft.getMinecraft()), overFlows ? feature.x - feature.width : feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
             GlStateManager.translate(overFlows ? - feature.width : feature.width, selected * fr.FONT_HEIGHT, 0);
             Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT * possibleStates.size() + 4, 0xFF444444);
             Gui.drawRect(-1, 1, feature.width - 1, fr.FONT_HEIGHT  * possibleStates.size() + 3, 0xFF262626);
@@ -230,7 +230,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
             Point popupStart = new Point(overFlows ? feature.x - feature.width : feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy + 2);
             for (int i = 0; i < possibleStates.size(); i++) {
-                if (new Rectangle(overFlows ? feature.x - feature.width : feature.width, popupStart.y + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
+                if (new Rectangle(overFlows ? feature.x - feature.width : feature.x + feature.width, popupStart.y + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
                     Gui.drawRect(-2, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
                 }
                 GlStateManager.enableBlend();
@@ -387,7 +387,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        boolean overFlows = new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth() < feature.x + feature.width;
+        boolean overFlows = new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth() < feature.x + 2*feature.width;
 
         Point popupStart = new Point(overFlows ? feature.x - feature.width : feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy);
         if (feature.contains(mouseX, mouseY)) {
