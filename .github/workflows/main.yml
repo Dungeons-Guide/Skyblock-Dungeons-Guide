@@ -1,0 +1,32 @@
+name: Build
+
+on:
+  push:
+    branches:
+      - '*'
+  pull_request:
+    branches:
+      - '*'
+  workflow_dispatch:
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Set up JDK 1.8
+      uses: actions/setup-java@v1
+      with:
+        java-version: 1.8
+    - name: Grant execute permission for gradlew
+      run: chmod +x gradlew
+    - name: Download hychat as a dependency
+      run: mkdir mods && wget https://cdn.discordapp.com/attachments/782825804983566356/791708191519932426/Hychat-1.12.1-BETA.jar -O mods/Hychat-1.12.1-BETA.jar
+    - name: Build with Gradle
+      run: ./gradlew build
+    - uses: actions/upload-artifact@v2
+      if: github.event_name == 'workflow_dispatch'
+      with:
+        name: Compiled-files
+        path: build/libs/*.jar
