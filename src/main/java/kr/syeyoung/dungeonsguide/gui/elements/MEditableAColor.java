@@ -26,6 +26,9 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 
@@ -63,6 +66,9 @@ public class MEditableAColor extends MPanel {
 
         int x = (rectangle.width - getSize().width) / 2;
         int y = (rectangle.height - getSize().height) / 2;
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         Gui.drawRect(x,y,x+getSize().width,y+getSize().height, RenderUtils.getColorAt(absMousex - relMousex0, absMousey -  relMousey0, color));
 
         Gui.drawRect(x,y,x+getSize().width,y+1, 0xff333333);

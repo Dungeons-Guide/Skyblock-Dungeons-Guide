@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.icefill;
 
 import kr.syeyoung.dungeonsguide.config.Config;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -109,7 +110,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     public void drawWorld(float partialTicks) {
         if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
         for (List<BlockPos> solution:this.solution)
-            RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, true);
+            RenderUtils.drawLines(solution, new AColor(0,255,0, 255), 1, partialTicks, true);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorIcePath2> {

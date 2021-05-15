@@ -332,6 +332,18 @@ public class RenderUtils {
         return (Color.HSBtoRGB((float) (((blah - (x + y) / 2.0f) % 360) / 360.0f), hsv[1],hsv[2]) & 0xffffff)
                 | ((color.getAlpha() << 24) & 0xff000000);
     }
+    public static int getColorAt(double x, double y,double z, AColor color) {
+        if (!color.isChroma())
+            return color.getRGB();
+
+        double blah = ((double)(color.getChromaSpeed()) * (System.currentTimeMillis() / 2)) % 360;
+        float[] hsv = new float[3];
+        Color.RGBtoHSB(color.getRed(), color.getBlue(), color.getGreen(), hsv);
+
+
+        return (Color.HSBtoRGB((float) (((blah - ((x + y+z) / 2.0f) % 360)) / 360.0f), hsv[1],hsv[2]) & 0xffffff)
+                | ((color.getAlpha() << 24) & 0xff000000);
+    }
 
     public static WorldRenderer color(WorldRenderer worldRenderer, int color ){
         return worldRenderer.color(((color >> 16) & 0xFF) / 255.0f, ((color >> 8) & 0xFF) / 255.0f, (color &0xFF) / 255.0f, ((color >> 24) & 0xFF) / 255.0f);
@@ -450,7 +462,7 @@ public class RenderUtils {
         GlStateManager.popMatrix();
     }
 
-    public static void drawLines(List<BlockPos> poses, Color colour, float partialTicks, boolean depth) {
+    public static void drawLines(List<BlockPos> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -463,17 +475,25 @@ public class RenderUtils {
         GlStateManager.disableTexture2D();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
-        GL11.glLineWidth(2);
+        GL11.glLineWidth(thickness);
         if (!depth) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
-        worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION);
+//        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
+        GlStateManager.color(1,1,1,1);
+        worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+        int num = 0;
         for (BlockPos pos:poses) {
-            worldRenderer.pos(pos.getX() +0.5, pos.getY() +0.5, pos.getZ() +0.5).endVertex();
+            int i = getColorAt(num++ * 10,0, colour);
+            worldRenderer.pos(pos.getX() +0.5, pos.getY() +0.5, pos.getZ() +0.5).color(
+                    ((i >> 16) &0xFF)/255.0f,
+                    ((i >> 8) &0xFF)/255.0f,
+                    (i &0xFF)/255.0f,
+                    ((i >> 24) &0xFF)/255.0f
+            ).endVertex();
         }
         Tessellator.getInstance().draw();
 
@@ -487,9 +507,11 @@ public class RenderUtils {
         }
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
+        GL11.glLineWidth(1);
     }
 
     public static void drawLines(List<BlockPos> poses, Color colour, float thickness, float partialTicks, boolean depth) {
+        if (colour instanceof AColor) drawLines(poses, (AColor)colour, thickness, partialTicks,depth);
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
