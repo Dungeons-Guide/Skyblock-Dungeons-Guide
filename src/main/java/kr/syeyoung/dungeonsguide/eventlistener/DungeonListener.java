@@ -60,6 +60,8 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
+import net.minecraftforge.fml.client.FMLClientHandler;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
@@ -146,7 +148,8 @@ public class DungeonListener {
 
                     final String[] a = new String[]{
                             "User has changed current Minecraft session.",
-                            "Please restart mc to revalidate Dungeons Guide"
+                            "Please restart mc to revalidate Dungeons Guide",
+                            "Hopefully this screen will be fixed in later release"
                     };
                     final GuiScreen b = new GuiErrorScreen(null, null) {
                         @Override
@@ -166,7 +169,7 @@ public class DungeonListener {
 
                         @Override
                         protected void actionPerformed(GuiButton button) throws IOException {
-                            System.exit(-1);
+                            FMLCommonHandler.instance().exitJava(-1,true);
                         }
                     };
                     Minecraft.getMinecraft().displayGuiScreen(b);
@@ -243,18 +246,6 @@ public class DungeonListener {
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
             if (postRender.type != RenderGameOverlayEvent.ElementType.ALL) return;
-
-            JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
-            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-            if (obj.get("plan").getAsString().equalsIgnoreCase("TRIAL")) {
-
-                GlStateManager.enableBlend();
-                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                fr.drawString("Using trial Version of Dungeons Guide", 0,0, 0xFFFFFFFF);
-                fr.drawString("Trial version bound to: "+obj.get("nickname").getAsString(), 0,10, 0xFFFFFFFF);
-            }
-
 
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
