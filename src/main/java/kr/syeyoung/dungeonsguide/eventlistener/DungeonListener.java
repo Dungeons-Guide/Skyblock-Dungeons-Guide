@@ -104,6 +104,11 @@ public class DungeonListener {
                     }
                 }
             GlStateManager.enableBlend();
+            GlStateManager.color(1,1,1,1);
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.popAttrib();
+            GlStateManager.enableAlpha();
         } catch (Throwable e2) {e2.printStackTrace();}
     }
     @SubscribeEvent
@@ -227,7 +232,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
-            if (postRender.type != RenderGameOverlayEvent.ElementType.TEXT) return;
+            if (postRender.type != RenderGameOverlayEvent.ElementType.ALL) return;
 
             JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
@@ -244,6 +249,7 @@ public class DungeonListener {
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
+            GlStateManager.pushAttrib();
             if (skyblockStatus.getContext() != null) {
                 DungeonContext context = skyblockStatus.getContext();
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -259,6 +265,12 @@ public class DungeonListener {
 
             }
             GlStateManager.enableBlend();
+            GlStateManager.color(1,1,1,1);
+            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
+            GlStateManager.popAttrib();
+            GlStateManager.enableAlpha();
         } catch (Throwable e) {
             e.printStackTrace();
         }

@@ -69,7 +69,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList("roomname");
+        return Arrays.asList("roomname", "in");
     }
 
     @Override

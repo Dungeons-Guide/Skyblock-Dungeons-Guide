@@ -31,6 +31,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 import org.w3c.dom.css.Rect;
 
 import javax.sound.midi.MidiEvent;
@@ -75,6 +76,9 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         GlStateManager.popAttrib();
 
         GlStateManager.enableBlend();
+        GlStateManager.color(1,1,1,1);
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
 
