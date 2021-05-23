@@ -166,7 +166,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             w.flush();
             byte[] bytes = baos.toByteArray();
             String str = Base64.encodeBase64String(bytes);
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pc $DG-BD " +str);
+            Minecraft.getMinecraft().thePlayer.sendChatMessage("/ac $DG-BD " +str);
 
             for (ChamberSet ch:chambers) {
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
