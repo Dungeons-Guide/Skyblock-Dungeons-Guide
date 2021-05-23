@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -55,6 +56,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
         if (!dc.getBossfightProcessor().getCurrentPhase().equals("terminals")) return;
+        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(309,123,291) > 400) return;
+
 
         if (orderclick.size() >= 1)
             RenderUtils.highlightBlock(orderclick.get(0), new Color(0, 255 ,255, 100), partialTicks, false);
