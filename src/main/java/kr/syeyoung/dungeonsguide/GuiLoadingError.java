@@ -62,7 +62,7 @@ public class GuiLoadingError extends GuiScreen {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         fontRenderer.drawString("DungeonsGuide has ran into error while loading itself", (sr.getScaledWidth()-fontRenderer.getStringWidth("DungeonsGuide has ran into error while loading itself"))/2,40,0xFFFF0000);
-        fontRenderer.drawString("Please contact developer with this screen", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please contact developer with this screen"))/2, (int) (40+fontRenderer.FONT_HEIGHT*1.5),0xFFFF0000);
+        fontRenderer.drawString("Please contact DungeonsGuide support with this screen", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please contact developer with this screen"))/2, (int) (40+fontRenderer.FONT_HEIGHT*1.5),0xFFFF0000);
 
         int tenth = sr.getScaledWidth() / 10;
 
