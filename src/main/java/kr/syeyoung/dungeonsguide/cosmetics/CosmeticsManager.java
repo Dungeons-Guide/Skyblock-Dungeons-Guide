@@ -244,13 +244,13 @@ public class CosmeticsManager implements StompMessageHandler {
         str = str.replace("{HYPIXEL_RANKED_NAME}", "{ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?{MC_NAME}");
         str = str.replace("{HYPIXEL_RANKED_NAME_PAT}", "({ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?)({MC_NAME})");
         str = str.replace("{ISLAND_VISITOR}", "(?:§r§a\\[✌\\] )");
-        str = str.replace("{RANK}", "(?:{ANY_COLOR}\\[.+\\] )");
+        str = str.replace("{RANK}", "(?:{ANY_COLOR}\\[[a-zA-Z0-9_ ]+\\] )");
         str = str.replace("{MC_NAME}", "[a-zA-Z0-9_]+");
         str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])*");
         return str;
     }
-    private static final Pattern PARTY_MSG = Pattern.compile(substitute("§r§9Party §8> {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
-    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2Guild > {HYPIXEL_RANKED_NAME_PAT}((?: {ANY_COLOR}\\[.+\\])?{ANY_COLOR}): (.+)"));
+    private static final Pattern PARTY_MSG = Pattern.compile(substitute("§r§9P(?:arty)? §8> {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
+    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2G(?:uild)? > {HYPIXEL_RANKED_NAME_PAT}((?: {ANY_COLOR}\\[.+\\])?{ANY_COLOR}): (.+)"));
     private static final Pattern CHAT_MSG = Pattern.compile(substitute("({ISLAND_VISITOR}?{RANK}?){HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern COOP_MSG = Pattern.compile(substitute("§r§bCo-op > {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
     private static final Pattern DM_TO = Pattern.compile(substitute("§dTo §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));

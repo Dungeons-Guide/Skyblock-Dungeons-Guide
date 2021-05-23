@@ -128,6 +128,7 @@ public class FeatureRegistry {
 
 
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
+    public static final FeatureDungeonRoomName DUNGEON_ROOMNAME = register(new FeatureDungeonRoomName());
     public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST = register(new FeaturePressAnyKeyToCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
     public static final FeatureBoxBats DUNGEON_BOXBAT = register(new FeatureBoxBats());

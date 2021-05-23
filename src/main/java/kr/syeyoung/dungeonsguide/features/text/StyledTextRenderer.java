@@ -43,7 +43,7 @@ public class StyledTextRenderer {
 
 
     public static List<StyleTextAssociated> drawTextWithStylesAssociated(List<StyledText> texts, int x, int y,int width, Map<String, TextStyle> styleMap, Alignment alignment) {
-        String[] totalLines = texts.stream().map( a-> a.getText()).collect(Collectors.joining()).split("\n");
+        String[] totalLines = (texts.stream().map( a-> a.getText()).collect(Collectors.joining())+" ").split("\n");
 
 
         int currentLine = 0;
