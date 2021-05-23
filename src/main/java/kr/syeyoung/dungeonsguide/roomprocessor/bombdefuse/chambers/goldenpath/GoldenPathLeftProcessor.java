@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
@@ -105,7 +106,7 @@ public class GoldenPathLeftProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawLines(blocksolution, Color.blue, partialTicks, false);
+        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0), 1,partialTicks, false);
     }
 
     @Override

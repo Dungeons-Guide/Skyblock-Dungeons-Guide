@@ -19,19 +19,22 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiErrorScreen;
-import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.*;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
+import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -52,12 +55,39 @@ public class Main
 
     private DGInterface dgInterface;
 
+    private boolean isLoaded = false;
+    private Throwable cause;
+    private String stacktrace;
+    private boolean showedError = false;
+
+
+
     @EventHandler
     public void initEvent(FMLInitializationEvent initializationEvent)
     {
+        MinecraftForge.EVENT_BUS.register(this);
+        if (dgInterface != null) {
+            main = this;
+            try {
+                dgInterface.init(initializationEvent);
+            } catch (Exception e) {
+                cause = e;
+                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                PrintStream printStream = new PrintStream(byteArrayOutputStream);
+                e.printStackTrace(printStream);
+                stacktrace = new String(byteArrayOutputStream.toByteArray());
 
-        main = this;
-        dgInterface.init(initializationEvent);
+                e.printStackTrace();
+            }
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
+        if (!showedError && !isLoaded && guiOpenEvent.gui instanceof GuiMainMenu) {
+            guiOpenEvent.gui = new GuiLoadingError(cause, stacktrace, guiOpenEvent.gui);
+            showedError = true;
+        }
     }
 
     @EventHandler
@@ -80,65 +110,36 @@ public class Main
                     while (progressBar.getStep() < progressBar.getSteps())
                         progressBar.step("random-"+progressBar.getStep());
                     ProgressManager.pop(progressBar);
+                    isLoaded = true;
                 } catch (Throwable e) {
-                    e.printStackTrace();
+                    cause = e;
+                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+                    PrintStream printStream = new PrintStream(byteArrayOutputStream);
+                    e.printStackTrace(printStream);
+                    stacktrace = new String(byteArrayOutputStream.toByteArray());
 
-                    throwError(new String[]{
-                            "Couldn't load Dungeons Guide",
-                            "Please contact developer if this problem persists after restart"
-                    });
+                    while (progressBar.getStep() < progressBar.getSteps())
+                        progressBar.step("random-"+progressBar.getStep());
+                    ProgressManager.pop(progressBar);
+
+                    e.printStackTrace();
                 }
-                return;
             }
         } catch (IOException  | AuthenticationException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
+            cause = e;
+            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+            PrintStream printStream = new PrintStream(byteArrayOutputStream);
+            e.printStackTrace(printStream);
+            stacktrace = new String(byteArrayOutputStream.toByteArray());
+
+            while (progressBar.getStep() < progressBar.getSteps())
+                progressBar.step("random-"+progressBar.getStep());
+            ProgressManager.pop(progressBar);
+
             e.printStackTrace();
         }
-
-        throwError(new String[]{
-                "Can't authenticate session",
-                "Steps to fix",
-                "1. check if other people can't join minecraft servers.",
-                "2. physically click on logout button, then login again",
-                "3. make sure you're on the right account",
-                "If the problem persists after following these steps, please contact developer"
-        });
     }
 
-    public void throwError(final String[] a) {
-        final GuiScreen b = new GuiErrorScreen(null, null) {
-            @Override
-            public void drawScreen(int par1, int par2, float par3) {
-                super.drawScreen(par1, par2, par3);
-                for (int i = 0; i < a.length; ++i) {
-                    drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
-                }
-            }
-
-            @Override
-            public void initGui() {
-                super.initGui();
-                this.buttonList.clear();
-                this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100,20, "close"));
-            }
-
-            @Override
-            protected void actionPerformed(GuiButton button) throws IOException {
-                System.exit(-1);
-            }
-        };
-        @SuppressWarnings("serial") CustomModLoadingErrorDisplayException e = new CustomModLoadingErrorDisplayException() {
-
-            @Override
-            public void initGui(GuiErrorScreen errorScreen, FontRenderer fontRenderer) {
-                Minecraft.getMinecraft().displayGuiScreen(b);
-            }
-
-            @Override
-            public void drawScreen(GuiErrorScreen errorScreen, FontRenderer fontRenderer, int mouseRelX, int mouseRelY, float tickTime) {
-            }
-        };
-        throw e;
-    }
     public static Main a() {
         return main;
     }

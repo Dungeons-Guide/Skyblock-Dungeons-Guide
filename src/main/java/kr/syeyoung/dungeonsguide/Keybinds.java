@@ -37,15 +37,15 @@ public class Keybinds
 
     public static void register()
     {
-        editingSession = new KeyBinding("start editing session", Keyboard.KEY_NONE, "key.categories.dungeonsguide");
+        editingSession = new KeyBinding("start editing session", Keyboard.KEY_NONE, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(editingSession);
-        sendBombdefuse = new KeyBinding("send and save bombdefuse solution", Keyboard.KEY_F, "key.categories.dungeonsguide");
+        sendBombdefuse = new KeyBinding("send and save bombdefuse solution", Keyboard.KEY_F, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(sendBombdefuse);
-        nextSecret = new KeyBinding("navigate to next secret. (Req option enabled at /dg)", Keyboard.KEY_NONE, "key.categories.dungeonsguide");
+        nextSecret = new KeyBinding("navigate to next secret. (Req option enabled at /dg)", Keyboard.KEY_NONE, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(nextSecret);
-        togglePathfind = new KeyBinding("toggle Pathfind. (Req option enabled at /dg)", Keyboard.KEY_NONE, "key.categories.dungeonsguide");
+        togglePathfind = new KeyBinding("toggle Pathfind. (Req option enabled at /dg)", Keyboard.KEY_NONE, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(togglePathfind);
-        freezeLines = new KeyBinding("Toggle freeze pathfind lines", Keyboard.KEY_NONE, "key.categories.dungeonsguide");
+        freezeLines = new KeyBinding("Toggle freeze pathfind lines", Keyboard.KEY_NONE, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(freezeLines);
     }
 

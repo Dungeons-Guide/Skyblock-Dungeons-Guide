@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.boxpuzzle;
 
 import kr.syeyoung.dungeonsguide.config.Config;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -362,11 +363,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             }
 
             if (pathFound != null) {
-                RenderUtils.drawLines(pathFound, new Color(0, 255, 0, 255), partialTicks, true);
+                RenderUtils.drawLines(pathFound, new AColor(0, 255, 0, 255),1, partialTicks, true);
             }
         } else {
             if (totalPath != null) {
-                RenderUtils.drawLines(totalPath, new Color(0, 255, 0, 255), partialTicks, false);
+                RenderUtils.drawLines(totalPath, new AColor(0, 255, 0, 255),1, partialTicks, false);
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {

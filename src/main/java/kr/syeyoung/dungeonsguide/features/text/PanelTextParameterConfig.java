@@ -135,7 +135,7 @@ public class PanelTextParameterConfig extends MPanel {
 
         List<StyledText> texts = feature.getDummyText();
         Map<String, TextStyle> styles = feature.getStylesMap();
-        List<StyledTextRenderer.StyleTextAssociated> calc = StyledTextRenderer.drawTextWithStylesAssociated(texts, 0,0, styles);
+        List<StyledTextRenderer.StyleTextAssociated> calc = StyledTextRenderer.drawTextWithStylesAssociated(texts, 0,0, getBounds().width, styles, StyledTextRenderer.Alignment.LEFT);
         boolean bool =clip.contains(absMousex, absMousey);
         for (StyledTextRenderer.StyleTextAssociated calc3: calc) {
             if (selected.contains(calc3.getStyledText().getGroup())) {

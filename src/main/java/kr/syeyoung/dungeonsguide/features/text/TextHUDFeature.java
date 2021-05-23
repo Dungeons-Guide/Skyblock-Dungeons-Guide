@@ -43,6 +43,8 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
         this.parameters.put("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
+        this.parameters.put("alignRight", new FeatureParameter<Boolean>("alignRight", "Align Right", "Align text to right", false, "boolean"));
+        this.parameters.put("alignCenter", new FeatureParameter<Boolean>("alignCenter", "Align Center", "Align text to center (overrides alignright)", false, "boolean"));
     }
 
     @Override
@@ -50,12 +52,13 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         if (isHUDViewable()) {
             List<StyledText> asd = getText();
 
+            double scale = 1;
             if (doesScaleWithHeight()) {
                 FontRenderer fr = getFontRenderer();
-                double scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
+                scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
                 GlStateManager.scale(scale, scale, 0);
             }
-            StyledTextRenderer.drawTextWithStylesAssociated(getText(), 0, 0, getStylesMap());
+            StyledTextRenderer.drawTextWithStylesAssociated(getText(), 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),this.<Boolean>getParameter("alignCenter").getValue() ? StyledTextRenderer.Alignment.CENTER : this.<Boolean>getParameter("alignRight").getValue() ? StyledTextRenderer.Alignment.RIGHT : StyledTextRenderer.Alignment.LEFT);
         }
     }
 
@@ -66,12 +69,13 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     @Override
     public void drawDemo(float partialTicks) {
         List<StyledText> asd = getDummyText();
+        double scale = 1;
         if (doesScaleWithHeight()) {
             FontRenderer fr = getFontRenderer();
-            double scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
+            scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
             GlStateManager.scale(scale, scale, 0);
         }
-        StyledTextRenderer.drawTextWithStylesAssociated(getDummyText(), 0, 0, getStylesMap());
+        StyledTextRenderer.drawTextWithStylesAssociated(getDummyText(), 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),this.<Boolean>getParameter("alignCenter").getValue() ? StyledTextRenderer.Alignment.CENTER : this.<Boolean>getParameter("alignRight").getValue() ? StyledTextRenderer.Alignment.RIGHT : StyledTextRenderer.Alignment.LEFT);
     }
 
     public int countLines(List<StyledText> texts) {

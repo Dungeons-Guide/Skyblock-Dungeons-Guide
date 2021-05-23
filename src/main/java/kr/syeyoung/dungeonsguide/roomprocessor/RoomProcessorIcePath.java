@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.config.Config;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -142,7 +143,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_SILVERFISH.isEnabled()) return;
         if (!err)
-        RenderUtils.drawLines(solution, new Color(0,255,0, 255), partialTicks, false);
+        RenderUtils.drawLines(solution, new AColor(0,255,0, 255),1, partialTicks, false);
     }
 
     public Point getPointOfSilverFishOnMap(BlockPos blockPos) {

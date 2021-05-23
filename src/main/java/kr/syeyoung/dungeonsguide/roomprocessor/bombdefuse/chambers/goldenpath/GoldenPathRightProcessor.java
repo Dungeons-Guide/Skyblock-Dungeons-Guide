@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.goldenpath;
 
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
@@ -63,7 +64,7 @@ public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
         super.drawWorld(partialTicks);
         RenderUtils.drawTextAtWorld(blocksolution.size() == 0 ? "Answer not received yet. Visit left room to obtain solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
 
-        RenderUtils.drawLines(blocksolution, Color.blue, partialTicks, false);
+        RenderUtils.drawLines(blocksolution, new AColor(0,0,255,0),1, partialTicks, false);
 
     }
 

@@ -143,8 +143,7 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         MinecraftForge.EVENT_BUS.register(cosmeticsManager);
 
         try {
-            stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), this);
-            MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
+            connectStomp();
         } catch (Exception e) {
             throw new RuntimeException(e);
         }

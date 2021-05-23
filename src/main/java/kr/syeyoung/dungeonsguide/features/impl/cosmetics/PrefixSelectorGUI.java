@@ -118,13 +118,20 @@ public class PrefixSelectorGUI extends MPanel {
                     if (!cosmeticsManager.getPerms().contains(value.getReqPerm()) && value.getReqPerm().startsWith("invis_")) continue;
                     Gui.drawRect(0,0,220, fr.FONT_HEIGHT+3, 0xFF222222);
                     Gui.drawRect(1,1, 219, fr.FONT_HEIGHT+2, 0xFF555555);
-                    fr.drawString(optionTransformer.apply(value.getData()), 2, 2, -1);
                     Gui.drawRect(120,1,160, fr.FONT_HEIGHT+2, new Rectangle(120,cnt * (fr.FONT_HEIGHT+4) + 2,40,fr.FONT_HEIGHT+1).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
+
+                    GlStateManager.enableBlend();
+                    GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                    fr.drawString(optionTransformer.apply(value.getData()), 2, 2, -1);
                     fr.drawString("TEST", (280-fr.getStringWidth("TEST"))/2, 2, -1);
 
                     if (cosmeticsManager.getPerms().contains(value.getReqPerm())) {
                         Gui.drawRect(161,1,219, fr.FONT_HEIGHT+2, new Rectangle(161,cnt * (fr.FONT_HEIGHT+4) + 2,58,fr.FONT_HEIGHT+1).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
 
+                        GlStateManager.enableBlend();
+                        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         if (activeCosmeticList.contains(value.getId())) {
                             fr.drawString("UNSELECT", (381 - fr.getStringWidth("UNSELECT")) / 2, 2, -1);
                         } else {
@@ -132,6 +139,9 @@ public class PrefixSelectorGUI extends MPanel {
                         }
                     } else {
                         Gui.drawRect(161,1,219, fr.FONT_HEIGHT+2, 0xFFFF3333);
+                        GlStateManager.enableBlend();
+                        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         fr.drawString("Locked", (381 - fr.getStringWidth("Locked")) / 2, 2, -1);
                     }
                     GlStateManager.translate(0,fr.FONT_HEIGHT+4, 0);

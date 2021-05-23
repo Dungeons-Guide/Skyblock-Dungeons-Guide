@@ -32,12 +32,24 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class StyledTextRenderer {
-    public static List<StyleTextAssociated> drawTextWithStylesAssociated(List<StyledText> texts, int x, int y, Map<String, TextStyle> styleMap) {
-        int currX = x;
-        int currY = y;
+
+    public static enum Alignment {
+        LEFT, CENTER, RIGHT
+    }
+
+
+
+    public static List<StyleTextAssociated> drawTextWithStylesAssociated(List<StyledText> texts, int x, int y,int width, Map<String, TextStyle> styleMap, Alignment alignment) {
+        String[] totalLines = texts.stream().map( a-> a.getText()).collect(Collectors.joining()).split("\n");
+
+
+        int currentLine = 0;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        int currX = alignment == Alignment.LEFT ? x : alignment == Alignment.CENTER ? (x+width-fr.getStringWidth(totalLines[currentLine]))/2 : (x+width-fr.getStringWidth(totalLines[currentLine]));
+        int currY = y;
         int maxHeightForLine = 0;
         List<StyleTextAssociated> associateds = new ArrayList<StyleTextAssociated>();
         for (StyledText st : texts) {
@@ -53,13 +65,15 @@ public class StyledTextRenderer {
 
                 if (i+1 != lines.length) {
                     currY += maxHeightForLine ;
-                    currX = x;
+                    currentLine++;
+                    currX = alignment == Alignment.LEFT ? x : alignment == Alignment.CENTER ? (x+width-fr.getStringWidth(totalLines[currentLine]))/2 : (x+width-fr.getStringWidth(totalLines[currentLine]));
                     maxHeightForLine = 0;
                 }
             }
             if (st.getText().endsWith("\n")) {
-                currY += maxHeightForLine ;
-                currX = x;
+                currY += maxHeightForLine;
+                currentLine++;
+                currX = alignment == Alignment.LEFT ? x : alignment == Alignment.CENTER ? (x+width-fr.getStringWidth(totalLines[currentLine]))/2 : (x+width-fr.getStringWidth(totalLines[currentLine]));
                 maxHeightForLine = 0;
             }
         }

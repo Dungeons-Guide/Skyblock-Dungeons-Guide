@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
@@ -58,13 +59,13 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     public FeatureMechanicBrowse() {
         super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
-        parameters.put("linecolor", new FeatureParameter<Color>("linecolor", "Color", "Color of Pathfind line", Color.green, "color"));
+        parameters.put("linecolor2", new FeatureParameter<AColor>("linecolor2", "Color", "Color of Pathfind line", new AColor(0xFF00FF00, true), "acolor"));
         parameters.put("linethickness", new FeatureParameter<Float>("linethickness", "Thickness", "Thickness of Pathfind line", 1.0f, "float"));
         parameters.put("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "How many ticks per line refresh?", 10, "integer"));
     }
 
-    public Color getColor() {
-        return this.<Color>getParameter("linecolor").getValue();
+    public AColor getColor() {
+        return this.<AColor>getParameter("linecolor2").getValue();
     }
     public float getThickness() {
         return this.<Float>getParameter("linethickness").getValue();
@@ -209,31 +210,42 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
                 fr.drawString("Cancel Current", 3, i * fr.FONT_HEIGHT, 0xFF00FFFF);
             } else {
                 Gui.drawRect(-1, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF444444);
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString((String)obj, 3, i * fr.FONT_HEIGHT, 0xFFEEEEEE);
             }
         }
         GlStateManager.popMatrix();
 
         if (selected != -1) {
-            clip(new ScaledResolution(Minecraft.getMinecraft()), feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
-            GlStateManager.translate(feature.width, selected * fr.FONT_HEIGHT, 0);
+
+            boolean overFlows = new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth() < feature.x + 2*feature.width;
+
+            clip(new ScaledResolution(Minecraft.getMinecraft()), overFlows ? feature.x - feature.width : feature.x + feature.width, feature.y + fr.FONT_HEIGHT + 5, feature.width , feature.height - fr.FONT_HEIGHT - 6);
+            GlStateManager.translate(overFlows ? - feature.width : feature.width, selected * fr.FONT_HEIGHT, 0);
             Gui.drawRect(0, 0, feature.width, fr.FONT_HEIGHT * possibleStates.size() + 4, 0xFF444444);
             Gui.drawRect(-1, 1, feature.width - 1, fr.FONT_HEIGHT  * possibleStates.size() + 3, 0xFF262626);
             GlStateManager.translate(2,2, 0);
 
-            Point popupStart = new Point(feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy + 2);
+            Point popupStart = new Point(overFlows ? feature.x - feature.width : feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy + 2);
             for (int i = 0; i < possibleStates.size(); i++) {
-                if (new Rectangle(feature.x + feature.width, popupStart.y + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
+                if (new Rectangle(overFlows ? feature.x - feature.width : feature.x + feature.width, popupStart.y + i * fr.FONT_HEIGHT, feature.width, fr.FONT_HEIGHT).contains(mouseX, mouseY)) {
                     Gui.drawRect(-2, i * fr.FONT_HEIGHT, feature.width - 3, i * fr.FONT_HEIGHT + fr.FONT_HEIGHT - 1, 0xFF555555);
                 }
+                GlStateManager.enableBlend();
+                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString(possibleStates.get(i), 0, i * fr.FONT_HEIGHT, 0xFFFFFFFF);
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
         GlStateManager.popMatrix();
-        GlStateManager.enableBlend();
         GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
     private void clip(ScaledResolution resolution, int x, int y, int width, int height) {
@@ -375,7 +387,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
         Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        Point popupStart = new Point(feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy);
+        boolean overFlows = new ScaledResolution(Minecraft.getMinecraft()).getScaledWidth() < feature.x + 2*feature.width;
+
+        Point popupStart = new Point(overFlows ? feature.x - feature.width : feature.x + feature.width, (selected + 1) * fr.FONT_HEIGHT  +6 + feature.y - dy);
         if (feature.contains(mouseX, mouseY)) {
             mouseInputEvent.setCanceled(true);
 
