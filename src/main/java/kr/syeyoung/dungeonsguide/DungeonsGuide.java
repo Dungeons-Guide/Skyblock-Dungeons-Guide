@@ -159,11 +159,14 @@ public class DungeonsGuide implements DGInterface, CloseListener {
 
         ProgressManager.pop(progressbar);
     }
+    @Getter
+    private boolean firstTimeUsingDG = false;
     public void pre(FMLPreInitializationEvent event) {
         configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
         File configFile = new File(configDir, "config.json");
         if (!configFile.exists()) {
             configDir.mkdirs();
+            firstTimeUsingDG = true;
         }
         Config.f = configFile;
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
@@ -181,9 +184,6 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         fos.flush();
         fos.close();
         inputStream.close();
-    }
-
-    private void combineConfig(Configuration saved, Configuration newest) {
     }
 
     @Getter
