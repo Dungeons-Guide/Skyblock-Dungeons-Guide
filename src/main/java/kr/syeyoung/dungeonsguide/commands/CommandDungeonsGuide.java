@@ -364,6 +364,13 @@ public class CommandDungeonsGuide extends CommandBase {
             cosmeticsManager.requestCosmeticsList();
             cosmeticsManager.requestActiveCosmetics();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
+        } else if (args[0].equals("pbroadcast")) {
+            try {
+                String[] payload = new String[args.length - 1];
+                System.arraycopy(args, 1, payload, 0, payload.length);
+                String actualPayload = String.join(" ", payload).replace("$C$", "§");
+                DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().header("destination", "/queue/party.broadcast").payload(actualPayload));
+            } catch (Exception e) {e.printStackTrace();}
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

@@ -109,9 +109,8 @@ public class DungeonListener {
             GlStateManager.color(1,1,1,1);
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GlStateManager.popAttrib();
             GlStateManager.enableAlpha();
-        } catch (Throwable e2) {e2.printStackTrace();}
+        } catch (Throwable e2) {e2.printStackTrace(); Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDG HAS RAN INTO ERROR WHILE RENDERING SCREEN! Please report to support channel"));}
     }
     @SubscribeEvent
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
@@ -250,7 +249,6 @@ public class DungeonListener {
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 
-            GlStateManager.pushAttrib();
             if (skyblockStatus.getContext() != null) {
                 DungeonContext context = skyblockStatus.getContext();
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -270,10 +268,9 @@ public class DungeonListener {
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             Minecraft.getMinecraft().entityRenderer.setupOverlayRendering();
-            GlStateManager.popAttrib();
             GlStateManager.enableAlpha();
         } catch (Throwable e) {
-            e.printStackTrace();
+            e.printStackTrace();Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDG HAS RAN INTO ERROR WHILE RENDERING SCREEN! Please report to support channel"));
         }
     }
 

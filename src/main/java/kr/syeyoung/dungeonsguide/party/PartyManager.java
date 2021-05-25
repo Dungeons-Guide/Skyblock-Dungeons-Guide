@@ -393,6 +393,12 @@ public class PartyManager implements StompMessageHandler {
             if (secret.equals(askToJoinSecret) && partyID != null) {
                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite "+playerName);
             }
+        } else if ("/user/queue/party.broadcast".equals(stompPayload.headers().get("destination"))) {
+            try {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + stompPayload.payload()));
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         } else {
             String str = object.getString("status");
             if ("success".equals(str)) {
@@ -411,5 +417,7 @@ public class PartyManager implements StompMessageHandler {
                 .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.check").build());
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
                 .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.join").build());
+        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.broadcast").build());
     }
 }
