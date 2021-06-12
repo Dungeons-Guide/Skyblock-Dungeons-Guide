@@ -42,5 +42,5 @@ Join Our Discord! https://discord.gg/vuGsXhY5Bv
   - Teleport-pads solver
   - Trivia solver
 - Useful Dungeon HUDS
-- All the other features could be found at [here](https://dungeonsguide.gitbook.io/)
+- All the other features could be found at [here](https://dungeonsguide.design)
 
