@@ -75,6 +75,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
         DungeonContext context = skyblockStatus.getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        if (thePlayer == null) return;
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         if (dungeonRoom == null) return;
