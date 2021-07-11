@@ -11,15 +11,15 @@
   <a href="https://github.com/cyoung06/Skyblock-Dungeons-Guide/">
     <img alt="lines" src="https://img.shields.io/tokei/lines/github/cyoung06/Skyblock-Dungeons-Guide?color=00FFFF&style=for-the-badge">
  </a>
-    <a href="https://discord.gg/dg" target="_blank">
+    <a href="https://discord.gg/vuGsXhY5Bv" target="_blank">
     <img alt="discord" src="https://img.shields.io/discord/781913473872560189?color=00FFFF&label=discord&style=for-the-badge" />
   </a>
  </p>
  
 # Dungeons Guide
 The most intelligent Hypixel Skyblock Dungeons Mod
-## Safety Concerns 
-Moulberry (NEU developer) and Danker (DSM developer) and staff for both discord server (Bestower) have confirmed that this mod is safe, for further details please check [this](https://hypixel.net/threads/about-the-dungeons-guide-mod.3727014/) forum post. You can also read the code yourself if you do not trust us. 
+## Official Support Discord
+Join Our Discord! https://discord.gg/vuGsXhY5Bv 
 ## Features
 - Dungeon Waypoints
   - Waypoints for every things that are interactable in dungeon.
