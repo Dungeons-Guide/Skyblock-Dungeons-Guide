@@ -20,20 +20,22 @@ package kr.syeyoung.dungeonsguide.cosmetics;
 
 import com.google.gson.JsonPrimitive;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.cosmetics.chatreplacers.*;
 import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.*;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.EnumChatFormatting;
+import net.minecraft.util.*;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.ForgeHooks;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -231,100 +233,26 @@ public class CosmeticsManager implements StompMessageHandler {
         requestActiveCosmetics();
         requestPerms();
     }
-
-    // §9Party §8> §a[VIP§6+§a] syeyoung§f: ty
-    // §2Guild > §a[VIP§6+§a] syeyoung §3[Vet]§f
-    // §dTo §r§a[VIP§r§6+§r§a] SlashSlayer§r§7: §r§7what§r
-    // §dFrom §r§a[VIP§r§6+§r§a] SlashSlayer§r§7: §r§7?§r
-    // §7Rock_Bird§7§r§7: SELLING 30 DIAMOD BLOCK /p me§r
-    // §b[MVP§c+§b] Probutnoobgamer§f: quitting skyblock! highe
-    // §r§bCo-op > §a[VIP§6+§a] syeyoung§f: §rwhat§r
-
-    public static String substitute(String str) {
-        str = str.replace("{HYPIXEL_RANKED_NAME}", "{ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?{MC_NAME}");
-        str = str.replace("{HYPIXEL_RANKED_NAME_PAT}", "({ANY_COLOR}(?:\\[[a-zA-Z\\+§0-9]+\\] )?)({MC_NAME})");
-        str = str.replace("{ISLAND_VISITOR}", "(?:§r§a\\[✌\\] )");
-        str = str.replace("{RANK}", "(?:{ANY_COLOR}\\[[a-zA-Z0-9_ ]+\\] )");
-        str = str.replace("{MC_NAME}", "[a-zA-Z0-9_]+");
-        str = str.replace("{ANY_COLOR}", "(?:§[a-zA-Z0-9])*");
-        return str;
+    @Getter @Setter
+    private static Set<IChatReplacer> iChatReplacers = new HashSet<>();
+    static {
+        iChatReplacers.add(new ChatReplacerViewProfile());
+        iChatReplacers.add(new ChatReplacerSocialOptions());
+        iChatReplacers.add(new ChatReplacerCoop());
+        iChatReplacers.add(new ChatReplacerMessage());
+        iChatReplacers.add(new ChatReplacerChatByMe());
     }
-    private static final Pattern PARTY_MSG = Pattern.compile(substitute("§r§9P(?:arty)? §8> {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
-    private static final Pattern GUILD_MSG = Pattern.compile(substitute("§r§2G(?:uild)? > {HYPIXEL_RANKED_NAME_PAT}((?: {ANY_COLOR}\\[.+\\])?{ANY_COLOR}): (.+)"));
-    private static final Pattern CHAT_MSG = Pattern.compile(substitute("({ISLAND_VISITOR}?{RANK}?){HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
-    private static final Pattern COOP_MSG = Pattern.compile(substitute("§r§bCo-op > {HYPIXEL_RANKED_NAME_PAT}({ANY_COLOR}): (.+)"));
-    private static final Pattern DM_TO = Pattern.compile(substitute("§dTo §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
-    private static final Pattern DM_FROM = Pattern.compile(substitute("§dFrom §r{HYPIXEL_RANKED_NAME_PAT}§r§7: (.+)"));
-
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        Matcher m;
-        String msg = clientChatReceivedEvent.message.getFormattedText();
-        boolean match = false;
-        String preRank = "";
-        String rank = "";
-        String last = "";
-        String nickname = "";
-        if ((m = PARTY_MSG.matcher(msg)).matches()) {
-            match = true;
-            nickname = m.group(2);
-            preRank = "§r§9Party §8> ";
-            rank = m.group(1);
-            last = m.group(2)+m.group(3)+": "+m.group(4);
-        } else if ((m = GUILD_MSG.matcher(msg)).matches()) {
-            match = true;
-            nickname = m.group(2);
-            preRank = "§r§2Guild > ";
-            rank = m.group(1);
-            last = m.group(2)+m.group(3)+": "+m.group(4);
-        } else if ((m = CHAT_MSG.matcher(msg)).matches()) {
-            match = true;
-            nickname = m.group(3);
-            preRank = m.group(1);
-            rank = m.group(2);
-            last = m.group(3)+m.group(4)+": "+m.group(5);
-        } else if ((m = COOP_MSG.matcher(msg)).matches()) {
-            match = true;
-            nickname = m.group(2);
-            preRank = "§r§bCo-op > ";
-            rank = m.group(1);
-            last = m.group(2)+m.group(3)+": "+m.group(4);
-        } else if ((m = DM_TO.matcher(msg)).matches()) {
-            match = true;
-            nickname = m.group(2);
-            preRank = "§dTo §r";
-            rank = m.group(1);
-            last = m.group(2)+"§r§7: "+m.group(3);
-        } else if ((m = DM_FROM.matcher(msg)).matches()) {
-            match = true;
-            nickname = m.group(2);
-            preRank = "§dFrom §r";
-            rank = m.group(1);
-            last = m.group(2)+"§r§7: "+m.group(3);
-        }
-
-        if (!match) return;
-
-        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayerNameLowerCase.get(nickname.toLowerCase());
-        if (activeCosmetics != null) {
-            CosmeticData prefix = null, color =null;
-            for (ActiveCosmetic activeCosmetic : activeCosmetics) {
-                CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
-                if (cosmeticData == null) continue;
-                if (cosmeticData.getCosmeticType().equals("prefix")) prefix = cosmeticData;
-                if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
-            }
-
-            if (prefix != null) {
-                preRank += prefix.getData().replace("&", "§")+" ";
-            }
-            if (color != null) {
-                last = color.getData().replace("&", "§") + last;
+        if (clientChatReceivedEvent.type == 2) return;
+        for (IChatReplacer iChatReplacer : iChatReplacers) {
+            if (iChatReplacer.isAcceptable(clientChatReceivedEvent)) {
+                System.out.println("Chosen "+iChatReplacer);
+                iChatReplacer.translate(clientChatReceivedEvent, this);
+                return;
             }
         }
-
-        clientChatReceivedEvent.message = new ChatComponentText(preRank + rank + last);
     }
 
 

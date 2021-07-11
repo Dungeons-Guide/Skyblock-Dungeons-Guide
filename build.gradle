@@ -27,7 +27,7 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-        classpath "com.github.Skytils:ForgeGradle:FG_2.1-SNAPSHOT"
+        classpath "com.github.Skytils:ForgeGradle:6f5327"
         classpath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
     }
 }

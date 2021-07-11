@@ -395,7 +395,7 @@ public class PartyManager implements StompMessageHandler {
             }
         } else if ("/user/queue/party.broadcast".equals(stompPayload.headers().get("destination"))) {
             try {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + stompPayload.payload()));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(stompPayload.payload()).getString("payload")));
             } catch (Exception e) {
                 e.printStackTrace();
             }
