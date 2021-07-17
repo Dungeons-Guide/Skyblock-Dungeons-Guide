@@ -35,7 +35,6 @@ import java.util.UUID;
 public class ChatReplacerViewProfile implements IChatReplacer {
     @Override
     public boolean isAcceptable(ClientChatReceivedEvent event) {
-        System.out.println(event.message);
         for (IChatComponent sibling : event.message.getSiblings()) {
             if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile")) return true;
         }
@@ -112,6 +111,7 @@ public class ChatReplacerViewProfile implements IChatReplacer {
                     ChatComponentText newChatCompText = new ChatComponentText(building);
                     newChatCompText.setChatStyle(sibling.getChatStyle());
                     replaceMents.add(new Tuple<>(sibling, newChatCompText));
+                    break;
                 }
             }
         }

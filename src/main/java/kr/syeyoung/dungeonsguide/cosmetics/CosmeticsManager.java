@@ -234,7 +234,7 @@ public class CosmeticsManager implements StompMessageHandler {
         requestPerms();
     }
     @Getter @Setter
-    private static Set<IChatReplacer> iChatReplacers = new HashSet<>();
+    private static List<IChatReplacer> iChatReplacers = new ArrayList<>();
     static {
         iChatReplacers.add(new ChatReplacerViewProfile());
         iChatReplacers.add(new ChatReplacerSocialOptions());
@@ -245,13 +245,17 @@ public class CosmeticsManager implements StompMessageHandler {
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (clientChatReceivedEvent.type == 2) return;
-        for (IChatReplacer iChatReplacer : iChatReplacers) {
-            if (iChatReplacer.isAcceptable(clientChatReceivedEvent)) {
-                System.out.println("Chosen "+iChatReplacer);
-                iChatReplacer.translate(clientChatReceivedEvent, this);
-                return;
+        try {
+            if (clientChatReceivedEvent.type == 2) return;
+            for (IChatReplacer iChatReplacer : iChatReplacers) {
+                if (iChatReplacer.isAcceptable(clientChatReceivedEvent)) {
+                    iChatReplacer.translate(clientChatReceivedEvent, this);
+                    return;
+                }
             }
+        } catch (Throwable t) {
+            System.out.println(clientChatReceivedEvent.message);
+            t.printStackTrace();
         }
     }
 

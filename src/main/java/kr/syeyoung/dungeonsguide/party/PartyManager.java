@@ -31,6 +31,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -40,6 +41,8 @@ import org.json.JSONObject;
 
 import java.security.SecureRandom;
 import java.util.*;
+import java.util.concurrent.ConcurrentLinkedQueue;
+import java.util.concurrent.SynchronousQueue;
 import java.util.function.Consumer;
 
 public class PartyManager implements StompMessageHandler {
@@ -87,8 +90,7 @@ public class PartyManager implements StompMessageHandler {
         }
 
         if (partyID != null && !partyID.equals(this.partyID)) {
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-            invitedDash = 1;
+            sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
         } else {
             canInvite = true;
             allowAskToJoin = false;
@@ -199,7 +201,7 @@ public class PartyManager implements StompMessageHandler {
             } else if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
                 String username = TextUtils.stripColor(str).split(" ")[3];
                 if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
+                    sendChat.add(new Tuple<>("/pl", () -> {partyJoin = 1;}));
                     partyJoin = 1;
                 } else {
                     members.add(username);
@@ -282,8 +284,7 @@ public class PartyManager implements StompMessageHandler {
                 allowAskToJoin = false;
                 askToJoinSecret = "";
                 RichPresenceManager.INSTANCE.updatePresence();
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                invitedDash = 1;
+                sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
             } else if (str.endsWith("§r§eto Party Moderator§r")) {
                 // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r
                 String[] thetext = TextUtils.stripColor(str).split(" ");
@@ -296,8 +297,7 @@ public class PartyManager implements StompMessageHandler {
                         if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
                             canInvite = true;
                         } else {
-                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                            invitedDash = 1;
+                            sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
                             break;
                         }
                     } else {
@@ -316,9 +316,7 @@ public class PartyManager implements StompMessageHandler {
                 if (asd != null && Minecraft.getMinecraft().getSession().getUsername().equalsIgnoreCase(asd)) {
                     canInvite = true;
                 } else {
-
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                    invitedDash = 1;
+                    sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
                 }
             } else if (str.endsWith("§eto Party Leader§r")) {
                 // §a[VIP§r§6+§r§a] syeyoung§r§e has promoted §r§b[MVP§r§f+§r§b] apotato321 §r§eto Party Leader§r
@@ -332,8 +330,7 @@ public class PartyManager implements StompMessageHandler {
                         if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
                             canInvite = true;
                         } else {
-                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                            invitedDash = 1;
+                            sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
                             break;
                         }
                     } else {
@@ -349,8 +346,7 @@ public class PartyManager implements StompMessageHandler {
                     else if (s.equals("[")) continue;
                     else if (seenThings == 2) {
                         if (s.equals(Minecraft.getMinecraft().getSession().getUsername())) {
-                            Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite -");
-                            invitedDash = 1;
+                            sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
                             canInvite = false;
                             break;
                         }
@@ -364,22 +360,33 @@ public class PartyManager implements StompMessageHandler {
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
-        if (clientTickEvent.phase == TickEvent.Phase.START) {
+        if (clientTickEvent.phase == TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer != null && minimumNext < System.currentTimeMillis() ) {
             if (checkPlayer == 1) {
-                checkPlayer = 2;
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
+                checkPlayer = -1;
+                sendChat.add(new Tuple<>("/pl", () -> {checkPlayer = 2;}));
             }
+            if (!sendChat.isEmpty()) {
+                Tuple<String, Runnable> tuple =  sendChat.poll();
+                Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
+                if (tuple.getSecond() != null)
+                    tuple.getSecond().run();
+                minimumNext = System.currentTimeMillis()+ 200;
+                DungeonsGuide.sendDebugChat(new ChatComponentText("Sending "+tuple.getFirst()+" Secretly"));
+            }
+
         }
     }
 
     @SubscribeEvent
     public void onHypixelJoin(HypixelJoinedEvent skyblockJoinedEvent) {
-        Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
-        partyJoin = 1;
+        sendChat.add(new Tuple<>("/pl", () -> {partyJoin = 1;}));
     }
 
     private int checkPlayer = 0;
     private JSONObject theObject;
+    private long minimumNext = 0;
+
+    public static Queue<Tuple<String, Runnable>> sendChat = new ConcurrentLinkedQueue<>();
 
     @Override
     public void handle(StompInterface stompInterface, StompPayload stompPayload) {
@@ -391,7 +398,7 @@ public class PartyManager implements StompMessageHandler {
             String playerName = object.getString("player");
             String secret = object.getString("secret");
             if (secret.equals(askToJoinSecret) && partyID != null) {
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite "+playerName);
+                sendChat .add(new Tuple<>("/p invite "+playerName, null));
             }
         } else if ("/user/queue/party.broadcast".equals(stompPayload.headers().get("destination"))) {
             try {
