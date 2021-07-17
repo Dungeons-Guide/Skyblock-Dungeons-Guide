@@ -87,11 +87,11 @@ public class StompClient extends WebSocketClient implements StompInterface {
 
                 String heartbeat = payload.headers().get("heart-beat");
                 if (heartbeat != null) {
-                    int sx = Integer.parseInt(heartbeat.split(",")[0]);
-                    int sy = Integer.parseInt(heartbeat.split(",")[1]);
-
-                    if (sy == 0) return;
-                    int heartbeatMS = Integer.max(30000, sy);
+//                    int sx = Integer.parseInt(heartbeat.split(",")[0]);
+//                    int sy = Integer.parseInt(heartbeat.split(",")[1]);
+//
+//                    if (sy == 0) return;
+                    int heartbeatMS = 30000;
                     this.heartbeat = ex.scheduleAtFixedRate(() -> {
                         send("\n");
                     }, heartbeatMS-1000, heartbeatMS-1000, TimeUnit.MILLISECONDS);
