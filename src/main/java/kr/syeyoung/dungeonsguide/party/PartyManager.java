@@ -360,25 +360,31 @@ public class PartyManager implements StompMessageHandler {
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
-        if (clientTickEvent.phase == TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer != null && minimumNext < System.currentTimeMillis() ) {
-            if (checkPlayer == 1) {
-                checkPlayer = -1;
-                sendChat.add(new Tuple<>("/pl", () -> {checkPlayer = 2;}));
+        try {
+            if (clientTickEvent.phase == TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer != null && minimumNext < System.currentTimeMillis()) {
+                if (checkPlayer == 1) {
+                    checkPlayer = -1;
+                    sendChat.add(new Tuple<>("/pl", () -> {
+                        checkPlayer = 2;
+                    }));
+                }
+                if (!sendChat.isEmpty()) {
+                    Tuple<String, Runnable> tuple = sendChat.poll();
+                    Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
+                    if (tuple.getSecond() != null)
+                        tuple.getSecond().run();
+                    minimumNext = System.currentTimeMillis() + 200;
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
+                }
             }
-            if (!sendChat.isEmpty()) {
-                Tuple<String, Runnable> tuple =  sendChat.poll();
-                Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
-                if (tuple.getSecond() != null)
-                    tuple.getSecond().run();
-                minimumNext = System.currentTimeMillis()+ 200;
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Sending "+tuple.getFirst()+" Secretly"));
-            }
-
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
     @SubscribeEvent
     public void onHypixelJoin(HypixelJoinedEvent skyblockJoinedEvent) {
+        minimumNext = System.currentTimeMillis() + 1000;
         sendChat.add(new Tuple<>("/pl", () -> {partyJoin = 1;}));
     }
 
