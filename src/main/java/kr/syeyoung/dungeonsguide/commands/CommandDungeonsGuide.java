@@ -34,11 +34,13 @@ import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
+import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.stomp.*;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -365,6 +367,8 @@ public class CommandDungeonsGuide extends CommandBase {
             cosmeticsManager.requestPerms();
             cosmeticsManager.requestCosmeticsList();
             cosmeticsManager.requestActiveCosmetics();
+            StaticResourceCache.INSTANCE.purgeCache();
+
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else if (args[0].equals("pbroadcast")) {
             try {
@@ -378,7 +382,12 @@ public class CommandDungeonsGuide extends CommandBase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else {
+        } else if (args[0].equals("requeststaticresource")) {
+            UUID uid = UUID.fromString(args[1]);
+            StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
+                sender.addChatMessage(new ChatComponentText(a.getResourceID()+": "+a.getValue()+": "+a.isExists()));
+            });
+        } else{
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));

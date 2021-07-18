@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IResourcePack;
@@ -125,6 +126,7 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         RichPresenceManager.INSTANCE.setup();
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PartyInviteViewer.INSTANCE);
 
         AhUtils.registerTimer();
@@ -178,13 +180,6 @@ public class DungeonsGuide implements DGInterface, CloseListener {
             t.printStackTrace();
         }
     }
-    private void copy(InputStream inputStream, File f) throws IOException {
-        FileOutputStream fos = new FileOutputStream(f);
-        IOUtils.copy(inputStream, fos);
-        fos.flush();
-        fos.close();
-        inputStream.close();
-    }
 
     @Getter
     private File configDir;
@@ -205,15 +200,12 @@ public class DungeonsGuide implements DGInterface, CloseListener {
     }
 
     public void connectStomp() {
-        ex.schedule(new Runnable() {
-            @Override
-            public void run() {
-                try {
-                    stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), DungeonsGuide.this);
-                    MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+        ex.schedule(() -> {
+            try {
+                stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), DungeonsGuide.this);
+                MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
+            } catch (Exception e) {
+                e.printStackTrace();
             }
         }, 5L, TimeUnit.SECONDS);
     }

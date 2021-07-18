@@ -35,6 +35,8 @@ import kr.syeyoung.dungeonsguide.stomp.StompMessageHandler;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResource;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
@@ -45,8 +47,11 @@ import net.minecraft.util.MathHelper;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 
-public class FeatureDungeonScore extends TextHUDFeature implements StompConnectedListener, StompMessageHandler {
+public class FeatureDungeonScore extends TextHUDFeature {
     public FeatureDungeonScore() {
         super("Dungeon", "Display Current Score", "Calculate and Display current score\nThis data is from pure calculation and can be different from actual score.", "dungeon.stats.score", false, 200, getFontRenderer().FONT_HEIGHT * 4);
         this.setEnabled(false);
@@ -131,60 +136,40 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         if (score == null) return new ArrayList<StyledText>();
         int sum = score.time + score.skill + score.explorer + score.bonus;
         if (this.<Boolean>getParameter("verbose").getValue()) {
-            actualBit.add(new StyledText("Skill","scorename"));
-            actualBit.add(new StyledText(": ","separator"));
-            actualBit.add(new StyledText(score.skill+" ","score"));
-            actualBit.add(new StyledText("(","brackets"));
-            actualBit.add(new StyledText(score.deaths+" Deaths","etc"));
-            actualBit.add(new StyledText(")\n","brackets"));
-            actualBit.add(new StyledText("Explorer","scorename"));
-            actualBit.add(new StyledText(": ","separator"));
-            actualBit.add(new StyledText(score.explorer+" ","score"));
-            actualBit.add(new StyledText("(","brackets"));
-            actualBit.add(new StyledText("Rooms "+(score.fullyCleared ? "O":"X")+ " Secrets "+score.secrets+"/"+score.totalSecrets+(score.totalSecretsKnown ? "": "?"),"etc"));
-            actualBit.add(new StyledText(")\n","brackets"));
-            actualBit.add(new StyledText("Time","scorename"));
-            actualBit.add(new StyledText(": ","separator"));
-            actualBit.add(new StyledText(score.time+" ","score"));
-            actualBit.add(new StyledText("Bonus","scorename"));
-            actualBit.add(new StyledText(": ","separator"));
-            actualBit.add(new StyledText(score.bonus+" ","score"));
-            actualBit.add(new StyledText("Total","scorename"));
-            actualBit.add(new StyledText(": ","separator"));
-            actualBit.add(new StyledText(sum+"\n","score"));
+            actualBit.add(new StyledText("Skill", "scorename"));
+            actualBit.add(new StyledText(": ", "separator"));
+            actualBit.add(new StyledText(score.skill + " ", "score"));
+            actualBit.add(new StyledText("(", "brackets"));
+            actualBit.add(new StyledText(score.deaths + " Deaths", "etc"));
+            actualBit.add(new StyledText(")\n", "brackets"));
+            actualBit.add(new StyledText("Explorer", "scorename"));
+            actualBit.add(new StyledText(": ", "separator"));
+            actualBit.add(new StyledText(score.explorer + " ", "score"));
+            actualBit.add(new StyledText("(", "brackets"));
+            actualBit.add(new StyledText("Rooms " + (score.fullyCleared ? "O" : "X") + " Secrets " + score.secrets + "/" + score.totalSecrets + (score.totalSecretsKnown ? "" : "?"), "etc"));
+            actualBit.add(new StyledText(")\n", "brackets"));
+            actualBit.add(new StyledText("Time", "scorename"));
+            actualBit.add(new StyledText(": ", "separator"));
+            actualBit.add(new StyledText(score.time + " ", "score"));
+            actualBit.add(new StyledText("Bonus", "scorename"));
+            actualBit.add(new StyledText(": ", "separator"));
+            actualBit.add(new StyledText(score.bonus + " ", "score"));
+            actualBit.add(new StyledText("Total", "scorename"));
+            actualBit.add(new StyledText(": ", "separator"));
+            actualBit.add(new StyledText(sum + "\n", "score"));
             actualBit.addAll(buildRequirement(score));
         } else {
             String letter = getLetter(sum);
-            actualBit.add(new StyledText("Score","scorename"));
-            actualBit.add(new StyledText(": ","separator"));
-            actualBit.add(new StyledText(sum+" ","score"));
-            actualBit.add(new StyledText("(","brackets"));
-            actualBit.add(new StyledText(letter,"currentScore"));
-            actualBit.add(new StyledText(")","brackets"));
+            actualBit.add(new StyledText("Score", "scorename"));
+            actualBit.add(new StyledText(": ", "separator"));
+            actualBit.add(new StyledText(sum + " ", "score"));
+            actualBit.add(new StyledText("(", "brackets"));
+            actualBit.add(new StyledText(letter, "currentScore"));
+            actualBit.add(new StyledText(")", "brackets"));
         }
 
         return actualBit;
     }
-
-    @Override
-    public void onStompConnected(StompConnectedEvent event) {
-        event.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/topic/dungeon.bonusscore").build());
-        event.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/dungeon.bonusscore").build());
-
-        event.getStompInterface().send(new StompPayload().header("destination", "/app/dungeon.bonusscore.req"));
-    }
-
-    private int mayorScore = 0;
-    @Override
-    public void handle(StompInterface stompInterface, StompPayload stompPayload) {
-        try {
-            mayorScore = Integer.parseInt(stompPayload.payload().trim());
-        } catch (Exception e) {
-        }
-    }
-
 
     @Data
     @AllArgsConstructor
@@ -307,7 +292,14 @@ public class FeatureDungeonScore extends TextHUDFeature implements StompConnecte
         {
             bonus += tombs = MathHelper.clamp_int(FeatureRegistry.DUNGEON_TOMBS.getTombsFound(), 0, 5);
             if (context.isGotMimic()) bonus += 2;
-            bonus += mayorScore;
+            CompletableFuture<StaticResource> staticResourceCompletableFuture = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.BONUS_SCORE);
+            if (staticResourceCompletableFuture.isDone()) {
+                try {
+                    bonus += Integer.parseInt(staticResourceCompletableFuture.get().getValue().trim());
+                } catch (InterruptedException | ExecutionException e) {
+                    e.printStackTrace();
+                }
+            }
         }
 
         // amazing thing
