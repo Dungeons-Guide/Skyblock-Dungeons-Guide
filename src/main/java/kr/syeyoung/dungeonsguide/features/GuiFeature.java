@@ -63,9 +63,8 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         if (!isEnabled()) return;
         GlStateManager.pushAttrib();
         GlStateManager.pushMatrix();
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        Rectangle featureRect = this.featureRect.getRectangle(scaledResolution);
-        clip(scaledResolution, featureRect.x, featureRect.y, featureRect.width, featureRect.height);
+        Rectangle featureRect = this.featureRect.getRectangleNoScale();
+        clip(featureRect.x, featureRect.y, featureRect.width, featureRect.height);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GlStateManager.translate(featureRect.x, featureRect.y, 0);
@@ -88,8 +87,9 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         drawHUD(partialTicks);
     }
 
-    private void clip(ScaledResolution resolution, int x, int y, int width, int height) {
-        int scale = resolution.getScaleFactor();
+    private void clip(int x, int y, int width, int height) {
+//        int scale = resolution.getScaleFactor();
+        int scale = 1;
         GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }
 

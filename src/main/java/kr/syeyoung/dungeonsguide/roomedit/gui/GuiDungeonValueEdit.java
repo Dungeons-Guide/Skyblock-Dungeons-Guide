@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.gui.MGui;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
@@ -38,18 +39,7 @@ import java.awt.*;
 import java.util.List;
 import java.io.IOException;
 
-public class GuiDungeonValueEdit extends GuiScreen {
-
-    private final MPanel mainPanel = new MPanel() {
-        @Override
-        public void onBoundsUpdate() {
-            for (int i = 0; i < addons.size(); i++) {
-                addons.get(i).setBounds(new Rectangle(0, getBounds().height - (i+1) * 20 - 20, getBounds().width, 20));
-            }
-            save.setBounds(new Rectangle(0 ,getBounds().height - 20, getBounds().width, 20));
-        }
-    };
-
+public class GuiDungeonValueEdit extends MGui {
     private DungeonRoom dungeonRoom;
 
 
@@ -69,7 +59,7 @@ public class GuiDungeonValueEdit extends GuiScreen {
             dungeonRoom = EditingContext.getEditingContext().getRoom();
             this.addons = addons;
             this.editingObj = object;
-            mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
+            getMainPanel().setBackgroundColor(new Color(17, 17, 17, 179));
             {
                 currentValueEdit = new MPanel() {
                     @Override
@@ -77,11 +67,11 @@ public class GuiDungeonValueEdit extends GuiScreen {
                         setBounds(new Rectangle(0, 0, parentWidth, parentHeight - 20 - addons.size() * 20));
                     }
                 };
-                mainPanel.add(currentValueEdit);
+                getMainPanel().add(currentValueEdit);
             }
 
             for (MPanel addon : addons) {
-                mainPanel.add(addon);
+                getMainPanel().add(addon);
             }
             {
                 save = new MButton() {
@@ -98,7 +88,7 @@ public class GuiDungeonValueEdit extends GuiScreen {
                         EditingContext.getEditingContext().goBack();
                     }
                 });
-                mainPanel.add(save);
+                getMainPanel().add(save);
             }
             updateClassSelection();
         } catch (Exception e){}
@@ -131,89 +121,13 @@ public class GuiDungeonValueEdit extends GuiScreen {
     public void initGui() {
         super.initGui();
         // update bounds
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle(10, Math.min((scaledResolution.getScaledHeight() - 300) / 2, scaledResolution.getScaledHeight()),200,300));
-    }
+        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
 
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        try {
 
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
-            GL11.glDisable(GL11.GL_FOG);
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-            mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
-            GlStateManager.enableDepth();
-            GlStateManager.depthMask(true);
-            GlStateManager.popAttrib();
-            GlStateManager.popMatrix();
-            GlStateManager.enableBlend();
-            GlStateManager.enableLighting();
-        } catch (Throwable e) {
-            e.printStackTrace();
+        for (int i = 0; i < addons.size(); i++) {
+            addons.get(i).setBounds(new Rectangle(0, getMainPanel().getBounds().height - (i+1) * 20 - 20, getMainPanel().getBounds().width, 20));
         }
+        save.setBounds(new Rectangle(0 ,getMainPanel().getBounds().height - 20, getMainPanel().getBounds().width, 20));
     }
 
-    @Override
-    public void keyTyped(char typedChar, int keyCode) throws IOException {
-
-        try {
-            super.keyTyped(typedChar, keyCode);
-            mainPanel.keyTyped0(typedChar, keyCode);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        try {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        mainPanel.mouseClicked0(mouseX, mouseY,mouseX,mouseY, mouseButton);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseReleased(int mouseX, int mouseY, int state) {
-        try {
-        mainPanel.mouseReleased0(mouseX, mouseY,mouseX,mouseY, state);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        try {
-            mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-
-        int wheel = Mouse.getDWheel();
-        if (wheel != 0) {
-            try {
-                mainPanel.mouseScrolled0(i, j,i,j, wheel);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
-    }
 }

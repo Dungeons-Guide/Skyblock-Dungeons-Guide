@@ -152,7 +152,6 @@ public class PanelTextParameterConfig extends MPanel {
         GlStateManager.popMatrix();
 
         GlStateManager.translate(5, height + 7, 0);
-        GlStateManager.scale(0.5,0.5,0);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -163,7 +162,6 @@ public class PanelTextParameterConfig extends MPanel {
         GlStateManager.pushMatrix();
         GlStateManager.translate(width + 15, 5, 0);
         GlStateManager.pushMatrix();
-        GlStateManager.scale(0.5,0.5,0);
         fr.drawString("Selected Groups: "+selected, 0, 0, 0xFFBFBFBF);
         GlStateManager.popMatrix();
         fr.drawString("Text Color: ", 0, 10, 0xFFFFFFFF);

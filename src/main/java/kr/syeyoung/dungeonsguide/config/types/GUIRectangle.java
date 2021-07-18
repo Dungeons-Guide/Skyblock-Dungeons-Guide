@@ -31,21 +31,19 @@ import java.awt.*;
 @NoArgsConstructor
 public class GUIRectangle {
     public GUIRectangle(Rectangle rectangle) {
-
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        if (rectangle.x < sr.getScaledWidth() / 2) {
+        if (rectangle.x < Minecraft.getMinecraft().displayWidth / 2) {
             this.x = rectangle.x;
             this.width = rectangle.width;
         } else {
-            this.x = rectangle.x + rectangle.width - sr.getScaledWidth();
+            this.x = rectangle.x + rectangle.width - Minecraft.getMinecraft().displayWidth;
             this.width = -rectangle.width;
         }
 
-        if (rectangle.y < sr.getScaledHeight() / 2) {
+        if (rectangle.y < Minecraft.getMinecraft().displayHeight / 2) {
             this.y = rectangle.y;
             this.height = rectangle.height;
         } else {
-            this.y = rectangle.y +rectangle.height - sr.getScaledHeight();
+            this.y = rectangle.y +rectangle.height - Minecraft.getMinecraft().displayHeight;
             this.height = -rectangle.height;
         }
     }
@@ -56,13 +54,20 @@ public class GUIRectangle {
     private int height;
 
     public Rectangle getRectangle() {
-        return getRectangle(new ScaledResolution(Minecraft.getMinecraft()));
+        return getRectangleNoScale();
     }
-    public Rectangle getRectangle(ScaledResolution scaledResolution) {
-        int realX = x < 0 ? scaledResolution.getScaledWidth() + x : x;
-        int realY = y < 0 ? scaledResolution.getScaledHeight() + y : y;
+//    public Rectangle getRectangle(ScaledResolution scaledResolution) {
+//        double realX = (int) (x < 0 ? scaledResolution.getScaledWidth() + x : x);
+//        double realY = (int) (y < 0 ? scaledResolution.getScaledHeight() + y : y);
+//
+//        return new Rectangle((int)Math.min(realX + width, realX), (int)Math.min(realY + height, realY),
+//                (int)Math.abs(width), (int)Math.abs(height));
+//    }
+    public Rectangle getRectangleNoScale() {
+        double realX = (int) (x < 0 ? Minecraft.getMinecraft().displayWidth + x : x);
+        double realY = (int) (y < 0 ? Minecraft.getMinecraft().displayHeight + y : y);
 
-        return new Rectangle(Math.min(realX + width, realX), Math.min(realY + height, realY),
-                Math.abs(width), Math.abs(height));
+        return new Rectangle((int)Math.min(realX + width, realX), (int)Math.min(realY + height, realY),
+                (int)Math.abs(width), (int)Math.abs(height));
     }
 }

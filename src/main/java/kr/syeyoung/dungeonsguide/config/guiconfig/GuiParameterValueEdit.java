@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import kr.syeyoung.dungeonsguide.gui.MGui;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
@@ -37,14 +38,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiParameterValueEdit extends GuiScreen {
-
-    private final MPanel mainPanel = new MPanel() {
-        @Override
-        public void onBoundsUpdate() {
-            save.setBounds(new Rectangle(0 ,getBounds().height - 20, getBounds().width, 20));
-        }
-    };
+public class GuiParameterValueEdit extends MGui {
 
 
     private MPanel currentValueEdit;
@@ -65,7 +59,7 @@ public class GuiParameterValueEdit extends GuiScreen {
     public GuiParameterValueEdit(final Object object, final GuiConfig prev) {
         try {
             this.editingObj = object;
-            mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
+            getMainPanel().setBackgroundColor(new Color(17, 17, 17, 179));
             {
                 currentValueEdit = new MPanel() {
                     @Override
@@ -73,7 +67,7 @@ public class GuiParameterValueEdit extends GuiScreen {
                         setBounds(new Rectangle(5, 5, parentWidth-10, parentHeight - 25));
                     }
                 };
-                mainPanel.add(currentValueEdit);
+                getMainPanel().add(currentValueEdit);
             }
             {
                 save = new MButton() {
@@ -91,7 +85,7 @@ public class GuiParameterValueEdit extends GuiScreen {
                         Minecraft.getMinecraft().displayGuiScreen(prev);
                     }
                 });
-                mainPanel.add(save);
+                getMainPanel().add(save);
             }
             updateClassSelection();
         } catch (Exception e){}
@@ -123,89 +117,7 @@ public class GuiParameterValueEdit extends GuiScreen {
     public void initGui() {
         super.initGui();
         // update bounds
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle(10, Math.min((scaledResolution.getScaledHeight() - 300) / 2, scaledResolution.getScaledHeight()),200,300));
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        try {
-
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
-            GL11.glDisable(GL11.GL_FOG);
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.disableDepth();
-            GlStateManager.depthMask(false);
-            mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
-            GlStateManager.enableDepth();
-            GlStateManager.depthMask(true);
-            GlStateManager.popAttrib();
-            GlStateManager.popMatrix();
-            GlStateManager.enableBlend();
-            GlStateManager.enableLighting();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Override
-    public void keyTyped(char typedChar, int keyCode) throws IOException {
-
-        try {
-            super.keyTyped(typedChar, keyCode);
-            mainPanel.keyTyped0(typedChar, keyCode);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        try {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        mainPanel.mouseClicked0(mouseX, mouseY,mouseX,mouseY, mouseButton);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseReleased(int mouseX, int mouseY, int state) {
-        try {
-        mainPanel.mouseReleased0(mouseX, mouseY,mouseX,mouseY, state);
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        try {
-            mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
-
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-
-        int wheel = Mouse.getDWheel();
-        if (wheel != 0) {
-            try {
-                mainPanel.mouseScrolled0(i, j,i,j, wheel);
-            } catch (Throwable t) {
-                t.printStackTrace();
-            }
-        }
+        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
+        save.setBounds(new Rectangle(0 ,getMainPanel().getBounds().height - 20, getMainPanel().getBounds().width, 20));
     }
 }

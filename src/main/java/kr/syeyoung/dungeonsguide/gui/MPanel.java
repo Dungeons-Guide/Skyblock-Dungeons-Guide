@@ -18,15 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.gui;
 
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import lombok.AccessLevel;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -45,6 +43,9 @@ public class MPanel {
 
     @Getter(AccessLevel.PUBLIC)
     protected boolean isFocused;
+
+    @Getter
+    protected MPanel parent;
 
     public void setBackgroundColor(Color c) {
         if (c == null) return;
@@ -83,19 +84,31 @@ public class MPanel {
     }
 
     public void add(MPanel child) {
+        if (child.parent != null) throw new IllegalArgumentException("What have you done");
         this.childComponents.add(child);
+        child.parent = this;
+    }
+
+    public void openTooltip(MTooltip mPanel) {
+        parent.openTooltip(mPanel);
+    }
+    public int getTooltipsOpen() {
+        return parent.getTooltipsOpen();
     }
 
     public void remove(MPanel panel) {
+        panel.parent = null;
         this.childComponents.remove(panel);
     }
 
+    protected Point lastParentPoint;
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
 
+        lastParentPoint = parentPoint;
         int relMousex = relMousex0 - getBounds().x;
         int relMousey = relMousey0 - getBounds().y;
 
-        GlStateManager.translate(getBounds().x, getBounds().y, 0);
+        GlStateManager.translate(getBounds().x, getBounds().y, 5);
         GlStateManager.color(1,1,1,0);
 
 
@@ -103,6 +116,7 @@ public class MPanel {
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
         lastAbsClip = clip;
+        if (clip.getSize().height * clip.getSize().width == 0) return;
 
         clip(resolution, clip.x, clip.y, clip.width, clip.height);
         GlStateManager.pushAttrib();
@@ -115,6 +129,12 @@ public class MPanel {
 
         GlStateManager.pushMatrix();
         GlStateManager.pushAttrib();
+
+        GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
@@ -137,7 +157,8 @@ public class MPanel {
     public static void clip(ScaledResolution resolution, int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
-        int scale = resolution.getScaleFactor();
+//        int scale = resolution.getScaleFactor();
+        int scale = 1;
         GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }
 

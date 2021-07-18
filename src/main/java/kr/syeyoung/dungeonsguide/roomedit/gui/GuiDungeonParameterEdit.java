@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.roomedit.gui;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.gui.MGui;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.roomedit.Parameter;
@@ -38,9 +39,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.io.IOException;
 
-public class GuiDungeonParameterEdit extends GuiScreen {
-
-    private final MPanel mainPanel = new MPanel();
+public class GuiDungeonParameterEdit extends MGui {
 
     private final Parameter parameter;
     private final DungeonRoom dungeonRoom;
@@ -57,7 +56,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
 
     public GuiDungeonParameterEdit(final MParameter parameter2, final DynamicEditor processorParameterEditPane) {
         dungeonRoom = EditingContext.getEditingContext().getRoom();
-        mainPanel.setBackgroundColor(new Color(17, 17, 17, 179));
+        getMainPanel().setBackgroundColor(new Color(17, 17, 17, 179));
         this.parameter = parameter2.getParameter();
         {
             MTextField mTextField = new MTextField() {
@@ -70,7 +69,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
 
             mTextField.setText(parameter.getName());
             mLabelAndElement.setBounds(new Rectangle(0,0,200, 20));
-            mainPanel.add(mLabelAndElement);
+            getMainPanel().add(mLabelAndElement);
         }
         {
             classSelection = parameter.getNewData() == null ?"null" : parameter.getNewData().getClass().getName();
@@ -95,7 +94,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
                 }
             });
             mStringSelectionButton.setBounds(new Rectangle(0,20,150,20));
-            mainPanel.add(mStringSelectionButton);
+            getMainPanel().add(mStringSelectionButton);
         }
         {
             currentValueEdit = new MPanel(){
@@ -104,7 +103,7 @@ public class GuiDungeonParameterEdit extends GuiScreen {
                     setBounds(new Rectangle(0, 40, parentWidth,parentHeight - 60));
                 }
             };
-            mainPanel.add(currentValueEdit);
+            getMainPanel().add(currentValueEdit);
         }
         {
             delete = new MButton() {
@@ -137,8 +136,8 @@ public class GuiDungeonParameterEdit extends GuiScreen {
                     EditingContext.getEditingContext().goBack();
                 }
             });
-            mainPanel.add(delete);
-            mainPanel.add(save);
+            getMainPanel().add(delete);
+            getMainPanel().add(save);
         }
         updateClassSelection();
     }
@@ -175,63 +174,6 @@ public class GuiDungeonParameterEdit extends GuiScreen {
     public void initGui() {
         super.initGui();
         // update bounds
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle(10, Math.min((scaledResolution.getScaledHeight() - 300) / 2, scaledResolution.getScaledHeight()),200,300));
-    }
-
-    @Override
-    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
-        GlStateManager.disableLighting();
-        GlStateManager.disableFog();
-        GL11.glDisable(GL11.GL_FOG);
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.disableDepth();
-        GlStateManager.depthMask(false);
-        mainPanel.render0(scaledResolution, new Point(0,0), new Rectangle(0,0,scaledResolution.getScaledWidth(),scaledResolution.getScaledHeight()), mouseX, mouseY, mouseX, mouseY, partialTicks);
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
-        GlStateManager.popAttrib();
-        GlStateManager.popMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableLighting();
-    }
-
-    @Override
-    public void keyTyped(char typedChar, int keyCode) throws IOException {
-        super.keyTyped(typedChar, keyCode);
-        mainPanel.keyTyped0(typedChar, keyCode);
-    }
-
-    @Override
-    public void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
-        super.mouseClicked(mouseX, mouseY, mouseButton);
-        mainPanel.mouseClicked0(mouseX, mouseY,mouseX,mouseY, mouseButton);
-    }
-
-    @Override
-    public void mouseReleased(int mouseX, int mouseY, int state) {
-        mainPanel.mouseReleased0(mouseX, mouseY,mouseX,mouseY, state);
-    }
-
-    @Override
-    public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
-        mainPanel.mouseClickMove0(mouseX,mouseY,mouseX,mouseY,clickedMouseButton,timeSinceLastClick);
-    }
-
-    @Override
-    public void handleMouseInput() throws IOException {
-        super.handleMouseInput();
-
-        int i = Mouse.getEventX() * this.width / this.mc.displayWidth;
-        int j = this.height - Mouse.getEventY() * this.height / this.mc.displayHeight - 1;
-
-        int wheel = Mouse.getDWheel();
-        if (wheel != 0) {
-            mainPanel.mouseScrolled0(i, j,i,j, wheel);
-        }
+        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
     }
 }
