@@ -64,6 +64,15 @@ public class GUIRectangle {
 //                (int)Math.abs(width), (int)Math.abs(height));
 //    }
     public Rectangle getRectangleNoScale() {
+        int x = this.x, y = this.y;
+        if (Math.abs(x) > Minecraft.getMinecraft().displayWidth / 2) {
+            x = x < 0 ? -Minecraft.getMinecraft().displayWidth/2 : Minecraft.getMinecraft().displayWidth/2;
+        }
+        if (Math.abs(y) > Minecraft.getMinecraft().displayHeight / 2) {
+            y = y < 0 ? -Minecraft.getMinecraft().displayHeight/2 : Minecraft.getMinecraft().displayHeight/2;
+        }
+
+
         double realX = (int) (x < 0 ? Minecraft.getMinecraft().displayWidth + x : x);
         double realY = (int) (y < 0 ? Minecraft.getMinecraft().displayHeight + y : y);
 

@@ -22,6 +22,8 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltipText;
 import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
@@ -54,6 +56,9 @@ public class RoomMatchDisplayPane extends MPanel {
             targetBlocks = ArrayUtils.rotateCounterClockwise(targetBlocks);
     }
 
+    MTooltip mTooltip;
+    int lastTooltipX = -1, lastTooltipZ = -1;
+
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
@@ -80,6 +85,7 @@ public class RoomMatchDisplayPane extends MPanel {
         int hoverY = (relMousey0 - offsetY - 10) / 16;
         // draw Content
         clip(sr, clip.x + 10, clip.y +10, clip.width - 10, clip.height - 10);
+        boolean tooltiped=false;
         for (int z = 0; z < height; z++) {
             for (int x = 0; x < width; x++) {
                 int data1;
@@ -103,9 +109,18 @@ public class RoomMatchDisplayPane extends MPanel {
                     fr.drawString("N", x *16 +10 + offsetX, z *16 +10 + offsetY,0xFFFF0000);
                 }
                 if (z == hoverY && x == hoverX) {
-                    RenderUtils.drawHoveringText(Arrays.asList("Expected "+data2 +" But found "+data1), relMousex0, relMousey0, fr);
+                    tooltiped = true;
+                    if (lastTooltipX != x || lastTooltipZ != z){
+                        if (mTooltip != null) mTooltip.close();
+                        mTooltip = new MTooltipText(Arrays.asList("Expected "+data2 +" But found "+data1));
+                        mTooltip.open(this);
+                    }
                 }
             }
+        }
+        if (!tooltiped && mTooltip != null) {
+            mTooltip.close();
+            mTooltip = null;
         }
 
     }

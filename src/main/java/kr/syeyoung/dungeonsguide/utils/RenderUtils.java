@@ -55,125 +55,23 @@ public class RenderUtils {
     public static boolean allowScrolling;
     public static int scrollX = 0;
 
-    public static void drawHoveringText(List<String> textLines, int x, int y, FontRenderer font)
-    {
-        if (!textLines.isEmpty())
-        {
-            GlStateManager.disableRescaleNormal();
-            RenderHelper.disableStandardItemLighting();
-            GlStateManager.disableLighting();
-            GlStateManager.disableDepth();
-            int i = 0;
 
-            for (String s : textLines)
-            {
-                int j = font.getStringWidth(s);
+    public static int blendTwoColors(int background, int newColor) {
+        float alpha = ((newColor >> 24) & 0xFF) /255.0f;
+        int r1 = (background >> 16) & 0xFF, r2 = (newColor >> 16) & 0xFF;
+        int g1 = (background >> 8) & 0xFF, g2 = (newColor >> 8) & 0xFF;
+        int b1 = (background) & 0xFF, b2 = (newColor) & 0xFF;
 
-                if (j > i)
-                {
-                    i = j;
-                }
-            }
-
-            int l1 = x + 12;
-            int i2 = y - 12;
-            int k = 8;
-
-            if (textLines.size() > 1)
-            {
-                k += 2 + (textLines.size() - 1) * 10;
-            }
-
-            zLevel = 300.0F;
-            int l = -267386864;
-
-
-            if (!allowScrolling) {
-                scrollX = 0;
-                scrollY = 0;
-            }
-            allowScrolling = (i2 < 0);
-            GlStateManager.pushMatrix();
-            if (allowScrolling) {
-                int eventDWheel = Mouse.getDWheel();
-                if (Keyboard.isKeyDown(42)) {
-                    if (eventDWheel < 0) {
-                        scrollX += 10;
-                    } else if (eventDWheel > 0) {
-                        scrollX -= 10;
-                    }
-                } else if (eventDWheel < 0) {
-                    scrollY -= 10;
-                } else if (eventDWheel > 0) {
-                    scrollY += 10;
-                }
-            }
-            GlStateManager.translate(scrollX, scrollY, 0.0F);
-
-            drawGradientRect(l1 - 3, i2 - 4, l1 + i + 3, i2 - 3, l, l);
-            drawGradientRect(l1 - 3, i2 + k + 3, l1 + i + 3, i2 + k + 4, l, l);
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 + k + 3, l, l);
-            drawGradientRect(l1 - 4, i2 - 3, l1 - 3, i2 + k + 3, l, l);
-            drawGradientRect(l1 + i + 3, i2 - 3, l1 + i + 4, i2 + k + 3, l, l);
-            int i1 = 1347420415;
-            int j1 = (i1 & 16711422) >> 1 | i1 & -16777216;
-            drawGradientRect(l1 - 3, i2 - 3 + 1, l1 - 3 + 1, i2 + k + 3 - 1, i1, j1);
-            drawGradientRect(l1 + i + 2, i2 - 3 + 1, l1 + i + 3, i2 + k + 3 - 1, i1, j1);
-            drawGradientRect(l1 - 3, i2 - 3, l1 + i + 3, i2 - 3 + 1, i1, i1);
-            drawGradientRect(l1 - 3, i2 + k + 2, l1 + i + 3, i2 + k + 3, j1, j1);
-
-            GlStateManager.enableBlend();
-            GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            for (int k1 = 0; k1 < textLines.size(); ++k1)
-            {
-                String s1 = textLines.get(k1);
-                font.drawStringWithShadow(s1, (float)l1, (float)i2, -1);
-
-                if (k1 == 0)
-                {
-                    i2 += 2;
-                }
-
-                i2 += 10;
-            }
-
-            zLevel = 0.0F;
-            GlStateManager.enableLighting();
-            GlStateManager.enableDepth();
-            RenderHelper.enableStandardItemLighting();
-            GlStateManager.enableRescaleNormal();
-            GlStateManager.popMatrix();
-        }
+        int rr = (int) (r1 + (r2-r1) * alpha) & 0xFF;
+        int rg = (int) (g1 + (g2-g1) * alpha) & 0xFF;
+        int rb = (int) (b1 + (b2-b1) * alpha) & 0xFF;
+        return 0xFF000000 | ((rr << 16) & 0xFF0000) | ((rg << 8) & 0xFF00) | (rb & 0xFF);
     }
-    protected static void drawGradientRect(int left, int top, int right, int bottom, int startColor, int endColor)
-    {
-        float f = (float)(startColor >> 24 & 255) / 255.0F;
-        float f1 = (float)(startColor >> 16 & 255) / 255.0F;
-        float f2 = (float)(startColor >> 8 & 255) / 255.0F;
-        float f3 = (float)(startColor & 255) / 255.0F;
-        float f4 = (float)(endColor >> 24 & 255) / 255.0F;
-        float f5 = (float)(endColor >> 16 & 255) / 255.0F;
-        float f6 = (float)(endColor >> 8 & 255) / 255.0F;
-        float f7 = (float)(endColor & 255) / 255.0F;
-        GlStateManager.disableTexture2D();
-        GlStateManager.enableBlend();
-        GlStateManager.disableAlpha();
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
-        GlStateManager.shadeModel(7425);
-        Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        worldrenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
-        worldrenderer.pos(right, top, zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos(left, top, zLevel).color(f1, f2, f3, f).endVertex();
-        worldrenderer.pos(left, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
-        worldrenderer.pos(right, bottom, zLevel).color(f5, f6, f7, f4).endVertex();
-        tessellator.draw();
-        GlStateManager.shadeModel(7424);
-        GlStateManager.disableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.enableTexture2D();
+
+    public static int blendAlpha(int origColor, float alphaPerc) {
+        return blendTwoColors(origColor, (int)(alphaPerc*255) << 24 | 0xFFFFFF);
     }
+
     public static void drawTexturedRect(float x, float y, float width, float height, float uMin, float uMax, float vMin, float vMax, int filter) {
         GlStateManager.enableTexture2D();
         GlStateManager.enableBlend();

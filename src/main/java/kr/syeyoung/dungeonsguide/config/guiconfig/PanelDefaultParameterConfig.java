@@ -22,6 +22,8 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltipText;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
@@ -68,6 +70,8 @@ public class PanelDefaultParameterConfig extends MPanel {
 
 
     MPanel within;
+    MTooltip mTooltip;
+    MParameter lastWithin;
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         int heights = 0;
@@ -80,9 +84,16 @@ public class PanelDefaultParameterConfig extends MPanel {
         }
         if (within instanceof MParameter) {
             FeatureParameter feature = ((MParameter) within).getParameter();
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            RenderUtils.drawHoveringText(new ArrayList<String>(Arrays.asList(feature.getDescription().split("\n"))), relMousex0,relMousey0, Minecraft.getMinecraft().fontRendererObj);
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+            if (lastWithin != within) {
+                if (mTooltip != null) mTooltip.close();
+                    mTooltip = new MTooltipText(Arrays.asList(feature.getDescription().split("\n")));
+                mTooltip.open(this);
+            }
+        } else {
+            if (mTooltip != null) {
+                mTooltip.close();
+                mTooltip = null;
+            }
         }
     }
 

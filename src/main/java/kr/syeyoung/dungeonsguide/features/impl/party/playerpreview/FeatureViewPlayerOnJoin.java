@@ -72,6 +72,7 @@ import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
@@ -183,6 +184,12 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     }
 
+    public static void clip(ScaledResolution resolution, int x, int y, int width, int height) {
+        if (width < 0 || height < 0) return;
+
+        int scale = resolution.getScaleFactor();
+        GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
+    }
     private void render(Rectangle popupRect, ScaledResolution scaledResolution, int mouseX, int mouseY, Optional<PlayerProfile> playerProfile, boolean apiKeyPlsSet) {
 
         GlStateManager.pushMatrix();
@@ -214,7 +221,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        MPanel.clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
+        clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
 
         Gui.drawRect(0,168, 90, 195, 0xFF23272a);
         Gui.drawRect(2,170, 88, 193, new Rectangle(2,170,86,23).contains(relX, relY) ? 0xFFff7777 : 0xFFFF3333);
@@ -315,11 +322,13 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                     }
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
+                GlStateManager.popMatrix();
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 FontRenderer theRenderer = (font == null ? fr : font);
-                int minY = scaledResolution.getScaledHeight() - (list.size()+4) * theRenderer.FONT_HEIGHT - popupRect.y;
-                RenderUtils.drawHoveringText(list,relX, Math.min(minY, relY), theRenderer);
+                GuiUtils.drawHoveringText(list,mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(popupRect.x, popupRect.y, 0);
             }
         } else {
             GlStateManager.enableBlend();
@@ -328,16 +337,19 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             fr.drawString("Loading", 5,35, 0xFFEFFF00);
         }
 
+        GlStateManager.popMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         if (dataRendererToHover != null && !drawInv) {
-            dataRendererToHover.onHover(playerProfile.get(), relX, relY);
+            dataRendererToHover.onHover(playerProfile.get(), mouseX, mouseY);
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GlStateManager.translate(popupRect.x, popupRect.y, 0);
+        GlStateManager.pushMatrix();
 
         if (drawInv && playerProfile.get().getInventory() != null) {
             int startX = 81;
             int startY = 86;
-            MPanel.clip(scaledResolution, popupRect.x+startX-1, popupRect.y+startY-1, 164, 74);
+            clip(scaledResolution, popupRect.x+startX-1, popupRect.y+startY-1, 164, 74);
             GlStateManager.translate(startX,startY,1);
             Gui.drawRect(-1,-1,163,73, 0xFF000000);
             GlStateManager.disableLighting();
@@ -373,11 +385,12 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                     }
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
+                GlStateManager.popMatrix();
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 FontRenderer theRenderer = (font == null ? fr : font);
-                int minY = scaledResolution.getScaledHeight() - (list.size()+4) * theRenderer.FONT_HEIGHT - popupRect.y;
-                RenderUtils.drawHoveringText(list,rx, Math.min(minY-startY, ry), theRenderer);
+                GuiUtils.drawHoveringText(list,mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                GlStateManager.pushMatrix();
             }
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);

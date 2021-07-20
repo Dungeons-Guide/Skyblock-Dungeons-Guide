@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.gui;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import lombok.AccessLevel;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
@@ -45,6 +46,7 @@ public class MPanel {
     protected boolean isFocused;
 
     @Getter
+    @Setter
     protected MPanel parent;
 
     public void setBackgroundColor(Color c) {

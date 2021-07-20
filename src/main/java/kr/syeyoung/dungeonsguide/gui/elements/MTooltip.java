@@ -40,6 +40,11 @@ public class MTooltip extends MPanel {
         root.removeTooltip(this);
     }
 
+
+    public boolean isOpen() {
+        return root != null;
+    }
+
     @Override
     public int getTooltipsOpen() {
         return super.getTooltipsOpen() - 1;

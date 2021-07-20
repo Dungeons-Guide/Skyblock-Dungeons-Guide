@@ -24,6 +24,8 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.Arrays;
@@ -85,7 +87,8 @@ public class DataRenderDungeonHighestFloorStat implements DataRenderer {
         if (playedFloorFloorSpecificData == null) return;
         String floorName = (dungeonType == DungeonType.CATACOMBS ? "F" : "M") + dungeonStatDungeonSpecificData.getData().getHighestCompleted();
 
-        RenderUtils.drawHoveringText(Arrays.asList(
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        GuiUtils.drawHoveringText(Arrays.asList(
                 "§bFloor "+floorName,
                 "§bBest Score§7: §f"+playedFloorFloorSpecificData.getData().getBestScore(),
                 "§bTotal Completions§7: §f"+playedFloorFloorSpecificData.getData().getCompletions(),
@@ -96,6 +99,6 @@ public class DataRenderDungeonHighestFloorStat implements DataRenderer {
                 "§bFastest Run§7: §f"+(playedFloorFloorSpecificData.getData().getFastestTime() != -1? TextUtils.formatTime(playedFloorFloorSpecificData.getData().getFastestTime()) : "N/A"),
                 "§bMost Mobs Killed§7: §f"+playedFloorFloorSpecificData.getData().getMostMobsKilled(),
                 "§bTotal Mobs Killed§7: §f"+playedFloorFloorSpecificData.getData().getMobsKilled()
-        ), mouseX, mouseY, Minecraft.getMinecraft().fontRendererObj);
+        ), mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 }

@@ -132,6 +132,7 @@ public class MNavigatingPane extends MPanel {
             panel2.setBackgroundColor(background2);
             pages.put(currentPage, panel2);
             panel2.setBounds(new Rectangle(1,30,getBounds().width-2, getBounds().height-31));
+            panel2.setParent(this);
         }
         dynamic.add(pages.get(currentPage));
         dynamic.add(back);

@@ -152,11 +152,10 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        int width = scaledResolution.getScaledWidth();
-        int height = scaledResolution.getScaledHeight();
-        int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
-        int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
+        int width = Minecraft.getMinecraft().displayWidth;
+        int height = Minecraft.getMinecraft().displayHeight;
+        int mouseX = Mouse.getX() ;
+        int mouseY = height - Mouse.getY() - 1;
         GlStateManager.pushMatrix();
         GlStateManager.enableTexture2D();
         GlStateManager.disableLighting();
@@ -379,11 +378,10 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
 
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        int width = scaledResolution.getScaledWidth();
-        int height = scaledResolution.getScaledHeight();
-        int mouseX = Mouse.getX() * width / Minecraft.getMinecraft().displayWidth;
-        int mouseY = height - Mouse.getY() * height / Minecraft.getMinecraft().displayHeight - 1;
+        int width = Minecraft.getMinecraft().displayWidth;
+        int height = Minecraft.getMinecraft().displayHeight;
+        int mouseX = Mouse.getX();
+        int mouseY = height - Mouse.getY() - 1;
 
         Rectangle feature = getFeatureRect().getRectangle();
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
