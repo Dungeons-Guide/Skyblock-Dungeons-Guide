@@ -104,6 +104,11 @@ public class MPanel {
     }
 
     protected Point lastParentPoint;
+
+    @Getter
+    @Setter
+    private boolean ignoreBoundOnClip;
+
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
 
         lastParentPoint = parentPoint;
@@ -116,7 +121,9 @@ public class MPanel {
 
         Rectangle absBound = getBounds().getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
-        Rectangle clip = determineClip(parentClip, absBound);
+        Rectangle clip;
+        if (ignoreBoundOnClip) clip = parentClip;
+        else clip = determineClip(parentClip, absBound);
         lastAbsClip = clip;
         if (clip.getSize().height * clip.getSize().width == 0) return;
 
