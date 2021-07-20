@@ -31,6 +31,7 @@ import net.minecraftforge.client.event.*;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -61,6 +62,20 @@ public class FeatureListener {
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof StompConnectedListener) {
                     ((StompConnectedListener) abstractFeature).onStompConnected(stompConnectedEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onWindowUpdate(WindowUpdateEvent windowUpdateEvent) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiUpdateListener) {
+                    ((GuiUpdateListener) abstractFeature).onGuiUpdate(windowUpdateEvent);
                 }
             }
         } catch (Throwable t) {

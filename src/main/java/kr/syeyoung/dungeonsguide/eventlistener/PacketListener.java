@@ -28,13 +28,12 @@ import kr.syeyoung.dungeonsguide.cosmetics.CustomPacketPlayerListItem;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.events.TitleEvent;
+import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
-import net.minecraft.network.play.server.S04PacketEntityEquipment;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.network.play.server.S45PacketTitle;
+import net.minecraft.network.play.server.*;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -61,8 +60,10 @@ public class PacketListener extends ChannelDuplexHandler {
         if (packet instanceof S38PacketPlayerListItem) {
             packet = new CustomPacketPlayerListItem((S38PacketPlayerListItem) packet);
         }
+        if (packet instanceof  S30PacketWindowItems || packet instanceof S2FPacketSetSlot) {
+            MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent(packet instanceof  S30PacketWindowItems ? (S30PacketWindowItems)packet : null , packet instanceof S2FPacketSetSlot ? (S2FPacketSetSlot)packet : null));
+        }
         super.channelRead(ctx, packet);
-
     }
 
     @Override
