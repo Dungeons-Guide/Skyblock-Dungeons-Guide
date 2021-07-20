@@ -92,12 +92,6 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
-        if (selectedPart != -2) {
-            Gui.drawRect(internallyThinking.x, internallyThinking.y, internallyThinking.x + internallyThinking.width, internallyThinking.y + internallyThinking.height, 0xFF000000);
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-            fontRenderer.drawString(internallyThinking.width + "x"+internallyThinking.height, internallyThinking.x, internallyThinking.y, 0xFFFFFFFF);
-        }
-
         GlStateManager.pushMatrix();
         super.render0(resolution, parentPoint, parentClip, absMousex, absMousey, relMousex0, relMousey0, partialTicks);
         GlStateManager.popMatrix();
@@ -109,9 +103,6 @@ public class PanelDelegate extends MPanel {
             worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
             GL11.glLineWidth(1);
             for (Tuple<Marker[], EnumFacing.Axis> markerAxisTuple : snapped) {
-//                worldRenderer.pos(markerAxisTuple.getFirst()[0].getX(), markerAxisTuple.getFirst()[0].getY(), 0).color(255,255,255,255).endVertex();
-//                worldRenderer.pos(markerAxisTuple.getFirst()[1].getX(), markerAxisTuple.getFirst()[1].getY(), 0).color(255,255,255,255).endVertex();
-
                 if (markerAxisTuple.getSecond() == EnumFacing.Axis.X) {
                     worldRenderer.pos(markerAxisTuple.getFirst()[0].getX(), 0, 0).color(0,255,0,255).endVertex();
                     worldRenderer.pos(markerAxisTuple.getFirst()[0].getX(), Minecraft.getMinecraft().displayHeight, 0).color(0,255,0,255).endVertex();

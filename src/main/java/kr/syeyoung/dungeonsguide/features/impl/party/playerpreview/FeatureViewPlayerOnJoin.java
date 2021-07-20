@@ -386,10 +386,12 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
                 GlStateManager.popMatrix();
+                GlStateManager.popMatrix();
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 FontRenderer theRenderer = (font == null ? fr : font);
                 GuiUtils.drawHoveringText(list,mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                GlStateManager.pushMatrix();
                 GlStateManager.pushMatrix();
             }
         }

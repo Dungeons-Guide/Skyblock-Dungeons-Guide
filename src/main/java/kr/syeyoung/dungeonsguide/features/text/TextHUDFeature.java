@@ -45,6 +45,9 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         this.parameters.put("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
         this.parameters.put("alignRight", new FeatureParameter<Boolean>("alignRight", "Align Right", "Align text to right", false, "boolean"));
         this.parameters.put("alignCenter", new FeatureParameter<Boolean>("alignCenter", "Align Center", "Align text to center (overrides alignright)", false, "boolean"));
+        if (!doesScaleWithHeight()) {
+            this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
+        }
     }
 
     @Override
@@ -56,8 +59,10 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
             if (doesScaleWithHeight()) {
                 FontRenderer fr = getFontRenderer();
                 scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
-                GlStateManager.scale(scale, scale, 0);
+            } else {
+                scale = this.<Float>getParameter("scale").getValue();
             }
+            GlStateManager.scale(scale, scale, 0);
             StyledTextRenderer.drawTextWithStylesAssociated(getText(), 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),this.<Boolean>getParameter("alignCenter").getValue() ? StyledTextRenderer.Alignment.CENTER : this.<Boolean>getParameter("alignRight").getValue() ? StyledTextRenderer.Alignment.RIGHT : StyledTextRenderer.Alignment.LEFT);
         }
     }
@@ -72,9 +77,11 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         double scale = 1;
         if (doesScaleWithHeight()) {
             FontRenderer fr = getFontRenderer();
-            scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT * countLines(asd));
-            GlStateManager.scale(scale, scale, 0);
+            scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
+        } else {
+            scale = this.<Float>getParameter("scale").getValue();
         }
+        GlStateManager.scale(scale, scale, 0);
         StyledTextRenderer.drawTextWithStylesAssociated(getDummyText(), 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),this.<Boolean>getParameter("alignCenter").getValue() ? StyledTextRenderer.Alignment.CENTER : this.<Boolean>getParameter("alignRight").getValue() ? StyledTextRenderer.Alignment.RIGHT : StyledTextRenderer.Alignment.LEFT);
     }
 

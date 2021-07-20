@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -65,7 +66,7 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         GlStateManager.pushMatrix();
         Rectangle featureRect = this.featureRect.getRectangleNoScale();
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.translate(1.0/scaledResolution.getScaleFactor(), 1.0/scaledResolution.getScaleFactor(), 1);
+        GlStateManager.scale(1.0/scaledResolution.getScaleFactor(), 1.0/scaledResolution.getScaleFactor(), 1);
         clip(featureRect.x, featureRect.y, featureRect.width, featureRect.height);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
@@ -111,5 +112,9 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         JsonObject object = super.saveConfig();
         object.add("$bounds", TypeConverterRegistry.getTypeConverter("guirect", GUIRectangle.class).serialize(featureRect));
         return object;
+    }
+
+    public MTooltip getTooltipForEditor() {
+        return null;
     }
 }
