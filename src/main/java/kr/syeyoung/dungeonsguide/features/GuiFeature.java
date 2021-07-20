@@ -19,24 +19,31 @@
 package kr.syeyoung.dungeonsguide.features;
 
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
-import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
-import org.w3c.dom.css.Rect;
 
-import javax.sound.midi.MidiEvent;
 import java.awt.*;
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
 @Getter
 public abstract class GuiFeature extends AbstractFeature implements ScreenRenderListener {
@@ -114,7 +121,44 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         return object;
     }
 
-    public MTooltip getTooltipForEditor() {
-        return null;
+    public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
+        ArrayList<MPanel> mPanels = new ArrayList<>();
+        mPanels.add(new MLabel(){
+            {
+                setText(getName());
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(Minecraft.getMinecraft().fontRendererObj.getStringWidth(getName()), 30);
+            }
+        });
+        mPanels.add(new MButton() {
+            {
+                setText("Edit");
+                setOnActionPerformed(() -> {
+                    GuiScreen guiScreen = guiGuiLocationConfig.getBefore();
+                    if (guiScreen == null) {
+                        guiScreen = new GuiConfig();
+                    }
+                    Minecraft.getMinecraft().displayGuiScreen(guiScreen);
+                    if (guiScreen instanceof GuiConfig) {
+                        ((GuiConfig) guiScreen).getTabbedPane().setCurrentPage(getEditRoute((GuiConfig) guiScreen));
+                    }
+                });
+            }
+
+            @Override
+            public Dimension getPreferredSize() {
+                return new Dimension(150,30);
+            }
+        });
+        mPanels.add(new MPassiveLabelAndElement("Enabled", new MToggleButton() {{
+            setEnabled(GuiFeature.this.isEnabled());
+            setOnToggle(() ->{
+                GuiFeature.this.setEnabled(isEnabled());
+            }); }
+        }));
+        return mPanels;
     }
 }

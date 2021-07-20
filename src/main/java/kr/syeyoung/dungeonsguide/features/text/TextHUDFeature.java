@@ -21,12 +21,17 @@ package kr.syeyoung.dungeonsguide.features.text;
 import com.google.common.base.Supplier;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
+import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -45,9 +50,8 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         this.parameters.put("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
         this.parameters.put("alignRight", new FeatureParameter<Boolean>("alignRight", "Align Right", "Align text to right", false, "boolean"));
         this.parameters.put("alignCenter", new FeatureParameter<Boolean>("alignCenter", "Align Center", "Align text to center (overrides alignright)", false, "boolean"));
-        if (!doesScaleWithHeight()) {
-            this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
-        }
+        this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
+
     }
 
     @Override
@@ -139,5 +143,31 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
             }
         });
         return "base." + getKey() ;
+    }
+
+    @Override
+    public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
+        List<MPanel> mPanels = super.getTooltipForEditor(guiGuiLocationConfig);
+        mPanels.add(new MPassiveLabelAndElement("Align Right", new MToggleButton() {{
+            setEnabled(TextHUDFeature.this.<Boolean>getParameter("alignRight").getValue());
+            setOnToggle(() ->{
+                TextHUDFeature.this.<Boolean>getParameter("alignRight").setValue(isEnabled());
+            }); }
+        }));
+        mPanels.add(new MPassiveLabelAndElement("Align Center", new MToggleButton() {{
+            setEnabled(TextHUDFeature.this.<Boolean>getParameter("alignCenter").getValue());
+            setOnToggle(() ->{
+                TextHUDFeature.this.<Boolean>getParameter("alignCenter").setValue(isEnabled());
+            }); }
+        }));
+        if (!doesScaleWithHeight()) {
+            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
+                setOnUpdate(() ->{
+                    TextHUDFeature.this.<Float>getParameter("scale").setValue(this.getData());
+                }); }
+            }));
+        }
+
+        return mPanels;
     }
 }

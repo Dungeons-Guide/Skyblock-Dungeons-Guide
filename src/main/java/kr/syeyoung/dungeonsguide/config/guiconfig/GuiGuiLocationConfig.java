@@ -40,6 +40,7 @@ import java.util.List;
 
 public class GuiGuiLocationConfig extends MGui {
 
+    @Getter
     private final GuiScreen before;
 
     @Getter

@@ -21,6 +21,8 @@ package kr.syeyoung.dungeonsguide.config.guiconfig;
 import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MPopupMenu;
+import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -65,6 +67,7 @@ public class PanelDelegate extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMouseX, int relMouseY, float partialTicks, Rectangle scissor) {
+        if (!guiFeature.isEnabled()) return;
 
         GlStateManager.pushMatrix();
         guiFeature.drawDemo(partialTicks);
@@ -277,9 +280,13 @@ public class PanelDelegate extends MPanel {
         }
     }
 
+    MTooltip mTooltip;
+
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (!draggable) return;
+        if (!guiFeature.isEnabled()) return;
+        if (getTooltipsOpen() > 0) return;
         if (!lastAbsClip.contains(absMouseX, absMouseY)) return;
         if (mouseButton == 0) {
             internallyThinking = guiFeature.getFeatureRect().getRectangleNoScale();
@@ -306,6 +313,10 @@ public class PanelDelegate extends MPanel {
             lastY = absMouseY;
             applyConstraint();
 
+        } else if (getTooltipsOpen() == 0){
+            if (mTooltip != null) mTooltip.close();
+            mTooltip = new MPopupMenu(absMouseX, absMouseY, guiFeature.getTooltipForEditor(guiGuiLocationConfig));
+            mTooltip.open(this);
         }
         throw new IllegalArgumentException("bruh, a hack to stop event progress");
     }
@@ -313,6 +324,7 @@ public class PanelDelegate extends MPanel {
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
         if (!draggable) return;
+        if (!guiFeature.isEnabled()) return;
         if (selectedPart >= -1) {
             guiFeature.setFeatureRect(new GUIRectangle(constraintApplied));
         }
@@ -323,6 +335,7 @@ public class PanelDelegate extends MPanel {
     @Override
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
         if (!draggable) return;
+        if (!guiFeature.isEnabled()) return;
         int dx = (absMouseX - lastX);
         int dy = (absMouseY - lastY);
         if (selectedPart >= 0) {

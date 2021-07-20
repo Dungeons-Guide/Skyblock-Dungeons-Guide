@@ -55,6 +55,49 @@ public class RenderUtils {
     public static boolean allowScrolling;
     public static int scrollX = 0;
 
+    public static void drawRoundedRectangle(int x, int y, int width, int height, int radius, double delta, int color) {
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(width/2.0+x, height/2.0+y, 0);
+        Tessellator t = Tessellator.getInstance();
+        GlStateManager.disableTexture2D();
+        GlStateManager.disableCull();
+        RenderUtils.GL_SETCOLOR(color);
+        WorldRenderer wr = t.getWorldRenderer();
+        wr.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
+        for (double i = 0.1; i < Math.PI*2; i+= delta) {
+            double cos = MathHelper.cos((float) i);
+            double sin = MathHelper.sin((float) i);
+            if (cos != 0 || sin != 0)
+                wr.pos(cos * radius + (cos < 0 ? -width/2.0+radius : width/2.0-radius),
+                        sin * radius + (sin <= 0 ? -height/2.0+radius : height/2.0-radius), 0)
+                        .endVertex(); // .color((int) (i/(Math.PI*2) * 255),0,0,255)
+            if (cos *MathHelper.cos((float) (i + delta)) <= 0) { // X Change
+                sin = Math.round(sin);
+
+                wr.pos((cos < 0 ? -1 : 1) * (width/2.0 - radius),
+                        sin * radius + (sin < 0 ? -height/2.0+radius : height/2.0-radius), 0).endVertex();
+                wr.pos((cos < 0 ? 1 : -1) *  (width/2.0 - radius),
+                        sin * radius + (sin < 0 ? -height/2.0+radius : height/2.0-radius), 0).endVertex();
+            } else if (sin * MathHelper.sin((float) (i+delta)) <= 0) { // Y Change
+                cos = Math.round(cos);
+
+                wr.pos(cos * radius + (cos < 0 ? -width/2.0+radius : width/2.0-radius),
+                        (sin < 0 ? -1 : 1) *(height/2.0 - radius), 0).endVertex();
+                wr.pos(cos * radius + (cos < 0 ? -width/2.0+radius : width/2.0-radius),
+                        (sin < 0 ? 1 : -1) *(height/2.0 - radius), 0).endVertex();
+            }
+        }
+        t.draw();
+        GlStateManager.popMatrix();
+    }
+
+    public static void GL_SETCOLOR(int color) {
+        float f3 = (float)(color >> 24 & 255) / 255.0F;
+        float f = (float)(color >> 16 & 255) / 255.0F;
+        float f1 = (float)(color >> 8 & 255) / 255.0F;
+        float f2 = (float)(color & 255) / 255.0F;
+        GlStateManager.color(f, f1, f2, f3);
+    }
 
     public static int blendTwoColors(int background, int newColor) {
         float alpha = ((newColor >> 24) & 0xFF) /255.0f;
