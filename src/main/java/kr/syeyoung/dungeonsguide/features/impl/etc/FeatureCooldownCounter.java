@@ -20,10 +20,14 @@ package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonQuitListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiOpenListener;
+import kr.syeyoung.dungeonsguide.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -34,41 +38,55 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
-public class FeatureCooldownCounter extends GuiFeature implements DungeonQuitListener, GuiOpenListener {
+public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQuitListener, GuiOpenListener {
     public FeatureCooldownCounter() {
         super("ETC", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.orange, "color"));
+        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("number", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
     }
 
     private long leftDungeonTime = 0L;
-    private final boolean wasInDungeon = false;
-    @Override
-    public void drawHUD(float partialTicks) {
-        if (System.currentTimeMillis() - leftDungeonTime > 20000) return;
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
 
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Cooldown: "+(20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
+    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
+    static {
+        dummyText.add(new StyledText("Cooldown","title"));
+        dummyText.add(new StyledText(": ","separator"));
+        dummyText.add(new StyledText("20s","number"));
     }
 
     @Override
-    public void drawDemo(float partialTicks) {
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        double scale = getFeatureRect().getRectangle().getHeight() / fr.FONT_HEIGHT;
-        GlStateManager.scale(scale, scale, 0);
-
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Cooldown: 20s", 0,0,this.<Color>getParameter("color").getValue().getRGB());
+    public List<StyledText> getDummyText() {
+        return dummyText;
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+    @Override
+    public boolean isHUDViewable() {
+        return System.currentTimeMillis() - leftDungeonTime < 20000;
+    }
+
+    @Override
+    public java.util.List<String> getUsedTextStyle() {
+        return Arrays.asList("title", "separator", "number");
+    }
+
+    @Override
+    public List<StyledText> getText() {
+        List<StyledText> actualBit = new ArrayList<StyledText>();
+        actualBit.add(new StyledText("Cooldown","title"));
+        actualBit.add(new StyledText(": ","separator"));
+        actualBit.add(new StyledText((20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s","time"));
+        return actualBit;
+    }
+
+    @Override
+    public boolean doesScaleWithHeight() {
+        return true;
+    }
 
     @Override
     public void onDungeonQuit() {
