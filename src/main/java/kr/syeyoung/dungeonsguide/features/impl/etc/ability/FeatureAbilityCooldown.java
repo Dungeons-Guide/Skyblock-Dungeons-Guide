@@ -112,6 +112,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         register(new SkyblockAbility("Spiky", -1, -1, "PUFFERFISH_HAT"));
         register(new SkyblockAbility("Jingle Bells", -1, 1, "JINGLE_BELLS"));
         register(new SkyblockAbility("Wither Shield", 150, 10, "WITHER_SHIELD_SCROLL"));
+        register(new SkyblockAbility("Wither Impact", 150, 10, "WITHER_SHIELD_SCROLL"));
         register(new SkyblockAbility("Brute Force", -1, -1, "WARDEN_HELMET"));
         register(new SkyblockAbility("Growth", -1, 4, "GROWTH_LEGGINGS"));
         register(new SkyblockAbility("Shadowstep", -1, 60, "SILENT_DEATH"));
@@ -230,7 +231,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         register(new SkyblockAbility("Ragnarok", -1, 60, "DUNGEON_STONE"));
         register(new SkyblockAbility("Explosive Shot", -1, 40, "DUNGEON_STONE"));
         register(new SkyblockAbility("Rapid Fire", -1, 100, "DUNGEON_STONE"));
-        register(new SkyblockAbility("Seismic Wave", -1, 60, "DUNGEON_STONE"));
+        register(new SkyblockAbility("Seismic Wave", -1, 15, "DUNGEON_STONE"));
         register(new SkyblockAbility("Castle of Stone", -1, 150, "DUNGEON_STONE"));
     }
 
