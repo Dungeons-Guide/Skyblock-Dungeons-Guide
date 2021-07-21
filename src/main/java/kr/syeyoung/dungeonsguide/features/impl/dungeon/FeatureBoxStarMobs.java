@@ -56,7 +56,7 @@ public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderList
             @Override
             public boolean apply(@Nullable EntityArmorStand input) {
                 if (player.distanceSq(input.getPosition()) > sq) return false;
-                if (input.isInvisible() || !input.getAlwaysRenderNameTag()) return false;
+                if (!input.getAlwaysRenderNameTag()) return false;
                 return input.getName().contains("✯");
             }
         });
