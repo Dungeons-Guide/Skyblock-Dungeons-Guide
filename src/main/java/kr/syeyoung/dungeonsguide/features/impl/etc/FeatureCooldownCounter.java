@@ -79,7 +79,7 @@ public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQui
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("Cooldown","title"));
         actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText((20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s","time"));
+        actualBit.add(new StyledText((20 - (System.currentTimeMillis() - leftDungeonTime) / 1000)+"s","number"));
         return actualBit;
     }
 
