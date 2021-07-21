@@ -88,7 +88,7 @@ public class MPanel {
     public void add(MPanel child) {
         if (child.parent != null) throw new IllegalArgumentException("What have you done");
         this.childComponents.add(child);
-        child.parent = this;
+        child.setParent(this);
     }
 
     public void openTooltip(MTooltip mPanel) {
@@ -99,7 +99,7 @@ public class MPanel {
     }
 
     public void remove(MPanel panel) {
-        panel.parent = null;
+        panel.setParent(null);
         this.childComponents.remove(panel);
     }
 

@@ -39,7 +39,7 @@ import java.io.IOException;
 public class MTextField extends MPanel {
     private final Color foreground = Color.white;
 
-    private String text = "asdasdasd";
+    private String text = "";
     private int cursorBlickTicker = 0;
 
     private int selectionStart = 0;

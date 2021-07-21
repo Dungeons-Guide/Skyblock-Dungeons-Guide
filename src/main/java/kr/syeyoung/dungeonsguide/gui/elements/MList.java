@@ -51,7 +51,7 @@ public class MList extends MPanel {
         for (int i = 1; i < getChildComponents().size(); i++) {
             MPanel panel = getChildComponents().get(i);
             Rectangle bound = panel.getBounds();
-            Gui.drawRect(0,bound.y - (gap/2), getBounds().width, bound.y - (gap/2)+1, gapLineColor);
+            Gui.drawRect(0, bound.y - gap, getBounds().width, bound.y, gapLineColor);
         }
     }
 

@@ -78,8 +78,8 @@ public class MGui extends GuiScreen {
             mainPanel.keyTyped0(typedChar, keyCode);
             super.keyTyped(typedChar, keyCode);
         } catch (Throwable e) {
-            if (!e.getMessage().contains("hack to stop"))
-            e.printStackTrace();
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
         }
     }
 
@@ -90,7 +90,7 @@ public class MGui extends GuiScreen {
             mainPanel.mouseClicked0(mouseX, mouseY
                     ,mouseX, mouseY, mouseButton);
         } catch (Throwable e) {
-            if (!e.getMessage().contains("hack to stop"))
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
             e.printStackTrace();
         }
     }
@@ -106,7 +106,7 @@ public class MGui extends GuiScreen {
             mainPanel.mouseReleased0(mouseX, mouseY
                     ,mouseX,mouseY , state);
         } catch (Throwable e) {
-            if (!e.getMessage().contains("hack to stop"))
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
             e.printStackTrace();
         }
     }
@@ -117,7 +117,7 @@ public class MGui extends GuiScreen {
             mainPanel.mouseClickMove0(mouseX, mouseY
                     ,mouseX ,mouseY, clickedMouseButton, timeSinceLastClick);
         } catch (Throwable e) {
-            if (!e.getMessage().contains("hack to stop"))
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
             e.printStackTrace();
         }
     }

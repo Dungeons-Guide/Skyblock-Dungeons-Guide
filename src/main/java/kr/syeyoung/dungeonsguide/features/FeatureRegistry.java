@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
 import kr.syeyoung.dungeonsguide.features.impl.party.FeatureGoodParties;
+import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPartyFinder;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureFreezePathfind;
@@ -112,6 +113,7 @@ public class FeatureRegistry {
     public static final APIKey PARTYKICKER_APIKEY = register(new APIKey());
     public static final FeatureViewPlayerOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerOnJoin());
     public static final FeatureGoodParties PARTYKICKER_GOODPARTIES = register(new FeatureGoodParties());
+    public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM = register(new FeatureCustomPartyFinder());
 
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
     public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());

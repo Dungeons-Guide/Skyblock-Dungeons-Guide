@@ -34,6 +34,9 @@ public class MPassiveLabelAndElement extends MPanel {
     @Getter @Setter
     private Runnable onClick;
 
+    @Getter @Setter
+    private double divideRatio = 1/3.0;
+
     public MPassiveLabelAndElement(String label, MPanel element) {
         this.add(this.label = new MLabel());
         this.label.setText(label);
@@ -62,7 +65,7 @@ public class MPassiveLabelAndElement extends MPanel {
 
     @Override
     public void onBoundsUpdate() {
-        label.setBounds(new Rectangle(0,0,getBounds().width / 3, getBounds().height));
-        element.setBounds(new Rectangle(getBounds().width / 3,0,getBounds().width / 3 * 2, getBounds().height));
+        label.setBounds(new Rectangle(0,0, (int) (getBounds().width * divideRatio), getBounds().height));
+        element.setBounds(new Rectangle((int) (getBounds().width * divideRatio),0, (int) (getBounds().width * (1-divideRatio)), getBounds().height));
     }
 }

@@ -112,7 +112,7 @@ public class MScrollablePanel extends MPanel {
         }
     }
 
-    private void evalulateContentArea() {
+    public void evalulateContentArea() {
         if (contentArea.getChildComponents().size() == 0) {
             contentAreaDim= new Rectangle(0,0,0,0);
             return;
