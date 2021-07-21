@@ -255,6 +255,18 @@ public class CommandDungeonsGuide extends CommandBase {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
+        } else if (args[0].equalsIgnoreCase("pvall")) {
+            PartyManager.INSTANCE.getRunOnMembersReceived().add((e) -> {
+                for (String s : e) {
+                    ApiFetchur.fetchUUIDAsync(s)
+                            .thenAccept(a -> {
+                                if (a == null) return;
+                                ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+s+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                            });
+                }
+            });
+            PartyManager.INSTANCE.requestPartyRetrieval();
 //        } else if (args[0].equals("fixschematic")) {
 //            File root = new File(e.getDungeonsGuide().getConfigDir(), "schematics");
 //            Method method = null;
@@ -400,6 +412,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets partymax §7(maximum amount people in party, for discord rpc)"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
         }

@@ -388,6 +388,10 @@ public class PartyManager implements StompMessageHandler {
         sendChat.add(new Tuple<>("/pl", () -> {partyJoin = 1;}));
     }
 
+    public void requestPartyRetrieval() {
+        sendChat.add(new Tuple<>("/pl", () -> {partyJoin = 1;}));
+    }
+
     private int checkPlayer = 0;
     private JSONObject theObject;
     private long minimumNext = 0;

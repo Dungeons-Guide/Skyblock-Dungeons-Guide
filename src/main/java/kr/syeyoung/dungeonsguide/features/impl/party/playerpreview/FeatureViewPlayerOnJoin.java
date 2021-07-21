@@ -463,7 +463,6 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
             String username = TextUtils.stripColor(str).split(" ")[3];
             if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
                 PartyManager.INSTANCE.getRunOnMembersReceived().add((e) -> {
                     for (String s : e) {
                         ApiFetchur.fetchUUIDAsync(s)
@@ -474,6 +473,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                                 });
                     }
                 });
+                PartyManager.INSTANCE.requestPartyRetrieval();
             } else {
                 ApiFetchur.fetchUUIDAsync(username)
                         .thenAccept(a -> {
