@@ -60,11 +60,11 @@ public class MapProcessor {
     @Getter
     private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
 
-    @Getter
+    @Getter @Setter
     private Dimension unitRoomDimension;
-    @Getter
+    @Getter @Setter
     private Dimension doorDimension; // width: width of door, height: gap between rooms
-    @Getter
+    @Getter @Setter
     private Point topLeftMapPoint;
 
     @Setter

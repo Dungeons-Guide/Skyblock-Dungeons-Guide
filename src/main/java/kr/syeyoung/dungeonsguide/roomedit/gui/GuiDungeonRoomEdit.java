@@ -70,6 +70,6 @@ public class GuiDungeonRoomEdit extends MGui {
     public void initGui() {
         super.initGui();
         // update bounds
-        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
+        getMainPanel().setBounds(new Rectangle(Math.min((Minecraft.getMinecraft().displayWidth - 500) / 2, Minecraft.getMinecraft().displayWidth), Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),500,300));
     }
 }

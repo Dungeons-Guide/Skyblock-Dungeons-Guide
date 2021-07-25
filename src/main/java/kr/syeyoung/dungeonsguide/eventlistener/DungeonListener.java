@@ -66,6 +66,8 @@ import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
+import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -138,6 +140,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) throws Throwable {
         try {
+            if (ev.side == Side.SERVER) return;
             if (ev.phase == TickEvent.Phase.START) {
 
 
@@ -486,6 +489,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
         try {
+            if (!keyInputEvent.world.isRemote) return;
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
 

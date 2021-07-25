@@ -20,12 +20,17 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.CatacombMasterDataProvider;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -35,33 +40,50 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
+import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.stomp.*;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
+import kr.syeyoung.dungeonsguide.utils.ShortUtils;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
+import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.server.MinecraftServer;
+import net.minecraft.tileentity.TileEntity;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
+import sun.misc.Unsafe;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Map;
 import java.util.UUID;
+import java.util.regex.Pattern;
 
 public class CommandDungeonsGuide extends CommandBase {
     @Override
@@ -397,6 +419,77 @@ public class CommandDungeonsGuide extends CommandBase {
             StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
                 sender.addChatMessage(new ChatComponentText(a.getResourceID()+": "+a.getValue()+": "+a.isExists()));
             });
+        } else if (args[0].equals("createFakeRoom")&& Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
+
+            // load schematic
+            File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/Pillars-9fa09d68-c483-4320-872e-9e07b049ee37-a92c0ec6-e125-451a-8518-56e68d9cb463.schematic");
+            NBTTagCompound compound;
+            try {
+                compound = CompressedStreamTools.readCompressed(new FileInputStream(f));
+            } catch (IOException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            byte[] blocks = compound.getByteArray("Blocks");
+            byte[] meta = compound.getByteArray("Data");
+            for (int x = 0; x < compound.getShort("Width"); x++) {
+                for (int y = 0; y <  compound.getShort("Height"); y++) {
+                    for (int z = 0; z < compound.getShort("Length"); z++) {
+                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                        BlockPos pos = new BlockPos(x,y,z);
+                        World w = MinecraftServer.getServer().getEntityWorld();
+                        w.setBlockState(pos, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF), 2);
+                    }
+                }
+            }
+
+
+            DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
+                @Override
+                public BlockPos findDoor(World w, String dungeonName) {
+                    return new BlockPos(0,0,0);
+                }
+
+                @Override
+                public Vector2d findDoorOffset(World w, String dungeonName) {
+                    return null;
+                }
+
+                @Override
+                public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
+                    return null;
+                }
+
+                @Override
+                public boolean isTrapSpawn(String dungeonName) {
+                    return false;
+                }
+            });
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            skyblockStatus.setDungeonName("TEST DG");
+            DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
+            skyblockStatus.setContext(fakeContext);
+            skyblockStatus.setForceIsOnDungeon(true);
+            MapProcessor mapProcessor = fakeContext.getMapProcessor();
+            mapProcessor.setUnitRoomDimension(new Dimension(16,16));
+            mapProcessor.setBugged(false);
+            mapProcessor.setDoorDimension(new Dimension(4,4));
+            mapProcessor.setTopLeftMapPoint(new Point(0,0));
+            fakeContext.setDungeonMin(new BlockPos(0,70,0));
+
+            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0,0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0,70,0), new BlockPos(31,70,31), fakeContext);
+
+            fakeContext.getDungeonRoomList().add(dungeonRoom);
+            for (Point p:Arrays.asList(new Point(0,0))) {
+                fakeContext.getRoomMapper().put(p, dungeonRoom);
+            }
+
+            EditingContext.createEditingContext(dungeonRoom);
+            EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
+        } else if (args[0].equals("CloseContext")) {
+            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
+            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setContext(null);
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

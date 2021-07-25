@@ -67,24 +67,36 @@ public class RoomMatcher {
             shape = ShortUtils.topLeftifyInt(shape);
 
             List<DungeonRoomInfo> roomInfoList = DungeonRoomInfoRegistry.getByShape(shape);
+            int lowestcost = Integer.MAX_VALUE;
+            DungeonRoomInfo bestMatch = null;
             for (DungeonRoomInfo roomInfo : roomInfoList) {
-                if (tryMatching(roomInfo, rotation)) {
-                    match = roomInfo;
-                    this.rotation = rotation;
-                    return match;
+                int cost = tryMatching(roomInfo, rotation);
+//                if () {
+//                    match = roomInfo;
+//                    this.rotation = rotation;
+//                    return match;
+//                }
+                if (cost < lowestcost) {
+                    lowestcost = cost;
+                    bestMatch = roomInfo;
+                    if (cost == 0) break;
                 }
             }
+            match = bestMatch;
+            this.rotation = rotation;
+            return bestMatch;
         }
         return null;
     }
 
-    private boolean tryMatching(DungeonRoomInfo dungeonRoomInfo, int rotation) {
-        if (dungeonRoomInfo.getColor() != dungeonRoom.getColor()) return false;
+    private int tryMatching(DungeonRoomInfo dungeonRoomInfo, int rotation) {
+        if (dungeonRoomInfo.getColor() != dungeonRoom.getColor()) return Integer.MAX_VALUE;
 
         int[][] res = dungeonRoomInfo.getBlocks();
         for (int i = 0; i < rotation; i++)
             res = ArrayUtils.rotateCounterClockwise(res);
 
+        int wrongs = 0;
         for (int z = 0; z < res.length; z ++) {
             for (int x = 0; x < res[0].length; x++) {
                 int data = res[z][x];
@@ -92,11 +104,13 @@ public class RoomMatcher {
                 Block b = dungeonRoom.getRelativeBlockAt(x,0,z);
 
                 if (b == null || Block.getIdFromBlock(b) != data) {
-                    return false;
+                    wrongs++;
+
+                    if (wrongs > 10) return wrongs;
                 }
             }
         }
-        return true;
+        return wrongs;
     }
 
     private static final int offset = 3;

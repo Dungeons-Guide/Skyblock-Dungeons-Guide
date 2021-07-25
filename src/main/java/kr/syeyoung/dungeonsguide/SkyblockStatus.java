@@ -46,8 +46,14 @@ import java.util.regex.Pattern;
 public class SkyblockStatus {
     @Getter
     private boolean isOnSkyblock;
-    @Getter
     private boolean isOnDungeon;
+
+    public boolean isOnDungeon() {
+        return forceIsOnDungeon || isOnDungeon;
+    }
+
+    @Getter @Setter
+    private boolean forceIsOnDungeon;
 
     @Getter
     @Setter
@@ -57,7 +63,7 @@ public class SkyblockStatus {
     @Setter
     private int percentage;
 
-    @Getter
+    @Getter @Setter
     private String dungeonName;
 
     public boolean isOnHypixel() {

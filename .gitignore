@@ -34,3 +34,6 @@ mods/*
 
 options.txt
 servers.dat
+/saves/*
+/usernamecache.json
+/usercache.json
