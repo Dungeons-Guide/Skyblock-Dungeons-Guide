@@ -68,7 +68,7 @@ public class MTextField extends MPanel {
         Gui.drawRect(1,1,getBounds().width - 1, getBounds().height - 1, Color.black.getRGB());
 
         Minecraft mc = Minecraft.getMinecraft();
-        clip(new ScaledResolution(mc), clip.x + 1, clip.y + 1, clip.width - 2, clip.height - 2);
+        clip(clip.x + 1, clip.y + 1, clip.width - 2, clip.height - 2);
         FontRenderer fr = mc.fontRendererObj;
         int y = (getBounds().height - fr.FONT_HEIGHT) / 2;
         GlStateManager.enableBlend();

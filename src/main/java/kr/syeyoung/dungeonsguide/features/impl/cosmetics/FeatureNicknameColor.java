@@ -18,11 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.cosmetics;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import net.minecraft.util.EnumChatFormatting;
 
 public class FeatureNicknameColor extends SimpleFeature {
     public FeatureNicknameColor() {

@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -78,7 +78,7 @@ public class DataRendererEditor extends MPanel {
         Gui.drawRect(155 + hamburgerWidth,4 + fr.FONT_HEIGHT + 3,156 + hamburgerWidth, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
 
         GlStateManager.pushMatrix();
-        clip(sr, scissor.x + 6+hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+        clip(scissor.x + 6+hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
         GlStateManager.translate(6+hamburgerWidth, 5+fr.FONT_HEIGHT+3, 0);
         int culmutativeY = 0;
         int relSelectedY = selectedY - (5+ fr.FONT_HEIGHT + 3);
@@ -92,7 +92,7 @@ public class DataRendererEditor extends MPanel {
                 else dim = dataRenderer.getDimension();
 
                 if (culmutativeY + dim.height > relSelectedY && relSelectedY >= culmutativeY && !drewit) {
-                    clip(sr, scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+                    clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
                     GlStateManager.enableBlend();
                     GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -105,7 +105,7 @@ public class DataRendererEditor extends MPanel {
                         dim = dataRenderer.renderDummy();
                         GlStateManager.popMatrix();
                     }
-                    clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
+                    clip(scissor.x, scissor.y, scissor.width, scissor.height);
                     GlStateManager.translate(-hamburgerWidth-1, 0, 0);
                     Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFF777777);
                     GlStateManager.enableBlend();
@@ -118,7 +118,7 @@ public class DataRendererEditor extends MPanel {
             }
 
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
-            clip(sr, scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+            clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
 
             GlStateManager.enableBlend();
@@ -133,7 +133,7 @@ public class DataRendererEditor extends MPanel {
                 dim = dataRenderer.renderDummy();
                 GlStateManager.popMatrix();
             }
-            clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
+            clip(scissor.x, scissor.y, scissor.width, scissor.height);
             GlStateManager.translate(-hamburgerWidth-1, 0, 0);
             Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFFAAAAAA);
             GlStateManager.enableBlend();
@@ -148,7 +148,7 @@ public class DataRendererEditor extends MPanel {
         if (currentlySelected != null && new Rectangle(0,5+fr.FONT_HEIGHT + 3, hamburgerWidth+11, 232).contains(selectedX, selectedY) && !drewit) {
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
             Dimension dim;
-                clip(sr, scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+                clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             GlStateManager.enableBlend();
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -161,7 +161,7 @@ public class DataRendererEditor extends MPanel {
                     dim = dataRenderer.renderDummy();
                     GlStateManager.popMatrix();
                 }
-                clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
+                clip(scissor.x, scissor.y, scissor.width, scissor.height);
                 GlStateManager.translate(-hamburgerWidth-1, 0, 0);
                 Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFF777777);
             GlStateManager.enableBlend();
@@ -181,7 +181,7 @@ public class DataRendererEditor extends MPanel {
         rest.remove(currentlySelected);
         for (String datarenderers : rest) {
             DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
-            clip(sr, scissor.x + 156 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
+            clip(scissor.x + 156 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
             GlStateManager.enableBlend();
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -195,7 +195,7 @@ public class DataRendererEditor extends MPanel {
                 dim = dataRenderer.renderDummy();
                 GlStateManager.popMatrix();
             }
-            clip(sr, scissor.x + 155, scissor.y + 5+fr.FONT_HEIGHT+3, hamburgerWidth, 230);
+            clip(scissor.x + 155, scissor.y + 5+fr.FONT_HEIGHT+3, hamburgerWidth, 230);
             GlStateManager.translate(-hamburgerWidth-1, 0, 0);
             Gui.drawRect(0,0, hamburgerWidth, dim.height-1, 0xFFAAAAAA);
             GlStateManager.enableBlend();
@@ -205,7 +205,7 @@ public class DataRendererEditor extends MPanel {
             GlStateManager.translate(hamburgerWidth+1,dim.height,0);
         }
         GlStateManager.popMatrix();
-        clip(sr, 0,0,sr.getScaledWidth(), sr.getScaledHeight());
+        clip(0,0,sr.getScaledWidth(), sr.getScaledHeight());
         {
             if (currentlySelected != null) {
                 GlStateManager.pushMatrix();
@@ -233,7 +233,7 @@ public class DataRendererEditor extends MPanel {
                 GlStateManager.popMatrix();
             }
         }
-        clip(sr, scissor.x, scissor.y, scissor.width, scissor.height);
+        clip(scissor.x, scissor.y, scissor.width, scissor.height);
     }
 
     @Override

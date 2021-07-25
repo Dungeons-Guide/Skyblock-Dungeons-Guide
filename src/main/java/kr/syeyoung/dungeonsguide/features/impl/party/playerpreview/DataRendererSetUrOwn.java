@@ -18,17 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.ClassSpecificData;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import kr.syeyoung.dungeonsguide.utils.XPUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.awt.*;
-import java.util.Arrays;
 
 public class DataRendererSetUrOwn implements DataRenderer {
     @Override

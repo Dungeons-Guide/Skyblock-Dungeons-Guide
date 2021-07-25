@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.DungeonSpecificData;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.DungeonStat;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.DungeonType;

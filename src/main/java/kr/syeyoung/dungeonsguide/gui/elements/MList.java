@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.gui.elements;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
@@ -28,6 +29,9 @@ public class MList extends MPanel {
     @Getter
     private int gap = 5;
 
+    @Getter @Setter
+    private boolean drawLine = true;
+
     public void setGap(int gap) {
         this.gap = gap;
         realignChildren();
@@ -35,19 +39,35 @@ public class MList extends MPanel {
 
     private final int gapLineColor = 0xFFFFFFFF;
 
-    protected void realignChildren() {
+    public void realignChildren() {
         int y = 0;
         for (MPanel childComponent : getChildComponents()) {
             Dimension preferedSize = childComponent.getPreferredSize();
             childComponent.setBounds(new Rectangle(0, y, bounds.width, Math.max(10, preferedSize.height)));
             y += preferedSize.height;
-            y += gap;
+            if (gap > 0)
+                y += gap;
         }
         setSize(new Dimension(getSize().width, Math.max(0, y-gap)));
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        int maxW = 0;
+        int h = 0;
+        for (MPanel childComponent : getChildComponents()) {
+            Dimension preferedSize = childComponent.getPreferredSize();
+            if (preferedSize.width > maxW) maxW = preferedSize.width;
+            h += preferedSize.height;
+            if (gap > 0) h += gap;
+        }
+        return new Dimension(maxW, Math.max(0, h-gap));
+    }
+
+    @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
+        if (gap <= 0) return;
+        if (!drawLine) return;
         for (int i = 1; i < getChildComponents().size(); i++) {
             MPanel panel = getChildComponents().get(i);
             Rectangle bound = panel.getBounds();

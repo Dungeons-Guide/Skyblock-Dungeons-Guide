@@ -23,8 +23,8 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
@@ -48,6 +48,8 @@ public class MPanel {
     @Getter
     @Setter
     protected MPanel parent;
+
+    private boolean debug = false;
 
     public void setBackgroundColor(Color c) {
         if (c == null) return;
@@ -109,7 +111,7 @@ public class MPanel {
     @Setter
     private boolean ignoreBoundOnClip;
 
-    public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
+    public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
 
         lastParentPoint = parentPoint;
         int relMousex = relMousex0 - getBounds().x;
@@ -127,7 +129,8 @@ public class MPanel {
         lastAbsClip = clip;
         if (clip.getSize().height * clip.getSize().width == 0) return;
 
-        clip(resolution, clip.x, clip.y, clip.width, clip.height);
+        this.scale = scale;
+        clip(clip.x, clip.y, clip.width, clip.height);
         GlStateManager.pushAttrib();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
@@ -147,28 +150,30 @@ public class MPanel {
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
+        if (debug && lastAbsClip.contains(absMousex, absMousey)) {
+            Gui.drawRect(0, 0, getBounds().width, getBounds().height, 0x2200FF00);
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+//            Gui.drawRect(0, 0, getPreferredSize().width, getPreferredSize().height, 0x220000FF);
+        }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.popAttrib();
-
 
         Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
 
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(scale, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }
     }
-
-    public static void clip(ScaledResolution resolution, int x, int y, int width, int height) {
+    protected double scale;
+    public void clip(int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
-//        int scale = resolution.getScaleFactor();
-        int scale = 1;
-        GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
+        GL11.glScissor((int) (x  * scale), Minecraft.getMinecraft().displayHeight - (int) ((y + height) * scale), (int)(width* scale), (int) (height * scale));
     }
 
     protected Rectangle determineClip(Rectangle rect1, Rectangle rect2) {

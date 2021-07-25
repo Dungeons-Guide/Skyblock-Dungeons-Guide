@@ -20,9 +20,9 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.cosmetics.chatreplacers.*;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
-import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.stomp.*;
@@ -43,7 +42,6 @@ import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.ChatComponentText;
@@ -399,7 +397,7 @@ public class CommandDungeonsGuide extends CommandBase {
             StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
                 sender.addChatMessage(new ChatComponentText(a.getResourceID()+": "+a.getValue()+": "+a.isExists()));
             });
-        } else{
+        } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
@@ -425,7 +423,7 @@ public class CommandDungeonsGuide extends CommandBase {
         try {
             if (openConfig && e.phase == TickEvent.Phase.START ) {
                 openConfig = false;
-                Minecraft.getMinecraft().displayGuiScreen(new GuiConfig());
+                Minecraft.getMinecraft().displayGuiScreen(new GuiConfigV2());
             }
         } catch (Throwable t) {
             t.printStackTrace();

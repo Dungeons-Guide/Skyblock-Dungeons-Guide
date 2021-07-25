@@ -201,7 +201,7 @@ public class MPortableColorEdit extends MPanel {
     }
 
     @Override
-    public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
+    public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
         int relMousex = relMousex0 - getBounds().x;
         int relMousey = relMousey0 - getBounds().y;
 
@@ -213,8 +213,8 @@ public class MPortableColorEdit extends MPanel {
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
         Rectangle clip = determineClip(parentClip, absBound);
         lastAbsClip = clip;
-
-        clip(resolution, clip.x, clip.y, clip.width, clip.height);
+this.scale =scale;
+        clip(clip.x, clip.y, clip.width, clip.height);
         GlStateManager.pushAttrib();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 
@@ -237,7 +237,7 @@ public class MPortableColorEdit extends MPanel {
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            mPanel.render0(resolution, newPt, new Rectangle(newPt, new Dimension(getBounds().getSize())), absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(scale, newPt, new Rectangle(newPt, new Dimension(getBounds().getSize())), absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }

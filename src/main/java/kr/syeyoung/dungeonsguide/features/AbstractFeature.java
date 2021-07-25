@@ -21,15 +21,14 @@ package kr.syeyoung.dungeonsguide.features;
 import com.google.common.base.Supplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDefaultParameterConfig;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.Minecraft;
 
 import java.util.*;
 

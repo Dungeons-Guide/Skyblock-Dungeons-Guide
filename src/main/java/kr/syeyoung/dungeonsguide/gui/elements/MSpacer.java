@@ -16,31 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.config.guiconfig;
+package kr.syeyoung.dungeonsguide.gui.elements;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.Getter;
-import lombok.ToString;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
 
-@Getter
-@ToString
-@AllArgsConstructor
-public class Marker {
-    private final int x;
-    private final int y;
-    /**
-     * 0xABCDEFGH
-     * A: ?
-     * B: ?
-     * C: ?
-     * D: ?
-     * EF: 0~3 (TC 0x00 CL 0x01 BC 0x10 CR 0x11)
-     */
-    private final int type;
-    private final Object parent;
+import java.awt.*;
 
-    public int distanceSQ(Marker m2) {
-        return (m2.x - x)*(m2.x - x) + (m2.y - y)*(m2.y - y);
+public class MSpacer extends MPanel {
+
+    int width, height;
+    public MSpacer(int x, int y, int width, int height) {
+        setBounds(new Rectangle(x,y,width,height));
+        this.width = width; this.height = height;
+    }
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(width, height);
     }
 }

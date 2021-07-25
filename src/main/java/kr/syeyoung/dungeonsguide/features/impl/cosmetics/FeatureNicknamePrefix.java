@@ -18,18 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.cosmetics;
 
-import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.DataRendererEditor;
-import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
-import kr.syeyoung.dungeonsguide.gui.MPanel;
-
-import java.util.Arrays;
-import java.util.Collections;
 
 public class FeatureNicknamePrefix extends SimpleFeature {
     public FeatureNicknamePrefix() {

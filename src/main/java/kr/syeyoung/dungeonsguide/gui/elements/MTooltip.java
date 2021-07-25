@@ -50,7 +50,7 @@ public class MTooltip extends MPanel {
         return super.getTooltipsOpen() - 1;
     }
 
-    public void render0(ScaledResolution resolution, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
+    public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
         int relMousex = relMousex0 - getBounds().x;
         int relMousey = relMousey0 - getBounds().y;
 
@@ -61,7 +61,8 @@ public class MTooltip extends MPanel {
         Rectangle clip = getBounds().getBounds();
         GlStateManager.pushAttrib();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        clip(resolution, clip.x, clip.y, clip.width, clip.height);
+        this.scale = scale;
+        clip(clip.x, clip.y, clip.width, clip.height);
 
         GlStateManager.pushAttrib();
         GuiScreen.drawRect(0,0, getBounds().width, getBounds().height,  backgroundColor.getRGB());
@@ -83,7 +84,7 @@ public class MTooltip extends MPanel {
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            mPanel.render0(resolution, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(scale, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }

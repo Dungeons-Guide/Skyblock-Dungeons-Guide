@@ -40,8 +40,6 @@ public class MScrollablePanel extends MPanel {
     private final int axis; // 1: Y 2: X 3: both.
 
 
-    private Dimension totalContentArea = new Dimension();
-
     private MPanel viewPort;
     @Getter
     private MPanel contentArea;
@@ -135,23 +133,28 @@ public class MScrollablePanel extends MPanel {
     @Override
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
-        boolean hideX = false, hideY = false;
-        if (bounds.width > contentAreaDim.width && hideScrollBarWhenNotNecessary) hideX = true;
-        if (bounds.height > contentAreaDim.height && hideScrollBarWhenNotNecessary) hideY = true;
+        boolean hideX = (axis & 2) == 0, hideY = (axis & 1) == 0;
+        viewPort.setBounds(new Rectangle(0,0,bounds.width, bounds.height));
+        evalulateContentArea();
+        if (bounds.width >= contentAreaDim.width && hideScrollBarWhenNotNecessary) hideX = true;
+        if (bounds.height >= contentAreaDim.height && hideScrollBarWhenNotNecessary) hideY = true;
 
-        if (axis == 3 && !(hideX || hideY)) {
+        if (!(hideX || hideY)) {
             Dimension preferedX = scrollBarX.getPreferredSize();
             Dimension preferedY = scrollBarY.getPreferredSize();
             scrollBarY.setBounds(new Rectangle(bounds.width - preferedY.width, 0, preferedY.width, bounds.height - preferedX.height));
             scrollBarX.setBounds(new Rectangle(0, bounds.height - preferedX.height, bounds.width - preferedY.width, preferedX.height));
-        } else if (axis == 2 || (axis == 3 && hideY)) {
+        } else if ((hideY && !hideX)) {
             Dimension preferedX = scrollBarX.getPreferredSize();
             scrollBarY.setBounds(new Rectangle(0,0,0,0));
             scrollBarX.setBounds(new Rectangle(0, bounds.height - preferedX.height, bounds.width, preferedX.height));
-        } else if (axis == 1 || (axis == 3 && hideX)) {
+        } else if ((hideX && !hideY)) {
             Dimension preferedY = scrollBarY.getPreferredSize();
             scrollBarX.setBounds(new Rectangle(0,0,0,0));
             scrollBarY.setBounds(new Rectangle(bounds.width - preferedY.width, 0, preferedY.width, bounds.height));
+        } else if (hideX && hideY){
+            scrollBarY.setBounds(new Rectangle(0,0,0,0));
+            scrollBarX.setBounds(new Rectangle(0,0,0,0));
         }
 
         viewPort.setBounds(new Rectangle(0,0,bounds.width-scrollBarY.getBounds().width, bounds.height - scrollBarX.getBounds().height));

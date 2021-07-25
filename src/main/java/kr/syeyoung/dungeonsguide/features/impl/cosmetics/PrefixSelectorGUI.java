@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.cosmetics;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
@@ -35,7 +35,6 @@ import java.awt.*;
 import java.util.*;
 import java.util.List;
 import java.util.function.Function;
-import java.util.stream.Collectors;
 
 public class PrefixSelectorGUI extends MPanel {
     private GuiConfig config;

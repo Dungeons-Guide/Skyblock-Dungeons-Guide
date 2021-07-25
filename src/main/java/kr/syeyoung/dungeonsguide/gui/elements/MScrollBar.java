@@ -37,6 +37,10 @@ public class MScrollBar extends MPanel {
     @Getter
     private int current;
 
+    @Getter
+    @Setter
+    private int width = 10;
+
     public void addToCurrent(int dv) {
         int current2 = current + dv;
 
@@ -48,7 +52,7 @@ public class MScrollBar extends MPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(axis == Axis.X ? -1 : 20, axis == Axis.Y ? -1 : 20);
+        return new Dimension(axis == Axis.X ? -1 : width, axis == Axis.Y ? -1 : width);
     }
 
     @Getter

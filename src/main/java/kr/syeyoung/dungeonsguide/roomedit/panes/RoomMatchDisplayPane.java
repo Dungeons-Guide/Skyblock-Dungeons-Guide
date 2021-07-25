@@ -18,14 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.roomedit.panes;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltipText;
 import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -70,12 +68,12 @@ public class RoomMatchDisplayPane extends MPanel {
 
         // draw Axis;
         Gui.drawRect(0,0,10,10,0x77777777);
-        clip(sr, clip.x + 10, clip.y, clip.width - 10, 10);
+        clip(clip.x + 10, clip.y, clip.width - 10, 10);
         Gui.drawRect(0,0,getBounds().width, getBounds().height, 0x77777777);
         for (int x = 0; x < width; x++) {
             fr.drawString(x+"", x * 16 +10 + offsetX, 0, 0xFFFFFFFF);
         }
-        clip(sr, clip.x, clip.y +10, 10, clip.height-10);
+        clip(clip.x, clip.y +10, 10, clip.height-10);
         Gui.drawRect(0,0,getBounds().width, getBounds().height, 0x77777777);
         for (int z = 0; z < height; z++) {
             fr.drawString(z+"", 2, z * 16 + 10 + offsetY, 0xFFFFFFFF);
@@ -84,7 +82,7 @@ public class RoomMatchDisplayPane extends MPanel {
         int hoverX = (relMousex0 - offsetX - 10) / 16;
         int hoverY = (relMousey0 - offsetY - 10) / 16;
         // draw Content
-        clip(sr, clip.x + 10, clip.y +10, clip.width - 10, clip.height - 10);
+        clip(clip.x + 10, clip.y +10, clip.width - 10, clip.height - 10);
         boolean tooltiped=false;
         for (int z = 0; z < height; z++) {
             for (int x = 0; x < width; x++) {

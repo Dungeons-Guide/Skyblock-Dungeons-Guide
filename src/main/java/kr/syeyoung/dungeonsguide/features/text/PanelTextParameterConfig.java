@@ -18,35 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.features.text;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.FeatureEditPane;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MParameter;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.features.text.StyledText;
-import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.gui.elements.MColor;
 import kr.syeyoung.dungeonsguide.gui.elements.MEditableAColor;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
-import java.io.IOException;
 import java.util.*;
 import java.util.List;
 
@@ -126,7 +112,7 @@ public class PanelTextParameterConfig extends MPanel {
         Gui.drawRect(4,4,width+6, height+6, 0xFF222222);
         Gui.drawRect(5,5,width+5, height+5, 0xFF555555);
         Rectangle clip = new Rectangle(scissor.x + 5, scissor.y + 5, width, height);
-        clip(new ScaledResolution(Minecraft.getMinecraft()), clip.x, clip.y, clip.width, clip.height);
+        clip(clip.x, clip.y, clip.width, clip.height);
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(offsetX + 5, offsetY + 5, 0);
@@ -147,7 +133,7 @@ public class PanelTextParameterConfig extends MPanel {
                 }
             }
         }
-        clip(new ScaledResolution(Minecraft.getMinecraft()), scissor.x, scissor.y, scissor.width, scissor.height);
+        clip(scissor.x, scissor.y, scissor.width, scissor.height);
 
         GlStateManager.popMatrix();
 

@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.features.impl.secret;
 import com.google.common.collect.Lists;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
@@ -56,9 +56,8 @@ import java.util.Map;
 import java.util.UUID;
 
 public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
-
     public FeatureMechanicBrowse() {
-        super("Secret","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
+        super("Dungeon Secret.Secret Pathfind","Mechanic(Secret) Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
         parameters.put("linecolor2", new FeatureParameter<AColor>("linecolor2", "Color", "Color of Pathfind line", new AColor(0xFF00FF00, true), "acolor"));
         parameters.put("linethickness", new FeatureParameter<Float>("linethickness", "Thickness", "Thickness of Pathfind line", 1.0f, "float"));
         parameters.put("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "How many ticks per line refresh?", 10, "integer"));

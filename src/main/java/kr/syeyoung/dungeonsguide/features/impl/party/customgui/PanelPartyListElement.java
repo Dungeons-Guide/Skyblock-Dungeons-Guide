@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.MParameter;
-import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltipText;
@@ -40,7 +38,6 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.awt.*;
-import java.util.Arrays;
 import java.util.List;
 
 public class PanelPartyListElement extends MPanel {

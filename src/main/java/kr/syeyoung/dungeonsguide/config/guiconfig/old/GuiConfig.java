@@ -1,43 +1,35 @@
 /*
- *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- *     Copyright (C) 2021  cyoung06
+ * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ * Copyright (C) 2021  cyoung06
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as published
- *     by the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.config.guiconfig;
+package kr.syeyoung.dungeonsguide.config.guiconfig.old;
 
 import com.google.common.base.Supplier;
+import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MGui;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MNavigatingPane;
-import kr.syeyoung.dungeonsguide.gui.elements.MTabbedPane;
+import kr.syeyoung.dungeonsguide.gui.elements.MPanelScaledGUI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.BufferUtils;
-import org.lwjgl.input.Mouse;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.io.IOException;
-import java.nio.FloatBuffer;
 import java.util.List;
 import java.util.Map;
 import java.util.Stack;
@@ -51,9 +43,13 @@ public class GuiConfig extends MGui {
 
     private final Stack<String> history = new Stack();
 
+    private MPanelScaledGUI panelScaledGUI;
     public GuiConfig() {
+
+        panelScaledGUI = new MPanelScaledGUI();
+        getMainPanel().add(panelScaledGUI);
         MNavigatingPane tabbedPane = new MNavigatingPane();
-        getMainPanel().add(tabbedPane);
+        panelScaledGUI.add(tabbedPane);
         tabbedPane.setBackground2(new Color(38, 38, 38, 255));
 
         tabbedPane.setPageGenerator(ConfigPanelCreator.INSTANCE);
@@ -90,6 +86,7 @@ public class GuiConfig extends MGui {
     @Override
     public void initGui() {
         super.initGui();
-        getMainPanel().setBounds(new Rectangle(Math.min((Minecraft.getMinecraft().displayWidth - 500) / 2, Minecraft.getMinecraft().displayWidth), Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),500,300));
+        panelScaledGUI.setBounds(new Rectangle(Math.min((Minecraft.getMinecraft().displayWidth - 1000) / 2, Minecraft.getMinecraft().displayWidth), Math.min((Minecraft.getMinecraft().displayHeight - 700) / 2, Minecraft.getMinecraft().displayHeight),1000,700));
+        panelScaledGUI.setScale(1.0);
     }
 }

@@ -152,12 +152,18 @@ public class FeatureRegistry {
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
     public static final FeatureSoulRoomWarning SECRET_FAIRYSOUL = register(new FeatureSoulRoomWarning());
-    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Secret", "Auto browse next secret.", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
-    public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Secret", "Auto browse secret upon entering room", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
-    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Secret", "Auto browse next secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
-    public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Secret", "Press a key to toggle pathfind lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
+    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Auto browse next secret.", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
+    public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Auto browse secret upon entering room", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
+    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Auto browse next secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
+    public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Dungeon Secret.Pathfind Display", "Press a key to toggle pathfind lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
     public static final SimpleFeature SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
 
     public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
     public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());
+
+    public static final SimpleFeature TEST_1 = register(new SimpleFeature("Test", "t", "t", "emp"));
+    public static final SimpleFeature TEST_1_1 = register(new SimpleFeature("Test.Test1", "t", "t", "emp"));
+    public static final SimpleFeature TEST_1_2 = register(new SimpleFeature("Test.Test2", "t", "t", "emp"));
+    public static final SimpleFeature TEST_1_2_1 = register(new SimpleFeature("Test.Test2.Test1", "t", "t", "emp"));
+
 }

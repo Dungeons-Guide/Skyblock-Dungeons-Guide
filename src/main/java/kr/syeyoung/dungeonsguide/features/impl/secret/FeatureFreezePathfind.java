@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 
 public class FeatureFreezePathfind extends SimpleFeature  {
     public FeatureFreezePathfind() {
-        super("Secret", "Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move", "secret.freezepathfind", false);
+        super("Dungeon Secret.Pathfind Display", "Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move", "secret.freezepathfind", false);
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

@@ -55,6 +55,53 @@ public class RenderUtils {
     public static boolean allowScrolling;
     public static int scrollX = 0;
 
+    public static void drawRect(int left, int top, int right, int bottom, AColor color)
+    {
+        if (left < right)
+        {
+            int i = left;
+            left = right;
+            right = i;
+        }
+
+        if (top < bottom)
+        {
+            int j = top;
+            top = bottom;
+            bottom = j;
+        }
+
+        float f3 = (float)(color.getRGB() >> 24 & 255) / 255.0F;
+        float f = (float)(color.getRGB() >> 16 & 255) / 255.0F;
+        float f1 = (float)(color.getRGB() >> 8 & 255) / 255.0F;
+        float f2 = (float)(color.getRGB() & 255) / 255.0F;
+        if (!color.isChroma() && f3 == 0) return;
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldrenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GlStateManager.disableTexture2D();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        if (!color.isChroma()) {
+            GlStateManager.color(f, f1, f2, f3);
+            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            worldrenderer.pos(left, bottom, 0.0D).endVertex();
+            worldrenderer.pos(right, bottom, 0.0D).endVertex();
+            worldrenderer.pos(right, top, 0.0D).endVertex();
+            worldrenderer.pos(left, top, 0.0D).endVertex();
+        } else {
+            worldrenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_COLOR);
+            GlStateManager.shadeModel(GL11.GL_SMOOTH);
+            color(worldrenderer.pos(left, bottom, 0.0D), getColorAt(left, bottom, color)).endVertex();
+            color(worldrenderer.pos(right, bottom, 0.0D), getColorAt(right, bottom, color)).endVertex();
+            color(worldrenderer.pos(right, top, 0.0D), getColorAt(right, top, color)).endVertex();
+            color(worldrenderer.pos(left, top, 0.0D), getColorAt(left, top, color)).endVertex();
+        }
+        tessellator.draw();
+        GlStateManager.enableTexture2D();
+        GlStateManager.disableBlend();
+    }
+
+
     public static void drawRoundedRectangle(int x, int y, int width, int height, int radius, double delta, int color) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(width/2.0+x, height/2.0+y, 0);

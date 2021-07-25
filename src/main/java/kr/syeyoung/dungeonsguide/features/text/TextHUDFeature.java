@@ -19,28 +19,20 @@
 package kr.syeyoung.dungeonsguide.features.text;
 
 import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.GuiGuiLocationConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDefaultParameterConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
-import kr.syeyoung.dungeonsguide.gui.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
-import java.awt.*;
 import java.util.*;
 import java.util.List;
 
