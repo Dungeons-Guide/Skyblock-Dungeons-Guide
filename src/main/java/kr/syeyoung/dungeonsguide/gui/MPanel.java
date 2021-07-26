@@ -101,6 +101,7 @@ public class MPanel {
     }
 
     public void remove(MPanel panel) {
+        if (panel != null)
         panel.setParent(null);
         this.childComponents.remove(panel);
     }

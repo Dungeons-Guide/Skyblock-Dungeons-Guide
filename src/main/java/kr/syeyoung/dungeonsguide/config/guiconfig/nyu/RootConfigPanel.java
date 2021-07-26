@@ -19,6 +19,10 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import com.google.common.base.Function;
+import com.google.common.base.Supplier;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.FeatureEditPane;
+import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
@@ -32,6 +36,7 @@ import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 public class RootConfigPanel extends MPanelScaledGUI {
@@ -95,7 +100,12 @@ public class RootConfigPanel extends MPanelScaledGUI {
                 NestedCategory finalCurrentRoot = currentRoot;
                 currentRoot = currentRoot.children().computeIfAbsent(s, k -> new NestedCategory(finalCurrentRoot.categoryFull+"."+k));
             }
+
         }
+        for (Map.Entry<String, List<AbstractFeature>> stringListEntry : FeatureRegistry.getFeaturesByCategory().entrySet()) {
+            ConfigPanelCreator.map.put("ROOT."+stringListEntry.getKey(),(Supplier<MPanel>) () -> new FeatureEditPane(stringListEntry.getValue(), null));
+        }
+
         for (NestedCategory value : root.children().values()) {
             setupNavigationRecursive(value, navigation, 0, 17);
         }

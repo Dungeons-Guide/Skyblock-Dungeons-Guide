@@ -119,6 +119,7 @@ public class DungeonRoomInfoRegistry {
                     fis.close();
                     register(dri);
                 } catch (Exception e) {
+                    System.out.println(name);
                     e.printStackTrace();
                 }
             }
@@ -132,7 +133,8 @@ public class DungeonRoomInfoRegistry {
                 ois.close();
                 fis.close();
                 register(dri);
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception e) {
+                System.out.println(f.getName());e.printStackTrace();}
         }
     }
 

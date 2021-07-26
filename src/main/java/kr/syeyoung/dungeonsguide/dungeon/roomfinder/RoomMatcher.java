@@ -60,6 +60,9 @@ public class RoomMatcher {
         }
 
         triedMatch = true;
+        int lowestcost = 10;
+        int lowestRot = 0;
+        DungeonRoomInfo bestMatch = null;
         for (int rotation = 0; rotation < 4; rotation++) {
             short shape = dungeonRoom.getShape();
             for (int j = 0; j<rotation; j++)
@@ -67,26 +70,23 @@ public class RoomMatcher {
             shape = ShortUtils.topLeftifyInt(shape);
 
             List<DungeonRoomInfo> roomInfoList = DungeonRoomInfoRegistry.getByShape(shape);
-            int lowestcost = Integer.MAX_VALUE;
-            DungeonRoomInfo bestMatch = null;
             for (DungeonRoomInfo roomInfo : roomInfoList) {
                 int cost = tryMatching(roomInfo, rotation);
-//                if () {
-//                    match = roomInfo;
-//                    this.rotation = rotation;
-//                    return match;
-//                }
+                if (cost == 0) {
+                    match = roomInfo;
+                    this.rotation = rotation;
+                    return match;
+                }
                 if (cost < lowestcost) {
                     lowestcost = cost;
                     bestMatch = roomInfo;
-                    if (cost == 0) break;
+                    lowestRot = rotation;
                 }
             }
-            match = bestMatch;
-            this.rotation = rotation;
-            return bestMatch;
         }
-        return null;
+        match = bestMatch;
+        this.rotation = lowestRot;
+        return bestMatch;
     }
 
     private int tryMatching(DungeonRoomInfo dungeonRoomInfo, int rotation) {

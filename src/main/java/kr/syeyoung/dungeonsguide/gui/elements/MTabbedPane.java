@@ -67,6 +67,7 @@ public class MTabbedPane extends MPanel {
         panel2.add(panel);
         panel2.setBackgroundColor(background2);
         tabs.put(tab, panel2);
+        panel2.setParent(this);
         panel2.setBounds(new Rectangle(1,16,getBounds().width-2, getBounds().height-17));
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
