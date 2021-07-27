@@ -103,6 +103,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         DungeonContext dc = ss.getContext();
         if (dc == null) return;
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
         World w = dc.getWorld();
 
         BlockPos pos = event.pos.add(1,0,0);
