@@ -19,15 +19,13 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
-import net.minecraft.client.Minecraft;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import net.minecraft.client.gui.*;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ProgressManager;
@@ -35,14 +33,9 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import scala.tools.nsc.Global;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
 import java.net.URL;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -83,11 +76,6 @@ public class Main
                 e.printStackTrace();
             }
         }
-
-
-
-
-
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

@@ -60,6 +60,8 @@ dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation "org.json:json:20171018"
+    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
+
 
     compileOnly "org.projectlombok:lombok:1.18.20"
     compileOnly files("mods/Hychat-1.12.1-BETA.jar")
@@ -79,6 +81,7 @@ shadowJar {
         include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
         include(dependency("org.slf4j:slf4j-api:1.7.25"))
         include(dependency("org.json:json:20171018"))
+        include(dependency("com.twelvemonkeys.imageio:imageio-bmp:3.7.0"))
     }
 }
 

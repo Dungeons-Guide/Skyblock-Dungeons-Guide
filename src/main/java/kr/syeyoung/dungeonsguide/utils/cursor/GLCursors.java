@@ -18,8 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.utils.cursor;
 
+import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
@@ -36,9 +38,15 @@ import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
+import java.nio.Buffer;
+import java.nio.ByteBuffer;
+import java.nio.ByteOrder;
 import java.nio.IntBuffer;
+import java.util.Comparator;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 
 public class GLCursors {
@@ -74,20 +82,21 @@ public class GLCursors {
         if (enumCursorCursorMap.size() != 0) return;
         int platform = LWJGLUtil.getPlatform();
         for (EnumCursor value : EnumCursor.values()) {
+            System.out.println("Loading "+value);
             Cursor c = null;
             try {
                 switch(platform) {
                     case LWJGLUtil.PLATFORM_WINDOWS:
-                        if (value.getWindows() == -1) continue;
-                        c = createCursorWindows(value.getWindows());
+                        if (value.getWindows() != -1)
+                            c = createCursorWindows(value.getWindows());
                         break;
                     case LWJGLUtil.PLATFORM_LINUX:
-                        if (value.getLinux() == -1) continue;
-                        c = createCursorLinux(value.getLinux());
+                        if (value.getLinux() != -1)
+                            c = createCursorLinux(value.getLinux());
                         break;
                     case LWJGLUtil.PLATFORM_MACOSX:
-                        if (value.getMacos() == null) continue;
-                        c = createCursorMac(value.getMacos());
+                        if (value.getMacos() != null)
+                            c = createCursorMac(value.getMacos());
                         break;
                 }
             } catch (Throwable e) {
@@ -96,21 +105,29 @@ public class GLCursors {
             }
             try {
                 if (c == null) {
+                    System.out.println("Loading image cursor "+value);
                     int hotspotX = 0, hotspotY = 0;
+                    BufferedImage bufferedImage = null;
+                    int minC = Cursor.getMinCursorSize(), maxC = Cursor.getMaxCursorSize();
                     try {
-                        ResourceLocation cursorinfo = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName()+".curinfo");
-                        String cursorinfoStr = IOUtils.toString(Minecraft.getMinecraft().getResourceManager().getResource(cursorinfo).getInputStream());
-                        hotspotX = Integer.parseInt(cursorinfoStr.split(":")[0]);
-                        hotspotY = Integer.parseInt(cursorinfoStr.split(":")[1]);
+                        ResourceLocation cursorinfo = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName());
+                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(Minecraft.getMinecraft().getResourceManager().getResource(cursorinfo).getInputStream());
+                        List<CursorReader.CursorData> cursorDataList2 = cursorDataList.stream()
+                                .filter(cdata -> cdata.getBufferedImage()  != null)
+                                .filter(cdata -> minC <= cdata.getHeight() && cdata.getHeight() <= maxC && minC <= cdata.getWidth() && cdata.getWidth() <= maxC)
+                                .sorted(Comparator.comparingInt(CursorReader.CursorData::getWidth)).collect(Collectors.toList());
+
+                        CursorReader.CursorData cursorData =
+                                cursorDataList2.size() == 0 ? cursorDataList.get(0) : cursorDataList2.get(0);
+                        System.out.println(cursorData);
+                        bufferedImage = cursorData.getBufferedImage();
+                        hotspotX = cursorData.getXHotSpot();
+                        hotspotY = cursorData.getYHotSpot();
                     } catch (Throwable t) {t.printStackTrace();}
 
-                    ResourceLocation cursor = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName()+".png");
 
-                    BufferedImage bufferedImage = ImageIO.read(Minecraft.getMinecraft().getResourceManager().getResource(cursor).getInputStream());
-
-
-                    int width = bufferedImage.getWidth();
-                    int height = bufferedImage.getHeight();
+                    int width = bufferedImage == null ? 16 : bufferedImage.getWidth();
+                    int height = bufferedImage == null ? 16 : bufferedImage.getHeight();
                     int effWidth = MathHelper.clamp_int(width, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
                     int effHeight = MathHelper.clamp_int(height, Cursor.getMinCursorSize(), Cursor.getMaxCursorSize());
                     int length = effHeight * effWidth;
@@ -118,20 +135,44 @@ public class GLCursors {
                     for (int i = 0; i < length; i++) {
                         int x = i % effWidth;
                         int y = i / effWidth;
-                        if (x >= width || y >= height) {
+                        if (bufferedImage == null) {
+                            intBuffer.put(RenderUtils.getChromaColorAt(x,y,1.0f, 1.0f, 1.0f, 1.0f));
+                        } else if (x >= width || y >= height) {
                             intBuffer.put(0);
                         } else {
                             intBuffer.put(bufferedImage.getRGB(x, height - y - 1));
                         }
                     }
                     intBuffer.flip();
-                    c = new Cursor(effWidth, effHeight, hotspotX, hotspotY,1,intBuffer, null);
+                    c = new Cursor(effWidth, effHeight, hotspotX, height - hotspotY - 1,1,intBuffer, null);
                 }
             } catch (Throwable e) {
                 System.out.println("Error occured while loading cursor from resource:  "+value);
                 e.printStackTrace();
             }
-            if (c != null) enumCursorCursorMap.put(value, c);
+            if (c != null) {
+                try {
+                    Object arr = cursorField.get(c);
+                    Object cursor = Array.get(arr, 0);
+                    for (Field declaredField : cursor.getClass().getDeclaredFields()) {
+                        declaredField.setAccessible(true);
+                        Object obj = declaredField.get(cursor);
+                        System.out.println(declaredField.getName()+": "+obj+" - "+(obj instanceof ByteBuffer));
+                        if (obj instanceof ByteBuffer) {
+                            ByteBuffer b = (ByteBuffer) declaredField.get(cursor);
+                            StringBuilder sb = new StringBuilder("Contents: ");
+                            for (int i = 0; i < b.limit(); i++) {
+                                sb.append(Integer.toHexString(b.get(i) & 0xFF)).append(" ");
+                            }
+                            System.out.println(sb.toString());
+                        }
+                    }
+                } catch (IllegalAccessException e) {
+                    e.printStackTrace();
+                }
+
+                enumCursorCursorMap.put(value, c);
+            }
         }
     }
 
@@ -143,9 +184,21 @@ public class GLCursors {
         User32 user32 = User32.INSTANCE;
         Pointer hIcon = user32
                 .LoadCursorW(Pointer.NULL, cursor);
-        long iconPtr = Pointer.nativeValue(hIcon);
-
-        return createCursor(iconPtr);
+        long ptrVal = Pointer.nativeValue(hIcon);
+        ByteBuffer handle = BufferUtils.createByteBuffer(Pointer.SIZE); // Why does it have to be direct? well it crashes without it.
+        if (handle.order() == ByteOrder.LITTLE_ENDIAN) {
+            for (int i = 0; i < Pointer.SIZE; i++) {
+                byte value = (byte) ((ptrVal >> i * 8) & 0xFF);
+                handle.put(value);
+            }
+        } else {
+            for (int i = Pointer.SIZE; i >= 0; i++) {
+                byte value = (byte) ((ptrVal >> i * 8) & 0xFF);
+                handle.put(value);
+            }
+        }
+        handle.position(0);
+        return createCursor(handle);
     }
     private static Cursor createCursorLinux(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
         X11.Display display = X11.INSTANCE.XOpenDisplay(null);
@@ -159,8 +212,7 @@ public class GLCursors {
         Foundation foundation = Foundation.INSTANCE;
         Pointer nsCursor = foundation.objc_getClass("NSCursor");
         Pointer selector = foundation.sel_registerName(cursor);
-        Structure structure = foundation.objc_msgSend_stret(nsCursor, selector);
-        Pointer thePointer = structure.getPointer();
+        Pointer thePointer = foundation.objc_msgSend(nsCursor, selector);
         long iconPtr = Pointer.nativeValue(thePointer);
 
         return createCursor(iconPtr);

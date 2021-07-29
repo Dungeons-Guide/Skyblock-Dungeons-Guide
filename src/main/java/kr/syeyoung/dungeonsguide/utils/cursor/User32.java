@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.utils.cursor;
 import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.Structure;
 
 public interface User32 extends Library {
 
@@ -62,6 +63,6 @@ public interface User32 extends Library {
 
     /** http://msdn.microsoft.com/en-us/library/ms648391(VS.85).aspx */
     public Pointer LoadCursorW(Pointer hInstance,
-                               int lpCursorName);
+                                 int lpCursorName);
 
 }

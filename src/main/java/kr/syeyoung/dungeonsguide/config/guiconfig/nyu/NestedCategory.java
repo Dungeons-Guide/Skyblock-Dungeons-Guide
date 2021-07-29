@@ -16,19 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.utils.cursor;
+package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
+import lombok.Data;
+import lombok.experimental.Accessors;
 
+import java.util.HashMap;
+import java.util.Map;
 
-public interface Foundation extends Library {
-    Foundation INSTANCE = (Foundation) Native.loadLibrary("Foundation",
-            Foundation.class);
+@Data
+@Accessors(chain = true, fluent = true)
+class NestedCategory {
+    private final String categoryFull;
+    private String categoryName;
+    private NestedCategory parent;
 
-    Pointer objc_getClass(String className);
-    Pointer sel_registerName(String selectorName);
-    Pointer objc_msgSend(Pointer receiver, Pointer selector, Object... args);
+    public NestedCategory(String categoryFull) {
+        this.categoryFull = categoryFull;
+        this.categoryName = categoryFull.substring(categoryFull.lastIndexOf(".") + 1);
+    }
+
+    private Map<String, NestedCategory> children = new HashMap<>();
+
+    public NestedCategory child(NestedCategory child) {
+        this.children.put(child.categoryName, child);
+        child.parent = this;
+        return this;
+    }
 }
