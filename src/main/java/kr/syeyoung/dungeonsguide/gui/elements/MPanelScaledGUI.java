@@ -196,4 +196,17 @@ public class MPanelScaledGUI extends MPanel {
         }
         mouseScrolled(absMouseX, absMouseY, relMousex, relMousey, scrollAmount);
     }
+
+    @Override
+    public void mouseMoved0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        int relMousex = (int) ((relMouseX0 - getBounds().x)  / scale);
+        int relMousey = (int) ((relMouseY0 - getBounds().y) / scale);
+        absMouseX = (int) (absMouseX / scale);
+        absMouseY = (int) (absMouseY / scale);
+
+        mouseMoved(absMouseX, absMouseY, relMousex, relMousey);
+        for (MPanel childComponent  : getChildComponents()) {
+            childComponent.mouseMoved0(absMouseX, absMouseY, relMousex, relMousey);
+        }
+    }
 }

@@ -19,19 +19,17 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import com.google.common.base.Function;
-import com.google.common.base.Supplier;
+import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.FeatureEditPane;
 import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
-import lombok.experimental.Accessors;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
@@ -55,7 +53,11 @@ public class RootConfigPanel extends MPanelScaledGUI {
     @Getter
     private String currentPage = "";
 
-    public RootConfigPanel() {
+    private GuiConfigV2 gui;
+
+    public RootConfigPanel(GuiConfigV2 guiConfigV2) {
+        this.gui = guiConfigV2;
+
         navigationScroll = new MScrollablePanel(1);
         navigationScroll.setHideScrollBarWhenNotNecessary(false);
         add(navigationScroll);
@@ -73,23 +75,6 @@ public class RootConfigPanel extends MPanelScaledGUI {
         rePlaceElements();
     }
 
-    @Data
-    @Accessors(chain = true, fluent = true)
-    private static class NestedCategory {
-        private final String categoryFull;
-        private String categoryName;
-        public NestedCategory(String categoryFull) {
-            this.categoryFull =categoryFull;
-            this.categoryName = categoryFull.substring(categoryFull.lastIndexOf(".")+1);
-        }
-
-        private Map<String, NestedCategory> children = new HashMap<>();
-        public NestedCategory child(NestedCategory child) {
-            this.children.put(child.categoryName, child);
-            return this;
-        }
-    }
-
     private void setupNavigation() {
         NestedCategory root = new NestedCategory("ROOT");
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
@@ -98,24 +83,32 @@ public class RootConfigPanel extends MPanelScaledGUI {
             NestedCategory currentRoot = root;
             for (String s : category.split("\\.")) {
                 NestedCategory finalCurrentRoot = currentRoot;
-                currentRoot = currentRoot.children().computeIfAbsent(s, k -> new NestedCategory(finalCurrentRoot.categoryFull+"."+k));
+                currentRoot = currentRoot.children().computeIfAbsent(s, k -> new NestedCategory(finalCurrentRoot.categoryFull()+"."+k));
             }
 
-        }
-        for (Map.Entry<String, List<AbstractFeature>> stringListEntry : FeatureRegistry.getFeaturesByCategory().entrySet()) {
-            ConfigPanelCreator.map.put("ROOT."+stringListEntry.getKey(),(Supplier<MPanel>) () -> new FeatureEditPane(stringListEntry.getValue(), null));
         }
 
         for (NestedCategory value : root.children().values()) {
             setupNavigationRecursive(value, navigation, 0, 17);
         }
+
+        MCategoryElement current = new MCategoryElement("GUI Relocate",() -> {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(gui, null));
+        }, 17,17, this);
+        navigation.add(current);
     }
     private void setupNavigationRecursive(NestedCategory nestedCategory, MPanel parent, int depth, int offset) {
+        ConfigPanelCreator.map.put(nestedCategory.categoryFull(), () -> new MPanelCategory(nestedCategory, this));
+
         if (nestedCategory.children().size() == 0) {
-            MCategoryElement current = new MCategoryElement(nestedCategory.categoryFull, this::setCurrentPage, 13 * depth + 17, offset, this);
+            MCategoryElement current = new MCategoryElement(nestedCategory.categoryFull(),() -> {
+                setCurrentPage(nestedCategory.categoryFull());
+            }, 13 * depth + 17, offset, this);
             parent.add(current);
         } else {
-            MCategoryElement current = new MCategoryElement(nestedCategory.categoryFull, this::setCurrentPage, 3,offset, this);
+            MCategoryElement current = new MCategoryElement(nestedCategory.categoryFull(),() -> {
+                setCurrentPage(nestedCategory.categoryFull());
+            }, 3,offset, this);
             MCollapsable mCollapsable = new MCollapsable(current, this::rePlaceElements);
             mCollapsable.setLeftPad(offset-13);
             mCollapsable.getLowerElements().setDrawLine(false);

@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.gui.elements;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -369,6 +370,13 @@ public class MTextField extends MPanel {
                 c != KeyEvent.CHAR_UNDEFINED &&
                 block != null &&
                 block != Character.UnicodeBlock.SPECIALS;
+    }
+
+
+    @Override
+    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        if (lastAbsClip.contains(absMouseX, absMouseY))
+            setCursor(EnumCursor.BEAM_CURSOR);
     }
 
 }

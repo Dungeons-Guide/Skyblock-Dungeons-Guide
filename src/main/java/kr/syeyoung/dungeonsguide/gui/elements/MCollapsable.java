@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.gui.elements;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -127,5 +128,11 @@ public class MCollapsable extends MPanel {
             collapsed = !collapsed;
             if (onPreferedSizeChange != null) onPreferedSizeChange.run();
         }
+    }
+
+    @Override
+    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX, int relMouseY) {
+        if (relMouseX >= leftPad && relMouseY >= 0 && relMouseX <= leftPad + 10 && relMouseY <= representing.getPreferredSize().height)
+            setCursor(EnumCursor.POINTING_HAND);
     }
 }

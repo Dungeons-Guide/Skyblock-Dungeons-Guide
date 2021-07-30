@@ -19,11 +19,14 @@
 package kr.syeyoung.dungeonsguide.gui;
 
 import kr.syeyoung.dungeonsguide.gui.elements.MRootPanel;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
@@ -33,8 +36,15 @@ import java.io.IOException;
 public class MGui extends GuiScreen {
 
     @Getter
-    private final MPanel mainPanel = new MRootPanel();
+    private final MRootPanel mainPanel = new MRootPanel();
 
+    public MGui(){
+        try {
+            Mouse.setNativeCursor(GLCursors.getCursor(EnumCursor.DEFAULT));
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void initGui() {
@@ -98,6 +108,12 @@ public class MGui extends GuiScreen {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
+
+        try {
+            Mouse.setNativeCursor(null);
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -122,10 +138,23 @@ public class MGui extends GuiScreen {
         }
     }
 
+    public void mouseMove(int mouseX, int mouseY) {
+        try {
+            mainPanel.mouseMoved0(mouseX, mouseY
+                    ,mouseX ,mouseY);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+
     private int touchValue;
     private int eventButton;
     private long lastMouseEvent;
 
+
+    private int lastX, lastY;
     @Override
     public void handleMouseInput() throws IOException {
         try {
@@ -159,14 +188,30 @@ public class MGui extends GuiScreen {
                 long l = Minecraft.getSystemTime() - this.lastMouseEvent;
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
+            if (lastX != i || lastY != j) {
+                try {
+                    EnumCursor prevCursor = mainPanel.getCurrentCursor();
+                    mainPanel.setCursor(EnumCursor.DEFAULT);
+                    this.mouseMove(i, j);
+                    EnumCursor newCursor = mainPanel.getCurrentCursor();
+                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
+                } catch (Throwable e) {
+                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                        e.printStackTrace();
+                }
+            }
 
 
             int wheel = Mouse.getDWheel();
             if (wheel != 0) {
                 mainPanel.mouseScrolled0(i, j,i,j, wheel);
             }
+            lastX = i;
+            lastY = j;
         } catch (Throwable e) {
                 e.printStackTrace();
         }
     }
+
+
 }

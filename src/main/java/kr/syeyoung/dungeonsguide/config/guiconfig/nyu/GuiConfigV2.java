@@ -20,16 +20,22 @@ package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.gui.MGui;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import net.minecraft.client.Minecraft;
+import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Cursor;
+import org.lwjgl.input.Mouse;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class GuiConfigV2 extends MGui {
 
     private RootConfigPanel rootConfigPanel;
 
     public GuiConfigV2() {
-        rootConfigPanel = new RootConfigPanel();
+        rootConfigPanel = new RootConfigPanel(this);
         rootConfigPanel.setPageGenerator(ConfigPanelCreator.INSTANCE);
         getMainPanel().add(rootConfigPanel);
     }

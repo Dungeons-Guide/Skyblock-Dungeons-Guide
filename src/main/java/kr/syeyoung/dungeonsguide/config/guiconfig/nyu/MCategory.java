@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import kr.syeyoung.dungeonsguide.config.guiconfig.old.MFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -71,5 +72,11 @@ public class MCategory extends MPanel {
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (lastAbsClip.contains(absMouseX, absMouseY))
             rootConfigPanel.setCurrentPage(nestedCategory.categoryFull());
+    }
+
+    @Override
+    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        if (lastAbsClip.contains(absMouseX, absMouseY))
+            setCursor(EnumCursor.POINTING_HAND);
     }
 }

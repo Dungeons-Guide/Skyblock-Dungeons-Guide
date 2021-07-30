@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.gui.elements;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;
@@ -71,6 +72,7 @@ public class MScrollBar extends MPanel {
         this.onUpdate = onUpdate;
     }
 
+    private Rectangle lastThumbRect = new Rectangle();
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         // RENDER SUPER NICE SCROLL BAR
@@ -93,12 +95,14 @@ public class MScrollBar extends MPanel {
             endX = Math.max(endX, startX + 20);
 
             Gui.drawRect(startX,0,endX,getBounds().height, color);
+            lastThumbRect.x = startX; lastThumbRect.y = 0; lastThumbRect.width = endX - startX; lastThumbRect.height = getBounds().height;
         } else if (axis == Axis.Y) {
             int startY = (int) (startPerc * getBounds().height);
             int endY = (int) (endPerc * getBounds().height);
             endY = Math.max(endY, startY + 20);
 
             Gui.drawRect(0,startY,getBounds().width,endY, color);
+            lastThumbRect.x = 0; lastThumbRect.y = startY; lastThumbRect.width = getBounds().width; lastThumbRect.height = endY - startY;
         }
     }
 
@@ -145,5 +149,14 @@ public class MScrollBar extends MPanel {
 
     public static enum Axis {
         X, Y
+    }
+
+
+    @Override
+    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        if (grabbed)
+            setCursor(EnumCursor.CLOSED_HAND);
+        else if (lastThumbRect.contains(relMouseX0, relMouseY0))
+            setCursor(EnumCursor.OPEN_HAND);
     }
 }

@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -30,11 +31,11 @@ import java.util.function.Consumer;
 
 public class MCategoryElement extends MPanel {
     private String category;
-    private Consumer<String> onClick;
+    private Runnable onClick;
     private int leftPad = 0;
     private int offsetX;
     private RootConfigPanel rootConfigPanel;
-    public MCategoryElement(String category, Consumer<String> onClick, int leftPad, int offsetX, RootConfigPanel rooot) {
+    public MCategoryElement(String category, Runnable onClick, int leftPad, int offsetX, RootConfigPanel rooot) {
         this.category = category;
         this.onClick = onClick;
         this.leftPad = leftPad;
@@ -70,6 +71,11 @@ public class MCategoryElement extends MPanel {
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (!lastAbsClip.contains(absMouseX, absMouseY)) { return; }
-        if (onClick != null) onClick.accept(category);
+        if (onClick != null) onClick.run();
+    }
+    @Override
+    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        if (lastAbsClip.contains(absMouseX, absMouseY))
+            setCursor(EnumCursor.POINTING_HAND);
     }
 }
