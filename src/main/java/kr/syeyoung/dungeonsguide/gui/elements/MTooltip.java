@@ -28,7 +28,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class MTooltip extends MPanel {
+public class MTooltip extends MPanelScaledGUI {
     @Getter @Setter
     private MRootPanel root;
 
@@ -50,22 +50,37 @@ public class MTooltip extends MPanel {
         return super.getTooltipsOpen() - 1;
     }
 
-    public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
-        int relMousex = relMousex0 - getBounds().x;
-        int relMousey = relMousey0 - getBounds().y;
+    @Override
+    public void render0(double parentScale, Point parentPoint, Rectangle parentClip, int absMousex0, int absMousey0, int relMousex0, int relMousey0, float partialTicks) {
+        lastParentPoint = parentPoint;
 
         GlStateManager.translate(getBounds().x, getBounds().y, 300);
         GlStateManager.color(1,1,1,0);
 
+        Rectangle absBound = getBounds().getBounds();
+        absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
 
-        Rectangle clip = getBounds().getBounds();
+        Rectangle clip = absBound;
+        lastAbsClip = clip;
+
+        if (clip.getSize().height * clip.getSize().width == 0) return;
+
+        int absMousex = (int) (absMousex0 / scale), absMousey = (int) (absMousey0 / scale);
+        int relMousex = (int) ((relMousex0 - getBounds().x) / scale);
+        int relMousey = (int) ((relMousey0 - getBounds().y) /scale);
+
+        // FROM HERE, IT IS SCALED
+
+        GlStateManager.scale(this.scale, this.scale, 1);
+        clip = new Rectangle((int) (clip.x / scale), (int) (clip.y / scale), (int) (clip.width / scale), (int) (clip.height / scale));
+        lastAbsClip = clip;
         GlStateManager.pushAttrib();
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        this.scale = scale;
+        this.relativeScale = parentScale * this.scale;
         clip(clip.x, clip.y, clip.width, clip.height);
 
         GlStateManager.pushAttrib();
-        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height,  backgroundColor.getRGB());
+        GuiScreen.drawRect(0,0, (int) (getBounds().width / scale), (int) (getBounds().height / scale),  backgroundColor.getRGB());
         GlStateManager.enableBlend();
         GlStateManager.popAttrib();
 
@@ -79,12 +94,12 @@ public class MTooltip extends MPanel {
         GlStateManager.popAttrib();
 
 
-        Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
+        Point newPt = new Point((int) ((parentPoint.x + getBounds().x) / scale), (int) ((parentPoint.y + getBounds().y) / scale));
 
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            mPanel.render0(scale, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(relativeScale, newPt,clip,absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }

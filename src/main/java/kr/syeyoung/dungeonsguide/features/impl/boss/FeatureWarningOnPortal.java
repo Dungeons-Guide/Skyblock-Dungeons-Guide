@@ -21,11 +21,13 @@ package kr.syeyoung.dungeonsguide.features.impl.boss;
 import com.google.common.base.Supplier;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MFeatureEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MParameterEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
@@ -177,14 +179,17 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
 
 
     @Override
-    public String getEditRoute(final GuiConfig config) {
+    public String getEditRoute(RootConfigPanel rootConfigPanel) {
         ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelDefaultParameterConfig(config, FeatureWarningOnPortal.this,
-                        Arrays.asList(new MPanel[] {
-                                new PanelTextParameterConfig(config, FeatureWarningOnPortal.this)
-                        }), Collections.singleton("textStyles"));
+                MFeatureEdit featureEdit = new MFeatureEdit(FeatureWarningOnPortal.this, rootConfigPanel);
+                featureEdit.addParameterEdit("textStyles", new PanelTextParameterConfig(FeatureWarningOnPortal.this));
+                for (FeatureParameter parameter: getParameters()) {
+                    if (parameter.getKey().equals("textStyles")) continue;
+                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureWarningOnPortal.this, parameter, rootConfigPanel));
+                }
+                return featureEdit;
             }
         });
         return "base." + getKey() ;

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -35,10 +34,8 @@ import java.util.Set;
 
 public class DataRendererEditor extends MPanel {
     private final FeatureViewPlayerOnJoin feature;
-    private final GuiConfig config;
 
-    public DataRendererEditor(GuiConfig config, FeatureViewPlayerOnJoin featureViewPlayerOnJoin) {
-        this.config = config;
+    public DataRendererEditor(FeatureViewPlayerOnJoin featureViewPlayerOnJoin) {
         this.feature = featureViewPlayerOnJoin;
     }
 

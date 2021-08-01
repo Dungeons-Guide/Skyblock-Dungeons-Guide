@@ -30,15 +30,16 @@ import java.awt.*;
 
 public class MPanelScaledGUI extends MPanel {
     @Getter
-    private double scale = 1.0;
+    protected double scale = 1.0;
 
-    private double relativeScale;
+    protected double relativeScale;
 
     public void setScale(double scale) {
         this.scale = scale;
         for (MPanel childComponent : childComponents) {
             childComponent.resize0((int) (getBounds().width/scale), (int) (getBounds().height/scale));
         }
+        onBoundsUpdate();
     }
 
     @Override
@@ -84,6 +85,7 @@ public class MPanelScaledGUI extends MPanel {
 
         GlStateManager.scale(this.scale, this.scale, 1);
         clip = new Rectangle((int) (clip.x / scale), (int) (clip.y / scale), (int) (clip.width / scale), (int) (clip.height / scale));
+        lastAbsClip = clip;
 
 
         this.relativeScale = parentScale * this.scale;
@@ -119,7 +121,7 @@ public class MPanelScaledGUI extends MPanel {
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
             GlStateManager.pushAttrib();
-            mPanel.render0(scale, newPt,clip,absMousex, absMousey, relMousex, relMousey, partialTicks);
+            mPanel.render0(relativeScale, newPt,clip,absMousex, absMousey, relMousex, relMousey, partialTicks);
             GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }

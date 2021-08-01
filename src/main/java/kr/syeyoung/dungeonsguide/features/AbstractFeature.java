@@ -21,9 +21,7 @@ package kr.syeyoung.dungeonsguide.features;
 import com.google.common.base.Supplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.*;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
@@ -84,11 +82,15 @@ public abstract class AbstractFeature {
         return object;
     }
 
-    public String getEditRoute(final GuiConfig config) {
+    public String getEditRoute(RootConfigPanel rootConfigPanel) {
         ConfigPanelCreator.map.put("base." + key , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelDefaultParameterConfig(config, AbstractFeature.this, Collections.emptyList(), Collections.emptySet());
+                MFeatureEdit featureEdit = new MFeatureEdit(AbstractFeature.this, rootConfigPanel);
+                for (FeatureParameter parameter: getParameters()) {
+                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(AbstractFeature.this, parameter, rootConfigPanel));
+                }
+                return featureEdit;
             }
         });
         return "base." + key ;

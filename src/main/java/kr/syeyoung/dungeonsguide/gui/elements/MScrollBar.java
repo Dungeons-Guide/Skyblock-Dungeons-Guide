@@ -42,6 +42,30 @@ public class MScrollBar extends MPanel {
     @Setter
     private int width = 10;
 
+    public void setMax(int max) {
+        this.max = max;
+
+        current = MathHelper.clamp_int(current, min, max - thumbSize);
+        if (max - min < thumbSize) current = min;
+        if (onUpdate != null) onUpdate.run();
+    }
+
+    public void setMin(int min) {
+        this.min = min;
+
+        current = MathHelper.clamp_int(current, min, max - thumbSize);
+        if (max - min < thumbSize) current = min;
+        if (onUpdate != null) onUpdate.run();
+    }
+
+    public void setThumbSize(int thumbSize) {
+        this.thumbSize = thumbSize;
+
+        current = MathHelper.clamp_int(current, min, max - thumbSize);
+        if (max - min < thumbSize) current = min;
+        if (onUpdate != null) onUpdate.run();
+    }
+
     public void addToCurrent(int dv) {
         int current2 = current + dv;
 
@@ -70,6 +94,12 @@ public class MScrollBar extends MPanel {
         this.current = MathHelper.clamp_int(current, min, max - thumbSize);
         if (max - min < thumbSize) this.current = min;
         this.onUpdate = onUpdate;
+    }
+
+    @Override
+    public void setBounds(Rectangle bounds) {
+        super.setBounds(bounds);
+        lastThumbRect.width = 0; lastThumbRect.height = 0;
     }
 
     private Rectangle lastThumbRect = new Rectangle();
@@ -156,7 +186,8 @@ public class MScrollBar extends MPanel {
     public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
         if (grabbed)
             setCursor(EnumCursor.CLOSED_HAND);
-        else if (lastThumbRect.contains(relMouseX0, relMouseY0))
+        else if (lastThumbRect.contains(relMouseX0, relMouseY0)) {
             setCursor(EnumCursor.OPEN_HAND);
+        }
     }
 }

@@ -84,7 +84,7 @@ public class MCollapsable extends MPanel {
         super.render0(scale, parentPoint, parentClip, absMousex, absMousey, relMousex0, relMousey0, partialTicks);
 
         clip(lastAbsClip.x, lastAbsClip.y, lastAbsClip.width, lastAbsClip.height);
-//        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
 
         GlStateManager.pushMatrix();

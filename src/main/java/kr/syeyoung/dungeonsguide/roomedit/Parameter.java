@@ -22,9 +22,19 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-@AllArgsConstructor
 public class Parameter {
     private String name;
     private Object previousData;
     private Object newData;
+
+    public Parameter(String name, Object previousData, Object newData) {
+        this.name = name; this.previousData = previousData; this.newData = newData;
+    }
+
+    private Runnable onSetNewData;
+
+    public void setNewData(Object newData) {
+        this.newData = newData;
+        if (onSetNewData != null) onSetNewData.run();
+    }
 }

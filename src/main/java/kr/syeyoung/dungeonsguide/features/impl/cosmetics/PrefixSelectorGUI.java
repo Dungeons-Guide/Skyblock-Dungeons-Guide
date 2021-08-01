@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.features.impl.cosmetics;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
@@ -37,12 +36,10 @@ import java.util.List;
 import java.util.function.Function;
 
 public class PrefixSelectorGUI extends MPanel {
-    private GuiConfig config;
     private String cosmeticType;
     private Function<String, String> optionTransformer;
 
-    public PrefixSelectorGUI(GuiConfig config, String cosmeticType, String[] previews, Function<String, String> optionTransformer) {
-        this.config = config;
+    public PrefixSelectorGUI(String cosmeticType, String[] previews, Function<String, String> optionTransformer) {
         this.cosmeticType = cosmeticType;
         this.previews = previews;
         this.optionTransformer = optionTransformer;

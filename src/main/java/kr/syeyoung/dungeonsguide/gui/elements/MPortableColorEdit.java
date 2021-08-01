@@ -36,7 +36,7 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class MPortableColorEdit extends MPanel {
+public class MPortableColorEdit extends MTooltip {
 
     private final float[] hsv = new float[3];
     private float alpha = 0;
@@ -71,7 +71,7 @@ public class MPortableColorEdit extends MPanel {
     public void onBoundsUpdate() {
         super.onBoundsUpdate();
 
-        textField.setBounds(new Rectangle(5, getBounds().height - 25, getBounds().width - 10, 20));
+        textField.setBounds(new Rectangle(5, getEffectiveDimension().height - 25, getEffectiveDimension().width - 10, 20));
     }
 
     public void setColor(AColor color) {
@@ -88,11 +88,12 @@ public class MPortableColorEdit extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
+        Dimension size = getEffectiveDimension();
 
-        Gui.drawRect(0,0,getSize().width,getSize().height, 0xff333333);
-        Gui.drawRect(1,1,getSize().width-1,getSize().height-1, 0xffa1a1a1);
+        Gui.drawRect(0,0,size.width,size.height, 0xff333333);
+        Gui.drawRect(1,1,size.width-1,size.height-1, 0xffa1a1a1);
 
-        int width = getBounds().height- 35;
+        int width = size.height- 35;
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         int shademodel = GL11.glGetInteger(GL11.GL_SHADE_MODEL);
@@ -200,60 +201,20 @@ public class MPortableColorEdit extends MPanel {
         GlStateManager.color(1,1,1,1);
     }
 
-    @Override
-    public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
-        int relMousex = relMousex0 - getBounds().x;
-        int relMousey = relMousey0 - getBounds().y;
-
-        GlStateManager.translate(getBounds().x, getBounds().y, 0);
-        GlStateManager.color(1,1,1,0);
-
-
-        Rectangle absBound = getBounds().getBounds();
-        absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
-        Rectangle clip = determineClip(parentClip, absBound);
-        lastAbsClip = clip;
-this.scale =scale;
-        clip(clip.x, clip.y, clip.width, clip.height);
-        GlStateManager.pushAttrib();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-
-        GlStateManager.pushAttrib();
-        GuiScreen.drawRect(0,0, getBounds().width, getBounds().height, backgroundColor.getRGB());
-        GlStateManager.popAttrib();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
-        render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
-        GlStateManager.popAttrib();
-        GlStateManager.popMatrix();
-
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.popAttrib();
-
-
-        Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
-
-        for (MPanel mPanel : getChildComponents()){
-            GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
-            mPanel.render0(scale, newPt, new Rectangle(newPt, new Dimension(getBounds().getSize())), absMousex, absMousey, relMousex, relMousey, partialTicks);
-            GlStateManager.popAttrib();
-            GlStateManager.popMatrix();
-        }
-    }
-
     private int selected = 0;
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        int width = getBounds().height- 35;
+        int width = getEffectiveDimension().height- 35;
         float radius = width / 2f;
         float circleX = 5 + radius;
         float circleY = 5 + radius;
 
         selected = 0;
-        if (!getBounds().contains(relMouseX, relMouseY)) return;
+        if (!lastAbsClip.contains(absMouseX, absMouseY)) {
+            close();
+            return;
+        }
 
         {
             // check circle
@@ -292,7 +253,7 @@ this.scale =scale;
 
     @Override
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
-        int width = getBounds().height- 35;
+        int width = getEffectiveDimension().height- 35;
         float radius = width / 2f;
         float circleX = 5 + radius;
         float circleY = 5 + radius;

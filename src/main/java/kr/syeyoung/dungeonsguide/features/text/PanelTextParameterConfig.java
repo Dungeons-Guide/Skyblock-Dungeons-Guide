@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features.text;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MEditableAColor;
@@ -47,15 +46,12 @@ public class PanelTextParameterConfig extends MPanel {
     @Override
     public void onBoundsUpdate() {
     }
-
     @Override
-    public void resize(int parentWidth, int parentHeight) {
-        this.setBounds(new Rectangle(5,5,parentWidth-10, 120));
+    public Dimension getPreferredSize() {
+        return new Dimension(400, 120);
     }
 
-    private final GuiConfig config;
-    public PanelTextParameterConfig(final GuiConfig config, final StyledTextProvider feature) {
-        this.config = config;
+    public PanelTextParameterConfig(final StyledTextProvider feature) {
         this.feature = feature;
         setBackgroundColor(new Color(38, 38, 38, 255));
 

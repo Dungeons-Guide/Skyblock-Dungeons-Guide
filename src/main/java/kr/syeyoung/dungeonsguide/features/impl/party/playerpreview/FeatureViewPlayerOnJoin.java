@@ -24,11 +24,13 @@ import io.github.moulberry.hychat.HyChat;
 import io.github.moulberry.hychat.chat.ChatManager;
 import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDefaultParameterConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MFeatureEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MParameterEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
@@ -585,14 +587,18 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
     @Override
-    public String getEditRoute(final GuiConfig config) {
+    public String getEditRoute(RootConfigPanel rootConfigPanel) {
         ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelDefaultParameterConfig(config, FeatureViewPlayerOnJoin.this,
-                        Arrays.asList(new MPanel[] {
-                                new DataRendererEditor(config, FeatureViewPlayerOnJoin.this)
-                        }), Collections.singleton("datarenderers"));
+
+                MFeatureEdit featureEdit = new MFeatureEdit(FeatureViewPlayerOnJoin.this, rootConfigPanel);
+                featureEdit.addParameterEdit("datarenderers", new DataRendererEditor(FeatureViewPlayerOnJoin.this));
+                for (FeatureParameter parameter: getParameters()) {
+                    if (parameter.getKey().equals("datarenderers")) continue;
+                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureViewPlayerOnJoin.this, parameter, rootConfigPanel));
+                }
+                return featureEdit;
             }
         });
         return "base." + getKey() ;

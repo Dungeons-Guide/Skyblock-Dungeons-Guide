@@ -48,6 +48,8 @@ public class MStringSelectionButton extends MPanel {
         dec = new MButton(); dec.setText("<"); add(dec);
         inc = new MButton(); inc.setText(">"); add(inc);
         selected = new MLabel(); updateSelected(); add(selected);
+        selected.setBackgroundColor(Color.black);
+        selected.setAlignment(MLabel.Alignment.CENTER);
 
         dec.setOnActionPerformed(new Runnable() {
             @Override

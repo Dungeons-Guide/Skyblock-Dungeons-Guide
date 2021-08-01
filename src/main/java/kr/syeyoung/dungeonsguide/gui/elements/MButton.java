@@ -41,6 +41,7 @@ public class MButton extends MPanel {
     private int background = RenderUtils.blendAlpha(0xFF141414, 0.08f);
     private int hover =  RenderUtils.blendAlpha(0xFF141414, 0.14f);
     private int clicked =  RenderUtils.blendAlpha(0xFF141414, 0.16f);
+    private int border = 0x0;
     private int disabled =0xFF141414;
 
     private boolean enabled = true;
@@ -59,8 +60,12 @@ public class MButton extends MPanel {
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
         }
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, bg);
-
+        if (((border >> 24) & 0xFF) == 0)
+            Gui.drawRect(0,0,getBounds().width, getBounds().height, bg);
+        else {
+            Gui.drawRect(0, 0, getBounds().width, getBounds().height, border);
+            Gui.drawRect(1, 1, getBounds().width-1, getBounds().height-1, bg);
+        }
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(getText());
         int x = (getBounds().width - width) / 2;

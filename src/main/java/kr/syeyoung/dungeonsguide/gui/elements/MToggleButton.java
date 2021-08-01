@@ -38,14 +38,16 @@ public class MToggleButton extends MPanel {
     private boolean enabled = true;
     private Runnable onToggle;
 
+    private int border = 0xFF333333, background = 0xFF171717;
+
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
         Dimension bounds = getSize();
 
         int gap = 1;
 
-        Gui.drawRect(0, 0, bounds.width, bounds.height, 0xFF333333);
-        Gui.drawRect(gap, gap, bounds.width-gap, bounds.height-gap, 0xFF171717);
+        Gui.drawRect(0, 0, bounds.width, bounds.height, border);
+        Gui.drawRect(gap, gap, bounds.width-gap, bounds.height-gap, background);
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

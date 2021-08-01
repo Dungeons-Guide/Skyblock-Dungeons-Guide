@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.config.guiconfig.location;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDelegate;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;

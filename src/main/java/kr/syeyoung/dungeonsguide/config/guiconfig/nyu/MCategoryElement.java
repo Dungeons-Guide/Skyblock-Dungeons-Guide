@@ -46,14 +46,13 @@ public class MCategoryElement extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         if (rootConfigPanel.getCurrentPage().equals(category)) {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            clip(0,scissor.y, Minecraft.getMinecraft().displayWidth, scissor.height);
             Gui.drawRect(leftPad - offsetX, 0, getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.13f));
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
         } else if (lastAbsClip.contains(absMousex, absMousey)) {
-            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+            clip(0,scissor.y, Minecraft.getMinecraft().displayWidth, scissor.height);
             Gui.drawRect(leftPad - offsetX, 0, getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.09f));
-            GL11.glEnable(GL11.GL_SCISSOR_TEST);
         }
+        clip(scissor.x, scissor.y, scissor.width, scissor.height);
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

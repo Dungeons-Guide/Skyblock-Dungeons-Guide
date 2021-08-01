@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.config.guiconfig.old;
+package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import com.google.common.base.Function;
 import com.google.common.base.Supplier;

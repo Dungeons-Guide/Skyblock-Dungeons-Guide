@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.config.guiconfig.old;
+package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -34,8 +35,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.List;
 import java.util.ArrayList;
+import java.util.List;
 
 public class MFeature extends MPanel {
 
@@ -47,10 +48,10 @@ public class MFeature extends MPanel {
     @Getter @Setter
     private Color hover;
 
-    private final GuiConfig config;
+    private final RootConfigPanel panel;
 
-    public MFeature(final AbstractFeature abstractFeature, final GuiConfig config) {
-        this.config = config;
+    public MFeature(final AbstractFeature abstractFeature, final RootConfigPanel panel) {
+        this.panel = panel;
         this.feature = abstractFeature;
 
         if (abstractFeature.isDisyllable()) {
@@ -62,9 +63,10 @@ public class MFeature extends MPanel {
                     feature.setEnabled(selected);
                 }
             });
+            mStringSelectionButton.setBackground(RenderUtils.blendAlpha(0x141414, 0.07f));
             addons.add(mStringSelectionButton);
             mStringSelectionButton.setEnabled(feature.isEnabled());
-            mStringSelectionButton.setSize(new Dimension(30, 15));
+            mStringSelectionButton.setSize(new Dimension(40, 15));
             add(mStringSelectionButton);
         }
         if (abstractFeature.getParameters().size() != 0) {
@@ -73,33 +75,40 @@ public class MFeature extends MPanel {
             button.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    config.getTabbedPane().setCurrentPage(abstractFeature.getEditRoute(config));
+                    panel.setCurrentPageAndPushHistory(abstractFeature.getEditRoute(panel));
                 }
             });
+            button.setBackground(RenderUtils.blendAlpha(0x141414, 0.07f));
+            button.setClicked(RenderUtils.blendAlpha(0x141414, 0.17f));
+            button.setHover(RenderUtils.blendAlpha(0x141414, 0.17f));
             addons.add(button);
             button.setSize(new Dimension(50, 15));
             add(button);
         }
         if (abstractFeature instanceof GuiFeature) {
             MButton button = new MButton();
-            button.setText("GUI");
+            button.setText("Relocate");
             button.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(config, abstractFeature));
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(Minecraft.getMinecraft().currentScreen, abstractFeature));
+                    button.setIsclicked(false);
                 }
             });
+            button.setBackground(RenderUtils.blendAlpha(0x141414, 0.07f));
+            button.setClicked(RenderUtils.blendAlpha(0x141414, 0.17f));
+            button.setHover(RenderUtils.blendAlpha(0x141414, 0.17f));
             addons.add(button);
-            button.setSize(new Dimension(50, 15));
+            button.setSize(new Dimension(75, 15));
             add(button);
         }
     }
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        Gui.drawRect(0,0,getBounds().width, getBounds().height,0xFF444444);
-            Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, 0xFF545454);
-        Gui.drawRect(0,17,getBounds().width, 18,0xFF444444);
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.12f));
+        Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, RenderUtils.blendAlpha(0x141414, 0.15f));
+        Gui.drawRect(0,17,getBounds().width, 18,RenderUtils.blendAlpha(0x141414, 0.12f));
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

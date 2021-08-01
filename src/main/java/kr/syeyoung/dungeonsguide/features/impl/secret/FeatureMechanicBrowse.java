@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.features.impl.secret;
 import com.google.common.collect.Lists;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
@@ -78,7 +77,6 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     @Override
     public void drawHUD(float partialTicks) {
         if (Minecraft.getMinecraft().currentScreen != null && !(Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig
-                || Minecraft.getMinecraft().currentScreen instanceof GuiConfig
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonRoomEdit
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonAddSet
                 || Minecraft.getMinecraft().currentScreen instanceof GuiDungeonParameterEdit

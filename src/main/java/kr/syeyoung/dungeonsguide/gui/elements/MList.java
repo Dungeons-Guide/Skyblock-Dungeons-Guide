@@ -43,8 +43,9 @@ public class MList extends MPanel {
         int y = 0;
         for (MPanel childComponent : getChildComponents()) {
             Dimension preferedSize = childComponent.getPreferredSize();
-            childComponent.setBounds(new Rectangle(0, y, bounds.width, Math.max(10, preferedSize.height)));
-            y += preferedSize.height;
+            int height = Math.max(10, preferedSize.height);
+            childComponent.setBounds(new Rectangle(0, y, bounds.width, height));
+            y += height;
             if (gap > 0)
                 y += gap;
         }
@@ -57,8 +58,9 @@ public class MList extends MPanel {
         int h = 0;
         for (MPanel childComponent : getChildComponents()) {
             Dimension preferedSize = childComponent.getPreferredSize();
+            int height = Math.max(10, preferedSize.height);
             if (preferedSize.width > maxW) maxW = preferedSize.width;
-            h += preferedSize.height;
+            h += height;
             if (gap > 0) h += gap;
         }
         return new Dimension(maxW, Math.max(0, h-gap));

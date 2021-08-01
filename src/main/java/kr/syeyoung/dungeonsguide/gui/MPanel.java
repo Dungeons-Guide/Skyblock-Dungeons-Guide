@@ -153,9 +153,9 @@ public class MPanel {
         GlStateManager.popAttrib();
         GlStateManager.popMatrix();
         if (debug && lastAbsClip.contains(absMousex, absMousey)) {
-            Gui.drawRect(0, 0, getBounds().width, getBounds().height, 0x2200FF00);
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
-//            Gui.drawRect(0, 0, getPreferredSize().width, getPreferredSize().height, 0x220000FF);
+            Gui.drawRect(0, 0, getBounds().width, getBounds().height, 0x2200FF00);
+            Gui.drawRect(0, 0, getPreferredSize().width, getPreferredSize().height, 0x220000FF);
         }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -175,7 +175,7 @@ public class MPanel {
     public void clip(int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
-        GL11.glScissor((int) (x  * scale), Minecraft.getMinecraft().displayHeight - (int) ((y + height) * scale), (int)(width* scale), (int) (height * scale));
+        GL11.glScissor((int) (x  * scale), Minecraft.getMinecraft().displayHeight - (int) ((y + height) * scale), (int)(width* scale + scale) - 1, (int) (height * scale + scale) - 1);
     }
 
     protected Rectangle determineClip(Rectangle rect1, Rectangle rect2) {

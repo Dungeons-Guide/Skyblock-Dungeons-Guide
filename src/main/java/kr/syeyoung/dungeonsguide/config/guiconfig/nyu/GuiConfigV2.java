@@ -18,20 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.gui.MGui;
-import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
-import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import org.lwjgl.LWJGLException;
-import org.lwjgl.input.Cursor;
-import org.lwjgl.input.Mouse;
 
 import java.awt.*;
-import java.io.IOException;
 
 public class GuiConfigV2 extends MGui {
 
+    @Getter
     private RootConfigPanel rootConfigPanel;
 
     public GuiConfigV2() {
@@ -46,7 +41,13 @@ public class GuiConfigV2 extends MGui {
         super.initGui();
         int dw = Minecraft.getMinecraft().displayWidth;
         int dh = Minecraft.getMinecraft().displayHeight;
-        rootConfigPanel.setBounds(new Rectangle((dw-1000)/2, (dh-800)/2, 1000,800));
-        rootConfigPanel.setScale(2.0f);
+        rootConfigPanel.setBounds(new Rectangle((dw-1500)/2, (dh-800)/2, 1500,800));
+        rootConfigPanel.setScale(2.0);
+    }
+
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        super.drawDefaultBackground();
+        super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }

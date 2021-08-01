@@ -18,8 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.MFeature;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
@@ -46,7 +47,9 @@ public class MCategory extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        Gui.drawRect(0,0,getBounds().width, getBounds().height,0xFF444444);
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.12f));
+        Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, RenderUtils.blendAlpha(0x141414, 0.15f));
+        Gui.drawRect(0,17,getBounds().width, 18,RenderUtils.blendAlpha(0x141414, 0.12f));
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
@@ -60,18 +63,22 @@ public class MCategory extends MPanel {
         fr.drawString((lastAbsClip.contains(absMousex, absMousey) ? "§n" : "") + nestedCategory.categoryName(), 0,0, 0xFFFFFFFF);
         GlStateManager.popMatrix();
 
-        fr.drawSplitString("NO DESC", 5, 23, getBounds().width -10, 0xFFBFBFBF);
+        fr.drawSplitString(FeatureRegistry.getCategoryDescription().getOrDefault(nestedCategory.categoryFull(), ""), 5, 23, getBounds().width -10, 0xFFBFBFBF);
     }
 
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(100, 17);
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        int descriptionHeight = fr.listFormattedStringToWidth(FeatureRegistry.getCategoryDescription().getOrDefault(nestedCategory.categoryFull(), ""), Math.max(100, getBounds().width - 10)).size() * fr.FONT_HEIGHT;
+
+        return new Dimension(100, descriptionHeight + 28);
     }
+
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (lastAbsClip.contains(absMouseX, absMouseY))
-            rootConfigPanel.setCurrentPage(nestedCategory.categoryFull());
+            rootConfigPanel.setCurrentPageAndPushHistory(nestedCategory.categoryFull());
     }
 
     @Override

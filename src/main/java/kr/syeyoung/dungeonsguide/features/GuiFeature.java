@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.features;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
@@ -135,11 +135,11 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
                 setOnActionPerformed(() -> {
                     GuiScreen guiScreen = guiGuiLocationConfig.getBefore();
                     if (guiScreen == null) {
-                        guiScreen = new GuiConfig();
+                        guiScreen = new GuiConfigV2();
                     }
                     Minecraft.getMinecraft().displayGuiScreen(guiScreen);
-                    if (guiScreen instanceof GuiConfig) {
-                        ((GuiConfig) guiScreen).getTabbedPane().setCurrentPage(getEditRoute((GuiConfig) guiScreen));
+                    if (guiScreen instanceof GuiConfigV2) {
+                        ((GuiConfigV2) guiScreen).getRootConfigPanel().setCurrentPageAndPushHistory(getEditRoute(((GuiConfigV2) guiScreen).getRootConfigPanel()));
                     }
                 });
             }

@@ -22,11 +22,13 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -39,8 +41,11 @@ import java.io.IOException;
 @Getter
 public class MTextField extends MPanel {
     private final Color foreground = Color.white;
+    private final Color placeHolderColor = Color.lightGray;
 
     private String text = "";
+    @Setter
+    private String placeHolder = "";
     private int cursorBlickTicker = 0;
 
     private int selectionStart = 0;
@@ -62,9 +67,22 @@ public class MTextField extends MPanel {
         edit(text);
     }
 
+    private void setCursor0(int cursor) {
+        if (cursor > text.length()) cursor = text.length();
+        if (cursor < 0) cursor = 0;
+        this.cursor = cursor;
+
+
+        int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text.substring(0, cursor));
+        int cursorX = width + 3- xOffset;
+        cursorX = MathHelper.clamp_int(cursorX,10, getBounds().width - 10);
+        xOffset = width+ 3 - cursorX;
+        xOffset = MathHelper.clamp_int(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(text) - getBounds().width+10));
+    }
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle clip) {
+        clip(clip.x - 1, clip.y - 1, clip.width +2, clip.height + 2);
         Gui.drawRect(0,0,getBounds().width, getBounds().height, isFocused ? Color.white.getRGB() : Color.gray.getRGB());
         Gui.drawRect(1,1,getBounds().width - 1, getBounds().height - 1, Color.black.getRGB());
 
@@ -76,6 +94,8 @@ public class MTextField extends MPanel {
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString(text, 3 - xOffset, y, foreground.getRGB());
+        if (text.isEmpty())
+            fr.drawString(placeHolder, 3, y, placeHolderColor.getRGB());
         // draw selection
         if (isFocused) {
             if (selectionStart != -1) {
@@ -90,7 +110,7 @@ public class MTextField extends MPanel {
 
             // draw cursor
             if (cursor != -1) {
-                if (cursor > text.length()) cursor = text.length();
+                if (cursor > text.length()) setCursor0(text.length());
                 int x = fr.getStringWidth(text.substring(0, cursor)) - xOffset;
                 cursorBlickTicker++;
                 if (cursorBlickTicker < 10)
@@ -120,11 +140,11 @@ public class MTextField extends MPanel {
         for (int i = 0; i < text.length(); i++) {
             int totalWidth = fr.getStringWidth(text.substring(0, i));
             if (offseted < totalWidth) {
-                cursor = i;
+                setCursor0(i);
                 return;
             }
         }
-        cursor = text.length();
+        setCursor0(text.length());
     }
 
     @Override
@@ -184,31 +204,35 @@ public class MTextField extends MPanel {
 
         if (selectionStart == -1) {
             if (keycode == 199) { // home
-                cursor = 0;
+                setCursor0(0);
+                xOffset = 0;
                 return;
             }
 
             if (keycode == 207) { // end
-                cursor = text.length();
+                setCursor0(text.length());
+
+                int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text);
+                xOffset = Integer.max(0, width - getBounds().width+10);
                 return;
             }
 
             if (keycode == 203) { // left
-                cursor--;
-                if (cursor < 0) cursor = 0;
+                setCursor0(this.cursor-1);;
+                if (cursor < 0) setCursor0(0);
                 return;
             }
 
             if (keycode == 205) { // right
-                cursor ++;
-                if (cursor > text.length()) cursor = text.length();
+                setCursor0(this.cursor+1);
+                if (cursor > text.length()) setCursor0(text.length());
                 return;
             }
 
             // backspace
             if (keycode == 14 && cursor > 0) {
-                setText0(this.text.substring(0, cursor - 1) + this.text.substring(cursor));
-                cursor--;
+                setText0(this.text.substring(0, cursor-1) + this.text.substring(cursor));
+                setCursor0(this.cursor-1);
                 return;
             }
 
@@ -257,30 +281,33 @@ public class MTextField extends MPanel {
                         this.text.substring(0, this.cursor)
                                 + typedChar
                                 + this.text.substring(this.cursor));
-                this.cursor++;
+                this.setCursor0(this.cursor+1);;
                 return;
             }
         } else {
             if (keycode == 199) { // home
-                cursor = 0;
+                setCursor0(0);
                 selectionStart = -1;
+                xOffset =0;
                 return;
             }
 
             if (keycode == 207) { // end
                 selectionStart = -1;
-                cursor = text.length();
+                setCursor0(text.length());
+                int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(text);
+                xOffset = Integer.max(0, width - getBounds().width+10);
                 return;
             }
 
             if (keycode == 203) { // left
-                cursor = selectionStart;
+                setCursor0(selectionStart);
                 selectionStart = -1;
                 return;
             }
 
             if (keycode == 205) { // right
-                cursor = selectionEnd;
+                setCursor0(selectionEnd);
                 selectionStart = -1;
                 return;
             }
@@ -288,7 +315,7 @@ public class MTextField extends MPanel {
             // backspace
             if (keycode == 14 && cursor > 0) {
                 setText0(this.text.substring(0, selectionStart) + this.text.substring(selectionEnd));
-                cursor = selectionStart;
+                setCursor0(selectionStart);
                 selectionStart = -1;
                 return;
             }
@@ -296,7 +323,7 @@ public class MTextField extends MPanel {
             //del
             if (keycode == 211 && cursor < text.length()) {
                 setText0(this.text.substring(0, selectionStart) + this.text.substring(selectionEnd));
-                cursor = selectionStart;
+                setCursor0(selectionStart);
                 selectionStart = -1;
                 return;
             }
@@ -323,7 +350,7 @@ public class MTextField extends MPanel {
                                 this.text.substring(0, this.selectionStart)
                                         + theText
                                         + this.text.substring(this.selectionEnd));
-                        cursor = this.selectionStart + theText.toString().length();
+                        setCursor0(this.selectionStart + theText.toString().length());
                     } catch (UnsupportedFlavorException e) {
                         e.printStackTrace();
                     } catch (IOException e) {
@@ -358,7 +385,7 @@ public class MTextField extends MPanel {
                         this.text.substring(0, this.selectionStart)
                                 + typedChar
                                 + this.text.substring(this.selectionEnd));
-                this.cursor = this.selectionStart + 1;
+                this.setCursor0(this.selectionStart + 1);
                 selectionStart = -1;
                 return;
             }

@@ -51,6 +51,8 @@ public class FeatureRegistry {
     private static final Map<String, AbstractFeature> featureByKey = new HashMap<String, AbstractFeature>();
     @Getter
     private static final Map<String, List<AbstractFeature>> featuresByCategory = new HashMap<String, List<AbstractFeature>>();
+    @Getter
+    private static final Map<String, String> categoryDescription = new HashMap<>();
 
     public static AbstractFeature getFeatureByKey(String key) {
         return featureByKey.get(key);

@@ -19,16 +19,20 @@
 package kr.syeyoung.dungeonsguide.features.text;
 
 import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
+import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MFeatureEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MParameterEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.PanelDefaultParameterConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
+import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
+import kr.syeyoung.dungeonsguide.gui.elements.MStringSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -40,10 +44,8 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
         this.parameters.put("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
-        this.parameters.put("alignRight", new FeatureParameter<Boolean>("alignRight", "Align Right", "Align text to right", false, "boolean"));
-        this.parameters.put("alignCenter", new FeatureParameter<Boolean>("alignCenter", "Align Center", "Align text to center (overrides alignright)", false, "boolean"));
+        this.parameters.put("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string"));
         this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
-
     }
 
     @Override
@@ -59,7 +61,8 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
                 scale = this.<Float>getParameter("scale").getValue();
             }
             GlStateManager.scale(scale, scale, 0);
-            StyledTextRenderer.drawTextWithStylesAssociated(getText(), 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),this.<Boolean>getParameter("alignCenter").getValue() ? StyledTextRenderer.Alignment.CENTER : this.<Boolean>getParameter("alignRight").getValue() ? StyledTextRenderer.Alignment.RIGHT : StyledTextRenderer.Alignment.LEFT);
+            StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),
+                    StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue()));
         }
     }
 
@@ -78,7 +81,9 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
             scale = this.<Float>getParameter("scale").getValue();
         }
         GlStateManager.scale(scale, scale, 0);
-        StyledTextRenderer.drawTextWithStylesAssociated(getDummyText(), 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),this.<Boolean>getParameter("alignCenter").getValue() ? StyledTextRenderer.Alignment.CENTER : this.<Boolean>getParameter("alignRight").getValue() ? StyledTextRenderer.Alignment.RIGHT : StyledTextRenderer.Alignment.LEFT);
+
+        StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),
+                StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue()));
     }
 
     public int countLines(List<StyledText> texts) {
@@ -124,14 +129,27 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
 
 
     @Override
-    public String getEditRoute(final GuiConfig config) {
+    public String getEditRoute(RootConfigPanel rootConfigPanel) {
         ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
             @Override
             public MPanel get() {
-                return new PanelDefaultParameterConfig(config, TextHUDFeature.this,
-                        Arrays.asList(new MPanel[] {
-                                new PanelTextParameterConfig(config, TextHUDFeature.this)
-                        }), Collections.singleton("textStylesNEW"));
+
+                MFeatureEdit featureEdit = new MFeatureEdit(TextHUDFeature.this, rootConfigPanel);
+                featureEdit.addParameterEdit("textStyleNEW", new PanelTextParameterConfig(TextHUDFeature.this));
+
+                StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue());
+                MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.asList("LEFT", "CENTER", "RIGHT"), alignment.name());
+                mStringSelectionButton.setOnUpdate(() -> {
+                    TextHUDFeature.this.<String>getParameter("alignment").setValue(mStringSelectionButton.getSelected());
+                });
+                featureEdit.addParameterEdit("alignment", new MParameterEdit(TextHUDFeature.this, TextHUDFeature.this.<String>getParameter("alignment"), rootConfigPanel, mStringSelectionButton));
+
+                for (FeatureParameter parameter: getParameters()) {
+                    if (parameter.getKey().equals("textStylesNEW")) continue;
+                    if (parameter.getKey().equals("alignment")) continue;
+                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(TextHUDFeature.this, parameter, rootConfigPanel));
+                }
+                return featureEdit;
             }
         });
         return "base." + getKey() ;
@@ -140,18 +158,13 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     @Override
     public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
         List<MPanel> mPanels = super.getTooltipForEditor(guiGuiLocationConfig);
-        mPanels.add(new MPassiveLabelAndElement("Align Right", new MToggleButton() {{
-            setEnabled(TextHUDFeature.this.<Boolean>getParameter("alignRight").getValue());
-            setOnToggle(() ->{
-                TextHUDFeature.this.<Boolean>getParameter("alignRight").setValue(isEnabled());
-            }); }
-        }));
-        mPanels.add(new MPassiveLabelAndElement("Align Center", new MToggleButton() {{
-            setEnabled(TextHUDFeature.this.<Boolean>getParameter("alignCenter").getValue());
-            setOnToggle(() ->{
-                TextHUDFeature.this.<Boolean>getParameter("alignCenter").setValue(isEnabled());
-            }); }
-        }));
+        StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(this.<String>getParameter("alignment").getValue());
+        MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.asList("LEFT", "CENTER", "RIGHT"), alignment.name());
+        mStringSelectionButton.setOnUpdate(() -> {
+            TextHUDFeature.this.<String>getParameter("alignment").setValue(mStringSelectionButton.getSelected());
+        });
+
+        mPanels.add(new MPassiveLabelAndElement("Alignment", mStringSelectionButton));
         if (!doesScaleWithHeight()) {
             mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
                 setOnUpdate(() ->{
@@ -161,5 +174,15 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         }
 
         return mPanels;
+    }
+
+    @Override
+    public void loadConfig(JsonObject jsonObject) {
+        super.loadConfig(jsonObject);
+        StyledTextRenderer.Alignment alignment;
+        try {
+            alignment = StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue());
+        } catch (Exception e) {alignment = StyledTextRenderer.Alignment.LEFT;}
+        TextHUDFeature.this.<String>getParameter("alignment").setValue(alignment.name());
     }
 }

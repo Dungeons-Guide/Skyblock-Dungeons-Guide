@@ -84,7 +84,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
         Point roomPt = skyblockStatus.getContext().getMapProcessor().worldPointToRoomPoint(player.getPosition());
         DungeonRoom dungeonRoom = skyblockStatus.getContext().getRoomMapper().get(roomPt);
         List<StyledText> actualBit = new ArrayList<StyledText>();
-        dummyText.add(new StyledText("You're in ","in"));
+        actualBit.add(new StyledText("You're in ","in"));
         if (dungeonRoom == null) {
             actualBit.add(new StyledText("Unknown","roomname"));
         } else {

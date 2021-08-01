@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.cosmetics;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.old.GuiConfig;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 
@@ -30,8 +30,8 @@ public class FeatureNicknamePrefix extends SimpleFeature {
     }
 
     @Override
-    public String getEditRoute(final GuiConfig config) {
-        ConfigPanelCreator.map.put("base." + getKey() , () -> new PrefixSelectorGUI(config, "prefix", new String[] {
+    public String getEditRoute(RootConfigPanel rootConfigPanel) {
+        ConfigPanelCreator.map.put("base." + getKey() , () -> new PrefixSelectorGUI("prefix", new String[] {
                 "§9Party §8> §r%prefix% §a[RANK§6+§a] %name%§f: TEST",
                 "§2Guild > §r%prefix% §a[RANK§6+§a] %name% §3[Vet]§f: TEST",
                 "§dTo §r%prefix% §r§a[RANK§r§6+§r§a] %name%§r§7: §r§7TEST§r",

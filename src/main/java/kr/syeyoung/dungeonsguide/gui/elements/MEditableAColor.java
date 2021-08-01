@@ -25,6 +25,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
@@ -80,7 +81,7 @@ public class MEditableAColor extends MPanel {
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (!enableEdit) return;
-        if (lastAbsClip.contains(absMouseX, absMouseY) && portable == null) {
+        if (lastAbsClip.contains(absMouseX, absMouseY) && getTooltipsOpen() == 0) {
             portable = new MPortableColorEdit() {
                 @Override
                 public void update2() {
@@ -91,11 +92,16 @@ public class MEditableAColor extends MPanel {
                 }
             };
             portable.setColor(color);
-            portable.setBounds(new Rectangle(relMouseX, relMouseY, 100, 90));
-            add(portable);
-        } else if (portable != null && !portable.getBounds().contains(relMouseX, relMouseY)) {
-            remove(portable);
-            portable = null;
+            Rectangle startWith = new Rectangle((int)(absMouseX * getScale()), (int) (absMouseY* getScale()), (int) (100 * getScale()), (int) (90 * getScale()));
+            if (startWith.x < 10) startWith.x = 10;
+            if (startWith.y < 10) startWith.y = 10;
+            if (startWith.x + startWith.width > Minecraft.getMinecraft().displayWidth - 10) startWith.x = Minecraft.getMinecraft().displayWidth - 10 - startWith.width;
+            if (startWith.y + startWith.height > Minecraft.getMinecraft().displayHeight - 10) startWith.y = Minecraft.getMinecraft().displayHeight - 10 - startWith.height;
+            portable.setBounds(startWith);
+
+
+            portable.setScale(2.0f);
+            portable.open(this);
         }
     }
 }

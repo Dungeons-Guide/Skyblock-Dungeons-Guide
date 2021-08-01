@@ -102,9 +102,9 @@ public class MScrollablePanel extends MPanel {
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         super.render(absMousex, absMousey, relMousex0, relMousey0, partialTicks, scissor);
 
-        boolean hideX = false, hideY = false;
-        if (bounds.width > contentAreaDim.width && hideScrollBarWhenNotNecessary) hideX = true;
-        if (bounds.height > contentAreaDim.height && hideScrollBarWhenNotNecessary) hideY = true;
+        boolean hideX = (axis & 2) == 0, hideY = (axis & 1) == 0;
+        if (bounds.width >= contentAreaDim.width && hideScrollBarWhenNotNecessary) hideX = true;
+        if (bounds.height >= contentAreaDim.height && hideScrollBarWhenNotNecessary) hideY = true;
         if (axis == 3 && !(hideX && hideY)) {
             Gui.drawRect(scrollBarX.getBounds().width, scrollBarY.getBounds().height, getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.03f));
         }
@@ -161,6 +161,7 @@ public class MScrollablePanel extends MPanel {
 
         scrollBarX.setThumbSize(viewPort.getBounds().width);
         scrollBarY.setThumbSize(viewPort.getBounds().height);
+        evalulateContentArea();
     }
 
 

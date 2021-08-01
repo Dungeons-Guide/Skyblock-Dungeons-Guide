@@ -19,41 +19,45 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MList;
 
 import java.awt.*;
+import java.util.HashMap;
+import java.util.Map;
 
-public class MPanelCategory extends MPanel {
-
-    private NestedCategory key;
-    private RootConfigPanel rootConfigPanel;
-
+public class MFeatureEdit extends MPanel {
     private MList list;
+    private MButton goBack;
+    private RootConfigPanel rootConfigPanel;
+    private AbstractFeature abstractFeature;
 
-    public MPanelCategory(NestedCategory nestedCategory, RootConfigPanel rootConfigPanel) {
-        this.key = nestedCategory;
+    private Map<String, MPanel> parameterEdits = new HashMap<>();
+
+    public MFeatureEdit(AbstractFeature abstractFeature, RootConfigPanel rootConfigPanel) {
+        this.abstractFeature = abstractFeature;
         this.rootConfigPanel = rootConfigPanel;
-
         list = new MList();
-        list.setDrawLine(false);
         list.setGap(5);
+        list.setDrawLine(false);
         add(list);
 
-        for (NestedCategory value : nestedCategory.children().values()) {
-            list.add(new MCategory(value, rootConfigPanel));
-        }
-        String actualCategory = nestedCategory.categoryFull().substring(5);
-        if (FeatureRegistry.getFeaturesByCategory().containsKey(actualCategory))
-            for (AbstractFeature abstractFeature : FeatureRegistry.getFeaturesByCategory().get(actualCategory)) {
-                MFeature mFeature = new MFeature(abstractFeature, rootConfigPanel);
-                list.add(mFeature);
-                mFeature.setHover(new Color(94, 94, 94, 255));
-            }
-        list.realignChildren();
+        goBack = new MButton();
+        goBack.setText("< Go Back");
+        goBack.setOnActionPerformed(rootConfigPanel::goBack);
+        add(goBack);
+    }
 
+    public void addParameterEdit(String name, MPanel paramEdit) {
+        parameterEdits.put(name, paramEdit);
+        list.add(paramEdit);
+    }
+    public MPanel removeParameterEdit(String name) {
+        MPanel panel = parameterEdits.remove(name);
+        list.remove(panel);
+        return panel;
     }
 
     @Override
@@ -68,15 +72,15 @@ public class MPanelCategory extends MPanel {
     @Override
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
-        list.setBounds(new Rectangle(5,5,bounds.width- 10, bounds.height - 10));
+        goBack.setBounds(new Rectangle(5,5,75,15));
+
+        list.setBounds(new Rectangle(5,25,bounds.width - 10, bounds.height - 10));
         list.realignChildren();
     }
 
     @Override
     public Dimension getPreferredSize() {
-        Dimension prefSize = list.getPreferredSize();
-        int wid = prefSize.width + 10;
-        int hei = prefSize.height + 10;
-        return new Dimension(wid, hei);
+        Dimension listPref = list.getPreferredSize();
+        return new Dimension(listPref.width + 10, listPref.height + 30);
     }
 }

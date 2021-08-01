@@ -111,6 +111,7 @@ public class MGui extends GuiScreen {
 
         try {
             Mouse.setNativeCursor(null);
+            mainPanel.setCursor(EnumCursor.DEFAULT);
         } catch (LWJGLException e) {
             e.printStackTrace();
         }
