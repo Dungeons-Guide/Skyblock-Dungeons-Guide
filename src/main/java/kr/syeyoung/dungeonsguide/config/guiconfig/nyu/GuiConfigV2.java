@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 import kr.syeyoung.dungeonsguide.gui.MGui;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 
@@ -40,8 +41,14 @@ public class GuiConfigV2 extends MGui {
         super.initGui();
         int dw = Minecraft.getMinecraft().displayWidth;
         int dh = Minecraft.getMinecraft().displayHeight;
-        rootConfigPanel.setBounds(new Rectangle((dw-1500)/2, (dh-800)/2, 1500,800));
-        rootConfigPanel.setScale(2.0);
+        int width = MathHelper.clamp_int(dw - 200, 1250, 1500), height = MathHelper.clamp_int(dh - 200, 600, 800);
+        double scale = 2.0;
+        if (dw <= width || dh <= height) {
+            width = width/2; height = height/2;
+            scale = 1.0;
+        }
+        rootConfigPanel.setBounds(new Rectangle((dw-width)/2, (dh-height)/2, width,height));
+        rootConfigPanel.setScale(scale);
     }
 
     @Override

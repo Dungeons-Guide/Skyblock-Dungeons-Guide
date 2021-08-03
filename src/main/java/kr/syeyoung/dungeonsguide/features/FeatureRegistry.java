@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.features;
 
 import kr.syeyoung.dungeonsguide.config.types.AColor;
+import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
@@ -59,6 +60,7 @@ public class FeatureRegistry {
     }
 
     public static <T extends AbstractFeature> T register(T abstractFeature) {
+        if (featureByKey.containsKey(abstractFeature.getKey())) throw new IllegalArgumentException("DUPLICATE FEATURE DEFINITION");
         featureList.add(abstractFeature);
         featureByKey.put(abstractFeature.getKey(), abstractFeature);
         List<AbstractFeature> features = featuresByCategory.get(abstractFeature.getCategory());
@@ -69,7 +71,7 @@ public class FeatureRegistry {
 
         return abstractFeature;
     }
-    public static final SimpleFeature DEBUG = register(new SimpleFeature("hidden", "Debug", "Toggles debug mode", "debug", false));
+    public static final SimpleFeature DEBUG = register(new FeatureDebug());
 
     public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
