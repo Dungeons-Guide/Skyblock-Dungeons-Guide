@@ -108,7 +108,7 @@ public class MFeature extends MPanel {
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
 
         int border = RenderUtils.blendAlpha(0x141414, 0.12f);
-        if (!panel.getSearchWord().isEmpty() && (feature.getName().contains(panel.getSearchWord()) || feature.getDescription().contains(panel.getSearchWord()))) {
+        if (!panel.getSearchWord().isEmpty() && (feature.getName().toLowerCase().contains(panel.getSearchWord()) || feature.getDescription().toLowerCase().contains(panel.getSearchWord()))) {
             border = 0xFF02EE67;
         }
 

@@ -32,6 +32,9 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.*;
 
 public class RootConfigPanel extends MPanelScaledGUI {
@@ -56,10 +59,12 @@ public class RootConfigPanel extends MPanelScaledGUI {
     private MTextField search;
     private MButton guiRelocate;
 
+    private MButton github, discord;
+
     private final Stack<String> history = new Stack<String>();
 
     public String getSearchWord() {
-        return search.getText().trim();
+        return search.getText().trim().toLowerCase();
     }
 
     public RootConfigPanel(GuiConfigV2 guiConfigV2) {
@@ -99,6 +104,26 @@ public class RootConfigPanel extends MPanelScaledGUI {
         guiRelocate.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));
         add(guiRelocate);
 
+        discord = new MButton(); github = new MButton();
+        discord.setText("Discord"); github.setText("Github");
+        discord.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));
+        github.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));
+        github.setOnActionPerformed(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide/"));
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
+        discord.setOnActionPerformed(() -> {
+            try {
+                Desktop.getDesktop().browse(new URI("https://discord.gg/VuxayCWGE8"));
+            } catch (IOException | URISyntaxException e) {
+                e.printStackTrace();
+            }
+        });
+        add(discord); add(github);
+
         navigationScroll = new MScrollablePanel(1);
         navigationScroll.setHideScrollBarWhenNotNecessary(false);
 
@@ -114,7 +139,6 @@ public class RootConfigPanel extends MPanelScaledGUI {
         navigation.setGap(0);
         navigation.setDrawLine(false);
 
-
         setCurrentPageAndPushHistory("ROOT");
         rePlaceElements();
     }
@@ -129,21 +153,21 @@ public class RootConfigPanel extends MPanelScaledGUI {
         }
         NestedCategory root = new NestedCategory("ROOT");
         Set<String> categoryAllowed = new HashSet<>();
-        String search = this.search.getText().trim();
+        String search = this.search.getText().trim().toLowerCase();
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             if (search.isEmpty()) {
-                categoryAllowed.add("ROOT."+abstractFeature.getCategory());
-            } else if (abstractFeature.getName().contains(search)) {
-                categoryAllowed.add("ROOT."+abstractFeature.getCategory());
-            } else if (abstractFeature.getDescription().contains(search)) {
-                categoryAllowed.add("ROOT."+abstractFeature.getCategory());
+                categoryAllowed.add("ROOT."+abstractFeature.getCategory()+".");
+            } else if (abstractFeature.getName().toLowerCase().contains(search)) {
+                categoryAllowed.add("ROOT."+abstractFeature.getCategory()+".");
+            } else if (abstractFeature.getDescription().toLowerCase().contains(search)) {
+                categoryAllowed.add("ROOT."+abstractFeature.getCategory()+".");
             }
         }
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             String category = abstractFeature.getCategory();
             boolean test =false;
             for (String s : categoryAllowed) {
-                if (("ROOT."+category).startsWith(s)) {
+                if (s.startsWith("ROOT."+category+".")) {
                     test = true;
                     break;
                 }
@@ -273,5 +297,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         search.setBounds(new Rectangle(5,30,navBound.x + navBound.width - 10,15));
 
         guiRelocate.setBounds(new Rectangle(5,5,100,15));
+        github.setBounds(new Rectangle(effectiveDim.width - 80,5,75,15));
+        discord.setBounds(new Rectangle(effectiveDim.width - 160,5,75,15));
     }
 }

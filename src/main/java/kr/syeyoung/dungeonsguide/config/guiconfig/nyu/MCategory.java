@@ -47,10 +47,15 @@ public class MCategory extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.12f));
+        int border = RenderUtils.blendAlpha(0x141414, 0.12f);
+        if (!rootConfigPanel.getSearchWord().isEmpty() && (nestedCategory.categoryName().toLowerCase().contains(rootConfigPanel.getSearchWord()))) {
+            border = 0xFF02EE67;
+        }
+
+        Gui.drawRect(0,0,getBounds().width, getBounds().height,border);
         if (getBounds().height >= 28)
             Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, RenderUtils.blendAlpha(0x141414, 0.15f));
-        Gui.drawRect(0,17,getBounds().width, 18,RenderUtils.blendAlpha(0x141414, 0.12f));
+        Gui.drawRect(1,1,getBounds().width-1, 18, RenderUtils.blendAlpha(0x141414, 0.12f));
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
@@ -75,7 +80,7 @@ public class MCategory extends MPanel {
         int descriptionHeight =
                 FeatureRegistry.getCategoryDescription().containsKey(nestedCategory.categoryFull()) ?
                 fr.listFormattedStringToWidth(FeatureRegistry.getCategoryDescription().get(nestedCategory.categoryFull()), Math.max(100, getBounds().width - 10)).size() * fr.FONT_HEIGHT
-                : -11;
+                : -9;
 
         return new Dimension(100, descriptionHeight + 28);
     }
