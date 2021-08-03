@@ -43,7 +43,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureAbilityCooldown() {
-        super("ETC", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2", false, 100, getFontRenderer().FONT_HEIGHT * 5);
+        super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2", false, 100, getFontRenderer().FONT_HEIGHT * 5);
         getStyles().add(new TextStyle("abilityname", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("number", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));

@@ -39,7 +39,7 @@ import java.util.List;
 public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListener {
 
     public FeatureSoulRoomWarning() {
-        super("Secret","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn", true, getFontRenderer().getStringWidth("There is a fairy soul in this room!"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon.Dungeon Information","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn", true, getFontRenderer().getStringWidth("There is a fairy soul in this room!"), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("warning", new AColor(0xFF, 0x69,0x17,255), new AColor(0, 0,0,0), false));
     }
 

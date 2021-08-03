@@ -36,6 +36,7 @@ public class MRootPanel extends MPanel {
     public void openTooltip(MTooltip mPanel) {
         mPanel.setRoot(this);
         tooltips.add(mPanel);
+        mPanel.resize(getBounds().width, getBounds().height);
         add(mPanel);
     }
 

@@ -63,7 +63,9 @@ public abstract class AbstractFeature {
 
     public void loadConfig(JsonObject jsonObject) { // gets key, calls it
         enabled = jsonObject.get("$enabled").getAsBoolean();
+
         for (Map.Entry<String, FeatureParameter> parameterEntry : parameters.entrySet()) {
+            parameterEntry.getValue().setToDefault();
             JsonElement element = jsonObject.get(parameterEntry.getKey());
             if (element == null) continue;
             TypeConverter typeConverter = TypeConverterRegistry.getTypeConverter(parameterEntry.getValue().getValue_type());
@@ -95,6 +97,8 @@ public abstract class AbstractFeature {
         });
         return "base." + key ;
     }
+
+    public void onParameterReset() {}
 
     public boolean isDisyllable() {
         return true;

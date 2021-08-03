@@ -31,7 +31,7 @@ import net.minecraft.util.ChatComponentText;
 
 public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, StompMessageHandler, TickListener {
     public FeatureUpdateAlarm() {
-        super("ETC", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
+        super("Updates", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
     }
 
     private StompPayload stompPayload;

@@ -29,7 +29,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureCopyMessages extends SimpleFeature implements ChatListener {
     public FeatureCopyMessages() {
-        super("ETC", "Copy Chat Messages", "Click on copy to copy", "etc.copymsg");
+        super("Misc.Chat", "Copy Chat Messages", "Click on copy to copy", "etc.copymsg");
         setEnabled(false);
     }
     @Override

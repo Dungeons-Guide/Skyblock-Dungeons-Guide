@@ -36,7 +36,7 @@ import java.util.List;
 
 public class FeatureBoxBats extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxBats() {
-        super("Dungeon", "Box Bats", "Box bats in dungeons\nDoes not appear through walls", "dungeon.batbox", true);
+        super("Dungeon.Mobs", "Box Bats", "Box bats in dungeons\nDoes not appear through walls", "dungeon.batbox", true);
         parameters.put("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and bats to be boxed", 20, "integer"));
         parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Bats", new AColor(255,0,0,50), "acolor"));
     }

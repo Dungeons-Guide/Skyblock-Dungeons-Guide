@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
 
 import lombok.Data;
+import lombok.EqualsAndHashCode;
+import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.HashMap;
@@ -26,9 +28,13 @@ import java.util.Map;
 
 @Data
 @Accessors(chain = true, fluent = true)
+public
 class NestedCategory {
     private final String categoryFull;
+    @EqualsAndHashCode.Exclude
     private String categoryName;
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private NestedCategory parent;
 
     public NestedCategory(String categoryFull) {
@@ -36,6 +42,8 @@ class NestedCategory {
         this.categoryName = categoryFull.substring(categoryFull.lastIndexOf(".") + 1);
     }
 
+    @EqualsAndHashCode.Exclude
+    @ToString.Exclude
     private Map<String, NestedCategory> children = new HashMap<>();
 
     public NestedCategory child(NestedCategory child) {

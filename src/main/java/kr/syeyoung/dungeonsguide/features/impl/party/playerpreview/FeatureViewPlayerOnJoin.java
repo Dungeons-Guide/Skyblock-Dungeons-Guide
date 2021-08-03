@@ -77,7 +77,7 @@ import java.util.concurrent.Future;
 public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRenderListener, ChatListener, GuiClickListener {
 
     public FeatureViewPlayerOnJoin() {
-        super("Party Kicker", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
+        super("Party", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
         this.parameters.put("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers","Datarenderssdasd", new ArrayList<>(Arrays.asList(
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
         )), "stringlist"));

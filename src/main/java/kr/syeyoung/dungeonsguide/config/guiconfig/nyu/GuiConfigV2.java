@@ -31,7 +31,6 @@ public class GuiConfigV2 extends MGui {
 
     public GuiConfigV2() {
         rootConfigPanel = new RootConfigPanel(this);
-        rootConfigPanel.setPageGenerator(ConfigPanelCreator.INSTANCE);
         getMainPanel().add(rootConfigPanel);
     }
 

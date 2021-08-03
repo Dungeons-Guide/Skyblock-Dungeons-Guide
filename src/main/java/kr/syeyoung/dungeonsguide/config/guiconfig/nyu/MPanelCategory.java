@@ -45,13 +45,15 @@ public class MPanelCategory extends MPanel {
         for (NestedCategory value : nestedCategory.children().values()) {
             list.add(new MCategory(value, rootConfigPanel));
         }
-        String actualCategory = nestedCategory.categoryFull().substring(5);
-        if (FeatureRegistry.getFeaturesByCategory().containsKey(actualCategory))
-            for (AbstractFeature abstractFeature : FeatureRegistry.getFeaturesByCategory().get(actualCategory)) {
-                MFeature mFeature = new MFeature(abstractFeature, rootConfigPanel);
-                list.add(mFeature);
-                mFeature.setHover(new Color(94, 94, 94, 255));
-            }
+        if (nestedCategory.parent() != null) {
+            String actualCategory = nestedCategory.categoryFull().substring(5);
+            if (FeatureRegistry.getFeaturesByCategory().containsKey(actualCategory))
+                for (AbstractFeature abstractFeature : FeatureRegistry.getFeaturesByCategory().get(actualCategory)) {
+                    MFeature mFeature = new MFeature(abstractFeature, rootConfigPanel);
+                    list.add(mFeature);
+                    mFeature.setHover(new Color(94, 94, 94, 255));
+                }
+        }
         list.realignChildren();
 
     }

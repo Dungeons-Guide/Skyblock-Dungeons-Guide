@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.features;
 
+import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
+import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
@@ -30,5 +32,20 @@ public class FeatureParameter<T> {
     private String description;
 
     private T value;
+    private T default_value;
     private String value_type;
+
+    public FeatureParameter(String key, String name, String description, T default_value, String value_type) {
+        this.key = key; this.name = name; this.default_value = default_value;
+        this.description = description; this.value_type = value_type;
+    }
+
+    public void setToDefault() {
+        TypeConverter<T> typeConverter = TypeConverterRegistry.getTypeConverter(getValue_type());
+        value = (T) typeConverter.deserialize(typeConverter.serialize(default_value));
+    }
+
+    public T getValue() {
+        return value == null ? default_value : value;
+    }
 }

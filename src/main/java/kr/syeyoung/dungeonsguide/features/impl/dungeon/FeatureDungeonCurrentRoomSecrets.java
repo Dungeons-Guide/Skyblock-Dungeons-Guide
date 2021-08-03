@@ -33,7 +33,7 @@ import java.util.List;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements ChatListener {
     public FeatureDungeonCurrentRoomSecrets() {
-        super("Dungeon", "Display #Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom", true, getFontRenderer().getStringWidth("Secrets In Room: 8/8"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon.Dungeon Information", "Display # Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom", true, getFontRenderer().getStringWidth("Secrets In Room: 8/8"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));

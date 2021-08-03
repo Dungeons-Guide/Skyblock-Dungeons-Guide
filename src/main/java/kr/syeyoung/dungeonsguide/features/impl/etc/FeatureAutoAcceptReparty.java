@@ -28,7 +28,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureAutoAcceptReparty extends SimpleFeature implements ChatListener {
     public FeatureAutoAcceptReparty() {
-        super("ETC", "Auto accept reparty", "Automatically accept reparty", "qol.autoacceptreparty", true);
+        super("Party.Reparty", "Auto accept reparty", "Automatically accept reparty", "qol.autoacceptreparty", true);
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

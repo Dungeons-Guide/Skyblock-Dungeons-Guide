@@ -39,7 +39,7 @@ import net.minecraftforge.client.event.RenderPlayerEvent;
 
 public class FeaturePenguins extends SimpleFeature implements PlayerRenderListener {
     public FeaturePenguins() {
-        super("ETC", "Penguins", "Awwww", "etc.penguin", false);
+        super("Misc", "Penguins", "Awwww", "etc.penguin", false);
     }
 
 

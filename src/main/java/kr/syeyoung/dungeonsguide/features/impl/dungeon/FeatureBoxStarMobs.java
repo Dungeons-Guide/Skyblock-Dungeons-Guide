@@ -36,7 +36,7 @@ import java.util.List;
 
 public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxStarMobs() {
-        super("Dungeon", "Box Starred mobs", "Box Starred mobs in dungeons", "dungeon.starmobbox", false);
+        super("Dungeon.Mobs", "Box Starred mobs", "Box Starred mobs in dungeons", "dungeon.starmobbox", false);
         parameters.put("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and starred mobs to be boxed", 20, "integer"));
         parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Starred mobs", new AColor(0,255,255,50), "acolor"));
     }

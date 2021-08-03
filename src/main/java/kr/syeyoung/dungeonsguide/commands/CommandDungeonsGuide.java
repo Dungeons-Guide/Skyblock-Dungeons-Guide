@@ -22,6 +22,7 @@ import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.NestedCategory;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
@@ -35,6 +36,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
@@ -61,6 +63,7 @@ import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
+import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,10 +81,8 @@ import java.io.*;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.text.SimpleDateFormat;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
+import java.util.List;
 import java.util.regex.Pattern;
 
 public class CommandDungeonsGuide extends CommandBase {
@@ -489,6 +490,51 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("CloseContext")) {
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setContext(null);
+        } else if (args[0].equals("dumpsettings")) {
+            NestedCategory root = new NestedCategory("ROOT");
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                String category = abstractFeature.getCategory();
+                NestedCategory currentRoot = root;
+                for (String s : category.split("\\.")) {
+                    NestedCategory finalCurrentRoot = currentRoot;
+                    if (currentRoot.children().containsKey(s))
+                        currentRoot = currentRoot.children().get(s);
+                    else {
+                        currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull()+"."+s));
+                    }
+                }
+            }
+
+            StringBuilder stringBuilder = new StringBuilder();
+            StringBuilder stringBuilder2 = new StringBuilder();
+
+            Stack<Tuple<NestedCategory, Integer>> stak = new Stack<>();
+            stak.push(new Tuple<>(root, 0));
+            Set<NestedCategory> discovered = new HashSet<>();
+            while (!stak.isEmpty()) {
+                Tuple<NestedCategory, Integer> n = stak.pop();
+                if (discovered.contains(n.getFirst())) continue;
+                discovered.add(n.getFirst());
+                for (Map.Entry<String, NestedCategory> stringNestedCategoryEntry : n.getFirst().children().entrySet()) {
+                    stak.push(new Tuple<>(stringNestedCategoryEntry.getValue(), n.getSecond() + 1));
+                }
+
+                if (n.getFirst().categoryFull().equals("ROOT")) continue;
+
+                String prefix = "";
+                for (int i = 0; i < n.getSecond()-1; i++) {
+                    prefix += "    ";
+                }
+
+                List<AbstractFeature> abstractFeatureList = FeatureRegistry.getFeaturesByCategory().getOrDefault(n.getFirst().categoryFull().substring(5), Collections.emptyList());
+                stringBuilder.append(prefix).append("- C ").append(n.getFirst().categoryFull()).append("\n");
+                stringBuilder2.append(n.getFirst().categoryFull()).append("\n");
+                for (AbstractFeature abstractFeature : abstractFeatureList) {
+                    stringBuilder.append(prefix).append("    - F ").append(abstractFeature.getName()).append(" / ").append(abstractFeature.getDescription().replace("\n", "$NEW_LINE$")).append("\n");
+                }
+            }
+            System.out.println(stringBuilder.toString());
+            System.out.println(stringBuilder2.toString());
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

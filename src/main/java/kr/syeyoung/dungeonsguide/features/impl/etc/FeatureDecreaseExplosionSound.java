@@ -28,7 +28,7 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 
 public class FeatureDecreaseExplosionSound extends SimpleFeature implements SoundListener {
     public FeatureDecreaseExplosionSound() {
-       super("ETC", "Decrease Explosion sound effect", "Decreases volume of explosions while on skyblock", "qol.reparty");
+       super("Misc", "Decrease Explosion sound effect", "Decreases volume of explosions while on skyblock", "qol.explosionsound");
        parameters.put("sound", new FeatureParameter<Float>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0f, "float"));
     }
 

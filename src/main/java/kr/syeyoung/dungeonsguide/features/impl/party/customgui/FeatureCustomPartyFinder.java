@@ -29,7 +29,7 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenListener, GuiUpdateListener {
     public FeatureCustomPartyFinder() {
-        super("Party Kicker","Custom Party Finder","Custom Party Finder", "party.customfinder", true);
+        super("Party","Custom Party Finder","Custom Party Finder", "party.customfinder", true);
     }
 
     GuiCustomPartyFinder guiCustomPartyFinder;

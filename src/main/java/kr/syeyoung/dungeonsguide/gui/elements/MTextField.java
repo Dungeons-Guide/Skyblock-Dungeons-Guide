@@ -125,7 +125,7 @@ public class MTextField extends MPanel {
         Rectangle actualField = new Rectangle(1, 3,getBounds().width - 2, getBounds().height - 6);
         if (!actualField.contains(relMouseX, relMouseY)) return;
         if (!lastAbsClip.contains(absMouseX, absMouseY)) return;
-
+        if (getTooltipsOpen() > 0) return;
 
 
 

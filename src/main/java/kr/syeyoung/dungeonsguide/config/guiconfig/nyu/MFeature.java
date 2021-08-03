@@ -106,9 +106,15 @@ public class MFeature extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.12f));
+
+        int border = RenderUtils.blendAlpha(0x141414, 0.12f);
+        if (!panel.getSearchWord().isEmpty() && (feature.getName().contains(panel.getSearchWord()) || feature.getDescription().contains(panel.getSearchWord()))) {
+            border = 0xFF02EE67;
+        }
+
+        Gui.drawRect(0,0,getBounds().width, getBounds().height,border);
         Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, RenderUtils.blendAlpha(0x141414, 0.15f));
-        Gui.drawRect(0,17,getBounds().width, 18,RenderUtils.blendAlpha(0x141414, 0.12f));
+        Gui.drawRect(1,1,getBounds().width-1, 18, RenderUtils.blendAlpha(0x141414, 0.12f));
 
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

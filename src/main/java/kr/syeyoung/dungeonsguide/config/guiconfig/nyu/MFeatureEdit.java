@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MList;
+import kr.syeyoung.dungeonsguide.gui.elements.MModal;
+import kr.syeyoung.dungeonsguide.gui.elements.MModalConfirmation;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -30,7 +32,7 @@ import java.util.Map;
 
 public class MFeatureEdit extends MPanel {
     private MList list;
-    private MButton goBack;
+    private MButton goBack, resetToDefault;
     private RootConfigPanel rootConfigPanel;
     private AbstractFeature abstractFeature;
 
@@ -48,6 +50,30 @@ public class MFeatureEdit extends MPanel {
         goBack.setText("< Go Back");
         goBack.setOnActionPerformed(rootConfigPanel::goBack);
         add(goBack);
+        resetToDefault = new MButton();
+        resetToDefault.setText("Reset To Default");
+        resetToDefault.setForeground(Color.red);
+        resetToDefault.setOnActionPerformed(() -> {
+            openResetConfirmation();
+        });
+        add(resetToDefault);
+    }
+
+    public void openResetConfirmation() {
+        MModalConfirmation mModal = new MModalConfirmation("Are you sure?",
+                "Resetting to default will reset your configuration for the selected feature to default",
+                () -> {
+            for (FeatureParameter parameter : abstractFeature.getParameters()) {
+                parameter.setToDefault();
+            }
+            abstractFeature.onParameterReset();
+            rootConfigPanel.invalidatePage(abstractFeature.getEditRoute(rootConfigPanel));
+            }, () -> {});
+        mModal.setScale(getScale());
+        mModal.getYes().setBorder(0xFFFF0000);
+        mModal.getYes().setText("Yes, Reset it");
+        mModal.getNo().setText("Cancel");
+        mModal.open(MFeatureEdit.this);
     }
 
     public void addParameterEdit(String name, MPanel paramEdit) {
@@ -73,9 +99,11 @@ public class MFeatureEdit extends MPanel {
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
         goBack.setBounds(new Rectangle(5,5,75,15));
+        resetToDefault.setBounds(new Rectangle(bounds.width - 105, 5, 100, 15));
 
         list.setBounds(new Rectangle(5,25,bounds.width - 10, bounds.height - 10));
         list.realignChildren();
+
     }
 
     @Override

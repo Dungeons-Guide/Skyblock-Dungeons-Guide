@@ -34,7 +34,7 @@ import org.lwjgl.opengl.GL11;
 
 public class FeaturePlayerESP extends SimpleFeature implements PlayerRenderListener {
     public FeaturePlayerESP() {
-        super("Dungeon", "See players through walls", "See players through walls", "dungeon.playeresp", false);
+        super("Dungeon.Teammates", "See players through walls", "See players through walls", "dungeon.playeresp", false);
         setEnabled(false);
     }
 

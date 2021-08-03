@@ -26,6 +26,8 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MParameterEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
+import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
+import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
@@ -174,6 +176,11 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         }
 
         return mPanels;
+    }
+
+    @Override
+    public void onParameterReset() {
+        stylesMap = null;
     }
 
     @Override

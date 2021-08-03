@@ -22,8 +22,10 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.util.ResourceLocation;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
@@ -48,7 +50,7 @@ public class MCategoryElement extends MPanel {
         if (rootConfigPanel.getCurrentPage().equals(category)) {
             clip(0,scissor.y, Minecraft.getMinecraft().displayWidth, scissor.height);
             Gui.drawRect(leftPad - offsetX, 0, getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.13f));
-        } else if (lastAbsClip.contains(absMousex, absMousey)) {
+        } else if (lastAbsClip.contains(absMousex, absMousey) && getTooltipsOpen() == 0) {
             clip(0,scissor.y, Minecraft.getMinecraft().displayWidth, scissor.height);
             Gui.drawRect(leftPad - offsetX, 0, getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.09f));
         }
@@ -69,8 +71,10 @@ public class MCategoryElement extends MPanel {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (!lastAbsClip.contains(absMouseX, absMouseY)) { return; }
+        if (!lastAbsClip.contains(absMouseX, absMouseY) || getTooltipsOpen() > 0) { return; }
         if (onClick != null) onClick.run();
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
     }
     @Override
     public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {

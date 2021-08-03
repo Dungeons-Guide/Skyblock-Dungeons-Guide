@@ -31,7 +31,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 public class APIKey extends SimpleFeature implements ChatListenerGlobal {
 
     public APIKey() {
-        super("Party Kicker", "API KEY", "Sets api key","partykicker.apikey");
+        super("Misc.API Features", "API KEY", "Sets api key","partykicker.apikey");
         parameters.put("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "","string"));
     }
 

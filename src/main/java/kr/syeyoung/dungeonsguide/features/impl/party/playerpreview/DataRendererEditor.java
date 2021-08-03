@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -55,7 +56,7 @@ public class DataRendererEditor extends MPanel {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        Gui.drawRect(0,0,getBounds().width, getBounds().height, 0xFF444444);
+        Gui.drawRect(0,0,getBounds().width, getBounds().height,  RenderUtils.blendAlpha(0x141414, 0.12f));
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
@@ -67,11 +68,11 @@ public class DataRendererEditor extends MPanel {
         fr.drawString("Available", (310 + baseWidth + hamburgerWidth -fr.getStringWidth("Available")) / 2, 4, 0xFFFFFFFF);
         fr.drawString("Current", (baseWidth + hamburgerWidth+10 -fr.getStringWidth("Current")) /2 , 4, 0xFFFFFFFF);
         Gui.drawRect(4,4 + fr.FONT_HEIGHT + 3,baseWidth + hamburgerWidth+6 + 1, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
-        Gui.drawRect(5,5+ fr.FONT_HEIGHT + 3,baseWidth + hamburgerWidth + 5 + 1, 235+ fr.FONT_HEIGHT + 3, 0xFF555555);
+        Gui.drawRect(5,5+ fr.FONT_HEIGHT + 3,baseWidth + hamburgerWidth + 5 + 1, 235+ fr.FONT_HEIGHT + 3,  RenderUtils.blendAlpha(0x141414, 0.15f));
         Gui.drawRect(5 + hamburgerWidth,4+ fr.FONT_HEIGHT + 3,6 + hamburgerWidth, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
 
         Gui.drawRect(154,4 + fr.FONT_HEIGHT + 3,150 + baseWidth + hamburgerWidth + 6+1, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
-        Gui.drawRect(155,5+ fr.FONT_HEIGHT + 3,150 + baseWidth + hamburgerWidth + 5+1, 235+ fr.FONT_HEIGHT + 3, 0xFF555555);
+        Gui.drawRect(155,5+ fr.FONT_HEIGHT + 3,150 + baseWidth + hamburgerWidth + 5+1, 235+ fr.FONT_HEIGHT + 3,  RenderUtils.blendAlpha(0x141414, 0.15f));
         Gui.drawRect(155 + hamburgerWidth,4 + fr.FONT_HEIGHT + 3,156 + hamburgerWidth, 236+ fr.FONT_HEIGHT + 3, 0xFF222222);
 
         GlStateManager.pushMatrix();

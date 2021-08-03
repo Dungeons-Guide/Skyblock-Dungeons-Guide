@@ -32,9 +32,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Stack;
+import java.util.*;
 
 public class RootConfigPanel extends MPanelScaledGUI {
     private MScrollablePanel navigationScroll;
@@ -47,7 +45,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
     private final Map<String, MPanel> pages = new HashMap<String, MPanel>();
     @Getter
     @Setter
-    private Function<String, MPanel> pageGenerator;
+    private Function<String, MPanel> pageGenerator = ConfigPanelCreator.INSTANCE;
     @Getter
     private String currentPage = "";
 
@@ -60,12 +58,34 @@ public class RootConfigPanel extends MPanelScaledGUI {
 
     private final Stack<String> history = new Stack<String>();
 
+    public String getSearchWord() {
+        return search.getText().trim();
+    }
+
     public RootConfigPanel(GuiConfigV2 guiConfigV2) {
         this.gui = guiConfigV2;
 
         search = new MTextField() {
             @Override
             public void edit(String str) {
+                setupNavigation();
+
+                setCurrentPageAndPushHistory("");
+                if (!categoryMap.containsKey(lastOpenCategory)) {
+                    for (Map.Entry<NestedCategory, MPanel> nestedCategoryMPanelEntry : categoryMap.entrySet()) {
+                        if (nestedCategoryMPanelEntry.getValue() instanceof MCategoryElement) {
+                            setCurrentPageAndPushHistory(nestedCategoryMPanelEntry.getKey().categoryFull());
+                            lastOpenCategory = nestedCategoryMPanelEntry.getKey();
+                            break;
+                        }
+                    }
+                }
+                    for (Map.Entry<NestedCategory, MPanel> nestedCategoryMPanelEntry : categoryMap.entrySet()) {
+                        if (nestedCategoryMPanelEntry.getValue() instanceof MCollapsable) {
+                            ((MCollapsable) nestedCategoryMPanelEntry.getValue()).setCollapsed(false);
+                        }
+                    }
+                rePlaceElements();
             }
         };
         search.setPlaceHolder("Search...");
@@ -95,18 +115,49 @@ public class RootConfigPanel extends MPanelScaledGUI {
         navigation.setDrawLine(false);
 
 
+        setCurrentPageAndPushHistory("ROOT");
         rePlaceElements();
     }
 
+
+    private Map<NestedCategory, MPanel> categoryMap = new HashMap<>();
+    private NestedCategory lastOpenCategory;
     private void setupNavigation() {
+        categoryMap.clear();
+        for (MPanel childComponent : navigation.getChildComponents()) {
+            navigation.remove(childComponent);
+        }
         NestedCategory root = new NestedCategory("ROOT");
+        Set<String> categoryAllowed = new HashSet<>();
+        String search = this.search.getText().trim();
+        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+            if (search.isEmpty()) {
+                categoryAllowed.add("ROOT."+abstractFeature.getCategory());
+            } else if (abstractFeature.getName().contains(search)) {
+                categoryAllowed.add("ROOT."+abstractFeature.getCategory());
+            } else if (abstractFeature.getDescription().contains(search)) {
+                categoryAllowed.add("ROOT."+abstractFeature.getCategory());
+            }
+        }
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             String category = abstractFeature.getCategory();
+            boolean test =false;
+            for (String s : categoryAllowed) {
+                if (("ROOT."+category).startsWith(s)) {
+                    test = true;
+                    break;
+                }
+            }
+            if (!test) continue;
 
             NestedCategory currentRoot = root;
             for (String s : category.split("\\.")) {
                 NestedCategory finalCurrentRoot = currentRoot;
-                currentRoot = currentRoot.children().computeIfAbsent(s, k -> new NestedCategory(finalCurrentRoot.categoryFull()+"."+k));
+                if (currentRoot.children().containsKey(s))
+                    currentRoot = currentRoot.children().get(s);
+                else {
+                    currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull()+"."+s));
+                }
             }
 
         }
@@ -114,6 +165,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         for (NestedCategory value : root.children().values()) {
             setupNavigationRecursive(value, navigation, 0, 17);
         }
+        ConfigPanelCreator.map.put("ROOT", () -> new MPanelCategory(root, this));
     }
     private void setupNavigationRecursive(NestedCategory nestedCategory, MPanel parent, int depth, int offset) {
         ConfigPanelCreator.map.put(nestedCategory.categoryFull(), () -> new MPanelCategory(nestedCategory, this));
@@ -121,11 +173,14 @@ public class RootConfigPanel extends MPanelScaledGUI {
         if (nestedCategory.children().size() == 0) {
             MCategoryElement current = new MCategoryElement(nestedCategory.categoryFull(),() -> {
                 setCurrentPageAndPushHistory(nestedCategory.categoryFull());
+                lastOpenCategory = nestedCategory;
             }, 13 * depth + 17, offset, this);
             parent.add(current);
+            categoryMap.put(nestedCategory, current);
         } else {
             MCategoryElement current = new MCategoryElement(nestedCategory.categoryFull(),() -> {
                 setCurrentPageAndPushHistory(nestedCategory.categoryFull());
+                lastOpenCategory = nestedCategory;
             }, 3,offset, this);
             MCollapsable mCollapsable = new MCollapsable(current, this::rePlaceElements);
             mCollapsable.setLeftPad(offset-13);
@@ -133,6 +188,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
             mCollapsable.getLowerElements().setGap(0);
             mCollapsable.setLeftPadElements(0);
             parent.add(mCollapsable);
+            categoryMap.put(nestedCategory, mCollapsable);
 
             for (NestedCategory value : nestedCategory.children().values()) {
                 setupNavigationRecursive(value, mCollapsable, depth+1, offset+13);
@@ -144,6 +200,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
     public void setCurrentPageAndPushHistory(String currentPage) {
         if (!this.currentPage.equals(currentPage))
             history.push(this.currentPage);
+        lastOpenCategory = null;
         this.currentPage = currentPage;
         setupPage();
     }
@@ -162,6 +219,12 @@ public class RootConfigPanel extends MPanelScaledGUI {
         }
         contentScroll.getContentArea().add(pages.get(currentPage));
         rePlaceElements();
+    }
+
+    public void invalidatePage(String page) {
+        pages.remove(page);
+        if (page.equals(currentPage))
+            setupPage();
     }
 
     @Override
@@ -187,6 +250,12 @@ public class RootConfigPanel extends MPanelScaledGUI {
     @Override
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
+        rePlaceElements();
+    }
+
+    @Override
+    public void setScale(double scale) {
+        super.setScale(scale);
         rePlaceElements();
     }
 
