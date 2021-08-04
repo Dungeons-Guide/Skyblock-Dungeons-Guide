@@ -143,9 +143,8 @@ public class MParameterEdit extends MPanel {
     @Override
     public Dimension getPreferredSize() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        int descriptionHeight = fr.listFormattedStringToWidth(featureParameter.getDescription(), 2*bounds.width /3-10).size() * fr.FONT_HEIGHT;
-
-        return new Dimension(100, Math.max(Math.max(30, descriptionHeight + 23), valueEditHolder.getPreferredSize().height));
+        int descriptionHeight = fr.listFormattedStringToWidth(featureParameter.getDescription(), Math.max(50, 2*bounds.width/3-10)).size() * fr.FONT_HEIGHT;
+        return new Dimension(100, Math.max(30, descriptionHeight + 23));
     }
 
     @Override

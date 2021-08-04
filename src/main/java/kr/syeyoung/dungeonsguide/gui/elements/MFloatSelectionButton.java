@@ -75,6 +75,11 @@ public class MFloatSelectionButton extends MPanel {
         });
     }
 
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(-1,15);
+    }
+
     public float getSelected() {
         return data;
     }

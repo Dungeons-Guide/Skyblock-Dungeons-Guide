@@ -71,6 +71,12 @@ public class MIntegerSelectionButton extends MPanel {
         });
     }
 
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(-1,15);
+    }
+
     public int getSelected() {
         return data;
     }

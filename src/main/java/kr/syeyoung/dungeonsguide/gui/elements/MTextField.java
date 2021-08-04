@@ -58,6 +58,12 @@ public class MTextField extends MPanel {
     public void edit(String str) {
         
     }
+
+
+    @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(-1,15);
+    }
     
     public void setText(String text) {
         this.text = text;

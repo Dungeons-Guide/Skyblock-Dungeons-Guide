@@ -75,6 +75,11 @@ public class MToggleButton extends MPanel {
     }
 
     @Override
+    public Dimension getPreferredSize() {
+        return new Dimension(40,15);
+    }
+
+    @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (onToggle != null && lastAbsClip.contains(absMouseX, absMouseY)  && getTooltipsOpen() == 0) {
             enabled = !enabled;
