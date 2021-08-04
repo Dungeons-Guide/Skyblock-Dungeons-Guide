@@ -44,6 +44,7 @@ public class MPanel {
     protected Rectangle lastAbsClip = new Rectangle(0,0,0,0);
 
     @Getter(AccessLevel.PUBLIC)
+    @Setter
     protected boolean isFocused;
 
     @Getter

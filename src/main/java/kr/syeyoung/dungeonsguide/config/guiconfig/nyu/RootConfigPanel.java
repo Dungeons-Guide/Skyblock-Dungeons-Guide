@@ -141,6 +141,8 @@ public class RootConfigPanel extends MPanelScaledGUI {
 
         setCurrentPageAndPushHistory("ROOT");
         rePlaceElements();
+
+        search.setFocused(true);
     }
 
 
