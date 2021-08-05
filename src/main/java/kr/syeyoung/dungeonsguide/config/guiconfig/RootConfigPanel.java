@@ -263,7 +263,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
 
 
         FontRenderer fr  = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("DungeonsGuide by syeyoung", (effectiveDim.width - fr.getStringWidth("DungeonsGuide By syeyoung"))/2, (25 - fr.FONT_HEIGHT)/2, 0xFF02EE67);
+        fr.drawString("DungeonsGuide By syeyoung", (effectiveDim.width - fr.getStringWidth("DungeonsGuide By syeyoung"))/2, (25 - fr.FONT_HEIGHT)/2, 0xFF02EE67);
     }
 
     @Override
