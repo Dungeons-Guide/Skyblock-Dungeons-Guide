@@ -16,25 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.config.guiconfig.nyu;
+package kr.syeyoung.dungeonsguide.config.guiconfig;
 
-import com.google.common.base.Function;
-import com.google.common.base.Supplier;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import org.jetbrains.annotations.Nullable;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import org.lwjgl.opengl.GL11;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.awt.*;
 
-public class ConfigPanelCreator implements Function<String, MPanel> {
-    public static final ConfigPanelCreator INSTANCE = new ConfigPanelCreator();
-
-    public static final Map<String, Supplier<MPanel>> map = new HashMap<String, Supplier<MPanel>>();
-
-    @Nullable
+public class MNotFound extends MPanel {
     @Override
-    public MPanel apply(@Nullable String input) {
-        if (!map.containsKey(input)) return null;
-        return map.get(input).get();
+    public void resize(int parentWidth, int parentHeight) {
+        setBounds(new Rectangle(0,0,parentWidth,parentHeight));
+    }
+
+    @Override
+    public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        fr.drawString("404 Not Found", (getBounds().width - fr.getStringWidth("404 Not Found")) / 2, (getBounds().height - fr.FONT_HEIGHT) / 2, -1);
     }
 }

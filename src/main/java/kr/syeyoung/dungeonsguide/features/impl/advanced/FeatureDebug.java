@@ -19,11 +19,10 @@
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
 import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MParameterEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
+import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;

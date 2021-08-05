@@ -20,22 +20,18 @@ package kr.syeyoung.dungeonsguide.features.text;
 
 import com.google.common.base.Supplier;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.MParameterEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.config.types.TypeConverter;
-import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.gui.elements.MStringSelectionButton;
-import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 

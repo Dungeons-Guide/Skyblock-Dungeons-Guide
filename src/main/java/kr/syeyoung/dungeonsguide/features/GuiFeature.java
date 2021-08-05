@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.features;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;

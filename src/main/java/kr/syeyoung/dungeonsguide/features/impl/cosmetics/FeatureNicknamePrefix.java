@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.cosmetics;
 
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 
