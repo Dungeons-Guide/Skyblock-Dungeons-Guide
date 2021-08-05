@@ -121,7 +121,7 @@ public class MPanel {
         int relMousey = relMousey0 - getBounds().y;
 
         GlStateManager.translate(getBounds().x, getBounds().y, 5);
-        GlStateManager.color(1,1,1,0);
+        GlStateManager.color(1,1,1,1);
 
 
         Rectangle absBound = getBounds().getBounds();
@@ -134,16 +134,13 @@ public class MPanel {
 
         this.scale = scale;
         clip(clip.x, clip.y, clip.width, clip.height);
-        GlStateManager.pushAttrib();
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        GlStateManager.pushAttrib();
         GuiScreen.drawRect(0,0, getBounds().width, getBounds().height,  backgroundColor.getRGB());
         GlStateManager.enableBlend();
-        GlStateManager.popAttrib();
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.enableBlend();
@@ -151,7 +148,6 @@ public class MPanel {
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
-        GlStateManager.popAttrib();
         GlStateManager.popMatrix();
         if (debug && lastAbsClip.contains(absMousex, absMousey)) {
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
@@ -160,15 +156,12 @@ public class MPanel {
         }
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.popAttrib();
 
         Point newPt = new Point(parentPoint.x + getBounds().x, parentPoint.y + getBounds().y);
 
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
             mPanel.render0(scale, newPt, clip, absMousex, absMousey, relMousex, relMousey, partialTicks);
-            GlStateManager.popAttrib();
             GlStateManager.popMatrix();
         }
     }

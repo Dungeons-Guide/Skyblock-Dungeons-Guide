@@ -144,7 +144,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
 
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+
             GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
             GlStateManager.colorMask(false, false, false, false);
@@ -152,7 +152,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             GlStateManager.colorMask(true, true, true, true);
 
             GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
+
 
             GL11.glStencilFunc(GL11.GL_EQUAL, 1, 0xFF);
             GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
@@ -172,7 +172,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
                 GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
                 GlStateManager.pushMatrix();
-                GlStateManager.pushAttrib();
+
                 GlStateManager.translate(-x_fix, -y_fix, -z_fix);
                 GlStateManager.translate(x, y + 0.7, z);
                 GlStateManager.scale(1.1f, 1.1f, 1.1f);
@@ -182,7 +182,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 GlStateManager.colorMask(true, true, true, true);
 
                 GlStateManager.popMatrix();
-                GlStateManager.popAttrib();
+
 
 
                 GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);

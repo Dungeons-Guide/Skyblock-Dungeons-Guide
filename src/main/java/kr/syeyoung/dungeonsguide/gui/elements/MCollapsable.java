@@ -88,7 +88,7 @@ public class MCollapsable extends MPanel {
 
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.enableBlend();
@@ -105,7 +105,7 @@ public class MCollapsable extends MPanel {
 
         fr.drawString(">", 0,0, -1);
 
-        GlStateManager.popAttrib();
+
         GlStateManager.popMatrix();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }

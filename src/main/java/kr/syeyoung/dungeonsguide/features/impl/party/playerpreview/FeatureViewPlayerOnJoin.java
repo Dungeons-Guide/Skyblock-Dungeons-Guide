@@ -348,7 +348,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             int ry = relY - startY;
 
 
-            GlStateManager.pushAttrib();
+
             GlStateManager.disableRescaleNormal();
             RenderHelper.enableGUIStandardItemLighting();
             GlStateManager.disableLighting();
@@ -364,7 +364,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
                 Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.get().getInventory()[(i+9) % 36], (i%9) * 18+1,(i/9) * 18+1);
             }
-            GlStateManager.popAttrib();
+
             if (toHover != null) {
                 List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
                 for (int i = 0; i < list.size(); ++i) {

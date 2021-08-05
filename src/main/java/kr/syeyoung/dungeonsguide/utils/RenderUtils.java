@@ -373,7 +373,7 @@ public class RenderUtils {
         double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
 //because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
 
-        GlStateManager.pushAttrib();
+
         GlStateManager.pushMatrix();
         GlStateManager.translate(-playerX, -playerY, -playerZ);
         GlStateManager.disableTexture2D();
@@ -436,7 +436,7 @@ public class RenderUtils {
         GlStateManager.enableTexture2D();
         GlStateManager.enableCull();
 
-        GlStateManager.popAttrib();
+
         GlStateManager.popMatrix();
 
     }
@@ -578,7 +578,7 @@ public class RenderUtils {
         double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
         GlStateManager.disableLighting();
@@ -638,7 +638,7 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+
 
 
 //...
@@ -653,7 +653,7 @@ public class RenderUtils {
         double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
         GlStateManager.disableLighting();
@@ -731,7 +731,7 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+
     }
 
     public static void highlightBox(Entity entity, AxisAlignedBB  axisAlignedBB, Color c, float partialTicks, boolean depth) {
@@ -742,7 +742,7 @@ public class RenderUtils {
         double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
         GlStateManager.disableLighting();
@@ -819,7 +819,7 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+
     }
     public static void highlightBox(Entity entity, Color c, float partialTicks, boolean depth) {
         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
@@ -829,7 +829,7 @@ public class RenderUtils {
         double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
         GlStateManager.disableLighting();
@@ -905,7 +905,7 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+
 
 
 //...
@@ -920,7 +920,7 @@ public class RenderUtils {
         double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
         GlStateManager.translate(-x_fix, -y_fix, -z_fix);
 
         GlStateManager.disableLighting();
@@ -999,7 +999,7 @@ public class RenderUtils {
         GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
-        GlStateManager.popAttrib();
+
 
 
 //...

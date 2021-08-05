@@ -77,7 +77,7 @@ public class ActionTreeDisplayPane extends MPanel {
             Point pt = drawmPoints.get(actionTree);
 
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+
             GlStateManager.enableBlend();
             GlStateManager.disableDepth();
             GlStateManager.disableTexture2D();
@@ -94,14 +94,14 @@ public class ActionTreeDisplayPane extends MPanel {
             GlStateManager.enableDepth();
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
+
             return 0;
         }
 
         Dimension dim = renderAction(actionTree.getCurrent(), x, y, fr);
         if (drawLineFrom != null) {
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+
 
             GlStateManager.enableBlend();
             GlStateManager.disableDepth();
@@ -119,7 +119,7 @@ public class ActionTreeDisplayPane extends MPanel {
             GlStateManager.enableDepth();
             GlStateManager.disableBlend();
             GlStateManager.popMatrix();
-            GlStateManager.popAttrib();
+
         }
         Point pt = new Point(x + dim.width / 2, y + dim.height);
 
@@ -139,7 +139,7 @@ public class ActionTreeDisplayPane extends MPanel {
             Dimension dim = renderAction(action, x, y2, fr);
             if (lastPt != null) {
                 GlStateManager.pushMatrix();
-                GlStateManager.pushAttrib();
+
 
                 GlStateManager.enableBlend();
                 GlStateManager.disableDepth();
@@ -157,7 +157,7 @@ public class ActionTreeDisplayPane extends MPanel {
                 GlStateManager.enableDepth();
                 GlStateManager.disableBlend();
                 GlStateManager.popMatrix();
-                GlStateManager.popAttrib();
+
             }
             lastPt = new Point(x + dim.width / 2, y2 + dim.height);
 

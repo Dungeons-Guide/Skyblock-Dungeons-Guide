@@ -32,12 +32,11 @@ import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
-import kr.syeyoung.dungeonsguide.features.impl.party.FeatureGoodParties;
 import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPartyFinder;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureFreezePathfind;
-import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureMechanicBrowse;
+import kr.syeyoung.dungeonsguide.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
 import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureSoulRoomWarning;
 import lombok.Getter;
 

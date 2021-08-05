@@ -61,21 +61,15 @@ public class MGui extends GuiScreen {
             int j = this.mc.displayHeight - Mouse.getEventY();
             ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
-            GlStateManager.disableLighting();
-            GlStateManager.disableFog();
             GlStateManager.disableDepth();
-            GL11.glDisable(GL11.GL_FOG);
             GlStateManager.enableBlend();
             GlStateManager.enableAlpha();
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.scale(1.0/scaledResolution.getScaleFactor(), 1.0/scaledResolution.getScaleFactor(), 1.0d);
             mainPanel.render0(1, new Point(0,0), new Rectangle(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
-            GlStateManager.popAttrib();
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();
-            GlStateManager.enableLighting();
         } catch (Throwable e) {
             e.printStackTrace();
         }

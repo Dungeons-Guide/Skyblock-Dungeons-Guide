@@ -65,7 +65,7 @@ public class MPanelScaledGUI extends MPanel {
         lastParentPoint = parentPoint;
 
         GlStateManager.translate(getBounds().x, getBounds().y, 5);
-        GlStateManager.color(1,1,1,0);
+        GlStateManager.color(1,1,1,1);
 
         Rectangle absBound = getBounds().getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
@@ -92,16 +92,16 @@ public class MPanelScaledGUI extends MPanel {
         clip(clip.x, clip.y, clip.width, clip.height);
 
 
-        GlStateManager.pushAttrib();
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
-        GlStateManager.pushAttrib();
+
         GuiScreen.drawRect(0,0, (int) (getBounds().width / scale), (int) (getBounds().height / scale),  backgroundColor.getRGB());
         GlStateManager.enableBlend();
-        GlStateManager.popAttrib();
+
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
 
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.enableBlend();
@@ -109,20 +109,20 @@ public class MPanelScaledGUI extends MPanel {
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
 
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
-        GlStateManager.popAttrib();
+
         GlStateManager.popMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.popAttrib();
+
 
 
         Point newPt = new Point((int) ((parentPoint.x + getBounds().x) / scale), (int) ((parentPoint.y + getBounds().y) / scale));
 
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+
             mPanel.render0(relativeScale, newPt,clip,absMousex, absMousey, relMousex, relMousey, partialTicks);
-            GlStateManager.popAttrib();
+
             GlStateManager.popMatrix();
         }
     }
@@ -131,7 +131,7 @@ public class MPanelScaledGUI extends MPanel {
     public void clip(int x, int y, int width, int height) {
         if (width < 0 || height < 0) return;
 
-        GL11.glScissor((int) (x  * relativeScale), Minecraft.getMinecraft().displayHeight - (int) ((y + height) * relativeScale), (int)(width* relativeScale), (int) (height * relativeScale));
+        GL11.glScissor((int) (x  * relativeScale), Minecraft.getMinecraft().displayHeight - (int) ((y + height+1) * relativeScale), (int)((width+1)* relativeScale), (int) ((height+1) * relativeScale));
     }
 
     @Override

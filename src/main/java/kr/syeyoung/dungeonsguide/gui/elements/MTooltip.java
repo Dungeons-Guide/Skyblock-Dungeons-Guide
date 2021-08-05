@@ -33,6 +33,7 @@ public class MTooltip extends MPanelScaledGUI {
     private MRootPanel root;
 
     public void open(MPanel component) {
+        if (root == null)
         component.openTooltip(this);
     }
     public void close() {
@@ -55,7 +56,7 @@ public class MTooltip extends MPanelScaledGUI {
         lastParentPoint = parentPoint;
 
         GlStateManager.translate(getBounds().x, getBounds().y, 300);
-        GlStateManager.color(1,1,1,0);
+        GlStateManager.color(1,1,1,1);
 
         Rectangle absBound = getBounds().getBounds();
         absBound.setLocation(absBound.x + parentPoint.x, absBound.y + parentPoint.y);
@@ -74,33 +75,33 @@ public class MTooltip extends MPanelScaledGUI {
         GlStateManager.scale(this.scale, this.scale, 1);
         clip = new Rectangle((int) (clip.x / scale), (int) (clip.y / scale), (int) (clip.width / scale), (int) (clip.height / scale));
         lastAbsClip = clip;
-        GlStateManager.pushAttrib();
+
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         this.relativeScale = parentScale * this.scale;
         clip(clip.x, clip.y, clip.width, clip.height);
 
-        GlStateManager.pushAttrib();
+
         GuiScreen.drawRect(0,0, (int) (getBounds().width / scale), (int) (getBounds().height / scale),  backgroundColor.getRGB());
         GlStateManager.enableBlend();
-        GlStateManager.popAttrib();
+
 
         GlStateManager.pushMatrix();
-        GlStateManager.pushAttrib();
+
         render(absMousex, absMousey, relMousex, relMousey, partialTicks, clip);
-        GlStateManager.popAttrib();
+
         GlStateManager.popMatrix();
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.popAttrib();
+
 
 
         Point newPt = new Point((int) ((parentPoint.x + getBounds().x) / scale), (int) ((parentPoint.y + getBounds().y) / scale));
 
         for (MPanel mPanel : getChildComponents()){
             GlStateManager.pushMatrix();
-            GlStateManager.pushAttrib();
+
             mPanel.render0(relativeScale, newPt,clip,absMousex, absMousey, relMousex, relMousey, partialTicks);
-            GlStateManager.popAttrib();
+
             GlStateManager.popMatrix();
         }
     }

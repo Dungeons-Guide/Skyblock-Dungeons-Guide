@@ -209,7 +209,7 @@ public class PartyInviteViewer {
                 if (loadedImage.getResourceLocation() == null) loadedImage.buildGLThings();
                 TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
                 textureManager.bindTexture(loadedImage.getResourceLocation());
-                GlStateManager.pushAttrib();
+
 
                 GlStateManager.disableLighting();
                 GlStateManager.color(1, 1, 1, 1.0F);
@@ -222,7 +222,7 @@ public class PartyInviteViewer {
                 GlStateManager.enableLighting();
                 GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
                 GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-                GlStateManager.popAttrib();
+
             } else {
                 Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
             }

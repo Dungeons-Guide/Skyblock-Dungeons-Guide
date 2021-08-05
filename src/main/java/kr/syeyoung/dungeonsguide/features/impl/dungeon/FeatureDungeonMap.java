@@ -189,7 +189,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         if (this.<Boolean>getParameter("showtotalsecrets").getValue()) {
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 GlStateManager.pushMatrix();
-                GlStateManager.pushAttrib();
+
                 Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
                 GlStateManager.translate(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2, 0);
 
@@ -218,7 +218,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED ? 0xFF00FF00 : (dungeonRoom.getColor() == 74 ? 0xff000000 : 0xFFFFFFFF));
-                GlStateManager.popAttrib();
+
                 GlStateManager.popMatrix();
             }
         }
