@@ -21,6 +21,8 @@ package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
@@ -31,6 +33,10 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
     public FeatureCustomPartyFinder() {
         super("Party","Custom Party Finder","Custom Party Finder", "party.customfinder", true);
     }
+
+    @Getter
+    @Setter
+    private String whitelist = "", blacklist = "", highlight ="";
 
     GuiCustomPartyFinder guiCustomPartyFinder;
     @Override

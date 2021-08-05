@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
 import lombok.Getter;
@@ -80,15 +81,27 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
                 @Override
                 public void edit(String str) {
                     panelPartyFinder.onChestUpdate(null);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setWhitelist(str);
                 }
             };
             filterBlacklist = new MTextField() {
                 @Override
                 public void edit(String str) {
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklist(str);
                     panelPartyFinder.onChestUpdate(null);
                 }
             };
-            highlightNote = new MTextField();
+            highlightNote = new MTextField() {
+                @Override
+                public void edit(String str) {
+                    super.edit(str);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setHighlight(str);
+                }
+            };
+
+            filterWhitelist.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getWhitelist());
+            filterBlacklist.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getBlacklist());
+            highlightNote.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getHighlight());
 
             filterWhitelistNote = new MPassiveLabelAndElement("Whitelist Note", filterWhitelist);
             filterBlacklistNote = new MPassiveLabelAndElement("Blacklist Note", filterBlacklist);
