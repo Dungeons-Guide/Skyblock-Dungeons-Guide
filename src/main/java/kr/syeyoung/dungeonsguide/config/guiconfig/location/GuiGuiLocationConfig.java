@@ -25,8 +25,12 @@ import kr.syeyoung.dungeonsguide.gui.MGui;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.Vec3;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
@@ -112,6 +116,22 @@ public class GuiGuiLocationConfig extends MGui {
         }
     }
 
+    @Override
+    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+        GlStateManager.pushMatrix();
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        GlStateManager.translate(scaledResolution.getScaledWidth()/2, scaledResolution.getScaledHeight()/2, 0);
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.color(1, 1, 1, 1);
+        fr.drawString("Right Click On Elements to Open Popup Menu",
+                -fr.getStringWidth("Right Click On Elements to Open Popup Menu")/2
+                ,-fr.FONT_HEIGHT/2, -1);
+        GlStateManager.popMatrix();
+        super.drawScreen(mouseX, mouseY, partialTicks);
+    }
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
