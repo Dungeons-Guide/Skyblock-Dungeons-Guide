@@ -18,17 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
+import kr.syeyoung.dungeonsguide.config.guiconfig.nyu.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
-import kr.syeyoung.dungeonsguide.gui.elements.MList;
-import kr.syeyoung.dungeonsguide.gui.elements.MScrollablePanel;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
@@ -55,8 +55,12 @@ public class PanelPartyFinder extends MPanel {
     private MList list;
 
     private MButton goBack;
+
+    private MPanelScaledGUI navigation;
+
     private MButton previous;
     private MButton next;
+    private MButton settings;
     private int page = 1;
 
     private Map<Integer, PanelPartyListElement> panelPartyListElementMap = new HashMap<>();
@@ -66,6 +70,7 @@ public class PanelPartyFinder extends MPanel {
 
         scrollablePanel = new MScrollablePanel(1);
         panelPartyFinderSettings = new PanelPartyFinderSettings(this);
+
 
         list = new MList() {
             @Override
@@ -99,7 +104,35 @@ public class PanelPartyFinder extends MPanel {
             GuiChest chest = getGuiCustomPartyFinder().getGuiChest();
             Minecraft.getMinecraft().playerController.windowClick(chest.inventorySlots.windowId, 9*5+3, 0, 0, Minecraft.getMinecraft().thePlayer);
         });
-        add(previous); add(next); add(goBack);
+        add(goBack);
+        settings = new MButton();
+        settings.setBackground(RenderUtils.blendAlpha(0xFF141414, 0.05f));
+        settings.setText("Settings");
+        settings.setOnActionPerformed(() -> {
+            GuiConfigV2 guiConfigV2 = new GuiConfigV2();
+            guiConfigV2.getRootConfigPanel().setCurrentPageAndPushHistory("ROOT."+ FeatureRegistry.PARTYKICKER_CUSTOM.getCategory());
+            Minecraft.getMinecraft().displayGuiScreen(guiConfigV2);
+        });
+        add(settings);
+        navigation = new MPanelScaledGUI() {
+            @Override
+            public void onBoundsUpdate() {
+                super.onBoundsUpdate();
+                Dimension dimension = getEffectiveDimension();
+                previous.setBounds(new Rectangle(0,0,50,dimension.height));
+                next.setBounds(new Rectangle(dimension.width-50,0,50,dimension.height));
+            }
+
+            @Override
+            public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
+                super.render(absMousex, absMousey, relMousex0, relMousey0, partialTicks, scissor);
+                FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+                Gui.drawRect(0,0,getEffectiveDimension().width, getEffectiveDimension().height, RenderUtils.blendAlpha(0xFF141414, 0.08f));
+                fr.drawString("Page "+page, (getEffectiveDimension().width-fr.getStringWidth("Page "+page))/2, (getEffectiveDimension().height-fr.FONT_HEIGHT)/2, -1);
+            }
+        };
+        navigation.add(next); navigation.add(previous);
+        add(navigation);
     }
 
     public String getHighlightNote() {
@@ -110,12 +143,15 @@ public class PanelPartyFinder extends MPanel {
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        scrollablePanel.setBounds(new Rectangle(0, fr.FONT_HEIGHT*2+41, 2*bounds.width/3, bounds.height - fr.FONT_HEIGHT*2-41));
-        panelPartyFinderSettings.setBounds(new Rectangle(2*bounds.width/3+1, fr.FONT_HEIGHT*2+21, bounds.width/3 -1, (bounds.height-fr.FONT_HEIGHT*2-21)));
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        panelPartyFinderSettings.setBounds(new Rectangle(3*bounds.width/5+1, fr.FONT_HEIGHT*2+21, 2*bounds.width/5 -1, (bounds.height-fr.FONT_HEIGHT*2-21)));
+        panelPartyFinderSettings.setScale(scaledResolution.getScaleFactor());
 
-        previous.setBounds(new Rectangle(0, fr.FONT_HEIGHT*2+21, 50, 20));
-        next.setBounds(new Rectangle(2*bounds.width/3-50, fr.FONT_HEIGHT*2+21, 50, 20));
+        navigation.setBounds(new Rectangle(0,fr.FONT_HEIGHT*2 + 21, 3*bounds.width/5, 20*scaledResolution.getScaleFactor()));
+        navigation.setScale(scaledResolution.getScaleFactor());
+        scrollablePanel.setBounds(new Rectangle(0, navigation.getBounds().y+navigation.getBounds().height, 3*bounds.width/5, bounds.height - (navigation.getBounds().y+navigation.getBounds().height)));
         goBack.setBounds(new Rectangle(0,0, fr.FONT_HEIGHT*2+20, fr.FONT_HEIGHT*2+20));
+        settings.setBounds(new Rectangle(bounds.width - 75, 0, 75, fr.FONT_HEIGHT*2+20));
     }
 
     @Override
@@ -129,14 +165,12 @@ public class PanelPartyFinder extends MPanel {
         Gui.drawRect(0,fr.FONT_HEIGHT*2+20,getBounds().width, fr.FONT_HEIGHT*2+21, -1);
         Gui.drawRect(panelPartyFinderSettings.getBounds().x-1,fr.FONT_HEIGHT*2+20,panelPartyFinderSettings.getBounds().x, getBounds().height, -1);
         // prev next bar
-        Gui.drawRect(0,fr.FONT_HEIGHT*2+21,scrollablePanel.getBounds().width, fr.FONT_HEIGHT*2+41, RenderUtils.blendAlpha(0xFF141414, 0.08f));
 
         GlStateManager.pushMatrix();
             GlStateManager.translate(fr.FONT_HEIGHT*2+21, 0,0);
             GlStateManager.scale(2,2,1);
             fr.drawString("Party Finder", 5,5,-1);
         GlStateManager.popMatrix();
-        fr.drawString("Page "+page, (scrollablePanel.getBounds().width-fr.getStringWidth("Page "+page))/2, (20-fr.FONT_HEIGHT)/2 + fr.FONT_HEIGHT*2+21, -1);
    }
 
     public synchronized void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {

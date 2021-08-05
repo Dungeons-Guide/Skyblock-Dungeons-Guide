@@ -31,7 +31,7 @@ import java.awt.*;
 public class MPanelScaledGUI extends MPanel {
     @Getter
     protected double scale = 1.0;
-
+    @Getter
     protected double relativeScale;
 
     public void setScale(double scale) {

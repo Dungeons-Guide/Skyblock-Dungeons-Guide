@@ -39,6 +39,6 @@ public class MTooltipText extends MTooltip {
 
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-        GuiUtils.drawHoveringText(tooltipText, relMousex0, relMousey0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
+        GuiUtils.drawHoveringText(tooltipText, relMousex0, relMousey0, (int) (Minecraft.getMinecraft().displayWidth/getRelativeScale()), (int) (Minecraft.getMinecraft().displayHeight/getRelativeScale()), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 }

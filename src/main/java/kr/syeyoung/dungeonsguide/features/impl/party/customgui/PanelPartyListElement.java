@@ -22,9 +22,11 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltipText;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -158,7 +160,9 @@ public class PanelPartyListElement extends MPanel {
                     list.set(i, EnumChatFormatting.GRAY + list.get(i));
                 }
             }
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
             mTooltip = new MTooltipText(list);
+            mTooltip.setScale(scaledResolution.getScaleFactor());
             mTooltip.open(this);
         } else if (!lastAbsClip.contains(absMousex, absMousey)){
             if (mTooltip != null)
@@ -190,5 +194,12 @@ public class PanelPartyListElement extends MPanel {
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
         clicked = false;
+    }
+
+    @Override
+    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        if (lastAbsClip.contains(absMouseX, absMouseY)) {
+            setCursor(EnumCursor.POINTING_HAND);
+        }
     }
 }

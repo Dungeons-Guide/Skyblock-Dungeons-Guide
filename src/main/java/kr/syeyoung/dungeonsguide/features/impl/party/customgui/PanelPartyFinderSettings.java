@@ -19,10 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.gui.elements.MTextField;
-import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
+import kr.syeyoung.dungeonsguide.gui.elements.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -40,7 +37,7 @@ import net.minecraft.util.EnumChatFormatting;
 import java.awt.*;
 import java.util.List;
 
-public class PanelPartyFinderSettings extends MPanel {
+public class PanelPartyFinderSettings extends MPanelScaledGUI {
     private PanelPartyFinder panelPartyFinder;
 
     private MButton refresh = new MButton(), createNew = new MButton(), settings = new MButton();
@@ -95,7 +92,7 @@ public class PanelPartyFinderSettings extends MPanel {
 
             filterWhitelistNote = new MPassiveLabelAndElement("Whitelist Note", filterWhitelist);
             filterBlacklistNote = new MPassiveLabelAndElement("Blacklist Note", filterBlacklist);
-            plaeHighlightNote = new MPassiveLabelAndElement("Highlight Note (Regex)", highlightNote);
+            plaeHighlightNote = new MPassiveLabelAndElement("Highlight Note", highlightNote);
 
             filterWhitelistNote.setDivideRatio(0.5);
             filterBlacklistNote.setDivideRatio(0.5);
@@ -185,8 +182,8 @@ public class PanelPartyFinderSettings extends MPanel {
     }
 
     @Override
-    public void setBounds(Rectangle bounds) {
-        super.setBounds(bounds);
+    public void onBoundsUpdate() {
+        Dimension bounds = getEffectiveDimension();
         refresh.setBounds(new Rectangle(5,5,(bounds.width-10)/2,20));
         createNew.setBounds(new Rectangle(bounds.width/2,5,(bounds.width-10)/2,20));
         filterCantjoin.setBounds(new Rectangle(5,30,bounds.width-10,20));
