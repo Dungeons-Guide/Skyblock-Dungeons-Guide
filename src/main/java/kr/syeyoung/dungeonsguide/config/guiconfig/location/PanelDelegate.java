@@ -316,6 +316,7 @@ public class PanelDelegate extends MPanel {
         } else if (getTooltipsOpen() == 0){
             if (mTooltip != null) mTooltip.close();
             mTooltip = new MPopupMenu(absMouseX, absMouseY, guiFeature.getTooltipForEditor(guiGuiLocationConfig));
+            mTooltip.setScale(2.0f);
             mTooltip.open(this);
         }
         throw new IllegalArgumentException("bruh, a hack to stop event progress");

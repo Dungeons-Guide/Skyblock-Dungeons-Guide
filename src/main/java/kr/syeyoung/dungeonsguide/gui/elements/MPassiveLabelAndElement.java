@@ -46,7 +46,7 @@ public class MPassiveLabelAndElement extends MPanel {
 
     @Override
     public Dimension getPreferredSize() {
-        return new Dimension(200, 30);
+        return new Dimension(100, 20);
     }
 
     @Override

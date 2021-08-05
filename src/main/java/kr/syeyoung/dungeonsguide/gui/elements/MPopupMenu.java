@@ -33,7 +33,9 @@ import java.awt.*;
 import java.util.List;
 
 public class MPopupMenu extends MTooltip {
+    private int x, y;
     public MPopupMenu(int x, int y, List<MPanel> popupMenuElementList) {
+        this.x = x; this.y = y;
         int maxWidth = 150;
         for (MPanel mPanel : popupMenuElementList) {
             Dimension dimension = mPanel.getPreferredSize();
@@ -55,14 +57,40 @@ public class MPopupMenu extends MTooltip {
     }
 
     @Override
+    public void setScale(double scale) {
+        super.setScale(scale);
+
+        int maxWidth = 150;
+        for (MPanel mPanel : getChildComponents()) {
+            Dimension dimension = mPanel.getPreferredSize();
+            if (dimension.width > maxWidth) maxWidth = dimension.width;
+        }
+        int h1 = 7;
+        for (MPanel mPanel :  getChildComponents()) {
+            Dimension dimension = mPanel.getPreferredSize();
+            mPanel.setBounds(new Rectangle(7,h1, maxWidth-13, dimension.height));
+            h1 += dimension.height + 7;
+        }
+        maxWidth += 2;
+        maxWidth *= scale; h1 *= scale;
+
+        if (y + h1 > Minecraft.getMinecraft().displayHeight)
+            y = Minecraft.getMinecraft().displayHeight - h1;
+        if (x + maxWidth > Minecraft.getMinecraft().displayWidth)
+            x = Minecraft.getMinecraft().displayWidth - maxWidth;
+        setBounds(new Rectangle(x,y,maxWidth, h1));
+    }
+
+    @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         super.render(absMousex, absMousey, relMousex0, relMousey0, partialTicks, scissor);
         int radius = 7;
         double deltaDegree = Math.PI/6;
-        RenderUtils.drawRoundedRectangle(0,0,getBounds().width,getBounds().height,radius,deltaDegree, RenderUtils.blendAlpha(0x121212, 0.0f));
+        Dimension effectiveDim = getEffectiveDimension();
+        RenderUtils.drawRoundedRectangle(0,0,effectiveDim.width,effectiveDim.height,radius,deltaDegree, RenderUtils.blendAlpha(0x121212, 0.0f));
         for (int i = 1; i < getChildComponents().size(); i++) {
             MPanel childComponent = getChildComponents().get(i);
-            Gui.drawRect(7,childComponent.getBounds().y - 4, getBounds().width-7, childComponent.getBounds().y - 3, RenderUtils.blendAlpha(0x121212, 0.10f));
+            Gui.drawRect(7,childComponent.getBounds().y - 4, effectiveDim.width-7, childComponent.getBounds().y - 3, RenderUtils.blendAlpha(0x121212, 0.10f));
         }
     }
 

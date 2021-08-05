@@ -126,7 +126,7 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
 
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(Minecraft.getMinecraft().fontRendererObj.getStringWidth(getName()), 30);
+                return new Dimension(Minecraft.getMinecraft().fontRendererObj.getStringWidth(getName()), 20);
             }
         });
         mPanels.add(new MButton() {
@@ -146,7 +146,7 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
 
             @Override
             public Dimension getPreferredSize() {
-                return new Dimension(150,30);
+                return new Dimension(100,20);
             }
         });
         mPanels.add(new MPassiveLabelAndElement("Enabled", new MToggleButton() {{
