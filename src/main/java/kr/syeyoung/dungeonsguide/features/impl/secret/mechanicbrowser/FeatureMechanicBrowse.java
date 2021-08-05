@@ -134,6 +134,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+        if (!isEnabled()) return;
         try {
             mGuiMechanicBrowser.handleMouseInput();
         } catch (IOException e) {
@@ -144,6 +145,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
 
     @Override
     public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
+        if (!isEnabled()) return;
         int i = Mouse.getEventX();
         int j = Minecraft.getMinecraft().displayHeight - Mouse.getEventY();
         mGuiMechanicBrowser.drawScreen(i, j, rendered.renderPartialTicks);
