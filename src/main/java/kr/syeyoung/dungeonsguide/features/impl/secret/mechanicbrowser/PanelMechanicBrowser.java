@@ -264,7 +264,8 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
         }
         mechanicBrowserTooltip.setScale(getScale());
         Dimension prefSize = mechanicBrowserTooltip.getPreferredSize();
-        mechanicBrowserTooltip.setBounds(new Rectangle(bounds.x + bounds.width, latestTooltipDY + bounds.y, prefSize.width, prefSize.height));
+        mechanicBrowserTooltip.setBounds(new Rectangle(bounds.x +
+                (bounds.x > Minecraft.getMinecraft().displayWidth/2 ? -prefSize.width : bounds.width), latestTooltipDY + bounds.y, prefSize.width, prefSize.height));
         mechanicBrowserTooltip.open(this);
     }
 
@@ -299,7 +300,7 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
         if (mechanicBrowserTooltip != null) {
             Dimension prefSize = mechanicBrowserTooltip.getPreferredSize();
             mechanicBrowserTooltip.setScale(getScale());
-            mechanicBrowserTooltip.setBounds(new Rectangle(bounds.x + bounds.width, latestTooltipDY + bounds.y, prefSize.width, prefSize.height));
+            mechanicBrowserTooltip.setBounds(new Rectangle(bounds.x + (bounds.x > Minecraft.getMinecraft().displayWidth/2 ? -prefSize.width: bounds.width), latestTooltipDY + bounds.y, prefSize.width, prefSize.height));
         }
     }
 
