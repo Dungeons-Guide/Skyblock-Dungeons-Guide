@@ -262,6 +262,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         fr.drawString("§eI", 83,161,-1);
         GlStateManager.color(1, 1, 1, 1.0F);
         if (fakePlayer != null) {
+            clip(scaledResolution, popupRect.x+2, popupRect.y+2, 86, 166);
             GuiInventory.drawEntityOnScreen(45, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
 
             String toDraw = fakePlayer.getName();
@@ -319,6 +320,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(popupRect.x, popupRect.y, 0);
             }
+            clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
         } else {
             GlStateManager.enableBlend();
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -332,8 +334,8 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             dataRendererToHover.onHover(playerProfile.get(), mouseX, mouseY);
         }
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.translate(popupRect.x, popupRect.y, 0);
         GlStateManager.pushMatrix();
+        GlStateManager.translate(popupRect.x, popupRect.y, 0);
 
         if (drawInv && playerProfile.get().getInventory() != null) {
             int startX = 81;
@@ -375,12 +377,10 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
                 }
                 FontRenderer font = toHover.getItem().getFontRenderer(toHover);
                 GlStateManager.popMatrix();
-                GlStateManager.popMatrix();
                 GL11.glDisable(GL11.GL_SCISSOR_TEST);
                 FontRenderer theRenderer = (font == null ? fr : font);
                 GuiUtils.drawHoveringText(list,mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
                 GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                GlStateManager.pushMatrix();
                 GlStateManager.pushMatrix();
             }
         }
