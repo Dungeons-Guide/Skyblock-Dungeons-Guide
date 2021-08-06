@@ -68,6 +68,30 @@ public class FeatureListener {
         }
     }
     @SubscribeEvent
+    public void onStomp(TextureStitchEvent.Pre textureStitchEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TextureStichListener) {
+                    ((TextureStichListener) abstractFeature).onTextureStitch(textureStitchEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onStomp(TextureStitchEvent.Post textureStitchEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TextureStichListener) {
+                    ((TextureStichListener) abstractFeature).onTextureStitch(textureStitchEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
     public void onWindowUpdate(WindowUpdateEvent windowUpdateEvent) {
         try {
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

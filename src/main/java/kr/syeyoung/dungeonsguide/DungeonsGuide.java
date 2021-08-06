@@ -175,6 +175,7 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(),"defaultResourcePacks", "aA", "field_110449_ao");
             resourcePackList.add(new DGTexturePack(authenticator));
+            Minecraft.getMinecraft().refreshResources();
         } catch (Throwable t){
             t.printStackTrace();
         }

@@ -18,58 +18,102 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
+import com.google.common.collect.ImmutableMap;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.PlayerRenderListener;
+import kr.syeyoung.dungeonsguide.features.listener.TextureStichListener;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.gui.Gui;
+import net.minecraft.client.renderer.EntityRenderer;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.block.model.BakedQuad;
 import net.minecraft.client.renderer.block.model.ItemCameraTransforms;
+import net.minecraft.client.renderer.texture.TextureMap;
+import net.minecraft.client.renderer.texture.TextureUtil;
+import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.client.resources.model.IBakedModel;
+import net.minecraft.client.resources.model.ModelManager;
+import net.minecraft.client.resources.model.ModelResourceLocation;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.ForgeHooksClient;
 import net.minecraftforge.client.event.RenderPlayerEvent;
+import net.minecraftforge.client.event.TextureStitchEvent;
+import net.minecraftforge.client.model.IModel;
+import net.minecraftforge.client.model.ModelLoader;
+import net.minecraftforge.client.model.ModelLoaderRegistry;
+import net.minecraftforge.client.model.obj.OBJLoader;
+import net.minecraftforge.client.model.obj.OBJModel;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
+
+import java.io.IOException;
+import java.util.List;
 
 
-public class FeaturePenguins extends SimpleFeature implements PlayerRenderListener {
+public class FeaturePenguins extends SimpleFeature implements PlayerRenderListener, TextureStichListener {
     public FeaturePenguins() {
         super("Misc", "Penguins", "Awwww", "etc.penguin", false);
+        OBJLoader.instance.addDomain("dungeonsguide");
+
+    }
+    @Override
+    public void onTextureStitch(TextureStitchEvent event) {
+        System.out.println("STICH!");
+        if (event instanceof TextureStitchEvent.Pre) {
+            objModel = null;
+            ResourceLocation modelResourceLocation = new ResourceLocation("dungeonsguide:models/penguin.obj");
+            try {
+                objModel = (OBJModel) OBJLoader.instance.loadModel(modelResourceLocation);
+                objModel = (OBJModel) objModel.process(new ImmutableMap.Builder<String, String>().put("flip-v", "true").build());
+                for (String obj : objModel.getMatLib().getMaterialNames()) {
+                    ResourceLocation resourceLocation = objModel.getMatLib().getMaterial(obj).getTexture().getTextureLocation();
+                    event.map.registerSprite(resourceLocation);
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        if (objModel != null && event instanceof TextureStitchEvent.Post) {
+            model = objModel.bake(objModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+        }
     }
 
 
+    private OBJModel objModel;
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    private final ResourceLocation penguin = new ResourceLocation("dungeonsguide:penguin.png");
+    private IBakedModel model;
 
     @Override
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
+
         if (!isEnabled()) return;
+        if (renderPlayerEvent.entityPlayer.isInvisible()) return;
         renderPlayerEvent.setCanceled(true);
         GlStateManager.pushMatrix();
+        GlStateManager.color(1,1,1,1);
         GlStateManager.translate(renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z);
-
-        GlStateManager.rotate(-renderPlayerEvent.renderer.getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
-
-        GlStateManager.translate(0.5,2,0);
-        GlStateManager.scale(-1,-1,-1);
-
         if (renderPlayerEvent.entityPlayer.isSneaking())
         {
-            GlStateManager.translate(0.0F, 0.203125F, 0.0F);
+            GlStateManager.translate(0.0F, -0.203125F, 0.0F);
         }
+        float f1 = renderPlayerEvent.entityPlayer.prevRotationYawHead + (renderPlayerEvent.entityPlayer.rotationYawHead - renderPlayerEvent.entityPlayer.prevRotationYawHead) * renderPlayerEvent.partialRenderTick;
+        GlStateManager.rotate(f1+180,0,-1,0);
+        Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
-        Minecraft.getMinecraft().getTextureManager().bindTexture(penguin);
-        GlStateManager.disableLighting();
-        GlStateManager.color(1f, 1f, 1f, 1f);
-        Gui.drawModalRectWithCustomSizedTexture(0,0,0,0,1,2,1,2);
-        GlStateManager.bindTexture(0);
-        GlStateManager.enableLighting();
+        Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(
+                model, 1,1,1,1
+        );
         GlStateManager.popMatrix();
+
 
         EntityPlayer entitylivingbaseIn = renderPlayerEvent.entityPlayer;
         {
@@ -79,9 +123,13 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
             {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z);
-                GlStateManager.rotate(-renderPlayerEvent.renderer.getRenderManager().playerViewY, 0.0f, 1.0f, 0.0f);
-                GlStateManager.translate(-0.3,1.8,0.1);
-                GlStateManager.scale(0.8,0.8,0.8);
+                if (renderPlayerEvent.entityPlayer.isSneaking())
+                {
+                    GlStateManager.translate(0.0F, -0.203125F, 0.0F);
+                }
+                GlStateManager.rotate(f1+180, 0.0f, -1.0f, 0.0f);
+                GlStateManager.translate(0,1.30 ,-0.5);
+
 
 
                 if (entitylivingbaseIn.fishEntity != null)
@@ -92,20 +140,30 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
                 Item item = itemstack.getItem();
                 Minecraft minecraft = Minecraft.getMinecraft();
 
-                if (item instanceof ItemBlock && Block.getBlockFromItem(item).getRenderType() == 2)
-                {
-                    GlStateManager.translate(0,0,0.2);
+                GlStateManager.rotate(180, 0.0f, 0.0f, 1.0f);
+                if (item.isFull3D()) {
+                    GlStateManager.translate(0.05,0,0);
+                    GlStateManager.rotate(90, 0.0f, 0.0f, 1.0f);
+                    GlStateManager.rotate(-45, 1.0f, 0.0f, 0.0f);
+                } else if (item instanceof ItemBow) {
+                    GlStateManager.translate(0,0.1, -0);
+                    GlStateManager.rotate(90, 0.0f, 1.0f, 0.0f);
+                    GlStateManager.rotate(-90, 0.0f, 0.0f, 1.0f);
+                } else if (item instanceof ItemBlock && Block.getBlockFromItem(item).getRenderType() == 2) {
+                    GlStateManager.translate(0,-0.20,0.1);
                     GlStateManager.translate(0.0F, 0.1875F, -0.3125F);
-                    GlStateManager.rotate(20.0F, 1.0F, 0.0F, 0.0F);
+                    GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0F);
                     GlStateManager.rotate(45.0F, 0.0F, 1.0F, 0.0F);
-                    float f1 = 0.375F;
+                    f1 = 0.375F;
                     GlStateManager.scale(-f1, -f1, f1);
+                } else if (item instanceof ItemBlock) {
+                    GlStateManager.translate(0.0F, 0.05, 0.1);
+                    GlStateManager.rotate(-25.0F, 1.0F, 0.0F, 0.0F);
+                } else {
+                    GlStateManager.translate(0,-0.1, 0.1);
                 }
 
-                if (entitylivingbaseIn.isSneaking())
-                {
-                    GlStateManager.translate(0.0F, 0.203125F, 0.0F);
-                }
+                GlStateManager.scale(0.8,0.8,0.8);
 
                 minecraft.getItemRenderer().renderItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON);
                 GlStateManager.popMatrix();
