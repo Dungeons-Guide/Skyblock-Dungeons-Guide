@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.gui;
 
 import kr.syeyoung.dungeonsguide.gui.elements.MRootPanel;
+import kr.syeyoung.dungeonsguide.utils.GlStateUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import lombok.Getter;
@@ -70,6 +71,7 @@ public class MGui extends GuiScreen {
             mainPanel.render0(1, new Point(0,0), new Rectangle(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
             GlStateManager.popMatrix();
             GlStateManager.enableBlend();
+            GlStateManager.enableDepth();
         } catch (Throwable e) {
             e.printStackTrace();
         }
@@ -197,7 +199,7 @@ public class MGui extends GuiScreen {
             }
 
 
-            int wheel = Mouse.getDWheel();
+            int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
                 mainPanel.mouseScrolled0(i, j,i,j, wheel);
             }
