@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.party;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
-import net.arikia.dev.drpc.DiscordRPC;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -77,7 +76,7 @@ public class PartyInviteViewer {
                         partyJoinRequestList.add(joinRequest);
                     }
                 } else if (!isOnHypixel){
-                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.NO);
+//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.NO);
                     partyJoinRequestList.add(joinRequest);
                 } else if (joinRequest.getExpire() < System.currentTimeMillis()) {
                     partyJoinRequestList.add(joinRequest);
@@ -107,21 +106,21 @@ public class PartyInviteViewer {
                 if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                     joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                     joinRequest.setTtl(60);
-                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.YES);
+//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.YES);
                     return;
                 }
 
                 if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
                     joinRequest.setReply(PartyJoinRequest.Reply.DENY);
                     joinRequest.setTtl(60);
-                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.NO);
+//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.NO);
                     return;
                 }
 
                 if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
                     joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
                     joinRequest.setTtl(60);
-                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.IGNORE);
+//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.IGNORE);
                     return;
                 }
 
@@ -195,7 +194,7 @@ public class PartyInviteViewer {
             Gui.drawRect(0, 0,width,height, 0xFF23272a);
             Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
-            String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().userId+"/"+partyJoinRequest.getDiscordUser().avatar+".png";
+            String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().id.longValue()+"/"+partyJoinRequest.getDiscordUser().avatar+".png";
             Future<LoadedImage> loadedImageFuture = loadImage(avatar);
             LoadedImage loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -237,11 +236,11 @@ public class PartyInviteViewer {
 
                 GlStateManager.pushMatrix();
                     GlStateManager.scale(3.0,3.0,1.0);
-                    fr.drawString(partyJoinRequest.getDiscordUser().username, 0,0, 0xFFFFFFFF, true);
+                    fr.drawString(partyJoinRequest.getDiscordUser().username+"", 0,0, 0xFFFFFFFF, true);
                 GlStateManager.popMatrix();
 
                 GlStateManager.pushMatrix();
-                    GlStateManager.translate(fr.getStringWidth(partyJoinRequest.getDiscordUser().username) * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
+                    GlStateManager.translate(fr.getStringWidth(partyJoinRequest.getDiscordUser().username+"") * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
                     fr.drawString("#"+partyJoinRequest.getDiscordUser().discriminator, 0,0,0xFFaaaaaa, true);
                 GlStateManager.popMatrix();
                 GlStateManager.pushMatrix();

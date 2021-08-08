@@ -18,14 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.party;
 
+import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.arikia.dev.drpc.DiscordRPC;
-import net.arikia.dev.drpc.DiscordUser;
 
 import java.awt.*;
-import java.time.Instant;
 
 @Data
 public class PartyJoinRequest {
