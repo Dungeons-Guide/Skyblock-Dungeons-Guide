@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordStatus;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordPresence extends DiscordStruct {
     public EDiscordStatus status = EDiscordStatus.DiscordStatus_Offline;
     public DiscordActivity activity;
@@ -29,4 +32,9 @@ public class DiscordPresence extends DiscordStruct {
 
     public static class ByReference extends DiscordPresence implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordPresence implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("status", "activity");
+    }
 }

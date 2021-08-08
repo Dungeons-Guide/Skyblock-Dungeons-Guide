@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordRelationshipType;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordRelationship extends DiscordStruct {
     public EDiscordRelationshipType type = EDiscordRelationshipType.DiscordRelationshipType_None;
     public DiscordUser user;
@@ -30,4 +33,9 @@ public class DiscordRelationship extends DiscordStruct {
 
     public static class ByReference extends DiscordRelationship implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordRelationship implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("type", "user", "presence");
+    }
 }

@@ -31,6 +31,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordFileStat;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt64;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordStorageManager extends DiscordStruct { public IDiscordStorageManager() {super();} public IDiscordStorageManager(Pointer pointer) {super(pointer);}
     public interface ReadCallback extends GameSDKCallback { EDiscordResult read(IDiscordStorageManager manager, String name, ByteByReference data, UInt32 dataLength, IntByReference read); }
     public ReadCallback Read;
@@ -73,4 +76,7 @@ public class IDiscordStorageManager extends DiscordStruct { public IDiscordStora
 
     public static class ByReference extends IDiscordStorageManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordStorageManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+
+    @Override protected List getFieldOrder() { return Arrays.asList("Read", "ReadAsync", "ReadAsyncPartial", "Write", "WriteAsync", "Delete", "Exists", "Count", "Stat", "StatAt", "GetPath"); }
 }

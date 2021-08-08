@@ -29,6 +29,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt8;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordInputMode;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordVoiceManager extends DiscordStruct { public IDiscordVoiceManager() {super();} public IDiscordVoiceManager(Pointer pointer) {super(pointer);}
     public interface GetInputModeCallback extends GameSDKCallback { EDiscordResult getInputMode(IDiscordVoiceManager manager, DiscordInputMode inputMode); }
     public GetInputModeCallback GetInputMode;
@@ -64,4 +67,7 @@ public class IDiscordVoiceManager extends DiscordStruct { public IDiscordVoiceMa
 
     public static class ByReference extends IDiscordVoiceManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordVoiceManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+
+    @Override protected List getFieldOrder() { return Arrays.asList("GetInputMode", "SetInputMode", "IsSelfMute", "SetSelfMute", "IsSelfDeaf", "SetSelfDeaf", "IsLocalMute", "SetLocalMute", "GetLocalVolume", "SetLocalVolume"); }
 }

@@ -33,6 +33,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordLobbyManager extends DiscordStruct { public IDiscordLobbyManager() {super();} public IDiscordLobbyManager(Pointer pointer) {super(pointer);}
     public interface GetLobbyCreateTransactionCallback extends GameSDKCallback { EDiscordResult getLobbyCreateTransaction(IDiscordLobbyManager manager, IDiscordLobbyTransaction transaction); }
     public GetLobbyCreateTransactionCallback GetLobbyCreateTransaction;
@@ -141,4 +144,6 @@ public class IDiscordLobbyManager extends DiscordStruct { public IDiscordLobbyMa
 
     public static class ByReference extends IDiscordLobbyManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordLobbyManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("GetLobbyCreateTransaction", "GetLobbyUpdateTransaction", "GetMemberUpdateTransaction", "CreateLobby", "UpdateLobby", "DeleteLobby", "ConnectLobby", "ConnectLobbyWithActivitySecret", "DisconnectLobby", "GetLobby", "GetLobbyActivitySecret", "GetLobbyMetadataValue", "GetLobbyMetadataKey", "LobbyMetadataCount", "MemberCount", "GetMemberUserId", "GetMemberUser", "GetMemberMetadataValue", "GetMemberMetadataKey", "MemberMetadataCount", "UpdateMember", "SendLobbyMessage", "GetSearchQuery", "Search", "LobbyCount", "GetLobbyId", "ConnectVoice", "DisconnectVoice", "ConnectNetwork", "DisconnectNetwork", "FlushNetwork", "OpenNetworkChannel", "SendNetworkMessage"); }
 }

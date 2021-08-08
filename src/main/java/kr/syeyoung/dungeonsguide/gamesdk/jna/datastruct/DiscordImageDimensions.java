@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordImageDimensions extends DiscordStruct {
     public UInt32 width = new UInt32();
     public UInt32 height = new UInt32();
@@ -29,4 +32,9 @@ public class DiscordImageDimensions extends DiscordStruct {
 
     public static class ByReference extends DiscordImageDimensions implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) { super(pointer);}}
     public static class ByValue extends DiscordImageDimensions implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) { super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("width", "height");
+    }
 }

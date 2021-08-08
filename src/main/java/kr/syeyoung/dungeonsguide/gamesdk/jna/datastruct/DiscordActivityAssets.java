@@ -21,6 +21,9 @@ package kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class DiscordActivityAssets extends DiscordStruct{
     public byte[] large_image = new byte[128];
@@ -31,4 +34,9 @@ public class DiscordActivityAssets extends DiscordStruct{
 
     public static class ByReference extends DiscordActivityAssets implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordActivityAssets implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("large_image", "large_text", "small_image", "small_text");
+    }
 }

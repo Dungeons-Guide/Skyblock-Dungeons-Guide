@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordInputModeType;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class DiscordInputMode extends DiscordStruct {
     public EDiscordInputModeType type = EDiscordInputModeType.DiscordInputModeType_PushToTalk;
@@ -30,4 +33,9 @@ public class DiscordInputMode extends DiscordStruct {
 
     public static class ByReference extends DiscordInputMode implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordInputMode implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("type", "shortcut");
+    }
 }

@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordOverlayEvents extends DiscordStruct { public IDiscordOverlayEvents() {super();} public IDiscordOverlayEvents(Pointer pointer) {super(pointer);}
     public interface OnToggleCallback extends GameSDKCallback { void onToggle(Pointer eventData, boolean locked); }
     public OnToggleCallback OnToggle;
@@ -31,4 +34,6 @@ public class IDiscordOverlayEvents extends DiscordStruct { public IDiscordOverla
 
     public static class ByReference extends IDiscordOverlayEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordOverlayEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnToggle"); }
 }

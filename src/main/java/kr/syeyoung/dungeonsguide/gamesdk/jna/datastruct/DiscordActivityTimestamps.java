@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordTimestamp;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordActivityTimestamps extends DiscordStruct {
     public DiscordTimestamp start = new DiscordTimestamp();
     public DiscordTimestamp end = new DiscordTimestamp();
@@ -29,4 +32,9 @@ public class DiscordActivityTimestamps extends DiscordStruct {
 
     public static class ByReference extends DiscordActivityTimestamps implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordActivityTimestamps implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("start", "end");
+    }
 }

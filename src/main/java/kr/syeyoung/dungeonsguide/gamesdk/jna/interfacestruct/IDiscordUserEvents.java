@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordUserEvents extends DiscordStruct { public IDiscordUserEvents() {super();} public IDiscordUserEvents(Pointer pointer) {super(pointer);}
     public interface OnCurrentUserUpdateCallback extends GameSDKCallback { void onCurrentUserUpdate(Pointer eventData); }
     public OnCurrentUserUpdateCallback OnCurrentUserUpdate;
@@ -31,4 +34,6 @@ public class IDiscordUserEvents extends DiscordStruct { public IDiscordUserEvent
 
     public static class ByReference extends IDiscordUserEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordUserEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnCurrentUserUpdate"); }
 }

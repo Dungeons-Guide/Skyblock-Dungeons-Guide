@@ -24,6 +24,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordRelationship;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordRelationshipEvents extends DiscordStruct { public IDiscordRelationshipEvents() {super();} public IDiscordRelationshipEvents(Pointer pointer) {super(pointer);}
     public interface OnRefreshCallback extends GameSDKCallback { void onRefresh(Pointer eventData); }
     public OnRefreshCallback OnRefresh;
@@ -35,4 +38,6 @@ public class IDiscordRelationshipEvents extends DiscordStruct { public IDiscordR
 
     public static class ByReference extends IDiscordRelationshipEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordRelationshipEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnRefresh", "OnRelationshipUpdate"); }
 }

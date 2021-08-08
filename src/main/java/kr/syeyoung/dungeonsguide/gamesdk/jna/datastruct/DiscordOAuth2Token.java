@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordTimestamp;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class DiscordOAuth2Token extends DiscordStruct {
     public byte[] access_token = new byte[128];
@@ -31,4 +34,9 @@ public class DiscordOAuth2Token extends DiscordStruct {
 
     public static class ByReference extends DiscordOAuth2Token implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordOAuth2Token implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("access_token", "scopes", "expires");
+    }
 }

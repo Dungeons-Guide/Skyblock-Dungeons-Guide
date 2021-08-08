@@ -24,6 +24,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordEntitlement;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordStoreEvents extends DiscordStruct { public IDiscordStoreEvents() {super();} public IDiscordStoreEvents(Pointer pointer) {super(pointer);}
     public interface OnEntitlementCreateCallback extends GameSDKCallback { void onEntitlementCreate(Pointer eventData, DiscordEntitlement entitlement); }
     public OnEntitlementCreateCallback OnEntitlementCreate;
@@ -35,4 +38,7 @@ public class IDiscordStoreEvents extends DiscordStruct { public IDiscordStoreEve
 
     public static class ByReference extends IDiscordStoreEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordStoreEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnEntitlementCreate", "OnEntitlementDelete"); }
 }

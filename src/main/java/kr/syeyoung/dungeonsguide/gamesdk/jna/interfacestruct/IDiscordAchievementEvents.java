@@ -24,6 +24,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUserAchievement;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordAchievementEvents extends DiscordStruct { public IDiscordAchievementEvents() {super();} public IDiscordAchievementEvents(Pointer pointer) {super(pointer);}
     public interface OnUserAchievementUpdateCallback extends GameSDKCallback { void onUserAchievementUpdate(Pointer eventData, DiscordUserAchievement userAchievement); }
     public OnUserAchievementUpdateCallback OnUserAchievementUpdate;
@@ -32,4 +35,6 @@ public class IDiscordAchievementEvents extends DiscordStruct { public IDiscordAc
 
     public static class ByReference extends IDiscordAchievementEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordAchievementEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnUserAchievementUpdate"); }
 }

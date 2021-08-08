@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt64;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordFileStat extends DiscordStruct {
     public byte[] filename = new byte[260];
     public UInt64 size = new UInt64();
@@ -31,4 +34,9 @@ public class DiscordFileStat extends DiscordStruct {
 
     public static class ByReference extends DiscordFileStat implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordFileStat implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("filename", "size", "last_modified");
+    }
 }

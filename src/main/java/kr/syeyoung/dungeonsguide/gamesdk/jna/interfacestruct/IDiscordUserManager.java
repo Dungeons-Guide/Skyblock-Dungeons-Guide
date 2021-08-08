@@ -29,6 +29,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordUserFlag;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordUserManager extends DiscordStruct { public IDiscordUserManager() {super();} public IDiscordUserManager(Pointer pointer) {super(pointer);}
     public interface GetCurrentUserCallback extends GameSDKCallback { EDiscordResult getCurrentUser(IDiscordUserManager manager, DiscordUser currentUser); }
     public GetCurrentUserCallback GetCurrentUser;
@@ -47,4 +50,5 @@ public class IDiscordUserManager extends DiscordStruct { public IDiscordUserMana
 
     public static class ByReference extends IDiscordUserManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordUserManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+    @Override protected List getFieldOrder() { return Arrays.asList("GetCurrentUser", "GetUser", "GetCurrentUserPremiumType", "CurrentUserHasFlag"); }
 }

@@ -26,6 +26,9 @@ import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordOAuth2Token;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordApplicationManager extends DiscordStruct { public IDiscordApplicationManager() {super();} public IDiscordApplicationManager(Pointer pointer) {super(pointer);}
     public interface ValidateOrExitCallback extends GameSDKCallback { void validateOrExit(IDiscordApplicationManager manager, Pointer callbackData, NativeGameSDK.DiscordCallback callback); }
     public ValidateOrExitCallback ValidateOrExit;
@@ -53,4 +56,6 @@ public class IDiscordApplicationManager extends DiscordStruct { public IDiscordA
 
     public static class ByReference extends IDiscordApplicationManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordApplicationManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("ValidateOrExit", "GetCurrentLocale", "GetCurrentBranch", "GetOauth2Token", "GetTicket"); }
 }

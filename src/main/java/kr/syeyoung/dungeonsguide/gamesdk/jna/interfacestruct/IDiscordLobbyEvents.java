@@ -27,6 +27,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt8;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.Int64;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordLobbyEvents extends DiscordStruct { public IDiscordLobbyEvents() {super();} public IDiscordLobbyEvents(Pointer pointer) {super(pointer);}
     public interface OnLobbyUpdateCallback extends GameSDKCallback { void onLobbyUpdate(Pointer eventData, Int64 lobbyId); }
     public OnLobbyUpdateCallback OnLobbyUpdate;
@@ -56,4 +59,7 @@ public class IDiscordLobbyEvents extends DiscordStruct { public IDiscordLobbyEve
 
     public static class ByReference extends IDiscordLobbyEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordLobbyEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnLobbyUpdate", "OnLobbyDelete", "OnMemberConnect", "OnMemberUpdate", "OnMemberDisconnect", "OnLobbyMessage", "OnSpeaking", "OnNetworkMessage"); }
 }

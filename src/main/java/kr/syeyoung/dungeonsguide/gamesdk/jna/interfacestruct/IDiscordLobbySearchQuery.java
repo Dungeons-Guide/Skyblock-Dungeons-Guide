@@ -28,6 +28,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordLobbySearchDist
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordLobbySearchCast;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordLobbySearchQuery extends DiscordStruct { public IDiscordLobbySearchQuery() {super();} public IDiscordLobbySearchQuery(Pointer pointer) {super(pointer);}
     public interface FilterCallback extends GameSDKCallback { EDiscordResult filter(IDiscordLobbySearchQuery lobbySearchQuery, Pointer key, EDiscordLobbySearchComparison comparison, EDiscordLobbySearchCast cast, Pointer value); }
     public FilterCallback Filter;
@@ -45,4 +48,6 @@ public class IDiscordLobbySearchQuery extends DiscordStruct { public IDiscordLob
 
     public static class ByReference extends IDiscordLobbySearchQuery implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordLobbySearchQuery implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("Filter", "Sort", "Limit", "Distance"); }
 }

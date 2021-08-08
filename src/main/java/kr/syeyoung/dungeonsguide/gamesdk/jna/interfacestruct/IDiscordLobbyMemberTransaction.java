@@ -24,6 +24,9 @@ import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordLobbyMemberTransaction extends DiscordStruct { public IDiscordLobbyMemberTransaction() {super();} public IDiscordLobbyMemberTransaction(Pointer pointer) {super(pointer);}
     public interface SetMetadataCallback extends GameSDKCallback { EDiscordResult setMetadata(IDiscordLobbyMemberTransaction lobbyMemberTransaction, Pointer key, Pointer value); } // key is 256 bytes, value is 4096
     public SetMetadataCallback SetMetadata;
@@ -35,4 +38,6 @@ public class IDiscordLobbyMemberTransaction extends DiscordStruct { public IDisc
 
     public static class ByReference extends IDiscordLobbyMemberTransaction implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordLobbyMemberTransaction implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("SetMetadata", "DeleteMetadata"); }
 }

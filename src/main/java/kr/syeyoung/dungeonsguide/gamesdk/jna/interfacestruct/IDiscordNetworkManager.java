@@ -29,6 +29,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordNetworkChannelId;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordNetworkPeerId;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordNetworkManager extends DiscordStruct { public IDiscordNetworkManager() {super();} public IDiscordNetworkManager(Pointer pointer) {super(pointer);}
     public interface GetPeerIdCallback extends GameSDKCallback { void getPeerId(IDiscordNetworkManager manager, LongByReference peerId); }
     public GetPeerIdCallback GetPeerId;
@@ -58,4 +61,6 @@ public class IDiscordNetworkManager extends DiscordStruct { public IDiscordNetwo
 
     public static class ByReference extends IDiscordNetworkManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordNetworkManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("GetPeerId", "Flush", "OpenPeer", "UpdatePeer", "ClosePeer", "OpenChannel", "CloseChannel", "SendMessage"); }
 }

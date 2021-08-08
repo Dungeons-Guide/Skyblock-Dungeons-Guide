@@ -24,6 +24,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordImageType;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.Int64;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordImageHandle extends DiscordStruct {
     public EDiscordImageType type = EDiscordImageType.DiscordImageType_User;
     public Int64 integerType = new Int64();
@@ -32,4 +35,9 @@ public class DiscordImageHandle extends DiscordStruct {
 
     public static class ByReference extends DiscordImageHandle implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordImageHandle implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("type", "integerType", "size");
+    }
 }

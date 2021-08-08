@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordSkuPrice extends DiscordStruct {
     public UInt32 amount = new UInt32();
     public byte[] currency = new byte[16];
@@ -30,4 +33,9 @@ public class DiscordSkuPrice extends DiscordStruct {
 
     public static class ByReference extends DiscordSkuPrice implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordSkuPrice implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("amount", "currency");
+    }
 }

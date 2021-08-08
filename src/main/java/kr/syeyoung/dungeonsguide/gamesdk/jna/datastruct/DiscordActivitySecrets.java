@@ -21,6 +21,9 @@ package kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class DiscordActivitySecrets extends DiscordStruct {
     public byte[] match = new byte[128];
@@ -30,4 +33,9 @@ public class DiscordActivitySecrets extends DiscordStruct {
 
     public static class ByReference extends DiscordActivitySecrets implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordActivitySecrets implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("match", "join", "spectate");
+    }
 }

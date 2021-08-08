@@ -26,6 +26,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionType;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordOverlayManager extends DiscordStruct { public IDiscordOverlayManager() {super();} public IDiscordOverlayManager(Pointer pointer) {super(pointer);}
     public interface IsEnabledCallback extends GameSDKCallback { void isEnabled(IDiscordOverlayManager manager, ByteByReference enabled); }
     public IsEnabledCallback IsEnabled;
@@ -49,4 +52,6 @@ public class IDiscordOverlayManager extends DiscordStruct { public IDiscordOverl
 
     public static class ByReference extends IDiscordOverlayManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordOverlayManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("IsEnabled", "IsLocked", "SetLocked", "OpenActivityInvite", "OpenGuildInvite", "OpenVoiceSettings"); }
 }

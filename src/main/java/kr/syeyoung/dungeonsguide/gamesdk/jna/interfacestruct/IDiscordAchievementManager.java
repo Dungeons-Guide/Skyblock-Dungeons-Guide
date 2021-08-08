@@ -30,6 +30,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt8;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUserAchievement;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordAchievementManager extends DiscordStruct { public IDiscordAchievementManager() {super();} public IDiscordAchievementManager(Pointer pointer) {super(pointer);}
     public interface SetUserAchievementCallback extends GameSDKCallback { void setUserAchievement(IDiscordAchievementManager manager, DiscordSnowflake achievementId, UInt8 percentComplete, Pointer callbackData, NativeGameSDK.DiscordCallback callback); }
     public SetUserAchievementCallback SetUserAchievement;
@@ -50,4 +53,6 @@ public class IDiscordAchievementManager extends DiscordStruct { public IDiscordA
 
     public static class ByReference extends IDiscordAchievementManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordAchievementManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("SetUserAchievement", "FetchUserAchievements", "CountUserAchievements", "GetUserAchievement", "GetUserAchievementAt"); }
 }

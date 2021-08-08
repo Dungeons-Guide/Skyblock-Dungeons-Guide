@@ -25,6 +25,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordClientID;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordVersion;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt64;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordCreateParams extends DiscordStruct { public DiscordCreateParams() {super();} public DiscordCreateParams(Pointer pointer) {super(pointer);}
     public DiscordClientID client_id = new DiscordClientID();
     public UInt64 flags = new UInt64();
@@ -57,4 +60,12 @@ public class DiscordCreateParams extends DiscordStruct { public DiscordCreatePar
 
     public static class ByReference extends DiscordCreateParams implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordCreateParams implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("client_id", "flags", "events", "event_data", "application_events", "application_version", "user_events",
+                "user_version", "image_events", "image_version", "activity_events", "activity_version", "lobby_events", "lobby_version",
+                "network_events", "network_version", "overlay_events", "overlay_version", "storage_events", "storage_version", "store_events",
+                "store_version", "voice_events", "voice_version", "achievement_events", "achievement_version");
+    }
 }

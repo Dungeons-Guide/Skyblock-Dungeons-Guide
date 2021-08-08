@@ -31,6 +31,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.Int32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordStoreManager extends DiscordStruct { public IDiscordStoreManager() {super();} public IDiscordStoreManager(Pointer pointer) {super(pointer);}
     public interface FetchSkusCallback extends GameSDKCallback { void fetchSkus(IDiscordStoreManager manager, Pointer callbackData, NativeGameSDK.DiscordCallback callback); }
     public FetchSkusCallback FetchSkus;
@@ -66,4 +69,6 @@ public class IDiscordStoreManager extends DiscordStruct { public IDiscordStoreMa
 
     public static class ByReference extends IDiscordStoreManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordStoreManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("FetchSkus", "CountSkus", "GetSku", "GetSkuAt", "FetchEntitlements", "CountEntitlements", "GetEntitlement", "GetEntitlementAt", "HasSkuEntitlement", "StartPurchase"); }
 }

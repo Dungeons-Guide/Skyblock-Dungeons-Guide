@@ -25,6 +25,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordUser extends DiscordStruct {
     public DiscordSnowflake id = new DiscordSnowflake();
     public byte[] username = new byte[256];
@@ -35,4 +38,9 @@ public class DiscordUser extends DiscordStruct {
 
     public static class ByReference extends DiscordUser implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordUser implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("id", "username", "discriminator", "avatar", "bot");
+    }
 }

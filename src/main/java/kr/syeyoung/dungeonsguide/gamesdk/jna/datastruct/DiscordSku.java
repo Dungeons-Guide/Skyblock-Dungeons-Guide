@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordSkuType;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
+import java.util.Arrays;
+import java.util.List;
+
 
 public class DiscordSku extends DiscordStruct {
     public DiscordSnowflake id = new DiscordSnowflake();
@@ -33,4 +36,9 @@ public class DiscordSku extends DiscordStruct {
 
     public static class ByReference extends DiscordSku implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordSku implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("id", "type", "name", "discordSkuPrice");
+    }
 }

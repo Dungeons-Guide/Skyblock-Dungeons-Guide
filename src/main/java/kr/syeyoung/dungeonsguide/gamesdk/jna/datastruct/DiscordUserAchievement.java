@@ -24,6 +24,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordUserAchievement extends DiscordStruct {
     public DiscordSnowflake user_id = new DiscordSnowflake();
     public DiscordSnowflake achievement_id = new DiscordSnowflake();
@@ -33,4 +36,9 @@ public class DiscordUserAchievement extends DiscordStruct {
 
     public static class ByReference extends DiscordUserAchievement implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordUserAchievement implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("user_id", "achievement_id", "percent_complete", "unlocked_at");
+    }
 }

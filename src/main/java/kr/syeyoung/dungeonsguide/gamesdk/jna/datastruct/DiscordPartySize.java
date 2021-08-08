@@ -22,6 +22,9 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.Int32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordPartySize extends DiscordStruct{
     public Int32 current_size = new Int32();
     public Int32 max_size = new Int32();
@@ -29,4 +32,9 @@ public class DiscordPartySize extends DiscordStruct{
 
     public static class ByReference extends DiscordPartySize implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordPartySize implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("current_size", "max_size");
+    }
 }

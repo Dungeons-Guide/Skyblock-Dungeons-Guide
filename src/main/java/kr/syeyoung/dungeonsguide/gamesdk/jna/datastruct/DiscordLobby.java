@@ -25,6 +25,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordLobby extends DiscordStruct {
     public DiscordSnowflake id = new DiscordSnowflake();
     public EDiscordLobbyType type = EDiscordLobbyType.DiscordLobbyType_Private;
@@ -36,4 +39,9 @@ public class DiscordLobby extends DiscordStruct {
 
     public static class ByReference extends DiscordLobby implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordLobby implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("id", "type", "owner_id", "secret", "capacity", "locked");
+    }
 }

@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordEntitlementType;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class DiscordEntitlement extends DiscordStruct {
     public DiscordSnowflake id = new DiscordSnowflake();
     public EDiscordEntitlementType type = EDiscordEntitlementType.DiscordEntitlementType_Purchase;
@@ -31,4 +34,9 @@ public class DiscordEntitlement extends DiscordStruct {
 
     public static class ByReference extends DiscordEntitlement implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordEntitlement implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override
+    protected List getFieldOrder() {
+        return Arrays.asList("id", "type", "sku_id");
+    }
 }

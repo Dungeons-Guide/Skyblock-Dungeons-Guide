@@ -26,6 +26,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionT
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordActivity;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordActivityEvents extends DiscordStruct { public IDiscordActivityEvents() {super();} public IDiscordActivityEvents(Pointer pointer) {super(pointer);}
     public interface OnActivityJoinCallback extends GameSDKCallback { void onActivityJoin(Pointer eventData, String secret); }
     public OnActivityJoinCallback OnActivityJoin;
@@ -43,4 +46,6 @@ public class IDiscordActivityEvents extends DiscordStruct { public IDiscordActiv
 
     public static class ByReference extends IDiscordActivityEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordActivityEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnActivityJoin", "OnActivitySpectate", "OnActivityJoinRequest", "OnActivityInvite"); }
 }

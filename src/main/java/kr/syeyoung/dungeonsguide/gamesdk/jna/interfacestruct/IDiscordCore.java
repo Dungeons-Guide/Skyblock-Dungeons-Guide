@@ -27,6 +27,9 @@ import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordLogLevel;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordCore extends DiscordStruct { public IDiscordCore() {super();} public IDiscordCore(Pointer pointer) {super(pointer);}
 
     public static final TypeMapper TYPE_MAPPER = GameSDKTypeMapper.INSTANCE;
@@ -84,4 +87,6 @@ public class IDiscordCore extends DiscordStruct { public IDiscordCore() {super()
     }
     public static class ByValue extends IDiscordCore implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}
     }
+
+    @Override protected List getFieldOrder() { return Arrays.asList("Destroy", "RunCallbacks", "SetLogHook", "GetApplicationManager", "GetUserManager", "GetImageManager", "GetActivityManager", "GetRelationshipManager", "GetLobbyManager", "GetNetworkManager", "GetOverlayManager", "GetStorageManager", "GetStoreManager", "GetVoiceManager", "GetAchievementManager"); }
 }

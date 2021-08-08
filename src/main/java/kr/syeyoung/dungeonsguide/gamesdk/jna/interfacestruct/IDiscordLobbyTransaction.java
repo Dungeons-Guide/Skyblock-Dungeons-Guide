@@ -27,6 +27,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordLobbyTransaction extends DiscordStruct { public IDiscordLobbyTransaction() {super();} public IDiscordLobbyTransaction(Pointer pointer) {super(pointer);}
     public interface SetTypeCallback extends GameSDKCallback { EDiscordResult setType(IDiscordLobbyTransaction lobbyTransaction, EDiscordLobbyType type); }
     public SetTypeCallback SetType;
@@ -50,4 +53,6 @@ public class IDiscordLobbyTransaction extends DiscordStruct { public IDiscordLob
 
     public static class ByReference extends IDiscordLobbyTransaction implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordLobbyTransaction implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("SetType", "SetOwner", "SetCapacity", "SetMetadata", "DeleteMetadata", "SetLocked"); }
 }

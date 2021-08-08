@@ -28,6 +28,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordRelationshipManager extends DiscordStruct { public IDiscordRelationshipManager() {super();} public IDiscordRelationshipManager(Pointer pointer) {super(pointer);}
     public interface FilterCallback extends GameSDKCallback { void filter(IDiscordRelationshipManager manager, Pointer filterData, FilterCallback_Callback filter); }
     public interface FilterCallback_Callback extends GameSDKCallback { boolean filter(Pointer filterData, Structure relationShip);}
@@ -46,4 +49,6 @@ public class IDiscordRelationshipManager extends DiscordStruct { public IDiscord
 
     public static class ByReference extends IDiscordRelationshipManager implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordRelationshipManager implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("Filter", "Count", "Get", "GetAt"); }
 }

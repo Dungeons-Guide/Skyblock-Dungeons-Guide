@@ -23,6 +23,9 @@ import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordStruct;
 import com.sun.jna.Pointer;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordVoiceEvents extends DiscordStruct { public IDiscordVoiceEvents() {super();} public IDiscordVoiceEvents(Pointer pointer) {super(pointer);}
     public interface OnSettingsUpdateCallback extends GameSDKCallback { void onSettingsUpdate(Pointer eventData); }
     public OnSettingsUpdateCallback OnSettingsUpdate;
@@ -31,4 +34,7 @@ public class IDiscordVoiceEvents extends DiscordStruct { public IDiscordVoiceEve
 
     public static class ByReference extends IDiscordVoiceEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordVoiceEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnSettingsUpdate"); }
 }

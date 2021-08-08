@@ -27,6 +27,9 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordNetworkChannelId;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordNetworkPeerId;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class IDiscordNetworkEvents extends DiscordStruct { public IDiscordNetworkEvents() {super();} public IDiscordNetworkEvents(Pointer pointer) {super(pointer);}
     public interface OnMessageCallback extends GameSDKCallback { void onMessage(Pointer eventData, DiscordNetworkPeerId peerId, DiscordNetworkChannelId channelId, ByteByReference data, UInt32 dataLength); }
     public OnMessageCallback OnMessage;
@@ -38,4 +41,6 @@ public class IDiscordNetworkEvents extends DiscordStruct { public IDiscordNetwor
 
     public static class ByReference extends IDiscordNetworkEvents implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends IDiscordNetworkEvents implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+
+    @Override protected List getFieldOrder() { return Arrays.asList("OnMessage", "OnRouteUpdate"); }
 }
