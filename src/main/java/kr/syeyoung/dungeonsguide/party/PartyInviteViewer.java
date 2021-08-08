@@ -39,6 +39,7 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import javax.imageio.ImageIO;
+import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.net.HttpURLConnection;
 import java.net.URL;
@@ -105,25 +106,40 @@ public class PartyInviteViewer {
                     return;
                 }
 
-                if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
-                    joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
-                    joinRequest.setTtl(60);
-                    RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Yes);
-                    return;
-                }
+                if (!joinRequest.isInvite()) {
+                    if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
+                        joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
+                        joinRequest.setTtl(60);
+                        RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Yes);
+                        return;
+                    }
 
-                if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
-                    joinRequest.setReply(PartyJoinRequest.Reply.DENY);
-                    joinRequest.setTtl(60);
-                    RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_No);
-                    return;
-                }
+                    if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
+                        joinRequest.setReply(PartyJoinRequest.Reply.DENY);
+                        joinRequest.setTtl(60);
+                        RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_No);
+                        return;
+                    }
 
-                if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
-                    joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
-                    joinRequest.setTtl(60);
-                    RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Ignore);
-                    return;
+                    if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
+                        joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
+                        joinRequest.setTtl(60);
+                        RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Ignore);
+                        return;
+                    }
+                } else {
+                    if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
+                        joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
+                        joinRequest.setTtl(60);
+                        RichPresenceManager.INSTANCE.accept(joinRequest.getDiscordUser().id);
+                        return;
+                    }
+
+                    if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
+                        joinRequest.setReply(PartyJoinRequest.Reply.DENY);
+                        joinRequest.setTtl(60);
+                        return;
+                    }
                 }
 
                 return;
@@ -147,8 +163,12 @@ public class PartyInviteViewer {
                 HttpURLConnection huc = (HttpURLConnection) urlObj.openConnection();
                 huc.addRequestProperty("User-Agent", "DungeonsGuideMod (dungeons.guide, 1.0)");
                 BufferedImage bufferedImage = ImageIO.read(huc.getInputStream());
+                BufferedImage newImage = new BufferedImage(128,128, BufferedImage.TYPE_INT_RGB);
+                Graphics g = newImage.createGraphics();
+                g.drawImage(bufferedImage, 0, 0, 128, 128, null);
+                g.dispose();
                 LoadedImage loadedImage = new LoadedImage();
-                loadedImage.setImage(bufferedImage);
+                loadedImage.setImage(newImage);
                 imageMap.put(url, loadedImage);
                 return loadedImage;
             } catch (Exception e) {
@@ -196,7 +216,7 @@ public class PartyInviteViewer {
             Gui.drawRect(0, 0,width,height, 0xFF23272a);
             Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
-            String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().id.longValue()+"/"+partyJoinRequest.getAvatar()+".png";
+            String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(partyJoinRequest.getDiscordUser().id.longValue())+"/"+partyJoinRequest.getAvatar()+"."+(partyJoinRequest.getAvatar().startsWith("a_") ? "gif":"png");
             Future<LoadedImage> loadedImageFuture = loadImage(avatar);
             LoadedImage loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -211,19 +231,9 @@ public class PartyInviteViewer {
                 TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
                 textureManager.bindTexture(loadedImage.getResourceLocation());
 
-
-                GlStateManager.disableLighting();
                 GlStateManager.color(1, 1, 1, 1.0F);
-                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
 
-                Gui.drawModalRectWithCustomSizedTexture(7, 7, 0, 0, height-14, height-14,loadedImage.getImage().getWidth(),loadedImage.getImage().getHeight());
-
-
-                GlStateManager.enableLighting();
-                GlStateManager.setActiveTexture(OpenGlHelper.lightmapTexUnit);
-                GlStateManager.setActiveTexture(OpenGlHelper.defaultTexUnit);
-
+                Gui.drawScaledCustomSizeModalRect(7, 7, 0, 0, loadedImage.getImage().getWidth(),loadedImage.getImage().getHeight(),height-14,height-14, loadedImage.getImage().getWidth(), loadedImage.getImage().getHeight());
             } else {
                 Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
             }
@@ -248,6 +258,9 @@ public class PartyInviteViewer {
                 GlStateManager.pushMatrix();
                     GlStateManager.translate(0, fr.FONT_HEIGHT * 3 + 5, 0);
                     GlStateManager.scale(1.0,1.0,1.0);
+                    if (partyJoinRequest.isInvite())
+                        fr.drawString("§ewants to you to join their party! ("+(TextUtils.formatTime(partyJoinRequest.getExpire() - System.currentTimeMillis()))+")", 0,0,0xFFFFFFFF,false);
+                    else
                     fr.drawString("wants to join your party! ("+(TextUtils.formatTime(partyJoinRequest.getExpire() - System.currentTimeMillis()))+")", 0,0,0xFFFFFFFF,false);
                 GlStateManager.popMatrix();
             GlStateManager.popMatrix();
@@ -279,18 +292,21 @@ public class PartyInviteViewer {
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                         fr.drawString(text, 0, 0, 0xFFFFFFFF);
                     GlStateManager.popMatrix();
+                if (!partyJoinRequest.isInvite()) {
                     GlStateManager.translate(widthForTheThing, 0, 0);
                     partyJoinRequest.getIgnoreRect().setBounds(x + height + 3 + widthForTheThing + widthForTheThing, y + height - 25, widthForTheThing - 10, 25);
                     Gui.drawRect(0, 0, widthForTheThing - 10, 25, hover && partyJoinRequest.getIgnoreRect().contains(mouseX, mouseY) ? 0xFFAEC0CB : 0xFF99aab5); // AEC0CB
-                    GlStateManager.pushMatrix();
-                        text = "Ignore";
-                        GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
-                        GlStateManager.scale(2.0f, 2.0f, 1.0f);
-                GlStateManager.enableBlend();
-                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                        fr.drawString(text, 0, 0, 0xFFFFFFFF);
-                    GlStateManager.popMatrix();
+
+                      GlStateManager.pushMatrix();
+                      text = "Ignore";
+                      GlStateManager.translate((widthForTheThing - 10 - fr.getStringWidth(text) * 2) / 2, 15 - fr.FONT_HEIGHT, 0);
+                      GlStateManager.scale(2.0f, 2.0f, 1.0f);
+                      GlStateManager.enableBlend();
+                      GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                      GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+                      fr.drawString(text, 0, 0, 0xFFFFFFFF);
+                      GlStateManager.popMatrix();
+                  }
                 GlStateManager.popMatrix();
             } else {
                 GlStateManager.pushMatrix();

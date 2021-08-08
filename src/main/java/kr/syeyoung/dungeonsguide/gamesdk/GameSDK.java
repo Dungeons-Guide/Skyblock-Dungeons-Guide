@@ -83,11 +83,12 @@ public class GameSDK {
 
     public static void writeString(byte[] bts, String str) {
         System.arraycopy(str.getBytes(), 0, bts, 0, str.getBytes().length);
+        bts[str.getBytes().length] = 0;
     }
     public static String readString(byte[] bts) {
         int i;
         for (i = 0; i < bts.length && bts[i] != 0; i++);
-        byte[] asdasd = new byte[i+1];
+        byte[] asdasd = new byte[i];
         System.arraycopy(bts, 0, asdasd, 0, i);
         return new String(asdasd);
     }

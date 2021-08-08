@@ -39,6 +39,7 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
+import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
@@ -395,6 +396,8 @@ public class CommandDungeonsGuide extends CommandBase {
             cosmeticsManager.requestCosmeticsList();
             cosmeticsManager.requestActiveCosmetics();
             StaticResourceCache.INSTANCE.purgeCache();
+            PartyInviteViewer.INSTANCE.imageMap.clear();
+            PartyInviteViewer.INSTANCE.futureMap.clear();
 
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else if (args[0].equals("pbroadcast")) {

@@ -35,6 +35,7 @@ public class PartyJoinRequest {
         username = GameSDK.readString(discordUser.username);
         discriminator = GameSDK.readString(discordUser.discriminator);
         avatar = GameSDK.readString(discordUser.avatar);
+        System.out.println(username+"/"+discriminator+"/"+avatar);
     }
 
     private String username, discriminator, avatar;
@@ -45,6 +46,7 @@ public class PartyJoinRequest {
     private Rectangle denyRect = new Rectangle();
     private Rectangle ignoreRect = new Rectangle();
 
+    private boolean isInvite;
     private int ttl = -1;
     private Reply reply;
 
