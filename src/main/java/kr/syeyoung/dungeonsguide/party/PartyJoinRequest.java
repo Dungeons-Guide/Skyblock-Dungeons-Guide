@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.party;
 
+import kr.syeyoung.dungeonsguide.gamesdk.GameSDK;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -28,6 +29,15 @@ import java.awt.*;
 @Data
 public class PartyJoinRequest {
     private DiscordUser discordUser;
+
+    public void setDiscordUser(DiscordUser discordUser) {
+        this.discordUser = discordUser;
+        username = GameSDK.readString(discordUser.username);
+        discriminator = GameSDK.readString(discordUser.discriminator);
+        avatar = GameSDK.readString(discordUser.avatar);
+    }
+
+    private String username, discriminator, avatar;
     private long expire;
 
     private Rectangle wholeRect = new Rectangle();

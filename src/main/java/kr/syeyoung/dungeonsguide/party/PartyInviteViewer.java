@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.party;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -106,21 +108,21 @@ public class PartyInviteViewer {
                 if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                     joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                     joinRequest.setTtl(60);
-//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.YES);
+                    RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Yes);
                     return;
                 }
 
                 if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
                     joinRequest.setReply(PartyJoinRequest.Reply.DENY);
                     joinRequest.setTtl(60);
-//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.NO);
+                    RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_No);
                     return;
                 }
 
                 if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
                     joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
                     joinRequest.setTtl(60);
-//                    DiscordRPC.discordRespond(joinRequest.getDiscordUser().userId, DiscordRPC.DiscordReply.IGNORE);
+                    RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Ignore);
                     return;
                 }
 
@@ -194,7 +196,7 @@ public class PartyInviteViewer {
             Gui.drawRect(0, 0,width,height, 0xFF23272a);
             Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
-            String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().id.longValue()+"/"+partyJoinRequest.getDiscordUser().avatar+".png";
+            String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().id.longValue()+"/"+partyJoinRequest.getAvatar()+".png";
             Future<LoadedImage> loadedImageFuture = loadImage(avatar);
             LoadedImage loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -236,12 +238,12 @@ public class PartyInviteViewer {
 
                 GlStateManager.pushMatrix();
                     GlStateManager.scale(3.0,3.0,1.0);
-                    fr.drawString(partyJoinRequest.getDiscordUser().username+"", 0,0, 0xFFFFFFFF, true);
+                    fr.drawString(partyJoinRequest.getUsername()+"", 0,0, 0xFFFFFFFF, true);
                 GlStateManager.popMatrix();
 
                 GlStateManager.pushMatrix();
-                    GlStateManager.translate(fr.getStringWidth(partyJoinRequest.getDiscordUser().username+"") * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
-                    fr.drawString("#"+partyJoinRequest.getDiscordUser().discriminator, 0,0,0xFFaaaaaa, true);
+                    GlStateManager.translate(fr.getStringWidth(partyJoinRequest.getUsername()+"") * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
+                    fr.drawString("#"+partyJoinRequest.getDiscriminator(), 0,0,0xFFaaaaaa, true);
                 GlStateManager.popMatrix();
                 GlStateManager.pushMatrix();
                     GlStateManager.translate(0, fr.FONT_HEIGHT * 3 + 5, 0);

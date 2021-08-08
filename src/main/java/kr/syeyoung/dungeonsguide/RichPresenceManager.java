@@ -28,15 +28,13 @@ import kr.syeyoung.dungeonsguide.gamesdk.GameSDK;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.NativeGameSDK;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.*;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionType;
+import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordLogLevel;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordResult;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordActivityEvents;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordActivityManager;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordCore;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordClientID;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordTimestamp;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordVersion;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.Int32;
+import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.*;
 import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyJoinRequest;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
@@ -73,15 +71,18 @@ public class RichPresenceManager implements Runnable {
         callbacks.OnActivityInvite = (eventData, type, user, activity) -> {
 
         };
-        callbacks.OnActivityJoin = (eventData, secret) -> DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
+        callbacks.OnActivityJoin = (eventData, secret) -> {DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
                 .header("destination", "/app/party.askedtojoin")
                 .payload(new JSONObject().put("token", secret).toString()));
+            System.out.println("Trying to join with token "+secret);
+        };
         callbacks.OnActivityJoinRequest = (eventData, user) -> {
                 PartyJoinRequest partyJoinRequest = new PartyJoinRequest();
                 partyJoinRequest.setDiscordUser(user);
                 partyJoinRequest.setExpire(System.currentTimeMillis() + 30000);
 
                 PartyInviteViewer.INSTANCE.joinRequests.add(partyJoinRequest);
+                System.out.println("Received Join Request from "+user.id.longValue()+" ("+partyJoinRequest.getUsername()+"#"+partyJoinRequest.getDiscriminator()+")");
         };
         callbacks.OnActivitySpectate = (eventData, secret) -> {
 
@@ -112,6 +113,12 @@ public class RichPresenceManager implements Runnable {
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     private DiscordActivity latestDiscordActivity;
+
+    public void respond(DiscordSnowflake userID, EDiscordActivityJoinRequestReply reply) {
+        activityManager.SendRequestReply.sendRequestReply(activityManager, userID, reply, Pointer.NULL, (callbackData, result) -> {
+            System.out.println("Discord Returned "+result+" For Replying "+reply+" To "+userID.longValue()+"L");
+        });
+    }
 
     public void updatePresence() {
         if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.ADVANCED_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.ADVANCED_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
