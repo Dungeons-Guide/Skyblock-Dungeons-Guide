@@ -29,7 +29,7 @@ import java.util.List;
 
 public class DiscordImageHandle extends DiscordStruct {
     public EDiscordImageType type = EDiscordImageType.DiscordImageType_User;
-    public Int64 integerType = new Int64();
+    public Int64 id = new Int64();
     public UInt32 size = new UInt32();
     public DiscordImageHandle() {super();} public DiscordImageHandle(Pointer pointer) {super(pointer);}
 
@@ -38,6 +38,6 @@ public class DiscordImageHandle extends DiscordStruct {
 
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList("type", "integerType", "size");
+        return Arrays.asList("type", "id", "size");
     }
 }
