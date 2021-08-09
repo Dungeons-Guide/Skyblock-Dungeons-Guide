@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordImageDimensions;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordImageHandle;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 import java.util.List;
 
@@ -41,7 +42,7 @@ public class IDiscordImageManager extends DiscordStruct { public IDiscordImageMa
     public interface GetDimensionsCallback extends GameSDKCallback { EDiscordResult getDimensions(IDiscordImageManager manager, DiscordImageHandle.ByValue handle, DiscordImageDimensions dimensions); }
     public GetDimensionsCallback GetDimensions;
 
-    public interface GetDataCallback extends GameSDKCallback { EDiscordResult getData(IDiscordImageManager manager, DiscordImageHandle.ByValue handle, ByteByReference data, UInt32 dataLength); }
+    public interface GetDataCallback extends GameSDKCallback { EDiscordResult getData(IDiscordImageManager manager, DiscordImageHandle.ByValue handle, ByteBuffer data, UInt32 dataLength); }
     public GetDataCallback GetData;
 
 
