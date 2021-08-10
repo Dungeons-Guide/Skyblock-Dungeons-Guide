@@ -1,25 +1,28 @@
 /*
- *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- *     Copyright (C) 2021  cyoung06
+ * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ * Copyright (C) 2021  cyoung06
  *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as published
- *     by the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
  *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
  *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.party;
+package kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.events.DiscordUserJoinRequestEvent;
+import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.*;
+import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -27,13 +30,8 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.OpenGlHelper;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -47,29 +45,32 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class PartyInviteViewer {
-    public static final PartyInviteViewer INSTANCE = new PartyInviteViewer();
+public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderListener, ScreenRenderListener, TickListener, GuiClickListener, DiscordUserJoinRequestListener {
+    public PartyInviteViewer() {
+        super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.party_invite_viewer");
+    }
 
-    @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
+    @Override
+    public boolean isDisyllable() {
+        return false;
+    }
+
+    @Override
+    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
+        renderRequests(true);
+    }
+
+    @Override
+    public void drawScreen(float partialTicks) {
         try {
-            if (postRender.type == RenderGameOverlayEvent.ElementType.TEXT) {
-                renderRequests(false);
-            }
+            renderRequests(false);
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
-
-    @SubscribeEvent
-    public void onRender(GuiScreenEvent.DrawScreenEvent.Post postRender) {
-        renderRequests(true);
-    }
-
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
+    @Override
+    public void onTick() {
         try {
-            if (clientTickEvent.phase != TickEvent.Phase.START) return;
             List<PartyJoinRequest> partyJoinRequestList = new ArrayList<>();
             boolean isOnHypixel = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
             for (PartyJoinRequest joinRequest:joinRequests) {
@@ -90,14 +91,13 @@ public class PartyInviteViewer {
     }
 
 
-
-    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
-    public void onRender(GuiScreenEvent.MouseInputEvent.Pre mouseInput) {
+    @Override
+    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         int mouseX = Mouse.getX();
         int mouseY = Minecraft.getMinecraft().displayHeight - Mouse.getY() +3;
         for (PartyJoinRequest joinRequest:joinRequests) {
             if (joinRequest.getWholeRect() != null && joinRequest.getWholeRect().contains(mouseX, mouseY)) {
-                mouseInput.setCanceled(true);
+                mouseInputEvent.setCanceled(true);
 
                 if (Mouse.getEventButton() == -1) return;
 
@@ -148,29 +148,21 @@ public class PartyInviteViewer {
     }
 
 
+
     public CopyOnWriteArrayList<PartyJoinRequest> joinRequests = new CopyOnWriteArrayList<>();
 
     ExecutorService executorService = Executors.newFixedThreadPool(3);
-    public Map<String, Future<LoadedImage>> futureMap = new HashMap<>();
-    public Map<String, LoadedImage> imageMap = new HashMap<>();
+    public Map<String, Future<ImageTexture>> futureMap = new HashMap<>();
+    public Map<String, ImageTexture> imageMap = new HashMap<>();
 
-    public Future<LoadedImage> loadImage(String url) {
+    public Future<ImageTexture> loadImage(String url) {
         if (imageMap.containsKey(url)) return CompletableFuture.completedFuture(imageMap.get(url));
         if (futureMap.containsKey(url)) return futureMap.get(url);
-        Future<LoadedImage> future =  executorService.submit(() -> {
+        Future<ImageTexture> future =  executorService.submit(() -> {
             try {
-                URL urlObj = new URL(url);
-                HttpURLConnection huc = (HttpURLConnection) urlObj.openConnection();
-                huc.addRequestProperty("User-Agent", "DungeonsGuideMod (dungeons.guide, 1.0)");
-                BufferedImage bufferedImage = ImageIO.read(huc.getInputStream());
-                BufferedImage newImage = new BufferedImage(128,128, BufferedImage.TYPE_INT_RGB);
-                Graphics g = newImage.createGraphics();
-                g.drawImage(bufferedImage, 0, 0, 128, 128, null);
-                g.dispose();
-                LoadedImage loadedImage = new LoadedImage();
-                loadedImage.setImage(newImage);
-                imageMap.put(url, loadedImage);
-                return loadedImage;
+                ImageTexture imageTexture = new ImageTexture(url);
+                imageMap.put(url, imageTexture);
+                return imageTexture;
             } catch (Exception e) {
                 throw e;
             }
@@ -217,8 +209,8 @@ public class PartyInviteViewer {
             Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
             String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(partyJoinRequest.getDiscordUser().id.longValue())+"/"+partyJoinRequest.getAvatar()+"."+(partyJoinRequest.getAvatar().startsWith("a_") ? "gif":"png");
-            Future<LoadedImage> loadedImageFuture = loadImage(avatar);
-            LoadedImage loadedImage = null;
+            Future<ImageTexture> loadedImageFuture = loadImage(avatar);
+            ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
                 try {
                     loadedImage = loadedImageFuture.get();
@@ -227,13 +219,7 @@ public class PartyInviteViewer {
                 }
             }
             if (loadedImage != null) {
-                if (loadedImage.getResourceLocation() == null) loadedImage.buildGLThings();
-                TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
-                textureManager.bindTexture(loadedImage.getResourceLocation());
-
-                GlStateManager.color(1, 1, 1, 1.0F);
-
-                Gui.drawScaledCustomSizeModalRect(7, 7, 0, 0, loadedImage.getImage().getWidth(),loadedImage.getImage().getHeight(),height-14,height-14, loadedImage.getImage().getWidth(), loadedImage.getImage().getHeight());
+                loadedImage.drawFrameAndIncrement( 7,7,height-14,height-14);
             } else {
                 Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
             }
@@ -319,5 +305,14 @@ public class PartyInviteViewer {
                 GlStateManager.popMatrix();
             }
         GlStateManager.popMatrix();
+    }
+
+    @Override
+    public void onDiscordUserJoinRequest(DiscordUserJoinRequestEvent event) {
+        PartyJoinRequest partyInvite = new PartyJoinRequest();
+        partyInvite.setDiscordUser(event.getDiscordUser());
+        partyInvite.setExpire(System.currentTimeMillis() + 30000L);
+        partyInvite.setInvite(event.isInvite());
+        joinRequests.add(partyInvite);
     }
 }

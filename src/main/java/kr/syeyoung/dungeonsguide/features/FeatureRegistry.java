@@ -28,6 +28,8 @@ import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureSimonSaysSol
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolvers;
 import kr.syeyoung.dungeonsguide.features.impl.cosmetics.FeatureNicknameColor;
 import kr.syeyoung.dungeonsguide.features.impl.cosmetics.FeatureNicknamePrefix;
+import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.PartyInviteViewer;
+import kr.syeyoung.dungeonsguide.features.impl.discord.onlinealarm.PlayingDGAlarm;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
@@ -76,11 +78,15 @@ public class FeatureRegistry {
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
-    public static final SimpleFeature ADVANCED_RICHPRESENCE = register(new SimpleFeature("Misc", "Discord RPC", "Discord rich presence with ASK-TO-JOIN Support!\n\nSimply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!", "advanced.richpresence", true) {
+
+    public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.richpresence", true) {
         {
             parameters.put("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
         }
     });
+    public static final PartyInviteViewer DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
+    public static final PlayingDGAlarm DISCORD_ONLINEALARM = register(new PlayingDGAlarm());
+
 
     public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("Solver.Any Floor", "Riddle", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
     public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("Solver.Floor 4+", "Quiz", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));

@@ -33,7 +33,7 @@ import java.util.List;
 
 public class IDiscordRelationshipManager extends DiscordStruct { public IDiscordRelationshipManager() {super();} public IDiscordRelationshipManager(Pointer pointer) {super(pointer);}
     public interface FilterCallback extends GameSDKCallback { void filter(IDiscordRelationshipManager manager, Pointer filterData, FilterCallback_Callback filter); }
-    public interface FilterCallback_Callback extends GameSDKCallback { boolean filter(Pointer filterData, Structure relationShip);}
+    public interface FilterCallback_Callback extends GameSDKCallback { boolean filter(Pointer filterData, DiscordRelationship relationShip);}
     public FilterCallback Filter;
 
     public interface CountCallback extends GameSDKCallback { EDiscordResult count(IDiscordRelationshipManager manager, IntByReference count); }

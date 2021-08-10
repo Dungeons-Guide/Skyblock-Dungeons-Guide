@@ -92,6 +92,30 @@ public class FeatureListener {
         }
     }
     @SubscribeEvent
+    public void onDiscordUserUpdate(DiscordUserUpdateEvent discordUserUpdateEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DiscordUserUpdateListener) {
+                    ((DiscordUserUpdateListener) abstractFeature).onDiscordUserUpdate(discordUserUpdateEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onDiscordUserUpdate(DiscordUserJoinRequestEvent discordUserUpdateEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DiscordUserJoinRequestListener) {
+                    ((DiscordUserJoinRequestListener) abstractFeature).onDiscordUserJoinRequest(discordUserUpdateEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
     public void onWindowUpdate(WindowUpdateEvent windowUpdateEvent) {
         try {
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

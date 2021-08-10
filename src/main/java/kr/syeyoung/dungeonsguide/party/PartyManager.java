@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.party;
 
-import kr.syeyoung.dungeonsguide.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.events.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
@@ -42,7 +42,6 @@ import org.json.JSONObject;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.SynchronousQueue;
 import java.util.function.Consumer;
 
 public class PartyManager implements StompMessageHandler {

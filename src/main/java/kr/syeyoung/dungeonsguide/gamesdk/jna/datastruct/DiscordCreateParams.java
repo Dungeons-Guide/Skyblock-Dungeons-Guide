@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
+import kr.syeyoung.dungeonsguide.gamesdk.jna.NativeGameSDK;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.*;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordClientID;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordVersion;
@@ -34,29 +35,29 @@ public class DiscordCreateParams extends DiscordStruct { public DiscordCreatePar
     public Pointer events; // void*
     public Pointer event_data; // void*
     public Pointer application_events;
-    public DiscordVersion application_version = new DiscordVersion();
+    public DiscordVersion application_version = new DiscordVersion(NativeGameSDK.DISCORD_APPLICATION_MANAGER_VERSION);
     public IDiscordUserEvents.ByReference user_events;
-    public DiscordVersion user_version= new DiscordVersion();
+    public DiscordVersion user_version= new DiscordVersion(NativeGameSDK.DISCORD_USER_MANAGER_VERSION);
     public Pointer image_events;// void*
-    public DiscordVersion image_version= new DiscordVersion();
+    public DiscordVersion image_version= new DiscordVersion(NativeGameSDK.DISCORD_IMAGE_MANAGER_VERSION);
     public IDiscordActivityEvents.ByReference activity_events;
-    public DiscordVersion activity_version= new DiscordVersion();
+    public DiscordVersion activity_version= new DiscordVersion(NativeGameSDK.DISCORD_ACTIVITY_MANAGER_VERSION);
     public IDiscordRelationshipEvents.ByReference relationship_events;
-    public DiscordVersion relationship_version= new DiscordVersion();
+    public DiscordVersion relationship_version= new DiscordVersion(NativeGameSDK.DISCORD_RELATIONSHIP_MANAGER_VERSION);
     public IDiscordLobbyEvents.ByReference lobby_events;
-    public DiscordVersion lobby_version= new DiscordVersion();
+    public DiscordVersion lobby_version= new DiscordVersion(NativeGameSDK.DISCORD_LOBBY_MANAGER_VERSION);
     public IDiscordNetworkEvents.ByReference network_events;
-    public DiscordVersion network_version= new DiscordVersion();
+    public DiscordVersion network_version= new DiscordVersion(NativeGameSDK.DISCORD_NETWORK_MANAGER_VERSION);
     public IDiscordOverlayEvents.ByReference overlay_events;
-    public DiscordVersion overlay_version= new DiscordVersion();
+    public DiscordVersion overlay_version= new DiscordVersion(NativeGameSDK.DISCORD_OVERLAY_MANAGER_VERSION);
     public Pointer storage_events;// void*
-    public DiscordVersion storage_version= new DiscordVersion();
+    public DiscordVersion storage_version= new DiscordVersion(NativeGameSDK.DISCORD_STORAGE_MANAGER_VERSION);
     public IDiscordStoreEvents.ByReference store_events;
-    public DiscordVersion store_version= new DiscordVersion();
+    public DiscordVersion store_version= new DiscordVersion(NativeGameSDK.DISCORD_STORE_MANAGER_VERSION);
     public IDiscordVoiceEvents.ByReference voice_events;
-    public DiscordVersion voice_version= new DiscordVersion();
+    public DiscordVersion voice_version= new DiscordVersion(NativeGameSDK.DISCORD_VOICE_MANAGER_VERSION);
     public IDiscordAchievementEvents.ByReference achievement_events;
-    public DiscordVersion achievement_version= new DiscordVersion();
+    public DiscordVersion achievement_version= new DiscordVersion(NativeGameSDK.DISCORD_ACHIEVEMENT_MANAGER_VERSION);
 
     public static class ByReference extends DiscordCreateParams implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
     public static class ByValue extends DiscordCreateParams implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}

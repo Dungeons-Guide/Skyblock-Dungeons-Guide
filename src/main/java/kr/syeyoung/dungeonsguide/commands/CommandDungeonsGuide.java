@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.config.guiconfig.NestedCategory;
@@ -39,7 +41,7 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
-import kr.syeyoung.dungeonsguide.party.PartyInviteViewer;
+import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
@@ -327,8 +329,11 @@ public class CommandDungeonsGuide extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.isAllowAskToJoin() ? "§eon" : "§coff")));
             }
 
-            if (!FeatureRegistry.ADVANCED_RICHPRESENCE.isEnabled()) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Advanced "));
+            if (!FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled()) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Discord "));
+            }
+            if (!FeatureRegistry.DISCORD_ASKTOJOIN.isEnabled()) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Invite Viewer is disabled! Enable at /dg -> Discord ")); // how
             }
         } else if (args[0].equalsIgnoreCase("partymax") || args[0].equalsIgnoreCase("pm")) {
             if (args.length == 1) {
@@ -396,8 +401,8 @@ public class CommandDungeonsGuide extends CommandBase {
             cosmeticsManager.requestCosmeticsList();
             cosmeticsManager.requestActiveCosmetics();
             StaticResourceCache.INSTANCE.purgeCache();
-            PartyInviteViewer.INSTANCE.imageMap.clear();
-            PartyInviteViewer.INSTANCE.futureMap.clear();
+            FeatureRegistry.DISCORD_ASKTOJOIN.imageMap.clear();
+            FeatureRegistry.DISCORD_ASKTOJOIN.futureMap.clear();
 
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else if (args[0].equals("pbroadcast")) {
@@ -533,7 +538,11 @@ public class CommandDungeonsGuide extends CommandBase {
             }
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
-        } else {
+        }  else if (args[0].equals("IDKTEST")) {
+            for (Map.Entry<Long, JDiscordRelation> longJDiscordRelationEntry : RichPresenceManager.INSTANCE.getRelationMap().entrySet()) {
+                System.out.println(longJDiscordRelationEntry.getValue());
+            }
+        } else{
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
