@@ -19,7 +19,10 @@
 package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
+import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionType;
+import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordOverlayManager;
 import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -539,9 +542,10 @@ public class CommandDungeonsGuide extends CommandBase {
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
         }  else if (args[0].equals("IDKTEST")) {
-            for (Map.Entry<Long, JDiscordRelation> longJDiscordRelationEntry : RichPresenceManager.INSTANCE.getRelationMap().entrySet()) {
-                System.out.println(longJDiscordRelationEntry.getValue());
-            }
+            IDiscordOverlayManager iDiscordOverlayManager = RichPresenceManager.INSTANCE.getIDiscordCore().GetOverlayManager.getOverlayManager(RichPresenceManager.INSTANCE.getIDiscordCore());
+            iDiscordOverlayManager.OpenActivityInvite.openActivityInvite(iDiscordOverlayManager, EDiscordActivityActionType.DiscordActivityActionType_Join, Pointer.NULL, (callbackData, result) -> {
+
+            });
         } else{
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

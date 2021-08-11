@@ -125,9 +125,9 @@ public class MScrollablePanel extends MPanel {
         }
         contentAreaDim = new Rectangle(minX, minY, maxX - minX, maxY - minY);
         scrollBarX.setMin(contentAreaDim.x);
-        scrollBarX.setMax(contentAreaDim.x + contentAreaDim.width);
+        scrollBarX.setMax(contentAreaDim.x + contentAreaDim.width-scrollBarX.getThumbSize());
         scrollBarY.setMin(contentAreaDim.y);
-        scrollBarY.setMax(contentAreaDim.y + contentAreaDim.height);
+        scrollBarY.setMax(contentAreaDim.y + contentAreaDim.height-scrollBarY.getThumbSize());
     }
 
     @Override
@@ -161,6 +161,8 @@ public class MScrollablePanel extends MPanel {
 
         scrollBarX.setThumbSize(viewPort.getBounds().width);
         scrollBarY.setThumbSize(viewPort.getBounds().height);
+        scrollBarX.setMax(contentAreaDim.x + contentAreaDim.width-scrollBarX.getThumbSize());
+        scrollBarY.setMax(contentAreaDim.y + contentAreaDim.height-scrollBarY.getThumbSize());
         evalulateContentArea();
     }
 

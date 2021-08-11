@@ -37,7 +37,8 @@ public class MList extends MPanel {
         realignChildren();
     }
 
-    private final int gapLineColor = 0xFFFFFFFF;
+    @Getter @Setter
+    private int gapLineColor = 0xFFFFFFFF;
 
     public void realignChildren() {
         int y = 0;
@@ -73,7 +74,8 @@ public class MList extends MPanel {
         for (int i = 1; i < getChildComponents().size(); i++) {
             MPanel panel = getChildComponents().get(i);
             Rectangle bound = panel.getBounds();
-            Gui.drawRect(0, bound.y - gap, getBounds().width, bound.y, gapLineColor);
+            int top = bound.y - (int)Math.ceil(gap/2.0);
+            Gui.drawRect(0, top, getBounds().width, top + 1, gapLineColor);
         }
     }
 

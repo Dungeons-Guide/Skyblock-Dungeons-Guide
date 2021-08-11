@@ -45,6 +45,7 @@ public class MButton extends MPanel {
     private int clicked =  RenderUtils.blendAlpha(0xFF141414, 0.16f);
     private int border = 0x0;
     private int disabled =0xFF141414;
+    private int roundness = 0;
 
     private boolean enabled = true;
 
@@ -55,19 +56,29 @@ public class MButton extends MPanel {
         Dimension bounds = getSize();
 
         int bg = background;
-        if (getTooltipsOpen() > 0) {
-        } else if (!enabled) {
+        if (!enabled) {
             bg = disabled;
+        } else if (getTooltipsOpen() > 0) {
         } else if (isclicked) {
             bg = clicked;
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
         }
-        if (((border >> 24) & 0xFF) == 0)
-            Gui.drawRect(0,0,getBounds().width, getBounds().height, bg);
-        else {
-            Gui.drawRect(0, 0, getBounds().width, getBounds().height, border);
-            Gui.drawRect(1, 1, getBounds().width-1, getBounds().height-1, bg);
+        if (roundness == 0) {
+            if (((border >> 24) & 0xFF) == 0)
+                Gui.drawRect(0, 0, getBounds().width, getBounds().height, bg);
+            else {
+                Gui.drawRect(0, 0, getBounds().width, getBounds().height, border);
+                Gui.drawRect(1, 1, getBounds().width - 1, getBounds().height - 1, bg);
+            }
+        } else {
+            if (((border >> 24) & 0xFF) == 0)
+                RenderUtils.drawRoundedRectangle(0, 0, getBounds().width, getBounds().height, roundness, Math.PI/8, bg);
+            else {
+                RenderUtils.drawRoundedRectangle(0, 0, getBounds().width, getBounds().height, roundness, Math.PI/8, border);
+                RenderUtils.drawRoundedRectangle(1, 1, getBounds().width-2, getBounds().height-2, roundness, Math.PI/8,  bg);
+            }
+            GlStateManager.enableTexture2D();
         }
         FontRenderer renderer = Minecraft.getMinecraft().fontRendererObj;
         int width = renderer.getStringWidth(getText());

@@ -28,40 +28,31 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
-public class MModalConfirmation extends MModal {
+public class MModalMessage extends MModal {
     private String content;
-    private Runnable callBackYes;
-    private Runnable callBackNo;
+    private Runnable callBackOk;
     @Getter
-    private MButton yes, no;
-    public MModalConfirmation(String title, String content, Runnable callBackYes, Runnable callBackNo) {
+    private MButton yes;
+    public MModalMessage(String title, String content, Runnable callBackOk) {
         super();
         setTitle(title);
         this.content = content;
-        this.callBackYes = callBackYes;
-        this.callBackNo = callBackNo;
+        this.callBackOk = callBackOk;
         this.yes = new MButton();
-        this.no = new MButton();
-        yes.setText("Yes"); no.setText("No");
-        no.setBackground(RenderUtils.blendAlpha(0x141414, 0.15f));
-        no.setHover(RenderUtils.blendAlpha(0x141414, 0.17f));
+        yes.setText("Ok");
         yes.setOnActionPerformed(() -> {
             close();
-            if (callBackYes != null) callBackYes.run();
-        });
-        no.setOnActionPerformed(() -> {
-            close();
-            if (callBackNo != null) callBackNo.run();
+            if (callBackOk != null) callBackOk.run();
         });
         yes.setBackground(RenderUtils.blendAlpha(0x141414, 0.15f));
         yes.setHover(RenderUtils.blendAlpha(0x141414, 0.17f));
 
-        add(new ConfirmationContent());
+        add(new MessageContent());
     }
 
-    public class ConfirmationContent extends MPanel {
-        public ConfirmationContent() {
-            add(yes); add(no);
+    public class MessageContent extends MPanel {
+        public MessageContent() {
+            add(yes);
         }
 
         @Override
@@ -74,14 +65,13 @@ public class MModalConfirmation extends MModal {
             GlStateManager.translate(5,5,0);
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
-            fr.drawSplitString(content, 0,0, ConfirmationContent.this.bounds.width-10, -1);
+            fr.drawSplitString(content, 0,0, MModalMessage.MessageContent.this.bounds.width-10, -1);
         }
 
         @Override
         public void setBounds(Rectangle bounds) {
             super.setBounds(bounds);
-            yes.setBounds(new Rectangle(10,bounds.height-25,(bounds.width-30)/2, 15));
-            no.setBounds(new Rectangle(yes.getBounds().x + yes.getBounds().width + 10,bounds.height-25,(bounds.width-30)/2, 15));
-        }
+            yes.setBounds(new Rectangle(10,bounds.height-25,(bounds.width-20), 15));
+         }
     }
 }

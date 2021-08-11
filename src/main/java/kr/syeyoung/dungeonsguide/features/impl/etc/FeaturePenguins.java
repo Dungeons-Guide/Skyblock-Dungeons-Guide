@@ -67,7 +67,6 @@ public class FeaturePenguins extends SimpleFeature implements PlayerRenderListen
     }
     @Override
     public void onTextureStitch(TextureStitchEvent event) {
-        System.out.println("STICH!");
         if (event instanceof TextureStitchEvent.Pre) {
             objModel = null;
             ResourceLocation modelResourceLocation = new ResourceLocation("dungeonsguide:models/penguin.obj");

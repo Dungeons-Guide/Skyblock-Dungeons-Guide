@@ -95,7 +95,6 @@ public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateLi
 
     public void renderRequest(PlayerOnline online, int x, int y, int width, int height) {
         GlStateManager.pushMatrix();
-        online.setEnd(System.currentTimeMillis()+600000);
         GlStateManager.translate(x,y,0);
 
         Gui.drawRect(0, 0,width,height, 0xFF23272a);
@@ -154,7 +153,7 @@ public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateLi
     public void onDiscordUserUpdate(DiscordUserUpdateEvent event) {
         JDiscordRelation prev = event.getPrev(), current = event.getCurrent();
         if (!isDisplayable(prev) && isDisplayable(current)) {
-            notif.add(new PlayerOnline(current, System.currentTimeMillis()+600000));
+            notif.add(new PlayerOnline(current, System.currentTimeMillis()+3000));
         }
     }
 

@@ -36,7 +36,10 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
 
     @Getter
     @Setter
-    private String whitelist = "", blacklist = "", highlight ="";
+    private String whitelist = "", blacklist = "", highlight ="", blacklistClass = "";
+    @Getter
+    @Setter
+    private int minimumCata;
 
     GuiCustomPartyFinder guiCustomPartyFinder;
     @Override

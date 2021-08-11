@@ -43,34 +43,32 @@ public class MScrollBar extends MPanel {
     private int width = 10;
 
     public void setMax(int max) {
+        if (max < min) max = min;
         this.max = max;
 
-        current = MathHelper.clamp_int(current, min, max - thumbSize);
-        if (max - min < thumbSize) current = min;
+        current = MathHelper.clamp_int(current, min, max);
         if (onUpdate != null) onUpdate.run();
     }
 
     public void setMin(int min) {
+        if (max < min) max = min;
         this.min = min;
 
-        current = MathHelper.clamp_int(current, min, max - thumbSize);
-        if (max - min < thumbSize) current = min;
+        current = MathHelper.clamp_int(current, min, max);
         if (onUpdate != null) onUpdate.run();
     }
 
     public void setThumbSize(int thumbSize) {
         this.thumbSize = thumbSize;
 
-        current = MathHelper.clamp_int(current, min, max - thumbSize);
-        if (max - min < thumbSize) current = min;
+        current = MathHelper.clamp_int(current, min, max);
         if (onUpdate != null) onUpdate.run();
     }
 
     public void addToCurrent(int dv) {
         int current2 = current + dv;
 
-        current = MathHelper.clamp_int(current2, min, max - thumbSize);
-        if (max - min < thumbSize) current = min;
+        current = MathHelper.clamp_int(current2, min, max);
 
         if (onUpdate != null) onUpdate.run();
     }
@@ -83,16 +81,16 @@ public class MScrollBar extends MPanel {
     @Getter
     @Setter
     private int background = RenderUtils.blendAlpha(0xFF141414, 0.04f),
-            thumb = RenderUtils.blendAlpha(0xFF141414, 0.08f),
-            thumbHover = RenderUtils.blendAlpha(0xFF141414, 0.09f),
-            thumbClick = RenderUtils.blendAlpha(0xFF141414, 0.14f);
+            thumb = RenderUtils.blendAlpha(0xFF141414, 0.14f),
+            thumbHover = RenderUtils.blendAlpha(0xFF141414, 0.15f),
+            thumbClick = RenderUtils.blendAlpha(0xFF141414, 0.20f);
 
     private Runnable onUpdate;
 
     public MScrollBar(int min, int max, int thumbSize, int current, Axis axis, Runnable onUpdate) {
+        if (max < min) max = min;
         this.min = min; this.min = max; this.thumbSize = thumbSize; this.current = current; this.axis = axis;
-        this.current = MathHelper.clamp_int(current, min, max - thumbSize);
-        if (max - min < thumbSize) this.current = min;
+        this.current = MathHelper.clamp_int(current, min, max);
         this.onUpdate = onUpdate;
     }
 
@@ -106,13 +104,22 @@ public class MScrollBar extends MPanel {
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         // RENDER SUPER NICE SCROLL BAR
+        int minimalThumbLen = 20;
+
         Gui.drawRect(0,0,getBounds().width, getBounds().height, background);
-        double startPerc, endPerc;
+        int length = axis == Axis.X ? bounds.width :bounds.height;
+        int totalUnscaledLength = max-min + thumbSize;
+        double subPoint = ((double)max-min) * length / totalUnscaledLength;
+        if (length - subPoint < minimalThumbLen) {
+            subPoint = length - minimalThumbLen;
+        }
+        double thumbSize = length - subPoint;
+
+        double startPt;
         if (max - min == 0) {
-            startPerc =0; endPerc = 1;
+            startPt =0;
         } else {
-            startPerc = (current - min)/((double)max - min);
-            endPerc = (current+thumbSize - min)/((double)max - min);
+            startPt = subPoint * (current - min)/((double)max - min);
         }
 
         int color = thumbHover;
@@ -120,16 +127,14 @@ public class MScrollBar extends MPanel {
         if (grabbed) color = thumbClick;
 
         if (axis == Axis.X) {
-            int startX = (int) (startPerc * getBounds().width);
-            int endX = (int) (endPerc * getBounds().width);
-            endX = Math.max(endX, startX + 20);
+            int startX = (int) startPt;
+            int endX = (int) (startPt + thumbSize);
 
             Gui.drawRect(startX,0,endX,getBounds().height, color);
             lastThumbRect.x = startX; lastThumbRect.y = 0; lastThumbRect.width = endX - startX; lastThumbRect.height = getBounds().height;
         } else if (axis == Axis.Y) {
-            int startY = (int) (startPerc * getBounds().height);
-            int endY = (int) (endPerc * getBounds().height);
-            endY = Math.max(endY, startY + 20);
+            int startY = (int) startPt;
+            int endY = (int) (startPt + thumbSize);
 
             Gui.drawRect(0,startY,getBounds().width,endY, color);
             lastThumbRect.x = 0; lastThumbRect.y = startY; lastThumbRect.width = getBounds().width; lastThumbRect.height = endY - startY;
@@ -153,21 +158,33 @@ public class MScrollBar extends MPanel {
     @Override
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {
         if (!grabbed) return;
+
+        int minimalThumbLen = 20;
+
+        Gui.drawRect(0,0,getBounds().width, getBounds().height, background);
+        int length = axis == Axis.X ? bounds.width :bounds.height;
+        int totalUnscaledLength = max-min + thumbSize;
+        double subPoint = ((double)max-min) * length / totalUnscaledLength;
+        if (length - subPoint < minimalThumbLen) {
+            subPoint = length - minimalThumbLen;
+        }
+        double thumbSize = length - subPoint;
+
+
+
         int dx = absMouseX - lastX, dy = absMouseY - lastY;
 
         lastX = absMouseX;
         lastY = absMouseY;
 
         int prevVal = current;
-
         if (axis == Axis.Y) {
-            actualValue += dy * (max - min) / getBounds().height;
+            actualValue += dy * (max - min) / subPoint;
         } else if (axis == Axis.X) {
-            actualValue += dx * (max - min) / getBounds().width;
+            actualValue += dx * (max - min) / subPoint;
         }
 
-        current = MathHelper.clamp_int(actualValue, min, max - thumbSize);
-        if (max - min < thumbSize) current = min;
+        current = MathHelper.clamp_int(actualValue, min, max);
 
         if (onUpdate != null && prevVal != current) onUpdate.run();
     }

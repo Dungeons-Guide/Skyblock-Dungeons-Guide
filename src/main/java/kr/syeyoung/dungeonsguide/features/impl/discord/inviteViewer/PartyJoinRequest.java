@@ -35,7 +35,6 @@ public class PartyJoinRequest {
         username = GameSDK.readString(discordUser.username);
         discriminator = GameSDK.readString(discordUser.discriminator);
         avatar = GameSDK.readString(discordUser.avatar);
-        System.out.println(username+"/"+discriminator+"/"+avatar);
     }
 
     private String username, discriminator, avatar;

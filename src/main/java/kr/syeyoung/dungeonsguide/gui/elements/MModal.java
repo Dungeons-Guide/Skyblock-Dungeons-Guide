@@ -30,6 +30,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.awt.*;
 
 public class MModal extends MTooltip {
+    @Getter
     private MPanel modalContent = new MPanel();
 
     @Getter @Setter
@@ -50,8 +51,8 @@ public class MModal extends MTooltip {
 
 
     @Override
-    public void setBounds(Rectangle bounds) {
-        super.setBounds(bounds);
+    public void onBoundsUpdate() {
+        super.onBoundsUpdate();
         Dimension effDim = getEffectiveDimension();
 
         modalContent.setBounds(new Rectangle((effDim.width - modalSize.width)/2, (effDim.height - modalSize.height)/2 + 16, modalSize.width, modalSize.height-16));
@@ -64,20 +65,24 @@ public class MModal extends MTooltip {
         int x = (effDim.width-modalSize.width)/2;
         int y = (effDim.height - modalSize.height)/2;
         GlStateManager.translate(x,y, 0);
-        RenderUtils.drawRoundedRectangle(0,0,modalSize.width, modalSize.height, 10, Math.PI/8, RenderUtils.blendAlpha(0x141414, 0.20f));
+        RenderUtils.drawRoundedRectangle(0,0,modalSize.width, modalSize.height, 3, Math.PI/8, RenderUtils.blendAlpha(0x141414, 0.20f));
         Gui.drawRect(0,15, modalSize.width, 16, 0xFF02EE67);
         Gui.drawRect(0,16,modalSize.width, 26,  RenderUtils.blendAlpha(0x141414, 0.1f));
-        RenderUtils.drawRoundedRectangle(0,16,modalSize.width, modalSize.height-16, 10, Math.PI/8, RenderUtils.blendAlpha(0x141414, 0.1f));
+        RenderUtils.drawRoundedRectangle(0,16,modalSize.width, modalSize.height-16, 3, Math.PI/8, RenderUtils.blendAlpha(0x141414, 0.1f));
 
         GlStateManager.enableTexture2D();
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(title, 10,(16-fr.FONT_HEIGHT)/2, -1);
+        fr.drawString(title, 5,(16-fr.FONT_HEIGHT)/2, -1);
     }
 
     @Override
     public void add(MPanel child) {
         modalContent.add(child);
+    }
+
+    protected void addSuper(MPanel child) {
+        super.add(child);
     }
 
     @Override

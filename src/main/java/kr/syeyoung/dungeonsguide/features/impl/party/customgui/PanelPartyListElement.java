@@ -106,7 +106,7 @@ public class PanelPartyListElement extends MPanel {
         if (cantjoin) {}
         else if (clicked) {
             color = RenderUtils.blendAlpha(0x141414, 0.10f);
-        } else if (lastAbsClip.contains(absMousex, absMousey)) {
+        } else if (lastAbsClip.contains(absMousex, absMousey) && (getTooltipsOpen() == 0 || (mTooltip != null && mTooltip.isOpen()))) {
             color = RenderUtils.blendAlpha(0x141414, 0.12f);
         }
         if (cantjoin) {}
@@ -150,7 +150,7 @@ public class PanelPartyListElement extends MPanel {
         fr.drawString(sideNote, 0,0,-1);
 
         GlStateManager.popMatrix();
-        if (lastAbsClip.contains(absMousex, absMousey) && (mTooltip == null || !mTooltip.isOpen())) {
+        if (lastAbsClip.contains(absMousex, absMousey) && (mTooltip == null || !mTooltip.isOpen()) && getTooltipsOpen() == 0) {
             if (mTooltip != null) mTooltip.close();
             List<String> list = itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
             for (int i = 0; i < list.size(); ++i) {
@@ -183,7 +183,7 @@ public class PanelPartyListElement extends MPanel {
     boolean clicked = false;
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (lastAbsClip.contains(absMouseX, absMouseY)) {
+        if (lastAbsClip.contains(absMouseX, absMouseY)&& (getTooltipsOpen() == 0 || (mTooltip != null && mTooltip.isOpen()))) {
             clicked = true;
 
             GuiChest chest = panelPartyFinder.getGuiCustomPartyFinder().getGuiChest();
@@ -198,7 +198,7 @@ public class PanelPartyListElement extends MPanel {
 
     @Override
     public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
-        if (lastAbsClip.contains(absMouseX, absMouseY)) {
+        if (lastAbsClip.contains(absMouseX, absMouseY) && (getTooltipsOpen() == 0 || (mTooltip != null && mTooltip.isOpen()))) {
             setCursor(EnumCursor.POINTING_HAND);
         }
     }

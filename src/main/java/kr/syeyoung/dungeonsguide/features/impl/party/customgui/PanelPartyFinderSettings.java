@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -36,14 +37,17 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.awt.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 public class PanelPartyFinderSettings extends MPanelScaledGUI {
     private PanelPartyFinder panelPartyFinder;
 
     private MButton refresh = new MButton(), createNew = new MButton(), settings = new MButton();
-    private MPassiveLabelAndElement filterCantjoin, filterWhitelistNote, filterBlacklistNote, plaeHighlightNote; private MToggleButton filterCantjoinButton;
-    private MTextField filterWhitelist, filterBlacklist, highlightNote;
+    private MPassiveLabelAndElement filterCantjoin, filterWhitelistNote, filterBlacklistNote, plaeHighlightNote, cataLv,blacklistClass; private MToggleButton filterCantjoinButton;
+    private MTextField filterWhitelist, filterBlacklist, highlightNote, blacklistClassTxt;
+    private MIntegerSelectionButton integerSelection;
 
     @Getter @Setter
     boolean delistable = false;
@@ -98,21 +102,42 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
                     FeatureRegistry.PARTYKICKER_CUSTOM.setHighlight(str);
                 }
             };
+            blacklistClassTxt = new MTextField() {
+                @Override
+                public void edit(String str) {
+                    super.edit(str);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklistClass(str);
+                    panelPartyFinder.onChestUpdate(null);
+                }
+            };
 
             filterWhitelist.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getWhitelist());
             filterBlacklist.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getBlacklist());
             highlightNote.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getHighlight());
+            blacklistClassTxt.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getBlacklistClass());
 
             filterWhitelistNote = new MPassiveLabelAndElement("Whitelist Note", filterWhitelist);
             filterBlacklistNote = new MPassiveLabelAndElement("Blacklist Note", filterBlacklist);
             plaeHighlightNote = new MPassiveLabelAndElement("Highlight Note", highlightNote);
+            blacklistClass = new MPassiveLabelAndElement("Blacklist Class", blacklistClassTxt);
 
             filterWhitelistNote.setDivideRatio(0.5);
             filterBlacklistNote.setDivideRatio(0.5);
             plaeHighlightNote.setDivideRatio(0.5);
+            blacklistClass.setDivideRatio(0.5);
             add(filterWhitelistNote);
             add(filterBlacklistNote);
             add(plaeHighlightNote);
+            add(blacklistClass);
+        }
+        {
+            integerSelection = new MIntegerSelectionButton(FeatureRegistry.PARTYKICKER_CUSTOM.getMinimumCata());
+            integerSelection.setOnUpdate(() -> {
+                FeatureRegistry.PARTYKICKER_CUSTOM.setMinimumCata(integerSelection.getData());
+                panelPartyFinder.onChestUpdate(null);
+            });
+            cataLv = new MPassiveLabelAndElement("Minimum Cata Lv", integerSelection);
+            cataLv.setDivideRatio(0.5); add(cataLv);
         }
     }
 
@@ -197,18 +222,25 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
     @Override
     public void onBoundsUpdate() {
         Dimension bounds = getEffectiveDimension();
-        refresh.setBounds(new Rectangle(5,5,(bounds.width-10)/2,20));
-        createNew.setBounds(new Rectangle(bounds.width/2,5,(bounds.width-10)/2,20));
-        filterCantjoin.setBounds(new Rectangle(5,30,bounds.width-10,20));
-        filterWhitelistNote.setBounds(new Rectangle(5,55,bounds.width-10,20));
-        filterBlacklistNote.setBounds(new Rectangle(5,80,bounds.width-10,20));
-        plaeHighlightNote.setBounds(new Rectangle(5,105,bounds.width-10,20));
-        settings.setBounds(new Rectangle(5,130,bounds.width-10,20));
+        refresh.setBounds(new Rectangle(5,5,(bounds.width-10)/2,15));
+        createNew.setBounds(new Rectangle(bounds.width/2,5,(bounds.width-10)/2,15));
+        filterCantjoin.setBounds(new Rectangle(5,22,bounds.width-10,15));
+        filterWhitelistNote.setBounds(new Rectangle(5,39,bounds.width-10,15));
+        filterBlacklistNote.setBounds(new Rectangle(5,56,bounds.width-10,15));
+        plaeHighlightNote.setBounds(new Rectangle(5,73,bounds.width-10,15));
+        cataLv.setBounds(new Rectangle(5,90,bounds.width-10,15));
+        blacklistClass.setBounds(new Rectangle(5,107,bounds.width-10,15));
+        settings.setBounds(new Rectangle(5,124,bounds.width-10,15));
     }
 
     public boolean filter(ItemStack itemStack) {
         NBTTagCompound stackTagCompound = itemStack.getTagCompound();
         String note = "";
+        int dLV = 0;
+        Set<String> invalidClasses = new HashSet<>();
+        for (String s : blacklistClassTxt.getText().split(",")) {
+            invalidClasses.add(s.toLowerCase());
+        }
         if (stackTagCompound.hasKey("display", 10)) {
             NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
 
@@ -221,9 +253,17 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
                     if (str.startsWith("§7§7Note:")) {
                         note = str.substring(12);
                     }
+                    if (str.startsWith("§7Dungeon Level Required: §b")) {
+                        dLV =  Integer.parseInt(str.substring(28));
+                    }
+                    if (str.startsWith(" ") && str.contains(":")) {
+                        String clazz = TextUtils.stripColor(str).trim().split(" ")[1];
+                        if (invalidClasses.contains(clazz.toLowerCase())) return false;
+                    }
                 }
             }
         }
+        if (integerSelection.getData() >dLV) return false;
 
         if (!filterBlacklist.getText().isEmpty() && note.toLowerCase().contains(filterBlacklist.getText().toLowerCase())) return false;
         if (!filterWhitelist.getText().isEmpty() && !note.toLowerCase().contains(filterWhitelist.getText().toLowerCase())) return false;

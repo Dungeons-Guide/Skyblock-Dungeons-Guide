@@ -51,7 +51,7 @@ public class MPanel {
     @Setter
     protected MPanel parent;
 
-    private boolean debug = false;
+    private boolean debug;
 
     public void setBackgroundColor(Color c) {
         if (c == null) return;

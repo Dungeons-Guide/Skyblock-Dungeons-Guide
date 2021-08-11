@@ -21,8 +21,10 @@ package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.discord.invteTooltip.MTooltipInvite;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -58,7 +60,7 @@ public class PanelPartyFinder extends MPanel {
 
     private MButton previous;
     private MButton next;
-    private MButton settings;
+    private MButton settings, discordInvite;
     private int page = 1;
 
     private Map<Integer, PanelPartyListElement> panelPartyListElementMap = new HashMap<>();
@@ -111,6 +113,21 @@ public class PanelPartyFinder extends MPanel {
             guiConfigV2.getRootConfigPanel().setCurrentPageAndPushHistory("ROOT."+ FeatureRegistry.PARTYKICKER_CUSTOM.getCategory());
             Minecraft.getMinecraft().displayGuiScreen(guiConfigV2);
         });
+        discordInvite = new MButton();
+        discordInvite.setText("Invite Discord Friends");
+        discordInvite.setOnActionPerformed(() -> {
+            if (PartyManager.INSTANCE.isAllowAskToJoin()) {
+                MTooltipInvite mTooltipInvite = new MTooltipInvite();
+                mTooltipInvite.setScale( new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                mTooltipInvite.open(this);
+            } else {
+                MModalMessage mTooltipInvite = new MModalMessage("Error", "You need to have Ask To Join Enabled to use this feature. Run /dg atj to enable ask to join", () -> {});
+                mTooltipInvite.setScale( new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                mTooltipInvite.open(this);
+            }
+        });
+        discordInvite.setBackground(RenderUtils.blendAlpha(0xFF141414, 0.05f));
+        add(discordInvite);
         add(settings);
         navigation = new MPanelScaledGUI() {
             @Override
@@ -150,6 +167,7 @@ public class PanelPartyFinder extends MPanel {
         scrollablePanel.setBounds(new Rectangle(0, navigation.getBounds().y+navigation.getBounds().height, 3*bounds.width/5, bounds.height - (navigation.getBounds().y+navigation.getBounds().height)));
         goBack.setBounds(new Rectangle(0,0, fr.FONT_HEIGHT*2+20, fr.FONT_HEIGHT*2+20));
         settings.setBounds(new Rectangle(bounds.width - 75, 0, 75, fr.FONT_HEIGHT*2+20));
+        discordInvite.setBounds(new Rectangle(bounds.width-275, 0, 200, fr.FONT_HEIGHT*2+20));
     }
 
     @Override

@@ -67,7 +67,6 @@ public class RichPresenceManager implements Runnable {
     public int setup() {
         System.out.println("SETUP!!! "+ iDiscordCore);
         if (iDiscordCore != null) {
-            System.out.println("DETROYED");
             iDiscordCore.Destroy.destroy(iDiscordCore);
             activityManager = null; callbacks = null; relation_callbacks = null; relationMap.clear();
         }
@@ -123,7 +122,6 @@ public class RichPresenceManager implements Runnable {
         relation_callbacks.OnRelationshipUpdate = (p, rel) -> {
             JDiscordRelation jDiscordRelation = JDiscordRelation.fromJNA(rel);
             JDiscordRelation prev = relationMap.put(jDiscordRelation.getDiscordUser().getId(), jDiscordRelation);
-            System.out.println("Discord relation update!! "+jDiscordRelation);
             try {
                 MinecraftForge.EVENT_BUS.post(new DiscordUserUpdateEvent(prev, jDiscordRelation));
             } catch (Throwable t) {
