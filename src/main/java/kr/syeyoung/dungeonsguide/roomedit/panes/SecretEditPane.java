@@ -58,6 +58,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
         MParameter parameter;
         parameters.add(parameter = new MParameter(new Parameter(uid, data, data), SecretEditPane.this));
         parameter.setBounds(new Rectangle(0,0,getBounds().width, 20));
+        parameter.setParent(SecretEditPane.this);
     }
 
     public void buildElements() {
@@ -93,6 +94,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
                     }
                 }
             });
+            create.setParent(this); save.setParent(this);
         }
         {
             for (Map.Entry<String, DungeonMechanic> en : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
@@ -101,6 +103,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
                 MParameter mParameter = new MParameter(new Parameter(en.getKey(), vec.cloneObj(en.getValue()), vec.cloneObj(en.getValue())), this);
                 mParameter.setBounds(new Rectangle(0,0,getBounds().width,20));
                 parameters.add(mParameter);
+                mParameter.setParent(this);
             }
         }
     }

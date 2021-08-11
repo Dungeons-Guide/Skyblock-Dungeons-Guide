@@ -56,6 +56,7 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
                 public void run() {
                     MParameter parameter;
                     parameters.add(parameter = new MParameter(new Parameter(UUID.randomUUID().toString(), null, null), ProcessorParameterEditPane.this));
+                    parameter.setParent(ProcessorParameterEditPane.this);
                     parameter.setBounds(new Rectangle(0,0,getBounds().width, 20));
                 }
             });
@@ -80,6 +81,7 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
                     }
                 }
             });
+            create.setParent(this); save.setParent(this);
         }
         {
             for (Map.Entry<String, Object> en : dungeonRoom.getDungeonRoomInfo().getProperties().entrySet()) {
@@ -88,6 +90,7 @@ public class ProcessorParameterEditPane extends MPanel implements DynamicEditor 
                 MParameter mParameter = new MParameter(new Parameter(en.getKey(), vec.cloneObj(en.getValue()), vec.cloneObj(en.getValue())), this);
                 mParameter.setBounds(new Rectangle(0,0,getBounds().width,20));
                 parameters.add(mParameter);
+                mParameter.setParent(this);
             }
         }
     }

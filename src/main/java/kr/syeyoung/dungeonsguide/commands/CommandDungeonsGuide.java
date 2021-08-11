@@ -428,7 +428,7 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("createFakeRoom")&& Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
 
             // load schematic
-            File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/Pillars-9fa09d68-c483-4320-872e-9e07b049ee37-a92c0ec6-e125-451a-8518-56e68d9cb463.schematic");
+            File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
             NBTTagCompound compound;
             try {
                 compound = CompressedStreamTools.readCompressed(new FileInputStream(f));
