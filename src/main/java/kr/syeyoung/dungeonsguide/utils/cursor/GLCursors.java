@@ -82,7 +82,6 @@ public class GLCursors {
         if (enumCursorCursorMap.size() != 0) return;
         int platform = LWJGLUtil.getPlatform();
         for (EnumCursor value : EnumCursor.values()) {
-            System.out.println("Loading "+value);
             Cursor c = null;
             try {
                 switch(platform) {
@@ -105,7 +104,6 @@ public class GLCursors {
             }
             try {
                 if (c == null) {
-                    System.out.println("Loading image cursor "+value);
                     int hotspotX = 0, hotspotY = 0;
                     BufferedImage bufferedImage = null;
                     int minC = Cursor.getMinCursorSize(), maxC = Cursor.getMaxCursorSize();

@@ -69,7 +69,6 @@ public class FeatureDisableMessage extends SimpleFeature implements ChatListener
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnSkyblock()) return;
         String msg = clientChatReceivedEvent.message.getFormattedText();
-        System.out.println(msg);
         for (MessageData md:PRE_DEFINED) {
             if (this.<Boolean>getParameter(md.key).getValue() && md.pattern.matcher(msg).matches()) {
                 clientChatReceivedEvent.setCanceled(true);

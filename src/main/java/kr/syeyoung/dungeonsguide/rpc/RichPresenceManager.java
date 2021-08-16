@@ -65,7 +65,6 @@ public class RichPresenceManager implements Runnable {
     @Getter
     private int lastSetupCode = -99999;
     public int setup() {
-        System.out.println("SETUP!!! "+ iDiscordCore);
         if (iDiscordCore != null) {
             iDiscordCore.Destroy.destroy(iDiscordCore);
             activityManager = null; callbacks = null; relation_callbacks = null; relationMap.clear();

@@ -30,12 +30,17 @@ import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.apache.logging.log4j.simple.SimpleLogger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -68,6 +73,18 @@ public class PartyManager implements StompMessageHandler {
     @Getter
     @Setter
     private int maxParty = 5;
+
+    private static final Logger logger = LogManager.getLogger();
+
+
+    private PartyManager() {
+        Logger l = LogManager.getLogger(GuiNewChat.class);
+        if (l instanceof SimpleLogger) {
+            ((SimpleLogger) l).setLevel(Level.OFF);
+        } else if (l instanceof org.apache.logging.log4j.core.Logger) {
+            ((org.apache.logging.log4j.core.Logger) l).setLevel(Level.OFF);
+        }
+    }
 
     public void toggleAllowAskToJoin() {
         if (canInvite) allowAskToJoin = !allowAskToJoin;
@@ -131,6 +148,7 @@ public class PartyManager implements StompMessageHandler {
         if (chatReceivedEvent.type == 2) return;
 
         String str = chatReceivedEvent.message.getFormattedText();
+        logger.log(Level.INFO, "[CHAT] "+str);
 
         try {
 
@@ -152,7 +170,6 @@ public class PartyManager implements StompMessageHandler {
                     members.add(player);
                 }
             } else if (str.equals("§9§m-----------------------------§r")) {
-                System.out.println(checkPlayer + " - "+partyJoin + " - "+invitedDash);
                 if ((checkPlayer > 0 || partyJoin > 0) && partyJoin != 100) {
                     chatReceivedEvent.setCanceled(true);
                 }

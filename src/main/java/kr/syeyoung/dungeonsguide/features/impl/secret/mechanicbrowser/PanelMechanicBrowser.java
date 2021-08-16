@@ -244,7 +244,6 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
         DungeonMechanic dungeonMechanic1 = dungeonRoom.getMechanics().get(id);
         if (dungeonMechanic1 != dungeonMechanic) return;
         Set<String> states = dungeonMechanic1.getPossibleStates(dungeonRoom);
-        System.out.println(states);
 
 
         if (mechanicBrowserTooltip != null) {

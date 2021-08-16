@@ -53,14 +53,10 @@ public class StompPayload {
         if (payload != null)
             sb.append(payload);
         sb.append((char) 0);
-        if (!sb.toString().contains("cosmetic"))
-            System.out.println("Probably sending "+ sb);
         return sb.toString();
     }
 
     public static StompPayload parse(String payload) {
-        if (!payload.contains("cosmetic"))
-            System.out.println("Parsing "+payload);
         Scanner scanner = new Scanner(payload);
         StompPayload stompPayload = new StompPayload();
         stompPayload.method = StompHeader.valueOf(scanner.nextLine());
