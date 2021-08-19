@@ -73,7 +73,7 @@ public class RichPresenceManager implements Runnable {
         nativeGameSDK = GameSDK.getNativeGameSDK();
         if (nativeGameSDK == null) return -9999;
         DiscordCreateParams discordCreateParams = new DiscordCreateParams();
-        discordCreateParams.flags = new UInt64(EDiscordCreateFlags.DiscordCreateFlags_Default.getValue());
+        discordCreateParams.flags = new UInt64(EDiscordCreateFlags.DiscordCreateFlags_NoRequireDiscord.getValue());
         discordCreateParams.client_id = new DiscordClientID(816298079732498473L);
 
         callbacks = new IDiscordActivityEvents.ByReference();
