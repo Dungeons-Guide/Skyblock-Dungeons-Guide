@@ -191,15 +191,34 @@ public class MPanel {
     public void resize(int parentWidth, int parentHeight) {}
 
 
-    public void keyTyped0(char typedChar, int keyCode) {
+    public void keyPressed0(char typedChar, int keyCode) {
         for (MPanel childComponent  : getChildComponents()) {
-            childComponent.keyTyped0(typedChar, keyCode);
+            childComponent.keyPressed0(typedChar, keyCode);
         }
 
         if (isFocused)
-            keyTyped(typedChar, keyCode);
+            keyPressed(typedChar, keyCode);
     }
-    public void keyTyped(char typedChar, int keyCode) {}
+    public void keyPressed(char typedChar, int keyCode) {}
+    public void keyHeld0(char typedChar, int keyCode, long heldMS) {
+        for (MPanel childComponent  : getChildComponents()) {
+            childComponent.keyHeld0(typedChar, keyCode, heldMS);
+        }
+
+        if (isFocused)
+            keyHeld(typedChar, keyCode, heldMS);
+    }
+    public void keyHeld(char typedChar, int keyCode, long heldMS) {}
+    public void keyReleased0(char typedChar, int keyCode, long heldMS) {
+        for (MPanel childComponent  : getChildComponents()) {
+            childComponent.keyReleased0(typedChar, keyCode, heldMS);
+        }
+
+        if (isFocused)
+            keyReleased(typedChar, keyCode, heldMS);
+    }
+    public void keyReleased(char typedChar, int keyCode, long heldMS) {}
+
 
     public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
         int relMousex = relMouseX0 - getBounds().x;

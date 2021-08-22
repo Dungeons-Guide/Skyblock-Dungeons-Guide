@@ -136,7 +136,7 @@ public class GuiGuiLocationConfig extends MGui {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         try {
-            getMainPanel().keyTyped0(typedChar, keyCode);
+            getMainPanel().keyPressed0(typedChar, keyCode);
 
             if (keyCode == 1) {
                 Minecraft.getMinecraft().displayGuiScreen(before);

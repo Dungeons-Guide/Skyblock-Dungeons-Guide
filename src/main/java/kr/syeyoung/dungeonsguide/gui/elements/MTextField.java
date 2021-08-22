@@ -37,6 +37,8 @@ import java.awt.*;
 import java.awt.datatransfer.*;
 import java.awt.event.KeyEvent;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 @Getter
 public class MTextField extends MPanel {
@@ -203,10 +205,25 @@ public class MTextField extends MPanel {
         }
     }
 
+    private Map<Integer, Long> callKeyHeldIfAfter = new HashMap<>();
     @Override
-    public void keyTyped(char typedChar, int keycode) {
+    public void keyHeld(char typedChar, int keyCode, long heldMS) {
         if (!isFocused) return;
+        Long callAfter = callKeyHeldIfAfter.get(keyCode);
+        if (callAfter == null) return;
+        if (callAfter <= System.currentTimeMillis()) this.keyPressed(typedChar, keyCode);
+    }
 
+    @Override
+    public void keyReleased(char typedChar, int keyCode, long heldMS) {
+        callKeyHeldIfAfter.remove(keyCode);
+    }
+
+    @Override
+    public void keyPressed(char typedChar, int keycode) {
+        if (!isFocused) return;
+        if (callKeyHeldIfAfter.containsKey(keycode)) callKeyHeldIfAfter.put(keycode, System.currentTimeMillis()+50);
+        else callKeyHeldIfAfter.put(keycode, System.currentTimeMillis() + 750);
 
         if (selectionStart == -1) {
             if (keycode == 199) { // home

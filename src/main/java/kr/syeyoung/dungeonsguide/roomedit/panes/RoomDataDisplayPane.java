@@ -95,7 +95,7 @@ public class RoomDataDisplayPane extends MPanel {
     }
 
     @Override
-    public void keyTyped(char typedChar, int keyCode) {
+    public void keyPressed(char typedChar, int keyCode) {
         int[][] blocks = dungeonRoom.getDungeonRoomInfo().getBlocks();
         if (selectedX != -1 && selectedY != -1 && selectedY < blocks.length && selectedX < blocks[0].length) {
             dungeonRoom.getDungeonRoomInfo().getBlocks()[selectedY][selectedX] = -1;

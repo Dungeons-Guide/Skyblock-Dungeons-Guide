@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.gui;
 
 import kr.syeyoung.dungeonsguide.gui.elements.MRootPanel;
-import kr.syeyoung.dungeonsguide.utils.GlStateUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import lombok.Getter;
@@ -27,12 +26,16 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.Tuple;
 import org.lwjgl.LWJGLException;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class MGui extends GuiScreen {
 
@@ -83,8 +86,24 @@ public class MGui extends GuiScreen {
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
         try {
-            mainPanel.keyTyped0(typedChar, keyCode);
+            mainPanel.keyPressed0(typedChar, keyCode);
             super.keyTyped(typedChar, keyCode);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+    public void keyHeld(int keyCode, char typedChar, long heldMS) throws IOException {
+        try {
+            mainPanel.keyHeld0(typedChar, keyCode, heldMS);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+    public void keyReleased(int keyCode, char typedChar,long heldMS) throws IOException {
+        try {
+            mainPanel.keyReleased0(typedChar, keyCode, heldMS);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                 e.printStackTrace();
@@ -107,6 +126,7 @@ public class MGui extends GuiScreen {
     public void onGuiClosed() {
         super.onGuiClosed();
         isOpen = false;
+        keyLastPressed.clear();
 
         try {
             Mouse.setNativeCursor(null);
@@ -155,6 +175,8 @@ public class MGui extends GuiScreen {
 
 
     private int lastX, lastY;
+
+
     @Override
     public void handleMouseInput() throws IOException {
         if (!isOpen) return;
@@ -213,6 +235,28 @@ public class MGui extends GuiScreen {
                 e.printStackTrace();
         }
     }
+    private Map<Integer, Tuple<Character, Long>> keyLastPressed = new HashMap<>();
+    public void handleKeyboardInput() throws IOException
+    {
+        if (!isOpen) return;
+        if (Keyboard.getEventKeyState())
+        {
+            keyLastPressed.put(Keyboard.getEventKey(), new Tuple<>(Keyboard.getEventCharacter(), System.currentTimeMillis()));
+            this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+        } else {
+            Tuple<Character, Long> val = keyLastPressed.remove(Keyboard.getEventKey());
+            if (val != null) this.keyReleased(Keyboard.getEventKey(), val.getFirst(), val.getSecond());
+        }
 
+        this.mc.dispatchKeypresses();
+    }
 
+    @Override
+    public void handleInput() throws IOException {
+        super.handleInput();
+        long currentTime = System.currentTimeMillis();
+        for (Map.Entry<Integer, Tuple<Character, Long>> integerLongEntry : keyLastPressed.entrySet()) {
+            this.keyHeld(integerLongEntry.getKey(), integerLongEntry.getValue().getFirst(), integerLongEntry.getValue().getSecond());
+        }
+    }
 }
