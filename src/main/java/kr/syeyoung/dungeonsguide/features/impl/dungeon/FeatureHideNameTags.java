@@ -28,7 +28,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 
 public class FeatureHideNameTags extends SimpleFeature implements EntityLivingRenderListener {
     public FeatureHideNameTags() {
-        super("Dungeon.Mobs", "Hide mob nametags", "Hide mob nametags. Developer personally don't suggest using this, it will be most likely annoying.", "dungeon.hidenametag", false);
+        super("Dungeon.Mobs", "Hide mob nametags", "Hide mob nametags in dungeon", "dungeon.hidenametag", false);
     }
 
 
