@@ -57,12 +57,13 @@ public class ChatReplacerChatByMe implements IChatReplacer {
         ChatStyle origStyle = hasMsg.get(0).getChatStyle();
         String name = chatComponents.getFormattedText();
 
+        System.out.println(name);
 
         String[] splited = name.split(" ");
         String actualName = splited[splited.length-1];
 
         List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(actualName).toLowerCase());
-        if (cDatas == null || splited.length > 2) return;
+        if (cDatas == null) return;
         CosmeticData color=null, prefix=null;
         for (ActiveCosmetic activeCosmetic : cDatas) {
             CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
@@ -75,10 +76,12 @@ public class ChatReplacerChatByMe implements IChatReplacer {
 
         String building = "";
         if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
-        if (splited.length == 2) building += splited[0] +" ";
+        for (int i = 0; i < splited.length-1; i++) {
+            building += splited[i] +" ";
+        }
 
         if (color != null) {
-            String nick = splited[1];
+            String nick = splited[splited.length-1];
             building += color.getData().replace("&","§");
             boolean foundLegitChar = false;
             boolean foundColor = false;
@@ -93,7 +96,7 @@ public class ChatReplacerChatByMe implements IChatReplacer {
                 }
             }
         } else {
-            building += splited[1] ;
+            building += splited[splited.length-1] ;
         }
 
         ChatComponentText chatComponents1 = new ChatComponentText(building);
