@@ -67,6 +67,7 @@ public class RichPresenceManager implements Runnable {
     public int setup() {
         if (iDiscordCore != null) {
             iDiscordCore.Destroy.destroy(iDiscordCore);
+            iDiscordCore = null;
             activityManager = null; callbacks = null; relation_callbacks = null; relationMap.clear();
         }
 
@@ -226,8 +227,10 @@ public class RichPresenceManager implements Runnable {
         while(!Thread.interrupted()) {
             try {
                 if (iDiscordCore == null || setup) {
+                    long lastSetup = lastSetupCode;
                     lastSetupCode = setup();
-                    System.out.println("Discord returned "+lastSetupCode+" for setup "+EDiscordResult.fromValue(lastSetupCode));
+                    if (lastSetup != lastSetupCode)
+                        System.out.println("Discord returned "+lastSetupCode+" for setup "+EDiscordResult.fromValue(lastSetupCode));
                     setup = lastSetupCode != EDiscordResult.DiscordResult_Ok.getValue();
                     counter = 0;
                 } else {
