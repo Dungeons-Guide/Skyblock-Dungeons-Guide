@@ -79,7 +79,6 @@ public class RenderUtils {
         worldrenderer.pos((double)right, (double)bottom, (double)0).color(f5, f6, f7, f4).endVertex();
         tessellator.draw();
         GlStateManager.shadeModel(7424);
-        GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
     }
@@ -635,7 +634,6 @@ public class RenderUtils {
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
 
@@ -728,7 +726,6 @@ public class RenderUtils {
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
         GlStateManager.enableLighting();
         GlStateManager.popMatrix();
 
