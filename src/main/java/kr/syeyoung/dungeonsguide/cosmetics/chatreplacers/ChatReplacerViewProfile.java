@@ -68,6 +68,10 @@ public class ChatReplacerViewProfile implements IChatReplacer {
                         char c = s.charAt(0);
                         if (('a' <= c && c <= 'z') || ('A' <= c && c <= 'Z') || ('0' <= c && c <= '9') || c == '_' || c == '-') {
                             lastValidNickname = i;
+                            if (i >= 1) {
+                                String str = TextUtils.stripColor(splitInto[i-1]);
+                                if (str.startsWith("[") && str.endsWith("]"))break;
+                            }
                         }
                     }
                     if (lastValidNickname == -1) continue;
