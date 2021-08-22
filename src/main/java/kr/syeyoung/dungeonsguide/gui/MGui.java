@@ -38,6 +38,7 @@ public class MGui extends GuiScreen {
 
     @Getter
     private final MRootPanel mainPanel = new MRootPanel();
+    private boolean isOpen = false;
 
     public MGui(){
         try {
@@ -50,6 +51,7 @@ public class MGui extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        isOpen = true;
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         mainPanel.setBounds(new Rectangle(0,0,Minecraft.getMinecraft().displayWidth,Minecraft.getMinecraft().displayHeight));
     }
@@ -104,6 +106,7 @@ public class MGui extends GuiScreen {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
+        isOpen = false;
 
         try {
             Mouse.setNativeCursor(null);
@@ -154,6 +157,7 @@ public class MGui extends GuiScreen {
     private int lastX, lastY;
     @Override
     public void handleMouseInput() throws IOException {
+        if (!isOpen) return;
         try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
