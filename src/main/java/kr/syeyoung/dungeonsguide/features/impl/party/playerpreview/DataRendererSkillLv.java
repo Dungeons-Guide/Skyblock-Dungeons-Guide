@@ -42,7 +42,7 @@ public class DataRendererSkillLv implements DataRenderer {
         Double xp = playerProfile.getSkillXp().get(skill);
         if (xp == null) {
             fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
-            fr.drawString("Unknown", fr.getStringWidth(skill.getFriendlyName()+" "),0,0xFFFFFFFF);
+            fr.drawString("§cSkill API Disabled", 0, fr.FONT_HEIGHT,0xFFFFFFFF);
         } else {
             XPUtils.XPCalcResult xpCalcResult = XPUtils.getSkillXp(skill, xp);
             fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);

@@ -302,6 +302,10 @@ public class ApiFetchur {
         if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
         return jsonObject.get(key).getAsString();
     }
+    public static Double getOrDefaultNullable(JsonObject jsonObject, String key, Double value) {
+        if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
+        return jsonObject.get(key).getAsDouble();
+    }
     public static NBTTagCompound parseBase64NBT(String nbt) throws IOException {
         return CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)));
     }
@@ -376,8 +380,9 @@ public class ApiFetchur {
             }
         }
 
+        playerProfile.setSkillXp(new HashMap<>());
         for (Skill value : Skill.values()) {
-            playerProfile.getSkillXp().put(value, getOrDefault(playerData, "experience_skill_"+value.getJsonName(), 0.0));
+            playerProfile.getSkillXp().put(value, getOrDefaultNullable(playerData, "experience_skill_"+value.getJsonName(), null));
         }
 
         if (playerData.has("pets")) {

@@ -337,7 +337,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         GlStateManager.pushMatrix();
         GlStateManager.translate(popupRect.x, popupRect.y, 0);
 
-        if (drawInv && playerProfile.get().getInventory() != null) {
+        if (drawInv) {
             int startX = 81;
             int startY = 86;
             clip(scaledResolution, popupRect.x+startX-1, popupRect.y+startY-1, 164, 74);
@@ -348,41 +348,45 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             int rx = relX - startX;
             int ry = relY - startY;
 
-
-
-            GlStateManager.disableRescaleNormal();
-            RenderHelper.enableGUIStandardItemLighting();
-            GlStateManager.disableLighting();
-            for (int i = 0; i < playerProfile.get().getInventory().length; i++) {
-                int x = (i%9) * 18;
-                int y = (i/9) * 18;
-                if (x <= rx && rx<x+18 && y<=ry&&ry<y+18) {
-                    toHover = playerProfile.get().getInventory()[(i+9) % 36];
-                }
-                Gui.drawRect(x,y,x+18,y+18, 0xFF000000);
-                Gui.drawRect(x+1,y+1,x+17,y+17, 0xFF666666);
-                GlStateManager.color(1, 1, 1, 1.0F);
-
-                Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.get().getInventory()[(i+9) % 36], (i%9) * 18+1,(i/9) * 18+1);
-            }
-
-            if (toHover != null) {
-                List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
-                for (int i = 0; i < list.size(); ++i) {
-                    if (i == 0) {
-                        list.set(i, toHover.getRarity().rarityColor + list.get(i));
-                    } else {
-                        list.set(i, EnumChatFormatting.GRAY + list.get(i));
+            if (playerProfile.get().getInventory() != null) {
+                GlStateManager.disableRescaleNormal();
+                RenderHelper.enableGUIStandardItemLighting();
+                GlStateManager.disableLighting();
+                for (int i = 0; i < playerProfile.get().getInventory().length; i++) {
+                    int x = (i%9) * 18;
+                    int y = (i/9) * 18;
+                    if (x <= rx && rx<x+18 && y<=ry&&ry<y+18) {
+                        toHover = playerProfile.get().getInventory()[(i+9) % 36];
                     }
+                    Gui.drawRect(x,y,x+18,y+18, 0xFF000000);
+                    Gui.drawRect(x+1,y+1,x+17,y+17, 0xFF666666);
+                    GlStateManager.color(1, 1, 1, 1.0F);
+
+                    Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(playerProfile.get().getInventory()[(i+9) % 36], (i%9) * 18+1,(i/9) * 18+1);
                 }
-                FontRenderer font = toHover.getItem().getFontRenderer(toHover);
-                GlStateManager.popMatrix();
-                GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                FontRenderer theRenderer = (font == null ? fr : font);
-                GuiUtils.drawHoveringText(list,mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
-                GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                GlStateManager.pushMatrix();
+
+                if (toHover != null) {
+                    List<String> list = toHover.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+                    for (int i = 0; i < list.size(); ++i) {
+                        if (i == 0) {
+                            list.set(i, toHover.getRarity().rarityColor + list.get(i));
+                        } else {
+                            list.set(i, EnumChatFormatting.GRAY + list.get(i));
+                        }
+                    }
+                    FontRenderer font = toHover.getItem().getFontRenderer(toHover);
+                    GlStateManager.popMatrix();
+                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
+                    FontRenderer theRenderer = (font == null ? fr : font);
+                    GuiUtils.drawHoveringText(list,mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
+                    GL11.glEnable(GL11.GL_SCISSOR_TEST);
+                    GlStateManager.pushMatrix();
+                }
+            } else {
+                Gui.drawRect(0,0,162,72, 0xFF666666);
+                fr.drawSplitString("Player has disabled Inventory API", 5,5, 142, -1);
             }
+
         }
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
 

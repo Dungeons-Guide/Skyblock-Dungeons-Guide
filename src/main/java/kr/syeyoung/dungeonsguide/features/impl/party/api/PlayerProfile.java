@@ -66,7 +66,7 @@ public class PlayerProfile {
         private double experience;
     }
 
-    private Map<Skill, Double> skillXp = new HashMap<>();
+    private Map<Skill, Double> skillXp;
 
     private List<Pet> pets = new ArrayList<>();
 
