@@ -36,6 +36,7 @@ public class FeatureTooltipPrice extends SimpleFeature implements TooltipListene
     public FeatureTooltipPrice() {
         super("Misc.API Features", "Item Price", "Shows price of items", "tooltip.price");
         parameters.put("reqShift", new FeatureParameter<Boolean>("reqShift", "Require Shift", "If shift needs to be pressed in order for this feature to be activated", false, "boolean"));
+        setEnabled(false);
     }
 
     @Override
