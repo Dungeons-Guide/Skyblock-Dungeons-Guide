@@ -182,6 +182,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
             mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue()) {{
                 setOnUpdate(() ->{
                     FeatureMechanicBrowse.this.<Float>getParameter("scale").setValue(this.getData());
+                    mGuiMechanicBrowser.initGui();
                 }); }
             }));
 

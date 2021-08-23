@@ -34,12 +34,12 @@ public class MGuiMechanicBrowser extends MGui {
     @Override
     public void initGui() {
         super.initGui();
+        panelMechanicBrowser.setBounds(featureMechanicBrowse.getFeatureRect().getRectangle());
+        panelMechanicBrowser.setScale(featureMechanicBrowse.getScale());
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        panelMechanicBrowser.setBounds(featureMechanicBrowse.getFeatureRect().getRectangle());
-        panelMechanicBrowser.setScale(featureMechanicBrowse.getScale());
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
 }
