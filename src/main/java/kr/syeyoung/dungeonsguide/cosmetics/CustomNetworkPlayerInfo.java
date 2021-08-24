@@ -36,23 +36,60 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
     public CustomNetworkPlayerInfo(S38PacketPlayerListItem.AddPlayerData p_i46295_1_) {
         super(p_i46295_1_);
+        setDisplayName(super.getDisplayName());
+    }
+
+
+    private IChatComponent displayName;
+    private String playernameLowercase;
+    private String unformatted;
+    private String actualName;
+    @Override
+    public void setDisplayName(IChatComponent displayNameIn) {
+        displayName = displayNameIn;
+        if (displayName == null) {
+            playernameLowercase = null;
+            unformatted = null;
+            return;
+        }
+
+        unformatted = displayName.getUnformattedText();
+
+
+        actualName = "";
+        for (String s : unformatted.split(" ")) {
+            String strippped = TextUtils.stripColor(s);
+            if (strippped.startsWith("[")) continue;
+            actualName = strippped;
+            break;
+        }
+        playernameLowercase = actualName.toLowerCase();
     }
 
     public IChatComponent getDisplayName()
     {
-        String semi_name = super.getDisplayName() != null ? super.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
 
-        String actualName = "";
-        for (String s : semi_name.split(" ")) {
-            if (TextUtils.stripColor(s).startsWith("[")) continue;
-            actualName = TextUtils.stripColor(s);
-            break;
+        String semi_name;
+        String actualName;
+        List<ActiveCosmetic> activeCosmetics;
+        if (playernameLowercase != null) {
+            activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(playernameLowercase);
+            semi_name = unformatted;
+            actualName = this.actualName;
+        } else {
+            semi_name = ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
+            actualName = "";
+            for (String s : semi_name.split(" ")) {
+                String strippped = TextUtils.stripColor(s);
+                if (strippped.startsWith("[")) continue;
+                actualName = strippped;
+                break;
+            }
+            activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
         }
-        List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
 
 
-
-        if (activeCosmetics == null) return super.getDisplayName();
+        if (activeCosmetics == null) return displayName;
         CosmeticData color=null;
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
             CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
