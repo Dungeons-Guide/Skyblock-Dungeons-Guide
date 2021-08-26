@@ -180,7 +180,6 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
             File root = DungeonsGuide.getDungeonsGuide().getConfigDir();
             File dir = new File(root, "processorinput");
-            File outpuzzle = new File(root, "processoroutpuzzle");
             File outsecret = new File(root, "processoroutsecret");
             for (File f : dir.listFiles()) {
                 if (!f.getName().endsWith(".roomdata")) continue;
@@ -194,14 +193,6 @@ public class CommandDungeonsGuide extends CommandBase {
 
                     FileOutputStream fos = new FileOutputStream(new File(outsecret, dri.getUuid().toString() + ".roomdata"));
                     ObjectOutputStream oos = new ObjectOutputStream(fos);
-                    oos.writeObject(dri);
-                    oos.flush();
-                    oos.close();
-
-                    dri.getMechanics().clear();
-
-                    fos = new FileOutputStream(new File(outpuzzle, dri.getUuid().toString() + ".roomdata"));
-                    oos = new ObjectOutputStream(fos);
                     oos.writeObject(dri);
                     oos.flush();
                     oos.close();
@@ -225,34 +216,36 @@ public class CommandDungeonsGuide extends CommandBase {
                         if (value instanceof DungeonSecret &&
                                 (((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.BAT
                                         || ((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.CHEST)
-                                && ((DungeonSecret) value).getSecretPoint().getY() == 0) {
+                                && ((DungeonSecret) value).getSecretPoint().getY() == 0 ) {
                             OffsetPoint offsetPoint = ((DungeonSecret) value).getSecretPoint();
-                            dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                            System.out.println("Fixing " + value2.getKey() + " - as secret " + ((DungeonSecret) value).getSecretType() + " - at " + ((DungeonSecret) value).getSecretPoint());
+                            if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+                                System.out.println("Fixing " + value2.getKey() + " - as secret " + ((DungeonSecret) value).getSecretType() + " - at " + ((DungeonSecret) value).getSecretPoint());
+                            }
                         } else if (value instanceof DungeonOnewayDoor) {
                             for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0) {
+                                if (offsetPoint.getY() == 0&& dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - o-door - at " + offsetPoint);
                                 }
                             }
                         } else if (value instanceof DungeonDoor) {
                             for (OffsetPoint offsetPoint : ((DungeonDoor) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0) {
+                                if (offsetPoint.getY() == 0&& dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - door - at " + offsetPoint);
                                 }
                             }
                         } else if (value instanceof DungeonBreakableWall) {
                             for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0) {
+                                if (offsetPoint.getY() == 0&& dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - wall - at " + offsetPoint);
                                 }
                             }
                         } else if (value instanceof DungeonTomb) {
                             for (OffsetPoint offsetPoint : ((DungeonTomb) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0) {
+                                if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - crypt - at " + offsetPoint);
                                 }
@@ -541,11 +534,6 @@ public class CommandDungeonsGuide extends CommandBase {
             }
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
-        }  else if (args[0].equals("IDKTEST")) {
-            IDiscordOverlayManager iDiscordOverlayManager = RichPresenceManager.INSTANCE.getIDiscordCore().GetOverlayManager.getOverlayManager(RichPresenceManager.INSTANCE.getIDiscordCore());
-            iDiscordOverlayManager.OpenActivityInvite.openActivityInvite(iDiscordOverlayManager, EDiscordActivityActionType.DiscordActivityActionType_Join, Pointer.NULL, (callbackData, result) -> {
-
-            });
         } else{
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
