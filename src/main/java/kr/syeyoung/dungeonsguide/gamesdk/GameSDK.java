@@ -46,7 +46,7 @@ public class GameSDK {
 
     static {
         try {
-            extractLibrary();
+            if (System.getProperty("dg.safe") == null) extractLibrary();
         } catch (IOException e) {
             e.printStackTrace();
         }

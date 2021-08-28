@@ -114,16 +114,12 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         commandReparty = new CommandReparty();
-        if (FeatureRegistry.ETC_REPARTY.isEnabled())
-            ClientCommandHandler.instance.registerCommand(commandReparty);
-
         MinecraftForge.EVENT_BUS.register(commandReparty);
+
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
         MinecraftForge.EVENT_BUS.register(new Keybinds());
 
-        RichPresenceManager.INSTANCE.getLastSetupCode();
-        MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
 
@@ -155,6 +151,13 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
+
+        if (FeatureRegistry.ETC_REPARTY.isEnabled())
+            ClientCommandHandler.instance.registerCommand(commandReparty);
+        if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled())
+            System.setProperty("dg.safe", "true");
+        MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
+
         ProgressManager.pop(progressbar);
     }
     @Getter

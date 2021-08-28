@@ -114,10 +114,8 @@ public class PartyManager implements StompMessageHandler {
         this.partyID = partyID;
         this.askToJoinSecret = null;
 
-        if (allowAskToJoin) {
+        if (allowAskToJoin && RichPresenceManager.INSTANCE.getLastSetupCode() != -9999) {
             generateNewAskToJoinSecret();
-        } else {
-            RichPresenceManager.INSTANCE.updatePresence();
         }
     }
 
@@ -137,7 +135,6 @@ public class PartyManager implements StompMessageHandler {
 
         StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
         stompInterface.send(new StompPayload().payload(new JSONObject().put("secret", askToJoinSecret).toString()).header("destination", "/app/party.setjoinsecret"));
-        RichPresenceManager.INSTANCE.updatePresence();
     }
 
     private int partyJoin =0;
@@ -284,7 +281,6 @@ public class PartyManager implements StompMessageHandler {
                 canInvite = false;
                 allowAskToJoin = false;
                 askToJoinSecret = "";
-                RichPresenceManager.INSTANCE.updatePresence();
             } else if (str.equals("§cCouldn't find a player with that name!§r")) {
                 canInvite = true;
                 if (invitedDash > 0) invitedDash = 3;
@@ -299,7 +295,6 @@ public class PartyManager implements StompMessageHandler {
                 canInvite = false;
                 allowAskToJoin = false;
                 askToJoinSecret = "";
-                RichPresenceManager.INSTANCE.updatePresence();
                 sendChat.add(new Tuple<>("/p invite -", () -> {invitedDash = 1;}));
             } else if (str.endsWith("§r§eto Party Moderator§r")) {
                 // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r

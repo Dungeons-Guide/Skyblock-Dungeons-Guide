@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.features.impl.discord.invteTooltip.MTooltipInvi
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
+import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -40,6 +41,7 @@ import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.util.ChatComponentText;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -116,7 +118,11 @@ public class PanelPartyFinder extends MPanel {
         discordInvite = new MButton();
         discordInvite.setText("Invite Discord Friends");
         discordInvite.setOnActionPerformed(() -> {
-            if (PartyManager.INSTANCE.isAllowAskToJoin()) {
+            if (RichPresenceManager.INSTANCE.getLastSetupCode() == -9999) {
+                MModalMessage mTooltipInvite = new MModalMessage("Error", "Discord GameSDK has been disabled, or it failed to load", () -> {});
+                mTooltipInvite.setScale( new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                mTooltipInvite.open(this);
+            } else if (PartyManager.INSTANCE.isAllowAskToJoin()) {
                 MTooltipInvite mTooltipInvite = new MTooltipInvite();
                 mTooltipInvite.setScale( new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
                 mTooltipInvite.open(this);

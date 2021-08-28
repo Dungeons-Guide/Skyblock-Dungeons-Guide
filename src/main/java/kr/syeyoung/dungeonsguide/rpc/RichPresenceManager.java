@@ -62,9 +62,12 @@ public class RichPresenceManager implements Runnable {
     @Getter
     private Map<Long, JDiscordRelation> relationMap = new HashMap<>();
 
+    private boolean ready = false;
+
     @Getter
     private int lastSetupCode = -99999;
     public int setup() {
+        ready = false;
         if (iDiscordCore != null) {
             iDiscordCore.Destroy.destroy(iDiscordCore);
             iDiscordCore = null;
@@ -106,23 +109,27 @@ public class RichPresenceManager implements Runnable {
 
         relation_callbacks = new IDiscordRelationshipEvents.ByReference();
         relation_callbacks.OnRefresh = (p) -> {
-            IDiscordRelationshipManager iDiscordRelationshipManager = iDiscordCore.GetRelationshipManager.getRelationshipManager(iDiscordCore);
-            iDiscordRelationshipManager.Filter.filter(iDiscordRelationshipManager, Pointer.NULL, (d, relation) -> true);
-            IntByReference intByReference = new IntByReference();
-            iDiscordRelationshipManager.Count.count(iDiscordRelationshipManager, intByReference);
-            int count = intByReference.getValue();
-            for (int i = 0; i < count; i++) {
-                DiscordRelationship discordRelationship = new DiscordRelationship();
-                iDiscordRelationshipManager.GetAt.getAt(iDiscordRelationshipManager, new UInt32(i), discordRelationship);
+            try {
+                ready = true;
+                IDiscordRelationshipManager iDiscordRelationshipManager = iDiscordCore.GetRelationshipManager.getRelationshipManager(iDiscordCore);
+                iDiscordRelationshipManager.Filter.filter(iDiscordRelationshipManager, Pointer.NULL, (d, relation) -> true);
+                IntByReference intByReference = new IntByReference();
+                iDiscordRelationshipManager.Count.count(iDiscordRelationshipManager, intByReference);
+                int count = intByReference.getValue();
+                relationMap.clear();
+                for (int i = 0; i < count; i++) {
+                    DiscordRelationship discordRelationship = new DiscordRelationship();
+                    iDiscordRelationshipManager.GetAt.getAt(iDiscordRelationshipManager, new UInt32(i), discordRelationship);
 
-                JDiscordRelation jDiscordRelation = JDiscordRelation.fromJNA(discordRelationship);
-                relationMap.put(jDiscordRelation.getDiscordUser().getId(), jDiscordRelation);
-            }
+                    JDiscordRelation jDiscordRelation = JDiscordRelation.fromJNA(discordRelationship);
+                    relationMap.put(jDiscordRelation.getDiscordUser().getId(), jDiscordRelation);
+                }
+            } catch (Throwable e) {e.printStackTrace();}
         };
         relation_callbacks.OnRelationshipUpdate = (p, rel) -> {
-            JDiscordRelation jDiscordRelation = JDiscordRelation.fromJNA(rel);
-            JDiscordRelation prev = relationMap.put(jDiscordRelation.getDiscordUser().getId(), jDiscordRelation);
             try {
+                JDiscordRelation jDiscordRelation = JDiscordRelation.fromJNA(rel);
+                JDiscordRelation prev = relationMap.put(jDiscordRelation.getDiscordUser().getId(), jDiscordRelation);
                 MinecraftForge.EVENT_BUS.post(new DiscordUserUpdateEvent(prev, jDiscordRelation));
             } catch (Throwable t) {
                 t.printStackTrace();
@@ -157,22 +164,21 @@ public class RichPresenceManager implements Runnable {
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public void respond(DiscordSnowflake userID, EDiscordActivityJoinRequestReply reply) {
+        if (activityManager == null) return;
         activityManager.SendRequestReply.sendRequestReply(activityManager, userID, reply, Pointer.NULL, (callbackData, result) -> {
             System.out.println("Discord Returned "+result+" For Replying "+reply+" To "+userID.longValue()+"L");
         });
     }
 
     public void accept(DiscordSnowflake userID) {
+        if (activityManager == null) return;
         activityManager.AcceptInvite.acceptInvite(activityManager, userID, Pointer.NULL, (callbackData, result) -> {
             System.out.println("Discord Returned "+result+" For Accepting invite from "+userID.longValue()+"L");
         });
     }
     public void updatePresence() {
         if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
-            activityManager.ClearActivity.clearActivity(activityManager, Pointer.NULL, new NativeGameSDK.DiscordCallback() {
-                @Override
-                public void callback(Pointer callbackData, EDiscordResult result) {
-                }
+            activityManager.ClearActivity.clearActivity(activityManager, Pointer.NULL, (callbackData, result) -> {
             });
         } else {
             String name = skyblockStatus.getDungeonName() == null ? "" : skyblockStatus.getDungeonName();
@@ -212,10 +218,7 @@ public class RichPresenceManager implements Runnable {
             } else {
                 GameSDK.writeString(latestDiscordActivity.secrets.join, "");
             }
-            activityManager.UpdateActivity.updateActivity(activityManager, latestDiscordActivity, Pointer.NULL, new NativeGameSDK.DiscordCallback() {
-                @Override
-                public void callback(Pointer callbackData, EDiscordResult result) {
-                }
+            activityManager.UpdateActivity.updateActivity(activityManager, latestDiscordActivity, Pointer.NULL, (callbackData, result) -> {
             });
         }
     }
@@ -235,9 +238,9 @@ public class RichPresenceManager implements Runnable {
                     counter = 0;
                 } else {
                     EDiscordResult eDiscordResult = iDiscordCore.RunCallbacks.runCallbacks(iDiscordCore);
-                    if (eDiscordResult == EDiscordResult.DiscordResult_NotRunning) {
+                    if (eDiscordResult != EDiscordResult.DiscordResult_Ok) {
                         setup = true;
-                    } else {
+                    } else if (ready){
                         if (counter == 0)
                             updatePresence();
                         if (++counter == 15) counter = 0;

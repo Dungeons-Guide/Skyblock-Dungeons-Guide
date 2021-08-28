@@ -86,6 +86,7 @@ public class FeatureRegistry {
     });
     public static final PartyInviteViewer DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
     public static final PlayingDGAlarm DISCORD_ONLINEALARM = register(new PlayingDGAlarm());
+    public static final SimpleFeature DISCORD_DONOTUSE = register(new SimpleFeature("Discord", "Disable Native Library", "Disables usage of jna for discord rpc support.\nBreaks any discord related feature in the mod.\nRequires mod restart to get affected.\n\nThis feature is only for those whose minecraft crashes due to discord gamesdk crash.", "discord.rpc", false));
 
 
     public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("Solver.Any Floor", "Riddle", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));

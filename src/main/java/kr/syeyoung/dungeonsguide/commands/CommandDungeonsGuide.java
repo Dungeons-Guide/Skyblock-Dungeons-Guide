@@ -318,6 +318,10 @@ public class CommandDungeonsGuide extends CommandBase {
 //                }
 //            }
         } else if (args[0].equalsIgnoreCase("asktojoin") || args[0].equalsIgnoreCase("atj")) {
+            if (RichPresenceManager.INSTANCE.getLastSetupCode() == -9999) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
+                return;
+            }
             if (!PartyManager.INSTANCE.isCanInvite()) {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cYou don't have perms in the party to invite people!"));
             } else {
