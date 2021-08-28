@@ -67,5 +67,6 @@ public class GuiCustomPartyFinder extends MGui {
     public void onGuiClosed() {
         guiChest.onGuiClosed();
         guiChest = null;
+        super.onGuiClosed();
     }
 }
