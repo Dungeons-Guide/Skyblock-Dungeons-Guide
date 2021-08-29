@@ -44,10 +44,10 @@ public class StyledTextRenderer {
         LEFT, CENTER, RIGHT
     }
 
-    private static final Method renderChar = ReflectionHelper.findMethod(FontRenderer.class, null, new String[] {"renderChar"}, char.class, boolean.class);
+    private static final Method renderChar = ReflectionHelper.findMethod(FontRenderer.class, null, new String[] {"renderChar", "func_181559_a"}, char.class, boolean.class);
     private static final Method doDraw = ReflectionHelper.findMethod(FontRenderer.class, null, new String[] {"doDraw"}, float.class);
-    private static final Field posX = ReflectionHelper.findField(FontRenderer.class, "posX");
-    private static final Field posY = ReflectionHelper.findField(FontRenderer.class, "posY");
+    private static final Field posX = ReflectionHelper.findField(FontRenderer.class, "posX", "field_78295_j");
+    private static final Field posY = ReflectionHelper.findField(FontRenderer.class, "posY", "field_78296_k");
 
 
     public static List<StyleTextAssociated> drawTextWithStylesAssociated(List<StyledText> texts, int x, int y,int width, Map<String, TextStyle> styleMap, Alignment alignment) {
