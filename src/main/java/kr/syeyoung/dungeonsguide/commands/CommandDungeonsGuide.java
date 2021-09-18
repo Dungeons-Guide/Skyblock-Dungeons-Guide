@@ -19,13 +19,8 @@
 package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
-import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.eventlistener.PathfindListener;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionType;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordOverlayManager;
 import kr.syeyoung.dungeonsguide.pathfinding.JPSPathfinder;
-import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
@@ -46,7 +41,6 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
-import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
@@ -537,24 +531,6 @@ public class CommandDungeonsGuide extends CommandBase {
             }
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
-        } else if (args[0].equalsIgnoreCase("pathfindtest")) {
-            if (args[1].equalsIgnoreCase("setbounds")) {
-                PathfindListener.INSTANCE.jpsPathfinder = new JPSPathfinder(Minecraft.getMinecraft().theWorld, new BlockPos(Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4])),
-                        new BlockPos(Integer.parseInt(args[5]), Integer.parseInt(args[6]),Integer.parseInt(args[7])));
-            } else {
-                new Thread(){
-                    @Override
-                    public void run() {
-                        try {
-                            boolean res = PathfindListener.INSTANCE.jpsPathfinder.pathfind(new Vec3(Float.parseFloat(args[2]), Float.parseFloat(args[3]), Float.parseFloat(args[4])),
-                                    new Vec3(Float.parseFloat(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7])));
-                            System.out.println("done-"+res);
-                        } catch (Exception e) {
-                            e.printStackTrace();
-                        }
-                    }
-                }.start();
-            }
         } else{
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

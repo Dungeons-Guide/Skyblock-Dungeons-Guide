@@ -103,8 +103,13 @@ public class JPSPathfinder {
 
     long arr[];
 
-    public boolean pathfind(Vec3 from, Vec3 to) {
+    public boolean pathfind(Vec3 from, Vec3 to, float within, long timeout) {
         route.clear(); nodeMap.clearMap();
+
+        {
+            from = new Vec3(((int)(from.xCoord * 2)) / 2.0, ((int)(from.yCoord * 2)) / 2.0, ((int)(from.zCoord* 2)) / 2.0);
+            to = new Vec3(((int)(to.xCoord * 2)) / 2.0, ((int)(to.yCoord * 2)) / 2.0, ((int)(to.zCoord* 2)) / 2.0);
+        }
 
         this.start = from; this.destination = to;
         tx = (int)(to.xCoord * 2);
@@ -113,14 +118,14 @@ public class JPSPathfinder {
 
         arr = new long[lenx *leny * lenz * 2 / 8];
 
-        destinationBB = AxisAlignedBB.fromBounds((to.xCoord - 0.6)* 2, (to.yCoord - 0.6) * 2, (to.zCoord - 0.6) * 2, (to.xCoord + 0.6) * 2, (to.yCoord + 0.6)* 2, (to.zCoord + 0.6) *2);
+        destinationBB = AxisAlignedBB.fromBounds((to.xCoord - within)* 2, (to.yCoord - within) * 2, (to.zCoord - within) * 2, (to.xCoord + within) * 2, (to.yCoord + within)* 2, (to.zCoord + within) *2);
         open.clear();
         Node start;
         open.add(start = openNode((int)from.xCoord* 2 + 1, (int)from.yCoord* 2 + 1, (int)from.zCoord * 2 + 1));
         start.g = 0; start.f = 0; start.h = (float) from.squareDistanceTo(to);
 
         Node end = null; float minDist = Float.MAX_VALUE;
-        long forceEnd = System.currentTimeMillis() + 5000;
+        long forceEnd = System.currentTimeMillis() + timeout;
         while(!open.isEmpty()) {
             if (forceEnd < System.currentTimeMillis()) break;
             Node n = open.poll();

@@ -26,6 +26,8 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.pathfinding.JPSPathfinder;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomprocessor.ProcessorFactory;
@@ -40,6 +42,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.IBlockAccess;
 
 import javax.vecmath.Vector2d;
@@ -91,22 +94,33 @@ public class DungeonRoom {
         this.currentState = currentState;
     }
 
-    public ScheduledFuture<List<BlockPos>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
-        ScheduledFuture<List<BlockPos>> sf =  asyncPathFinder.schedule(() -> {
-            PathFinder pathFinder = new PathFinder(nodeProcessorDungeonRoom);
-            PathEntity latest = pathFinder.createEntityPathTo(blockaccess, entityIn, targetPos, dist);
-            if (latest != null) {
-                List<BlockPos> poses = new ArrayList<>();
-                for (int i = 0; i < latest.getCurrentPathLength(); i++) {
-                    PathPoint pathPoint = latest.getPathPointFromIndex(i);
-                    poses.add(getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord));
+    public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
+        if (FeatureRegistry.SECRET_PATHFIND_STRATEGY.isEnabled()) {
+            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+                BlockPos min = new BlockPos(getMin().getX(), 0, getMin().getZ());
+                BlockPos max=  new BlockPos(getMax().getX(), 255, getMax().getZ());
+                JPSPathfinder pathFinder = new JPSPathfinder(context.getWorld(), min, max);
+                pathFinder.pathfind(entityIn.getPositionVector(), new Vec3(targetPos).addVector(0.5, 0.5, 0.5), 1.5f,1000);
+                return pathFinder.getRoute();
+            }, 0, TimeUnit.MILLISECONDS);
+            return sf;
+        } else {
+            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+                PathFinder pathFinder = new PathFinder(nodeProcessorDungeonRoom);
+                PathEntity latest = pathFinder.createEntityPathTo(blockaccess, entityIn, targetPos, dist);
+                if (latest != null) {
+                    List<Vec3> poses = new ArrayList<>();
+                    for (int i = 0; i < latest.getCurrentPathLength(); i++) {
+                        PathPoint pathPoint = latest.getPathPointFromIndex(i);
+                        poses.add(new Vec3(getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord)).addVector(0.5,0.5,0.5));
+                    }
+                    return poses;
                 }
-                return poses;
-            }
-            return new ArrayList<>();
-        }, 0, TimeUnit.MILLISECONDS);
-        asyncPathFinder.schedule(() -> sf.cancel(true), 10, TimeUnit.SECONDS);
-        return sf;
+                return new ArrayList<>();
+            }, 0, TimeUnit.MILLISECONDS);
+            asyncPathFinder.schedule(() -> sf.cancel(true), 10, TimeUnit.SECONDS);
+            return sf;
+        }
     }
 
     private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(4);

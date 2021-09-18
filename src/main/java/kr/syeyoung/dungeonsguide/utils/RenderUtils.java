@@ -55,6 +55,15 @@ public class RenderUtils {
      * @author Moulberry
      */
     public static void renderBeaconBeam(double x, double y, double z, AColor aColor, float partialTicks) {
+        Entity player = Minecraft.getMinecraft().thePlayer;
+        double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
+        double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
+        double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
+//because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
+
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(-playerX, -playerY, -playerZ);
         int height = 300;
         int bottomOffset = 0;
         int topOffset = bottomOffset + height;
@@ -66,6 +75,7 @@ public class RenderUtils {
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_S, 10497.0F);
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, 10497.0F);
         GlStateManager.disableLighting();
+        GlStateManager.disableDepth();
         GlStateManager.enableCull();
         GlStateManager.enableTexture2D();
         GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
@@ -133,6 +143,10 @@ public class RenderUtils {
         worldrenderer.pos(x + 0.2D, y + bottomOffset, z + 0.2D).tex(0.0D, d12).color(r, g, b, 0.25F).endVertex();
         worldrenderer.pos(x + 0.2D, y + topOffset, z + 0.2D).tex(0.0D, d13).color(r, g, b, 0.25F*alpha).endVertex();
         tessellator.draw();
+
+        GlStateManager.enableDepth();
+
+        GlStateManager.popMatrix();
     }
 
 

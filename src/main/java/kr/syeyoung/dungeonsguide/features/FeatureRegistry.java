@@ -165,6 +165,8 @@ public class FeatureRegistry {
     public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secret.Secret Pathfind.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
     public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secret.Secret Pathfind.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
     public static final SimpleFeature SECRET_PATHFIND_ALL = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Start pathfind to all secrets upon entering a room", "Auto browse to all secrets in the room", "secret.secretpathfind.allbrowse", false));
+    public static final SimpleFeature SECRET_PATHFIND_STRATEGY = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Use NEW JPS Optimization instead of standard A Star", "Faster, and accurate routes.", "secret.secretpathfind.algorithm", true));
+
     public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Dungeon Secret.Pathfind Display", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
     public static final SimpleFeature SECRET_BEACONS = register(new SimpleFeature("Dungeon Secret.Pathfind Display", "Beacons on pathfind", "When pathfinding, display beacons as well as lines", "secret.beacons"));
     public static final SimpleFeature SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());

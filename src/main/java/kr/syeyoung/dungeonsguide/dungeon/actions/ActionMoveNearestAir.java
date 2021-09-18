@@ -29,6 +29,7 @@ import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -64,22 +65,23 @@ public class ActionMoveNearestAir extends AbstractAction {
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
+        if (FeatureRegistry.SECRET_BEACONS.isEnabled()) {
+            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks);
+            RenderUtils.highlightBlock(pos, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks);
+        }
         RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
         RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !Keybinds.togglePathfindStatus) {
             if (poses != null){
-                RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), FeatureRegistry.SECRET_BROWSE.getThickness(), partialTicks,  true);
+                RenderUtils.drawLinesVec3(poses, FeatureRegistry.SECRET_BROWSE.getColor(), FeatureRegistry.SECRET_BROWSE.getThickness(), partialTicks,  true);
             }
-        }
-        if (FeatureRegistry.SECRET_BEACONS.isEnabled()) {
-            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks);
         }
     }
 
     private int tick = -1;
-    private List<BlockPos> poses;
-    private Future<List<BlockPos>> latestFuture;
+    private List<Vec3> poses;
+    private Future<List<Vec3>> latestFuture;
     @Override
     public void onTick(DungeonRoom dungeonRoom) {
         tick = (tick+1) % Math.max(1, FeatureRegistry.SECRET_BROWSE.getRefreshRate());
