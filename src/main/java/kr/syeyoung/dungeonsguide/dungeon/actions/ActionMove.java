@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.pathfinding.PathEntity;
+import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -68,16 +69,20 @@ public class ActionMove extends AbstractAction {
         RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
         RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
 
-        if (FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() && Keybinds.togglePathfindStatus) return;
-
-        if (poses != null){
-            RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), FeatureRegistry.SECRET_BROWSE.getThickness(), partialTicks,  true);
+        if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !Keybinds.togglePathfindStatus) {
+            if (poses != null){
+                RenderUtils.drawLines(poses, FeatureRegistry.SECRET_BROWSE.getColor(), FeatureRegistry.SECRET_BROWSE.getThickness(), partialTicks,  true);
+            }
+        }
+        if (FeatureRegistry.SECRET_BEACONS.isEnabled()) {
+            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks);
         }
     }
 
     private int tick = -1;
     private List<BlockPos> poses;
     private Future<List<BlockPos>> latestFuture;
+
     @Override
     public void onTick(DungeonRoom dungeonRoom) {
         tick = (tick+1) % Math.max(1, FeatureRegistry.SECRET_BROWSE.getRefreshRate());

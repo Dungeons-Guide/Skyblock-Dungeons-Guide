@@ -91,11 +91,9 @@ public class DungeonRoom {
         this.currentState = currentState;
     }
 
-    @Getter
-    private final PathFinder pathFinder;
-
     public ScheduledFuture<List<BlockPos>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
-        return asyncPathFinder.schedule(() -> {
+        ScheduledFuture<List<BlockPos>> sf =  asyncPathFinder.schedule(() -> {
+            PathFinder pathFinder = new PathFinder(nodeProcessorDungeonRoom);
             PathEntity latest = pathFinder.createEntityPathTo(blockaccess, entityIn, targetPos, dist);
             if (latest != null) {
                 List<BlockPos> poses = new ArrayList<>();
@@ -107,9 +105,11 @@ public class DungeonRoom {
             }
             return new ArrayList<>();
         }, 0, TimeUnit.MILLISECONDS);
+        asyncPathFinder.schedule(() -> sf.cancel(true), 10, TimeUnit.SECONDS);
+        return sf;
     }
 
-    private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(2);
+    private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(4);
     @Getter
     private final NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
@@ -144,7 +144,6 @@ public class DungeonRoom {
         buildDoors();
         buildRoom();
         nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
-        pathFinder = new PathFinder(nodeProcessorDungeonRoom);
         updateRoomProcessor();
     }
 

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.actions.tree;
 import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import lombok.Getter;
@@ -79,6 +80,7 @@ public class ActionRoute {
         getCurrentAction().onLivingDeath(dungeonRoom, event);
     }
     public void onRenderWorld(float partialTicks) {
+        if (current -1 >= 0 && actions.get(current-1) instanceof ActionMove) actions.get(current-1).onRenderScreen(dungeonRoom, partialTicks);
         getCurrentAction().onRenderWorld(dungeonRoom, partialTicks);
     }
 

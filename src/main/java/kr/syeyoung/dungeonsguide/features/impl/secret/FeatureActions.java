@@ -115,9 +115,7 @@ public class FeatureActions extends TextHUDFeature {
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
 
-        ActionRoute path = ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).getPath();
-
-        if (path != null) {
+        for (ActionRoute path : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {
             actualBit.add(new StyledText("Pathfinding ","pathfinding"));
             actualBit.add(new StyledText(path.getMechanic()+" ","mechanic"));
             actualBit.add(new StyledText("-> ","separator"));

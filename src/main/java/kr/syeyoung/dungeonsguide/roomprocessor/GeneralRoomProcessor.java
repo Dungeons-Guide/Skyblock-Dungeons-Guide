@@ -70,26 +70,37 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void tick() {
         if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled())
             searchForNextTarget();
-
-        ticked = true;
-        if (path != null) {
-            path.onTick();
-            if (FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled() && path.getCurrentAction() instanceof ActionComplete) {
-                if (!path.getState().equals("found")) return;
-                if (!(dungeonRoom.getMechanics().get(path.getMechanic()) instanceof DungeonSecret)) return;
-                searchForNextTarget();
+        if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
+            for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+                if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
+                    pathfind(value.getKey(), "found");
+                }
             }
         }
+        ticked = true;
+
+        Set<String> toRemove = new HashSet<>();
+        path.entrySet().forEach(a -> {
+            a.getValue().onTick();
+            if (a.getValue().getCurrentAction() instanceof ActionComplete)
+                toRemove.add(a.getKey());
+        });
+        toRemove.forEach(path::remove);
+
 
         for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
             if (value instanceof DungeonSecret) ((DungeonSecret) value).tick(dungeonRoom);
+        }
+
+        if (toRemove.contains("AUTO-BROWSE") && FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled()) {
+            searchForNextTarget();
         }
     }
     private final Set<String> visited = new HashSet<String>();
 
     public void searchForNextTarget() {
         if (getDungeonRoom().getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-            cancel();
+            cancelAll();
             return;
         }
 
@@ -120,7 +131,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         if (lowestWeightMechanic != null) {
             visited.add(lowestWeightMechanic.getKey());
-            pathfind(lowestWeightMechanic.getKey(), "found");
+            pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found");
         } else {
             visited.clear();
         }
@@ -128,7 +139,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawScreen(float partialTicks) {
-        if (path != null) path.onRenderScreen(partialTicks);
+        path.values().forEach(a -> {
+            a.onRenderScreen(partialTicks);
+        });
 
         if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
@@ -154,8 +167,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);
             }
         }
-        if (path != null) path.onRenderWorld(partialTicks);
-
+        path.values().forEach(a -> {
+            a.onRenderWorld(partialTicks);
+        });
     }
 
     @Override
@@ -217,13 +231,25 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Getter
-    private ActionRoute path;
+    private Map<String, ActionRoute> path = new HashMap<>();
 
-    public void pathfind(String mechanic, String state) {
-        path = new ActionRoute(getDungeonRoom(), mechanic, state);
+    public ActionRoute getPath(String id){
+        return path.get(id);
     }
-    public void cancel() {
-        path = null;
+
+    public String pathfind(String mechanic, String state) {
+        String str;
+        pathfind(str = UUID.randomUUID().toString(), mechanic, state);
+        return str;
+    }
+    public void pathfind(String id, String mechanic, String state) {
+        path.put(id, new ActionRoute(getDungeonRoom(), mechanic, state));
+    }
+    public void cancelAll() {
+        path.clear();
+    }
+    public void cancel(String id) {
+        path.remove(id);
     }
 
     @Override
@@ -251,13 +277,17 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onInteract(PlayerInteractEntityEvent event) {
-        if (path != null) path.onLivingInteract(event);
+        path.values().forEach(a -> {
+            a.onLivingInteract(event);
+        });
     }
 
     private boolean last = false;
     @Override
     public void onInteractBlock(PlayerInteractEvent event) {
-        if (path != null) path.onPlayerInteract(event);
+        path.values().forEach(a -> {
+            a.onPlayerInteract(event);
+        });
 
         if (event.entityPlayer.getHeldItem() != null &&
             event.entityPlayer.getHeldItem().getItem() == Items.stick &&
@@ -280,7 +310,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onEntityDeath(LivingDeathEvent deathEvent) {
-        if (path != null) path.onLivingDeath(deathEvent);
+        path.values().forEach(a -> {
+            a.onLivingDeath(deathEvent);
+        });
         if (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getRoom() == getDungeonRoom()) {
             if (deathEvent.entity instanceof EntityBat) {
                 for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {

@@ -21,8 +21,10 @@ package kr.syeyoung.dungeonsguide.commands;
 import com.google.gson.JsonObject;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.eventlistener.PathfindListener;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionType;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordOverlayManager;
+import kr.syeyoung.dungeonsguide.pathfinding.JPSPathfinder;
 import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
@@ -63,10 +65,7 @@ import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.ChatStyle;
-import net.minecraft.util.Tuple;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -173,7 +172,7 @@ public class CommandDungeonsGuide extends CommandBase {
 
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                 GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-                grp.pathfind(args[1], args[2]);
+                grp.pathfind("COMMAND", args[1], args[2]);
             } catch (Throwable t) {
                 t.printStackTrace();
             }
@@ -216,7 +215,7 @@ public class CommandDungeonsGuide extends CommandBase {
                         if (value instanceof DungeonSecret &&
                                 (((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.BAT
                                         || ((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.CHEST)
-                                && ((DungeonSecret) value).getSecretPoint().getY() == 0 ) {
+                                && ((DungeonSecret) value).getSecretPoint().getY() == 0) {
                             OffsetPoint offsetPoint = ((DungeonSecret) value).getSecretPoint();
                             if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                 dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
@@ -224,21 +223,21 @@ public class CommandDungeonsGuide extends CommandBase {
                             }
                         } else if (value instanceof DungeonOnewayDoor) {
                             for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0&& dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+                                if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - o-door - at " + offsetPoint);
                                 }
                             }
                         } else if (value instanceof DungeonDoor) {
                             for (OffsetPoint offsetPoint : ((DungeonDoor) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0&& dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+                                if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - door - at " + offsetPoint);
                                 }
                             }
                         } else if (value instanceof DungeonBreakableWall) {
                             for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).getSecretPoint().getOffsetPointList()) {
-                                if (offsetPoint.getY() == 0&& dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+                                if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                                     dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
                                     System.out.println("Fixing " + value2.getKey() + " - wall - at " + offsetPoint);
                                 }
@@ -276,7 +275,7 @@ public class CommandDungeonsGuide extends CommandBase {
                             .thenAccept(a -> {
                                 if (a == null) return;
                                 ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
-                                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+s+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + s + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
                             });
                 }
             });
@@ -420,12 +419,12 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("requeststaticresource")) {
             UUID uid = UUID.fromString(args[1]);
             StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
-                sender.addChatMessage(new ChatComponentText(a.getResourceID()+": "+a.getValue()+": "+a.isExists()));
+                sender.addChatMessage(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
             });
-        } else if (args[0].equals("createFakeRoom")&& Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
+        } else if (args[0].equals("createFakeRoom") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
 
             // load schematic
-            File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
+            File f = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
             NBTTagCompound compound;
             try {
                 compound = CompressedStreamTools.readCompressed(new FileInputStream(f));
@@ -437,10 +436,10 @@ public class CommandDungeonsGuide extends CommandBase {
             byte[] blocks = compound.getByteArray("Blocks");
             byte[] meta = compound.getByteArray("Data");
             for (int x = 0; x < compound.getShort("Width"); x++) {
-                for (int y = 0; y <  compound.getShort("Height"); y++) {
+                for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length"); z++) {
                         int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                        BlockPos pos = new BlockPos(x,y,z);
+                        BlockPos pos = new BlockPos(x, y, z);
                         World w = MinecraftServer.getServer().getEntityWorld();
                         w.setBlockState(pos, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF), 2);
                     }
@@ -451,7 +450,7 @@ public class CommandDungeonsGuide extends CommandBase {
             DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
                 @Override
                 public BlockPos findDoor(World w, String dungeonName) {
-                    return new BlockPos(0,0,0);
+                    return new BlockPos(0, 0, 0);
                 }
 
                 @Override
@@ -475,16 +474,16 @@ public class CommandDungeonsGuide extends CommandBase {
             skyblockStatus.setContext(fakeContext);
             skyblockStatus.setForceIsOnDungeon(true);
             MapProcessor mapProcessor = fakeContext.getMapProcessor();
-            mapProcessor.setUnitRoomDimension(new Dimension(16,16));
+            mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
             mapProcessor.setBugged(false);
-            mapProcessor.setDoorDimension(new Dimension(4,4));
-            mapProcessor.setTopLeftMapPoint(new Point(0,0));
-            fakeContext.setDungeonMin(new BlockPos(0,70,0));
+            mapProcessor.setDoorDimension(new Dimension(4, 4));
+            mapProcessor.setTopLeftMapPoint(new Point(0, 0));
+            fakeContext.setDungeonMin(new BlockPos(0, 70, 0));
 
-            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0,0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0,70,0), new BlockPos(31,70,31), fakeContext);
+            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0, 0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0, 70, 0), new BlockPos(31, 70, 31), fakeContext);
 
             fakeContext.getDungeonRoomList().add(dungeonRoom);
-            for (Point p:Arrays.asList(new Point(0,0))) {
+            for (Point p : Arrays.asList(new Point(0, 0))) {
                 fakeContext.getRoomMapper().put(p, dungeonRoom);
             }
 
@@ -503,7 +502,7 @@ public class CommandDungeonsGuide extends CommandBase {
                     if (currentRoot.children().containsKey(s))
                         currentRoot = currentRoot.children().get(s);
                     else {
-                        currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull()+"."+s));
+                        currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull() + "." + s));
                     }
                 }
             }
@@ -525,7 +524,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 if (n.getFirst().categoryFull().equals("ROOT")) continue;
 
                 String prefix = "";
-                for (int i = 0; i < n.getSecond()-1; i++) {
+                for (int i = 0; i < n.getSecond() - 1; i++) {
                     prefix += "    ";
                 }
 
@@ -538,6 +537,24 @@ public class CommandDungeonsGuide extends CommandBase {
             }
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
+        } else if (args[0].equalsIgnoreCase("pathfindtest")) {
+            if (args[1].equalsIgnoreCase("setbounds")) {
+                PathfindListener.INSTANCE.jpsPathfinder = new JPSPathfinder(Minecraft.getMinecraft().theWorld, new BlockPos(Integer.parseInt(args[2]), Integer.parseInt(args[3]), Integer.parseInt(args[4])),
+                        new BlockPos(Integer.parseInt(args[5]), Integer.parseInt(args[6]),Integer.parseInt(args[7])));
+            } else {
+                new Thread(){
+                    @Override
+                    public void run() {
+                        try {
+                            boolean res = PathfindListener.INSTANCE.jpsPathfinder.pathfind(new Vec3(Float.parseFloat(args[2]), Float.parseFloat(args[3]), Float.parseFloat(args[4])),
+                                    new Vec3(Float.parseFloat(args[5]), Float.parseFloat(args[6]), Float.parseFloat(args[7])));
+                            System.out.println("done-"+res);
+                        } catch (Exception e) {
+                            e.printStackTrace();
+                        }
+                    }
+                }.start();
+            }
         } else{
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

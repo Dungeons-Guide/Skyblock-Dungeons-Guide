@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
+import kr.syeyoung.dungeonsguide.eventlistener.PathfindListener;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.PartyInviteViewer;
@@ -119,6 +120,8 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
         MinecraftForge.EVENT_BUS.register(new Keybinds());
+
+        MinecraftForge.EVENT_BUS.register(PathfindListener.INSTANCE);
 
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
