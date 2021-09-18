@@ -120,9 +120,9 @@ public class JPSPathfinder {
         start.g = 0; start.f = 0; start.h = (float) from.squareDistanceTo(to);
 
         Node end = null; float minDist = Float.MAX_VALUE;
-        long forceEnd = System.currentTimeMillis() + 3000;
+        long forceEnd = System.currentTimeMillis() + 5000;
         while(!open.isEmpty()) {
-//            if (forceEnd < System.currentTimeMillis()) break;
+            if (forceEnd < System.currentTimeMillis()) break;
             Node n = open.poll();
             n.closed= true;
             if (minDist > n.h) {
@@ -134,7 +134,10 @@ public class JPSPathfinder {
             }
 
             for (Node neighbor : getNeighbors(n.parent == null ? n : n.parent, n)) {
-                expand(n.x, n.y, n.z, neighbor.x - n.x, neighbor.y - n.y, neighbor.z - n.z, n);
+                Node jumpPT = expand(n.x, n.y, n.z, neighbor.x - n.x, neighbor.y - n.y, neighbor.z - n.z);
+                if (jumpPT == null || jumpPT.closed) continue;
+
+                addNode(n, jumpPT, true);
             }
         }
 
@@ -247,42 +250,38 @@ public class JPSPathfinder {
         return nexts;
     }
 
-    public Node expand(int x, int y, int z, int dx, int dy, int dz, Node parent) {
+    public Node expand(int x, int y, int z, int dx, int dy, int dz) {
         while(true) {
             int nx =  x + dx, ny = y + dy, nz = z + dz;
             if (isBlocked(nx, ny, nz)) return null;
 
-            if (nx > destinationBB.minX && nx < destinationBB.maxX && ny > destinationBB.minY && ny < destinationBB.maxY && nz > destinationBB.minZ && nz < destinationBB.maxZ) return addNode(parent, openNode(nx,ny,nz), true);
+            if (nx > destinationBB.minX && nx < destinationBB.maxX && ny > destinationBB.minY && ny < destinationBB.maxY && nz > destinationBB.minZ && nz < destinationBB.maxZ) return openNode(nx,ny,nz);
 
             int determinant = Math.abs(dx) + Math.abs(dy) + Math.abs(dz);
             if (determinant == 1) {
                 for (int i = -1; i<=1; i++) {
                     for (int j = - 1; j<=1; j++) {
                         if (i == 0 && j == 0) continue;
-                        if (dx != 0 && isBlocked(nx, ny + i, nz + j) && !isBlocked(nx+dx, ny + i, nz + j)) return addNode(parent, openNode(nx,ny,nz), true);
-                        if (dy != 0 && isBlocked(nx + i, ny, nz + j) && !isBlocked(nx + i, ny+dy, nz + j)) return addNode(parent, openNode(nx,ny,nz), true);
-                        if (dz != 0 && isBlocked(nx + i, ny + j , nz) && !isBlocked(nx + i, ny + j , nz+dz)) return addNode(parent, openNode(nx,ny,nz), true);
+                        if (dx != 0 && isBlocked(nx, ny + i, nz + j) && !isBlocked(nx+dx, ny + i, nz + j)) return  openNode(nx,ny,nz);
+                        if (dy != 0 && isBlocked(nx + i, ny, nz + j) && !isBlocked(nx + i, ny+dy, nz + j)) return openNode(nx,ny,nz);
+                        if (dz != 0 && isBlocked(nx + i, ny + j , nz) && !isBlocked(nx + i, ny + j , nz+dz)) return openNode(nx,ny,nz);
                     }
                 }
             } else if (determinant == 2) {
                 if ((dx != 0 && isBlocked(nx , y , z ) && !isBlocked(nx + dx, y , z))
                         || (dy != 0 && isBlocked(x , ny  , z) && !isBlocked(x , ny+dy  , z))
-                        || (dz != 0 && isBlocked(x  , y , nz  ) && !isBlocked(x  , y , nz+dz))) return addNode(parent, openNode(nx,ny,nz), true);
-                Node co_parent = openNode(nx,ny,nz);
-                addNode(parent, co_parent,false);
-                if (dx != 0) expand(nx, ny, nz, dx, 0,0, co_parent);
-                if (dy != 0) expand(nx, ny, nz, 0, dy,0, co_parent);
-                if (dz != 0) expand(nx, ny, nz, 0, 0,dz, co_parent);
+                        || (dz != 0 && isBlocked(x  , y , nz  ) && !isBlocked(x  , y , nz+dz))) return openNode(nx,ny,nz);
+                if (dx != 0 &&  expand(nx, ny, nz, dx, 0,0) != null) return openNode(nx,ny,nz);
+                if (dy != 0 && expand(nx, ny, nz, 0, dy,0) != null) return openNode(nx,ny,nz);
+                if (dz != 0 && expand(nx, ny, nz, 0, 0,dz) != null) return openNode(nx,ny,nz);
             } else if (determinant == 3) {
-                if (isBlocked(x, ny, nz ) || isBlocked(nx, y , nz) || isBlocked(nx, ny, z)) return addNode(parent, openNode(nx,ny,nz), true);
-                Node co_parent = openNode(nx,ny,nz);
-                addNode(parent, co_parent,false);
-                expand(nx, ny, nz, dx, 0, 0, co_parent);
-                        expand(nx, ny, nz, dx, dy, 0, co_parent);
-                        expand(nx, ny, nz, dx, 0, dz, co_parent);
-                        expand(nx, ny, nz, 0, dy, 0, co_parent);
-                        expand(nx, ny, nz, 0, dy, dz, co_parent);
-                        expand(nx, ny, nz, 0, 0, dz, co_parent);
+                if (isBlocked(x, ny, nz ) || isBlocked(nx, y , nz) || isBlocked(nx, ny, z)) return openNode(nx,ny,nz);
+                if (expand(nx, ny, nz, dx, 0, 0) != null ||
+                        expand(nx, ny, nz, dx, dy, 0) != null ||
+                        expand(nx, ny, nz, dx, 0, dz) != null ||
+                        expand(nx, ny, nz, 0, dy, 0) != null ||
+                        expand(nx, ny, nz, 0, dy, dz) != null ||
+                        expand(nx, ny, nz, 0, 0, dz) != null) return openNode(nx,ny,nz);
             }
             x = nx; y = ny; z = nz;
         }
