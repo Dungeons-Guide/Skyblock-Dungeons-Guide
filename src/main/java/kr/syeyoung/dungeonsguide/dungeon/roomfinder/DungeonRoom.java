@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.pathfinding.CachedWorld;
 import kr.syeyoung.dungeonsguide.pathfinding.JPSPathfinder;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
@@ -37,13 +38,18 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
+import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -78,6 +84,9 @@ public class DungeonRoom {
     private RoomState currentState = RoomState.DISCOVERED;
 
     private Map<String, DungeonMechanic> cached = null;
+
+    @Getter
+    private World cachedWorld;
     public Map<String, DungeonMechanic> getMechanics() {
         if (cached == null || EditingContext.getEditingContext() != null) {
             cached = new HashMap<String, DungeonMechanic>(dungeonRoomInfo.getMechanics());
@@ -99,7 +108,7 @@ public class DungeonRoom {
             ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
                 BlockPos min = new BlockPos(getMin().getX(), 0, getMin().getZ());
                 BlockPos max=  new BlockPos(getMax().getX(), 255, getMax().getZ());
-                JPSPathfinder pathFinder = new JPSPathfinder(context.getWorld(), min, max);
+                JPSPathfinder pathFinder = new JPSPathfinder(this);
                 pathFinder.pathfind(entityIn.getPositionVector(), new Vec3(targetPos).addVector(0.5, 0.5, 0.5), 1.5f,timeout);
                 return pathFinder.getRoute();
             }, 0, TimeUnit.MILLISECONDS);
@@ -154,10 +163,26 @@ public class DungeonRoom {
         unitWidth = (int) Math.ceil(max.getX() - min.getX() / 32.0);
         unitHeight = (int) Math.ceil(max.getZ() - min.getZ() / 32.0);
 
+
+        ChunkCache chunkCache = new ChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
+        this.cachedWorld =  new CachedWorld(chunkCache);
+
+
+
+        minx = min.getX() * 2; miny = 0; minz = min.getZ() * 2;
+        maxx = max.getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = max.getZ() * 2 + 2;
+
+        lenx = maxx - minx;
+        leny = maxy - miny;
+        lenz = maxz - minz;
+        arr = new long[lenx *leny * lenz * 2 / 8];;
+
         buildDoors();
         buildRoom();
         nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
         updateRoomProcessor();
+
+
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
@@ -201,7 +226,7 @@ public class DungeonRoom {
         // validate x y z's
         BlockPos pos = new BlockPos(x,y,z);
         if (canAccessAbsolute(pos)) {
-            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlock(pos);
+            return cachedWorld.getBlockState(pos).getBlock();
         }
         return null;
     }
@@ -210,7 +235,7 @@ public class DungeonRoom {
         // validate x y z's
         if (canAccessRelative(x,z)) {
             BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
-            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlock(pos);
+            return cachedWorld.getBlockState(pos).getBlock();
         }
         return null;
     }
@@ -224,7 +249,8 @@ public class DungeonRoom {
         // validate x y z's
         if (canAccessRelative(x,z)) {
             BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
-            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlockMetadata(pos);
+            IBlockState iBlockState = cachedWorld.getBlockState(pos);
+            return iBlockState.getBlock().getMetaFromState(iBlockState);
         }
         return -1;
     }
@@ -233,7 +259,8 @@ public class DungeonRoom {
         // validate x y z's
         BlockPos pos = new BlockPos(x,y,z);
         if (canAccessAbsolute(pos)) {
-            return this.context.getWorld().getChunkFromBlockCoords(pos).getBlockMetadata(pos);
+            IBlockState iBlockState = cachedWorld.getBlockState(pos);
+            return iBlockState.getBlock().getMetaFromState(iBlockState);
         }
         return -1;
     }
@@ -247,5 +274,83 @@ public class DungeonRoom {
     }
     public boolean canAccessRelative(int x, int z) {
         return  x>= 0 && z >= 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
+    }
+
+
+
+    long arr[];
+    private final int minx, miny, minz, maxx, maxy, maxz;
+    private final int lenx, leny, lenz;
+    private static final float playerWidth = 0.3f;
+    public boolean isBlocked(int x,int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return true;
+        int dx = x - minx, dy = y - miny, dz = z - minz;
+        int bitIdx = dx * leny * lenz + dy * lenz + dz;
+        int location = bitIdx / 4;
+        int bitStart = (2 * (bitIdx % 4));
+        long theBit = arr[location];
+        if (((theBit >> bitStart) & 0x2) > 0) return ((theBit >> bitStart) & 1) > 0;
+        float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
+
+
+        AxisAlignedBB bb = AxisAlignedBB.fromBounds(wX - playerWidth, wY, wZ - playerWidth, wX + playerWidth, wY + 1.9f, wZ + playerWidth);
+
+        int i = MathHelper.floor_double(bb.minX);
+        int j = MathHelper.floor_double(bb.maxX + 1.0D);
+        int k = MathHelper.floor_double(bb.minY);
+        int l = MathHelper.floor_double(bb.maxY + 1.0D);
+        int i1 = MathHelper.floor_double(bb.minZ);
+        int j1 = MathHelper.floor_double(bb.maxZ + 1.0D);
+        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+
+        List<AxisAlignedBB> list = new ArrayList<>();
+        for (int k1 = i; k1 < j; ++k1) {
+            for (int l1 = i1; l1 < j1; ++l1) {
+                for (int i2 = k - 1; i2 < l; ++i2) {
+                    blockPos.set(k1, i2, l1);
+                    IBlockState iblockstate1 = cachedWorld.getBlockState(blockPos);
+                    Block b = iblockstate1.getBlock();
+                    if (!b.getMaterial().blocksMovement())continue;
+                    if (b.isFullCube() && i2 == k-1) continue;
+                    if (iblockstate1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
+                    if (b.isFullCube()) {
+                        theBit |= (3L << bitStart);
+                        arr[location] = theBit;
+                        return true;
+                    }
+                    try {
+                        b.addCollisionBoxesToList(cachedWorld, blockPos, iblockstate1, bb, list, null);
+                    } catch (Exception e) {
+                        return true;
+                    }
+                    if (list.size() > 0) {
+                        theBit |= (3L << bitStart);
+                        arr[location] = theBit;
+                        return true;
+                    }
+                }
+            }
+        }
+        theBit |= 2L << bitStart;
+        arr[location] = theBit;
+        return false;
+    }
+
+
+    public void resetBlock(BlockPos pos) {
+        for (int x = -1; x <= 1; x++) {
+            for (int y = -1; y <= 1; y++) {
+                for (int z = -1; z <= 1; z++) {
+                    resetBlock(pos.getX()*2 + x, pos.getY()*2 + y, pos.getZ()*2 + z);
+                }
+            }
+        }
+    }
+    private void resetBlock(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return;
+        int dx = x - minx, dy = y - miny, dz = z - minz;
+        int bitIdx = dx * leny * lenz + dy * lenz + dz;
+        int location = bitIdx / 4;
+        arr[location] = 0;
     }
 }

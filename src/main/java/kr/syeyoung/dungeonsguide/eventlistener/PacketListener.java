@@ -25,15 +25,16 @@ import io.netty.channel.ChannelPromise;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.cosmetics.CustomPacketPlayerListItem;
-import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
-import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
-import kr.syeyoung.dungeonsguide.events.TitleEvent;
-import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.*;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
+import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.client.C02PacketUseEntity;
 import net.minecraft.network.play.server.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
@@ -63,7 +64,67 @@ public class PacketListener extends ChannelDuplexHandler {
         if (packet instanceof  S30PacketWindowItems || packet instanceof S2FPacketSetSlot) {
             MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent(packet instanceof  S30PacketWindowItems ? (S30PacketWindowItems)packet : null , packet instanceof S2FPacketSetSlot ? (S2FPacketSetSlot)packet : null));
         }
+        if (packet instanceof S23PacketBlockChange) {
+            packet = new SingleBlockChange((S23PacketBlockChange) packet);
+        } else if (packet instanceof S22PacketMultiBlockChange) {
+            packet = new MultiBlockChange((S22PacketMultiBlockChange) packet);
+        }
         super.channelRead(ctx, packet);
+    }
+
+    private static class SingleBlockChange extends S23PacketBlockChange {
+        private S23PacketBlockChange old;
+        public SingleBlockChange(S23PacketBlockChange blockChange) {
+            this.old = blockChange;
+        }
+
+        @Override
+        public void processPacket(INetHandlerPlayClient handler) {
+            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
+            blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(),getBlockState()));
+            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            super.processPacket(handler);
+            blockUpdateEvent = new BlockUpdateEvent.Post();
+            blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(), getBlockState()));
+            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+        }
+
+        @Override
+        public BlockPos getBlockPosition() {
+            return old.getBlockPosition();
+        }
+
+        @Override
+        public IBlockState getBlockState() {
+            return old.getBlockState();
+        }
+    }
+
+
+    private static class MultiBlockChange extends S22PacketMultiBlockChange {
+        private S22PacketMultiBlockChange old;
+        public MultiBlockChange(S22PacketMultiBlockChange blockChange) {
+            this.old = blockChange;
+        }
+        @Override
+        public void processPacket(INetHandlerPlayClient handler) {
+            BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
+            for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
+                blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
+            }
+            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            super.processPacket(handler);
+            blockUpdateEvent = new BlockUpdateEvent.Post();
+            for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
+                blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
+            }
+            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+        }
+
+        @Override
+        public BlockUpdateData[] getChangedBlocks() {
+            return old.getChangedBlocks();
+        }
     }
 
     @Override

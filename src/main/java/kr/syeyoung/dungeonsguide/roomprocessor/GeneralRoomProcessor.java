@@ -30,8 +30,10 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
@@ -71,6 +73,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         this.dungeonRoom = dungeonRoom;
     }
     private boolean ticked = false;
+
 
     @Override
     public void tick() {
@@ -410,6 +413,13 @@ public class GeneralRoomProcessor implements RoomProcessor {
                             secret);
                 }
             }
+        }
+    }
+    @Override
+    public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
+        for (Tuple<BlockPos, IBlockState> updatedBlock : blockUpdateEvent.getUpdatedBlocks()) {
+            if (updatedBlock.getSecond().equals(NodeProcessorDungeonRoom.preBuilt)) continue;
+            dungeonRoom.resetBlock(updatedBlock.getFirst());
         }
     }
 

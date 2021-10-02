@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import lombok.*;
 import net.minecraft.entity.boss.BossStatus;
@@ -125,6 +126,10 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     }
     @Override
     public void onEntityDeath(LivingDeathEvent deathEvent) {
+
+    }
+    @Override
+    public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
 
     }
 

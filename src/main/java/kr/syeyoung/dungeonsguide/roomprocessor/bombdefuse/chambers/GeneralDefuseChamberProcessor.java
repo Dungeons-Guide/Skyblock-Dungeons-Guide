@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers;
 
 import kr.syeyoung.dungeonsguide.Keybinds;
+import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import lombok.Getter;
@@ -82,6 +83,10 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
     @Override
     public void actionbarReceived(IChatComponent chat) {
+
+    }
+    @Override
+    public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
 
     }
 

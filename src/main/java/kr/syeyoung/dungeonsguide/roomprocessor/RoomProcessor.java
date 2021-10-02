@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
@@ -46,4 +47,6 @@ public interface RoomProcessor {
 
     void onInteract(PlayerInteractEntityEvent event);
     void onInteractBlock(PlayerInteractEvent event);
+
+    void onBlockUpdate(BlockUpdateEvent blockUpdateEvent);
 }
