@@ -20,13 +20,12 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.entity.item.EntityItem;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 
@@ -59,7 +58,7 @@ public class ActionDropItem extends AbstractAction {
         return (predicate == null || predicate.apply(item.get(0)));
     }
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);

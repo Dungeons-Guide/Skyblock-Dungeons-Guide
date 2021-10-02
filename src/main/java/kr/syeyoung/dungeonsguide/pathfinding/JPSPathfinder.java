@@ -24,6 +24,7 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -127,7 +128,7 @@ public class JPSPathfinder {
         Node end = null; float minDist = Float.MAX_VALUE;
         long forceEnd = System.currentTimeMillis() + timeout;
         while(!open.isEmpty()) {
-            if (forceEnd < System.currentTimeMillis()) break;
+            if (forceEnd < System.currentTimeMillis() && timeout != -1) break;
             Node n = open.poll();
             n.closed= true;
             if (minDist > n.h) {
@@ -323,7 +324,7 @@ public class JPSPathfinder {
                         Block b = iblockstate1.getBlock();
                         if (!b.getMaterial().blocksMovement())continue;
                         if (b.isFullCube() && i2 == k-1) continue;
-                        if (b.isFullCube()) {
+                        if (b.isFullCube() && !iblockstate1.equals( NodeProcessorDungeonRoom.preBuilt)) {
                             theBit |= (3L << bitStart);
                             arr[location] = theBit;
                             return true;

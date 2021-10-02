@@ -156,6 +156,7 @@ public class DungeonSecret implements DungeonMechanic {
             return base;
         }
         if (!"found".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+        if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return new HashSet<>();
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         if (secretType == SecretType.CHEST || secretType == SecretType.ESSENCE) {

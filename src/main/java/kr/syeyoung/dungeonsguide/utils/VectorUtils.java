@@ -18,6 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.utils;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.ActiveRenderInfo;
+import net.minecraft.util.Vec3;
+
 import javax.vecmath.Vector2d;
 
 public class VectorUtils {
@@ -29,5 +35,19 @@ public class VectorUtils {
     }
     public static Vector2d rotateClockwise(Vector2d vector2d) {
         return new Vector2d(-vector2d.y, vector2d.x);
+    }
+
+    @Data @AllArgsConstructor
+    public static class ProjectionResult {
+        private float x;
+        private float y;
+        private boolean back;
+    }
+
+    public static double distSquared(Vec3 lookVec, Vec3 posVec, Vec3 objectVec) {
+        Vec3 v = objectVec.subtract(posVec);
+        double t = v.dotProduct(lookVec);
+        Vec3 p = posVec.addVector(lookVec.xCoord * t, lookVec.yCoord * t, lookVec.zCoord * t);
+        return p.squareDistanceTo(objectVec) / p.squareDistanceTo(posVec);
     }
 }

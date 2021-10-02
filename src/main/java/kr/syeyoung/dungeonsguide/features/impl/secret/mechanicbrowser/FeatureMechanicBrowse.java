@@ -65,25 +65,13 @@ import java.util.List;
 
 public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
     public FeatureMechanicBrowse() {
-        super("Dungeon Secret.Secret Pathfind","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
-        parameters.put("linecolor2", new FeatureParameter<AColor>("linecolor2", "Color", "Color of Pathfind line", new AColor(0xFF00FF00, true), "acolor"));
-        parameters.put("linethickness", new FeatureParameter<Float>("linethickness", "Thickness", "Thickness of Pathfind line", 1.0f, "float"));
-        parameters.put("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "How many ticks per line refresh?", 10, "integer"));
+        super("Dungeon Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
         parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
         mGuiMechanicBrowser = new MGuiMechanicBrowser(this);
         mGuiMechanicBrowser.setWorldAndResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         lastWidth = Minecraft.getMinecraft().displayWidth; lastHeight = Minecraft.getMinecraft().displayHeight;
     }
 
-    public AColor getColor() {
-        return this.<AColor>getParameter("linecolor2").getValue();
-    }
-    public float getThickness() {
-        return this.<Float>getParameter("linethickness").getValue();
-    }
-    public int getRefreshRate() {
-        return this.<Integer>getParameter("refreshrate").getValue();
-    }
     public double getScale() {
         return this.<Float>getParameter("scale").getValue();
     }

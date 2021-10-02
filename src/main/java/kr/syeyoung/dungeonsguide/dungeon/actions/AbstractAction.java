@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -25,32 +26,32 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 public abstract class AbstractAction implements Action {
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
 
     }
 
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
 
     }
 
     @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event) {
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
 
     }
 
     @Override
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks) {
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
 
     }
 
     @Override
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event) {
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
 
     }
 
     @Override
-    public void onTick(DungeonRoom dungeonRoom) {
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
 
     }
 }

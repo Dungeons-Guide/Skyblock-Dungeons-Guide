@@ -20,12 +20,12 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
-import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -56,7 +56,7 @@ public class ActionClickSet extends AbstractAction {
 
     private boolean clicked = false;
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event) {
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
         if (clicked) return;
         for (OffsetPoint pt2: target.getOffsetPointList()) {
             if (pt2.getBlockPos(dungeonRoom).equals(event.pos) &&
@@ -68,7 +68,7 @@ public class ActionClickSet extends AbstractAction {
     }
 
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
         float xAcc = 0;
         float yAcc = 0;
         float zAcc = 0;

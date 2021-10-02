@@ -18,8 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -31,12 +30,9 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.client.renderer.vertex.VertexBuffer;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
-import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -62,7 +58,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
     }
 
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
 
         BlockPos blockpos = target.getBlockPos(dungeonRoom);

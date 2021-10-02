@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MList;
 import kr.syeyoung.dungeonsguide.gui.elements.MPanelScaledGUI;
@@ -256,7 +257,7 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
         for (String state : states) {
             mechanicBrowserTooltip.getMList().add(new MechanicBrowserElement(() -> state, false, (m2, pt2) -> {
                 if (dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)
-                    ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).pathfind("MECH-BROWSER", id, state);
+                    ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).pathfind("MECH-BROWSER", id, state, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER.getRouteProperties());
                 mechanicBrowserTooltip.close();
                 mechanicBrowserTooltip = null;
             }));

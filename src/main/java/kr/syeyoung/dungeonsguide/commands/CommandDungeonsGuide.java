@@ -166,7 +166,7 @@ public class CommandDungeonsGuide extends CommandBase {
 
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                 GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-                grp.pathfind("COMMAND", args[1], args[2]);
+                grp.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
             } catch (Throwable t) {
                 t.printStackTrace();
             }

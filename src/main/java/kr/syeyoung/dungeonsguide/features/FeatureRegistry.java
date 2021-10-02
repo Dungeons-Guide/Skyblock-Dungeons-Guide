@@ -36,10 +36,8 @@ import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldow
 import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
 import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPartyFinder;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
-import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureActions;
-import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureFreezePathfind;
+import kr.syeyoung.dungeonsguide.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
-import kr.syeyoung.dungeonsguide.features.impl.secret.FeatureSoulRoomWarning;
 import lombok.Getter;
 
 import java.util.ArrayList;
@@ -157,19 +155,33 @@ public class FeatureRegistry {
     public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Dungeon.Teammates", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run\n\nThis automates player chatting action, (chatting data) Thus it might be against hypixel's rules.\nBut mods like auto-gg which also automate player action and is kinda allowed mod exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "dungeon.intermodcomm", false));
     public static final FeaturePlayerESP DUNGEON_PLAYERESP = register(new FeaturePlayerESP());
     public static final FeatureHideNameTags DUNGEON_HIDENAMETAGS = register(new FeatureHideNameTags());
+    public static final FeatureSoulRoomWarning DUNGEON_FAIRYSOUL = register(new FeatureSoulRoomWarning());
+
+
 
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER = register(new PathfindLineProperties("Dungeon Secrets.Secret Browser", "Line Settings", "Line Settings when pathfinding using Secret Browser", "secret.lineproperties.secretbrowser", true));
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
-    public static final FeatureSoulRoomWarning SECRET_FAIRYSOUL = register(new FeatureSoulRoomWarning());
-    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon Secret.Secret Pathfind.Legacy AutoPathfind", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
-    public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secret.Secret Pathfind.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
-    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secret.Secret Pathfind.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
-    public static final SimpleFeature SECRET_PATHFIND_ALL = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Start pathfind to all secrets upon entering a room", "Auto browse to all secrets in the room", "secret.secretpathfind.allbrowse", false));
-    public static final SimpleFeature SECRET_PATHFIND_STRATEGY = register(new SimpleFeature("Dungeon Secret.Secret Pathfind", "Use NEW JPS Optimization instead of standard A Star", "Faster, and accurate routes.", "secret.secretpathfind.algorithm", true));
 
-    public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Dungeon Secret.Pathfind Display", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
-    public static final SimpleFeature SECRET_BEACONS = register(new SimpleFeature("Dungeon Secret.Pathfind Display", "Beacons on pathfind", "When pathfinding, display beacons as well as lines", "secret.beacons"));
+    public static final SimpleFeature SECRET_PATHFIND_STRATEGY = register(new SimpleFeature("Dungeon Secrets", "Use NEW JPS Optimization instead of standard A Star", "Faster, and accurate routes.", "secret.secretpathfind.algorithm", true));
+    public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Dungeon Secrets.Keybinds", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
     public static final SimpleFeature SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
+    static {
+        categoryDescription.put("ROOT.Dungeon Secrets.Keybinds", "Useful keybinds / Toggle Pathfind lines, Freeze Pathfind lines");
+    }
+
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_GLOBAL = register(new PathfindLineProperties("Dungeon Secrets", "Global Line Settings", "Global Line Settings", "secret.lineproperties.global", true));
+
+    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
+    public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
+    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_AUTOPATHFIND = register(new PathfindLineProperties("Dungeon Secrets.Legacy AutoPathfind", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.autopathfind", true));
+
+    public static final FeaturePathfindToAll SECRET_PATHFIND_ALL = register(new FeaturePathfindToAll());
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_BAT = register(new PathfindLineProperties("Dungeon Secrets.Pathfind To All", "Bat Line Settings", "Line Settings when pathfind to Bat, when using above feature", "secret.lineproperties.apf.bat", false));
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST = register(new PathfindLineProperties("Dungeon Secrets.Pathfind To All", "Chest Line Settings", "Line Settings when pathfind to Chest, when using above feature", "secret.lineproperties.apf.chest", false));
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE = register(new PathfindLineProperties("Dungeon Secrets.Pathfind To All", "Essence Line Settings", "Line Settings when pathfind to Essence, when using above feature", "secret.lineproperties.apf.essence", false));
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP = register(new PathfindLineProperties("Dungeon Secrets.Pathfind To All", "Item Drop Line Settings", "Line Settings when pathfind to Item Drop, when using above feature", "secret.lineproperties.apf.itemdrop", false));
 
     public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
     public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());

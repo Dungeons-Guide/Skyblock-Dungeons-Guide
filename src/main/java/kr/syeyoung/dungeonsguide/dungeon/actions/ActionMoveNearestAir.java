@@ -19,20 +19,17 @@
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.Keybinds;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
-import java.awt.*;
-import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -59,22 +56,24 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
 
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
+
         float distance = MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
+        if (flag) multiplier *= 2.0f;
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
-        if (FeatureRegistry.SECRET_BEACONS.isEnabled()) {
-            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks);
-            RenderUtils.highlightBlock(pos, FeatureRegistry.SECRET_BROWSE.getColor(), partialTicks);
+        if (actionRouteProperties.isBeacon()) {
+            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
+            RenderUtils.highlightBlock(pos, actionRouteProperties.getBeaconColor(), partialTicks);
         }
-        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, 1f, true, false, partialTicks);
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, flag ? 2f : 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !Keybinds.togglePathfindStatus) {
             if (poses != null){
-                RenderUtils.drawLinesVec3(poses, FeatureRegistry.SECRET_BROWSE.getColor(), FeatureRegistry.SECRET_BROWSE.getThickness(), partialTicks,  true);
+                RenderUtils.drawLinesVec3(poses, actionRouteProperties.getLineColor(), actionRouteProperties.getLineWidth(), partialTicks,  true);
             }
         }
     }
@@ -83,8 +82,8 @@ public class ActionMoveNearestAir extends AbstractAction {
     private List<Vec3> poses;
     private Future<List<Vec3>> latestFuture;
     @Override
-    public void onTick(DungeonRoom dungeonRoom) {
-        tick = (tick+1) % Math.max(1, FeatureRegistry.SECRET_BROWSE.getRefreshRate());
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
+        tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
         if (latestFuture != null && latestFuture.isDone()) {
             try {
                 poses = latestFuture.get();
@@ -94,17 +93,22 @@ public class ActionMoveNearestAir extends AbstractAction {
             }
         }
 
-        if (tick == 0) {
+        if (tick == 0 && actionRouteProperties.isPathfind()) {
             try {
                 if (latestFuture != null) latestFuture.cancel(true);
             } catch (Exception ignored) {}
-            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()|| poses == null)
-            latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(),
-                    Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE);
+            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() || poses == null)
+                latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, actionRouteProperties.getLineRefreshRate()* 50- 10);
         }
     }
 
 
+    public void forceRefresh(DungeonRoom dungeonRoom) {
+        try {
+            if (latestFuture != null) latestFuture.cancel(true);
+        } catch (Exception ignored) {}
+        latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, 10000);
+    }
     @Override
     public String toString() {
         return "MoveNearestAir\n- target: "+target.toString();

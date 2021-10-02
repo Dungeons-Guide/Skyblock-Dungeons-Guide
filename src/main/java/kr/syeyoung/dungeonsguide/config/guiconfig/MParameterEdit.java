@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.config.guiconfig;
 
+import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
@@ -29,6 +30,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 
 import java.awt.*;
+import java.util.function.Predicate;
 
 public class MParameterEdit extends MPanel {
     private AbstractFeature abstractFeature;
@@ -37,10 +39,17 @@ public class MParameterEdit extends MPanel {
     private MPanel valueEditHolder;
     private MPanel valueEdit;
 
+    private Predicate<FeatureParameter> isDisabled ;
+
     public MParameterEdit(AbstractFeature abstractFeature, FeatureParameter parameter, RootConfigPanel rootConfigPanel) {
+        this(abstractFeature, parameter, rootConfigPanel, (a) -> false);
+    }
+
+    public MParameterEdit(AbstractFeature abstractFeature, FeatureParameter parameter, RootConfigPanel rootConfigPanel, Predicate<FeatureParameter> isDisabled ) {
         this.abstractFeature = abstractFeature;
         this.featureParameter = parameter;
         this.rootConfigPanel = rootConfigPanel;
+        this.isDisabled = isDisabled;
 
         if (parameter.getValue_type().equals("string")) {
             valueEdit = new MTextField() {
@@ -133,6 +142,14 @@ public class MParameterEdit extends MPanel {
     }
 
     @Override
+    public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) {
+        super.render0(scale, parentPoint, parentClip, absMousex, absMousey, relMousex0, relMousey0, partialTicks);
+        if (isDisabled.test(featureParameter)) {
+            Gui.drawRect(0,0, getBounds().width, getBounds().height, 0x55000000);
+        }
+    }
+
+    @Override
     public Dimension getPreferredSize() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         int descriptionHeight = fr.listFormattedStringToWidth(featureParameter.getDescription(), Math.max(50, 2*bounds.width/3-10)).size() * fr.FONT_HEIGHT;
@@ -143,5 +160,53 @@ public class MParameterEdit extends MPanel {
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
         valueEditHolder.setBounds(new Rectangle(2*bounds.width / 3, 0, bounds.width / 3, bounds.height));
+    }
+
+    @Override
+    public void keyPressed0(char typedChar, int keyCode) {
+        if (isDisabled.test(featureParameter)) return;
+        super.keyPressed0(typedChar, keyCode);
+    }
+
+    @Override
+    public void keyHeld0(char typedChar, int keyCode, long heldMS) {
+        if (isDisabled.test(featureParameter)) return;
+        super.keyHeld0(typedChar, keyCode, heldMS);
+    }
+
+    @Override
+    public void keyReleased0(char typedChar, int keyCode, long heldMS) {
+        if (isDisabled.test(featureParameter)) return;
+        super.keyReleased0(typedChar, keyCode, heldMS);
+    }
+
+    @Override
+    public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
+        if (isDisabled.test(featureParameter)) return false;
+        return super.mouseClicked0(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
+    }
+
+    @Override
+    public void mouseReleased0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int state) {
+        if (isDisabled.test(featureParameter)) return ;
+        super.mouseReleased0(absMouseX, absMouseY, relMouseX0, relMouseY0, state);
+    }
+
+    @Override
+    public void mouseClickMove0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
+        if (isDisabled.test(featureParameter)) return ;
+        super.mouseClickMove0(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
+    }
+
+    @Override
+    public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+        if (isDisabled.test(featureParameter)) return ;
+        super.mouseScrolled0(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
+    }
+
+    @Override
+    public void mouseMoved0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+        if (isDisabled.test(featureParameter)) return ;
+        super.mouseMoved0(absMouseX, absMouseY, relMouseX0, relMouseY0);
     }
 }

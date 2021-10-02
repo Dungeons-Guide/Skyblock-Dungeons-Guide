@@ -32,6 +32,7 @@ public class Keybinds
     public static KeyBinding editingSession;
     public static KeyBinding sendBombdefuse;
     public static KeyBinding nextSecret;
+    public static KeyBinding refreshPathfind;
     public static KeyBinding togglePathfind;
     public static KeyBinding freezeLines;
 
@@ -45,6 +46,8 @@ public class Keybinds
         ClientRegistry.registerKeyBinding(nextSecret);
         togglePathfind = new KeyBinding("Toggle Pathfind. (Req option enabled at /dg)", Keyboard.KEY_NONE, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(togglePathfind);
+        refreshPathfind = new KeyBinding("Refresh or Pathfind Pathfindline to hovered secret", Keyboard.KEY_NONE, "Dungeons Guide");
+        ClientRegistry.registerKeyBinding(refreshPathfind);
         freezeLines = new KeyBinding("Toggle freeze pathfind lines", Keyboard.KEY_NONE, "Dungeons Guide");
         ClientRegistry.registerKeyBinding(freezeLines);
     }

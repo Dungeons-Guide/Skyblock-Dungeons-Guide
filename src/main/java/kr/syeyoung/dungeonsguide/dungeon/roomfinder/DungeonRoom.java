@@ -94,13 +94,13 @@ public class DungeonRoom {
         this.currentState = currentState;
     }
 
-    public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist) {
+    public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist, int timeout) {
         if (FeatureRegistry.SECRET_PATHFIND_STRATEGY.isEnabled()) {
             ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
                 BlockPos min = new BlockPos(getMin().getX(), 0, getMin().getZ());
                 BlockPos max=  new BlockPos(getMax().getX(), 255, getMax().getZ());
                 JPSPathfinder pathFinder = new JPSPathfinder(context.getWorld(), min, max);
-                pathFinder.pathfind(entityIn.getPositionVector(), new Vec3(targetPos).addVector(0.5, 0.5, 0.5), 1.5f,1000);
+                pathFinder.pathfind(entityIn.getPositionVector(), new Vec3(targetPos).addVector(0.5, 0.5, 0.5), 1.5f,timeout);
                 return pathFinder.getRoute();
             }, 0, TimeUnit.MILLISECONDS);
             return sf;
@@ -118,7 +118,6 @@ public class DungeonRoom {
                 }
                 return new ArrayList<>();
             }, 0, TimeUnit.MILLISECONDS);
-            asyncPathFinder.schedule(() -> sf.cancel(true), 10, TimeUnit.SECONDS);
             return sf;
         }
     }
