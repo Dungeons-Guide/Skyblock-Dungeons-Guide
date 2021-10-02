@@ -324,7 +324,8 @@ public class JPSPathfinder {
                         Block b = iblockstate1.getBlock();
                         if (!b.getMaterial().blocksMovement())continue;
                         if (b.isFullCube() && i2 == k-1) continue;
-                        if (b.isFullCube() && !iblockstate1.equals( NodeProcessorDungeonRoom.preBuilt)) {
+                        if (iblockstate1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
+                        if (b.isFullCube()) {
                             theBit |= (3L << bitStart);
                             arr[location] = theBit;
                             return true;

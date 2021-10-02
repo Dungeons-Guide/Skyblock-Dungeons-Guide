@@ -322,7 +322,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
         if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && Keybinds.nextSecret.isKeyDown()) {
             searchForNextTarget();
-        } else if (Keybinds.refreshPathfind.isKeyDown()) {
+        } else if (Keybinds.refreshPathfind.isKeyDown() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             ActionRoute actionRoute = getBestFit(0);
             if (actionRoute.getCurrentAction() instanceof ActionMove) {
                 ActionMove ac = (ActionMove) actionRoute.getCurrentAction();
@@ -334,6 +334,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 ((ActionMove)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
             } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMoveNearestAir) {
                 ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
+            }
+
+            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !actionRoute.getActionRouteProperties().isPathfind()) {
+                actionRoute.getActionRouteProperties().setPathfind(true);
+                actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
         }
     }

@@ -34,18 +34,20 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import java.util.LinkedHashMap;
 
 public class PathfindLineProperties extends SimpleFeature {
-    public PathfindLineProperties(String category, String name, String description, String key, boolean useGlobal) {
+    private PathfindLineProperties parent;
+    public PathfindLineProperties(String category, String name, String description, String key, boolean useParent, PathfindLineProperties parent) {
         super(category, name, description, key);
+        this.parent = parent;
         this.parameters = new LinkedHashMap<>();
-        if (!key.equals("secret.lineproperties.global"))
-            this.parameters.put("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the global one",  useGlobal, "boolean"));
-        this.parameters.put("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useGlobal, "boolean"));
+        if (parent != null)
+            this.parameters.put("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, "boolean"));
+        this.parameters.put("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useParent, "boolean"));
         this.parameters.put("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the pathfind line", new AColor(0xFFFF0000, true), "acolor"));
         this.parameters.put("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the pathfind line",1.0f, "float"));
-        this.parameters.put("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, "integer"));
+        this.parameters.put("linerefreshrate", new FeatureParameter<Integer>("linerefreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, "integer"));
         this.parameters.put("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, "boolean"));
         this.parameters.put("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), "acolor"));
-        this.parameters.put("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), "acolor"));
+        this.parameters.put("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), "acolor"));
     }
 
 
@@ -55,7 +57,14 @@ public class PathfindLineProperties extends SimpleFeature {
             public MPanel get() {
                 MFeatureEdit featureEdit = new MFeatureEdit(PathfindLineProperties.this, rootConfigPanel);
                 for (FeatureParameter parameter: getParameters()) {
-                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> !a.getKey().equals("useGlobal") && isGlobal()));
+                    if (parameter.getKey().startsWith("line"))
+                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> isGlobal() || !isPathfind()));
+                    else if (parameter.getKey().startsWith("beam"))
+                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> isGlobal() || !isBeacon()));
+                    else if (!parameter.getKey().equals("useGlobal"))
+                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> isGlobal()));
+                    else
+                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> false));
                 }
                 return featureEdit;
             }
@@ -69,30 +78,30 @@ public class PathfindLineProperties extends SimpleFeature {
     }
 
     public boolean isGlobal() {
-        if (getKey().equals("secret.lineproperties.global")) return false;
+        if (parent == null) return false;
         return this.<Boolean>getParameter("useGlobal").getValue();
     }
 
     public boolean isPathfind() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.isPathfind() : this.<Boolean>getParameter("pathfind").getValue();
+        return isGlobal() ? parent.isPathfind() : this.<Boolean>getParameter("pathfind").getValue();
     }
     public AColor getLineColor() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getLineColor() : this.<AColor>getParameter("lineColor").getValue();
+        return isGlobal() ? parent.getLineColor() : this.<AColor>getParameter("lineColor").getValue();
     }
     public float getLineWidth() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getLineWidth() : this.<Float>getParameter("lineWidth").getValue();
+        return isGlobal() ? parent.getLineWidth() : this.<Float>getParameter("lineWidth").getValue();
     }
     public int getRefreshRate() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRefreshRate() : this.<Integer>getParameter("refreshrate").getValue();
+        return isGlobal() ? parent.getRefreshRate() : this.<Integer>getParameter("linerefreshrate").getValue();
     }
     public boolean isBeacon() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.isBeacon() : this.<Boolean>getParameter("beacon").getValue();
+        return isGlobal() ? parent.isBeacon() : this.<Boolean>getParameter("beacon").getValue();
     }
     public AColor getBeamColor() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getBeamColor() : this.<AColor>getParameter("beamColor").getValue();
+        return isGlobal() ? parent.getBeamColor() : this.<AColor>getParameter("beamColor").getValue();
     }
     public AColor getTargetColor() {
-        return isGlobal() ? FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getTargetColor() : this.<AColor>getParameter("targetColor").getValue();
+        return isGlobal() ? parent.getTargetColor() : this.<AColor>getParameter("beamTargetColor").getValue();
     }
     public ActionRoute.ActionRouteProperties getRouteProperties() {
         ActionRoute.ActionRouteProperties actionRouteProperties = new ActionRoute.ActionRouteProperties();
