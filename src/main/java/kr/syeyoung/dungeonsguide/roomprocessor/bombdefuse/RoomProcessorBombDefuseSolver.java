@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
@@ -51,7 +52,6 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.apache.commons.codec.binary.Base64;
 
 import java.io.ByteArrayInputStream;
@@ -358,8 +358,8 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
     }
 
     @Override
-    public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
-        super.onKeyPress(keyInputEvent);
+    public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
+        super.onKeybindPress(keyInputEvent);
         if (bugged) return;
 
         BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
@@ -367,12 +367,12 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         for (ChamberSet ch:chambers) {
             if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {
                 if (ch.getLeft().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getLeft().getProcessor().onKeyPress(keyInputEvent);
+                    ch.getLeft().getProcessor().onKeybindPress(keyInputEvent);
                 }
             }
             if (ch.getRight() != null && ch.getRight().getProcessor() != null) {
                 if (ch.getRight().getChamberBlocks().getOffsetPointList().contains(offsetPoint)) {
-                    ch.getRight().getProcessor().onKeyPress(keyInputEvent);
+                    ch.getRight().getProcessor().onKeybindPress(keyInputEvent);
                 }
             }
         }

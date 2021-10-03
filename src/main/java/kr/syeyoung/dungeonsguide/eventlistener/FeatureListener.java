@@ -55,6 +55,20 @@ public class FeatureListener {
             t.printStackTrace();
         }
     }
+
+    @SubscribeEvent
+    public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof KeybindPressedListener) {
+                    ((KeybindPressedListener) abstractFeature).onKeybindPress(keyBindPressedEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
     @SubscribeEvent
     public void onStomp(StompConnectedEvent stompConnectedEvent) {
         try {

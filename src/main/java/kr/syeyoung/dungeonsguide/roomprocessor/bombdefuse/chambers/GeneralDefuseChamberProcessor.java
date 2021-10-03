@@ -20,22 +20,22 @@ package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers;
 
 import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
-import net.minecraftforge.event.entity.player.EntityInteractEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -108,7 +108,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     protected void drawPressKey() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        String str = "Press "+ Keyboard.getKeyName(Keybinds.sendBombdefuse.getKeyCode()) + " to save and send solution";
+        String str = "Press "+ GameSettings.getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) + " to save and send solution";
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -116,8 +116,8 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
     }
 
     @Override
-    public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
-        if (Keybinds.sendBombdefuse.isKeyDown()) {
+    public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
+        if (keyInputEvent.getKey() == FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) {
             if (!getChamber().isWithinAbsolute(Minecraft.getMinecraft().thePlayer.getPosition())) {
                 return;
             }

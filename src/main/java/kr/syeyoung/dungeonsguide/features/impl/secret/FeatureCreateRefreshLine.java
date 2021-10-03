@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
 import com.google.common.base.Supplier;
+import kr.syeyoung.dungeonsguide.Keybinds;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
@@ -27,14 +28,20 @@ import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MKeyEditButton;
+import org.lwjgl.input.Keyboard;
+
+import java.util.LinkedHashMap;
 
 public class FeatureCreateRefreshLine extends SimpleFeature {
     public FeatureCreateRefreshLine() {
-        super("Dungeon Secrets.Keybinds", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nChange key at your key settings (Settings -> Controls)", "secret.refreshPathfind", true);
-
+        super("Dungeon Secrets.Keybinds", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nPress settings to edit the key", "secret.refreshPathfind", true);
+        this.parameters = new LinkedHashMap<>();
+        this.parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", Keyboard.KEY_NONE, "keybind"));
         this.parameters.put("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Force Enable pathfind for future actions when used", false, "boolean"));
         this.parameters.put("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "Ticks to wait per line refresh, to be overriden. If the line already has pathfind enabled, this value does nothing. Specify it to -1 to don't refresh line at all", 10, "integer"));
     }
+    public int getKeybind() {return this.<Integer>getParameter("key").getValue();}
     public boolean isPathfind() {
         return this.<Boolean>getParameter("pathfind").getValue();
     }

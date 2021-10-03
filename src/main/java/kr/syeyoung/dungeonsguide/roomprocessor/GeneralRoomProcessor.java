@@ -31,13 +31,13 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.VectorUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -57,7 +57,6 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -322,10 +321,10 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
 
     @Override
-    public void onKeyPress(InputEvent.KeyInputEvent keyInputEvent) {
-        if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && Keybinds.nextSecret.isKeyDown()) {
+    public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
+        if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && FeatureRegistry.SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
             searchForNextTarget();
-        } else if (Keybinds.refreshPathfind.isKeyDown() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
+        } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             ActionRoute actionRoute = getBestFit(0);
             if (actionRoute.getCurrentAction() instanceof ActionMove) {
                 ActionMove ac = (ActionMove) actionRoute.getCurrentAction();

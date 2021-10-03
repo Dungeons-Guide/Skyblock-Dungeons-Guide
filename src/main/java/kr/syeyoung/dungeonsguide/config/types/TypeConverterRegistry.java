@@ -49,5 +49,6 @@ public class TypeConverterRegistry {
         register(new TCTextStyleList());
         register(new TCTextStyle());
         register(new TCStringList());
+        register(new TCKeybind());
     }
 }

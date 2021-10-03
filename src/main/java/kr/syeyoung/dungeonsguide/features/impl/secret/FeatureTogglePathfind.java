@@ -19,38 +19,36 @@
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
 import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Keybinds;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.KeybindPressedListener;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MKeyEditButton;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
-public class FeatureFreezePathfind extends SimpleFeature implements KeybindPressedListener {
-    public FeatureFreezePathfind() {
-        super("Dungeon Secrets.Keybinds", "Global Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move.\nPress settings to edit the key", "secret.freezepathfind", false);
-        this.parameters.put("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, "keybind"));
+public class FeatureTogglePathfind extends SimpleFeature implements KeybindPressedListener {
+    public FeatureTogglePathfind() {
+        super("Dungeon Secrets.Keybinds", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nPress settings to edit the key", "secret.togglePathfind");
+        this.parameters.put("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle pathfind lines", Keyboard.KEY_NONE, "keybind"));
     }
+    public boolean togglePathfindStatus = false;
 
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
-        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
-            setEnabled(!isEnabled());
+        if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
+            togglePathfindStatus = !togglePathfindStatus;
             try {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ? "on":"off")));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Line visibility to §e"+(togglePathfindStatus ? "on":"off")));
             } catch (Exception ignored) {}
         }
     }

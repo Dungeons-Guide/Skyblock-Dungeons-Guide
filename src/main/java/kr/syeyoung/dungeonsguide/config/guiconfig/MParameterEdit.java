@@ -89,7 +89,14 @@ public class MParameterEdit extends MPanel {
             ((MToggleButton)valueEdit).setOnToggle(() -> {
                 parameter.setValue(((MToggleButton) valueEdit).isEnabled());
             });
-        } else {
+        }  else if (parameter.getValue_type().equals("keybind")) {
+            valueEdit = new MKeyEditButton();
+            ((MKeyEditButton)valueEdit).setKey((Integer) parameter.getValue());
+            ((MKeyEditButton)valueEdit).setOnKeyEdit(() -> {
+                parameter.setValue(((MKeyEditButton) valueEdit).getKey());
+            });
+            ((MKeyEditButton)valueEdit).setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));
+        }else {
             valueEdit = new MLabel();
             ((MLabel)valueEdit).setText("????");
         }
@@ -108,10 +115,11 @@ public class MParameterEdit extends MPanel {
         add(valueEditHolder);
         valueEditHolder.add(valueEdit);
     }
-    public MParameterEdit(AbstractFeature abstractFeature, FeatureParameter parameter, RootConfigPanel rootConfigPanel, MPanel valueEdit) {
+    public MParameterEdit(AbstractFeature abstractFeature, FeatureParameter parameter, RootConfigPanel rootConfigPanel, MPanel valueEdit,  Predicate<FeatureParameter> isDisabled) {
         this.abstractFeature = abstractFeature;
         this.featureParameter = parameter;
         this.rootConfigPanel = rootConfigPanel;
+        this.isDisabled = isDisabled;
 
 
         valueEditHolder = new MPanel() {

@@ -140,7 +140,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
                 mStringSelectionButton.setOnUpdate(() -> {
                     TextHUDFeature.this.<String>getParameter("alignment").setValue(mStringSelectionButton.getSelected());
                 });
-                featureEdit.addParameterEdit("alignment", new MParameterEdit(TextHUDFeature.this, TextHUDFeature.this.<String>getParameter("alignment"), rootConfigPanel, mStringSelectionButton));
+                featureEdit.addParameterEdit("alignment", new MParameterEdit(TextHUDFeature.this, TextHUDFeature.this.<String>getParameter("alignment"), rootConfigPanel, mStringSelectionButton, (a) -> false));
 
                 for (FeatureParameter parameter: getParameters()) {
                     if (parameter.getKey().equals("textStylesNEW")) continue;

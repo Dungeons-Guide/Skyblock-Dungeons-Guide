@@ -71,7 +71,7 @@ public class MFeature extends MPanel {
         }
         if (abstractFeature.getParameters().size() != 0) {
             MButton button = new MButton();
-            button.setText("Edit");
+            button.setText("Settings");
             button.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {

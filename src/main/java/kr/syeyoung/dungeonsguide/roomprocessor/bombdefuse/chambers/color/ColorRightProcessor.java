@@ -21,11 +21,13 @@ package kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.color;
 import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import kr.syeyoung.dungeonsguide.Keybinds;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.BDChamber;
 import kr.syeyoung.dungeonsguide.roomprocessor.bombdefuse.chambers.GeneralDefuseChamberProcessor;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.block.Block;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
@@ -69,7 +71,7 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        RenderUtils.drawTextAtWorld(answer == -1 ? "Press "+ Keyboard.getKeyName(Keybinds.sendBombdefuse.getKeyCode())+" to request solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
+        RenderUtils.drawTextAtWorld(answer == -1 ? "Press "+ GameSettings.getKeyDisplayString(FeatureRegistry.SOLVER_BOMBDEFUSE.<Integer>getParameter("key").getValue()) +" to request solution" : "" , center.getX()+ 0.5f, center.getY(), center.getZ()+ 0.5f, 0xFFFFFFFF, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld( colors.get((int) c1b), b1.getX()+ 0.5f, b1.getY()+0.6f, b1.getZ()+ 0.5f,c1b == b1b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld( colors.get((int) c2b), b2.getX()+ 0.5f, b2.getY()+0.6f, b2.getZ()+ 0.5f,c2b == b2b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);
         RenderUtils.drawTextAtWorld( colors.get((int) c3b), b3.getX()+ 0.5f, b3.getY()+0.6f, b3.getZ()+ 0.5f,c3b == b3b ? 0xFF00FF00 : 0xFFFF0000, 0.03F, false, false, partialTicks);

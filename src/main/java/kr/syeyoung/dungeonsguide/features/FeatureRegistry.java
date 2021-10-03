@@ -18,6 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.features;
 
+import com.google.common.base.Supplier;
+import kr.syeyoung.dungeonsguide.Keybinds;
+import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
+import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
+import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
@@ -38,7 +44,10 @@ import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPart
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
+import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.gui.elements.MKeyEditButton;
 import lombok.Getter;
+import org.lwjgl.input.Keyboard;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -72,7 +81,11 @@ public class FeatureRegistry {
     }
     public static final SimpleFeature DEBUG = register(new FeatureDebug());
 
-    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false));
+    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false){
+        {
+            parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to edit room", Keyboard.KEY_R, "keybind"));
+        }
+    });
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
@@ -100,7 +113,11 @@ public class FeatureRegistry {
     public static final SimpleFeature SOLVER_BOX_DISABLE_TEXT = register(new SimpleFeature("Solver.Floor 3+", "Box Puzzle Solver Disable text", "Disable 'Type recalc to recalculate solution' showing up on top left.\nYou can still type recalc to recalc solution after disabling this feature",  "solver.boxrecalc", false));
     public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Solver.Any Floor", "Creeper", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
     public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("Solver.Any Floor", "Teleport", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
-    public static final SimpleFeature SOLVER_BOMBDEFUSE = register(new SimpleFeature("Solver.Floor 7+", "Bomb Defuse", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse"));
+    public static final SimpleFeature SOLVER_BOMBDEFUSE = register(new SimpleFeature("Solver.Floor 7+", "Bomb Defuse", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse") {
+        {
+            parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to send solution in chat", Keyboard.KEY_NONE, "keybind"));
+        }
+    });
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
@@ -166,8 +183,8 @@ public class FeatureRegistry {
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
 
     public static final SimpleFeature SECRET_PATHFIND_STRATEGY = register(new SimpleFeature("Dungeon Secrets", "Use NEW JPS Optimization instead of standard A Star", "Faster, and accurate routes.", "secret.secretpathfind.algorithm", true));
-    public static final SimpleFeature SECRET_TOGGLE_KEY = register(new SimpleFeature("Dungeon Secrets.Keybinds", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nChange key at your key settings (Settings -> Controls)", "secret.togglePathfind"));
-    public static final SimpleFeature SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
+    public static final FeatureTogglePathfind SECRET_TOGGLE_KEY = register(new FeatureTogglePathfind());
+    public static final FeatureFreezePathfind SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
     public static final FeatureCreateRefreshLine SECRET_CREATE_REFRESH_LINE = register(new FeatureCreateRefreshLine());
     static {
         categoryDescription.put("ROOT.Dungeon Secrets.Keybinds", "Useful keybinds / Toggle Pathfind lines, Freeze Pathfind lines, Refresh pathfind line or Trigger pathfind (you would want to use it, if you're using Pathfind to All)");
@@ -176,7 +193,12 @@ public class FeatureRegistry {
 
     public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
     public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
-    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nChange key at your key settings (Settings -> Controls)", "secret.keyfornext", false));
+    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {
+        {
+            parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind"));
+        }
+    });
+
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_AUTOPATHFIND = register(new PathfindLineProperties("Dungeon Secrets.Legacy AutoPathfind", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.autopathfind", true, SECRET_LINE_PROPERTIES_GLOBAL));
 
     public static final FeaturePathfindToAll SECRET_PATHFIND_ALL = register(new FeaturePathfindToAll());

@@ -60,14 +60,12 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 import net.minecraftforge.fml.client.CustomModLoadingErrorDisplayException;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import net.minecraftforge.fml.relauncher.Side;
-import net.minecraftforge.fml.relauncher.SideOnly;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -395,7 +393,7 @@ public class DungeonListener {
         }
     }
     @SubscribeEvent()
-    public void onKey2(InputEvent.KeyInputEvent keyInputEvent) {
+    public void onKey2(KeyBindPressedEvent keyInputEvent) {
         try {
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnDungeon()) return;
@@ -407,14 +405,14 @@ public class DungeonListener {
                 Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
                 if (context.getBossfightProcessor() != null) {
-                    context.getBossfightProcessor().onKeyPress(keyInputEvent);
+                    context.getBossfightProcessor().onKeybindPress(keyInputEvent);
                 }
                 RoomProcessor roomProcessor = null;
                 try {
                     DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
                     if (dungeonRoom != null) {
                         if (dungeonRoom.getRoomProcessor() != null) {
-                            dungeonRoom.getRoomProcessor().onKeyPress(keyInputEvent);
+                            dungeonRoom.getRoomProcessor().onKeybindPress(keyInputEvent);
                         }
                     }
                 } catch (Throwable t) {
@@ -490,8 +488,8 @@ public class DungeonListener {
     }
 
     @SubscribeEvent
-    public void onKeyInput(InputEvent.KeyInputEvent keyInputEvent) {
-        if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && Keybinds.editingSession.isKeyDown() ){
+    public void onKeyInput(KeyBindPressedEvent keyInputEvent) {
+        if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue() ){
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();

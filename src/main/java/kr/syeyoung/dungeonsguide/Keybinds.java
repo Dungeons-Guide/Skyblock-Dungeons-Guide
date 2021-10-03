@@ -18,52 +18,36 @@
 
 package kr.syeyoung.dungeonsguide;
 
+import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.client.settings.KeyBinding;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.registry.ClientRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.InputEvent;
 import org.lwjgl.input.Keyboard;
+import org.lwjgl.input.Mouse;
 
 public class Keybinds
 {
-    public static KeyBinding editingSession;
-    public static KeyBinding sendBombdefuse;
-    public static KeyBinding nextSecret;
-    public static KeyBinding refreshPathfind;
-    public static KeyBinding togglePathfind;
-    public static KeyBinding freezeLines;
-
-    public static void register()
-    {
-        editingSession = new KeyBinding("Start editing session", Keyboard.KEY_NONE, "Dungeons Guide");
-        ClientRegistry.registerKeyBinding(editingSession);
-        sendBombdefuse = new KeyBinding("Send and save bombdefuse solution", Keyboard.KEY_F, "Dungeons Guide");
-        ClientRegistry.registerKeyBinding(sendBombdefuse);
-        nextSecret = new KeyBinding("Navigate to next secret. (Req option enabled at /dg)", Keyboard.KEY_R, "Dungeons Guide");
-        ClientRegistry.registerKeyBinding(nextSecret);
-        togglePathfind = new KeyBinding("Toggle Pathfind. (Req option enabled at /dg)", Keyboard.KEY_NONE, "Dungeons Guide");
-        ClientRegistry.registerKeyBinding(togglePathfind);
-        refreshPathfind = new KeyBinding("Refresh or Pathfind Pathfindline to hovered secret", Keyboard.KEY_NONE, "Dungeons Guide");
-        ClientRegistry.registerKeyBinding(refreshPathfind);
-        freezeLines = new KeyBinding("Toggle freeze pathfind lines", Keyboard.KEY_NONE, "Dungeons Guide");
-        ClientRegistry.registerKeyBinding(freezeLines);
-    }
-
-    public static boolean togglePathfindStatus = false;
 
     @SubscribeEvent
     public void onTogglePathfindStatus(InputEvent.KeyInputEvent keyInputEvent) {
-        if (togglePathfind.isKeyDown())
-            togglePathfindStatus = !togglePathfindStatus;
-
-        if (freezeLines.isKeyDown()) {
-            FeatureRegistry.SECRET_FREEZE_LINES.setEnabled(!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled());
-            try {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ? "on":"off")));
-            } catch (Exception ignored) {}
+        if (Keyboard.getEventKeyState()) {
+            int key = Keyboard.getEventKey() == 0 ? Keyboard.getEventCharacter() + 256 : Keyboard.getEventKey();
+            KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
+            MinecraftForge.EVENT_BUS.post(keyBindPressedEvent);
+        }
+    }
+    @SubscribeEvent
+    public void onMousePressed(InputEvent.MouseInputEvent mouseInputEvent) {
+        if (Mouse.getEventButtonState()) {
+            int key = Mouse.getEventButton() - 100;
+            KeyBindPressedEvent keyBindPressedEvent = new KeyBindPressedEvent(key);
+            MinecraftForge.EVENT_BUS.post(keyBindPressedEvent);
         }
     }
 }

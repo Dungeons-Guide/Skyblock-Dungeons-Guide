@@ -124,14 +124,12 @@ public class DungeonsGuide implements DGInterface, CloseListener {
 
         AhUtils.registerTimer();
 
-        progressbar.step("Downloading Roomdatas");
+        progressbar.step("Loading Roomdatas");
         try {
             DungeonRoomInfoRegistry.loadAll(configDir);
         } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
-        Keybinds.register();
-
         progressbar.step("Opening connection");
 
         cosmeticsManager = new CosmeticsManager();

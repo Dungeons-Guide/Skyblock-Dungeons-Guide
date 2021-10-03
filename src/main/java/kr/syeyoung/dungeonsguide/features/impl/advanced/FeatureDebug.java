@@ -56,7 +56,7 @@ public class FeatureDebug extends SimpleFeature {
                     public String getText() {
                         return isEnabled() ? "Enabled!" : "Incorrect Key";
                     }
-                }));
+                }, (a) -> false));
                 return featureEdit;
             }
         });
