@@ -41,7 +41,7 @@ public class FeatureListener {
         try {
             boolean isLocConfig = Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig;
 
-            if (postRender.type != RenderGameOverlayEvent.ElementType.ALL) return;
+            if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             if (!skyblockStatus.isOnSkyblock()) return;
 
