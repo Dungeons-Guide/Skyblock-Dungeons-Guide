@@ -49,11 +49,16 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private final List<String> questionDialog = new ArrayList<String>();
     private boolean questionDialogStart = false;
 
+    private boolean parseDialog = false;
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
         if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         String ch2 = chat.getUnformattedText();
+        if (parseDialog) {
+            parseDialog = false;
+            parseDialog();
+        }
         if (chat.getFormattedText().contains("§r§6§lQuestion ")) {
             questionDialogStart = true;
             questionDialog.clear();
@@ -64,7 +69,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
         if (chat.getFormattedText().contains("§r§6 ⓒ")) {
             questionDialogStart = false;
-            parseDialog();
+            parseDialog = true;
         }
     }
     public static final Pattern anwerPattern = Pattern.compile("§r§6 . §a(.+)§r");
