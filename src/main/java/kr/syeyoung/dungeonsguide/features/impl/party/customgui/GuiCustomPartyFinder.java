@@ -25,6 +25,7 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 
@@ -53,7 +54,12 @@ public class GuiCustomPartyFinder extends MGui {
     @Override
     public void initGui() {
         super.initGui();
-        panelPartyFinder.setBounds(new Rectangle(Minecraft.getMinecraft().displayWidth/5, Minecraft.getMinecraft().displayHeight/5,3*Minecraft.getMinecraft().displayWidth/5, 3*Minecraft.getMinecraft().displayHeight/5));
+        int width  = 3*Minecraft.getMinecraft().displayWidth/5;
+        width = Math.max(width, 1000);
+        int height = 3*Minecraft.getMinecraft().displayHeight/5;
+        height = Math.max(height, 600);
+
+        panelPartyFinder.setBounds(new Rectangle((Minecraft.getMinecraft().displayWidth-width)/2, (Minecraft.getMinecraft().displayHeight-height)/2, width, height));
     }
 
     @Override

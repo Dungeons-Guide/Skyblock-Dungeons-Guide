@@ -96,7 +96,7 @@ public class MPopupMenu extends MTooltip {
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
-        if (!getBounds().contains(absMouseX, absMouseY)) {
+        if (!lastAbsClip.contains(absMouseX, absMouseY)) {
             close();
         }
     }
