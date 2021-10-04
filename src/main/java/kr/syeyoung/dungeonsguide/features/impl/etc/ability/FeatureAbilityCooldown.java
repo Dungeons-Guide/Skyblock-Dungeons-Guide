@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
+import java.math.MathContext;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,6 +51,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         getStyles().add(new TextStyle("unit",new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("ready",new AColor(0xDF, 0x00,0x67,255), new AColor(0, 0,0,0), false));
         this.parameters.put("disable", new FeatureParameter<Boolean>("disable", "Disable outside of dungeon", "Disable the feature when out of dungeon", false, "boolean"));
+        this.parameters.put("decimal", new FeatureParameter<Integer>("decimal", "Decimal places", "ex) 2 -> Cooldown: 3.21 3-> Cooldown: 3.210", 0, "integer"));
     }
 
     @Override
@@ -265,9 +267,17 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
             } else {
                 cooldowns.add(new StyledText(usedAbility.getAbility().getName(), "abilityname"));
                 cooldowns.add(new StyledText(": ", "separator"));
-                long seconds = (long) Math.ceil((end - System.currentTimeMillis()) / 1000.0);
-                long hr = seconds / (60 * 60); seconds -= hr * 60 * 60;
-                long min = seconds / 60; seconds -= min * 60;
+                long millies = end-System.currentTimeMillis();
+                double decimalPlaces = (double ) Math.pow(10, 3- this.<Integer>getParameter("decimal").getValue());
+                if (decimalPlaces == 0) {
+                    cooldowns.add(new StyledText( this.<Integer>getParameter("decimal").getValue()+" decimal places? You'd be joking\n", "unit"));
+                    continue;
+                }
+                millies = (long) (((millies-1) / decimalPlaces + 1) * decimalPlaces);
+                long hr = (long) (millies / (1000 * 60 * 60));
+                long min  = (long) (( millies / (1000*60)) % 60);
+                double seconds = (millies/1000.0 ) % 60;
+                String secondStr = String.format("%."+(this.<Integer>getParameter("decimal").getValue())+"f", seconds);
 
                 if (hr > 0) {
                     cooldowns.add(new StyledText(String.valueOf(hr), "number"));
@@ -278,7 +288,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
                     cooldowns.add(new StyledText("m ", "unit"));
                 }
                 if (hr > 0 || min > 0 || seconds > 0) {
-                    cooldowns.add(new StyledText(String.valueOf(seconds), "number"));
+                    cooldowns.add(new StyledText(secondStr, "number"));
                     cooldowns.add(new StyledText("s ", "unit"));
                 }
                 cooldowns.add(new StyledText("\n", "unit"));
