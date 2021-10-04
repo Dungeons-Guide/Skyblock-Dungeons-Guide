@@ -23,19 +23,26 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.fml.client.config.GuiUtils;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.Arrays;
 
-public class FeatureDebuggableMap extends GuiFeature {
+public class FeatureDebuggableMap extends GuiFeature  {
     public FeatureDebuggableMap() {
         super("Advanced", "Display Debug info included map", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.map", true, 128, 128);
         this.setEnabled(false);
@@ -61,6 +68,16 @@ public class FeatureDebuggableMap extends GuiFeature {
         GlStateManager.enableAlpha();
         GuiScreen.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 128, 128, 128, 128);
         GlStateManager.popMatrix();
+
+
+        if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) return;
+        Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
+
+        int i = (int) (Mouse.getEventX() - featureRect.getX());
+        int j = (int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY());
+        if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
+            GuiUtils.drawHoveringText(Arrays.asList("Color: "+MapUtils.getColors()[j * 128 + i]),i, j, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
+        }
     }
 
     @Override

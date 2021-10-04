@@ -19,10 +19,12 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
@@ -43,10 +45,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.pathfinding.PathEntity;
 import net.minecraft.pathfinding.PathFinder;
 import net.minecraft.pathfinding.PathPoint;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
@@ -92,7 +91,7 @@ public class DungeonRoom {
             cached = new HashMap<String, DungeonMechanic>(dungeonRoomInfo.getMechanics());
             int index = 0;
             for (DungeonDoor door : doors) {
-                if (door.isExist()) cached.put((door.isRequiresKey() ? "withergate" : "gate")+"-"+(++index), new DungeonRoomDoor(door));
+                if (door.getType().isExist()) cached.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoor(this, door));
             }
         }
         return cached;
@@ -147,7 +146,7 @@ public class DungeonRoom {
 
     private RoomProcessor roomProcessor;
 
-    public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context) {
+    public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
         this.shape = shape;
         this.color = color;
@@ -177,7 +176,7 @@ public class DungeonRoom {
         lenz = maxz - minz;
         arr = new long[lenx *leny * lenz * 2 / 8];;
 
-        buildDoors();
+        buildDoors(doorsAndStates);
         buildRoom();
         nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
         updateRoomProcessor();
@@ -187,19 +186,17 @@ public class DungeonRoom {
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
-    private void buildDoors() {
-        Set<BlockPos> positions = new HashSet<BlockPos>();
-        for (Point p:unitPoints) {
-            BlockPos pos = context.getMapProcessor().roomPointToWorldPoint(p).add(16,0,16);
-            for (Vector2d vector2d : directions){
-                BlockPos doorLoc = pos.add(vector2d.x, 0, vector2d.y);
-                if (positions.contains(doorLoc)) positions.remove(doorLoc);
-                else positions.add(doorLoc);
-            }
+    private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
+        Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
+        BlockPos pos = context.getMapProcessor().roomPointToWorldPoint(minRoomPt).add(16,0,16);
+        for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
+            Vector2d vector2d = doorsAndState.getFirst();
+            BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
+            positions.add(new Tuple<>(neu, doorsAndState.getSecond()));
         }
 
-        for (BlockPos door : positions) {
-            doors.add(new DungeonDoor(context.getWorld(), door));
+        for (Tuple<BlockPos, EDungeonDoorType> door : positions) {
+            doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
         }
     }
 
@@ -269,6 +266,8 @@ public class DungeonRoom {
         MapProcessor mapProcessor = this.context.getMapProcessor();
         Point roomPt = mapProcessor.worldPointToRoomPoint(pos);
         roomPt.translate(-minRoomPt.x, -minRoomPt.y);
+
+        DungeonsGuide.sendDebugChat(new ChatComponentText(pos+"? "+((shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0)));
 
         return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
     }

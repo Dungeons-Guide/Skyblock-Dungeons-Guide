@@ -482,7 +482,7 @@ public class RenderUtils {
         GlStateManager.disableCull();
         GlStateManager.enableAlpha();
 
-        if (dungeonDoor.isExist())
+        if (dungeonDoor.getType().isExist())
             GlStateManager.color(0,1,0,1);
         else
             GlStateManager.color(1,0,0,1);
@@ -499,7 +499,7 @@ public class RenderUtils {
 
         GL11.glEnd();
 
-        if (dungeonDoor.isExist()) {
+        if (dungeonDoor.getType().isExist()) {
             GL11.glBegin(GL11.GL_QUADS);
 
             GlStateManager.color(0,0,1,1);
@@ -539,8 +539,30 @@ public class RenderUtils {
         GlStateManager.enableCull();
 
 
-        GlStateManager.popMatrix();
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
+        GlStateManager.translate( dungeonDoor.getPosition().getX(),  dungeonDoor.getPosition().getY(),  dungeonDoor.getPosition().getZ());
+        GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+        GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
+
+        float lScale = 0.02f;
+        GlStateManager.scale(-lScale, -lScale, lScale);
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        String text = "Type: "+dungeonDoor.getType();
+        int textWidth = fontRenderer.getStringWidth(text);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        fontRenderer.drawString(text, -textWidth / 2, 0, 0xFF00FFFF);
+
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.popMatrix();
     }
 
     public static void drawLine(Vec3 pos1, Vec3 pos2, Color colour, float partialTicks , boolean depth) {

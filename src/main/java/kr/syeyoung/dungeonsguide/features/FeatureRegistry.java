@@ -199,6 +199,10 @@ public class FeatureRegistry {
         }
     });
 
+    public static final SimpleFeature SECRET_BLOOD_RUSH = register(new SimpleFeature("Dungeon Secrets.Blood Rush", "Blood Rush Mode", "Auto pathfind to witherdoors. \nCan be toggled with key set in settings", "secret.bloodrush", false));
+    public static final PathfindLineProperties SECRET_BLOOD_RUSH_LINE_PROPERTIES = register(new PathfindLineProperties("Dungeon Secrets.Blood Rush", "Bloodrush Line Settings", "Line Settings to be used", "secret.lineproperties.bloodrush", false, SECRET_LINE_PROPERTIES_GLOBAL));
+
+
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_AUTOPATHFIND = register(new PathfindLineProperties("Dungeon Secrets.Legacy AutoPathfind", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.autopathfind", true, SECRET_LINE_PROPERTIES_GLOBAL));
 
     public static final FeaturePathfindToAll SECRET_PATHFIND_ALL = register(new FeaturePathfindToAll());

@@ -474,7 +474,7 @@ public class CommandDungeonsGuide extends CommandBase {
             mapProcessor.setTopLeftMapPoint(new Point(0, 0));
             fakeContext.setDungeonMin(new BlockPos(0, 70, 0));
 
-            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0, 0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0, 70, 0), new BlockPos(31, 70, 31), fakeContext);
+            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0, 0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0, 70, 0), new BlockPos(31, 70, 31), fakeContext, Collections.emptySet());
 
             fakeContext.getDungeonRoomList().add(dungeonRoom);
             for (Point p : Arrays.asList(new Point(0, 0))) {

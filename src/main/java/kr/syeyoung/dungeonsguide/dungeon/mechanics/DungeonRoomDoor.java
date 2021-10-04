@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import lombok.Getter;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -32,10 +34,26 @@ import java.util.HashSet;
 import java.util.Set;
 
 public class DungeonRoomDoor implements DungeonMechanic {
+    @Getter
     private final DungeonDoor doorfinder;
+    private OffsetPoint offsetPoint;
 
-    public DungeonRoomDoor(DungeonDoor doorfinder) {
+    public DungeonRoomDoor(DungeonRoom dungeonRoom, DungeonDoor doorfinder) {
         this.doorfinder = doorfinder;
+        if (doorfinder.isZDir()) {
+            if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(0,0,2)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0,0,2));
+            else if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(0,0,-2)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0,0,-2));
+        } else {
+            if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(2,0,0)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(2,0,0));
+            else if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(-2,0,0)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(-2,0,0));
+        }
+        if (offsetPoint == null) {
+            offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition());
+        }
     }
 
     @Override
@@ -44,7 +62,7 @@ public class DungeonRoomDoor implements DungeonMechanic {
         Set<Action> base;
         Set<Action> preRequisites = base = new HashSet<Action>();
         {
-            ActionMove actionMove = new ActionMove(new OffsetPoint(dungeonRoom, doorfinder.getPosition()));
+            ActionMove actionMove = new ActionMove(offsetPoint);
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
         }
@@ -53,7 +71,7 @@ public class DungeonRoomDoor implements DungeonMechanic {
 
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
-        BlockPos pos = doorfinder.getPosition();
+        BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, color,partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
@@ -61,7 +79,7 @@ public class DungeonRoomDoor implements DungeonMechanic {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
-        return doorfinder.isRequiresKey() ?"key" : "normal";
+        return doorfinder.getType().isKeyRequired() ? "key" : "normal";
     }
 
     @Override
@@ -76,6 +94,6 @@ public class DungeonRoomDoor implements DungeonMechanic {
 
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
-        return new OffsetPoint(dungeonRoom, doorfinder.getPosition());
+        return offsetPoint;
     }
 }

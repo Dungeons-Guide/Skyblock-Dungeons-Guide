@@ -22,9 +22,11 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonMapUpdateEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonRoomDiscoverEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
@@ -36,14 +38,12 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec4b;
+import net.minecraft.util.*;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
+import javax.vecmath.Vector2f;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
@@ -250,7 +250,7 @@ public class MapProcessor {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0,255,255,80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x,y));
                     if (rooms == null) continue;
-                    context.createEvent(new DungeonRoomDiscoverEvent(rooms.getUnitPoints().get(0), rooms.getRoomMatcher().getRotation(), rooms.getMin(), rooms.getShape(),rooms.getColor(), rooms.getDungeonRoomInfo().getUuid(), rooms.getDungeonRoomInfo().getName(), rooms.getDungeonRoomInfo().getProcessorId()));
+                    context.createEvent(new DungeonRoomDiscoverEvent(rooms.getUnitPoints().get(0), rooms.getRoomMatcher().getRotation(), new SerializableBlockPos(rooms.getMin()), new SerializableBlockPos(rooms.getMax()), rooms.getShape(),rooms.getColor(), rooms.getDungeonRoomInfo().getUuid(), rooms.getDungeonRoomInfo().getName(), rooms.getDungeonRoomInfo().getProcessorId()));
                     DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! shape: "+rooms.getShape()+ " color: "+rooms.getColor()+" unitPos: "+x+","+y));
                     DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: "+rooms.getMin() + " mapMx: "+rooms.getMax()));
                     StringBuilder builder = new StringBuilder();
@@ -278,6 +278,7 @@ public class MapProcessor {
         }
     }
 
+    private static final Set<Vector2d> door_dirs = Sets.newHashSet(new Vector2d(0,0.5), new Vector2d(0, -0.5), new Vector2d(0.5, 0), new Vector2d(-0.5 , 0));
     private DungeonRoom buildRoom(byte[] mapData, Point unitPoint) {
         Queue<Point[]> toCheck = new LinkedList<Point[]>();
         toCheck.add(new Point[] {unitPoint, unitPoint}); // requestor, target
@@ -309,12 +310,44 @@ public class MapProcessor {
             int localX = p.x - minX, localY = p.y - minY;
             shape |= 1 <<(localY *4 + localX);
         }
-
+        Set<Vector2d> doors = new HashSet<>();
+        for (Point p: ayConnected) {
+            for (Vector2d v: door_dirs) {
+                Vector2d v2 = new Vector2d(p.x + v.x , p.y + v.y );
+                if (doors.contains(v2)) doors.remove(v2);
+                else doors.add(v2);
+            }
+        }
         Point pt2 = roomPointToMapPoint(ayConnected.get(0));
         byte unit1 = MapUtils.getMapColorAt(mapData, pt2.x, pt2.y);
 
+        // 0: none 1: open door door 2. unopen door 3: wither door 4. red door
+        Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates = new HashSet<>();
+        final int halfWidth = unitRoomDimension.width + 4;
+        for (Vector2d door : doors) {
+            int floorX = (int)Math.floor(door.x), floorY = (int)Math.floor(door.y);
+            Point mapPt = roomPointToMapPoint(new Point(floorX, floorY));
+            Point target = new Point(mapPt.x+ unitRoomDimension.width/2 + (int)(halfWidth*(door.x - floorX)), mapPt.y + unitRoomDimension.height/2 + (int)(halfWidth*(door.y - floorY)) );
+            MapUtils.record(mapData, target.x, target.y, Color.green);
+            byte color = MapUtils.getMapColorAt(mapData, target.x, target.y);
+
+            Vector2d vector2d = new Vector2d(door.x - minX, door.y - minY);
+            if (color == 0) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.NONE));
+            } else if (color == 85) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.UNOPEN));
+            } else if (color == 119) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.WITHER));
+            } else if (color == 18 && unit1 != 18) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.BLOOD));
+            } else {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.ENTRANCE));
+            }
+        }
+
+
         try{
-            return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), roomPointToWorldPoint(new Point(maxX+1, maxY+1)).add(-1, 0, -1), context);
+            return new DungeonRoom(ayConnected, shape, unit1, roomPointToWorldPoint(new Point(minX, minY)), roomPointToWorldPoint(new Point(maxX+1, maxY+1)).add(-1, 0, -1), context, doorsAndStates);
         } catch (IllegalStateException ex) {
             DungeonsGuide.sendDebugChat(new ChatComponentText("Failed to load room, retrying later :: "+ex.getLocalizedMessage()));
             return null;
@@ -373,7 +406,7 @@ public class MapProcessor {
                     stabilizationTick++;
                 }
 
-                if (stabilizationTick > 5) {
+                if (stabilizationTick > 20) {
                     if (doorDimension == null) buildMap(mapData);
                     else processMap(mapData);
                 }

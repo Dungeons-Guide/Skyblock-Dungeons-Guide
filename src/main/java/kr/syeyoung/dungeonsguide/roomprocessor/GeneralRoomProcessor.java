@@ -27,7 +27,9 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
@@ -90,6 +92,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
                     if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP)
                         pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
+                }
+            }
+        }
+        if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
+            for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getMechanics().entrySet()) {
+                if (value.getValue() instanceof DungeonRoomDoor) {
+                    DungeonRoomDoor dungeonDoor = (DungeonRoomDoor) value.getValue();
+                    if (dungeonDoor.getDoorfinder().getType().isHeadToBlood()) {
+                        pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                    }
                 }
             }
         }

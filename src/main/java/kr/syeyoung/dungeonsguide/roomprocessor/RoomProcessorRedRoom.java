@@ -55,7 +55,7 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         this.basePt = new Vec3(basePt.getX() / 2.0f, basePt.getY() / 2.0f + 4, basePt.getZ() / 2.0f);
         DungeonDoor real = null;
         for (DungeonDoor door : getDungeonRoom().getDoors()) {
-            if (door.isExist()) {
+            if (door.getType().isExist()) {
                 real = door;break;
             }
         }

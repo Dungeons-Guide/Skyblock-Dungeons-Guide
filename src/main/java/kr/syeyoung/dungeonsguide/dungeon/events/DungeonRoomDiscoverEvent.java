@@ -30,7 +30,8 @@ import java.util.UUID;
 public class DungeonRoomDiscoverEvent implements DungeonEventData {
     private Point unitPt;
     private int rotation;
-    private BlockPos min;
+    private SerializableBlockPos min;
+    private SerializableBlockPos max;
     private int shape;
     private int color;
     private UUID roomUID;

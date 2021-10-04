@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.utils;
 
+import lombok.Getter;
 import net.minecraft.block.material.MapColor;
 import org.w3c.dom.css.Rect;
 
@@ -28,6 +29,7 @@ import java.awt.image.BufferedImage;
 public class MapUtils {
 
     private static Color[] colorMasks = new Color[128 * 128];
+    @Getter
     private static byte[] colors;
 
     public static void clearMap() {

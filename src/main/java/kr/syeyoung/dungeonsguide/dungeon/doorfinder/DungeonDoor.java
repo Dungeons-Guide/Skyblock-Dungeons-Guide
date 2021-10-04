@@ -31,22 +31,20 @@ import java.util.Set;
 public class DungeonDoor {
     private final World w;
     private final BlockPos position;
-    private boolean exist = true;
+    private EDungeonDoorType type;
     private boolean isZDir;
 
     private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.stained_hardened_clay);
 
-    private boolean requiresKey = false;
-    private boolean opened = false;
-
-    public DungeonDoor(World world, BlockPos pos) {
+    public DungeonDoor(World world, BlockPos pos, EDungeonDoorType type) {
         this.w = world;
         this.position = pos;
         Block itshouldbeall = world.getChunkFromBlockCoords(pos).getBlock(pos);
-        if (!legalBlocks.contains(itshouldbeall)) {
-            exist = false;
-            return;
-        }
+
+        if (type == EDungeonDoorType.WITHER && itshouldbeall == Blocks.air) type = EDungeonDoorType.WITHER_FAIRY;
+        this.type = type;
+        boolean exist = type.isExist();
+
         for (int x = -1; x<=1; x++)
             for (int y = -1; y<=1; y++)
                 for (int z = -1; z<=1; z++) {
@@ -78,13 +76,6 @@ public class DungeonDoor {
         }
         if (!exist) {
             isZDir = false;
-            return;
-        }
-
-        if (itshouldbeall == Blocks.stained_hardened_clay || itshouldbeall == Blocks.coal_block) {
-            requiresKey = true;
-        } else if (itshouldbeall == Blocks.barrier) {
-            opened = true;
         }
     }
 }
