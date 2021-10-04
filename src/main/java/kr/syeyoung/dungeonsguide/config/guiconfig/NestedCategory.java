@@ -24,6 +24,7 @@ import lombok.ToString;
 import lombok.experimental.Accessors;
 
 import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 @Data
@@ -44,7 +45,7 @@ class NestedCategory {
 
     @EqualsAndHashCode.Exclude
     @ToString.Exclude
-    private Map<String, NestedCategory> children = new HashMap<>();
+    private Map<String, NestedCategory> children = new LinkedHashMap<>();
 
     public NestedCategory child(NestedCategory child) {
         this.children.put(child.categoryName, child);
