@@ -73,6 +73,7 @@ public class PanelPartyListElement extends MPanel {
         boolean cantjoin = false;
         if (itemStack.getItem() == Item.getItemFromBlock(Blocks.bedrock)) cantjoin = true;
         int minClass = -1, minDungeon = -1;
+        int pplIn = 0;
         {
             NBTTagCompound stackTagCompound = itemStack.getTagCompound();
             if (stackTagCompound.hasKey("display", 10)) {
@@ -90,6 +91,7 @@ public class PanelPartyListElement extends MPanel {
                         } else if (str.startsWith("§7Dungeon Level Required: §b")) {
                             minDungeon = Integer.parseInt(str.substring(28));
                         } else if (str.startsWith("§cRequires ")) cantjoin = true;
+                        if (str.endsWith("§b)")) pplIn ++;
                     }
                 }
             }
@@ -136,11 +138,12 @@ public class PanelPartyListElement extends MPanel {
             name = name.substring(0, name.indexOf("'"));
         fr.drawString(name, 0,0,-1);
 
-        fr.drawString(note, fr.getStringWidth("AAAAAAAAAAAAAAAAAA")+5, 0,-1);
+        note = "§7("+pplIn+") §f"+note;
+        fr.drawString(note, fr.getStringWidth("AAAAAAAAAAAAAAAA")+5, 0,-1);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         String sideNote = "";
-        if (minClass != -1) sideNote = "§7CLv ≥§b"+minClass+" ";
+        if (minClass != -1) sideNote += "§7CLv ≥§b"+minClass+" ";
         if (minDungeon != -1) sideNote += "§7DLv ≥§b"+minDungeon+" ";
         if (cantjoin) sideNote = "§cCan't join";
         sideNote = sideNote.trim();
