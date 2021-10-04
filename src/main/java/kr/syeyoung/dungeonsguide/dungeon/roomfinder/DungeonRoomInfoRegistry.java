@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 import com.google.common.io.Files;
 import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
 
@@ -36,6 +37,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
 public class DungeonRoomInfoRegistry {
+    @Getter
     private static final List<DungeonRoomInfo> registered = new ArrayList<DungeonRoomInfo>();
     private static final Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
     private static final Map<UUID, DungeonRoomInfo> uuidMap = new HashMap<UUID, DungeonRoomInfo>();
