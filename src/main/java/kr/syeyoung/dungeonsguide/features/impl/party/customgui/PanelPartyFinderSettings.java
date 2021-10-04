@@ -265,9 +265,20 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
         }
         if (integerSelection.getData() >dLV) return false;
 
-        if (!filterBlacklist.getText().isEmpty() && note.toLowerCase().contains(filterBlacklist.getText().toLowerCase())) return false;
-        if (!filterWhitelist.getText().isEmpty() && !note.toLowerCase().contains(filterWhitelist.getText().toLowerCase())) return false;
-
+        if (!filterBlacklist.getText().isEmpty()) {
+            for (String s1 : filterBlacklist.getText().split(",")) {
+                if (note.toLowerCase().contains(s1.toLowerCase())) return false;
+            }
+        }
+        if (!filterWhitelist.getText().isEmpty()) {
+            boolean s = false;
+            for (String s1 : filterWhitelist.getText().split(",")) {
+                if (note.toLowerCase().contains(s1.toLowerCase())) {
+                    s = true; break;
+                }
+            }
+            if (!s) return false;
+        }
         return true;
     }
 }

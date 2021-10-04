@@ -101,8 +101,11 @@ public class PanelPartyListElement extends MPanel {
         note = note.replaceAll("(?i)(carry)", "§4$1§r");
 
         try {
-            if (!panelPartyFinder.getHighlightNote().isEmpty())
-                note = note.replaceAll("(?i)(" + panelPartyFinder.getHighlightNote() + ")", "§e§l$1§r");
+            if (!panelPartyFinder.getHighlightNote().isEmpty()) {
+                for (String s1 : panelPartyFinder.getHighlightNote().split(",")) {
+                    note = note.replaceAll("(?i)(" + s1 + ")", "§e§l$1§r");
+                }
+            }
         } catch (Exception e) {}
 
         if (cantjoin) {}
