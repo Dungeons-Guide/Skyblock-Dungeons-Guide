@@ -267,8 +267,6 @@ public class DungeonRoom {
         Point roomPt = mapProcessor.worldPointToRoomPoint(pos);
         roomPt.translate(-minRoomPt.x, -minRoomPt.y);
 
-        DungeonsGuide.sendDebugChat(new ChatComponentText(pos+"? "+((shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0)));
-
         return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
     }
     public boolean canAccessRelative(int x, int z) {
