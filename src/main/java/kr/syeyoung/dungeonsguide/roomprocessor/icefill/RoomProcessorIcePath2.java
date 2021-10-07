@@ -75,13 +75,11 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
 
                 new Thread() {
                     public void run() {
-                        messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §fCalculating solution for floor "+s);
                         List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
                         if (hamiltonianPath == null) {
                             messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
                             return;
                         }
-                        messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §fFound solution for floor "+s+"!");
                         hamiltonianPath.add(0,new Point(startX, startY));
                         List<BlockPos> poses = new LinkedList<BlockPos>();
                         for (int i = 0; i < hamiltonianPath.size(); i++) {
