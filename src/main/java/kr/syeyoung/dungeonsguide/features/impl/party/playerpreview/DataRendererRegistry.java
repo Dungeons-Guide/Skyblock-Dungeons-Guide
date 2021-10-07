@@ -56,5 +56,8 @@ public class DataRendererRegistry {
         dataRendererMap.put("secrets", new DataRendererSecrets());
 
         dataRendererMap.put("dummy", new DataRendererSetUrOwn());
+
+        dataRendererMap.put("talismans", new DataRendererTalismans());
+        dataRendererMap.put("weight", new DataRendererLilyWeight());
     }
 }

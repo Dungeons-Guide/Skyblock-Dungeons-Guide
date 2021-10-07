@@ -70,4 +70,22 @@ public class PlayerProfile {
 
     private List<Pet> pets = new ArrayList<>();
 
+
+    private Map<String, Object> additionalProperties = new HashMap<>();
+
+    private LilyWeight lilyWeight;
+
+    @Data
+    public static class LilyWeight {
+        private double skill_base;
+        private double skill_overflow;
+        private double catacombs_base;
+        private double catacombs_master;
+        private double catacombs_exp;
+        private double slayer;
+
+        public double getTotal() {
+            return skill_base + skill_overflow + catacombs_base + catacombs_exp + catacombs_master + slayer;
+        }
+    }
 }
