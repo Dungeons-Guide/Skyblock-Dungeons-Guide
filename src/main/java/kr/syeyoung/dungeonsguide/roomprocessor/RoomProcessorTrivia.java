@@ -27,6 +27,8 @@ import kr.syeyoung.dungeonsguide.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import org.apache.commons.lang3.math.NumberUtils;
@@ -145,7 +147,8 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);
         if (op != null) {
-            RenderUtils.highlightBlock(op.getBlockPos(getDungeonRoom()), new Color(0,255,0,50), partialTicks, false);
+            BlockPos solution = op.getBlockPos(getDungeonRoom());
+            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), partialTicks, true);
         }
     }
 

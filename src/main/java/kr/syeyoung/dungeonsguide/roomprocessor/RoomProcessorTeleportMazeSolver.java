@@ -26,6 +26,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
@@ -127,11 +128,11 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (BlockPos bpos:visitedPortals) {
-            RenderUtils.highlightBlock(bpos, new Color(255,0,0,100), partialTicks, true);
+            RenderUtils.highlightBoxAColor( AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
         }
 
         if (intersection != null) {
-            RenderUtils.highlightBlock(intersection, new Color(0, 255, 0, 100), partialTicks, false);
+            RenderUtils.highlightBoxAColor( AxisAlignedBB.fromBounds(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
         }
     }
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTeleportMazeSolver> {

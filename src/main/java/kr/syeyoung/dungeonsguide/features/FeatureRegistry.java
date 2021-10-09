@@ -18,13 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features;
 
-import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.Keybinds;
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
-import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
@@ -44,9 +37,7 @@ import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPart
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
-import kr.syeyoung.dungeonsguide.features.impl.solvers.FeatureSolverBlaze;
-import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MKeyEditButton;
+import kr.syeyoung.dungeonsguide.features.impl.solvers.*;
 import lombok.Getter;
 import org.lwjgl.input.Keyboard;
 
@@ -136,22 +127,17 @@ public class FeatureRegistry {
     public static final SimpleFeature DISCORD_DONOTUSE = register(new SimpleFeature("Discord", "Disable Native Library", "Disables usage of jna for discord rpc support.\nBreaks any discord related feature in the mod.\nRequires mod restart to get affected.\n\nThis feature is only for those whose minecraft crashes due to discord gamesdk crash.", "discord.rpc", false));
 
 
-    public static final SimpleFeature SOLVER_RIDDLE = register(new SimpleFeature("Solver.Any Floor", "Riddle", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle"));
-    public static final SimpleFeature SOLVER_TICTACTOE = register(new SimpleFeature("Solver.Any Floor", "Tictactoe", "Shows the best move that could be taken by player in the tictactoe room", "solver.tictactoe"));
+    public static final FeatureSolverRiddle SOLVER_RIDDLE = register(new FeatureSolverRiddle());
+    public static final FeatureSolverTictactoe SOLVER_TICTACTOE = register(new FeatureSolverTictactoe());
     public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Solver.Any Floor", "Waterboard (Advanced)", "Calculates solution for waterboard puzzle and displays it to user",  "solver.waterboard"));
     public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Solver.Any Floor", "Creeper", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
-    public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("Solver.Any Floor", "Teleport", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
+    public static final FeatureSolverTeleport SOLVER_TELEPORT = register(new FeatureSolverTeleport());
     public static final FeatureSolverBlaze SOLVER_BLAZE = register(new FeatureSolverBlaze());
-    public static final SimpleFeature SOLVER_ICEPATH = register(new SimpleFeature("Solver.Floor 3+", "Icepath (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath"));
-    public static final SimpleFeature SOLVER_SILVERFISH = register(new SimpleFeature("Solver.Floor 3+", "Silverfish (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish"));
-    public static final SimpleFeature SOLVER_BOX = register(new SimpleFeature("Solver.Floor 3+", "Box (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box"));
-    public static final SimpleFeature SOLVER_BOX_DISABLE_TEXT = register(new SimpleFeature("Solver.Floor 3+", "Box Puzzle Solver Disable text", "Disable 'Type recalc to recalculate solution' showing up on top left.\nYou can still type recalc to recalc solution after disabling this feature",  "solver.boxrecalc", false));
-    public static final SimpleFeature SOLVER_KAHOOT = register(new SimpleFeature("Solver.Floor 4+", "Quiz", "Highlights the correct solution for trivia puzzle",  "solver.trivia"));
-    public static final SimpleFeature SOLVER_BOMBDEFUSE = register(new SimpleFeature("Solver.Floor 7+", "Bomb Defuse", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse") {
-        {
-            parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to send solution in chat", Keyboard.KEY_NONE, "keybind"));
-        }
-    });
+    public static final FeatureSolverIcefill SOLVER_ICEPATH = register(new FeatureSolverIcefill());
+    public static final FeatureSolverSilverfish SOLVER_SILVERFISH = register(new FeatureSolverSilverfish());
+    public static final FeatureSolverBox SOLVER_BOX = register(new FeatureSolverBox());
+    public static final FeatureSolverKahoot SOLVER_KAHOOT = register(new FeatureSolverKahoot());
+    public static final FeatureSolverBombdefuse SOLVER_BOMBDEFUSE = register(new FeatureSolverBombdefuse());
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());

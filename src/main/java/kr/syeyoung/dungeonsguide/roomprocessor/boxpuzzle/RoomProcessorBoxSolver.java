@@ -31,10 +31,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
-import net.minecraft.util.MathHelper;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -332,7 +329,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
-        if (FeatureRegistry.SOLVER_BOX_DISABLE_TEXT.isEnabled()) return;
+        if (FeatureRegistry.SOLVER_BOX.disableText()) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -359,21 +356,23 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
 
                 BlockPos highlight = pos2.add(dir);
-                RenderUtils.highlightBlock(highlight, new Color(0, 255, 0, MathHelper.clamp_int((int) (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight)), 50, 150)), partialTicks, false);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight), 100, 255) / 255);
+                RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 
             if (pathFound != null) {
-                RenderUtils.drawLines(pathFound, new AColor(0, 255, 0, 255),1, partialTicks, true);
+                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(),FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
             }
         } else {
             if (totalPath != null) {
-                RenderUtils.drawLines(totalPath, new AColor(0, 255, 0, 255),1, partialTicks, false);
+                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(),FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     BlockPos pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);
-                    RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?0xFF000000 : 0xFF00FF00, 0.1f, false, false, partialTicks);
+                    RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
+                    RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
+                            RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
                 }
             }
         }

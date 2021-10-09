@@ -164,12 +164,12 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
             boolean border = true;
 
+            RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
             if (entity == theoneafterit) {
                 RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
             } else if (entity == nextBlaze)
                 RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
-            else
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
+
             GlStateManager.color(1,1,1,1);
 
 

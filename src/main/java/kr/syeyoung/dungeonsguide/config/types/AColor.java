@@ -37,6 +37,19 @@ public class AColor extends Color {
         super(rgba, hasalpha);
     }
 
+    public AColor(AColor clone) {
+        super(clone.getRGB(), true);
+        chroma = clone.isChroma();
+        chromaSpeed = clone.getChromaSpeed();
+    }
+
+    public AColor multiplyAlpha(double multiplier) {
+        AColor aColor = new AColor(getRed(), getGreen(), getBlue(), (int) (getAlpha() * multiplier));
+        aColor.chroma = this.chroma;
+        aColor.chromaSpeed = this.chromaSpeed;
+        return aColor;
+    }
+
     @Override
     public String toString() {
         return "AColor{" +

@@ -614,6 +614,7 @@ public class RenderUtils {
         GlStateManager.pushMatrix();
         GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
         GL11.glDisable(GL11.GL_TEXTURE_2D);
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
@@ -662,6 +663,7 @@ public class RenderUtils {
         GlStateManager.pushMatrix();
         GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GL11.glLineWidth(thickness);
@@ -711,6 +713,7 @@ public class RenderUtils {
         GlStateManager.pushMatrix();
         GlStateManager.translate(-realX, -realY, -realZ);
         GlStateManager.disableTexture2D();
+        GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GL11.glLineWidth(thickness);
@@ -838,6 +841,80 @@ public class RenderUtils {
             GlStateManager.depthMask(false);
         }
         int rgb = c.getRGB();
+        GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
+
+        GlStateManager.translate(axisAlignedBB.minX, axisAlignedBB.minY, axisAlignedBB.minZ);
+
+        double x = axisAlignedBB.maxX - axisAlignedBB.minX;
+        double y = axisAlignedBB.maxY - axisAlignedBB.minY;
+        double z = axisAlignedBB.maxZ - axisAlignedBB.minZ;
+        GL11.glBegin(GL11.GL_QUADS);
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, y, 0); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, 0, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, y, z);
+
+        GL11.glVertex3d(0, y, z);
+        GL11.glVertex3d(0, 0, z);
+        GL11.glVertex3d(x, 0, z);
+        GL11.glVertex3d(x, y, z); // TOP LEFT / BOTTOM LEFT / TOP RIGHT/ BOTTOM RIGHT
+
+        GL11.glVertex3d(0, 0, 0);
+        GL11.glVertex3d(0, y, 0);
+        GL11.glVertex3d(x, y, 0);
+        GL11.glVertex3d(x, 0, 0);
+
+        GL11.glVertex3d(0,y,0);
+        GL11.glVertex3d(0,y,z);
+        GL11.glVertex3d(x,y,z);
+        GL11.glVertex3d(x,y,0);
+
+        GL11.glVertex3d(0,0,z);
+        GL11.glVertex3d(0,0,0);
+        GL11.glVertex3d(x,0,0);
+        GL11.glVertex3d(x,0,z);
+
+
+
+        GL11.glEnd();
+
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(true);
+        }
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
+        GlStateManager.popMatrix();
+
+    }
+    public static void highlightBoxAColor(AxisAlignedBB  axisAlignedBB, AColor c, float partialTicks, boolean depth) {
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.disableCull();
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        GlStateManager.disableTexture2D();
+
+        if (!depth) {
+            GlStateManager.disableDepth();
+            GlStateManager.depthMask(false);
+        }
+        int rgb = RenderUtils.getColorAt(axisAlignedBB.minX, axisAlignedBB.minY, axisAlignedBB.minZ, c);
         GlStateManager.color(((rgb >> 16) &0XFF)/ 255.0f, ((rgb>>8) &0XFF)/ 255.0f, (rgb & 0xff)/ 255.0f, ((rgb >> 24) & 0xFF) / 255.0f);
 
         GlStateManager.translate(axisAlignedBB.minX, axisAlignedBB.minY, axisAlignedBB.minZ);

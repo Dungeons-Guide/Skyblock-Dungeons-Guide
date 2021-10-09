@@ -28,6 +28,7 @@ import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -108,7 +109,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
         if (chest != null) {
-            RenderUtils.highlightBlock(chest, new Color(0,255,0, 50),partialTicks, true);
+            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1),  FeatureRegistry.SOLVER_RIDDLE.getTargetColor(), partialTicks, true);
         }
     }
 
