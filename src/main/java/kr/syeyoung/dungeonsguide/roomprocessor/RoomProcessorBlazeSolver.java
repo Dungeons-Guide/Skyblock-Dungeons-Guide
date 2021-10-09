@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.solvers.FeatureSolverBlaze;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.block.Block;
@@ -57,7 +58,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
     private List<EntityArmorStand> entityList = new ArrayList<EntityArmorStand>();
     private List<EntityBlaze> blazeList = new ArrayList<>();
     private EntityArmorStand next;
-    private EntityBlaze nextBlaze;
+    private EntityBlaze nextBlaze, theoneafterit;
     public RoomProcessorBlazeSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
         Object highToLow = dungeonRoom.getDungeonRoomInfo().getProperties().get("order");
@@ -84,30 +85,32 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                     && low.getZ() < pos.getZ() && pos.getZ() < high.getZ();
         }));
 
-        EntityArmorStand semi_target = null;
-        int health = (highToLow ? Integer.MIN_VALUE : Integer.MAX_VALUE);
-        for (EntityArmorStand ea : entityList) {
-            String name = ea.getName();
+        Comparator<EntityArmorStand> comparator = Comparator.comparingInt(a -> {
+            String name = a.getName();
             String colorGone = TextUtils.stripColor(name);
             String health2 = TextUtils.keepIntegerCharactersOnly(colorGone.split("/")[1]);
             try {
-                int heal = Integer.parseInt(health2);
-                if (highToLow && heal > health) {
-                    health = heal;
-                    semi_target = ea;
-                } else if (!highToLow && heal < health) {
-                    health = heal;
-                    semi_target = ea;
-                }
-            } catch (Exception e){}
-
-        }
-        if (semi_target != null) {
-            EntityArmorStand finalSemi_target = semi_target;
-            nextBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(finalSemi_target))).orElse(null);
+                return Integer.parseInt(health2);
+            } catch (Exception e) {return -1;}
+        });
+        if (highToLow) {
+            entityList.sort(comparator.reversed());
+        } else {
+            entityList.sort(comparator);
         }
 
-        next = semi_target;
+        if (entityList.size() > 0) {
+            next = entityList.get(0);
+            nextBlaze  = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(next))).orElse(null);
+        } else {
+            nextBlaze = null;
+        }
+        if (entityList.size() > 1) {
+            EntityArmorStand thenextone = entityList.get(1);
+            theoneafterit  = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(thenextone))).orElse(null);
+        } else {
+            theoneafterit = null;
+        }
     }
 
 
@@ -161,10 +164,12 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
             boolean border = true;
 
-            if (entity != nextBlaze)
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), new Color(255,255,255,255), partialTicks, false);
+            if (entity == theoneafterit) {
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
+            } else if (entity == nextBlaze)
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
             else
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), new Color(0,255,0,255), partialTicks, false);
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
             GlStateManager.color(1,1,1,1);
 
 

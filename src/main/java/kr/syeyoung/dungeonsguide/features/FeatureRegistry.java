@@ -44,6 +44,7 @@ import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPart
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
+import kr.syeyoung.dungeonsguide.features.impl.solvers.FeatureSolverBlaze;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MKeyEditButton;
 import lombok.Getter;
@@ -140,9 +141,7 @@ public class FeatureRegistry {
     public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Solver.Any Floor", "Waterboard (Advanced)", "Calculates solution for waterboard puzzle and displays it to user",  "solver.waterboard"));
     public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Solver.Any Floor", "Creeper", "Draws line between prismarine lamps in creeper room",  "solver.creeper"));
     public static final SimpleFeature SOLVER_TELEPORT = register(new SimpleFeature("Solver.Any Floor", "Teleport", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport"));
-    public static final SimpleFeature SOLVER_BLAZE = register(new SimpleFeature("Solver.Floor 2+", "Blaze", "Highlights the blaze that needs to be killed in an blaze room", "solver.blaze") {{
-        parameters.put("blazeborder", new FeatureParameter<AColor>("blazeborder", "Blaze Border Color", "Blaze border color", new AColor(255,255,255,0), "acolor"));
-    }});
+    public static final FeatureSolverBlaze SOLVER_BLAZE = register(new FeatureSolverBlaze());
     public static final SimpleFeature SOLVER_ICEPATH = register(new SimpleFeature("Solver.Floor 3+", "Icepath (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath"));
     public static final SimpleFeature SOLVER_SILVERFISH = register(new SimpleFeature("Solver.Floor 3+", "Silverfish (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish"));
     public static final SimpleFeature SOLVER_BOX = register(new SimpleFeature("Solver.Floor 3+", "Box (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box"));
