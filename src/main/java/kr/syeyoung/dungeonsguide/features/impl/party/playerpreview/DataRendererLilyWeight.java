@@ -33,7 +33,10 @@ public class DataRendererLilyWeight implements DataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§eLily Weight §b"+String.format("%.3f", playerProfile.getLilyWeight().getTotal()), 0,0,-1);
+        if (playerProfile.getLilyWeight() == null)
+            fr.drawString("§eLily Weight §cAPI DISABLED", 0,0,-1);
+        else
+            fr.drawString("§eLily Weight §b"+String.format("%.3f", playerProfile.getLilyWeight().getTotal()), 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
 
@@ -51,6 +54,7 @@ public class DataRendererLilyWeight implements DataRenderer {
     @Override
     public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
         PlayerProfile.LilyWeight lilyWeight= playerProfile.getLilyWeight();
+        if (lilyWeight == null) return;
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GuiUtils.drawHoveringText(Arrays.asList(
                         "§bDungeon Weights§7: §e"+ String.format("%.3f",lilyWeight.getCatacombs_base()+lilyWeight.getCatacombs_master()+lilyWeight.getCatacombs_exp()),

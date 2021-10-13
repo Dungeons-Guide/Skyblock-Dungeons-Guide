@@ -37,7 +37,8 @@ import java.util.List;
 public class DataRendererTalismans implements DataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        if (!playerProfile.getAdditionalProperties().containsKey("talismanCnt")) {
+        boolean apiDisabled = playerProfile.getTalismans() == null || playerProfile.getInventory() == null;
+        if (!playerProfile.getAdditionalProperties().containsKey("talismanCnt") && !apiDisabled) {
             int[] cnts = new int[Rarity.values().length];
             for (ItemStack talisman : playerProfile.getTalismans()) {
                 if (talisman == null) continue;
@@ -58,6 +59,9 @@ public class DataRendererTalismans implements DataRenderer {
         }
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        if (apiDisabled)
+            fr.drawString("§eTalis §cAPI DISABLED", 0,0,-1);
+        else
         fr.drawString("§eTalis §f"+str, 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
