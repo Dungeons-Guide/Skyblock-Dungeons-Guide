@@ -51,14 +51,19 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         findCreeperAndDoPoses();
     }
 
+    private boolean check(AxisAlignedBB axis, Vec3 vec) {
+        if (vec == null) return false;
+        return axis.isVecInside(vec);
+    }
+
     private void findCreeperAndDoPoses() {
         World w = getDungeonRoom().getContext().getWorld();
         List<BlockPos> prismarines = new ArrayList<BlockPos>();
         final BlockPos low = getDungeonRoom().getMin().add(0,-2,0);
         final BlockPos high = getDungeonRoom().getMax().add(0,20,0);
         final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
-                low.getX() + 15, low.getY() + 5, low.getZ() + 15,
-                high.getX() - 15, low.getY() + 10.5, high.getZ() - 15
+                low.getX() + 17, low.getY() + 7, low.getZ() + 17,
+                low.getX() + 16, low.getY() + 10.5, low.getZ() + 16
         );
 
         for (BlockPos pos : BlockPos.getAllInBox(low, high)) {
@@ -72,6 +77,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
                 }
             }
         }
+        double offset = 0.1;
 
         while (prismarines.size() > 1) {
             BlockPos first = prismarines.get(0);
@@ -82,41 +88,18 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
 
                 if (second.distanceSq(first) < highestDist) continue;
 
-                double zslope = (second.getZ() - first.getZ()) / ((double)second.getX() - first.getX());
-                double zIntercept = (first.getZ() - first.getX() * zslope);
-
-                double yslope = (second.getY() - first.getY()) / ((double)second.getX() - first.getX());
-                double yIntercept = (first.getY() - first.getX() * yslope);
-
-                for (double x = axis.minX; x < axis.maxX; x += 0.1) {
-                    double y = yslope * x + yIntercept;
-                    double z = zslope * x + zIntercept;
-
-                    if (y > axis.minY && y < axis.maxY && z > axis.minZ && z < axis.maxZ) {
-                        // found pairll
-                        highestDist = (int) second.distanceSq(first);
-                        highestMatch = second;
-                        break;
-                    }
+                Vec3 startLoc = new Vec3(first).addVector(0.5,0.5,0.5);
+                Vec3 dest = new Vec3(second).addVector(0.5,0.5,0.5);
+                if (check(axis, startLoc.getIntermediateWithYValue(dest, axis.minY+offset)) ||
+                        check(axis, startLoc.getIntermediateWithYValue(dest, axis.maxY-offset)) ||
+                        check(axis, startLoc.getIntermediateWithXValue(dest, axis.minX+offset)) ||
+                        check(axis, startLoc.getIntermediateWithXValue(dest, axis.maxX-offset)) ||
+                        check(axis, startLoc.getIntermediateWithZValue(dest, axis.minZ+offset)) ||
+                        check(axis, startLoc.getIntermediateWithZValue(dest, axis.maxZ-offset))) {
+                    highestDist = (int) second.distanceSq(first);
+                    highestMatch = second;
                 }
 
-                double xslope = (second.getX() - first.getX()) / ((double)second.getZ() - first.getZ());
-                double xIntercept = (first.getX() - first.getZ() * xslope);
-
-                yslope = (second.getY() - first.getY()) / ((double)second.getZ() - first.getZ());
-                yIntercept = (first.getY() - first.getZ() * yslope);
-
-                for (double z = axis.minZ; z < axis.maxZ; z += 0.1) {
-                    double y = yslope * z + yIntercept;
-                    double x = xslope * z + xIntercept;
-
-                    if (y > axis.minY && y < axis.maxY && x > axis.minX && x < axis.maxX) {
-                        // found pair
-                        highestDist = (int) second.distanceSq(first);
-                        highestMatch = second;
-                        break;
-                    }
-                }
             }
 
 
@@ -152,6 +135,12 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
             RenderUtils.drawLine(new Vec3(poset[0].getX() +0.5, poset[0].getY() +0.5, poset[0].getZ()+0.5),
                     new Vec3(poset[1].getX() +0.5, poset[1].getY() +0.5, poset[1].getZ()+0.5), oneIsConnected ? new Color(0,0,0,50) : color, partialTicks, true);
         }
+        final BlockPos low = getDungeonRoom().getMin();
+        final AxisAlignedBB axis = AxisAlignedBB.fromBounds(
+                low.getX() + 17, low.getY() + 5, low.getZ() + 17,
+                low.getX() + 16, low.getY() + 8.5, low.getZ() + 16
+        );
+        RenderUtils.highlightBox(axis, new Color(0x4400FF00, true), partialTicks, false);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorCreeperSolver> {
