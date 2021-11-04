@@ -372,9 +372,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
             a.onPlayerInteract(event);
         });
 
-        IBlockState iBlockState = event.world.getBlockState(event.pos);
-        if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
-            lastChest = event.pos;
+        if (event.pos != null) {
+            IBlockState iBlockState = event.world.getBlockState(event.pos);
+            if (iBlockState.getBlock() == Blocks.chest || iBlockState.getBlock() == Blocks.trapped_chest)
+                lastChest = event.pos;
+        }
 
         if (event.entityPlayer.getHeldItem() != null &&
             event.entityPlayer.getHeldItem().getItem() == Items.stick &&

@@ -416,7 +416,7 @@ public class MapProcessor {
         }
 
 
-        if (lastMapData2 != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
+        if (lastMapData2 != null && mapIconToPlayerMap.size() < context.getPlayers().size() && initialized) {
             label: for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
                 if (mapIconToPlayerMap.containsValue(stringVec4bEntry.getKey())) continue;
                 int x = stringVec4bEntry.getValue().func_176112_b() /2 + 64;

@@ -237,6 +237,7 @@ public class CosmeticsManager implements StompMessageHandler {
     private static List<IChatReplacer> iChatReplacers = new ArrayList<>();
     static {
         iChatReplacers.add(new ChatReplacerViewProfile());
+        iChatReplacers.add(new ChatReplacerPV());
         iChatReplacers.add(new ChatReplacerSocialOptions());
         iChatReplacers.add(new ChatReplacerCoop());
         iChatReplacers.add(new ChatReplacerMessage());
