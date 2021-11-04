@@ -57,8 +57,6 @@ public class ChatReplacerChatByMe implements IChatReplacer {
         ChatStyle origStyle = hasMsg.get(0).getChatStyle();
         String name = chatComponents.getFormattedText();
 
-        System.out.println(name);
-
         String[] splited = name.split(" ");
         String actualName = splited[splited.length-1];
 

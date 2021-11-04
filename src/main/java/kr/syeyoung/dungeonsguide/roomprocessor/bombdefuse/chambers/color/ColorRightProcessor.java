@@ -110,9 +110,6 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
         ItemStack item = armorStand.getInventory()[4];
         NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
         String str = ((NBTTagCompound)list.get(0)).getString("Value");
-        if (!integers.containsKey(str)) {
-//            System.out.println("Cant determine "+str);
-        }
         return (byte) (!integers.containsKey(str) ? 0 : integers.get(str));
     }
 

@@ -40,7 +40,6 @@ public class DataRendererClassLv implements DataRenderer {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ClassSpecificData<PlayerProfile.PlayerClassData> dungeonStatDungeonSpecificData = playerProfile.getPlayerClassData().get(dungeonClass);
         boolean selected = playerProfile.getSelectedClass() == dungeonClass;
-//        System.out.println(playerProfile.getSelectedClass());
         if (dungeonStatDungeonSpecificData == null) {
             fr.drawString(dungeonClass.getFamilarName(), 0,0, 0xFF55ffff);
             fr.drawString("Unknown", fr.getStringWidth(dungeonClass.getFamilarName()+" "),0,0xFFFFFFFF);
