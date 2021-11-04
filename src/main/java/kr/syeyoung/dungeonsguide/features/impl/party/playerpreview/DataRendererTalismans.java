@@ -53,7 +53,9 @@ public class DataRendererTalismans implements DataRenderer {
             playerProfile.getAdditionalProperties().put("talismanCnt", cnts);
         }
         int[] rawData = (int[]) playerProfile.getAdditionalProperties().get("talismanCnt");
+
         String str = "";
+        if (rawData != null)
         for (Rarity r : Rarity.values()) {
             str = r.color+rawData[r.idx] +" "+ str;
         }
