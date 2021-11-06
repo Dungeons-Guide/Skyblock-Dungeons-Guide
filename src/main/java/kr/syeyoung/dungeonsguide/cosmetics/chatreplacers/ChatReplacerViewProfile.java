@@ -36,7 +36,7 @@ public class ChatReplacerViewProfile implements IChatReplacer {
     @Override
     public boolean isAcceptable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
-            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile")) return true;
+            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile ")) return true;
         }
         return false;
     }
@@ -45,7 +45,7 @@ public class ChatReplacerViewProfile implements IChatReplacer {
     public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
         List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
         for (IChatComponent sibling : event.message.getSiblings()) {
-            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile")) {
+            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile ")) {
                 String uid = sibling.getChatStyle().getChatClickEvent().getValue().split(" ")[1];
                 List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayer().get(UUID.fromString(uid));
 

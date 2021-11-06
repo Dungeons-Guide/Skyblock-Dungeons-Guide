@@ -57,7 +57,7 @@ public class JPSPathfinder {
     private Node openNode(int x, int y, int z)
     {
         int i = Node.makeHash(x, y, z);
-        Node node = (Node)this.nodeMap.lookup(i);
+        Node node = this.nodeMap.lookup(i);
 
         if (node == null)
         {
