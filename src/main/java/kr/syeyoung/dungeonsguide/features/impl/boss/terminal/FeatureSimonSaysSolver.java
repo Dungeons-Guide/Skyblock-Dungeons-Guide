@@ -55,7 +55,6 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
-        if (!dc.getBossfightProcessor().getCurrentPhase().equals("terminals")) return;
         if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(309,123,291) > 400) return;
 
 
@@ -73,7 +72,6 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
-        if (!dc.getBossfightProcessor().getCurrentPhase().equals("terminals")) return;
 
         World w = dc.getWorld();
 
