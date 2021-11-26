@@ -174,6 +174,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
+            if (Minecraft.getMinecraft().objectMouseOver == null) return;
             Entity en = Minecraft.getMinecraft().objectMouseOver.entityHit;
             if (en == null) return;
 
