@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.gui.elements;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
+import org.lwjgl.input.Keyboard;
 
 import java.awt.*;
 
@@ -56,7 +57,7 @@ public class MIntegerSelectionButton extends MPanel {
         dec.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                data--;
+                data -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
                 updateSelected();
                 onUpdate.run();
             }
@@ -64,7 +65,7 @@ public class MIntegerSelectionButton extends MPanel {
         inc.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                data ++;
+                data += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 5 : 1);
                 updateSelected();
                 onUpdate.run();
             }
