@@ -111,22 +111,6 @@ public class FeatureRegistry {
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE = register(new PathfindLineProperties("Dungeon Secrets.Pathfind To All", "Essence Line Settings", "Line Settings when pathfind to Essence, when using above feature", "secret.lineproperties.apf.essence", true, SECRET_LINE_PROPERTIES_PATHFINDALL_PARENT));
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP = register(new PathfindLineProperties("Dungeon Secrets.Pathfind To All", "Item Drop Line Settings", "Line Settings when pathfind to Item Drop, when using above feature", "secret.lineproperties.apf.itemdrop", true, SECRET_LINE_PROPERTIES_PATHFINDALL_PARENT));
 
-
-    public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
-    public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());
-
-
-
-    public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.richpresence", true) {
-        {
-            parameters.put("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
-        }
-    });
-    public static final PartyInviteViewer DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
-    public static final PlayingDGAlarm DISCORD_ONLINEALARM = register(new PlayingDGAlarm());
-    public static final SimpleFeature DISCORD_DONOTUSE = register(new SimpleFeature("Discord", "Disable Native Library", "Disables usage of jna for discord rpc support.\nBreaks any discord related feature in the mod.\nRequires mod restart to get affected.\n\nThis feature is only for those whose minecraft crashes due to discord gamesdk crash.", "discord.rpc", false));
-
-
     public static final FeatureSolverRiddle SOLVER_RIDDLE = register(new FeatureSolverRiddle());
     public static final FeatureSolverTictactoe SOLVER_TICTACTOE = register(new FeatureSolverTictactoe());
     public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Solver.Any Floor", "Waterboard (Advanced)", "Calculates solution for waterboard puzzle and displays it to user",  "solver.waterboard"));
@@ -138,39 +122,6 @@ public class FeatureRegistry {
     public static final FeatureSolverBox SOLVER_BOX = register(new FeatureSolverBox());
     public static final FeatureSolverKahoot SOLVER_KAHOOT = register(new FeatureSolverKahoot());
     public static final FeatureSolverBombdefuse SOLVER_BOMBDEFUSE = register(new FeatureSolverBombdefuse());
-
-    public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
-    public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
-    public static final FeatureAbilityCooldown ETC_ABILITY_COOLDOWN = register(new FeatureAbilityCooldown());
-    public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
-    public static final FeatureRepartyCommand ETC_REPARTY =  register(new FeatureRepartyCommand());
-    public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND =  register(new FeatureDecreaseExplosionSound());
-    public static final FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY =  register(new FeatureAutoAcceptReparty());
-    public static final FeatureUpdateAlarm ETC_TEST = register(new FeatureUpdateAlarm());
-
-    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Misc", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
-    public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
-
-    public static final FeatureCopyMessages ETC_COPY_MSG = register(new FeatureCopyMessages());
-
-    public static final FeaturePenguins ETC_PENGUIN = register(new FeaturePenguins());
-
-    public static final APIKey PARTYKICKER_APIKEY = register(new APIKey());
-    public static final FeatureViewPlayerOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerOnJoin());
-    public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM = register(new FeatureCustomPartyFinder());
-
-    public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
-    public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
-    public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());
-    public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
-    public static final FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS = register(new FeatureHideAnimals());
-    public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
-    public static final FeatureThornSpiritBowTimer BOSSFIGHT_BOW_TIMER = register(new FeatureThornSpiritBowTimer());
-    public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
-    public static final FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER = register(new FeatureTerracotaTimer());
-    public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
-    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
-    public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
 
 
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
@@ -194,14 +145,65 @@ public class FeatureRegistry {
     public static final FeatureHideNameTags DUNGEON_HIDENAMETAGS = register(new FeatureHideNameTags());
     public static final FeatureSoulRoomWarning DUNGEON_FAIRYSOUL = register(new FeatureSoulRoomWarning());
 
+    public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
+    public static final SimpleFeature BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
+    public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());
+    public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
+    public static final FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS = register(new FeatureHideAnimals());
+    public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
+    public static final FeatureThornSpiritBowTimer BOSSFIGHT_BOW_TIMER = register(new FeatureThornSpiritBowTimer());
+    public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
+    public static final FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER = register(new FeatureTerracotaTimer());
+    public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
+    public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
+
+    public static final APIKey PARTYKICKER_APIKEY = register(new APIKey());
+    public static final FeatureViewPlayerOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerOnJoin());
+    public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM = register(new FeatureCustomPartyFinder());
+
+    public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
+    public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
+    public static final FeatureAbilityCooldown ETC_ABILITY_COOLDOWN = register(new FeatureAbilityCooldown());
+    public static final FeatureCooldownCounter ETC_COOLDOWN =  register(new FeatureCooldownCounter());
+    public static final FeatureRepartyCommand ETC_REPARTY =  register(new FeatureRepartyCommand());
+    public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND =  register(new FeatureDecreaseExplosionSound());
+    public static final FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY =  register(new FeatureAutoAcceptReparty());
+    public static final FeatureUpdateAlarm ETC_TEST = register(new FeatureUpdateAlarm());
+
+    public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Misc", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
+    public static final FeatureDisableMessage FIX_MESSAGES = register(new FeatureDisableMessage());
+
+    public static final FeatureCopyMessages ETC_COPY_MSG = register(new FeatureCopyMessages());
+
+    public static final FeaturePenguins ETC_PENGUIN = register(new FeaturePenguins());
+
+
+
+
+
+    public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
+    public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());
+
+
+
+    public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.richpresence", true) {
+        {
+            parameters.put("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
+        }
+    });
+    public static final PartyInviteViewer DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
+    public static final PlayingDGAlarm DISCORD_ONLINEALARM = register(new PlayingDGAlarm());
+    public static final SimpleFeature DISCORD_DONOTUSE = register(new SimpleFeature("Discord", "Disable Native Library", "Disables usage of jna for discord rpc support.\nBreaks any discord related feature in the mod.\nRequires mod restart to get affected.\n\nThis feature is only for those whose minecraft crashes due to discord gamesdk crash.", "discord.rpc", false));
+
 
     public static final SimpleFeature DEBUG = register(new FeatureDebug());
-
     public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false){
         {
             parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to edit room", Keyboard.KEY_R, "keybind"));
         }
     });
+
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
