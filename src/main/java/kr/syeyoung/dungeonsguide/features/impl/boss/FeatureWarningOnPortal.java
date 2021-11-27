@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
@@ -105,8 +106,11 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         DungeonContext context = skyblockStatus.getContext();
         FeatureDungeonScore.ScoreCalculation scoreCalculation = FeatureRegistry.DUNGEON_SCORE.calculateScore();
 
+        boolean failed = context.getDungeonRoomList().stream().anyMatch(a -> a.getCurrentState() == DungeonRoom.RoomState.FAILED);
         if (context.getMapProcessor().getUndiscoveredRoom() > 0) {
             texts.add(new StyledText("There are at least "+context.getMapProcessor().getUndiscoveredRoom()+" undiscovered rooms!\n", "warning"));
+        } else if (failed) {
+            texts.add(new StyledText("There is a failed puzzle room! Yikes!\n", "warning"));
         } else if (!scoreCalculation.isFullyCleared()) {
             texts.add(new StyledText("Some rooms are not fully cleared!\n", "warning"));
         } else if (scoreCalculation.getTombs() < 5) {
