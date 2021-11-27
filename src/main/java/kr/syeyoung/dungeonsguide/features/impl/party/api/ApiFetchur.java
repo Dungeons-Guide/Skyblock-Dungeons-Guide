@@ -64,8 +64,12 @@ public class ApiFetchur {
         completableFutureMap3.clear();
         completableFutureMap4.clear();
         invalidKeys.clear();
-        completableFutureMapLily= null;
         constants = null;
+
+        ex.submit(ApiFetchur::getLilyWeightConstants);
+    }
+    static {
+        ex.submit(ApiFetchur::getLilyWeightConstants);
     }
 
     public static JsonObject getJson(String url) throws IOException {
@@ -81,25 +85,16 @@ public class ApiFetchur {
         return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
     }
 
-    private static JsonObject constants;
-    private static CompletableFuture<JsonObject> completableFutureMapLily;
-    public static CompletableFuture<JsonObject> getLilyWeightConstants() {
-        if (constants != null) return CompletableFuture.completedFuture(constants);
-        if (completableFutureMapLily != null) return completableFutureMapLily;
-        CompletableFuture<JsonObject> completableFuture = new CompletableFuture<>();
-        completableFutureMapLily = completableFuture;
-        ex.submit(() -> {
+    private static volatile JsonObject constants;
+    public static JsonObject getLilyWeightConstants() {
+        if (constants != null) return constants;
             try {
                 JsonObject jsonObject = getJson("https://raw.githubusercontent.com/Antonio32A/lilyweight/master/lib/constants.json");
                 constants = jsonObject;
-                completableFuture.complete(jsonObject);
-                completableFutureMapLily= null;
             } catch (Exception e) {
-                completableFuture.completeExceptionally(e);
-                completableFutureMapLily= null;
+                throw new RuntimeException(e);
             }
-        });
-        return completableFuture;
+            return constants;
     }
 
     private static final Map<String, CompletableFuture<Optional<GameProfile>>> completableFutureMap4 = new ConcurrentHashMap<>();
@@ -174,7 +169,7 @@ public class ApiFetchur {
                     completableFutureMap.remove(uid);
                     invalidKeys.add(apiKey);
                 } else {
-                    completableFuture.complete(Optional.empty());
+                    completableFuture.completeExceptionally(e);
                     completableFutureMap.remove(uid);
                 }
                 e.printStackTrace();
@@ -497,7 +492,7 @@ public class ApiFetchur {
     }
 
     private static void calculateLilyWeight(PlayerProfile playerProfile, JsonObject playerData) throws ExecutionException, InterruptedException {
-        JsonObject constants = getLilyWeightConstants().get();
+        JsonObject constants = getLilyWeightConstants();
         double[] slayerXP = new double[4];
         if (playerData.has("slayer_bosses")) {
             slayerXP[0] = getOrDefault(playerData.getAsJsonObject("slayer_bosses").getAsJsonObject("zombie"), "xp", 0);

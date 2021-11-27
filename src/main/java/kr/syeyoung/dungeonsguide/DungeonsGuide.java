@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
@@ -28,7 +30,6 @@ import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
@@ -119,6 +120,8 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         MinecraftForge.EVENT_BUS.register(new PacketListener());
         MinecraftForge.EVENT_BUS.register(new Keybinds());
 
+//        MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(ChatProcessor.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
 

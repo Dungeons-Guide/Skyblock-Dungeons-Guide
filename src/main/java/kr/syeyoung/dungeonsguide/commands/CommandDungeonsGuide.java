@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.pathfinding.JPSPathfinder;
+import kr.syeyoung.dungeonsguide.chat.PartyContext;
+import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
@@ -41,7 +42,6 @@ import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
@@ -263,17 +263,23 @@ public class CommandDungeonsGuide extends CommandBase {
                 t.printStackTrace();
             }
         } else if (args[0].equalsIgnoreCase("pvall")) {
-            PartyManager.INSTANCE.getRunOnMembersReceived().add((e) -> {
-                for (String s : e) {
-                    ApiFetchur.fetchUUIDAsync(s)
+            PartyManager.INSTANCE.requestPartyList((context) -> {
+                if (context == null) {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
+                    return;
+                }
+                for (String member : context.getPartyRawMembers()) {
+                    ApiFetchur.fetchUUIDAsync(member)
                             .thenAccept(a -> {
-                                if (a == null) return;
-                                ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
-                                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + s + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                                if (a == null) {
+                                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+member+"§f's Profile §cCouldn't fetch uuid"));
+                                } else {
+                                    ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + member + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                                }
                             });
                 }
             });
-            PartyManager.INSTANCE.requestPartyRetrieval();
 //        } else if (args[0].equals("fixschematic")) {
 //            File root = new File(e.getDungeonsGuide().getConfigDir(), "schematics");
 //            Method method = null;
@@ -315,11 +321,11 @@ public class CommandDungeonsGuide extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
                 return;
             }
-            if (!PartyManager.INSTANCE.isCanInvite()) {
+            if (!PartyManager.INSTANCE.canInvite()) {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cYou don't have perms in the party to invite people!"));
             } else {
                 PartyManager.INSTANCE.toggleAllowAskToJoin();
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.isAllowAskToJoin() ? "§eon" : "§coff")));
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.getAskToJoinSecret() != null ? "§eon" : "§coff")));
             }
 
             if (!FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled()) {
@@ -347,7 +353,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 }
             }
         } else if (args[0].equals("partyid")) {
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + PartyManager.INSTANCE.getPartyID()));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
         } else if (args[0].equalsIgnoreCase("loc")) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
         } else if (args[0].equalsIgnoreCase("saverun")) {
@@ -404,7 +410,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 System.arraycopy(args, 1, payload, 0, payload.length);
                 String actualPayload = String.join(" ", payload).replace("$C$", "§");
                 DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
-                        new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyID())
+                        new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
                                 .put("payload", actualPayload).toString()
                 ));
             } catch (Exception e) {

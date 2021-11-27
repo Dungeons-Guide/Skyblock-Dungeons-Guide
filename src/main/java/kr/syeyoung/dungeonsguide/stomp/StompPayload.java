@@ -53,10 +53,13 @@ public class StompPayload {
         if (payload != null)
             sb.append(payload);
         sb.append((char) 0);
+        if (FeatureRegistry.DEBUG.isEnabled()) System.out.println("Sending.. "+sb.toString());
         return sb.toString();
     }
 
     public static StompPayload parse(String payload) {
+        if (FeatureRegistry.DEBUG.isEnabled()) System.out.println("Receving.. "+payload);
+
         Scanner scanner = new Scanner(payload);
         StompPayload stompPayload = new StompPayload();
         stompPayload.method = StompHeader.valueOf(scanner.nextLine());

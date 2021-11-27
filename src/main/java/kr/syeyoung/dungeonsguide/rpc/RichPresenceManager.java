@@ -23,6 +23,8 @@ import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.chat.PartyContext;
+import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.events.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.events.DiscordUserUpdateEvent;
@@ -33,15 +35,13 @@ import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.*;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.*;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.*;
 import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.*;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
-import kr.syeyoung.dungeonsguide.stomp.StompHeader;
-import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
-import org.json.JSONObject;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
+import java.util.Set;
 
 public class RichPresenceManager implements Runnable {
     public static RichPresenceManager INSTANCE = new RichPresenceManager();
@@ -90,9 +90,7 @@ public class RichPresenceManager implements Runnable {
             System.out.println("Received Join Request from "+user.id.longValue()+" ("+GameSDK.readString(user.username)+")");
         };
         callbacks.OnActivityJoin = (eventData, secret) -> {
-            DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
-                .header("destination", "/app/party.askedtojoin")
-                .payload(new JSONObject().put("token", secret).toString()));
+            PartyManager.INSTANCE.joinWithToken(secret);
             System.out.println("Trying to join with token "+secret);
         };
         callbacks.OnActivityJoinRequest = (eventData, user) -> {
@@ -195,8 +193,8 @@ public class RichPresenceManager implements Runnable {
             GameSDK.writeString(latestDiscordActivity.assets.large_text, "mort");
             GameSDK.writeString(latestDiscordActivity.state, name);
 
-                GameSDK.writeString(latestDiscordActivity.party.id, PartyManager.INSTANCE.getPartyID() == null ? "" : PartyManager.INSTANCE.getPartyID());
-                latestDiscordActivity.party.discordActivityParty.current_size = new Int32(PartyManager.INSTANCE.getMemberCount());
+                GameSDK.writeString(latestDiscordActivity.party.id, Optional.ofNullable( PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(""));
+                latestDiscordActivity.party.discordActivityParty.current_size = new Int32(Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyRawMembers).map(Set::size).orElse(1));
                 latestDiscordActivity.party.discordActivityParty.max_size = new Int32(PartyManager.INSTANCE.getMaxParty());
 
             if (skyblockStatus.getContext() != null) {
@@ -213,7 +211,7 @@ public class RichPresenceManager implements Runnable {
                 latestDiscordActivity.timestamps.start = new DiscordTimestamp(0);
                 GameSDK.writeString(latestDiscordActivity.details, "Dungeons Guide");
             }
-            if (PartyManager.INSTANCE.isAllowAskToJoin()) {
+            if (PartyManager.INSTANCE.getAskToJoinSecret() != null) {
                 GameSDK.writeString(latestDiscordActivity.secrets.join, PartyManager.INSTANCE.getAskToJoinSecret());
             } else {
                 GameSDK.writeString(latestDiscordActivity.secrets.join, "");

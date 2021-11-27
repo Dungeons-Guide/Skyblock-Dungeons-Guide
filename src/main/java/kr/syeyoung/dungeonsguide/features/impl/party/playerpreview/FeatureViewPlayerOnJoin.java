@@ -24,6 +24,8 @@ import io.github.moulberry.hychat.HyChat;
 import io.github.moulberry.hychat.chat.ChatManager;
 import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
@@ -38,7 +40,6 @@ import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -416,10 +417,10 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
             if (Mouse.getEventButton() != -1 && Mouse.isButtonDown(Mouse.getEventButton())) {
                 if (new Rectangle(2, 195, 86, 23).contains(relX, relY)) {
                     // invite
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/p invite " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"));
+                    ChatProcessor.INSTANCE.addToChatQueue("/p invite " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"), () -> {}, true);
                 } else if (new Rectangle(2, 170, 86, 23).contains(relX, relY)) {
                     // kick
-                    Minecraft.getMinecraft().thePlayer.sendChatMessage("/p kick " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"));
+                    ChatProcessor.INSTANCE.addToChatQueue("/p kick " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"), () -> {}, true);
                 } else if (new Rectangle(80,159,10,11).contains(relX, relY)) {
                     drawInv = true;
                 }
@@ -456,21 +457,31 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         if (str.contains("§r§ejoined the dungeon group! (§r§b")) {
             String username = TextUtils.stripColor(str).split(" ")[3];
             if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
-                PartyManager.INSTANCE.getRunOnMembersReceived().add((e) -> {
-                    for (String s : e) {
-                        ApiFetchur.fetchUUIDAsync(s)
-                                .thenAccept(a -> {
-                                    if (a == null) return;
-                                    ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
-                                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+s+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
-                                });
+                PartyManager.INSTANCE.requestPartyList((context) -> {
+                    if (context == null) {
+                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
+                    } else {
+
+                        for (String member : context.getPartyRawMembers()) {
+                            ApiFetchur.fetchUUIDAsync(member)
+                                    .thenAccept((a) -> {
+                                        if (a == null) {
+                                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+member+"§f's Profile §cCouldn't fetch uuid"));
+                                        } else {
+                                            ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                                            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+member+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                                        }
+                                    });
+                        }
                     }
                 });
-                PartyManager.INSTANCE.requestPartyRetrieval();
             } else {
                 ApiFetchur.fetchUUIDAsync(username)
                         .thenAccept(a -> {
-                            if (a == null) return;
+                            if (a == null) {
+                                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+username+"§f's Profile §cCouldn't fetch uuid"));
+                                return;
+                            }
                             ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
                             Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+username+"§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
                         });

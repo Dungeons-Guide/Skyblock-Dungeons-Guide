@@ -18,8 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
+import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.gui.MPanel;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
@@ -53,22 +55,27 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
     boolean delistable = false;
 
     public void setDelistable(boolean delistable) {
-        createNew.setText(delistable ? "De-list" : "Create New");
         this.delistable = delistable;
+        updateCreateNew();
+    }
+
+    public void updateCreateNew() {
+        createNew.setText((PartyManager.INSTANCE.getPartyContext() != null && !PartyManager.INSTANCE.isLeader()) ? "Leave Party" : (delistable ? "De-list" : "Create New"));
     }
 
     public PanelPartyFinderSettings(PanelPartyFinder panelPartyFinder) {
         this.panelPartyFinder = panelPartyFinder;
 
-        createNew.setText("Create New");
         createNew.setOnActionPerformed(this::createNew);
         createNew.setBackground(0xFF00838F);
         createNew.setHover(0xFF00ACC1);
         createNew.setClicked(0xFF0097A7);
         add(createNew);
+        updateCreateNew();
         refresh.setText("Refresh");
         refresh.setOnActionPerformed(this::refresh);
         add(refresh);
+
         settings.setText("Search Settings");
         settings.setOnActionPerformed(this::settings);
         add(settings);
@@ -142,6 +149,10 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
     }
 
     private void createNew() {
+        if (PartyManager.INSTANCE.getPartyContext() != null && !PartyManager.INSTANCE.isLeader()) {
+            ChatProcessor.INSTANCE.addToChatQueue("/p leave ", () -> {}, true);
+            return;
+        }
         GuiChest chest = panelPartyFinder.getGuiCustomPartyFinder().getGuiChest();
         if (delistable)
             Minecraft.getMinecraft().playerController.windowClick(chest.inventorySlots.windowId, 9*5+7, 0, 0, Minecraft.getMinecraft().thePlayer);
