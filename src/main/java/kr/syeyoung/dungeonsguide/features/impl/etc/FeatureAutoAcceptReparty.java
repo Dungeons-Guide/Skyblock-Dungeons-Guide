@@ -20,7 +20,9 @@ package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -60,7 +62,7 @@ public class FeatureAutoAcceptReparty extends SimpleFeature implements ChatListe
             }
 
             if (equals && isEnabled()) {
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/p join "+lastDisband);
+                ChatProcessor.INSTANCE.addToChatQueue("/p accept " + lastDisband, () -> {}, true);
                 lastDisband = null;
             }
         }

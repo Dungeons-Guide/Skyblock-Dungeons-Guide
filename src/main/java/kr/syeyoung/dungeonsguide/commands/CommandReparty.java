@@ -18,17 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.commands;
 
+import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 public class CommandReparty extends CommandBase {
     private String command;
@@ -49,73 +54,53 @@ public class CommandReparty extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
-        requestReparty();
+        if (!requestReparty(false)) {
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
+        }
     }
 
-    public enum Phase {
-        NOT,
-        REQUESTED,
-        RECEIVE_PARTYMEMBERS,
-        DISBAND,
-        REPARTY
-    }
+    private boolean reparting = false;
 
-    private final List<String> players = new ArrayList<String>();
-    private long nextTrigger = Long.MAX_VALUE;
-    private Phase phase = Phase.NOT;
-    @SubscribeEvent
-    public void onChat(ClientChatReceivedEvent e) {
-        if (e.type == 2) return;
-        if (e.message.getFormattedText().startsWith("§6Party Members ") && phase == Phase.REQUESTED) {
-            players.clear();
-            phase = Phase.RECEIVE_PARTYMEMBERS;
+
+    public boolean requestReparty(boolean noerror) {
+        if (reparting) {
+            return false;
         }
-        if (e.message.getFormattedText().startsWith("§cYou are not currently in a party.§r") && phase == Phase.REQUESTED) {
-            phase = Phase.NOT;
-        }
-        String txt = e.message.getFormattedText();
-        if (txt.startsWith("§eParty ") && txt.contains(":")) {
-            String playerNames = TextUtils.stripColor(txt.split(":")[1]);
-            String myname = Minecraft.getMinecraft().getSession().getUsername();
-            for (String s : playerNames.split(" ")) {
-                if (s.isEmpty()) continue;
-                if (s.equals("●")) continue;
-                if (s.startsWith("[")) continue;
-                if (s.equalsIgnoreCase(myname)) continue;
-                players.add(s);
+        reparting = true;
+
+        PartyManager.INSTANCE.requestPartyList(pc -> {
+            if (pc == null) {
+                if (!noerror)
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
+                reparting = false;
+                return;
             }
-        }
-        if (e.message.getFormattedText().equals("§9§m-----------------------------§r") && phase == Phase.RECEIVE_PARTYMEMBERS) {
-            phase = Phase.DISBAND;
-            nextTrigger = System.currentTimeMillis() + 500;
-        }
-    }
-
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e) {
-        if (nextTrigger < System.currentTimeMillis() && (phase == Phase.DISBAND || phase == Phase.REPARTY)) {
-            if (phase == Phase.DISBAND) {
-                nextTrigger = System.currentTimeMillis() + 1000;
-                phase = Phase.REPARTY;
-                Minecraft.getMinecraft().thePlayer.sendChatMessage("/p disband");
-            } else {
-                phase = Phase.NOT;
-                nextTrigger = Long.MAX_VALUE;
-                StringBuilder sb = new StringBuilder();
-                sb.append("/p invite");
-                for (String player : players) {
-                    sb.append(" ").append(player);
-                }
-                Minecraft.getMinecraft().thePlayer.sendChatMessage(sb.toString());
+            if (!pc.hasLeader(Minecraft.getMinecraft().getSession().getUsername())) {
+                if (!noerror)
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cYou're not leader"));
+                reparting = false;
+                return;
             }
-        }
-    }
+            if (pc.isSelfSolo()) {
+                if (!noerror)
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cYou can not reparty yourself"));
+                reparting = false;
+                return;
+            }
+            String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())).collect(Collectors.joining(" "));
+            String command = "/p invite "+members;
 
-    public void requestReparty() {
-        if (phase == Phase.NOT) {
-            phase = Phase.REQUESTED;
-            Minecraft.getMinecraft().thePlayer.sendChatMessage("/pl");
-        }
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));
+            ChatProcessor.INSTANCE.addToChatQueue("/p disband", () -> {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eRunning invite command §f"+command));
+                ChatProcessor.INSTANCE.addToChatQueue(command, () -> {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eSuccessfully repartied!§f"));
+
+                    reparting = false;
+                }, false);
+            }, false);
+        });
+        return true;
     }
 
     @Override

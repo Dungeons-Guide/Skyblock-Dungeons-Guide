@@ -145,7 +145,9 @@ public class CommandDungeonsGuide extends CommandBase {
             String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
         } else if (args[0].equalsIgnoreCase("reparty")) {
-            DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty();
+            if (!DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(false)) {
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
+            }
         } else if (args[0].equalsIgnoreCase("gui")) {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("info")) {

@@ -29,6 +29,6 @@ public class FeatureAutoReparty extends SimpleFeature implements DungeonQuitList
 
     @Override
     public void onDungeonQuit() {
-        if (isEnabled()) DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty();
+        if (isEnabled()) DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(true);
     }
 }
