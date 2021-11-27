@@ -44,7 +44,7 @@ import java.util.Arrays;
 
 public class FeatureDebuggableMap extends GuiFeature  {
     public FeatureDebuggableMap() {
-        super("Advanced", "Display Debug info included map", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.map", true, 128, 128);
+        super("Advanced", "Display Debug Info included map", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.map", true, 128, 128);
         this.setEnabled(false);
     }
 
