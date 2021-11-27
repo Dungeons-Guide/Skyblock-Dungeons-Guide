@@ -103,6 +103,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             next = entityList.get(0);
             nextBlaze  = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(next))).orElse(null);
         } else {
+            next = null;
             nextBlaze = null;
         }
         if (entityList.size() > 1) {
