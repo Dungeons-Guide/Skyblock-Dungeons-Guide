@@ -24,10 +24,17 @@ import kr.syeyoung.dungeonsguide.features.listener.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
+import net.minecraft.item.ItemStack;
+import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiOpenEvent;
+
+import java.util.HashSet;
+import java.util.Set;
 
 public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenListener, GuiUpdateListener {
     public FeatureCustomPartyFinder() {
@@ -40,6 +47,9 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
     @Getter
     @Setter
     private int minimumCata;
+
+    @Getter @Setter
+    private String lastClass = "";
 
     GuiCustomPartyFinder guiCustomPartyFinder;
     @Override
@@ -65,6 +75,41 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
     public void onGuiUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (guiCustomPartyFinder != null) {
             guiCustomPartyFinder.onChestUpdate(windowUpdateEvent);
+        }
+
+        if (Minecraft.getMinecraft().currentScreen instanceof GuiChest) {
+            GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+
+            if (!(chest.inventorySlots instanceof ContainerChest)) return;
+            ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
+            IInventory lower = containerChest.getLowerChestInventory();
+            if (lower == null || !lower.getName().equals("Catacombs Gate")) return;
+
+            ItemStack item = null;
+            if (windowUpdateEvent.getWindowItems() != null) {
+                item = windowUpdateEvent.getWindowItems().getItemStacks()[47];
+            } else if (windowUpdateEvent.getPacketSetSlot() != null) {
+                if (windowUpdateEvent.getPacketSetSlot().func_149173_d() != 47) return;
+                item = windowUpdateEvent.getPacketSetSlot().func_149174_e();
+            }
+            if (item == null) return;
+
+            NBTTagCompound stackTagCompound = item.getTagCompound();
+            if (stackTagCompound.hasKey("display", 10)) {
+                NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
+
+                if (nbttagcompound.getTagId("Lore") == 9) {
+                    NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
+
+                    for (int i = 0; i < nbttaglist1.tagCount(); i++) {
+                        String str = nbttaglist1.getStringTagAt(i);
+                        System.out.println(str);
+                        if (str.startsWith("§aCurrently Selected")) {
+                            lastClass = str.substring(24);
+                        }
+                    }
+                }
+            }
         }
     }
 }

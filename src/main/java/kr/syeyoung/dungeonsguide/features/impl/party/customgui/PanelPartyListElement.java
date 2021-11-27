@@ -18,10 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.gui.elements.MTooltipText;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -40,7 +42,10 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.EnumChatFormatting;
 
 import java.awt.*;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Locale;
+import java.util.Set;
 
 public class PanelPartyListElement extends MPanel {
     private PanelPartyFinder panelPartyFinder;
@@ -74,6 +79,7 @@ public class PanelPartyListElement extends MPanel {
         if (itemStack.getItem() == Item.getItemFromBlock(Blocks.bedrock)) cantjoin = true;
         int minClass = -1, minDungeon = -1;
         int pplIn = 0;
+        Set<String> dungeonClasses = new HashSet<>();
         {
             NBTTagCompound stackTagCompound = itemStack.getTagCompound();
             if (stackTagCompound.hasKey("display", 10)) {
@@ -92,10 +98,17 @@ public class PanelPartyListElement extends MPanel {
                             minDungeon = Integer.parseInt(str.substring(28));
                         } else if (str.startsWith("§cRequires ")) cantjoin = true;
                         if (str.endsWith("§b)")) pplIn ++;
+
+                        if (str.startsWith(" ") && str.contains(":")) {
+                            String clazz = TextUtils.stripColor(str).trim().split(" ")[1];
+                            dungeonClasses.add(clazz);
+                        }
                     }
                 }
             }
         }
+
+        boolean nodupe = note.toLowerCase().contains("nodupe") || note.toLowerCase().contains("no dupe") || (note.toLowerCase().contains("nd") && (note.indexOf("nd") == 0 || note.charAt(note.indexOf("nd")-1) == ' '));
 
         note = note.replaceAll("(?i)(S\\+)", "§6$1§r");
         note = note.replaceAll("(?i)(carry)", "§4$1§r");
@@ -119,6 +132,11 @@ public class PanelPartyListElement extends MPanel {
             color = RenderUtils.blendTwoColors(color, 0x44FFFF00);
         } else if (note.contains("§6")){
             color = RenderUtils.blendTwoColors(color, 0x44FFAA00);
+        }
+
+        if (nodupe && dungeonClasses.contains(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass())) {
+            color = RenderUtils.blendTwoColors(color, 0x44FF0000);
+            note = note.replace("nodupe", "§cnodupe§r").replace("no dupe", "§cno dupe§r").replace("nd", "§cnd§r");
         }
         Gui.drawRect(0,0,getBounds().width,getBounds().height,color);
 
