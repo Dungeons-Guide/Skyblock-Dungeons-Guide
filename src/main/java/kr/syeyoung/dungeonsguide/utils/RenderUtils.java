@@ -806,7 +806,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
@@ -885,7 +885,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
@@ -959,7 +959,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
@@ -1046,7 +1046,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
@@ -1123,6 +1123,7 @@ public class RenderUtils {
         GL11.glVertex3d(x,y,0);
 
         GL11.glVertex3d(0,0,z);
+            GlStateManager.disableDepth();
         GL11.glVertex3d(0,0,0);
         GL11.glVertex3d(x,0,0);
         GL11.glVertex3d(x,0,z);
@@ -1133,7 +1134,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
@@ -1219,7 +1220,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
@@ -1313,7 +1314,7 @@ public class RenderUtils {
 
 
         if (!depth) {
-            GlStateManager.disableDepth();
+            GlStateManager.enableDepth();
             GlStateManager.depthMask(true);
         }
         GlStateManager.enableTexture2D();
