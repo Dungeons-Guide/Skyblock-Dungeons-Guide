@@ -31,7 +31,7 @@ import java.util.List;
 
 public class FeaturePartyList extends TextHUDFeature {
     public FeaturePartyList() {
-        super("Party","Party List", "Party List as GUI", "party.list", false, getFontRenderer().getStringWidth("Watcher finished spawning all mobs!"), getFontRenderer().FONT_HEIGHT);
+        super("Party","Party List", "Party List as GUI", "party.list", false, getFontRenderer().getStringWidth("Watcher finished spawning all mobs!"), getFontRenderer().FONT_HEIGHT*4);
         getStyles().add(new TextStyle("name", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("player", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
@@ -51,7 +51,7 @@ public class FeaturePartyList extends TextHUDFeature {
 
     private static final List<StyledText> dummyText = new ArrayList<StyledText>();
     static {
-        dummyText.add(new StyledText("\nLeader","name"));
+        dummyText.add(new StyledText("Leader","name"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("syeyoung","player"));
         dummyText.add(new StyledText("\nModerator","name"));
@@ -77,7 +77,7 @@ public class FeaturePartyList extends TextHUDFeature {
     public List<StyledText> getText() {
         PartyContext pc = PartyManager.INSTANCE.getPartyContext();
         List<StyledText> text= new ArrayList<>();
-            text.add(new StyledText("\nLeader","name"));
+            text.add(new StyledText("Leader","name"));
             text.add(new StyledText(": ","separator"));
             text.add(new StyledText(pc.getPartyOwner()+"","player"));
             text.add(new StyledText("\nModerator","name"));

@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
 import kr.syeyoung.dungeonsguide.features.impl.party.FeaturePartyList;
+import kr.syeyoung.dungeonsguide.features.impl.party.FeaturePartyReady;
 import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPartyFinder;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.*;
@@ -163,6 +164,7 @@ public class FeatureRegistry {
     public static final FeatureViewPlayerOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerOnJoin());
     public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM = register(new FeatureCustomPartyFinder());
     public static final FeaturePartyList PARTY_LIST = register(new FeaturePartyList());
+    public static final FeaturePartyReady PARTY_READY = register(new FeaturePartyReady());
 
     public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT = register(new FeatureTooltipDungeonStat());
     public static final FeatureTooltipPrice ETC_PRICE = register(new FeatureTooltipPrice());
