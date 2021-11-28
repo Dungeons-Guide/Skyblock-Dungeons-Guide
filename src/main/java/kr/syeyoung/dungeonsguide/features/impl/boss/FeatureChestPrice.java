@@ -43,7 +43,7 @@ import java.util.TreeSet;
 
 public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRenderListener {
     public FeatureChestPrice() {
-        super("Bossfight", "Show Profit of Dungeon Chests","Show Profit of Dungeon Chests", "bossfight.profitchest", true);
+        super("Bossfight", "Show Profit of Dungeon Chests","Show Profit of Dungeon Chests", "bossfight.profitchest", false);
     }
 
     @Override
