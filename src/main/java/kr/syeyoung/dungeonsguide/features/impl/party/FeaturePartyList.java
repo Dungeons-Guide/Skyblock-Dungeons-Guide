@@ -36,7 +36,7 @@ public class FeaturePartyList extends TextHUDFeature {
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("player", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("allinvite", new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        setEnabled(true);
+        setEnabled(false);
     }
 
     @Override
