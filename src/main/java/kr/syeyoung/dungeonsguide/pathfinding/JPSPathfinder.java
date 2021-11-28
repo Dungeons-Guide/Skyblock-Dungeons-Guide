@@ -238,7 +238,7 @@ public class JPSPathfinder {
             }
             if (dungeonRoom.isBlocked(x,y-dy,z)) {
                 nexts.add(openNode(x,y-dy,nz));
-                nexts.add(openNode(nx,y-dy,x));
+                nexts.add(openNode(nx,y-dy,nz));
                 nexts.add(openNode(nx,y-dy,nz));
             }
         }
