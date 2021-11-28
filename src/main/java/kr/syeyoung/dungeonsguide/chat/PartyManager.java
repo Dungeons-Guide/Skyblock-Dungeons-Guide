@@ -94,6 +94,7 @@ public class PartyManager implements StompMessageHandler {
                 || str.equals("§cYou are not allowed to invite players.§r")) {
                 getPartyContext(true).setAllInvite(false);
                 a.put("type", "allinvite_off");
+                potentialInvitenessChange();
             }
             return ChatProcessResult.NONE;
         });
@@ -161,6 +162,7 @@ public class PartyManager implements StompMessageHandler {
                         if (old.getPartyID() == null) {
                             joinedParty();
                         }
+                        potentialInvitenessChange();
                     }
                 }
                 return ChatProcessResult.NONE;
@@ -233,6 +235,7 @@ public class PartyManager implements StompMessageHandler {
                     getPartyContext(true).addPartyModerator(oldLeader);
                 }
                 a.put("type", "party_transfer");
+                potentialInvitenessChange();
             } else if (str.endsWith("§eto Party Leader§r")) {
                 // §a[VIP§r§6+§r§a] syeyoung§r§e has promoted §r§b[MVP§r§f+§r§b] apotato321 §r§eto Party Leader§r
                 String[] messageSplit = TextUtils.stripColor(str).split(" ");
@@ -255,6 +258,7 @@ public class PartyManager implements StompMessageHandler {
                     getPartyContext(true).addPartyModerator(oldLeader);
                 }
                 a.put("type", "party_transfer");
+                potentialInvitenessChange();
             } else if (str.endsWith("§r§eto Party Moderator§r")) {
                 // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r
                 String[] messageSplit = TextUtils.stripColor(str).split(" ");
@@ -277,6 +281,7 @@ public class PartyManager implements StompMessageHandler {
                     getPartyContext(true).addPartyModerator(newModerator);
                 }
                 a.put("type", "party_promotion");
+                potentialInvitenessChange();
             } else if (str.endsWith("§r§eto Party Member§r")) {
                 String[] messageSplit = TextUtils.stripColor(str).split(" ");
                 String oldLeader = null;
@@ -298,6 +303,7 @@ public class PartyManager implements StompMessageHandler {
                     getPartyContext(true).addPartyMember(newMember);
                 }
                 a.put("type", "party_demotion");
+                potentialInvitenessChange();
             }
             return ChatProcessResult.NONE;
         });
@@ -331,6 +337,7 @@ public class PartyManager implements StompMessageHandler {
                     joined = false;
                     getPartyContext().setRawMemberComplete(true);
                     joinedParty();
+                    potentialInvitenessChange();
                 }
                 return ChatProcessResult.NONE;
         }});
@@ -340,7 +347,9 @@ public class PartyManager implements StompMessageHandler {
                 String username = TextUtils.stripColor(str).split(" ")[3];
                 if (username.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())) {
                     partyContext = new PartyContext();
-                    requestPartyList((str2) -> {});
+                    requestPartyList((str2) -> {
+                        potentialInvitenessChange();
+                    });
                 } else {
                     getPartyContext(true).setMemberComplete(false);
                     requestPartyList((str2) -> {});
@@ -577,5 +586,9 @@ public class PartyManager implements StompMessageHandler {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
                 .header("destination", "/app/party.askedtojoin")
                 .payload(new JSONObject().put("token", secret).toString()));
+    }
+
+    private void potentialInvitenessChange() {
+        if (askToJoinSecret != null && !canInvite()) askToJoinSecret = null;
     }
 }
