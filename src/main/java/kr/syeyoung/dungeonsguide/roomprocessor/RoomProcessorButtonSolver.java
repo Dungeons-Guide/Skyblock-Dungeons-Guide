@@ -94,6 +94,9 @@ public class RoomProcessorButtonSolver extends GeneralRoomProcessor {
             Arrays.fill(result, -1);
             result[clickedButton] = 2;
             clickedButton = -1;
+        } else if (msg.equals("§r§aWrong button, looks like the system reset!§r")) {
+            Arrays.fill(result, 0);
+            clickedButton = -1;
         }
     }
 
