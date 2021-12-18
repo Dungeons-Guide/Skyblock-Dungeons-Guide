@@ -402,11 +402,6 @@ public class MapProcessor {
         int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
         DungeonsGuide.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
 
-        System.out.println(new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
-                .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
-                .put("timeScore", time)
-                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()).toString());
-
         try {
             String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
             if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("false")) {
