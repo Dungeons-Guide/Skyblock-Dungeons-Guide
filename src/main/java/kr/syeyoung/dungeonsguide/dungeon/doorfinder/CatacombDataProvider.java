@@ -124,4 +124,46 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
             return true;
         } else return floor.equals("F7");
     }
+
+    @Override
+    public double secretPercentage(String dungeonName) {
+        String floor = dungeonName.substring(14).trim();
+        if (floor.equals("F1")) {
+            return 0.3;
+        } else if (floor.equals("F2")) {
+            return 0.4;
+        } else if (floor.equals("F3")) {
+            return 0.5;
+        } else if (floor.equals("F4")) {
+            return 0.6;
+        } else if (floor.equals("F5")) {
+            return 0.7;
+        } else if (floor.equals("F6")) {
+            return 0.85;
+        } else if (floor.equals("F7")) {
+            return 1.0;
+        }
+        return 1.0;
+    }
+
+    @Override
+    public int speedSecond(String dungeonName) {
+        String floor = dungeonName.substring(14).trim();
+        if (floor.equals("F1")) {
+            return 600;
+        } else if (floor.equals("F2")) {
+            return 600;
+        } else if (floor.equals("F3")) {
+            return 600;
+        } else if (floor.equals("F4")) {
+            return 720;
+        } else if (floor.equals("F5")) {
+            return 600;
+        } else if (floor.equals("F6")) {
+            return 720;
+        } else if (floor.equals("F7")) {
+            return 720;
+        }
+        return 600;
+    }
 }

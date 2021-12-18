@@ -109,4 +109,14 @@ public class CatacombMasterDataProvider implements DungeonSpecificDataProvider {
             return true;
         } else return floor.equals("M7");
     }
+
+    @Override
+    public double secretPercentage(String dungeonName) {
+        return 1.0;
+    }
+
+    @Override
+    public int speedSecond(String dungeonName) {
+        return 480;
+    }
 }

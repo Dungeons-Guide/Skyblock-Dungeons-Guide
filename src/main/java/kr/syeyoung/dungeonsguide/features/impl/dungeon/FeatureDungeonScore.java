@@ -146,7 +146,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
             actualBit.add(new StyledText(": ", "separator"));
             actualBit.add(new StyledText(score.explorer + " ", "score"));
             actualBit.add(new StyledText("(", "brackets"));
-            actualBit.add(new StyledText("Rooms " + (score.fullyCleared ? "O" : "X") + " Secrets " + score.secrets + "/" + score.totalSecrets + (score.totalSecretsKnown ? "" : "?"), "etc"));
+            actualBit.add(new StyledText("Rooms " + (score.fullyCleared ? "O" : "X") + " Secrets " + score.secrets + "/" + score.effectiveTotalSecrets +" of "+score.getTotalSecrets() + (score.totalSecretsKnown ? "" : "?"), "etc"));
             actualBit.add(new StyledText(")\n", "brackets"));
             actualBit.add(new StyledText("Time", "scorename"));
             actualBit.add(new StyledText(": ", "separator"));
@@ -176,7 +176,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     public static class ScoreCalculation {
         private int skill, explorer, time, bonus, tombs;
         private boolean fullyCleared;
-        private int secrets, totalSecrets;
+        private int secrets, totalSecrets, effectiveTotalSecrets;
         private boolean totalSecretsKnown;
         private int deaths;
     }
@@ -259,33 +259,27 @@ public class FeatureDungeonScore extends TextHUDFeature {
             double total = 0;
 
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                if (dungeonRoom.getTotalSecrets() != -1)
-                    totalSecrets += dungeonRoom.getTotalSecrets();
-                else totalSecretsKnown = false;
                 if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FAILED)
                     completed += dungeonRoom.getUnitPoints().size();
                 total += dungeonRoom.getUnitPoints().size();
             }
 
+            totalSecrets =  FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt() ;
+            totalSecretsKnown = FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets();
+
             fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
             explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? getPercentage() : completed / total * 100)), 0, 60);
-            explorer += MathHelper.clamp_int((int) Math.floor(40 * ((secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / (double)totalSecrets)),0,40);
+            explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / (totalSecrets * context.getSecretPercentage())),0,40);
         }
         int time = 0;
         {
-            double timeModifier;
-            int timeModifierModifier =
-                    DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName().substring(14).trim().equals("F2") ? -120 : 0;
-            if (context.getBossRoomEnterSeconds() != -1) {
-                timeModifier = Math.max(0, context.getBossRoomEnterSeconds() - timeModifierModifier);
-            } else {
-                timeModifier = Math.max(0, FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - timeModifierModifier);
-            }
+            int maxTime = context.getMaxSpeed();
+            int timeSec = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
 
-            if (timeModifier <= 1320) time = 100;
-            else if (timeModifier <= 1420) time = (int) Math.ceil(232 - 0.1 * timeModifier);
-            else if (timeModifier <= 1820) time = (int) Math.ceil(161 - 0.05 * timeModifier);
-            else if (timeModifier < 3920) time = (int) Math.ceil(392/3.0 - (1/30.0) * timeModifier);
+            if (timeSec <= maxTime) time = 100;
+            else if (timeSec <= maxTime+100) time = (int) Math.ceil(232 - 0.1 * timeSec);
+            else if (timeSec <= maxTime+500) time = (int) Math.ceil(161 - 0.05 * timeSec);
+            else if (timeSec < maxTime+2600) time = (int) Math.ceil(392/3.0 - (1/30.0) * timeSec);
         }
         int bonus = 0;
         int tombs;
@@ -303,7 +297,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         }
 
         // amazing thing
-        return new ScoreCalculation(skill, explorer, time, bonus, tombs, fullyCleared, secrets, totalSecrets, totalSecretsKnown, deaths);
+        return new ScoreCalculation(skill, explorer, time, bonus, tombs, fullyCleared, secrets, totalSecrets, (int) (totalSecrets * context.getSecretPercentage()), totalSecretsKnown, deaths);
     }
     public String getLetter(int score) {
         if (score <= 99) return "D";
@@ -346,7 +340,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int tombsBreakable = Math.min(5 - calculation.tombs, reqPT);
         reqPT -= tombsBreakable;
 
-        double secretPer = 40.0 / calculation.totalSecrets;
+        double secretPer = 40.0 / calculation.effectiveTotalSecrets;
         int secrets = (int) Math.ceil(reqPT / secretPer);
 
         actualBit.add(new StyledText(currentLetter,"currentScore"));

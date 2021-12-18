@@ -182,6 +182,8 @@ public class FeatureRegistry {
 
     public static final FeaturePenguins ETC_PENGUIN = register(new FeaturePenguins());
 
+    public static final FeatureCollectScore ETC_COLLECT_SCORE = register(new FeatureCollectScore());
+
 
 
 

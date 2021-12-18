@@ -55,12 +55,14 @@ public class FeatureDebuggableMap extends GuiFeature  {
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public void drawHUD(float partialTicks) {
-        if (!skyblockStatus.isOnDungeon()) return;
+//        if (!skyblockStatus.isOnDungeon()) return;
         if (!FeatureRegistry.DEBUG.isEnabled()) return;
-        DungeonContext context = skyblockStatus.getContext();
-        if (context == null) return;
+//        DungeonContext context = skyblockStatus.getContext();
+//        if (context == null) return;
 
         GlStateManager.pushMatrix();
+        double factor = getFeatureRect().getRectangle().getWidth() / 128;
+        GlStateManager.scale(factor, factor, 1);
         int[] textureData = dynamicTexture.getTextureData();
         MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
         dynamicTexture.updateDynamicTexture();
@@ -73,10 +75,10 @@ public class FeatureDebuggableMap extends GuiFeature  {
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) return;
         Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
 
-        int i = (int) (Mouse.getEventX() - featureRect.getX());
-        int j = (int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY());
+        int i = (int) ((int) (Mouse.getEventX() - featureRect.getX()) / factor);
+        int j = (int) ((int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY())/ factor);
         if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
-            GuiUtils.drawHoveringText(Arrays.asList("Color: "+MapUtils.getColors()[j * 128 + i]),i, j, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
+            GuiUtils.drawHoveringText(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors()[j * 128 + i]),(int)(Mouse.getEventX() - featureRect.getX()), (int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY()), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
         }
     }
 

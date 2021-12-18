@@ -74,8 +74,10 @@ public class StaticResourceCache implements StompMessageHandler {
 
         getResource(BONUS_SCORE);
         getResource(TRIVIA_ANSWERS);
+        getResource(DATA_COLLECTION);
     }
 
     public static final UUID BONUS_SCORE = UUID.fromString("13f10001-66b5-46e5-94f9-1a5161a23429");
     public static final UUID TRIVIA_ANSWERS = UUID.fromString("5657f2cc-2bb8-4fcd-b55c-ffc0a35b9349");
+    public static final UUID DATA_COLLECTION = UUID.fromString("c11f026f-9f26-4d14-8d52-88325dd6397a");
 }

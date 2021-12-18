@@ -88,6 +88,11 @@ public class DungeonContext {
     private int latestTotalSecret = 0;
     private int latestCrypts = 0;
 
+    @Getter
+    private int maxSpeed = 600;
+    @Getter
+    private double secretPercentage = 1.0;
+
     public void setGotMimic(boolean gotMimic) {
         this.gotMimic = gotMimic;
         createEvent(new DungeonNodataEvent("MIMIC_KILLED"));
@@ -108,9 +113,12 @@ public class DungeonContext {
         createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapProcessor = new MapProcessor(this);
         DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
-        if (doorFinder != null)
+        if (doorFinder != null) {
             trapRoomGen = doorFinder.isTrapSpawn(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
-        else mapProcessor.setBugged(true);
+
+            secretPercentage = doorFinder.secretPercentage(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            maxSpeed = doorFinder.speedSecond(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        } else mapProcessor.setBugged(true);
         init = System.currentTimeMillis();
     }
 
@@ -162,6 +170,8 @@ public class DungeonContext {
         }
     }
 
+    @Getter
+    private boolean ended = false;
     public void onChat(ClientChatReceivedEvent event) {
         IChatComponent component = event.message;
         String formatted = component.getFormattedText();
@@ -186,6 +196,7 @@ public class DungeonContext {
             createEvent(new DungeonPuzzleFailureEvent(TextUtils.stripColor(formatted.split(" ")[2]), formatted));
         } else if (formatted.contains("§6> §e§lEXTRA STATS §6<")) {
             createEvent(new DungeonNodataEvent("DUNGEON_END"));
+            ended = true;
         }
     }
 }

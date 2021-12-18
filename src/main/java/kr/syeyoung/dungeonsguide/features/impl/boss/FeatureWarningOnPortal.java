@@ -56,7 +56,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
 
         dummyText.add(new StyledText("Total Secrets","field_name"));
         dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("103/100 ","field_value"));
+        dummyText.add(new StyledText("103/100 of 50","field_value"));
         dummyText.add(new StyledText("(103% 41.2 Explorer)","field_etc"));
 
 
@@ -121,8 +121,8 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
 
         texts.add(new StyledText("Total Secrets","field_name"));
         texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getSecrets() +"/" + scoreCalculation.getTotalSecrets(),"field_value"));
-        texts.add(new StyledText(" ("+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getTotalSecrets() * 100.0f)+"% "+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getTotalSecrets() * 40.0f)+" Explorer)\n","field_etc"));
+        texts.add(new StyledText(scoreCalculation.getSecrets() +"/" + scoreCalculation.getEffectiveTotalSecrets()+" of "+scoreCalculation.getTotalSecrets(),"field_value"));
+        texts.add(new StyledText(" ("+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 100.0f)+"% "+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 40.0f)+" Explorer)\n","field_etc"));
 
 
         texts.add(new StyledText("Crypts","field_name"));

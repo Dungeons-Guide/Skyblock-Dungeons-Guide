@@ -31,7 +31,11 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResource;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -41,12 +45,14 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
+import org.json.JSONObject;
 
 import javax.vecmath.Vector2d;
 import javax.vecmath.Vector2f;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
 
 public class MapProcessor {
 
@@ -382,6 +388,39 @@ public class MapProcessor {
     }
     private int stabilizationTick = 0;
 
+    private boolean processed = false;
+    private void processFinishedMap(byte[] mapData) {
+        if (MapUtils.getMapColorAt(mapData, 0, 0) == 0) return;
+        if (processed) return;
+        processed = true;
+        MapUtils.clearMap();
+        MapUtils.record(mapData, 0, 0, Color.GREEN);
+
+        int skill = MapUtils.readNumber(mapData, 51, 35, 9);
+        int exp = MapUtils.readNumber(mapData, 51, 54, 9);
+        int time = MapUtils.readNumber(mapData, 51, 73, 9);
+        int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
+        DungeonsGuide.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
+
+        System.out.println(new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
+                .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
+                .put("timeScore", time)
+                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()).toString());
+
+        try {
+            String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
+            if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("false")) {
+
+                DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
+                        .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
+                        .put("timeScore", time)
+                        .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()).toString()).header("destination", target.trim()));
+            }
+        } catch (Throwable e) {
+            e.printStackTrace();
+        }
+    }
+
     public void tick() {
         if (waitCnt < 5) {
             waitCnt++;
@@ -409,6 +448,10 @@ public class MapProcessor {
                 if (stabilizationTick > 20) {
                     if (doorDimension == null) buildMap(mapData);
                     else processMap(mapData);
+
+                    if (context.isEnded()) {
+                        processFinishedMap(mapData);
+                    }
                 }
                 lastMapData = mapData;
             }

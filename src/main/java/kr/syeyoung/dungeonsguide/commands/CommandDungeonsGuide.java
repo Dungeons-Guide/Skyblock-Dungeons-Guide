@@ -469,6 +469,16 @@ public class CommandDungeonsGuide extends CommandBase {
                 public boolean isTrapSpawn(String dungeonName) {
                     return false;
                 }
+
+                @Override
+                public double secretPercentage(String dungeonName) {
+                    return 0;
+                }
+
+                @Override
+                public int speedSecond(String dungeonName) {
+                    return 0;
+                }
             });
             SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
             skyblockStatus.setDungeonName("TEST DG");
@@ -539,7 +549,30 @@ public class CommandDungeonsGuide extends CommandBase {
             }
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
-        } else{
+        } else if (args[0].equals("readMap")) {
+            try {
+                int fromX = Integer.parseInt(args[1]);
+                int fromY = Integer.parseInt(args[2]);
+                sender.addChatMessage(new ChatComponentText(MapUtils.readDigit(MapUtils.getColors(), fromX, fromY)+"-"));
+//                int cntY = Integer.parseInt(args[3]);
+//                int target = Integer.parseInt(args[4]);
+//                StringBuilder sb = new StringBuilder("{");
+//                for (int y = fromY; y < fromY + cntY; y++) {
+//                    int curr = 0;
+//                    for (int x = fromX; x < fromX+8; x++) {
+//                        byte clr = MapUtils.getMapColorAt(MapUtils.getColors(), x,y);
+//                        if (clr == target) curr = (curr << 1) | 1;
+//                        else curr <<= 1;
+//                    }
+//                    sb.append("0x").append(Integer.toHexString(curr).toUpperCase());
+//                    if (y != fromY + cntY - 1) sb.append(", ");
+//                }
+//                sb.append("}");
+//                System.out.println("\n"+sb.toString());
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));

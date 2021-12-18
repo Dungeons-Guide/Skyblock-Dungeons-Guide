@@ -103,7 +103,6 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
 
                     for (int i = 0; i < nbttaglist1.tagCount(); i++) {
                         String str = nbttaglist1.getStringTagAt(i);
-                        System.out.println(str);
                         if (str.startsWith("§aCurrently Selected")) {
                             lastClass = str.substring(24);
                         }

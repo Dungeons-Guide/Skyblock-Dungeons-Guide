@@ -198,7 +198,8 @@ public class DungeonListener {
                     if ((isOnDungeon && !skyblockStatus.isOnDungeon())) {
                         MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
                         skyblockStatus.setContext(null);
-                        MapUtils.clearMap();
+                        if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled())
+                            MapUtils.clearMap();
                         return;
                     }
                     if (isOnSkyblock) {

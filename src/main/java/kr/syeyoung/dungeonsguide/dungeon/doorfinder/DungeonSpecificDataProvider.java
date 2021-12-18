@@ -32,4 +32,8 @@ public interface DungeonSpecificDataProvider {
     BossfightProcessor createBossfightProcessor(World w, String dungeonName);
 
     boolean isTrapSpawn(String dungeonName);
+
+    double secretPercentage(String dungeonName);
+
+    int speedSecond(String dungeonName);
 }

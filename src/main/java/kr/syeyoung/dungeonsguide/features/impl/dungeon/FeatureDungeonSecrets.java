@@ -37,7 +37,7 @@ import java.util.List;
 
 public class FeatureDungeonSecrets extends TextHUDFeature {
     public FeatureDungeonSecrets() {
-        super("Dungeon.Dungeon Information", "Display Total # of Secrets", "Display how much total secrets have been found in a dungeon run.\n+ sign means DG does not know the correct number, but it's somewhere above that number.", "dungeon.stats.secrets", true, getFontRenderer().getStringWidth("Secrets: 999/999+"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon.Dungeon Information", "Display Total # of Secrets", "Display how much total secrets have been found in a dungeon run.\n+ sign means DG does not know the correct number, but it's somewhere above that number.", "dungeon.stats.secrets", true, getFontRenderer().getStringWidth("Secrets: 999/999+ of 999+"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
@@ -51,15 +51,26 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     public int getSecretsFound() {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
-            if (name.startsWith("§r Secrets Found: §r§b")) {
+            if (name.startsWith("§r Secrets Found: §r§b") && !name.contains("%")) {
                 String noColor = TextUtils.stripColor(name);
                 return Integer.parseInt(noColor.substring(16));
             }
         }
         return 0;
     }
+    public double getSecretPercentage() {
+        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
+            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+            if (name.startsWith("§r Secrets Found: §r") && name.contains("%")) {
+                String noColor = TextUtils.stripColor(name);
+                return Double.parseDouble(noColor.substring(16).replace("%", ""));
+            }
+        }
+        return 0;
+    }
 
     public int getTotalSecretsInt() {
+        if (getSecretsFound() != 0) return (int) (getSecretsFound() / getSecretPercentage() * 100);
         DungeonContext context = skyblockStatus.getContext();
         int totalSecrets = 0;
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
@@ -69,6 +80,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         return totalSecrets;
     }
     public boolean sureOfTotalSecrets() {
+        if (getSecretsFound() != 0) return true;
         DungeonContext context = skyblockStatus.getContext();
         if (context.getMapProcessor().getUndiscoveredRoom() > 0) return false;
         boolean allknown = true;
@@ -124,7 +136,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         actualBit.add(new StyledText(": ","separator"));
         actualBit.add(new StyledText(getSecretsFound() +"","currentSecrets"));
         actualBit.add(new StyledText("/","separator2"));
-        actualBit.add(new StyledText(getTotalSecrets().replace("+", ""),"totalSecrets"));
+        actualBit.add(new StyledText((int)(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
         actualBit.add(new StyledText(getTotalSecrets().contains("+") ? "+" : "","unknown"));
         return actualBit;
     }
