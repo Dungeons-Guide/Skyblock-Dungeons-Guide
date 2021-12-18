@@ -108,7 +108,7 @@ public class PanelPartyListElement extends MPanel {
             }
         }
 
-        boolean nodupe = note.toLowerCase().contains("nodupe") || note.toLowerCase().contains("no dupe") || (note.toLowerCase().contains("nd") && (note.indexOf("nd") == 0 || note.charAt(note.indexOf("nd")-1) == ' '));
+        boolean nodupe = note.toLowerCase().contains("nodupe") || note.toLowerCase().contains("no dupe") || (note.toLowerCase().contains("nd") && (note.toLowerCase().indexOf("nd") == 0 || note.charAt(note.toLowerCase().indexOf("nd")-1) == ' '));
 
         note = note.replaceAll("(?i)(S\\+)", "§6$1§r");
         note = note.replaceAll("(?i)(carry)", "§4$1§r");
