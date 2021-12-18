@@ -39,7 +39,8 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
         getStyles().add(new TextStyle("player", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("ready", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("notready", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("notready", new AColor(0xFF, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        getStyles().add(new TextStyle("terminal", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
         setEnabled(true);
     }
 
@@ -50,7 +51,7 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
 
     @Override
     public List<String> getUsedTextStyle() {
-        return Arrays.asList("name" ,"separator", "player", "allinvite");
+        return Arrays.asList("separator", "player", "ready", "notready", "terminal");
     }
 
     private static final List<StyledText> dummyText = new ArrayList<StyledText>();
@@ -58,18 +59,23 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
         dummyText.add(new StyledText("syeyoung","player"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("Ready","ready"));
+        dummyText.add(new StyledText(" 4","terminal"));
         dummyText.add(new StyledText("\nrioho","player"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("Ready","ready"));
+        dummyText.add(new StyledText(" 3","terminal"));
         dummyText.add(new StyledText("\nRaidShadowLegends","player"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("Not Ready","notready"));
+        dummyText.add(new StyledText(" 2t","terminal"));
         dummyText.add(new StyledText("\nTricked","player"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("Ready","ready"));
+        dummyText.add(new StyledText(" ss","terminal"));
         dummyText.add(new StyledText("\nMr. Penguin","player"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("Not Ready","notready"));
+        dummyText.add(new StyledText(" 2b","terminal"));
     }
 
     @Override
@@ -83,6 +89,7 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
     }
 
     private Set<String> ready = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+    private Map<String, String> terminal = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     @Override
     public List<StyledText> getText() {
@@ -96,6 +103,9 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
                 text.add(new StyledText("Ready","ready"));
             else
                 text.add(new StyledText("Not Ready","notready"));
+            if (terminal.get(partyRawMember) != null) {
+                text.add(new StyledText(" "+ terminal.get(partyRawMember), "terminal"));
+            }
             first =false;
         }
         return text;
@@ -103,6 +113,7 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
 
     private static final List<String> readyPhrase = Arrays.asList("r", "rdy", "ready");
     private static final List<String> negator = Arrays.asList("not ", "not", "n", "n ");
+    private static final List<String> terminalPhrase = Arrays.asList("ss", "s1", "1", "2b", "2t", "3", "4", "s3", "s4", "s2", "2");
     private static final Map<String, Boolean> readynessIndicator = new HashMap<>();
     static {
         readyPhrase.forEach(val -> readynessIndicator.put(val, true));
@@ -125,17 +136,6 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
 
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":")+1)).trim().toLowerCase();
 
-        Boolean status = null;
-        String longestMatch = "";
-        for (Map.Entry<String, Boolean> stringBooleanEntry : readynessIndicator.entrySet()) {
-            if (chat.startsWith(stringBooleanEntry.getKey()) || chat.endsWith(stringBooleanEntry.getKey()) || (stringBooleanEntry.getKey().length()>=3 && chat.contains(stringBooleanEntry.getKey()))) {
-                if (stringBooleanEntry.getKey().length() > longestMatch.length()) {
-                    longestMatch = stringBooleanEntry.getKey();
-                    status = stringBooleanEntry.getValue();
-                }
-            }
-        }
-        if (status == null) return;
 
 
         String usernamearea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
@@ -146,12 +146,36 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
             username = s;
             break;
         }
-        if (status) ready.add(username);
+
+
+        Boolean status = null;
+        String longestMatch = "";
+        for (Map.Entry<String, Boolean> stringBooleanEntry : readynessIndicator.entrySet()) {
+            if (chat.startsWith(stringBooleanEntry.getKey()) || chat.endsWith(stringBooleanEntry.getKey()) || (stringBooleanEntry.getKey().length()>=3 && chat.contains(stringBooleanEntry.getKey()))) {
+                if (stringBooleanEntry.getKey().length() > longestMatch.length()) {
+                    longestMatch = stringBooleanEntry.getKey();
+                    status = stringBooleanEntry.getValue();
+                }
+            }
+        }
+        if (status == null);
+        else if (status) ready.add(username);
         else ready.remove(username);
+
+
+        String term = "";
+        for (String s : terminalPhrase) {
+            if (chat.equals(s) || chat.startsWith(s+" ") || chat.endsWith(" "+s) || chat.contains(" "+s+" ")) {
+                term += s+" ";
+            }
+        }
+        if (!term.isEmpty())
+            terminal.put(username, term);
     }
 
     @Override
     public void onDungeonStart() {
         ready.clear();
+        terminal.clear();
     }
 }
