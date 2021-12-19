@@ -70,7 +70,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     }
 
     public int getTotalSecretsInt() {
-        if (getSecretsFound() != 0) return (int) (getSecretsFound() / getSecretPercentage() * 100);
+        if (getSecretsFound() != 0) return (int) Math.ceil (getSecretsFound() / getSecretPercentage() * 100);
         DungeonContext context = skyblockStatus.getContext();
         int totalSecrets = 0;
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
@@ -136,7 +136,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         actualBit.add(new StyledText(": ","separator"));
         actualBit.add(new StyledText(getSecretsFound() +"","currentSecrets"));
         actualBit.add(new StyledText("/","separator2"));
-        actualBit.add(new StyledText((int)(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
+        actualBit.add(new StyledText((int)Math.ceil(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
         actualBit.add(new StyledText(getTotalSecrets().contains("+") ? "+" : "","unknown"));
         return actualBit;
     }

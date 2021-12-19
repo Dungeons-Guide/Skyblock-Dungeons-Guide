@@ -122,7 +122,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         texts.add(new StyledText("Total Secrets","field_name"));
         texts.add(new StyledText(": ","field_separator"));
         texts.add(new StyledText(scoreCalculation.getSecrets() +"/" + scoreCalculation.getEffectiveTotalSecrets()+" of "+scoreCalculation.getTotalSecrets(),"field_value"));
-        texts.add(new StyledText(" ("+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 100.0f)+"% "+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 40.0f)+" Explorer)\n","field_etc"));
+        texts.add(new StyledText(" ("+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 100.0f)+"% "+(int)Math.ceil(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 40.0f)+" Explorer)\n","field_etc"));
 
 
         texts.add(new StyledText("Crypts","field_name"));

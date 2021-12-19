@@ -269,7 +269,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
 
             fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
             explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? getPercentage() : completed / total * 100)), 0, 60);
-            explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / (totalSecrets * context.getSecretPercentage())),0,40);
+            explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
         }
         int time = 0;
         {
@@ -297,7 +297,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
         }
 
         // amazing thing
-        return new ScoreCalculation(skill, explorer, time, bonus, tombs, fullyCleared, secrets, totalSecrets, (int) (totalSecrets * context.getSecretPercentage()), totalSecretsKnown, deaths);
+        return new ScoreCalculation(skill, explorer, time, bonus, tombs, fullyCleared, secrets, totalSecrets, (int)Math.ceil (totalSecrets * context.getSecretPercentage()), totalSecretsKnown, deaths);
     }
     public String getLetter(int score) {
         if (score <= 99) return "D";
