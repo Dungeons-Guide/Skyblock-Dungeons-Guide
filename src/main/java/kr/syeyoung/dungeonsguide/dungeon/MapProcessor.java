@@ -401,6 +401,10 @@ public class MapProcessor {
         int time = MapUtils.readNumber(mapData, 51, 73, 9);
         int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
         DungeonsGuide.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
+        DungeonsGuide.sendDebugChat(new ChatComponentText(new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
+                .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
+                .put("timeScore", time)
+                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()).toString()));
 
         try {
             String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
