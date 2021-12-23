@@ -127,7 +127,7 @@ public class DungeonContext {
     }
 
 
-    private final Rectangle roomBoundary = new Rectangle(0,0,128,128);
+    private final Rectangle roomBoundary = new Rectangle(-10,-10,138,138);
 
     public void tick() {
         mapProcessor.tick();

@@ -401,19 +401,18 @@ public class MapProcessor {
         int time = MapUtils.readNumber(mapData, 51, 73, 9);
         int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
         DungeonsGuide.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
-        DungeonsGuide.sendDebugChat(new ChatComponentText(new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
+        JSONObject payload = new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
                 .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
                 .put("timeScore", time)
-                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()).toString()));
+                .put("completed", context.getBossRoomEnterSeconds() != -1)
+                .put("percentage", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getPercentage() / 100.0)
+                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        DungeonsGuide.sendDebugChat(new ChatComponentText(payload.toString()));
 
         try {
             String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
-            if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("false")) {
-
-                DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
-                        .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
-                        .put("timeScore", time)
-                        .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()).toString()).header("destination", target.trim()));
+            if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalse")) {
+                DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(payload.toString().replace("false", "")).header("destination", target.trim()));
             }
         } catch (Throwable e) {
             e.printStackTrace();
