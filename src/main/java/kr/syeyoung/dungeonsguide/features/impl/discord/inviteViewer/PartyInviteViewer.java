@@ -62,6 +62,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
 
     @Override
     public void drawScreen(float partialTicks) {
+        if (!isEnabled()) return;
         try {
             renderRequests(false);
         } catch (Throwable t) {
@@ -93,6 +94,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
 
     @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
+        if (!isEnabled()) return;
         int mouseX = Mouse.getX();
         int mouseY = Minecraft.getMinecraft().displayHeight - Mouse.getY() +3;
         for (PartyJoinRequest joinRequest:joinRequests) {

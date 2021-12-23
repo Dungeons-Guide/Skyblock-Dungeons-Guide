@@ -73,6 +73,7 @@ public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateLi
 
     @Override
     public void drawScreen(float partialTicks) {
+        if (!isEnabled()) return;
         try {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0,0,100);
