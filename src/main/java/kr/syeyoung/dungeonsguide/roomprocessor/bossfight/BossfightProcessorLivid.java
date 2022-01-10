@@ -34,8 +34,11 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
 
     private final Set<String> knownLivids = new HashSet<String>();
 
-    public BossfightProcessorLivid() {
+    private boolean isMasterMode;
+
+    public BossfightProcessorLivid(boolean isMasterMode) {
         addPhase(PhaseData.builder().phase("start").build());
+        this.isMasterMode = isMasterMode;
     }
     private static final Map<String, String> lividColorPrefix = new HashMap<String, String>() {{
             put("Vendetta", "§f");
@@ -76,7 +79,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             } catch (Exception e) {e.printStackTrace();}
         }
-        healths.add(new HealthData(realLividName == null ? "unknown" : realLividName, (int) health,7000000 , true));
+        healths.add(new HealthData(realLividName == null ? "unknown" : realLividName, (int) health,isMasterMode ? 600000000 : 7000000 , true));
         return healths;
     }
 

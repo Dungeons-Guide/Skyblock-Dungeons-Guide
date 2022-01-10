@@ -102,7 +102,7 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
         } else if (floor.equals("F4")) {
             return new BossfightProcessorThorn();
         } else if (floor.equals("F5")) {
-            return new BossfightProcessorLivid();
+            return new BossfightProcessorLivid(false);
         } else if (floor.equals("F6")) {
             return new BossfightProcessorSadan();
         } else if (floor.equals("F7")) {
