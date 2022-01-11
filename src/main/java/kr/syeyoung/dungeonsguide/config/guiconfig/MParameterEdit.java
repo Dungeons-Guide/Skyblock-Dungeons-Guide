@@ -177,15 +177,15 @@ public class MParameterEdit extends MPanel {
     }
 
     @Override
-    public void keyHeld0(char typedChar, int keyCode, long heldMS) {
+    public void keyHeld0(char typedChar, int keyCode) {
         if (isDisabled.test(featureParameter)) return;
-        super.keyHeld0(typedChar, keyCode, heldMS);
+        super.keyHeld0(typedChar, keyCode);
     }
 
     @Override
-    public void keyReleased0(char typedChar, int keyCode, long heldMS) {
+    public void keyReleased0(char typedChar, int keyCode) {
         if (isDisabled.test(featureParameter)) return;
-        super.keyReleased0(typedChar, keyCode, heldMS);
+        super.keyReleased0(typedChar, keyCode);
     }
 
     @Override

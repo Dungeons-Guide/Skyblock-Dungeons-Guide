@@ -205,25 +205,15 @@ public class MTextField extends MPanel {
         }
     }
 
-    private Map<Integer, Long> callKeyHeldIfAfter = new HashMap<>();
     @Override
-    public void keyHeld(char typedChar, int keyCode, long heldMS) {
+    public void keyHeld(char typedChar, int keyCode) {
         if (!isFocused) return;
-        Long callAfter = callKeyHeldIfAfter.get(keyCode);
-        if (callAfter == null) return;
-        if (callAfter <= System.currentTimeMillis()) this.keyPressed(typedChar, keyCode);
-    }
-
-    @Override
-    public void keyReleased(char typedChar, int keyCode, long heldMS) {
-        callKeyHeldIfAfter.remove(keyCode);
+        this.keyPressed(typedChar, keyCode);
     }
 
     @Override
     public void keyPressed(char typedChar, int keycode) {
         if (!isFocused) return;
-        if (callKeyHeldIfAfter.containsKey(keycode)) callKeyHeldIfAfter.put(keycode, System.currentTimeMillis()+50);
-        else callKeyHeldIfAfter.put(keycode, System.currentTimeMillis() + 750);
 
         if (selectionStart == -1) {
             if (keycode == 199) { // home

@@ -200,24 +200,24 @@ public class MPanel {
             keyPressed(typedChar, keyCode);
     }
     public void keyPressed(char typedChar, int keyCode) {}
-    public void keyHeld0(char typedChar, int keyCode, long heldMS) {
+    public void keyHeld0(char typedChar, int keyCode) {
         for (MPanel childComponent  : getChildComponents()) {
-            childComponent.keyHeld0(typedChar, keyCode, heldMS);
+            childComponent.keyHeld0(typedChar, keyCode);
         }
 
         if (isFocused)
-            keyHeld(typedChar, keyCode, heldMS);
+            keyHeld(typedChar, keyCode);
     }
-    public void keyHeld(char typedChar, int keyCode, long heldMS) {}
-    public void keyReleased0(char typedChar, int keyCode, long heldMS) {
+    public void keyHeld(char typedChar, int keyCode) {}
+    public void keyReleased0(char typedChar, int keyCode) {
         for (MPanel childComponent  : getChildComponents()) {
-            childComponent.keyReleased0(typedChar, keyCode, heldMS);
+            childComponent.keyReleased0(typedChar, keyCode);
         }
 
         if (isFocused)
-            keyReleased(typedChar, keyCode, heldMS);
+            keyReleased(typedChar, keyCode);
     }
-    public void keyReleased(char typedChar, int keyCode, long heldMS) {}
+    public void keyReleased(char typedChar, int keyCode) {}
 
 
     public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {

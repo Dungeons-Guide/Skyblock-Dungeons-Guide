@@ -54,6 +54,7 @@ public class MGui extends GuiScreen {
     @Override
     public void initGui() {
         super.initGui();
+        Keyboard.enableRepeatEvents(true);
         isOpen = true;
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         mainPanel.setBounds(new Rectangle(0,0,Minecraft.getMinecraft().displayWidth,Minecraft.getMinecraft().displayHeight));
@@ -93,17 +94,17 @@ public class MGui extends GuiScreen {
                 e.printStackTrace();
         }
     }
-    public void keyHeld(int keyCode, char typedChar, long heldMS) throws IOException {
+    public void keyHeld(int keyCode, char typedChar) throws IOException {
         try {
-            mainPanel.keyHeld0(typedChar, keyCode, heldMS);
+            mainPanel.keyHeld0(typedChar, keyCode);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                 e.printStackTrace();
         }
     }
-    public void keyReleased(int keyCode, char typedChar,long heldMS) throws IOException {
+    public void keyReleased(int keyCode, char typedChar) throws IOException {
         try {
-            mainPanel.keyReleased0(typedChar, keyCode, heldMS);
+            mainPanel.keyReleased0(typedChar, keyCode);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                 e.printStackTrace();
@@ -125,8 +126,8 @@ public class MGui extends GuiScreen {
     @Override
     public void onGuiClosed() {
         super.onGuiClosed();
+        Keyboard.enableRepeatEvents(false);
         isOpen = false;
-        keyLastPressed.clear();
 
         try {
             Mouse.setNativeCursor(null);
@@ -235,17 +236,18 @@ public class MGui extends GuiScreen {
                 e.printStackTrace();
         }
     }
-    private Map<Integer, Tuple<Character, Long>> keyLastPressed = new HashMap<>();
     public void handleKeyboardInput() throws IOException
     {
         if (!isOpen) return;
+
         if (Keyboard.getEventKeyState())
         {
-            keyLastPressed.put(Keyboard.getEventKey(), new Tuple<>(Keyboard.getEventCharacter(), System.currentTimeMillis()));
-            this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+            if (Keyboard.isRepeatEvent())
+                this.keyHeld(Keyboard.getEventKey(), Keyboard.getEventCharacter());
+            else
+                this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
         } else {
-            Tuple<Character, Long> val = keyLastPressed.remove(Keyboard.getEventKey());
-            if (val != null) this.keyReleased(Keyboard.getEventKey(), val.getFirst(), val.getSecond());
+            this.keyReleased(Keyboard.getEventKey(), Keyboard.getEventCharacter());
         }
 
         this.mc.dispatchKeypresses();
@@ -253,10 +255,7 @@ public class MGui extends GuiScreen {
 
     @Override
     public void handleInput() throws IOException {
+//        Keyboard.enableRepeatEvents(true); // i hope it's temproary solution
         super.handleInput();
-        long currentTime = System.currentTimeMillis();
-        for (Map.Entry<Integer, Tuple<Character, Long>> integerLongEntry : keyLastPressed.entrySet()) {
-            this.keyHeld(integerLongEntry.getKey(), integerLongEntry.getValue().getFirst(), integerLongEntry.getValue().getSecond());
-        }
     }
 }
