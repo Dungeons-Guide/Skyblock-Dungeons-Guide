@@ -156,11 +156,11 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
         } else if (floor.equals("F3")) {
             return 600;
         } else if (floor.equals("F4")) {
-            return 720;
-        } else if (floor.equals("F5")) {
             return 600;
-        } else if (floor.equals("F6")) {
+        } else if (floor.equals("F5")) {
             return 720;
+        } else if (floor.equals("F6")) {
+            return 600;
         } else if (floor.equals("F7")) {
             return 720;
         }

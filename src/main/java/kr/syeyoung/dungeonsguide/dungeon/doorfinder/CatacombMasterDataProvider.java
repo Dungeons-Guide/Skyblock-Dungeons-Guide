@@ -93,7 +93,7 @@ public class CatacombMasterDataProvider implements DungeonSpecificDataProvider {
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
         DungeonsGuide.sendDebugChat(new ChatComponentText("Floor: Master mode "+floor+ " Building bossfight processor"));
-        if (floor.equals("F5")) {
+        if (floor.equals("M5")) {
             return new BossfightProcessorLivid(true);
         }
         return null;
