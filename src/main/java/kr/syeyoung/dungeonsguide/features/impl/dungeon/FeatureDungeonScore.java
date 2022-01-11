@@ -274,12 +274,13 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int time = 0;
         {
             int maxTime = context.getMaxSpeed();
-            int timeSec = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
+            int timeSec = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - maxTime + 480;
 
-            if (timeSec <= maxTime) time = 100;
-            else if (timeSec <= maxTime+100) time = (int) Math.ceil(232 - 0.1 * timeSec);
-            else if (timeSec <= maxTime+500) time = (int) Math.ceil(161 - 0.05 * timeSec);
-            else if (timeSec < maxTime+2600) time = (int) Math.ceil(392/3.0 - (1/30.0) * timeSec);
+            if (timeSec <= 480) time = 100;
+            else if (timeSec <= 580) time = (int) Math.ceil(148 - 0.1 * timeSec);
+            else if (timeSec <= 980) time = (int) Math.ceil(119 - 0.05 * timeSec);
+            else if (timeSec < 3060) time = (int) Math.ceil(3102 - (1/30.0) * timeSec);
+            time = MathHelper.clamp_int(time, 0, 100); // just in case.
         }
         int bonus = 0;
         int tombs;
