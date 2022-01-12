@@ -404,7 +404,8 @@ public class MapProcessor {
         JSONObject payload = new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
                 .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
                 .put("timeScore", time)
-                .put("completed", context.getBossRoomEnterSeconds() != -1)
+                .put("completionStage", context.getBossRoomEnterSeconds() == -1 ? 0 :
+                                    context.isDefeated() ? 2 : 1)
                 .put("percentage", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getPercentage() / 100.0)
                 .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
         DungeonsGuide.sendDebugChat(new ChatComponentText(payload.toString()));

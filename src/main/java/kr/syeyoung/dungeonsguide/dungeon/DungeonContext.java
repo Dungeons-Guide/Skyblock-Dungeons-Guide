@@ -172,6 +172,8 @@ public class DungeonContext {
 
     @Getter
     private boolean ended = false;
+    @Getter
+    private boolean defeated = false;
     public void onChat(ClientChatReceivedEvent event) {
         IChatComponent component = event.message;
         String formatted = component.getFormattedText();
@@ -197,6 +199,8 @@ public class DungeonContext {
         } else if (formatted.contains("§6> §e§lEXTRA STATS §6<")) {
             createEvent(new DungeonNodataEvent("DUNGEON_END"));
             ended = true;
+        } else if (formatted.contains("§r§c☠ §r§eDefeated ")) {
+            defeated = true;
         }
     }
 }
