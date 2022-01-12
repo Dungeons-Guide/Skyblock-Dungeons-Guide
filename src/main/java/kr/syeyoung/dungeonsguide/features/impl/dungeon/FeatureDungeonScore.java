@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.stomp.StompMessageHandler;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResource;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.AllArgsConstructor;
@@ -274,13 +275,14 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int time = 0;
         {
             int maxTime = context.getMaxSpeed();
-            int timeSec = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - maxTime + 480;
-
-            if (timeSec <= 480) time = 100;
-            else if (timeSec <= 580) time = (int) Math.ceil(148 - 0.1 * timeSec);
-            else if (timeSec <= 980) time = (int) Math.ceil(119 - 0.05 * timeSec);
-            else if (timeSec < 3060) time = (int) Math.ceil(3102 - (1/30.0) * timeSec);
-            time = MathHelper.clamp_int(time, 0, 100); // just in case.
+//            int timeSec = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - maxTime + 480;
+//
+//            if (timeSec <= 480) time = 100;
+//            else if (timeSec <= 580) time = (int) Math.ceil(148 - 0.1 * timeSec);
+//            else if (timeSec <= 980) time = (int) Math.ceil(119 - 0.05 * timeSec);
+//            else if (timeSec < 3060) time = (int) Math.ceil(3102 - (1/30.0) * timeSec);
+//            time = MathHelper.clamp_int(time, 0, 100); // just in case.
+            time = TimeScoreUtil.estimate(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed(), maxTime);
         }
         int bonus = 0;
         int tombs;

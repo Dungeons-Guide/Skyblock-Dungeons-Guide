@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
+import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -157,6 +158,7 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled())
             System.setProperty("dg.safe", "true");
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
+        TimeScoreUtil.init();
 
         ProgressManager.pop(progressbar);
     }
