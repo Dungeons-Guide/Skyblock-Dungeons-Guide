@@ -196,7 +196,9 @@ public class FeatureDungeonScore extends TextHUDFeature {
         return 0;
     }
     public int getTotalRooms() {
-        return (int) (100 * (getCompleteRooms() / (double)getPercentage()));
+        int compRooms = getCompleteRooms();
+        if (compRooms == 0) return 100;
+        return (int) (100 * (compRooms / (double)getPercentage()));
     }
     public int getUndiscoveredPuzzles() {
         int cnt = 0;
@@ -221,33 +223,35 @@ public class FeatureDungeonScore extends TextHUDFeature {
             deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
             skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
             int totalCompRooms= 0;
-            boolean bossroomFound = false;
-            boolean traproomFound = false;
             int roomCnt = 0;
+            int roomSkillPenalty = 0;
+//            boolean bossroomIncomplete = true;
+            boolean traproomIncomplete = context.isTrapRoomGen();
+            int incompletePuzzles = getUndiscoveredPuzzles();
+
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                if (dungeonRoom.getColor() == 74) bossroomFound = true;
-                if (dungeonRoom.getColor() == 62) traproomFound = true;
+//                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+//                    bossroomIncomplete = false;
+                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+                    traproomIncomplete = false;
                 if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
                     totalCompRooms += dungeonRoom.getUnitPoints().size();
-                if (dungeonRoom.getColor() == 66 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) // INCOMPLETE PUZZLE ON MAP
-                    skill -= 10;
-                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) // INCOMPLETE BOSSROOM YELLOW
-                    skill += 1;
-                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) // INCOMPLETE TRAP ROOM
-                    skill += 1;
-
-                skill += dungeonRoom.getCurrentState().getScoreModifier();
-
+                if (dungeonRoom.getColor() == 66 && (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED || dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED)) // INCOMPLETE PUZZLE ON MAP
+                    incompletePuzzles++;
                 roomCnt += dungeonRoom.getUnitPoints().size();
             }
-            if (!bossroomFound) skill += 1;
-            if (!traproomFound && context.isTrapRoomGen()) skill += 1;
-            skill -= getUndiscoveredPuzzles() * 10;
-            if (context.getMapProcessor().getUndiscoveredRoom() == 0) {
-                skill -= Math.max(0, (roomCnt - totalCompRooms) * 4);
-            } else {
-                skill -= Math.max(0, (getTotalRooms() - totalCompRooms) * 4);
-            }
+            roomSkillPenalty += incompletePuzzles * 10;
+            if (context.getMapProcessor().getUndiscoveredRoom() != 0)
+                roomCnt = getTotalRooms();
+            roomSkillPenalty += (roomCnt - totalCompRooms) * 4;
+//            if (bossroomIncomplete) roomSkillPenalty -=1;
+            if (traproomIncomplete) roomSkillPenalty -=1;
+
+
+            skill -= roomSkillPenalty;
+
+
+
             skill = MathHelper.clamp_int(skill, 0, 100);
         }
         int explorer = 0;

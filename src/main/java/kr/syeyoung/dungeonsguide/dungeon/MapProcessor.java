@@ -218,8 +218,8 @@ public class MapProcessor {
     private void processMap(byte[] mapData) {
         int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
         int width = (int) ((128.0 - topLeftMapPoint.x) / (unitRoomDimension.width + doorDimension.height));
-        undiscoveredRoom = 0;
         if (MapUtils.getMapColorAt(mapData,0,0) != 0) return;
+        undiscoveredRoom = 0;
         for (int y = 0; y <= height; y++){
             for (int x = 0; x <= width; x++) {
                 Point mapPoint = roomPointToMapPoint(new Point(x,y));
