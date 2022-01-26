@@ -142,39 +142,7 @@ public class DungeonListener {
             if (ev.phase == TickEvent.Phase.START) {
 
 
-                JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
-                if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getProfile().getId().toString())) {
-                    if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;
 
-                    final String[] a = new String[]{
-                            "User has changed current Minecraft session.",
-                            "Please restart mc to revalidate Dungeons Guide",
-                            "Hopefully this screen will be fixed in later release"
-                    };
-                    final GuiScreen b = new GuiErrorScreen(null, null) {
-                        @Override
-                        public void drawScreen(int par1, int par2, float par3) {
-                            super.drawScreen(par1, par2, par3);
-                            for (int i = 0; i < a.length; ++i) {
-                                drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
-                            }
-                        }
-
-                        @Override
-                        public void initGui() {
-                            super.initGui();
-                            this.buttonList.clear();
-                            this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100,20, "close"));
-                        }
-
-                        @Override
-                        protected void actionPerformed(GuiButton button) throws IOException {
-                            FMLCommonHandler.instance().exitJava(-1,true);
-                        }
-                    };
-                    Minecraft.getMinecraft().displayGuiScreen(b);
-                    return;
-                }
 
 
 
