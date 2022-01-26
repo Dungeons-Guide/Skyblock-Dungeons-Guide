@@ -191,30 +191,30 @@ public class JPSPathfinder {
                 }
                 if (dungeonRoom.isBlocked(x, y-dy, z)) {
                     nexts.add(openNode(x, y-dy, nz));
-                    if (dungeonRoom.isBlocked(x+1, y-dy, z))nexts.add(openNode(x+1, y-dy, nz));
-                    if (dungeonRoom.isBlocked(x-1, y-dy, z))nexts.add(openNode(x+1, y-dy, nz));
+                    if (dungeonRoom.isBlocked(x+1, y-dy, z)) nexts.add(openNode(x+1, y-dy, nz));
+                    if (dungeonRoom.isBlocked(x-1, y-dy, z)) nexts.add(openNode(x+1, y-dy, nz));
                 }
             } else if (dy == 0) {
                 if (dungeonRoom.isBlocked(x, y, z-dz)) {
-                    nexts.add(openNode(x, ny, z-dz));
+                    nexts.add(openNode(nx, y, z-dz));
                     if (dungeonRoom.isBlocked(x, y+1, z-dz)) nexts.add(openNode(nx, y+1, z-dz));
                     if (dungeonRoom.isBlocked(x, y-1, z-dz)) nexts.add(openNode(nx, y-1, z-dz));
                 }
                 if (dungeonRoom.isBlocked(x-dx, y, z)) {
                     nexts.add(openNode(x-dx, y, nz));
-                    if (dungeonRoom.isBlocked(x-dx, y+1, z))nexts.add(openNode(x-dx, y+1, nz));
-                    if (dungeonRoom.isBlocked(x-dx, y-1, z))nexts.add(openNode(x-dx, y-1, nz));
+                    if (dungeonRoom.isBlocked(x-dx, y+1, z)) nexts.add(openNode(x-dx, y+1, nz));
+                    if (dungeonRoom.isBlocked(x-dx, y-1, z)) nexts.add(openNode(x-dx, y-1, nz));
                 }
             } else if (dz == 0) {
                 if (dungeonRoom.isBlocked(x, y-dy, z)) {
                     nexts.add(openNode(nx, y-dy, z));
-                    if (dungeonRoom.isBlocked(x, y-dy, z+1))nexts.add(openNode(nx, y-dy, z+1));
-                    if (dungeonRoom.isBlocked(x, y-dy, z-1))nexts.add(openNode(nx, y-dy, z-1));
+                    if (dungeonRoom.isBlocked(x, y-dy, z+1)) nexts.add(openNode(nx, y-dy, z+1));
+                    if (dungeonRoom.isBlocked(x, y-dy, z-1)) nexts.add(openNode(nx, y-dy, z-1));
                 }
                 if (dungeonRoom.isBlocked(x-dx, y, z)) {
                     nexts.add(openNode(x-dx, ny, z));
-                    if (dungeonRoom.isBlocked(x-dx, y, z+1))nexts.add(openNode(x-dx, ny, z+1));
-                    if (dungeonRoom.isBlocked(x-dx, y, z-1))nexts.add(openNode(x-dx, ny, z-1));
+                    if (dungeonRoom.isBlocked(x-dx, y, z+1)) nexts.add(openNode(x-dx, ny, z+1));
+                    if (dungeonRoom.isBlocked(x-dx, y, z-1)) nexts.add(openNode(x-dx, ny, z-1));
                 }
             }
         } else if (determinant == 3) {
