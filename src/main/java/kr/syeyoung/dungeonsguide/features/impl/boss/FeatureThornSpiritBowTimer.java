@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.features.listener.TitleListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
@@ -79,8 +80,24 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (!(skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        if (clientChatReceivedEvent.message.getFormattedText().equals("§r§a§lThe §r§5§lSpirit Bow §r§a§lhas dropped!§r")) {
+        String text = clientChatReceivedEvent.message.getFormattedText();
+        if (text.equals("§r§a§lThe §r§5§lSpirit Bow §r§a§lhas dropped!§r")) {
             time = System.currentTimeMillis() + 16000;
+        } else if (text.startsWith("§r§c[BOSS] Thorn§r§f: ")) {
+            if (text.contains("another wound")
+            || text.contains("My energy, it goes away")
+            || text.contains("dizzy")
+            || text.contains("a delicate feeling")) {
+                time = 0;
+            }
+        } else if (text.startsWith("§r§b[CROWD]")) {
+            if (text.contains("That wasn't fair!!!") || text.contains("how to damage") || text.contains("Cheaters!") || text.contains("BOOOO")) {
+                time = 0;
+            } else if (text.contains("missing easy shots like that") || text.contains("missed the shot!") || text.contains("Keep dodging") || text.contains("no thumbs") || text.contains("can't aim")) {
+                time = 0;
+            }
+        } else if (text.equals("§r§cThe §r§5Spirit Bow§r§c disintegrates as you fire off the shot!§r")) {
+            time = 0;
         }
     }
 
