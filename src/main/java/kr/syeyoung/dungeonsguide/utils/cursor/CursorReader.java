@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.utils.cursor;
 import com.google.common.io.LittleEndianDataInputStream;
 import com.google.common.io.LittleEndianDataOutputStream;
 import com.twelvemonkeys.imageio.plugins.bmp.CURImageReader;
+import com.twelvemonkeys.imageio.plugins.bmp.CURImageReaderSpi;
 import com.twelvemonkeys.imageio.plugins.bmp.ICOImageReader;
 import lombok.Data;
 
@@ -35,6 +36,7 @@ import java.util.List;
 
 public class CursorReader {
     public static List<CursorData> readFromInputStream(InputStream inputStream) throws IOException {
+        System.out.println(inputStream);
         LittleEndianDataInputStream dataInputStream = new LittleEndianDataInputStream(new BufferedInputStream(inputStream));
         dataInputStream.mark(Integer.MAX_VALUE);
 
@@ -63,8 +65,7 @@ public class CursorReader {
         dataInputStream.reset();
 
         try (ImageInputStream imageInputStream = ImageIO.createImageInputStream(dataInputStream)) {
-            Iterator<ImageReader> imageReaderIterator = ImageIO.getImageReaders(imageInputStream);
-            CURImageReader imageReader = (CURImageReader) imageReaderIterator.next();
+            CURImageReader imageReader = new CURImageReader();
             imageReader.setInput(imageInputStream);
 
             for (int i = 0; i < directoryList.size(); i++) {

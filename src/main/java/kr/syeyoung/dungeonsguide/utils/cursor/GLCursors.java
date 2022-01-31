@@ -73,11 +73,6 @@ public class GLCursors {
         }
     }
 
-
-    static {
-        setupCursors();
-    }
-
     public static void setupCursors() {
         if (enumCursorCursorMap.size() != 0) return;
         int platform = LWJGLUtil.getPlatform();
