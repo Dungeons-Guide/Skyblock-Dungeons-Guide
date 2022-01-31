@@ -228,11 +228,21 @@ public class PartyManager implements StompMessageHandler {
                     newLeader = s;
                     break;
                 }
-                String oldLeader = messageSplit[messageSplit.length-1];
+                String oldLeader;
+                boolean left= false;
+                if (str.endsWith("§r§eleft§r")) {
+                    oldLeader = messageSplit[messageSplit.length-2];
+                    left = true;
+                } else {
+                    oldLeader = messageSplit[messageSplit.length-1];
+                }
 
                 if (oldLeader != null && newLeader != null ) {
                     getPartyContext(true).setPartyOwner(newLeader);
-                    getPartyContext(true).addPartyModerator(oldLeader);
+                    if (left)
+                        getPartyContext(true).removeFromParty(oldLeader);
+                    else
+                        getPartyContext(true).addPartyModerator(oldLeader);
                 }
                 a.put("type", "party_transfer");
                 potentialInvitenessChange();
