@@ -55,7 +55,9 @@ public class DungeonSecret implements DungeonMechanic {
             if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if (chest.numPlayersUsing > 0) {
-                    dungeonRoom.getRoomContext().put("c-"+pos.toString(), true);
+                    dungeonRoom.getRoomContext().put("c-"+pos.toString(), 2);
+                } else {
+                    dungeonRoom.getRoomContext().put("c-"+pos.toString(), 1);
                 }
             }
         } else if (secretType == SecretType.ESSENCE) {
@@ -86,7 +88,7 @@ public class DungeonSecret implements DungeonMechanic {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
             if (dungeonRoom.getRoomContext().containsKey("c-"+pos.toString()))
-                return SecretStatus.FOUND;
+                return ((int)dungeonRoom.getRoomContext().get("c-"+pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
             if (blockState.getBlock() == Blocks.air) {
                 return SecretStatus.DEFINITELY_NOT;
