@@ -54,8 +54,8 @@ public class MStringSelectionButton extends MPanel {
         dec.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                selectedIndex++;
-                if (selectedIndex >= possible.size()) selectedIndex = 0;
+                selectedIndex --;
+                if (selectedIndex < 0) selectedIndex = possible.size() - 1;
                 updateSelected();
                 onUpdate.run();
             }
@@ -63,8 +63,8 @@ public class MStringSelectionButton extends MPanel {
         inc.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                selectedIndex --;
-                if (selectedIndex < 0) selectedIndex = possible.size() - 1;
+                selectedIndex++;
+                if (selectedIndex >= possible.size()) selectedIndex = 0;
                 updateSelected();
                 onUpdate.run();
             }

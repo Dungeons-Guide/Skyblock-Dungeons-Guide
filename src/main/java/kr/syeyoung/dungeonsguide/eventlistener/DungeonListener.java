@@ -47,6 +47,8 @@ import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -336,6 +338,22 @@ public class DungeonListener {
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
                             dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+                    }
+                }
+
+                if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom !=null) {
+
+                    Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
+                    BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
+                    for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
+                        boolean blocked = dungeonRoom.isBlocked(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+
+                            RenderUtils.highlightBox(
+                                    AxisAlignedBB.fromBounds(
+                                            allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
+                                            allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
+                                    ), blocked ? new Color(0x55FF0000, true) : new Color(0x3300FF00, true), renderWorldLastEvent.partialTicks, false);
+
                     }
                 }
 

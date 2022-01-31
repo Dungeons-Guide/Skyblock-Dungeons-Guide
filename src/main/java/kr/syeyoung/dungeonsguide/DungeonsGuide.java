@@ -38,12 +38,16 @@ import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
+import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
+import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
@@ -166,6 +170,8 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         TimeScoreUtil.init();
 
         ProgressManager.pop(progressbar);
+
+        ((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
     }
     @Getter
     private boolean firstTimeUsingDG = false;

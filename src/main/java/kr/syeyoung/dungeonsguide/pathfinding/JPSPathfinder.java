@@ -72,7 +72,7 @@ public class JPSPathfinder {
     private LinkedList<Vec3> route = new LinkedList<>();
 
     @Getter
-    private PriorityQueue<Node> open = new PriorityQueue<>(Comparator.comparing((Node a) -> a.f).thenComparing(a -> a.x).thenComparing(a -> a.y).thenComparing(a -> a.z));
+    private PriorityQueue<Node> open = new PriorityQueue<>(Comparator.comparing((Node a) -> a == null ? Float.MAX_VALUE : a.f).thenComparing(a -> a == null ? Float.MAX_VALUE :  a.x).thenComparing(a -> a == null ? Float.MAX_VALUE :  a.y).thenComparing(a -> a == null ? Float.MAX_VALUE :  a.z));
 
     private int tx, ty, tz;
 
@@ -111,11 +111,11 @@ public class JPSPathfinder {
         destinationBB = AxisAlignedBB.fromBounds((to.xCoord - within)* 2, (to.yCoord - within) * 2, (to.zCoord - within) * 2, (to.xCoord + within) * 2, (to.yCoord + within)* 2, (to.zCoord + within) *2);
         open.clear();
         Node start;
-        open.add(start = openNode((int)from.xCoord* 2 + 1, (int)from.yCoord* 2 + 1, (int)from.zCoord * 2 + 1));
+        open.add(start = openNode((int)from.xCoord * 2 + 1, (int)from.yCoord * 2, (int)from.zCoord * 2+1));
         start.g = 0; start.f = 0; start.h = (float) from.squareDistanceTo(to);
 
         Node end = null; float minDist = Float.MAX_VALUE;
-        long forceEnd = System.currentTimeMillis() + timeout;
+        long forceEnd = System.currentTimeMillis() + timeout + 999999999L;
         while(!open.isEmpty()) {
             if (forceEnd < System.currentTimeMillis() && timeout != -1) break;
             Node n = open.poll();
@@ -263,9 +263,13 @@ public class JPSPathfinder {
                     }
                 }
             } else if (determinant == 2) {
-                if ((dx != 0 && dungeonRoom.isBlocked(nx , y , z ) && !dungeonRoom.isBlocked(nx + dx, y , z))
-                        || (dy != 0 && dungeonRoom.isBlocked(x , ny  , z) && !dungeonRoom.isBlocked(x , ny+dy  , z))
-                        || (dz != 0 && dungeonRoom.isBlocked(x  , y , nz  ) && !dungeonRoom.isBlocked(x  , y , nz+dz))) return openNode(nx,ny,nz);
+                for (EnumFacing value : EnumFacing.VALUES) {
+                    if (value.getFrontOffsetX() == dx || value.getFrontOffsetY() == dy || value.getFrontOffsetZ() == dz) continue;
+                    int tx = nx + value.getFrontOffsetX();
+                    int ty = ny + value.getFrontOffsetY();
+                    int tz = nz + value.getFrontOffsetZ();
+                    if (dungeonRoom.isBlocked(tx, ty, tz)) return openNode(nx, ny, nz);
+                }
                 if (dx != 0 &&  expand(nx, ny, nz, dx, 0,0) != null) return openNode(nx,ny,nz);
                 if (dy != 0 && expand(nx, ny, nz, 0, dy,0) != null) return openNode(nx,ny,nz);
                 if (dz != 0 && expand(nx, ny, nz, 0, 0,dz) != null) return openNode(nx,ny,nz);

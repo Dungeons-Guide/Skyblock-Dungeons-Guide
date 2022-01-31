@@ -83,7 +83,7 @@ public class FeatureRegistry {
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER = register(new PathfindLineProperties("Dungeon Secrets.Secret Browser", "Line Settings", "Line Settings when pathfinding using Secret Browser", "secret.lineproperties.secretbrowser", true, SECRET_LINE_PROPERTIES_GLOBAL));
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
 
-    public static final SimpleFeature SECRET_PATHFIND_STRATEGY = register(new SimpleFeature("Dungeon Secrets", "Use NEW JPS Optimization instead of standard A Star", "Faster, and accurate routes.", "secret.secretpathfind.algorithm", true));
+    public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY = register(new FeaturePathfindStrategy());
     public static final FeatureTogglePathfind SECRET_TOGGLE_KEY = register(new FeatureTogglePathfind());
     public static final FeatureFreezePathfind SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
     public static final FeatureCreateRefreshLine SECRET_CREATE_REFRESH_LINE = register(new FeatureCreateRefreshLine());
