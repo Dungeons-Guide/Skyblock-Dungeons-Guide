@@ -63,20 +63,27 @@ public class PanelPartyListElement extends MPanel {
 
     private MTooltip mTooltip;
 
+    private ItemStack lastStack;
     @Override
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         GuiCustomPartyFinder guiCustomPartyFinder = panelPartyFinder.getGuiCustomPartyFinder();
         if (guiCustomPartyFinder.getGuiChest() == null) return;
         Slot s = guiCustomPartyFinder.getGuiChest().inventorySlots.getSlot(slot);
         ItemStack itemStack = s.getStack();
-        if (itemStack == null) return;
-
-
+        if (itemStack == null && lastStack == null) return;
+        if (itemStack != null)
+            lastStack = itemStack;
+        else
+            itemStack = lastStack;
         int color = RenderUtils.blendAlpha(0x141414, 0.0f);
 
         String note = "";
+        boolean notfound = false;
         boolean cantjoin = false;
-        if (itemStack.getItem() == Item.getItemFromBlock(Blocks.bedrock)) cantjoin = true;
+        if (itemStack.getItem() == Item.getItemFromBlock(Blocks.bedrock)) {
+            cantjoin = true;
+            notfound = true;
+        }
         int minClass = -1, minDungeon = -1;
         int pplIn = 0;
         Set<String> dungeonClasses = new HashSet<>();
@@ -159,14 +166,15 @@ public class PanelPartyListElement extends MPanel {
             name = name.substring(0, name.indexOf("'"));
         fr.drawString(name, 0,0,-1);
 
-        note = "§7("+pplIn+") §f"+note;
+        if (!notfound)
+            note = "§7("+pplIn+") §f"+note;
         fr.drawString(note, fr.getStringWidth("AAAAAAAAAAAAAAAA")+5, 0,-1);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         String sideNote = "";
         if (minClass != -1) sideNote += "§7CLv ≥§b"+minClass+" ";
         if (minDungeon != -1) sideNote += "§7DLv ≥§b"+minDungeon+" ";
-        if (cantjoin) sideNote = "§cCan't join";
+        if (cantjoin && !notfound) sideNote = "§cCan't join";
         sideNote = sideNote.trim();
 
         GlStateManager.translate(getBounds().width,(32 - 2*fr.FONT_HEIGHT)/2,0);

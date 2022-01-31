@@ -39,6 +39,8 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
+import java.util.Arrays;
+
 @ChannelHandler.Sharable
 public class PacketListener extends ChannelDuplexHandler {
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -61,8 +63,11 @@ public class PacketListener extends ChannelDuplexHandler {
         if (packet instanceof S38PacketPlayerListItem) {
             packet = new CustomPacketPlayerListItem((S38PacketPlayerListItem) packet);
         }
-        if (packet instanceof  S30PacketWindowItems || packet instanceof S2FPacketSetSlot) {
-            MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent(packet instanceof  S30PacketWindowItems ? (S30PacketWindowItems)packet : null , packet instanceof S2FPacketSetSlot ? (S2FPacketSetSlot)packet : null));
+        if (packet instanceof  S30PacketWindowItems) {
+            packet = new CustomWindowItems((S30PacketWindowItems) packet);
+        }
+        if (packet instanceof S2FPacketSetSlot) {
+            packet = new CustomSetSlot((S2FPacketSetSlot) packet);
         }
         if (packet instanceof S23PacketBlockChange) {
             packet = new SingleBlockChange((S23PacketBlockChange) packet);
@@ -70,6 +75,28 @@ public class PacketListener extends ChannelDuplexHandler {
             packet = new MultiBlockChange((S22PacketMultiBlockChange) packet);
         }
         super.channelRead(ctx, packet);
+    }
+
+    private static class CustomWindowItems extends S30PacketWindowItems {
+        public CustomWindowItems(S30PacketWindowItems parent) {
+            super(parent.func_148911_c(), Arrays.asList(parent.getItemStacks()));
+        }
+
+        @Override
+        public void processPacket(INetHandlerPlayClient handler) {
+            super.processPacket(handler);
+            MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent(this, null));
+        }
+    }
+    private static class CustomSetSlot extends S2FPacketSetSlot {
+        public CustomSetSlot(S2FPacketSetSlot parent) {
+            super(parent.func_149175_c(), parent.func_149173_d(), parent.func_149174_e());
+        }
+        @Override
+        public void processPacket(INetHandlerPlayClient handler) {
+            super.processPacket(handler);
+            MinecraftForge.EVENT_BUS.post(new WindowUpdateEvent(null, this));
+        }
     }
 
     private static class SingleBlockChange extends S23PacketBlockChange {
