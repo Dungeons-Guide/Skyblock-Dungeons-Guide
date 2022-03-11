@@ -133,7 +133,7 @@ public class PartyManager implements StompMessageHandler {
                     if (role.contains("Leader")) {
                         context.put("type", "member_leader");
                     }
-                } else if (txt.equals("§9§m-----------------------------§r")) {
+                } else if (txt.startsWith("§9§m---------------------------")) {
                     if (memberExpected) {
                         PartyContext old = getPartyContext(true);
                         old.setPartyOwner(partyContext.getPartyOwner());
@@ -343,7 +343,7 @@ public class PartyManager implements StompMessageHandler {
                         getPartyContext().addRawMember(player);
                     }
                     context.put("type", "party_selfjoin_players");
-                } else if (str.equals("§9§m-----------------------------§r") && joined) {
+                } else if (str.startsWith("§9§m---------------------------") && joined) {
                     joined = false;
                     getPartyContext().setRawMemberComplete(true);
                     joinedParty();
@@ -390,7 +390,7 @@ public class PartyManager implements StompMessageHandler {
     }
 
     public static ChatSubscriber dashShredder() {
-        return (str, a) -> (int)a.get("removed") == 0 && str.equals("§9§m-----------------------------§r") ? ChatProcessResult.REMOVE_LISTENER_AND_CHAT : ChatProcessResult.NONE;
+        return (str, a) -> (int)a.get("removed") == 0 && str.startsWith("§9§m---------------------------") ? ChatProcessResult.REMOVE_LISTENER_AND_CHAT : ChatProcessResult.NONE;
     }
 
     public static ChatSubscriber typeShredder(boolean end, String... types) {
