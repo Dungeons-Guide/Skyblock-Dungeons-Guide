@@ -70,7 +70,8 @@ public class PartyManager implements StompMessageHandler {
                     || str.equals("§cYou are not in a party and were moved to the ALL channel.§r")
                     || str.startsWith("§cThe party was disbanded")
                     || str.endsWith("§ehas disbanded the party!§r")
-                    || str.endsWith("§cYou are not in a party")) {
+                    || str.startsWith("§cYou are not in a party")
+                    || str.startsWith("§eYou have been kicked from the party by ")) {
                 leaveParty();
 
                 for (Consumer<PartyContext> partyContextConsumer : partyBuiltCallback) {
