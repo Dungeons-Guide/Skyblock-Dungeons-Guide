@@ -103,7 +103,7 @@ public class ActionMove extends AbstractAction {
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
         try {
-            if (latestFuture != null) latestFuture.cancel(true);
+            if (latestFuture != null) return;
         } catch (Exception ignored) {}
         latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, 10000);
     }
