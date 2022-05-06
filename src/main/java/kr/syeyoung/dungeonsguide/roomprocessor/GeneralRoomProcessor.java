@@ -237,7 +237,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         if (lastChest != null && chat.getFormattedText().equals("§r§cThis chest has already been searched!§r")) {
-            getDungeonRoom().getRoomContext().put("c-"+lastChest.toString(), true);
+            getDungeonRoom().getRoomContext().put("c-"+lastChest.toString(), 2);
             lastChest = null;
         }
     }
