@@ -55,7 +55,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
             progressBar.clear();
             for (int x = -30; x <= 30; x++) {
                 for (int y = -30; y <= 30; y++) {
-                    BlockPos newPos = new BlockPos(205 + x, 77, 205 + y);
+                    BlockPos newPos = new BlockPos(5 + x, 77, 5 + y);
                     Block b = w.getBlockState(newPos).getBlock();
                     if ((b == Blocks.coal_block || b == Blocks.sea_lantern) && w.getBlockState(newPos.add(0, 1, 0)).getBlock() != Blocks.carpet)
                         progressBar.add(newPos);
