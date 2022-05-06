@@ -76,7 +76,6 @@ public class RenderUtils {
         GL11.glTexParameterf(GL11.GL_TEXTURE_2D, GL11.GL_TEXTURE_WRAP_T, 10497.0F);
         GlStateManager.disableLighting();
         GlStateManager.disableDepth();
-        GlStateManager.enableCull();
         GlStateManager.enableTexture2D();
         GlStateManager.tryBlendFuncSeparate(770, 1, 1, 0);
         GlStateManager.enableBlend();
@@ -121,7 +120,6 @@ public class RenderUtils {
         worldrenderer.pos(x + d4, y + topOffset, z + d5).tex(0.0D, d15).color(r, g, b, alpha).endVertex();
         tessellator.draw();
 
-        GlStateManager.disableCull();
         double d12 = -1.0D + d1;
         double d13 = height + d12;
 
@@ -238,31 +236,25 @@ public class RenderUtils {
         GlStateManager.translate(width/2.0+x, height/2.0+y, 0);
         Tessellator t = Tessellator.getInstance();
         GlStateManager.disableTexture2D();
-        GlStateManager.disableCull();
         RenderUtils.GL_SETCOLOR(color);
         WorldRenderer wr = t.getWorldRenderer();
         wr.begin(GL11.GL_POLYGON, DefaultVertexFormats.POSITION);
         for (double i = 0.1; i < Math.PI*2; i+= delta) {
             double cos = MathHelper.cos((float) i);
             double sin = MathHelper.sin((float) i);
-            if (cos != 0 || sin != 0)
-                wr.pos(cos * radius + (cos < 0 ? -width/2.0+radius : width/2.0-radius),
-                        sin * radius + (sin <= 0 ? -height/2.0+radius : height/2.0-radius), 0)
-                        .endVertex(); // .color((int) (i/(Math.PI*2) * 255),0,0,255)
-            if (cos *MathHelper.cos((float) (i + delta)) <= 0) { // X Change
-                sin = Math.round(sin);
-
-                wr.pos((cos < 0 ? -1 : 1) * (width/2.0 - radius),
-                        sin * radius + (sin < 0 ? -height/2.0+radius : height/2.0-radius), 0).endVertex();
-                wr.pos((cos < 0 ? 1 : -1) *  (width/2.0 - radius),
-                        sin * radius + (sin < 0 ? -height/2.0+radius : height/2.0-radius), 0).endVertex();
-            } else if (sin * MathHelper.sin((float) (i+delta)) <= 0) { // Y Change
-                cos = Math.round(cos);
-
-                wr.pos(cos * radius + (cos < 0 ? -width/2.0+radius : width/2.0-radius),
-                        (sin < 0 ? -1 : 1) *(height/2.0 - radius), 0).endVertex();
-                wr.pos(cos * radius + (cos < 0 ? -width/2.0+radius : width/2.0-radius),
-                        (sin < 0 ? 1 : -1) *(height/2.0 - radius), 0).endVertex();
+            if (cos * MathHelper.cos((float) (i + delta)) <= 0) {
+                wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
+                        cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius),0).endVertex();
+                wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
+                        cos * radius + (cos > 0 ? -1 : 1) * (height/2.0 - radius),0).endVertex();
+            } else if (sin * MathHelper.sin((float) (i+delta)) <= 0) {
+                wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
+                        cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius), 0).endVertex();
+                wr.pos(sin * radius + (sin > 0 ? -1 : 1) * (width/2.0 - radius),
+                        cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius), 0).endVertex();
+            } else {
+                wr.pos(sin * radius + (sin > 0 ? 1 : -1) * (width/2.0 - radius),
+                        cos * radius + (cos > 0 ? 1 : -1) * (height/2.0 - radius), 0).endVertex();
             }
         }
         t.draw();
@@ -473,13 +465,10 @@ public class RenderUtils {
         double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
         double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
         double playerZ = player.prevPosZ + (player.posZ - player.prevPosZ) * partialTicks;
-//because of the way 3D rendering is done, all coordinates are relative to the camera.  This "resets" the "0,0,0" position to the location that is (0,0,0) in the world.
-
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-playerX, -playerY, -playerZ);
         GlStateManager.disableTexture2D();
-        GlStateManager.disableCull();
         GlStateManager.enableAlpha();
 
         if (dungeonDoor.getType().isExist())
@@ -536,7 +525,6 @@ public class RenderUtils {
         GlStateManager.disableBlend();
 
         GlStateManager.enableTexture2D();
-        GlStateManager.enableCull();
 
 
         RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
@@ -832,7 +820,6 @@ public class RenderUtils {
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
-        GlStateManager.disableCull();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.disableTexture2D();
 
@@ -906,7 +893,6 @@ public class RenderUtils {
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
-        GlStateManager.disableCull();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
         GlStateManager.disableTexture2D();
 

@@ -99,7 +99,6 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
                 GlStateManager.rotate(dir, 0.0f, 1.0f, 0.0f);
             GlStateManager.scale(-0.05f, -0.05f, 0.05f);
             GlStateManager.disableLighting();
-            GlStateManager.disableCull();
             GlStateManager.depthMask(false); GL11.glDisable(GL11.GL_DEPTH_TEST);
             GlStateManager.disableDepth();
             GlStateManager.enableBlend();
@@ -111,7 +110,6 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
             GlStateManager.depthMask(true);
             GlStateManager.enableDepth();
-            GlStateManager.enableCull();
             GlStateManager.popMatrix();
         }
     }

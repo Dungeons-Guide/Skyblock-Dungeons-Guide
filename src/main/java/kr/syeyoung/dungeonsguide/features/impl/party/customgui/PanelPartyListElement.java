@@ -152,7 +152,6 @@ public class PanelPartyListElement extends MPanel {
         RenderHelper.disableStandardItemLighting();
         RenderHelper.enableGUIStandardItemLighting();
         GlStateManager.scale(2,2,1);
-        GlStateManager.enableCull();
         GlStateManager.enableDepth();
         renderItem.renderItemAndEffectIntoGUI(itemStack, 0,0);
         GlStateManager.popMatrix();
