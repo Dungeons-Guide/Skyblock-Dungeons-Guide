@@ -95,12 +95,9 @@ public class ActionMove extends AbstractAction {
             }
         }
 
-        if (tick == 0 && actionRouteProperties.isPathfind()) {
-            try {
-                if (latestFuture != null) latestFuture.cancel(true);
-            } catch (Exception ignored) {}
+        if (tick == 0 && actionRouteProperties.isPathfind() && latestFuture == null) {
             if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() || poses == null)
-                latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, actionRouteProperties.getLineRefreshRate()* 50- 10);
+                latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, 10000);
         }
     }
 

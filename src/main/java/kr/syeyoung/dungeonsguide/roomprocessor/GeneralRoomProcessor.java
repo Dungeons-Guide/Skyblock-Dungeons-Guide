@@ -339,17 +339,18 @@ public class GeneralRoomProcessor implements RoomProcessor {
             searchForNextTarget();
         } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             ActionRoute actionRoute = getBestFit(0);
-            if (actionRoute.getCurrentAction() instanceof ActionMove) {
-                ActionMove ac = (ActionMove) actionRoute.getCurrentAction();
-                ac.forceRefresh(getDungeonRoom());
-            } else if (actionRoute.getCurrentAction() instanceof ActionMoveNearestAir) {
-                ActionMoveNearestAir ac = (ActionMoveNearestAir) actionRoute.getCurrentAction();
-                ac.forceRefresh(getDungeonRoom());
-            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMove) {
-                ((ActionMove)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
-            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMoveNearestAir) {
-                ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
-            }
+            // disable force refresh. It's bad idea.
+//            if (actionRoute.getCurrentAction() instanceof ActionMove) {
+//                ActionMove ac = (ActionMove) actionRoute.getCurrentAction();
+//                ac.forceRefresh(getDungeonRoom());
+//            } else if (actionRoute.getCurrentAction() instanceof ActionMoveNearestAir) {
+//                ActionMoveNearestAir ac = (ActionMoveNearestAir) actionRoute.getCurrentAction();
+//                ac.forceRefresh(getDungeonRoom());
+//            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMove) {
+//                ((ActionMove)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
+//            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMoveNearestAir) {
+//                ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
+//            }
 
             if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !actionRoute.getActionRouteProperties().isPathfind()) {
                 actionRoute.getActionRouteProperties().setPathfind(true);
