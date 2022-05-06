@@ -135,7 +135,6 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.enableBlend();
         GlStateManager.disableTexture2D();
-        GlStateManager.disableCull();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 //        worldrenderer.begin(GL11.GL_TRIANGLES, DefaultVertexFormats.POSITION_COLOR);
 
@@ -167,7 +166,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
             float g2 = (rgb2 >> 8 & 255) / 255.0f;
             float b2 = (rgb2 & 255) / 255.0f;
             GlStateManager.color(r2,g2,b2, 1);
-            GL11.glVertex3f(MathHelper.cos(rad) * radius + cx, MathHelper.sin(rad) * radius + cy, 0);
+            GL11.glVertex3f(MathHelper.sin(rad) * radius + cx, MathHelper.cos(rad) * radius + cy, 0);
         }
         GL11.glEnd();
         GlStateManager.shadeModel(shademodel);
@@ -175,8 +174,8 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
         GlStateManager.color(1,1,1,1);
         worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);
         float rad2 = 2 * 3.141592653f * hsv[0] ;
-        float x = 5 + radius + (MathHelper.cos(rad2)) * hsv[1] * radius;
-        float y = 45 + radius + (MathHelper.sin(rad2))* hsv[1] * radius;
+        float x = 5 + radius + (MathHelper.sin(rad2)) * hsv[1] * radius;
+        float y = 45 + radius + (MathHelper.cos(rad2))* hsv[1] * radius;
         for (int i = 0; i < 100; i++) {
             float rad = 2 * 3.141592653f * (i / 100f);
             worldrenderer.pos(MathHelper.sin(rad) * 2 + x, MathHelper.cos(rad) * 2 + y, 0).endVertex();
@@ -207,7 +206,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
             float dx = relMouseX - circleX;
             float dy = circleY - relMouseY;
             if (dx * dx + dy * dy <= radius * radius) {
-                double theta = (MathHelper.atan2(dx, dy) / Math.PI * 180 + 270) % 360;
+                double theta = (MathHelper.atan2(dy, dx) / Math.PI * 180 + 90) % 360;
                 hsv[0] = (float) theta / 360f;
                 hsv[1] = MathHelper.sqrt_float(dx * dx + dy * dy) / radius;
                 selected = 1;
@@ -234,7 +233,7 @@ public class ValueEditColor extends MPanel implements ValueEdit<Color> {
             float dx = relMouseX - circleX;
             float dy = circleY - relMouseY;
             if (selected == 1) {
-                double theta = (MathHelper.atan2(dx, dy) / Math.PI * 180 + 270) % 360;
+                double theta = (MathHelper.atan2(dy, dx) / Math.PI * 180 + 90) % 360;
                 hsv[0] = (float) theta / 360f;
                 hsv[1] = MathHelper.clamp_float(MathHelper.sqrt_float(dx * dx + dy * dy) / radius, 0, 1);
             }
