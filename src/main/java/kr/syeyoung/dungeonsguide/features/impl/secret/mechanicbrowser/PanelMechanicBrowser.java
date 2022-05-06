@@ -258,8 +258,8 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
             mechanicBrowserTooltip.getMList().add(new MechanicBrowserElement(() -> state, false, (m2, pt2) -> {
                 if (dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)
                     ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).pathfind("MECH-BROWSER", id, state, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER.getRouteProperties());
-                mechanicBrowserTooltip.close();
-                mechanicBrowserTooltip = null;
+//                mechanicBrowserTooltip.close();
+//                mechanicBrowserTooltip = null;
             }));
         }
         mechanicBrowserTooltip.setScale(getScale());
