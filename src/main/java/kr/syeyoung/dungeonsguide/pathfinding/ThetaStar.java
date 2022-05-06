@@ -98,7 +98,6 @@ public class ThetaStar {
             }
             route.addLast(new Vec3(curr.coordinate.x / 2.0, curr.coordinate.y / 2.0 + 0.1, curr.coordinate.z/ 2.0));
             this.route = route;
-            System.out.println("Route len: "+route.size());
             return true;
         }
         open.add(startNode);
