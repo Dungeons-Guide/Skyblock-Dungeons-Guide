@@ -142,6 +142,8 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
             return 0.85;
         } else if (floor.equals("F7")) {
             return 1.0;
+        } else if (floor.equals("E")) {
+            return 0.3;
         }
         return 1.0;
     }
