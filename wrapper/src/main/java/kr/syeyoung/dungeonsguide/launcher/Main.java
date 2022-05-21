@@ -26,6 +26,8 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredExcept
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.TokenExpiredException;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
+import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
+import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
@@ -44,6 +46,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.*;
 import java.security.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main
@@ -60,6 +65,14 @@ public class Main
     private Authenticator authenticator = new Authenticator();
     private ModDownloader modDownloader = new ModDownloader(authenticator);
 
+    private List<DungeonsGuideReloadListener> listeners = new ArrayList<>();
+
+    public void addDGReloadListener(DungeonsGuideReloadListener dungeonsGuideReloadListener) {
+        listeners.add(Objects.requireNonNull(dungeonsGuideReloadListener));
+    }
+    public void removeDGReloadListener(DungeonsGuideReloadListener dungeonsGuideReloadListener) {
+        listeners.remove(dungeonsGuideReloadListener);
+    }
 
     private IDGLoader currentLoader;
 
@@ -86,18 +99,25 @@ public class Main
             throw new UnsupportedOperationException("Current version is not unloadable");
         }
         dgInterface = null;
+        for (DungeonsGuideReloadListener listener : listeners) {
+            listener.unloadReference();
+        }
         if (currentLoader != null) {
             currentLoader.unloadJar();
         }
         currentLoader = null;
     }
-    public void load(IDGLoader newLoader) {
+    public void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
         newLoader.loadJar(authenticator);
         dgInterface = newLoader.getInstance();
         currentLoader = newLoader;
 
         dgInterface.init(configDir);
+
+        for (DungeonsGuideReloadListener listener : listeners) {
+            listener.onLoad(dgInterface);
+        }
     }
 
     public void reload(IDGLoader newLoader) {
@@ -113,10 +133,12 @@ public class Main
     }
 
     public void tryOpenError() {
+        Minecraft.getMinecraft().displayGuiScreen(obtainErrorGUI());
     }
 
     public GuiScreen obtainErrorGUI() {
         // when gets called init and stuff remove thing
+        return null;
     }
 
     @SubscribeEvent(priority = EventPriority.LOWEST)
@@ -144,12 +166,13 @@ public class Main
 
         if ("local".equals(loader) ||
                 (loader.equals("auto") && this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") == null)) {
-
-        } else if ("jar".equals("loader") ||
-                (loader.equals("auto") &&  this.getClass().getResourceAsStream("/mod.jar") == null)) {
-
+            return new LocalLoader();
+        } else if ("jar".equals(loader) ||
+                (loader.equals("auto") && this.getClass().getResourceAsStream("/mod.jar") == null)) {
+            return new JarLoader();
         } else if (loader.equals("auto") ){
                 // remote load
+            throw new UnsupportedOperationException(""); // yet
         } else {
             throw new NoSuitableLoaderFoundException(System.getProperty("dg.loader"), configuration.get("loader", "modsource", "auto").getString());
         }
@@ -231,6 +254,7 @@ public class Main
 
     public void setLastError(Throwable t) {
         lastError = t;
+        tryOpenError();
     }
 
     public static Main getMain() {

@@ -46,6 +46,7 @@ import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
+import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.ShortUtils;

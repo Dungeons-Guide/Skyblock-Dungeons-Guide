@@ -16,21 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.loader;
+package kr.syeyoung.dungeonsguide.launcher;
 
-import kr.syeyoung.dungeonsguide.launcher.DGInterface;
-import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
-import net.minecraftforge.common.config.Configuration;
-
-public interface IDGLoader {
-    void loadJar(Authenticator authenticator) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
-    DGInterface getInstance();
-    void unloadJar() throws ReferenceLeakedException;
-
-    boolean isUnloadable();
-
-    boolean isLoaded();
-
-    String strategyName();
+public interface DungeonsGuideReloadListener {
+    public void unloadReference();
+    public void onLoad(DGInterface dgInterface);
 }

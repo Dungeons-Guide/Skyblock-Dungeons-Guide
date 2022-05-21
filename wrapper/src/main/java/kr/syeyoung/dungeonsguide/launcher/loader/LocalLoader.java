@@ -21,16 +21,38 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
-import net.minecraftforge.common.config.Configuration;
 
-public interface IDGLoader {
-    void loadJar(Authenticator authenticator) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
-    DGInterface getInstance();
-    void unloadJar() throws ReferenceLeakedException;
+public class LocalLoader implements IDGLoader {
+    private DGInterface dgInterface;
 
-    boolean isUnloadable();
+    @Override
+    public void loadJar(Authenticator authenticator) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        if (dgInterface != null) throw new IllegalStateException("Already loaded");
+        dgInterface =  (DGInterface) Class.forName("kr.syeyoung.dungeonsguide.DungeonsGuide").newInstance();
+    }
 
-    boolean isLoaded();
+    @Override
+    public DGInterface getInstance() {
+        return dgInterface;
+    }
 
-    String strategyName();
+    @Override
+    public void unloadJar() throws ReferenceLeakedException {
+        throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public boolean isUnloadable() {
+        return false;
+    }
+
+    @Override
+    public boolean isLoaded() {
+        return dgInterface != null;
+    }
+
+    @Override
+    public String strategyName() {
+        return "local";
+    }
 }
