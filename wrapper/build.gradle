@@ -1,20 +1,4 @@
-/*
- *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- *     Copyright (C) 2021  cyoung06
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as published
- *     by the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+
 
 buildscript {
     repositories {
@@ -33,6 +17,8 @@ buildscript {
 }
 apply plugin: "net.minecraftforge.gradle.forge"
 apply plugin: "com.github.johnrengelman.shadow"
+apply plugin: "java"
+
 
 version = "3.0"
 group = "kr.syeyoung.dungeonsguide"
@@ -58,14 +44,10 @@ repositories {
 }
 dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
-    implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation "org.json:json:20171018"
-    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
 
-    compileOnly project(':wrapper')
     compileOnly "org.projectlombok:lombok:1.18.20"
-    compileOnly files("mods/Hychat-1.12.1-BETA.jar")
     annotationProcessor "org.projectlombok:lombok:1.18.16"
 
     testCompileOnly "org.projectlombok:lombok:1.18.20"
@@ -76,13 +58,8 @@ shadowJar {
 
     archiveFileName = jar.archiveFileName
 
-    relocate "org.java_websocket", "kr.syeyoung.org.java_websocket"
-
     dependencies {
-        include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
-        include(dependency("org.slf4j:slf4j-api:1.7.25"))
         include(dependency("org.json:json:20171018"))
-        include(dependency("com.twelvemonkeys..*:.*"))
     }
 }
 
