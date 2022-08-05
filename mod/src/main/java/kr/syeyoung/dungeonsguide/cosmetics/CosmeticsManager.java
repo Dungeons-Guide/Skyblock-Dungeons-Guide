@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.cosmetics.chatreplacers.*;
 import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.stomp.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;

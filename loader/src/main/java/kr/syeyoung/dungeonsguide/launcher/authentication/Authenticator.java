@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.authentication;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthServerException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.TokenExpiredException;
 import lombok.Getter;
@@ -41,8 +42,6 @@ import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.time.Instant;
 import java.util.UUID;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
@@ -72,7 +71,7 @@ public class Authenticator {
                 repeatAuthenticate(5);
             } catch (Throwable t) {
                 Main.getMain().setLastError(t);
-                throw new TokenExpiredException();
+                throw new TokenExpiredException(t);
             }
         }
         return token;
@@ -92,6 +91,7 @@ public class Authenticator {
                 reauthenticate();
                 break;
             } catch (IOException | AuthenticationException | NoSuchAlgorithmException e) {
+                e.printStackTrace();
                 if (cnt == tries) throw new RuntimeException(e);
                 try {
                     Thread.sleep((long) Math.max(Math.pow(2, tries)* 100, 1000 * 10));
@@ -168,7 +168,7 @@ public class Authenticator {
     }
 
     private String requestAuth(UUID uuid, String nickname) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) request("POST", "/auth/v2/requestAuth");
+        HttpURLConnection urlConnection = request("POST", "/auth/v2/requestAuth");
         urlConnection.setRequestProperty("Content-Type", "application/json");
 
         urlConnection.getOutputStream().write(("{\"uuid\":\""+uuid.toString()+"\",\"nickname\":\""+nickname+"\"}").getBytes());
@@ -187,7 +187,7 @@ public class Authenticator {
         }
     }
     private JSONObject verifyAuth(String tempToken, byte[] secret) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) request("POST", "/auth/v2/authenticate");
+        HttpURLConnection urlConnection = request("POST", "/auth/v2/authenticate");
 
         urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"sharedSecret\":\""+Base64.encodeBase64URLSafeString(secret)+"}").getBytes());
         try (InputStream is = obtainInputStream(urlConnection)) {
@@ -203,7 +203,7 @@ public class Authenticator {
         }
     }
     private JSONObject acceptPrivacyPolicy(String tempToken) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) request("POST", "/auth/v2/acceptPrivacyPolicy");
+        HttpURLConnection urlConnection =  request("POST", "/auth/v2/acceptPrivacyPolicy");
 
         urlConnection.getOutputStream().write(tempToken.getBytes());
         try (InputStream is = obtainInputStream(urlConnection)) {
@@ -239,15 +239,14 @@ public class Authenticator {
         return inputStream;
     }
     public HttpURLConnection request(String method, String url) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN+url).openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN+url).openConnection();
         urlConnection.setRequestMethod(method);
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
         urlConnection.setAllowUserInteraction(true);
-        String token = getUnexpiredToken();
         if (tokenStatus == TokenStatus.AUTHENTICATED)
-            urlConnection.setRequestProperty("Authorization", "Bearer "+token);
+            urlConnection.setRequestProperty("Authorization", "Bearer "+getUnexpiredToken());
         return urlConnection;
     }
 }

@@ -50,22 +50,20 @@ dependencies {
     mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
 
-
     implementation "org.jetbrains:annotations-java5:19.0.0"
-    implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation "org.json:json:20171018"
-    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
-
-    compileOnly project(':loader')
+    implementation 'io.nayuki:qrcodegen:1.4.0'
 
 
     compileOnly "org.projectlombok:lombok:1.18.20"
-    compileOnly files("../jars/Hychat-1.12.1-BETA.jar")
     annotationProcessor "org.projectlombok:lombok:1.18.16"
 
     testCompileOnly "org.projectlombok:lombok:1.18.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+
+    runtimeOnly project(":mod")
 }
+
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"

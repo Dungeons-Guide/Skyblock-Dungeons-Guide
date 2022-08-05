@@ -39,8 +39,8 @@ public class DGConnection extends URLConnection {
     public InputStream getInputStream() throws IOException {
             if (authenticator != null) {
                 String path = url.getPath().substring(1);
-                if (!authenticator.getResources().containsKey(path)) throw new FileNotFoundException();
-                return new ByteArrayInputStream(authenticator.getResources().get(path));
+//                if (!authenticator.getResources().containsKey(path)) throw new FileNotFoundException();
+//                return new ByteArrayInputStream(authenticator.getResources().get(path));
             }
         throw new FileNotFoundException();
     }

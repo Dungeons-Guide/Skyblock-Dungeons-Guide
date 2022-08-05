@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.authentication;
+package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
 import lombok.AllArgsConstructor;
 import org.json.JSONObject;
