@@ -5,11 +5,8 @@ eclipse/*
 
 build/*
 jars/*
-runtime/logs/*
-runtime/config/*
-runtime/crash-reports/*
+runtime/*
 run/*
-runtime/screenshots/*
 DEBUG/*
 sdk/*
 essential/*
