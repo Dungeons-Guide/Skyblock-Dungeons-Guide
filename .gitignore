@@ -21,18 +21,5 @@ gradle-app.setting
 
 # # Work around https://youtrack.jetbrains.com/issue/IDEA-116898
 # gradle/wrapper/gradle-wrapper.properties
-
-runtime/modsss/*
-/modcore/config.toml
-/modcore/Sk1er Modcore-0.1.47 (1.8.9).jar
-/.mixin.out/audit/mixin_implementation_report.csv
-/.mixin.out/audit/mixin_implementation_report.txt
-/modcore/metadata.json
-/runtime/.ReAuth.cfg
+/.mixin.out/*
 /libdiscord-rpc.so
-
-runtime/options.txt
-runtime/servers.dat
-/runtime/saves/*
-/runtime/usernamecache.json
-/runtime/usercache.json
