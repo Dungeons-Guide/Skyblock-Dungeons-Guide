@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -95,8 +94,7 @@ public class Main
                 }
             } catch (Exception e) {
                 e.printStackTrace();
-                lastError = e;
-                tryOpenError();
+                setLastFatalError(e);
             }
         }
     }
@@ -114,11 +112,8 @@ public class Main
         }
         currentLoader = null;
     }
-    public void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        if (dgInterface != null) throw new IllegalStateException("DG is loaded");
-        newLoader.loadJar(authenticator);
-        dgInterface = newLoader.getInstance();
-        currentLoader = newLoader;
+    private void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+        partialLoad(newLoader);
 
         dgInterface.init(configDir);
 
@@ -138,11 +133,11 @@ public class Main
             unload();
             load(newLoader);
         } catch (Exception e) {
-            e.printStackTrace();
-            lastError = e;
             dgInterface = null;
             currentLoader = null;
-            tryOpenError();
+
+            e.printStackTrace();
+            setLastFatalError(e);
         }
     }
 
@@ -209,83 +204,44 @@ public class Main
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent preInitializationEvent) {
+        // setup static variables
         main = this;
         configDir = preInitializationEvent.getModConfigurationDirectory();
-        ProgressManager.ProgressBar bar = null;
+
+        // setup preinit progress bar for well, progress bar!
+        ProgressManager.ProgressBar bar = ProgressManager.push("DungeonsGuide", 2);
         try {
-            bar = ProgressManager.push("DungeonsGuide",2);
+            // Try authenticate
             bar.step("Authenticating...");
             authenticator.repeatAuthenticate(5);
 
+
+            // If authentication succeeds, obtain loader and partially load dungeons guide
             File f = new File(preInitializationEvent.getModConfigurationDirectory(), "loader.cfg");
             Configuration configuration = new Configuration(f);
-            bar.step("Instantiating...");
 
+            bar.step("Instantiating...");
             partialLoad(obtainLoader(configuration));
 
+            // Save config because... well to generate it
             configuration.save();
         } catch (Throwable t) {
-            t.printStackTrace();
-            lastError = t;
             dgInterface = null;
             currentLoader = null;
-            tryOpenError();
+
+            t.printStackTrace();
+            setLastFatalError(t);
         } finally {
-            if (bar != null) {
-                while(bar.getStep() < bar.getSteps()) bar.step("");
-                ProgressManager.pop(bar);
-            }
+            while(bar.getStep() < bar.getSteps()) bar.step("");
+            ProgressManager.pop(bar);
         }
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
             if (dgInterface != null) dgInterface.onResourceReload(a);
         });
-//        try {
-//            token = authenticator.authenticateAndDownload(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") == null ? System.getProperty("dg.version") == null ? "nlatest" : System.getProperty("dg.version") : null);
-//            if (token != null) {
-//                main = this;
-//                URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory(authenticator));
-//                LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
-//                classLoader.addURL(new URL("z:///"));
-//
-//                try {
-//                    progressBar.step("Initializing");
-//                    this.dgInterface = new DungeonsGuide(authenticator);
-//                    this.dgInterface.pre(preInitializationEvent);
-//                    while (progressBar.getStep() < progressBar.getSteps())
-//                        progressBar.step("random-"+progressBar.getStep());
-//                    ProgressManager.pop(progressBar);
-//                    isLoaded = true;
-//                } catch (Throwable e) {
-//                    cause = e;
-//                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//                    PrintStream printStream = new PrintStream(byteArrayOutputStream);
-//                    e.printStackTrace(printStream);
-//                    stacktrace = new String(byteArrayOutputStream.toByteArray());
-//
-//                    while (progressBar.getStep() < progressBar.getSteps())
-//                        progressBar.step("random-"+progressBar.getStep());
-//                    ProgressManager.pop(progressBar);
-//
-//                    e.printStackTrace();
-//                }
-//            }
-//        } catch (IOException  | AuthenticationException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
-//            cause = e;
-//            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-//            PrintStream printStream = new PrintStream(byteArrayOutputStream);
-//            e.printStackTrace(printStream);
-//            stacktrace = new String(byteArrayOutputStream.toByteArray());
-//
-//            while (progressBar.getStep() < progressBar.getSteps())
-//                progressBar.step("random-"+progressBar.getStep());
-//            ProgressManager.pop(progressBar);
-//
-//            e.printStackTrace();
-//        }
     }
 
-    public void setLastError(Throwable t) {
+    public void setLastFatalError(Throwable t) {
         lastError = t;
         tryOpenError();
     }

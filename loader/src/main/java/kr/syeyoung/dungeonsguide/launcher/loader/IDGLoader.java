@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import net.minecraftforge.common.config.Configuration;
 
+import java.io.InputStream;
+
 public interface IDGLoader {
     void loadJar(Authenticator authenticator) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
     DGInterface getInstance();
@@ -33,4 +35,5 @@ public interface IDGLoader {
     boolean isLoaded();
 
     String strategyName();
+    String version();
 }

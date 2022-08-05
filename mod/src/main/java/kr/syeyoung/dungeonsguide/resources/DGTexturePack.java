@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.resources;
 
 import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
+import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.IMetadataSection;
@@ -35,19 +36,14 @@ import java.util.Set;
 @AllArgsConstructor
 public class DGTexturePack implements IResourcePack {
 
-    private final Authenticator authenticator;
-
     @Override
-    public InputStream getInputStream(ResourceLocation location) throws IOException {
-        InputStream inputStream = this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath());
-        if (inputStream != null) return inputStream;
-        return new ByteArrayInputStream(authenticator.getResources().get("assets/dg/"+location.getResourcePath()));
+    public InputStream getInputStream(ResourceLocation location) {
+        return this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath());
     }
 
     @Override
     public boolean resourceExists(ResourceLocation location) {
-        return authenticator.getResources().containsKey("assets/dg/"+location.getResourcePath())
-        || this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath()) != null;
+        return this.getClass().getResource("/assets/dg/"+location.getResourcePath()) != null;
     }
 
     @Override

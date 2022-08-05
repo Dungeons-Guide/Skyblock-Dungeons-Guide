@@ -22,6 +22,8 @@ import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 
+import java.io.InputStream;
+
 public class LocalLoader implements IDGLoader {
     private DGInterface dgInterface;
 
@@ -40,7 +42,6 @@ public class LocalLoader implements IDGLoader {
     public void unloadJar() throws ReferenceLeakedException {
         throw new UnsupportedOperationException();
     }
-
     @Override
     public boolean isUnloadable() {
         return false;
@@ -54,5 +55,10 @@ public class LocalLoader implements IDGLoader {
     @Override
     public String strategyName() {
         return "local";
+    }
+
+    @Override
+    public String version() {
+        return "unknown";
     }
 }

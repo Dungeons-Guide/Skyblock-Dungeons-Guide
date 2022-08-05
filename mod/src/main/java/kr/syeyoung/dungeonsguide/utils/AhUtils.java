@@ -56,15 +56,15 @@ public class AhUtils {
         try {
 
             Map<String, AuctionData> semi_auctions = new HashMap<String, AuctionData>();
-            JsonElement object = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJsonSecured("https://dungeons.guide/resource/keys");
-            for (JsonElement element : object.getAsJsonArray()) {
-                JsonObject object1 = element.getAsJsonObject();
-                AuctionData auctionData = new AuctionData(object1.get("id").getAsString());
-                auctionData.lowestBin = object1.get("lowestBin").getAsInt();
-                auctionData.sellPrice = object1.get("sellPrice").getAsInt();
-                auctionData.buyPrice = object1.get("buyPrice").getAsInt();
-                semi_auctions.put(auctionData.id, auctionData);
-            }
+//            JsonElement object = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJsonSecured("https://dungeons.guide/resource/keys");
+//            for (JsonElement element : object.getAsJsonArray()) {
+//                JsonObject object1 = element.getAsJsonObject();
+//                AuctionData auctionData = new AuctionData(object1.get("id").getAsString());
+//                auctionData.lowestBin = object1.get("lowestBin").getAsInt();
+//                auctionData.sellPrice = object1.get("sellPrice").getAsInt();
+//                auctionData.buyPrice = object1.get("buyPrice").getAsInt();
+//                semi_auctions.put(auctionData.id, auctionData);
+//            }
             auctions = semi_auctions;
         } catch (Throwable e) {
             e.printStackTrace();

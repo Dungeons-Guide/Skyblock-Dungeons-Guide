@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 
+import java.io.InputStream;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
@@ -46,29 +47,26 @@ public class JarLoader implements IDGLoader {
         protected Class<?> loadClass(String name, boolean resolve) throws ClassNotFoundException {
 
             synchronized (getClassLoadingLock(name)) {
-                // First, check if the class has already been loaded
                 Class<?> c = findLoadedClass(name);
                 if (c == null) {
-                    long t0 = System.nanoTime();
 
-                    if (c == null) {
-                        // If still not found, then invoke findClass in order
-                        // to find the class.
-                        long t1 = System.nanoTime();
-                        c = findClass(name);
-
-                        // this is the defining class loader; record the stats
-                        sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
-                        sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t1);
-                        sun.misc.PerfCounter.getFindClasses().increment();
-                    }
                     try {
-                        if (getParent() != null && c == null) {
-                            c = getParent().loadClass(name);
+                        if (c == null) {
+                            long t0 = System.nanoTime();
+                            c = findClass(name);
+
+                            sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t0);
+                            sun.misc.PerfCounter.getFindClasses().increment();
                         }
                     } catch (ClassNotFoundException e) {
                         // ClassNotFoundException thrown if class not found
                         // from the non-null parent class loader
+                    }
+                    if (getParent() != null && c == null) {
+                        long t0 = System.nanoTime();
+                        c = getParent().loadClass(name);
+                        long t1 = System.nanoTime();
+                        sun.misc.PerfCounter.getParentDelegationTime().addTime(t1 - t0);
                     }
                 }
                 if (resolve) {
@@ -83,11 +81,13 @@ public class JarLoader implements IDGLoader {
         }
     }
 
+    private JarClassLoader classLoader;
+
     @Override
     public void loadJar(Authenticator authenticator) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
 
-        JarClassLoader classLoader = new JarClassLoader(new URL[] {
+        classLoader = new JarClassLoader(new URL[] {
                 Main.class.getResource("/mod.jar")
         }, this.getClass().getClassLoader());
 
@@ -102,6 +102,7 @@ public class JarLoader implements IDGLoader {
 
     @Override
     public void unloadJar() throws ReferenceLeakedException {
+        classLoader = null;
         dgInterface.unload();
         dgInterface = null;
         System.gc();// pls do
@@ -124,5 +125,10 @@ public class JarLoader implements IDGLoader {
     @Override
     public String strategyName() {
         return "jar";
+    }
+
+    @Override
+    public String version() {
+        return "unknown"; // maybe read the thing...
     }
 }
