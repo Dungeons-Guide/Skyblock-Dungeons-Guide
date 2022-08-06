@@ -10,18 +10,27 @@ version = "4.0.0"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
+
 java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
 loom {
     launchConfigs {
-        "client" {
+        client {
             // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
 //            property("mixin.debug", "true")
 //            property("asmhelper.verbose", "true")
 //            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
 //            arg("--mixin", "mixins.examplemod.json")
+
+        }
+    }
+    runs {
+        client {
+            runDir = 'runtime'
+            property('devauth.enabled','true')
+            client()
         }
     }
     forge {
@@ -38,6 +47,8 @@ sourceSets.main {
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
+    // dev auth
+    maven {url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"}
 }
 
 configurations {
@@ -54,6 +65,7 @@ dependencies {
     implementation "org.json:json:20171018"
     implementation 'io.nayuki:qrcodegen:1.4.0'
 
+    runtimeOnly project(':mod')
 
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.16"
@@ -61,7 +73,8 @@ dependencies {
     testCompileOnly "org.projectlombok:lombok:1.18.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 
-    runtimeOnly project(":mod")
+
+    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 
@@ -70,7 +83,7 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Jar) {
-    archiveBaseName = "examplemod"
+    archivesBaseName = "dungeonsguide-loader"
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
         attributes["ForceLoadAsMod"] = "true"
@@ -83,7 +96,6 @@ tasks.withType(Jar) {
 
 
 tasks.shadowJar {
-
     archiveFileName = jar.archiveFileName
 
     relocate "org.java_websocket", "kr.syeyoung.org.java_websocket"

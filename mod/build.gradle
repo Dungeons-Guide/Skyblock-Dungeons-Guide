@@ -72,7 +72,7 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Jar) {
-    archiveBaseName = "examplemod"
+    archivesBaseName = "dungeonsguide"
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
         attributes["ForceLoadAsMod"] = "true"

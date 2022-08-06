@@ -46,7 +46,6 @@ import java.util.concurrent.locks.ReentrantLock;
 
 public class Authenticator {
     private String dgAccessToken;
-    private Instant validThru;
     @Getter
     private TokenStatus tokenStatus = TokenStatus.UNAUTHENTICATED;
 
@@ -55,13 +54,13 @@ public class Authenticator {
     private Lock authenticationLock = new ReentrantLock();
 
     static {
-        Reflection.registerFieldsToFilter(Authenticator.class, "token"); // Please do not touch this field. I know there is a way to block it completely, but I won't do it here.
+        Reflection.registerFieldsToFilter(Authenticator.class, "dgAccessToken"); // Please do not touch this field. I know there is a way to block it completely, but I won't do it here.
     }
 
     public String getRawToken() {
         return dgAccessToken;
     }
-    public String getUnexpiredToken() {
+    public String getUnexpiredToken() { // THIS METHOD MAY BLOCK.
         if (tokenStatus != TokenStatus.AUTHENTICATED) throw new IllegalStateException("Token is not available");
         long expiry = getJwtPayload(dgAccessToken).getLong("exp");
         if (System.currentTimeMillis() >= expiry-2000 || tokenStatus == TokenStatus.EXPIRED) {

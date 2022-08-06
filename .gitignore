@@ -5,11 +5,11 @@ eclipse/*
 
 build/*
 jars/*
-runtime/*
 run/*
 DEBUG/*
 sdk/*
 essential/*
+runtime/*
 # Ignore Gradle GUI config
 gradle-app.setting
 

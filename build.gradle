@@ -1,5 +1,3 @@
-
-
 tasks.wrapper {
     gradleVersion = "7.4"
     // You can either download the binary-only version of Gradle (BIN) or

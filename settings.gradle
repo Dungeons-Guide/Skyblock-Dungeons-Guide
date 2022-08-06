@@ -22,3 +22,4 @@ pluginManagement {
 include 'mod'
 include 'loader'
 
+rootProject.name = "Dungeons Guide"

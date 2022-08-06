@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
+import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
+import com.mojang.authlib.exceptions.InvalidCredentialsException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthServerException;
 import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.branch.ModDownloader;
@@ -54,7 +56,7 @@ public class Main
 {
     public static final String MOD_ID = "dungeons_guide_wrapper";
     public static final String VERSION = "1.0";
-    public static final String DOMAIN = "http://testmachine:8080/panel/api";
+    public static final String DOMAIN = "http://testmachine:8080/api";
 
     private static Main main;
 
@@ -155,6 +157,10 @@ public class Main
         } else if (lastError instanceof ReferenceLeakedException) {
 
         } else if (lastError instanceof AuthServerException) {
+
+        } else if (lastError instanceof InvalidCredentialsException) {
+
+        } else if (lastError instanceof AuthenticationUnavailableException) {
 
         } else if (lastError != null){
             return new GuiLoadingError(lastError, () -> {lastError = null;});
