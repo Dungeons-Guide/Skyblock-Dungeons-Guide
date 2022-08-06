@@ -20,8 +20,13 @@ package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
 import lombok.AllArgsConstructor;
 
-@AllArgsConstructor
 public class NoSuitableLoaderFoundException extends RuntimeException {
     private String jvmFlag;
     private String configuration;
+
+    public NoSuitableLoaderFoundException(String jvmFlag, String configuration) {
+        super("No suitable loader found: (flag: "+jvmFlag+" / config: "+configuration+")");
+        this.jvmFlag = jvmFlag;
+        this.configuration = configuration;
+    }
 }

@@ -18,10 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-import lombok.AllArgsConstructor;
 import org.json.JSONObject;
 
-@AllArgsConstructor
 public class AuthServerException extends RuntimeException {
     private JSONObject payload;
+
+    public AuthServerException(JSONObject payload) {
+        super("Auth server threw: \n"+payload);
+        this.payload = payload;
+    }
 }
