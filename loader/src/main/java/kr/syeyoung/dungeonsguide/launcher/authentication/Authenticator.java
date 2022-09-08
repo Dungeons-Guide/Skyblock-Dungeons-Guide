@@ -187,8 +187,9 @@ public class Authenticator {
     }
     private JSONObject verifyAuth(String tempToken, byte[] encryptedSecret) throws IOException {
         HttpURLConnection urlConnection = request("POST", "/auth/v2/authenticate");
+        urlConnection.setRequestProperty("Content-Type", "application/json");
 
-        urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"sharedSecret\":\""+Base64.encodeBase64URLSafeString(encryptedSecret)+"}").getBytes());
+        urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"sharedSecret\":\""+Base64.encodeBase64String(encryptedSecret)+"\"}").getBytes());
         try (InputStream is = obtainInputStream(urlConnection)) {
             String payload = String.join("\n", IOUtils.readLines(is));
             if (urlConnection.getResponseCode() != 200)

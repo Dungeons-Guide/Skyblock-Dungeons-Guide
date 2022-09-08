@@ -24,7 +24,11 @@ public class AuthServerException extends RuntimeException {
     private JSONObject payload;
 
     public AuthServerException(JSONObject payload) {
-        super("Auth server threw: \n"+payload);
+        super(payload.getString("errorMessage"));
         this.payload = payload;
+    }
+
+    public String getQRCode() {
+        return payload.getString("data");
     }
 }

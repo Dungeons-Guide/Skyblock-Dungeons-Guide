@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredExcept
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.TokenExpiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.GuiLoadingError;
+import kr.syeyoung.dungeonsguide.launcher.gui.GuiPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
@@ -149,7 +150,7 @@ public class Main
 
     public GuiScreen obtainErrorGUI() {
         if (lastError instanceof PrivacyPolicyRequiredException) {
-
+            return new GuiPrivacyPolicy();
         } else if (lastError instanceof TokenExpiredException) {
 
         } else if (lastError instanceof NoSuitableLoaderFoundException) {
@@ -177,7 +178,9 @@ public class Main
             isMcLoaded = true;
         }
         if (lastError != null && guiOpenEvent.gui instanceof GuiMainMenu) {
-            guiOpenEvent.gui = obtainErrorGUI();
+            GuiScreen gui = obtainErrorGUI();
+            if (gui != null)
+                guiOpenEvent.gui = gui;
         }
     }
 
