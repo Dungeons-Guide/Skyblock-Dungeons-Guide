@@ -47,7 +47,10 @@ public class ChatReplacerViewProfile implements IChatReplacer {
         for (IChatComponent sibling : event.message.getSiblings()) {
             if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile ")) {
                 String uid = sibling.getChatStyle().getChatClickEvent().getValue().split(" ")[1];
-                List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayer().get(UUID.fromString(uid));
+                // TODO: make cosmeticsManager handle usernames instead of uuids
+                // apperantly now hypixels /viewprofile command gives the nickname
+//                List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayer().get(UUID.fromString(uid));
+                List<ActiveCosmetic> cDatas = null;
 
                 if (cDatas != null) {
                     CosmeticData color=null, prefix=null;
