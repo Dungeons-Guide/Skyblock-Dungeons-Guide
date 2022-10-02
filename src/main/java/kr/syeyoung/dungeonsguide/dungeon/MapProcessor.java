@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
-import kr.syeyoung.dungeonsguide.wsresource.StaticResource;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,11 +47,9 @@ import net.minecraftforge.common.MinecraftForge;
 import org.json.JSONObject;
 
 import javax.vecmath.Vector2d;
-import javax.vecmath.Vector2f;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
 
 public class MapProcessor {
 

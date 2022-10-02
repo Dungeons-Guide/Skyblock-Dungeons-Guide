@@ -29,6 +29,8 @@ import net.minecraft.util.Session;
 import net.minecraftforge.fml.common.ProgressManager;
 import org.apache.commons.codec.binary.Base64;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -38,16 +40,24 @@ import java.io.*;
 import java.math.BigInteger;
 import java.net.*;
 import java.security.*;
-import java.security.cert.CertificateException;
 import java.security.spec.InvalidKeySpecException;
 import java.security.spec.X509EncodedKeySpec;
 import java.util.HashMap;
+import java.util.Map;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class Authenticator {
-    private KeyPair rsaKey;
+    Logger logger = LogManager.getLogger("DG-Authenticator");
+    public Authenticator(ProgressManager.ProgressBar progressBar) {
+        this.progressBar = progressBar;
+        progressBar.step("Generating KeyPair");
+        this.rsaKey = getKeyPair();
+    }
+
+    private final KeyPair rsaKey;
     private String token;
+
     private final ProgressManager.ProgressBar progressBar;
 
     public String getToken() {
@@ -58,13 +68,12 @@ public class Authenticator {
         KeyPairGenerator a = null;
         try {
             a = KeyPairGenerator.getInstance("RSA");
-        } catch (NoSuchAlgorithmException b) { }
+        } catch (NoSuchAlgorithmException ignored) { }
         a.initialize(1024);
-        this.rsaKey = a.generateKeyPair();
-        return this.rsaKey;
+        return a.generateKeyPair();
     }
-
     private PublicKey dgPublicKey;
+
     private PublicKey getDGPublicKey() throws NoSuchAlgorithmException, InvalidKeySpecException {
         if (dgPublicKey != null) return dgPublicKey;
         X509EncodedKeySpec spec = new X509EncodedKeySpec(Base64.decodeBase64("MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxO89qtwG67jNucQ9Y44c" +
@@ -79,35 +88,43 @@ public class Authenticator {
                 "p2Qy2k+xEdenpKdL+WMRimCQoO9gWe2Tp4NmP5dppDXZgPjXqjZpnGs0Uxs+fXqW" +
                 "cwlg3MbX3rFl9so/fhVf4p9oXZK3ve7z5D6XSSDRYECvsKIa08WAxJ/U6n204E/4" +
                 "xUF+3ZgFPdzZGn2PU7SsnOsCAwEAAQ=="));
-        return dgPublicKey = KeyFactory.getInstance("RSA").generatePublic(spec);
+
+        dgPublicKey = KeyFactory.getInstance("RSA").generatePublic(spec);
+        return dgPublicKey;
     }
 
-    public Authenticator(ProgressManager.ProgressBar progressBar) {
-        this.progressBar = progressBar;
-        progressBar.step("Generating KeyPair");
-        getKeyPair();
-    }
-
-    public String authenticateAndDownload(String version) throws IOException, AuthenticationException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException, InvalidKeySpecException, SignatureException {
-        Session session = Minecraft.getMinecraft().getSession();
-        String sessionToken = session.getToken();
-
-        progressBar.step("Authenticating (1/2)");
+    String checkSessionAuthenticity(Session session) throws IOException, NoSuchAlgorithmException, AuthenticationException {
         String tempToken = requestAuth(session.getProfile());
         MinecraftSessionService yggdrasilMinecraftSessionService = Minecraft.getMinecraft().getSessionService();
+        assert tempToken != null;
         JsonObject d = getJwtPayload(tempToken);
         String hash = calculateServerHash(Base64.decodeBase64(d.get("sharedSecret").getAsString()),
                 Base64.decodeBase64(d.get("publicKey").getAsString()));
-        yggdrasilMinecraftSessionService.joinServer(session.getProfile(), sessionToken, hash);
+        yggdrasilMinecraftSessionService.joinServer(session.getProfile(), session.getToken(), hash);
+        return tempToken;
+    }
+
+    public String authenticateAndDownload(String version) throws IOException, AuthenticationException, NoSuchAlgorithmException, InvalidKeySpecException, SignatureException {
+
+        progressBar.step("Authenticating (1/2)");
+
+        Session session = Minecraft.getMinecraft().getSession();
+
+        String tempToken = checkSessionAuthenticity(session);
+
         progressBar.step("Authenticating (2/2)");
+
         this.token = verifyAuth(tempToken, this.rsaKey.getPublic());
+
         try {
             progressBar.step("Downloading Jar");
             if (version != null)
-                downloadSafe(this.token, "https://dungeons.guide/resource/version?v=" + version, true);
+                // version not being null indicates that the user is "premium"
+                // so we download the special version
+                downloadSafe("https://dungeons.guide/resource/version?v=" + version, true);
             progressBar.step("Downloading Rooms");
-            downloadSafe(this.token, "https://dungeons.guide/resource/roomdata", false);
-        } catch (Throwable t) {
+            downloadSafe("https://dungeons.guide/resource/roomdata", false);
+        } catch (Exception t) {
             t.printStackTrace();
         }
         return this.token;
@@ -121,7 +138,7 @@ public class Authenticator {
 
 
 
-    private String requestAuth(GameProfile profile) throws IOException, NoSuchAlgorithmException, CertificateException, KeyStoreException, KeyManagementException {
+    private String requestAuth(GameProfile profile) throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) new URL("https://dungeons.guide/auth/requestAuth").openConnection();
         connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         connection.setRequestProperty("Content-Type", "application/json");
@@ -131,8 +148,9 @@ public class Authenticator {
 
         connection.getOutputStream().write(("{\"uuid\":\""+profile.getId().toString()+"\",\"nickname\":\""+profile.getName()+"\"}").getBytes());
         String payload = String.join("\n", IOUtils.readLines(connection.getErrorStream() == null ? connection.getInputStream() : connection.getErrorStream()));
-        if (connection.getResponseCode() >= 400)
-            System.out.println("https://dungeons.guide/auth/requestAuth :: Received "+connection.getResponseCode()+" along with\n"+payload);
+        if (connection.getResponseCode() >= 400) {
+            logger.info("https://dungeons.guide/auth/requestAuth :: Received {} along with\n{}", connection.getResponseCode(), payload);
+        }
 
         JsonObject json = (JsonObject) new JsonParser().parse(payload);
 
@@ -151,8 +169,9 @@ public class Authenticator {
 
         urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"publicKey\":\""+Base64.encodeBase64URLSafeString(clientKey.getEncoded())+"\"}").getBytes());
         String payload = String.join("\n", IOUtils.readLines(urlConnection.getErrorStream() == null ? urlConnection.getInputStream() : urlConnection.getErrorStream()));
-        if (urlConnection.getResponseCode() >= 400)
-            System.out.println("https://dungeons.guide/auth/authenticate :: Received "+urlConnection.getResponseCode()+" along with\n"+payload);
+        if (urlConnection.getResponseCode() >= 400) {
+            logger.info("https://dungeons.guide/auth/authenticate :: Received {} along with\n{}", urlConnection.getResponseCode(), payload);
+        }
 
         JsonObject jsonObject = (JsonObject) new JsonParser().parse(payload);
         if (!"ok".equals(jsonObject.get("status").getAsString())) {
@@ -161,18 +180,19 @@ public class Authenticator {
         return jsonObject.get("data").getAsString();
     }
 
-    private final HashMap<String, byte[]> loadedResources = new HashMap<String, byte[]>();
+    private final HashMap<String, byte[]> loadedResources = new HashMap<>();
 
-    public HashMap<String, byte[]> getResources() {
+    public Map<String, byte[]> getResources() {
         return loadedResources;
     }
 
-    private void downloadSafe(String dgToken, String url, boolean isValidateSignature) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, KeyManagementException, SignatureException, InvalidKeySpecException {
+
+    private void downloadSafe(String url, boolean isValidateSignature) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, SignatureException, InvalidKeySpecException {
         HttpsURLConnection dgConnection = (HttpsURLConnection) new URL(url).openConnection();
         dgConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         dgConnection.setRequestProperty("Content-Type", "application/json");
         dgConnection.setRequestMethod("GET");
-        dgConnection.setRequestProperty("Authorization", dgToken);
+        dgConnection.setRequestProperty("Authorization", token);
         dgConnection.setDoInput(true);
         dgConnection.setDoOutput(true);
 
@@ -213,7 +233,7 @@ public class Authenticator {
         }
         byte[] body = bos.toByteArray();
 
-        byte[] signed = null;
+        byte[] signed;
         if (isValidateSignature) {
             progressBar.step("Validating Signature");
             cipherInputStream.read(lengthBytes,0 , 4);
@@ -243,28 +263,31 @@ public class Authenticator {
         while ((zipEntry=zipInputStream.getNextEntry()) != null) {
             byte[] buffer = new byte[256];
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            int p = 0;
+            int p;
             while((p = zipInputStream.read(buffer)) > 0) {
                 byteArrayOutputStream.write(buffer, 0, p);
             }
             this.loadedResources.put(zipEntry.getName(), byteArrayOutputStream.toByteArray());
         }
-        dgConnection.disconnect();
     }
 
-    public JsonElement getJsonSecured(String u) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException, CertificateException, KeyStoreException, KeyManagementException {
+    public JsonElement getJsonSecured(String u) throws IOException, NoSuchPaddingException, NoSuchAlgorithmException, InvalidKeyException, BadPaddingException, IllegalBlockSizeException, InvalidAlgorithmParameterException{
+
+        int length = 0;
+        CipherInputStream cipherInputStream = null;
+
         HttpsURLConnection httpsURLConnection = (HttpsURLConnection) new URL(u).openConnection();
         httpsURLConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         httpsURLConnection.setRequestProperty("Content-Type", "application/json");
         httpsURLConnection.setRequestMethod("GET");
-        httpsURLConnection.setRequestProperty("Authorization", this.token);
+        httpsURLConnection.setRequestProperty("Authorization", token);
         httpsURLConnection.setDoInput(true);
         httpsURLConnection.setDoOutput(true);
 
         InputStream inputStream = httpsURLConnection.getInputStream();
         byte[] lengthPayload = new byte[4];
         inputStream.read(lengthPayload);
-        int length = ((lengthPayload[0] & 0xFF) << 24) |
+        length = ((lengthPayload[0] & 0xFF) << 24) |
                 ((lengthPayload[1] & 0xFF) << 16) |
                 ((lengthPayload[2] & 0xFF) << 8) |
                 ((lengthPayload[3] & 0xFF));
@@ -280,15 +303,16 @@ public class Authenticator {
         SecretKeySpec secretKeySpec = new SecretKeySpec(AESKey, "AES");
         IvParameterSpec ivParameterSpec = new IvParameterSpec(AESKey);
         cipher.init(Cipher.DECRYPT_MODE, secretKeySpec, ivParameterSpec);
-        CipherInputStream cipherInputStream = new CipherInputStream(inputStream, cipher);
+        cipherInputStream = new CipherInputStream(inputStream, cipher);
         cipherInputStream.read(lengthPayload);
         length = ((lengthPayload[0] & 0xFF) << 24) |
                 ((lengthPayload[1] & 0xFF) << 16) |
                 ((lengthPayload[2] & 0xFF) << 8) |
                 ((lengthPayload[3] & 0xFF));
-        JsonElement l = new JsonParser().parse(new InputStreamReader(cipherInputStream));
+
         httpsURLConnection.disconnect();
-        return l;
+
+        return new JsonParser().parse(new InputStreamReader(cipherInputStream));
     }
 
     public String calculateServerHash(byte[] a, byte[] b) throws NoSuchAlgorithmException {

@@ -41,13 +41,12 @@ import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiButton;
 import net.minecraft.client.gui.GuiErrorScreen;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourceManager;
-import net.minecraft.client.resources.IResourceManagerReloadListener;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
@@ -55,9 +54,10 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -73,54 +73,63 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class DungeonsGuide implements DGInterface, CloseListener {
+public class DungeonsGuide implements CloseListener {
 
     private SkyblockStatus skyblockStatus;
 
-    private static DungeonsGuide dungeonsGuide;
-
-
     @Getter
-    private final Authenticator authenticator;
+    @Setter
+    private Authenticator authenticator;
 
     @Getter
     private StompInterface stompConnection;
     @Getter
     private CosmeticsManager cosmeticsManager;
 
-    public DungeonsGuide(Authenticator authenticator) {
-        this.authenticator = authenticator;
+    Logger logger = LogManager.getLogger("DungeonsGuide");
+
+    private DungeonsGuide() {
+    }
+
+
+    private static DungeonsGuide instance;
+
+    public static DungeonsGuide getDungeonsGuide() {
+        if (instance == null) instance = new DungeonsGuide();
+        return instance;
     }
 
     public static void sendDebugChat(IChatComponent iChatComponent) {
         if (FeatureRegistry.DEBUG.isEnabled())
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
     }
+
     @Getter
     CommandReparty commandReparty;
 
 
-    private final String stompURL = "wss://dungeons.guide/ws";
-//    private String stompURL = "ws://localhost/ws";
-    public void init(FMLInitializationEvent event) {
-        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+    private static final String STOMP_URL = "wss://dungeons.guide/ws";
 
+    //    private String stompURL = "ws://localhost/ws";
+    public void init() {
+
+        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
         try {
             Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
             ((LaunchClassLoader) Main.class.getClassLoader()).clearNegativeEntries(Sets.newHashSet("org.slf4j.LoggerFactory"));
             invalid.clear();
-        } catch (Throwable t) {
-            t.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
 
         progressbar.step("Registering Events & Commands");
-        dungeonsGuide = this;
-        skyblockStatus = new SkyblockStatus();
 
-        CommandDungeonsGuide commandDungeonsGuide;
+        skyblockStatus = new SkyblockStatus();
         MinecraftForge.EVENT_BUS.register(new DungeonListener());
-        ClientCommandHandler.instance.registerCommand(commandDungeonsGuide = new CommandDungeonsGuide());
+
+        CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
+        ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         commandReparty = new CommandReparty();
@@ -137,10 +146,11 @@ public class DungeonsGuide implements DGInterface, CloseListener {
 
         AhUtils.registerTimer();
 
-        progressbar.step("Loading Roomdatas");
+        progressbar.step("Loading RoomData's");
         try {
             DungeonRoomInfoRegistry.loadAll(configDir);
-        } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException | IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+        } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |
+                 IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
         }
         progressbar.step("Opening connection");
@@ -151,13 +161,15 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         try {
             connectStomp();
         } catch (Exception e) {
-            throw new RuntimeException(e);
+            // fix that stupid error that's causing so much help tickets
+            // TODO: make it try to reconect automatically / create a stomp manager etc...
+            e.printStackTrace();
         }
 
 
         progressbar.step("Loading Config");
         try {
-            Config.loadConfig( null );
+            Config.loadConfig(null);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -171,13 +183,15 @@ public class DungeonsGuide implements DGInterface, CloseListener {
 
         ProgressManager.pop(progressbar);
 
-        ((IReloadableResourceManager)Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
     }
+
     @Getter
     private boolean firstTimeUsingDG = false;
+
     public void pre(FMLPreInitializationEvent event) {
         t.start();
-        configDir = new File(event.getModConfigurationDirectory(),"dungeonsguide");
+        configDir = new File(event.getModConfigurationDirectory(), "dungeonsguide");
         File configFile = new File(configDir, "config.json");
         if (!configFile.exists()) {
             configDir.mkdirs();
@@ -187,11 +201,11 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
         try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(),"defaultResourcePacks", "aA", "field_110449_ao");
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
             resourcePackList.add(new DGTexturePack(authenticator));
             Minecraft.getMinecraft().refreshResources();
-        } catch (Throwable t){
-            t.printStackTrace();
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
@@ -203,70 +217,69 @@ public class DungeonsGuide implements DGInterface, CloseListener {
         return skyblockStatus;
     }
 
-    public static DungeonsGuide getDungeonsGuide() {
-        return dungeonsGuide;
-    }
-    ScheduledExecutorService ex = Executors.newScheduledThreadPool(2);
+    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();
     @Override
     public void onClose(int code, String reason, boolean remote) {
-        System.out.println("Stomp Connection closed, trying to reconnect - "+reason+ " - "+code);
+        logger.info("Stomp Connection closed, trying to reconnect - {} - {}", reason, code);
         connectStomp();
     }
 
     public void connectStomp() {
         ex.schedule(() -> {
             try {
-                stompConnection = new StompClient(new URI(stompURL), authenticator.getToken(), DungeonsGuide.this);
+                stompConnection = new StompClient(new URI(STOMP_URL), authenticator.getToken(), DungeonsGuide.this);
                 MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
             } catch (Exception e) {
-                e.printStackTrace();
+//                e.printStackTrace();
+                logger.info("Failed to connect to Stomp");
             }
         }, 5L, TimeUnit.SECONDS);
     }
 
-    private Thread t = new Thread(new Runnable() {
-        @Override
-        public void run() {
-            while (true) {
-                JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
-                if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
-                    if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;
+    private final Thread t = new Thread(() -> {
+        // this is a temporary fix
+        // TODO: make it so when client is offline retry
+        if(Main.isOfflineMode()) return;
+        while (true) {
+            JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
+            if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
+                if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;
 
-                    final String[] a = new String[]{
-                            "User has changed current Minecraft session.",
-                            "Please restart mc to revalidate Dungeons Guide",
-                            "Hopefully this screen will be fixed in later release"
-                    };
-                    final GuiScreen b = new GuiErrorScreen(null, null) {
-                        @Override
-                        public void drawScreen(int par1, int par2, float par3) {
-                            super.drawScreen(par1, par2, par3);
-                            for (int i = 0; i < a.length; ++i) {
-                                drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
-                            }
+                final String[] a = new String[]{
+                        "User has changed current Minecraft session.",
+                        "Please restart mc to revalidate Dungeons Guide",
+                        "Hopefully this screen will be fixed in later release"
+                };
+                final GuiScreen b = new GuiErrorScreen(null, null) {
+                    @Override
+                    public void drawScreen(int par1, int par2, float par3) {
+                        super.drawScreen(par1, par2, par3);
+                        for (int i = 0; i < a.length; ++i) {
+                            drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
                         }
+                    }
 
-                        @Override
-                        public void initGui() {
-                            super.initGui();
-                            this.buttonList.clear();
-                            this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100, 20, "close"));
-                        }
+                    @Override
+                    public void initGui() {
+                        super.initGui();
+                        this.buttonList.clear();
+                        this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100, 20, "close"));
+                    }
 
-                        @Override
-                        protected void actionPerformed(GuiButton button) throws IOException {
-                            FMLCommonHandler.instance().exitJava(-1, true);
-                        }
-                    };
-                    Minecraft.getMinecraft().displayGuiScreen(b);
-                    return;
-                }
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
+                    @Override
+                    protected void actionPerformed(GuiButton button) {
+                        FMLCommonHandler.instance().exitJava(-1, true);
+                    }
+                };
+                Minecraft.getMinecraft().displayGuiScreen(b);
+                return;
+            }
+            try {
+                Thread.sleep(100L);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
         }
-    });
+    }
+    );
 }

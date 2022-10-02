@@ -35,7 +35,6 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-import java.math.MathContext;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
