@@ -18,18 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.url;
 
-import kr.syeyoung.dungeonsguide.Authenticator;
+import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 
-import java.io.*;
+import java.io.ByteArrayInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.net.URLConnection;
 
 public class DGConnection extends URLConnection {
-    private final Authenticator authenticator;
-    protected DGConnection(URL url, Authenticator a) {
+
+    protected DGConnection(URL url) {
         super(url);
         connected = false;
-        this.authenticator = a;
     }
 
     @Override
@@ -37,10 +39,10 @@ public class DGConnection extends URLConnection {
     }
     @Override
     public InputStream getInputStream() throws IOException {
-            if (authenticator != null) {
+            if (ResourceManager.getInstance().getResources() != null) {
                 String path = url.getPath().substring(1);
-                if (!authenticator.getResources().containsKey(path)) throw new FileNotFoundException();
-                return new ByteArrayInputStream(authenticator.getResources().get(path));
+                if (!ResourceManager.getInstance().getResources().containsKey(path)) throw new FileNotFoundException();
+                return new ByteArrayInputStream(ResourceManager.getInstance().getResources().get(path));
             }
         throw new FileNotFoundException();
     }

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.url;
 
-import kr.syeyoung.dungeonsguide.Authenticator;
 import lombok.AllArgsConstructor;
 
 import java.io.IOException;
@@ -28,9 +27,8 @@ import java.net.URLStreamHandler;
 
 @AllArgsConstructor
 public class DGStreamHandler extends URLStreamHandler {
-    private final Authenticator auth;
     @Override
     protected URLConnection openConnection(URL url) throws IOException {
-        return new DGConnection(url, this.auth);
+        return new DGConnection(url);
     }
 }

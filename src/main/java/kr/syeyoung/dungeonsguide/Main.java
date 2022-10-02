@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide;
 
+import kr.syeyoung.dungeonsguide.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
 import lombok.Getter;
 import net.minecraft.client.gui.*;
@@ -80,15 +82,32 @@ public class Main {
 
     ProgressManager.ProgressBar progressBar;
 
+    public static final String SERVER_URL = "https://dungeons.guide";
+
+    public static final String SOME_FUNNY_KEY_THING = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxO89qtwG67jNucQ9Y44c" +
+            "IUs/B+5BeJPs7G+RG2gfs4/2+tzF/c1FLDc33M7yKw8aKk99vsBUY9Oo8gxxiEPB" +
+            "JitP/qfon2THp94oM77ZTpHlmFoqbZMcKGZVI8yfvEL4laTM8Hw+qh5poQwtpEbK" +
+            "Xo47AkxygxJasUnykER2+aSTZ6kWU2D4xiNtFA6lzqN+/oA+NaYfPS0amAvyVlHR" +
+            "n/8IuGkxb5RrlqVssQstFnxsJuv88qdGSEqlcKq2tLeg9hb8eCnl2OFzvXmgbVER" +
+            "0JaV+4Z02fVG1IlR3Xo1mSit7yIU6++3usRCjx2yfXpnGGJUW5pe6YETjNew3ax+" +
+            "FAZ4GePWCdmS7FvBnbbABKo5pE06ZTfDUTCjQlAJQiUgoF6ntMJvQAXPu48Vr8q/" +
+            "mTcuZWVnI6CDgyE7nNq3WNoq3397sBzxRohMxuqzl3T19zkfPKF05iV2Ju1HQMW5" +
+            "I119bYrmVD240aGESZc20Sx/9g1BFpNzQbM5PGUlWJ0dhLjl2ge4ip2hHciY3OEY" +
+            "p2Qy2k+xEdenpKdL+WMRimCQoO9gWe2Tp4NmP5dppDXZgPjXqjZpnGs0Uxs+fXqW" +
+            "cwlg3MbX3rFl9so/fhVf4p9oXZK3ve7z5D6XSSDRYECvsKIa08WAxJ/U6n204E/4" +
+            "xUF+3ZgFPdzZGn2PU7SsnOsCAwEAAQ==";
+
     @EventHandler
     public void preInit(final FMLPreInitializationEvent preInitializationEvent) {
         try {
-
             try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
                 progressBar = ProgressManager.push("DungeonsGuide", premiumControlClass == null ? 7 : 6);
             }
 
-            Authenticator authenticator = new Authenticator(progressBar);
+
+
+            AuthManager.getInstance().setBaseserverurl(SERVER_URL);
+
 
             String version;
             try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class")) {
@@ -103,24 +122,20 @@ public class Main {
                 }
             }
 
-            String token = null;
 
-            try {
-                token = authenticator.authenticateAndDownload(version);
-            }catch (Exception ignore){
-                logger.info("Failed to authenticate (offline?) turning on offline mode");
-            }
+            AuthManager.getInstance().init();
 
-            if (token == null) {
-                offlineMode = true;
-            }
 
-            URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory(authenticator));
+            ResourceManager.getInstance().setBaseUrl(SERVER_URL);
+            ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(SOME_FUNNY_KEY_THING);
+
+            ResourceManager.getInstance().downloadAssets(version);
+
+            URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
             LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
             classLoader.addURL(new URL("z:///"));
 
             progressBar.step("Initializing");
-            DungeonsGuide.getDungeonsGuide().setAuthenticator(authenticator);
             DungeonsGuide.getDungeonsGuide().pre(preInitializationEvent);
             finishUpProgressBar(progressBar);
             isLoaded = true;

@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProviderUtil;
 import kr.syeyoung.dungeonsguide.chat.PartyContext;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
@@ -151,7 +153,7 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equalsIgnoreCase("gui")) {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("info")) {
-            JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
+            JsonObject obj = AuthProviderUtil.getJwtPayload(AuthManager.getInstance().getToken());
             SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd hh:mm:ss");
 
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent Plan§7: §e" + obj.get("plan").getAsString()));

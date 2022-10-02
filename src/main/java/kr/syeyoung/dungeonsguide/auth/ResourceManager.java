@@ -1,5 +1,7 @@
 package kr.syeyoung.dungeonsguide.auth;
 
+import lombok.Setter;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.codec.binary.Base64;
 
 import javax.crypto.*;
@@ -20,13 +22,24 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ResourceManager {
-    private final String baseUrl;
-    private final String BASE64_X509ENCODEDKEYSPEC;
+
+    @Setter
+    private String baseUrl;
+    @Setter
+    private String BASE64_X509ENCODEDKEYSPEC;
     private final HashMap<String, byte[]> loadedResources = new HashMap<>();
 
-    public ResourceManager(String baseUrl, String base64X509Encodedkeyspec) {
-        this.baseUrl = baseUrl;
-        this.BASE64_X509ENCODEDKEYSPEC = base64X509Encodedkeyspec;
+
+    private static ResourceManager instance;
+    public static ResourceManager getInstance() {
+        if(instance == null) {
+            instance = new ResourceManager();
+            MinecraftForge.EVENT_BUS.register(instance);
+        }
+        return instance;
+    }
+
+    private ResourceManager() {
     }
 
     public Map<String, byte[]> getResources() {
@@ -34,7 +47,7 @@ public class ResourceManager {
     }
 
 
-    void downloadAssets(String version){
+    public void downloadAssets(String version){
         try {
             // version not being null indicates that the user is "premium"
             // so we download the special version

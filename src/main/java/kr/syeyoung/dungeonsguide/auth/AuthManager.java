@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.auth;
 
+import com.google.common.base.Throwables;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
@@ -35,14 +36,14 @@ public class AuthManager {
 
     private AuthProvider currentProvider;
 
-    String getToken() {
+    public String getToken() {
         if (currentProvider != null && currentProvider.getToken() != null) {
             return currentProvider.getToken();
         }
         return null;
     }
 
-    KeyPair getKeyPair(){
+    public KeyPair getKeyPair(){
         if (currentProvider != null && currentProvider.getToken() != null) {
             return currentProvider.getRsaKey();
         }
@@ -52,11 +53,14 @@ public class AuthManager {
 
     boolean initlock = false;
 
-    void init() {
+    public void init() {
         if (initlock) {
             logger.info("Cannot init AuthManger twice");
             return;
         }
+
+        reauth();
+
         initlock = true;
 
 
@@ -73,7 +77,7 @@ public class AuthManager {
                 }
 
                 JsonObject obj = AuthProviderUtil.getJwtPayload(getToken());
-                if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
+                if (!obj.get("uuid").getAsString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                     shouldReAuth = true;
                 }
 
@@ -86,14 +90,14 @@ public class AuthManager {
         }, "minecraft session change listener thread").start();
     }
 
-    boolean shouldReAuth;
+    boolean shouldReAuth = true;
     int tickCounter;
 
     @SubscribeEvent
     public void onTickClientTick(TickEvent.ClientTickEvent event) {
         if (event.phase != TickEvent.Phase.START) return;
 
-        if (tickCounter % 20 == 0) {
+        if (tickCounter % 200 == 0) {
             tickCounter = 0;
             reauth();
         }
@@ -112,14 +116,16 @@ public class AuthManager {
             if (currentProvider.getToken() == null) {
                 shouldReAuth = true;
                 currentProvider = null;
+                logger.info("Re-auth failed, trying again in a second");
             } else {
-                // RE-AUTH 'ed SUCCESSFULLY HOORAY
+                // RE-AUTHed SUCCESSFULLY HOORAY
                 MinecraftForge.EVENT_BUS.post(new AuthChangedEvent());
             }
         } catch (NoSuchAlgorithmException | AuthenticationException | IOException e) {
-            e.printStackTrace();
+
             shouldReAuth = true;
             currentProvider = null;
+            logger.error("Re-auth failed with message {}, trying again in a ten seconds", String.valueOf(Throwables.getRootCause(e)));
         }
 
     }

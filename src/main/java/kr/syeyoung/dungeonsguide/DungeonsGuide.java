@@ -18,17 +18,20 @@
 
 package kr.syeyoung.dungeonsguide;
 
+import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
-import kr.syeyoung.dungeonsguide.commands.*;
+import kr.syeyoung.dungeonsguide.commands.CommandDungeonsGuide;
+import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
+import kr.syeyoung.dungeonsguide.events.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
@@ -41,20 +44,16 @@ import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiButton;
-import net.minecraft.client.gui.GuiErrorScreen;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +61,8 @@ import org.apache.logging.log4j.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.net.URI;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -77,9 +77,6 @@ public class DungeonsGuide implements CloseListener {
 
     private SkyblockStatus skyblockStatus;
 
-    @Getter
-    @Setter
-    private Authenticator authenticator;
 
     @Getter
     private StompInterface stompConnection;
@@ -158,13 +155,6 @@ public class DungeonsGuide implements CloseListener {
         cosmeticsManager = new CosmeticsManager();
         MinecraftForge.EVENT_BUS.register(cosmeticsManager);
 
-        try {
-            connectStomp();
-        } catch (Exception e) {
-            // fix that stupid error that's causing so much help tickets
-            // TODO: make it try to reconect automatically / create a stomp manager etc...
-            e.printStackTrace();
-        }
 
 
         progressbar.step("Loading Config");
@@ -190,7 +180,6 @@ public class DungeonsGuide implements CloseListener {
     private boolean firstTimeUsingDG = false;
 
     public void pre(FMLPreInitializationEvent event) {
-        t.start();
         configDir = new File(event.getModConfigurationDirectory(), "dungeonsguide");
         File configFile = new File(configDir, "config.json");
         if (!configFile.exists()) {
@@ -202,7 +191,7 @@ public class DungeonsGuide implements CloseListener {
 
         try {
             List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack(authenticator));
+            resourcePackList.add(new DGTexturePack());
             Minecraft.getMinecraft().refreshResources();
         } catch (Exception e) {
             e.printStackTrace();
@@ -217,6 +206,15 @@ public class DungeonsGuide implements CloseListener {
         return skyblockStatus;
     }
 
+
+    @SubscribeEvent
+    public void onAuthChanged(AuthChangedEvent event) {
+        try {
+            connectStomp();
+        }catch (Exception ignored){
+        }
+    }
+
     ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();
     @Override
     public void onClose(int code, String reason, boolean remote) {
@@ -226,60 +224,14 @@ public class DungeonsGuide implements CloseListener {
 
     public void connectStomp() {
         ex.schedule(() -> {
-            try {
-                stompConnection = new StompClient(new URI(STOMP_URL), authenticator.getToken(), DungeonsGuide.this);
-                MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
-            } catch (Exception e) {
-//                e.printStackTrace();
-                logger.info("Failed to connect to Stomp");
+            if (AuthManager.getInstance().getToken() != null) {
+                try {
+                    stompConnection = new StompClient(new URI(STOMP_URL), AuthManager.getInstance().getToken(), DungeonsGuide.this);
+                    MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
+                } catch (Exception e) {
+                    logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
+                }
             }
         }, 5L, TimeUnit.SECONDS);
     }
-
-    private final Thread t = new Thread(() -> {
-        // this is a temporary fix
-        // TODO: make it so when client is offline retry
-        if(Main.isOfflineMode()) return;
-        while (true) {
-            JsonObject obj = DungeonsGuide.getDungeonsGuide().getAuthenticator().getJwtPayload(DungeonsGuide.getDungeonsGuide().getAuthenticator().getToken());
-            if (!obj.get("uuid").getAsString().equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
-                if (Minecraft.getMinecraft().currentScreen instanceof GuiErrorScreen) return;
-
-                final String[] a = new String[]{
-                        "User has changed current Minecraft session.",
-                        "Please restart mc to revalidate Dungeons Guide",
-                        "Hopefully this screen will be fixed in later release"
-                };
-                final GuiScreen b = new GuiErrorScreen(null, null) {
-                    @Override
-                    public void drawScreen(int par1, int par2, float par3) {
-                        super.drawScreen(par1, par2, par3);
-                        for (int i = 0; i < a.length; ++i) {
-                            drawCenteredString(fontRendererObj, a[i], width / 2, height / 3 + 12 * i, 0xFFFFFFFF);
-                        }
-                    }
-
-                    @Override
-                    public void initGui() {
-                        super.initGui();
-                        this.buttonList.clear();
-                        this.buttonList.add(new GuiButton(0, width / 2 - 50, height - 50, 100, 20, "close"));
-                    }
-
-                    @Override
-                    protected void actionPerformed(GuiButton button) {
-                        FMLCommonHandler.instance().exitJava(-1, true);
-                    }
-                };
-                Minecraft.getMinecraft().displayGuiScreen(b);
-                return;
-            }
-            try {
-                Thread.sleep(100L);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-    );
 }
