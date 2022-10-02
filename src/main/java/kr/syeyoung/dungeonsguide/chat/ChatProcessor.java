@@ -40,7 +40,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 public class ChatProcessor {
     public static final ChatProcessor INSTANCE = new ChatProcessor();
 
-    private static final Logger logger = LogManager.getLogger();
+    private static final Logger logger = LogManager.getLogger("Dungeons-Guide-ChatProcessor");
     private ChatProcessor() {
         Logger l = LogManager.getLogger(GuiNewChat.class);
         if (l instanceof SimpleLogger) {
