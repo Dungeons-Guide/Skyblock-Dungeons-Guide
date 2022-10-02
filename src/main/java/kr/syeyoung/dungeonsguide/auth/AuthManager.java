@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.auth;
 import com.google.common.base.Throwables;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProviderUtil;
 import kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth;
@@ -119,6 +120,8 @@ public class AuthManager {
                 logger.info("Re-auth failed, trying again in a second");
             } else {
                 // RE-AUTHed SUCCESSFULLY HOORAY
+                // for some reason the forge events don't work in pre init, so I call the callback directly
+                DungeonsGuide.getDungeonsGuide().onAuthChanged(new AuthChangedEvent());
                 MinecraftForge.EVENT_BUS.post(new AuthChangedEvent());
             }
         } catch (NoSuchAlgorithmException | AuthenticationException | IOException e) {
