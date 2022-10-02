@@ -33,14 +33,16 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.apache.logging.log4j.simple.SimpleLogger;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class ChatProcessor {
     public static final ChatProcessor INSTANCE = new ChatProcessor();
 
-    private static final Logger logger = LogManager.getLogger("Dungeons-Guide-ChatProcessor");
+    private static final Logger logger = LogManager.getLogger("DG-ChatProcessor");
     private ChatProcessor() {
         Logger l = LogManager.getLogger(GuiNewChat.class);
         if (l instanceof SimpleLogger) {
