@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
-public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, StompMessageHandler, TickListener {
+public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, StompMessageSubscription, TickListener {
     public FeatureUpdateAlarm() {
         super("Misc", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
     }
@@ -51,10 +51,10 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
         event.getStompInterface().subscribe(StompSubscription.builder()
                 .destination("/topic/updates")
                 .ackMode(StompSubscription.AckMode.AUTO)
-                .stompMessageHandler(this).build());
+                .stompMessageSubscription(this).build());
         event.getStompInterface().subscribe(StompSubscription.builder()
                 .destination("/user/queue/messages")
                 .ackMode(StompSubscription.AckMode.AUTO)
-                .stompMessageHandler(this).build());
+                .stompMessageSubscription(this).build());
     }
 }

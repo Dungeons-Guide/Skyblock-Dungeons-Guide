@@ -43,7 +43,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class CosmeticsManager implements StompMessageHandler {
+public class CosmeticsManager implements StompMessageSubscription {
     @Getter
     private Map<UUID, CosmeticData> cosmeticDataMap = new ConcurrentHashMap<>();
     @Getter
@@ -211,15 +211,15 @@ public class CosmeticsManager implements StompMessageHandler {
     }
 
     @SubscribeEvent
-    public void stompConnect(StompConnectedEvent stompConnectedEvent) {
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/topic/cosmetic.set").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/user.perms").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/cosmetic.activelist").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/cosmetic.list").build());
+    public void stompConnect(StompConnectedEvent e) {
+        e.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/topic/cosmetic.set").build());
+        e.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/user.perms").build());
+        e.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/cosmetic.activelist").build());
+        e.getStompInterface().subscribe(StompSubscription.builder()
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/cosmetic.list").build());
 
         requestCosmeticsList();
         requestActiveCosmetics();

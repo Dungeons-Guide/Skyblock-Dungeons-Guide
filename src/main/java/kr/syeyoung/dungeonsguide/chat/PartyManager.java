@@ -35,7 +35,7 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class PartyManager implements StompMessageHandler {
+public class PartyManager implements StompMessageSubscription {
     public static final PartyManager INSTANCE = new PartyManager();
     @Getter
     private PartyContext partyContext;
@@ -578,15 +578,15 @@ public class PartyManager implements StompMessageHandler {
     @SubscribeEvent
     public void stompConnect(StompConnectedEvent stompConnectedEvent) {
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.resp").build());
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.resp").build());
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.check").build());
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.check").build());
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.broadcast").build());
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.broadcast").build());
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.join").build());
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.join").build());
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.askedtojoin.resp").build());
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.askedtojoin.resp").build());
     }
 
     private String lastToken;

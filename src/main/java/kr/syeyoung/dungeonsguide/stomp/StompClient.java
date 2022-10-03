@@ -125,7 +125,7 @@ public class StompClient extends WebSocketClient {
     private void handleMessage(StompPayload payload) {
         StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
         try {
-            stompSubscription.getStompMessageHandler().handle(this, payload);
+            stompSubscription.getStompMessageSubscription().handle(this, payload);
             if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
                 send(new StompPayload().method(StompHeader.ACK)
                         .header("id", payload.headers().get("ack")).getBuilt()

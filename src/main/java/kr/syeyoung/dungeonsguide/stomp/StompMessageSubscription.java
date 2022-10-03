@@ -18,6 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.stomp;
 
-public interface StompMessageHandler {
+public interface StompMessageSubscription {
     void handle(StompClient stompInterface, StompPayload stompPayload);
 }

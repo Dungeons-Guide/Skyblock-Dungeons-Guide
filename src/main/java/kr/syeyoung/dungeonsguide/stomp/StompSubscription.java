@@ -28,7 +28,7 @@ import lombok.Getter;
 public class StompSubscription {
     private int id;
     private String destination;
-    private StompMessageHandler stompMessageHandler;
+    private StompMessageSubscription stompMessageSubscription;
     private AckMode ackMode;
 
     @AllArgsConstructor

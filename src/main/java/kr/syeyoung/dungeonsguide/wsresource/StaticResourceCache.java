@@ -29,7 +29,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class StaticResourceCache implements StompMessageHandler {
+public class StaticResourceCache implements StompMessageSubscription {
     public static final StaticResourceCache INSTANCE = new StaticResourceCache();
 
     private Map<UUID, StaticResource> staticResourceMap = new HashMap<>();
@@ -67,7 +67,7 @@ public class StaticResourceCache implements StompMessageHandler {
     @SubscribeEvent
     public void stompConnect(StompConnectedEvent stompConnectedEvent) {
         stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageHandler(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/staticresource.get").build());
+                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/staticresource.get").build());
 
         getResource(BONUS_SCORE);
         getResource(TRIVIA_ANSWERS);
