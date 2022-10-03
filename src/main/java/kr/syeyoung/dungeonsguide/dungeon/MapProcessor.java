@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderR
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
@@ -410,7 +411,7 @@ public class MapProcessor {
         try {
             String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
             if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalsefalsefalse")) {
-                DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(payload.toString()).header("destination", target.replace("false", "").trim()));
+                StompManager.getInstance().getStompConn().send(new StompPayload().payload(payload.toString()).header("destination", target.replace("false", "").trim()));
             }
         } catch (Throwable e) {
             e.printStackTrace();

@@ -413,7 +413,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 String[] payload = new String[args.length - 1];
                 System.arraycopy(args, 1, payload, 0, payload.length);
                 String actualPayload = String.join(" ", payload).replace("$C$", "§");
-                DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
+                StompManager.getInstance().getStompConn().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
                         new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
                                 .put("payload", actualPayload).toString()
                 ));

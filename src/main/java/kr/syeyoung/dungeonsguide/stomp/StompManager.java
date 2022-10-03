@@ -24,7 +24,7 @@ public class StompManager implements CloseListener {
     }
 
     public void init() {
-        connectStomp();
+//        connectStomp();
     }
 
     private StompClient stompConnection;
@@ -38,7 +38,7 @@ public class StompManager implements CloseListener {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         logger.info("Stomp Connection closed, trying to reconnect - {} - {}", reason, code);
-        connectStomp();
+//        connectStomp();
     }
 
     public void connectStomp() {
