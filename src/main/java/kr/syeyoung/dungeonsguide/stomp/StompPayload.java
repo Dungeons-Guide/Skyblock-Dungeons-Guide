@@ -36,6 +36,17 @@ public class StompPayload {
         return this;
     }
 
+
+    public StompPayload destination(String value){
+        headers.put("destination", value);
+        return this;
+    }
+
+    public StompPayload id(String value){
+        headers.put("id", value);
+        return this;
+    }
+
     public String getBuilt() {
         StringBuilder sb = new StringBuilder();
         sb.append(method.name());

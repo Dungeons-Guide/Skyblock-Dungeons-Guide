@@ -175,7 +175,7 @@ public class StompClient extends WebSocketClient {
 
         send(new StompPayload().method(StompHeader.SUBSCRIBE)
                 .header("id",String.valueOf(stompSubscription.getId()))
-                .header("destination", stompSubscription.getDestination())
+                .destination(stompSubscription.getDestination())
                 .header("ack", stompSubscription.getAckMode().getValue()).getBuilt()
         );
 

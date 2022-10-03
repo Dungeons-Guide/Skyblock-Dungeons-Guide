@@ -60,33 +60,33 @@ public class CosmeticsManager implements StompMessageHandler {
     public void requestActiveCosmetics() {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
                 .method(StompHeader.SEND)
-                .header("destination", "/app/cosmetic.activelist")
+                .destination("/app/cosmetic.activelist")
         );
     }
     public void requestCosmeticsList() {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
                 .method(StompHeader.SEND)
-                .header("destination", "/app/cosmetic.list")
+                .destination("/app/cosmetic.list")
         );
     }
     public void requestPerms() {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
                 .method(StompHeader.SEND)
-                .header("destination", "/app/user.perms")
+                .destination("/app/user.perms")
         );
     }
     public void setCosmetic(CosmeticData cosmetic) {
         if (!perms.contains(cosmetic.getReqPerm())) return;
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
                 .method(StompHeader.SEND)
-                .header("destination", "/app/cosmetic.set")
+                .destination("/app/cosmetic.set")
                 .payload(cosmetic.getId().toString())
         );
     }
     public void removeCosmetic(ActiveCosmetic activeCosmetic) {
         DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
                 .method(StompHeader.SEND)
-                .header("destination", "/app/cosmetic.remove")
+                .destination("/app/cosmetic.remove")
                 .payload(activeCosmetic.getActivityUID().toString())
         );
     }
