@@ -47,7 +47,8 @@ public class ResourceManager {
     }
 
 
-    public void downloadAssets(String version){
+    public void downloadAssets(String version) throws InvalidDungeonsGuideCredentialsException {
+        if(AuthManager.getInstance().getToken() == null) throw new InvalidDungeonsGuideCredentialsException("Not Authenticated");
         try {
             // version not being null indicates that the user is "premium"
             // so we download the special version

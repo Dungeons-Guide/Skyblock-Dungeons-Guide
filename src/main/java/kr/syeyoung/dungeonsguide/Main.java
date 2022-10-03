@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide;
 
+import com.google.common.base.Throwables;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
 import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
 import lombok.Getter;
@@ -129,7 +131,11 @@ public class Main {
             ResourceManager.getInstance().setBaseUrl(SERVER_URL);
             ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(SOME_FUNNY_KEY_THING);
 
-            ResourceManager.getInstance().downloadAssets(version);
+            try {
+                ResourceManager.getInstance().downloadAssets(version);
+            } catch (InvalidDungeonsGuideCredentialsException e) {
+                logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
+            }
 
             URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
             LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
