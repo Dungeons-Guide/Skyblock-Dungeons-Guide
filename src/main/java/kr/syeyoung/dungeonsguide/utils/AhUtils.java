@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.auth.authprovider.AuthUtil;
+import kr.syeyoung.dungeonsguide.auth.AuthUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

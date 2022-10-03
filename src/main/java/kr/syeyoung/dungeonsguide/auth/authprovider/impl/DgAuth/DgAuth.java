@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
-import kr.syeyoung.dungeonsguide.auth.authprovider.AuthUtil;
+import kr.syeyoung.dungeonsguide.auth.AuthUtil;
 
 import java.io.IOException;
 import java.security.KeyPair;
