@@ -1,9 +1,6 @@
-package kr.syeyoung.dungeonsguide.auth.authprovider.impl;
+package kr.syeyoung.dungeonsguide.auth.authprovider;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.Session;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 

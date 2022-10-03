@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth;
+package kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;

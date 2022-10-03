@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.commands;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth.DgAuthUtil;
+import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
 import kr.syeyoung.dungeonsguide.chat.PartyContext;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;

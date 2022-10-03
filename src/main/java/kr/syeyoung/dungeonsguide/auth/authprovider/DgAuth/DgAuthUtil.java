@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth;
+package kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
