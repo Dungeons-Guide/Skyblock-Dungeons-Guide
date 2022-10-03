@@ -75,50 +75,68 @@ public class StompClient extends WebSocketClient {
     public void onMessage(String message) {
         try {
             StompPayload payload = StompPayload.parse(message);
-            if (payload.method() == StompHeader.CONNECTED) {
-                stompClientStatus = StompClientStatus.CONNECTED;
 
-                String heartbeat = payload.headers().get("heart-beat");
-                if (heartbeat != null) {
+            switch (payload.method()){
+                case SEND:
+                case SUBSCRIBE:
+                case UNSUBSCRIBE:
+                case BEGIN:
+                case COMMIT:
+                case ABORT:
+                case ACK:
+                case NACK:
+                case DISCONNECT:
+                case STOMP:
+                case CONNECTED:
+                    break;
+                case CONNECT:
+                    stompClientStatus = StompClientStatus.CONNECTED;
+
+                    String heartbeat = payload.headers().get("heart-beat");
+                    if (heartbeat != null) {
 //                    int sx = Integer.parseInt(heartbeat.split(",")[0]);
 //                    int sy = Integer.parseInt(heartbeat.split(",")[1]);
 //
 //                    if (sy == 0) return;
-                    int heartbeatMS = 30000;
-                    this.heartbeat = ex.scheduleAtFixedRate(() -> {
-                        send("\n");
-                    }, heartbeatMS-1000, heartbeatMS-1000, TimeUnit.MILLISECONDS);
-                }
+                        int heartbeatMS = 30000;
+                        this.heartbeat = ex.scheduleAtFixedRate(() -> {
+                            send("\n");
+                        }, heartbeatMS-1000, heartbeatMS-1000, TimeUnit.MILLISECONDS);
+                    }
+                    break;
 
-            } else if (payload.method() == StompHeader.ERROR) {
-                errorPayload = payload;
-                stompClientStatus = StompClientStatus.ERROR;
-                this.close();
-            } else if (payload.method() == StompHeader.MESSAGE) {
-                // mesage
-                StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
-                try {
-                    stompSubscription.getStompMessageHandler().handle(this, payload);
-                    if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-                        send(new StompPayload().method(StompHeader.ACK)
-                                .header("id",payload.headers().get("ack")).getBuilt()
-                        );
+                case MESSAGE:
+                    // mesage
+                    StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
+                    try {
+                        stompSubscription.getStompMessageHandler().handle(this, payload);
+                        if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+                            send(new StompPayload().method(StompHeader.ACK)
+                                    .header("id",payload.headers().get("ack")).getBuilt()
+                            );
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+                            send(new StompPayload().method(StompHeader.NACK)
+                                    .header("id",payload.headers().get("ack")).getBuilt()
+                            );
+                        }
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                    if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-                        send(new StompPayload().method(StompHeader.NACK)
-                                .header("id",payload.headers().get("ack")).getBuilt()
-                        );
+                    break;
+                case RECEIPT:
+                    String receiptId = payload.headers().get("receipt-id");
+                    StompPayload payload1 = receiptMap.remove(Integer.parseInt(receiptId));
+                    if (payload1.method() == StompHeader.DISCONNECT) {
+                        stompClientStatus = StompClientStatus.DISCONNECTED;
+                        close();
                     }
-                }
-            } else if (payload.method() == StompHeader.RECEIPT) {
-                String receipt_id = payload.headers().get("receipt-id");
-                StompPayload payload1 = receiptMap.remove(Integer.parseInt(receipt_id));
-                if (payload1.method() == StompHeader.DISCONNECT) {
-                    stompClientStatus = StompClientStatus.DISCONNECTED;
-                    close();
-                }
+                    break;
+                case ERROR:
+                    errorPayload = payload;
+                    stompClientStatus = StompClientStatus.ERROR;
+                    this.close();
+                    break;
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -136,7 +154,7 @@ public class StompClient extends WebSocketClient {
         ex.printStackTrace();
     }
 
-    private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<Integer, StompSubscription>();
+    private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<>();
     private final Map<Integer, StompPayload> receiptMap = new HashMap<>();
 
     private int idIncrement = 0;
@@ -172,12 +190,11 @@ public class StompClient extends WebSocketClient {
 
     public void disconnect() {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
-        StompPayload stompPayload;
         stompClientStatus =StompClientStatus.DISCONNECTING;
-        send((stompPayload = new StompPayload().method(StompHeader.DISCONNECT)
-                .header("receipt", String.valueOf(++idIncrement)))
-                .getBuilt()
-        );
+
+        StompPayload stompPayload = new StompPayload().method(StompHeader.DISCONNECT).header("receipt", String.valueOf(++idIncrement));
+
+        send(stompPayload.getBuilt());
         receiptMap.put(idIncrement, stompPayload);
     }
 

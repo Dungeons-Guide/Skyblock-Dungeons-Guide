@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.stomp;
 
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import lombok.Data;
-import lombok.Singular;
 import lombok.experimental.Accessors;
 
 import java.util.*;
@@ -29,7 +28,7 @@ import java.util.*;
 @Accessors(chain = true, fluent = true)
 public class StompPayload {
     private StompHeader method;
-    private Map<String, String> headers = new HashMap<String, String>();
+    private Map<String, String> headers = new HashMap<>();
     private String payload;
 
     public StompPayload header(String key, String value) {
@@ -53,7 +52,7 @@ public class StompPayload {
         if (payload != null)
             sb.append(payload);
         sb.append((char) 0);
-        if (FeatureRegistry.DEBUG.isEnabled()) System.out.println("Sending.. "+sb.toString());
+        if (FeatureRegistry.DEBUG.isEnabled()) System.out.println("Sending.. "+ sb);
         return sb.toString();
     }
 
@@ -63,7 +62,7 @@ public class StompPayload {
         Scanner scanner = new Scanner(payload);
         StompPayload stompPayload = new StompPayload();
         stompPayload.method = StompHeader.valueOf(scanner.nextLine());
-        String line = "";
+        String line;
         while (!(line = scanner.nextLine()).isEmpty()) {
             int index = line.indexOf(":");
             if (index == -1) throw new IllegalArgumentException("No : found in headers section");
@@ -76,7 +75,7 @@ public class StompPayload {
             stompPayload.headers.put(name, value);
         }
 
-        List<String> lines = new ArrayList<String>();
+        List<String> lines = new ArrayList<>();
         while (scanner.hasNextLine() && !(line = scanner.nextLine()).equals("\0")) {
             lines.add(line);
         }
