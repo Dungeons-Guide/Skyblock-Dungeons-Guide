@@ -44,8 +44,9 @@ public class StompClient extends WebSocketClient {
 
         logger.info("connecting websocket");
         if (!connectBlocking()) {
-            throw new RuntimeException("Can't connect to ws");
+            throw new FailedWebSocketConnection("Cant connect to ws");
         }
+
         logger.info("connected, stomp handshake");
         while(this.stompClientStatus == StompClientStatus.CONNECTING);
         logger.info("fully connected");
@@ -92,37 +93,15 @@ public class StompClient extends WebSocketClient {
                 case CONNECT:
                     stompClientStatus = StompClientStatus.CONNECTED;
 
-                    String heartbeat = payload.headers().get("heart-beat");
-                    if (heartbeat != null) {
-//                    int sx = Integer.parseInt(heartbeat.split(",")[0]);
-//                    int sy = Integer.parseInt(heartbeat.split(",")[1]);
-//
-//                    if (sy == 0) return;
-                        int heartbeatMS = 30000;
-                        this.heartbeat = ex.scheduleAtFixedRate(() -> {
-                            send("\n");
-                        }, heartbeatMS-1000, heartbeatMS-1000, TimeUnit.MILLISECONDS);
+                    String serverHeartbeat = payload.headers().get("heart-beat");
+                    if (serverHeartbeat != null) {
+                        int heartbeatMS = 30;
+                        this.heartbeat = ex.scheduleAtFixedRate(() -> send("\n"), heartbeatMS-1, heartbeatMS-1, TimeUnit.SECONDS);
                     }
                     break;
 
                 case MESSAGE:
-                    // mesage
-                    StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
-                    try {
-                        stompSubscription.getStompMessageHandler().handle(this, payload);
-                        if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-                            send(new StompPayload().method(StompHeader.ACK)
-                                    .header("id",payload.headers().get("ack")).getBuilt()
-                            );
-                        }
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-                            send(new StompPayload().method(StompHeader.NACK)
-                                    .header("id",payload.headers().get("ack")).getBuilt()
-                            );
-                        }
-                    }
+                    handleMessage(payload);
                     break;
                 case RECEIPT:
                     String receiptId = payload.headers().get("receipt-id");
@@ -143,6 +122,25 @@ public class StompClient extends WebSocketClient {
         }
     }
 
+    private void handleMessage(StompPayload payload) {
+        StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
+        try {
+            stompSubscription.getStompMessageHandler().handle(this, payload);
+            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+                send(new StompPayload().method(StompHeader.ACK)
+                        .header("id", payload.headers().get("ack")).getBuilt()
+                );
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+                send(new StompPayload().method(StompHeader.NACK)
+                        .header("id", payload.headers().get("ack")).getBuilt()
+                );
+            }
+        }
+    }
+
     @Override
     public void onClose(int code, String reason, boolean remote) {
         if (heartbeat != null) heartbeat.cancel(true);
@@ -159,8 +157,12 @@ public class StompClient extends WebSocketClient {
 
     private int idIncrement = 0;
 
-    public void send(StompPayload payload) {
+    private void makeSureStompIsConnected() {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
+    }
+
+    public void send(StompPayload payload) {
+        makeSureStompIsConnected();
         payload.method(StompHeader.SEND);
         if (payload.headers().get("receipt") != null)
             receiptMap.put(Integer.parseInt(payload.headers().get("receipt")), payload);
@@ -168,7 +170,7 @@ public class StompClient extends WebSocketClient {
     }
 
     public void subscribe(StompSubscription stompSubscription) {
-        if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
+        makeSureStompIsConnected();
         stompSubscription.setId(++idIncrement);
 
         send(new StompPayload().method(StompHeader.SUBSCRIBE)
@@ -181,7 +183,7 @@ public class StompClient extends WebSocketClient {
     }
 
     public void unsubscribe(StompSubscription stompSubscription) {
-        if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
+        makeSureStompIsConnected();
         send(new StompPayload().method(StompHeader.UNSUBSCRIBE)
                 .header("id",String.valueOf(stompSubscription.getId())).getBuilt()
         );
@@ -189,7 +191,7 @@ public class StompClient extends WebSocketClient {
     }
 
     public void disconnect() {
-        if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
+        makeSureStompIsConnected();
         stompClientStatus =StompClientStatus.DISCONNECTING;
 
         StompPayload stompPayload = new StompPayload().method(StompHeader.DISCONNECT).header("receipt", String.valueOf(++idIncrement));
@@ -197,6 +199,7 @@ public class StompClient extends WebSocketClient {
         send(stompPayload.getBuilt());
         receiptMap.put(idIncrement, stompPayload);
     }
+
 
     public enum  StompClientStatus {
         CONNECTING, CONNECTED, ERROR, DISCONNECTING, DISCONNECTED
