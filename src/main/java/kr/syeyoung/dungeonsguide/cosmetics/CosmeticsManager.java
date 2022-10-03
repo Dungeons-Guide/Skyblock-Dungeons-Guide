@@ -58,33 +58,33 @@ public class CosmeticsManager implements StompMessageSubscription {
     private Set<String> perms = new CopyOnWriteArraySet<>();
 
     public void requestActiveCosmetics() {
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
+        StompManager.getInstance().getStompConn().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.activelist")
         );
     }
     public void requestCosmeticsList() {
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
+        StompManager.getInstance().getStompConn().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.list")
         );
     }
     public void requestPerms() {
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
+        StompManager.getInstance().getStompConn().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/user.perms")
         );
     }
     public void setCosmetic(CosmeticData cosmetic) {
         if (!perms.contains(cosmetic.getReqPerm())) return;
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
+        StompManager.getInstance().getStompConn().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.set")
                 .payload(cosmetic.getId().toString())
         );
     }
     public void removeCosmetic(ActiveCosmetic activeCosmetic) {
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload()
+        StompManager.getInstance().getStompConn().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.remove")
                 .payload(activeCosmetic.getActivityUID().toString())

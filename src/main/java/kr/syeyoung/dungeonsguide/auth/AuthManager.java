@@ -8,6 +8,7 @@ import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuth;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
 import kr.syeyoung.dungeonsguide.events.AuthChangedEvent;
+import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -121,7 +122,7 @@ public class AuthManager {
             } else {
                 // RE-AUTHed SUCCESSFULLY HOORAY
                 // for some reason the forge events don't work in pre init, so I call the callback directly
-                DungeonsGuide.getDungeonsGuide().onAuthChanged(new AuthChangedEvent());
+                StompManager.getInstance().init();
                 MinecraftForge.EVENT_BUS.post(new AuthChangedEvent());
             }
         } catch (NoSuchAlgorithmException | AuthenticationException | IOException e) {

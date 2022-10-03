@@ -386,7 +386,7 @@ public class PartyManager implements StompMessageSubscription {
         }
         askToJoinSecret = secretBuilder.toString();
 
-        StompClient stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
+        StompClient stompInterface = StompManager.getInstance().getStompConn();
         stompInterface.send(new StompPayload().payload(new JSONObject().put("secret", askToJoinSecret).toString()).destination("/app/party.setjoinsecret"));
     }
 
@@ -429,7 +429,7 @@ public class PartyManager implements StompMessageSubscription {
             if (getPartyContext().getPartyID() != null) {
                 JSONObject object = new JSONObject();
                 object.put("partyid", getPartyContext().getPartyID());
-                StompClient stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
+                StompClient stompInterface = StompManager.getInstance().getStompConn();
                 stompInterface.send(new StompPayload().payload(object.toString()).destination( "/app/party.leave"));
             }
         }
@@ -451,7 +451,7 @@ public class PartyManager implements StompMessageSubscription {
         }
         JSONObject object = new JSONObject();
         object.put("members", jsonArray);
-        StompClient stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
+        StompClient stompInterface = StompManager.getInstance().getStompConn();
         stompInterface.send(new StompPayload().payload(object.toString()).destination("/app/party.join"));
 
         getPartyContext().setPartyID("!@#!@#!@#..........FETCHING..........$!@$!@$!@$"+UUID.randomUUID().toString());
@@ -506,23 +506,23 @@ public class PartyManager implements StompMessageSubscription {
                 requestPartyList((pc) -> {
                     boolean contains = pc.getPartyRawMembers().contains(playerName);
                     if (!contains) {
-                        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
+                        StompManager.getInstance().getStompConn().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
                     } else {
-                        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).destination("/app/party.check.resp"));
+                        StompManager.getInstance().getStompConn().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).destination("/app/party.check.resp"));
                     }
                 });
             } else {
                 if (getPartyContext().getPartyRawMembers().contains(playerName)) {
-                    DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).destination("/app/party.check.resp"));
+                    StompManager.getInstance().getStompConn().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).destination("/app/party.check.resp"));
                 } else if (getPartyContext().isMemberComplete() && getPartyContext().isModeratorComplete() && getPartyContext().getPartyOwner() != null) {
-                    DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
+                    StompManager.getInstance().getStompConn().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
                 } else {
                     requestPartyList((pc) -> {
                         boolean contains = pc.getPartyRawMembers().contains(playerName);
                         if (!contains) {
-                            DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
+                            StompManager.getInstance().getStompConn().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
                         } else {
-                            DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).destination("/app/party.check.resp"));
+                            StompManager.getInstance().getStompConn().send(new StompPayload().payload(new JSONObject().put("status", "success").put("token", token).toString()).destination("/app/party.check.resp"));
                         }
                     });
                 }
@@ -594,7 +594,7 @@ public class PartyManager implements StompMessageSubscription {
         lastToken = secret;
         if (partyContext != null && getPartyContext().isPartyExistHypixel())
             ChatProcessor.INSTANCE.addToChatQueue("/p leave", () -> {}, true);
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().method(StompHeader.SEND)
+        StompManager.getInstance().getStompConn().send(new StompPayload().method(StompHeader.SEND)
                 .destination("/app/party.askedtojoin")
                 .payload(new JSONObject().put("token", secret).toString()));
     }

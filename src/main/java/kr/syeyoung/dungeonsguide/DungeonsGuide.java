@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
+import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
@@ -71,13 +72,10 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class DungeonsGuide implements CloseListener {
+public class DungeonsGuide {
 
     private SkyblockStatus skyblockStatus;
 
-
-    @Getter
-    private StompClient stompConnection;
     @Getter
     private CosmeticsManager cosmeticsManager;
 
@@ -103,9 +101,6 @@ public class DungeonsGuide implements CloseListener {
     CommandReparty commandReparty;
 
 
-    private static final String STOMP_URL = "wss://dungeons.guide/ws";
-
-    //    private String stompURL = "ws://localhost/ws";
     public void init() {
 
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
@@ -152,7 +147,6 @@ public class DungeonsGuide implements CloseListener {
 
         cosmeticsManager = new CosmeticsManager();
         MinecraftForge.EVENT_BUS.register(cosmeticsManager);
-
 
 
         progressbar.step("Loading Config");
@@ -205,30 +199,6 @@ public class DungeonsGuide implements CloseListener {
     }
 
 
-    public void onAuthChanged(AuthChangedEvent event) {
-        try {
-            connectStomp();
-        }catch (Exception ignored){
-        }
-    }
 
-    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();
-    @Override
-    public void onClose(int code, String reason, boolean remote) {
-        logger.info("Stomp Connection closed, trying to reconnect - {} - {}", reason, code);
-        connectStomp();
-    }
 
-    public void connectStomp() {
-        ex.schedule(() -> {
-            if (AuthManager.getInstance().getToken() != null) {
-                try {
-                    stompConnection = new StompClient(new URI(STOMP_URL), AuthManager.getInstance().getToken(), DungeonsGuide.this);
-                    MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
-                } catch (Exception e) {
-                    logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
-                }
-            }
-        }, 5L, TimeUnit.SECONDS);
-    }
 }

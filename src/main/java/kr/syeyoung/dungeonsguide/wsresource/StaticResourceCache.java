@@ -45,7 +45,7 @@ public class StaticResourceCache implements StompMessageSubscription {
         if (staticResourceMap.containsKey(resourceID)) return CompletableFuture.completedFuture(staticResourceMap.get(resourceID));
         if (staticResourceRequest.containsKey(resourceID)) return staticResourceRequest.get(resourceID);
 
-        DungeonsGuide.getDungeonsGuide().getStompConnection().send(new StompPayload().destination("/app/staticresource.get").payload(resourceID.toString()));
+        StompManager.getInstance().getStompConn().send(new StompPayload().destination("/app/staticresource.get").payload(resourceID.toString()));
         CompletableFuture<StaticResource> comp = new CompletableFuture<>();
         staticResourceRequest.put(resourceID, comp);
         return comp;
