@@ -20,12 +20,12 @@ package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
@@ -55,8 +55,10 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.List;
 import java.util.Comparator;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener, DungeonStartListener, BossroomEnterListener {
     public FeatureDungeonMap() {
@@ -267,15 +269,37 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         this.mapTexture.updateDynamicTexture();
     }
 
+    final Pattern pattern = Pattern.compile("\\*[a-zA-Z0-9_]{2,16}\\*", Pattern.MULTILINE);
+
+
+
     private void renderHeads(MapProcessor mapProcessor, MapData mapData, float scale, float postScale, float partialTicks) {
         List<NetworkPlayerInfo> list = field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
         if (list.size() < 40) return;
         for (int i = 1; i < 20; i++) {
             NetworkPlayerInfo networkPlayerInfo = list.get(i);
             String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
+
             if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
-            String actual = TextUtils.stripColor(name).trim().split(" ")[0];
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(actual);
+
+            name = TextUtils.stripColor(name);
+
+            name = name.replaceAll(" ", "*");
+
+
+            Matcher matcher = pattern.matcher(name);
+
+            if(!matcher.find()) continue;
+
+            name = matcher.group(0);
+
+            name = name.substring(0, name.length() - 1);
+
+            name = name.substring(1);
+
+
+            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+
             if (TextUtils.stripColor(name).endsWith("(DEAD)") && entityplayer != Minecraft.getMinecraft().thePlayer) {
                 continue;
             }
@@ -286,7 +310,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 pt2 = mapProcessor.worldPointToMapPoint(entityplayer.getPositionEyes(partialTicks));
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
             } else {
-                String iconName = mapProcessor.getMapIconToPlayerMap().get(actual);
+                String iconName = mapProcessor.getMapIconToPlayerMap().get(name);
                 if (iconName == null) continue;
                 Vec4b vec = mapData.mapDecorations.get(iconName);
                 if (vec == null) {
