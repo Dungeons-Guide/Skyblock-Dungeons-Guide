@@ -20,10 +20,7 @@ package kr.syeyoung.dungeonsguide.wsresource;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
-import kr.syeyoung.dungeonsguide.stomp.StompInterface;
-import kr.syeyoung.dungeonsguide.stomp.StompMessageHandler;
-import kr.syeyoung.dungeonsguide.stomp.StompPayload;
-import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
+import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.json.JSONObject;
 
@@ -55,7 +52,7 @@ public class StaticResourceCache implements StompMessageHandler {
     }
 
     @Override
-    public void handle(StompInterface stompInterface, StompPayload stompPayload) {
+    public void handle(StompClient stompInterface, StompPayload stompPayload) {
         JSONObject object = new JSONObject(stompPayload.payload());
         StaticResource staticResource = new StaticResource();
         staticResource.setResourceID(UUID.fromString(object.getString("resourceID")));

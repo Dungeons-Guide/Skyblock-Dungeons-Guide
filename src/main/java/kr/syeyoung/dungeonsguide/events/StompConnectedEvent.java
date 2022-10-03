@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.events;
 
-import kr.syeyoung.dungeonsguide.stomp.StompInterface;
+import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraftforge.fml.common.eventhandler.Event;
@@ -26,5 +26,5 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @Data
 @AllArgsConstructor
 public class StompConnectedEvent extends Event {
-    private StompInterface stompInterface;
+    private StompClient stompInterface;
 }

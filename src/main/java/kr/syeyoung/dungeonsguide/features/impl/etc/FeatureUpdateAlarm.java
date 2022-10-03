@@ -22,10 +22,7 @@ import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.stomp.StompInterface;
-import kr.syeyoung.dungeonsguide.stomp.StompMessageHandler;
-import kr.syeyoung.dungeonsguide.stomp.StompPayload;
-import kr.syeyoung.dungeonsguide.stomp.StompSubscription;
+import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
@@ -36,7 +33,7 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
 
     private StompPayload stompPayload;
     @Override
-    public void handle(StompInterface stompInterface, StompPayload stompPayload) {
+    public void handle(StompClient stompInterface, StompPayload stompPayload) {
         this.stompPayload = stompPayload;
     }
 

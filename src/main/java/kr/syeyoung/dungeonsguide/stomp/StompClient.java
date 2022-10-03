@@ -32,7 +32,7 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
-public class StompClient extends WebSocketClient implements StompInterface {
+public class StompClient extends WebSocketClient {
 
     Logger logger = LogManager.getLogger("StompClient");
     public StompClient(URI serverUri, final String token, CloseListener closeListener) throws InterruptedException {
@@ -141,7 +141,6 @@ public class StompClient extends WebSocketClient implements StompInterface {
 
     private int idIncrement = 0;
 
-    @Override
     public void send(StompPayload payload) {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
         payload.method(StompHeader.SEND);
@@ -150,7 +149,6 @@ public class StompClient extends WebSocketClient implements StompInterface {
         send(payload.getBuilt());
     }
 
-    @Override
     public void subscribe(StompSubscription stompSubscription) {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
         stompSubscription.setId(++idIncrement);
@@ -164,7 +162,6 @@ public class StompClient extends WebSocketClient implements StompInterface {
         stompSubscriptionMap.put(stompSubscription.getId(), stompSubscription);
     }
 
-    @Override
     public void unsubscribe(StompSubscription stompSubscription) {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
         send(new StompPayload().method(StompHeader.UNSUBSCRIBE)
@@ -173,7 +170,6 @@ public class StompClient extends WebSocketClient implements StompInterface {
         stompSubscriptionMap.remove(stompSubscription.getId());
     }
 
-    @Override
     public void disconnect() {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
         StompPayload stompPayload;

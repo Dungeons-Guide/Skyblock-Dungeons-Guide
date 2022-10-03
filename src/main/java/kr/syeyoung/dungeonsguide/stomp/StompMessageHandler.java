@@ -19,5 +19,5 @@
 package kr.syeyoung.dungeonsguide.stomp;
 
 public interface StompMessageHandler {
-    void handle(StompInterface stompInterface, StompPayload stompPayload);
+    void handle(StompClient stompInterface, StompPayload stompPayload);
 }

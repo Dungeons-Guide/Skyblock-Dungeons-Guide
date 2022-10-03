@@ -92,7 +92,7 @@ public class CosmeticsManager implements StompMessageHandler {
     }
 
     @Override
-    public void handle(StompInterface stompInterface, StompPayload stompPayload) {
+    public void handle(StompClient stompInterface, StompPayload stompPayload) {
         String destination = stompPayload.headers().get("destination");
         if (destination.equals("/topic/cosmetic.set")) {
             JSONObject jsonObject = new JSONObject(stompPayload.payload());

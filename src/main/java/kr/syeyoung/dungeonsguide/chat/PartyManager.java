@@ -386,7 +386,7 @@ public class PartyManager implements StompMessageHandler {
         }
         askToJoinSecret = secretBuilder.toString();
 
-        StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
+        StompClient stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
         stompInterface.send(new StompPayload().payload(new JSONObject().put("secret", askToJoinSecret).toString()).header("destination", "/app/party.setjoinsecret"));
     }
 
@@ -429,7 +429,7 @@ public class PartyManager implements StompMessageHandler {
             if (getPartyContext().getPartyID() != null) {
                 JSONObject object = new JSONObject();
                 object.put("partyid", getPartyContext().getPartyID());
-                StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
+                StompClient stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
                 stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.leave"));
             }
         }
@@ -451,7 +451,7 @@ public class PartyManager implements StompMessageHandler {
         }
         JSONObject object = new JSONObject();
         object.put("members", jsonArray);
-        StompInterface stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
+        StompClient stompInterface = DungeonsGuide.getDungeonsGuide().getStompConnection();
         stompInterface.send(new StompPayload().payload(object.toString()).header("destination", "/app/party.join"));
 
         getPartyContext().setPartyID("!@#!@#!@#..........FETCHING..........$!@$!@$!@$"+UUID.randomUUID().toString());
@@ -497,7 +497,7 @@ public class PartyManager implements StompMessageHandler {
     private Map<String, Long> playerInvAntiSpam = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     @Override
-    public void handle(StompInterface stompInterface, StompPayload stompPayload) {
+    public void handle(StompClient stompInterface, StompPayload stompPayload) {
         JSONObject object = new JSONObject(stompPayload.payload());
         if ("/user/queue/party.check".equals(stompPayload.headers().get("destination"))) {
             String playerName = object.getString("player");

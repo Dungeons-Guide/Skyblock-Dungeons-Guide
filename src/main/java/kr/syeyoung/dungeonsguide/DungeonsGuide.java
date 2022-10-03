@@ -38,7 +38,6 @@ import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.stomp.CloseListener;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
-import kr.syeyoung.dungeonsguide.stomp.StompInterface;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
@@ -78,7 +77,7 @@ public class DungeonsGuide implements CloseListener {
 
 
     @Getter
-    private StompInterface stompConnection;
+    private StompClient stompConnection;
     @Getter
     private CosmeticsManager cosmeticsManager;
 
