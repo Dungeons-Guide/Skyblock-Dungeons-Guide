@@ -18,9 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.utils;
 
+import com.google.common.base.Throwables;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.auth.AuthUtil;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -35,6 +38,8 @@ import java.util.TimerTask;
 public class AhUtils {
     public static volatile Map<String, AuctionData> auctions = new HashMap<String, AuctionData>();
 
+    static Logger logger = LogManager.getLogger("AhUtils");
+
     public static Timer timer = new Timer();
 
     public static int totalAuctions = 0;
@@ -45,7 +50,7 @@ public class AhUtils {
                 try {
                     AhUtils.loadAuctions();
                 } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException | InvalidAlgorithmParameterException | NoSuchPaddingException | BadPaddingException | KeyStoreException | IllegalBlockSizeException | KeyManagementException e) {
-                    e.printStackTrace();
+                    logger.error("Error loading auctions {}", String.valueOf(Throwables.getRootCause(e)));
                 }
             }
         },  0L, 1800000L);
