@@ -19,23 +19,12 @@
 package kr.syeyoung.dungeonsguide.stomp;
 
 import lombok.Getter;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
 import org.java_websocket.handshake.ServerHandshake;
-import org.java_websocket.server.DefaultSSLWebSocketServerFactory;
-import sun.security.ssl.SSLSocketFactoryImpl;
 
-import javax.net.ssl.*;
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.net.Socket;
 import java.net.URI;
-import java.security.KeyManagementException;
-import java.security.KeyStore;
-import java.security.KeyStoreException;
-import java.security.NoSuchAlgorithmException;
-import java.security.cert.CertificateException;
-import java.security.cert.CertificateFactory;
-import java.security.cert.X509Certificate;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Executors;
@@ -44,18 +33,22 @@ import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 public class StompClient extends WebSocketClient implements StompInterface {
-    public StompClient(URI serverUri, final String token, CloseListener closeListener) throws Exception {
+
+    Logger logger = LogManager.getLogger("StompClient");
+    public StompClient(URI serverUri, final String token, CloseListener closeListener) throws InterruptedException {
         super(serverUri);
         this.closeListener = closeListener;
+
+
         addHeader("Authorization", token);
 
-        System.out.println("connecting websocket");
+        logger.info("connecting websocket");
         if (!connectBlocking()) {
             throw new RuntimeException("Can't connect to ws");
         }
-        System.out.println("connected, stomp handshake");
+        logger.info("connected, stomp handshake");
         while(this.stompClientStatus == StompClientStatus.CONNECTING);
-        System.out.println("fully connected");
+        logger.info("fully connected");
     }
     private final CloseListener closeListener;
 
@@ -144,7 +137,7 @@ public class StompClient extends WebSocketClient implements StompInterface {
     }
 
     private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<Integer, StompSubscription>();
-    private final Map<Integer, StompPayload> receiptMap = new HashMap<Integer, StompPayload>();
+    private final Map<Integer, StompPayload> receiptMap = new HashMap<>();
 
     private int idIncrement = 0;
 
@@ -190,5 +183,9 @@ public class StompClient extends WebSocketClient implements StompInterface {
                 .getBuilt()
         );
         receiptMap.put(idIncrement, stompPayload);
+    }
+
+    public enum  StompClientStatus {
+        CONNECTING, CONNECTED, ERROR, DISCONNECTING, DISCONNECTED
     }
 }
