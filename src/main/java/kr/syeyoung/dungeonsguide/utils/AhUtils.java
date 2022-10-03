@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.utils;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProviderUtil;
+import kr.syeyoung.dungeonsguide.auth.authprovider.AuthUtil;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -55,7 +55,7 @@ public class AhUtils {
         try {
 
             Map<String, AuctionData> semi_auctions = new HashMap<String, AuctionData>();
-            JsonElement object = AuthProviderUtil.getJsonSecured("https://dungeons.guide/resource/keys");
+            JsonElement object = AuthUtil.getJsonSecured("https://dungeons.guide/resource/keys");
             for (JsonElement element : object.getAsJsonArray()) {
                 JsonObject object1 = element.getAsJsonObject();
                 AuctionData auctionData = new AuctionData(object1.get("id").getAsString());

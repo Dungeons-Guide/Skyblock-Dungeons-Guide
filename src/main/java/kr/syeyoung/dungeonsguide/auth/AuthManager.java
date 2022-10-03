@@ -5,8 +5,8 @@ import com.google.gson.JsonObject;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
-import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProviderUtil;
-import kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth;
+import kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth.DgAuth;
+import kr.syeyoung.dungeonsguide.auth.authprovider.impl.DgAuth.DgAuthUtil;
 import kr.syeyoung.dungeonsguide.events.AuthChangedEvent;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -77,7 +77,7 @@ public class AuthManager {
                     continue;
                 }
 
-                JsonObject obj = AuthProviderUtil.getJwtPayload(getToken());
+                JsonObject obj = DgAuthUtil.getJwtPayload(getToken());
                 if (!obj.get("uuid").getAsString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                     shouldReAuth = true;
                 }
@@ -113,7 +113,7 @@ public class AuthManager {
 
         currentProvider = null;
         try {
-            currentProvider = new DgAuth(baseserverurl).createAuthProvider(Minecraft.getMinecraft().getSession());
+            currentProvider = new DgAuth(baseserverurl).createAuthProvider();
             if (currentProvider.getToken() == null) {
                 shouldReAuth = true;
                 currentProvider = null;

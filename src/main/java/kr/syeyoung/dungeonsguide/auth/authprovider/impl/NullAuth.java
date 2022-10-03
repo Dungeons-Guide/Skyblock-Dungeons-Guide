@@ -23,7 +23,7 @@ public class NullAuth implements AuthProvider {
     }
 
     @Override
-    public void authenticate(Session s) throws AuthenticationException, IOException, NoSuchAlgorithmException {
+    public void authenticate() throws AuthenticationException, IOException, NoSuchAlgorithmException {
         logger.info("Authenticating... something");
     }
 
@@ -68,7 +68,7 @@ public class NullAuth implements AuthProvider {
     }
 
     @Override
-    public AuthProvider createAuthProvider(Session session) throws NoSuchAlgorithmException, AuthenticationException, IOException {
+    public AuthProvider createAuthProvider() throws NoSuchAlgorithmException, AuthenticationException, IOException {
         return new NullAuth();
     }
 

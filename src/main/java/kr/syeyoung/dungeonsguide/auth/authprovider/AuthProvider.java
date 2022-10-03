@@ -10,11 +10,11 @@ import java.security.NoSuchAlgorithmException;
 
 public interface AuthProvider {
     void init() throws NoSuchAlgorithmException;
-    void authenticate(Session s) throws AuthenticationException, IOException, NoSuchAlgorithmException;
+    void authenticate() throws AuthenticationException, IOException, NoSuchAlgorithmException;
     String getToken();
 
     KeyPair getRsaKey();
 
 
-    AuthProvider createAuthProvider(Session session) throws NoSuchAlgorithmException, AuthenticationException, IOException;
+    AuthProvider createAuthProvider() throws NoSuchAlgorithmException, AuthenticationException, IOException;
 }
