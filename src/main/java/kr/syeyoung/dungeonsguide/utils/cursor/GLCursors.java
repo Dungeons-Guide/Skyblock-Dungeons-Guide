@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.utils.cursor;
 
+import com.google.common.base.Throwables;
 import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
@@ -26,6 +27,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.LWJGLUtil;
@@ -50,6 +53,8 @@ import java.util.stream.Collectors;
 
 
 public class GLCursors {
+
+    static Logger logger = LogManager.getLogger("DG-GlCursors");
     private static Unsafe unsafe;
     private static Class cursorElement;
     private static Constructor constructor;
@@ -94,7 +99,7 @@ public class GLCursors {
                         break;
                 }
             } catch (Throwable e) {
-                System.out.println("Error occured while loading cursor: "+value);
+                logger.error("Error occured while loading cursor: {}", value);
                 e.printStackTrace();
             }
             try {
@@ -112,11 +117,13 @@ public class GLCursors {
 
                         CursorReader.CursorData cursorData =
                                 cursorDataList2.size() == 0 ? cursorDataList.get(0) : cursorDataList2.get(0);
-                        System.out.println(cursorData);
+                        logger.info(cursorData);
                         bufferedImage = cursorData.getBufferedImage();
                         hotspotX = cursorData.getXHotSpot();
                         hotspotY = cursorData.getYHotSpot();
-                    } catch (Throwable t) {t.printStackTrace();}
+                    } catch (Throwable t) {
+                        logger.error("loading currsor failed with message, {}", String.valueOf(Throwables.getRootCause(t)));
+                    }
 
 
                     int width = bufferedImage == null ? 16 : bufferedImage.getWidth();
@@ -140,7 +147,7 @@ public class GLCursors {
                     c = new Cursor(effWidth, effHeight, hotspotX, height - hotspotY - 1,1,intBuffer, null);
                 }
             } catch (Throwable e) {
-                System.out.println("Error occured while loading cursor from resource:  "+value);
+                logger.error("Error occured while loading cursor from resource:  "+value);
                 e.printStackTrace();
             }
             if (c != null) {
@@ -150,14 +157,14 @@ public class GLCursors {
                     for (Field declaredField : cursor.getClass().getDeclaredFields()) {
                         declaredField.setAccessible(true);
                         Object obj = declaredField.get(cursor);
-                        System.out.println(declaredField.getName()+": "+obj+" - "+(obj instanceof ByteBuffer));
+                        logger.info(declaredField.getName()+": "+obj+" - "+(obj instanceof ByteBuffer));
                         if (obj instanceof ByteBuffer) {
                             ByteBuffer b = (ByteBuffer) declaredField.get(cursor);
                             StringBuilder sb = new StringBuilder("Contents: ");
                             for (int i = 0; i < b.limit(); i++) {
                                 sb.append(Integer.toHexString(b.get(i) & 0xFF)).append(" ");
                             }
-                            System.out.println(sb.toString());
+                            logger.info(sb.toString());
                         }
                     }
                 } catch (IllegalAccessException e) {
