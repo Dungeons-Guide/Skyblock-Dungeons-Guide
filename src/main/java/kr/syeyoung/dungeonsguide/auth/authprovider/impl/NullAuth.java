@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.auth.authprovider.impl;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Session;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -22,7 +23,7 @@ public class NullAuth implements AuthProvider {
     }
 
     @Override
-    public void authenticate(Minecraft mc) throws AuthenticationException, IOException, NoSuchAlgorithmException {
+    public void authenticate(Session s) throws AuthenticationException, IOException, NoSuchAlgorithmException {
         logger.info("Authenticating... something");
     }
 
@@ -64,6 +65,11 @@ public class NullAuth implements AuthProvider {
                 return new byte[0];
             }
         });
+    }
+
+    @Override
+    public AuthProvider createAuthProvider(Session session) throws NoSuchAlgorithmException, AuthenticationException, IOException {
+        return new NullAuth();
     }
 
 }

@@ -12,7 +12,7 @@ import java.security.NoSuchAlgorithmException;
 
 public class DgAuth implements AuthProvider {
 
-    private final String authServerUrl;
+    private String authServerUrl;
 
     public DgAuth(String authServerUrl){
         this.authServerUrl = authServerUrl;
@@ -28,10 +28,9 @@ public class DgAuth implements AuthProvider {
     }
 
     @Override
-    public void authenticate(Minecraft mc) throws AuthenticationException, IOException, NoSuchAlgorithmException {
-        Session session = mc.getSession();
+    public void authenticate(Session s) throws AuthenticationException, IOException, NoSuchAlgorithmException {
 
-        String tempToken  = AuthProviderUtil.checkSessionAuthenticity(session, authServerUrl);
+        String tempToken  = AuthProviderUtil.checkSessionAuthenticity(s, authServerUrl);
         token = AuthProviderUtil.verifyAuth(tempToken, rsaKey.getPublic(), authServerUrl);
 
     }
@@ -44,6 +43,15 @@ public class DgAuth implements AuthProvider {
     @Override
     public KeyPair getRsaKey() {
         return rsaKey;
+    }
+
+
+    @Override
+    public AuthProvider createAuthProvider(Session session) throws NoSuchAlgorithmException, AuthenticationException, IOException {
+        this.init();
+        this.authenticate(session);
+
+        return this;
     }
 
 }

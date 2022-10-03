@@ -113,7 +113,7 @@ public class AuthManager {
 
         currentProvider = null;
         try {
-            currentProvider = createAuthProvider();
+            currentProvider = new DgAuth(baseserverurl).createAuthProvider(Minecraft.getMinecraft().getSession());
             if (currentProvider.getToken() == null) {
                 shouldReAuth = true;
                 currentProvider = null;
@@ -131,16 +131,6 @@ public class AuthManager {
             logger.error("Re-auth failed with message {}, trying again in a ten seconds", String.valueOf(Throwables.getRootCause(e)));
         }
 
-    }
-
-
-    AuthProvider createAuthProvider() throws NoSuchAlgorithmException, AuthenticationException, IOException {
-        AuthProvider auth = new DgAuth(baseserverurl);
-
-        auth.init();
-        auth.authenticate(Minecraft.getMinecraft());
-
-        return auth;
     }
 
 
