@@ -28,8 +28,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import org.json.JSONObject;
-import scala.tools.cmd.Opt;
+import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
@@ -40,7 +39,6 @@ import java.util.*;
 import java.util.concurrent.*;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
-import java.util.stream.IntStream;
 
 public class ApiFetchur {
     private static final Gson gson = new Gson();
@@ -53,6 +51,7 @@ public class ApiFetchur {
     private static final ExecutorService ex = Executors.newFixedThreadPool(4);
 
     private static final Set<String> invalidKeys = new HashSet<>();
+
     public static void purgeCache() {
         playerProfileCache.clear();
         nicknameToUID.clear();
@@ -68,6 +67,7 @@ public class ApiFetchur {
 
         ex.submit(ApiFetchur::getLilyWeightConstants);
     }
+
     static {
         ex.submit(ApiFetchur::getLilyWeightConstants);
     }
@@ -76,8 +76,11 @@ public class ApiFetchur {
         URLConnection connection = new URL(url).openConnection();
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
-        return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonObject.class);
+        InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+        String serverres = IOUtils.toString(inputStreamReader);
+        return gson.fromJson(serverres, JsonObject.class);
     }
+
     public static JsonArray getJsonArr(String url) throws IOException {
         URLConnection connection = new URL(url).openConnection();
         connection.setConnectTimeout(10000);
@@ -86,18 +89,20 @@ public class ApiFetchur {
     }
 
     private static volatile JsonObject constants;
+
     public static JsonObject getLilyWeightConstants() {
         if (constants != null) return constants;
-            try {
-                JsonObject jsonObject = getJson("https://raw.githubusercontent.com/Antonio32A/lilyweight/master/lib/constants.json");
-                constants = jsonObject;
-            } catch (Exception e) {
-                throw new RuntimeException(e);
-            }
-            return constants;
+        try {
+            JsonObject jsonObject = getJson("https://raw.githubusercontent.com/Antonio32A/lilyweight/master/lib/constants.json");
+            constants = jsonObject;
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+        return constants;
     }
 
     private static final Map<String, CompletableFuture<Optional<GameProfile>>> completableFutureMap4 = new ConcurrentHashMap<>();
+
     public static CompletableFuture<Optional<GameProfile>> getSkinGameProfileByUUIDAsync(String uid) {
         if (UIDtoGameProfile.containsKey(uid)) {
             CachedData<GameProfile> cachedData = UIDtoGameProfile.get(uid);
@@ -116,8 +121,8 @@ public class ApiFetchur {
             }
             ex.submit(() -> {
                 try {
-                    Optional<GameProfile> playerProfile = getSkinGameProfileByUUID(uid,nick.get());
-                    UIDtoGameProfile.put(uid, new CachedData<GameProfile>(System.currentTimeMillis()+1000*60*30, playerProfile.orElse(null)));
+                    Optional<GameProfile> playerProfile = getSkinGameProfileByUUID(uid, nick.get());
+                    UIDtoGameProfile.put(uid, new CachedData<GameProfile>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
                     completableFuture.complete(playerProfile);
                     completableFutureMap4.remove(uid);
                     return;
@@ -140,6 +145,7 @@ public class ApiFetchur {
 
 
     private static final Map<String, CompletableFuture<Optional<PlayerProfile>>> completableFutureMap = new ConcurrentHashMap<>();
+
     public static CompletableFuture<Optional<PlayerProfile>> fetchMostRecentProfileAsync(String uid, String apiKey) {
         if (playerProfileCache.containsKey(uid)) {
             CachedData<PlayerProfile> cachedData = playerProfileCache.get(uid);
@@ -148,21 +154,21 @@ public class ApiFetchur {
             }
             playerProfileCache.remove(uid);
         }
-        if (completableFutureMap.containsKey(uid)) return completableFutureMap.get(uid);
+        if (completableFutureMap.containsKey(uid)) {
+            return completableFutureMap.get(uid);
+        }
         if (invalidKeys.contains(apiKey)) {
             CompletableFuture cf = new CompletableFuture();
             cf.completeExceptionally(new IOException("403 for url"));
             return cf;
         }
-
         CompletableFuture<Optional<PlayerProfile>> completableFuture = new CompletableFuture<>();
         ex.submit(() -> {
             try {
                 Optional<PlayerProfile> playerProfile = fetchMostRecentProfile(uid, apiKey);
-                playerProfileCache.put(uid, new CachedData<PlayerProfile>(System.currentTimeMillis()+1000*60*30, playerProfile.orElse(null)));
+                playerProfileCache.put(uid, new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
                 completableFuture.complete(playerProfile);
                 completableFutureMap.remove(uid);
-                return;
             } catch (IOException e) {
                 if (e.getMessage().contains("403 for URL")) {
                     completableFuture.completeExceptionally(e);
@@ -180,6 +186,7 @@ public class ApiFetchur {
     }
 
     private static final Map<String, CompletableFuture<Optional<String>>> completableFutureMap3 = new ConcurrentHashMap<>();
+
     public static CompletableFuture<Optional<String>> fetchNicknameAsync(String uid) {
         if (UIDtoNickname.containsKey(uid)) {
             CachedData<String> cachedData = UIDtoNickname.get(uid);
@@ -196,9 +203,9 @@ public class ApiFetchur {
         ex.submit(() -> {
             try {
                 Optional<String> playerProfile = fetchNickname(uid);
-                UIDtoNickname.put(uid, new CachedData<String>(System.currentTimeMillis()+1000*60*60*12,playerProfile.orElse(null)));
+                UIDtoNickname.put(uid, new CachedData<String>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, playerProfile.orElse(null)));
                 if (playerProfile.isPresent())
-                    nicknameToUID.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis()+1000*60*60*12, uid));
+                    nicknameToUID.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, uid));
                 completableFuture.complete(playerProfile);
                 completableFutureMap3.remove(uid);
                 return;
@@ -214,6 +221,7 @@ public class ApiFetchur {
     }
 
     private static final Map<String, CompletableFuture<Optional<String>>> completableFutureMap2 = new ConcurrentHashMap<>();
+
     public static CompletableFuture<Optional<String>> fetchUUIDAsync(String nickname) {
         if (nicknameToUID.containsKey(nickname)) {
             CachedData<String> cachedData = nicknameToUID.get(nickname);
@@ -230,9 +238,9 @@ public class ApiFetchur {
         ex.submit(() -> {
             try {
                 Optional<String> playerProfile = fetchUUID(nickname);
-                nicknameToUID.put(nickname, new CachedData<String>(System.currentTimeMillis()+1000*60*60*12,playerProfile.orElse(null)));
+                nicknameToUID.put(nickname, new CachedData<String>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, playerProfile.orElse(null)));
                 if (playerProfile.isPresent())
-                    UIDtoNickname.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis()+1000*60*60*12, nickname));
+                    UIDtoNickname.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, nickname));
 
                 completableFuture.complete(playerProfile);
                 completableFutureMap2.remove(nickname);
@@ -249,19 +257,22 @@ public class ApiFetchur {
     }
 
     public static Optional<String> fetchUUID(String nickname) throws IOException {
-        JsonObject json = getJson("https://api.mojang.com/users/profiles/minecraft/"+nickname);
+        JsonObject json = getJson("https://api.mojang.com/users/profiles/minecraft/" + nickname);
         if (json.has("error")) return Optional.empty();
         return Optional.of(TextUtils.insertDashUUID(json.get("id").getAsString()));
     }
+
     public static Optional<String> fetchNickname(String uuid) throws IOException {
         try {
             JsonArray json = getJsonArr("https://api.mojang.com/user/profiles/" + uuid.replace("-", "") + "/names");
-            return Optional.of(json.get(json.size()-1).getAsJsonObject().get("name").getAsString());
-        } catch (Exception e) {return Optional.empty();}
+            return Optional.of(json.get(json.size() - 1).getAsJsonObject().get("name").getAsString());
+        } catch (Exception e) {
+            return Optional.empty();
+        }
     }
 
     public static List<PlayerProfile> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
-        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid="+uid+"&key="+apiKey);
+        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
         if (!json.get("success").getAsBoolean()) return new ArrayList<>();
         JsonArray profiles = json.getAsJsonArray("profiles");
         String dashTrimmed = uid.replace("-", "");
@@ -276,26 +287,45 @@ public class ApiFetchur {
     }
 
     public static Optional<PlayerProfile> fetchMostRecentProfile(String uid, String apiKey) throws IOException {
-        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid="+uid+"&key="+apiKey);
+        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
         if (!json.get("success").getAsBoolean()) return Optional.empty();
         JsonArray profiles = json.getAsJsonArray("profiles");
         String dashTrimmed = uid.replace("-", "");
 
         JsonObject profile = null;
-        long lastSave = Long.MIN_VALUE;
+        float lastSave = Long.MIN_VALUE;
         for (JsonElement jsonElement : profiles) {
             JsonObject semiProfile = jsonElement.getAsJsonObject();
-            if (!semiProfile.getAsJsonObject("members").has(dashTrimmed)) continue;
-            long lastSave2 = semiProfile.getAsJsonObject("members").getAsJsonObject(dashTrimmed).get("last_save").getAsLong();
+            if (!semiProfile.getAsJsonObject("members").has(dashTrimmed)) {
+                continue;
+            }
+            JsonElement last_save = semiProfile.get("last_save");
+
+            JsonElement cute_name = semiProfile.get("cute_name");
+            if (cute_name != null) {
+                System.out.println(cute_name.getAsString());
+            } else {
+                System.out.println("THIS SHOULD NOT HAPPEN");
+            }
+
+            if (last_save == null) {
+                return Optional.empty();
+            }
+            float lastSave2 = last_save.getAsLong();
             if (lastSave2 > lastSave) {
+
                 profile = semiProfile;
                 lastSave = lastSave2;
             }
         }
 
-        if (profile == null) return Optional.empty();
+
+        if (profile == null) {
+            return Optional.empty();
+        }
+
         PlayerProfile pp = parseProfile(profile, dashTrimmed);
-        json = getJson("https://api.hypixel.net/player?uuid="+uid+"&key="+apiKey);
+        json = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
         if (json.has("player")) {
             JsonObject treasures = json.getAsJsonObject("player");
             if (treasures.has("achievements")) {
@@ -305,7 +335,6 @@ public class ApiFetchur {
                 }
             }
         }
-
         return Optional.of(pp);
     }
 
@@ -313,22 +342,27 @@ public class ApiFetchur {
         if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
         return jsonObject.get(key).getAsInt();
     }
+
     public static long getOrDefault(JsonObject jsonObject, String key, long value) {
         if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
         return jsonObject.get(key).getAsLong();
     }
+
     public static double getOrDefault(JsonObject jsonObject, String key, double value) {
         if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
         return jsonObject.get(key).getAsDouble();
     }
+
     public static String getOrDefault(JsonObject jsonObject, String key, String value) {
         if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
         return jsonObject.get(key).getAsString();
     }
+
     public static Double getOrDefaultNullable(JsonObject jsonObject, String key, Double value) {
         if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
         return jsonObject.get(key).getAsDouble();
     }
+
     public static NBTTagCompound parseBase64NBT(String nbt) throws IOException {
         return CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(nbt)));
     }
@@ -349,7 +383,7 @@ public class ApiFetchur {
         JsonObject playerData = profile.getAsJsonObject("members").getAsJsonObject(dashTrimmed);
         playerProfile.setLastSave(getOrDefault(playerData, "last_save", 0L));
         playerProfile.setFairySouls(getOrDefault(playerData, "fairy_souls_collected", 0));
-        playerProfile.setFairyExchanges(getOrDefault(playerData,  "fairy_exchanges", 0));
+        playerProfile.setFairyExchanges(getOrDefault(playerData, "fairy_exchanges", 0));
 
         if (playerData.has("inv_armor")) {
             playerProfile.setCurrentArmor(new PlayerProfile.Armor());
@@ -369,7 +403,7 @@ public class ApiFetchur {
             for (int i = 0; i < array.tagCount(); i++) {
                 if (i % 4 == 0) playerProfile.getWardrobe().add(new PlayerProfile.Armor());
                 NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getWardrobe().get(i/4).getArmorSlots()[i%4] = deserializeNBT(item);
+                playerProfile.getWardrobe().get(i / 4).getArmorSlots()[i % 4] = deserializeNBT(item);
             }
 
         }
@@ -405,7 +439,7 @@ public class ApiFetchur {
 
         playerProfile.setSkillXp(new HashMap<>());
         for (Skill value : Skill.values()) {
-            playerProfile.getSkillXp().put(value, getOrDefaultNullable(playerData, "experience_skill_"+value.getJsonName(), null));
+            playerProfile.getSkillXp().put(value, getOrDefaultNullable(playerData, "experience_skill_" + value.getJsonName(), null));
         }
 
         if (playerData.has("pets")) {
@@ -439,20 +473,20 @@ public class ApiFetchur {
 
                 for (Integer validFloor : value.getValidFloors()) {
                     DungeonStat.PlayedFloor playedFloor = new DungeonStat.PlayedFloor();
-                    playedFloor.setBestScore(getOrDefault(dungeonObj.getAsJsonObject("best_score"), ""+validFloor, 0));
-                    playedFloor.setCompletions(getOrDefault(dungeonObj.getAsJsonObject("tier_completions"), ""+validFloor, 0));
-                    playedFloor.setFastestTime(getOrDefault(dungeonObj.getAsJsonObject("fastest_time"), ""+validFloor, -1));
-                    playedFloor.setFastestTimeS(getOrDefault(dungeonObj.getAsJsonObject("fastest_time_s"), ""+validFloor, -1));
-                    playedFloor.setFastestTimeSPlus(getOrDefault(dungeonObj.getAsJsonObject("fastest_time_s_plus"), ""+validFloor, -1));
-                    playedFloor.setMobsKilled(getOrDefault(dungeonObj.getAsJsonObject("mobs_killed"), ""+validFloor, 0));
-                    playedFloor.setMostMobsKilled(getOrDefault(dungeonObj.getAsJsonObject("most_mobs_killed"), ""+validFloor, 0));
-                    playedFloor.setMostHealing(getOrDefault(dungeonObj.getAsJsonObject("most_healing"), ""+validFloor, 0));
-                    playedFloor.setTimes_played(getOrDefault(dungeonObj.getAsJsonObject("times_played"), ""+validFloor, 0));
-                    playedFloor.setWatcherKills(getOrDefault(dungeonObj.getAsJsonObject("watcher_kills"), ""+validFloor, 0));
+                    playedFloor.setBestScore(getOrDefault(dungeonObj.getAsJsonObject("best_score"), "" + validFloor, 0));
+                    playedFloor.setCompletions(getOrDefault(dungeonObj.getAsJsonObject("tier_completions"), "" + validFloor, 0));
+                    playedFloor.setFastestTime(getOrDefault(dungeonObj.getAsJsonObject("fastest_time"), "" + validFloor, -1));
+                    playedFloor.setFastestTimeS(getOrDefault(dungeonObj.getAsJsonObject("fastest_time_s"), "" + validFloor, -1));
+                    playedFloor.setFastestTimeSPlus(getOrDefault(dungeonObj.getAsJsonObject("fastest_time_s_plus"), "" + validFloor, -1));
+                    playedFloor.setMobsKilled(getOrDefault(dungeonObj.getAsJsonObject("mobs_killed"), "" + validFloor, 0));
+                    playedFloor.setMostMobsKilled(getOrDefault(dungeonObj.getAsJsonObject("most_mobs_killed"), "" + validFloor, 0));
+                    playedFloor.setMostHealing(getOrDefault(dungeonObj.getAsJsonObject("most_healing"), "" + validFloor, 0));
+                    playedFloor.setTimes_played(getOrDefault(dungeonObj.getAsJsonObject("times_played"), "" + validFloor, 0));
+                    playedFloor.setWatcherKills(getOrDefault(dungeonObj.getAsJsonObject("watcher_kills"), "" + validFloor, 0));
 
                     for (DungeonClass dungeonClass : DungeonClass.values()) {
                         DungeonStat.PlayedFloor.ClassStatistics classStatistics = new DungeonStat.PlayedFloor.ClassStatistics();
-                        classStatistics.setMostDamage(getOrDefault(dungeonObj.getAsJsonObject("most_damage_"+dungeonClass.getJsonName()), ""+validFloor, 0));
+                        classStatistics.setMostDamage(getOrDefault(dungeonObj.getAsJsonObject("most_damage_" + dungeonClass.getJsonName()), "" + validFloor, 0));
                         ClassSpecificData<DungeonStat.PlayedFloor.ClassStatistics> classStatisticsClassSpecificData = new ClassSpecificData<>(dungeonClass, classStatistics);
 
                         playedFloor.getClassStatistics().put(dungeonClass, classStatisticsClassSpecificData);
@@ -511,9 +545,9 @@ public class ApiFetchur {
             double skillAvg = playerProfile.getSkillXp().entrySet().stream()
                     .filter(a -> a.getValue() != null)
                     .filter(a -> srw.has(a.getKey().getJsonName()))
-                    .map(a ->  XPUtils.getSkillXp(a.getKey(), a.getValue()).getLevel()).collect(Collectors.averagingInt(a -> a));
+                    .map(a -> XPUtils.getSkillXp(a.getKey(), a.getValue()).getLevel()).collect(Collectors.averagingInt(a -> a));
 
-            double n = 12 * (skillAvg/60)*(skillAvg/60);
+            double n = 12 * (skillAvg / 60) * (skillAvg / 60);
             double r2 = Math.sqrt(2);
 
             for (Map.Entry<Skill, Double> skillDoubleEntry : playerProfile.getSkillXp().entrySet()) {
@@ -522,8 +556,8 @@ public class ApiFetchur {
                 if (temp_srw == null) continue;
                 int lv = XPUtils.getSkillXp(skillDoubleEntry.getKey(), skillDoubleEntry.getValue()).getLevel();
                 skillWeight += n * temp_srw.get(lv).getAsDouble()
-                            * temp_srw.get(temp_srw.size() - 1).getAsDouble();
-                skillWeight += temp_srw.get(temp_srw.size() - 1).getAsDouble() * Math.pow(lv/60.0, r2);
+                        * temp_srw.get(temp_srw.size() - 1).getAsDouble();
+                skillWeight += temp_srw.get(temp_srw.size() - 1).getAsDouble() * Math.pow(lv / 60.0, r2);
             }
 
             int cnt = 0;
@@ -532,13 +566,14 @@ public class ApiFetchur {
                 double factor = skillFactor.get(cnt).getAsDouble();
                 double effectiveOver;
                 Double xp = playerProfile.getSkillXp().get(s);
-                if (xp == null) continue; xp -= skillMaxXP;
+                if (xp == null) continue;
+                xp -= skillMaxXP;
                 {
                     if (xp < skillMaxXP) effectiveOver = xp;
                     else {
                         double remainingXP = xp;
                         double z = 0;
-                        for (int i = 0; i<= xp/skillMaxXP; i++) {
+                        for (int i = 0; i <= xp / skillMaxXP; i++) {
                             if (remainingXP >= skillMaxXP) {
                                 remainingXP -= skillMaxXP;
                                 z += Math.pow(factor, i);
@@ -568,13 +603,16 @@ public class ApiFetchur {
             max1000 *= 1000;
             mMax1000 *= 1000;
 
-            double upperBound = 1500; double score = 0;
+            double upperBound = 1500;
+            double score = 0;
 
             DungeonStat dStat = playerProfile.getDungeonStats().get(DungeonType.CATACOMBS).getData();
             for (FloorSpecificData<DungeonStat.PlayedFloor> value : dStat.getPlays().values()) {
                 int runs = value.getData().getCompletions();
-                int excess = 0; if (runs > 1000) {
-                    excess = runs - 1000; runs = 1000;
+                int excess = 0;
+                if (runs > 1000) {
+                    excess = runs - 1000;
+                    runs = 1000;
                 }
 
                 double floorScore = runs * completionFactor.get(value.getFloor()).getAsDouble();
@@ -586,20 +624,24 @@ public class ApiFetchur {
 
             dStat = playerProfile.getDungeonStats().get(DungeonType.MASTER_CATACOMBS).getData();
             for (FloorSpecificData<DungeonStat.PlayedFloor> value : dStat.getPlays().values()) {
-                if (dungeonCompletionBuffs.has(value.getFloor()+"")) {
+                if (dungeonCompletionBuffs.has(value.getFloor() + "")) {
                     double threshold = 20;
-                    if (value.getData().getCompletions() >= threshold) upperBound += dungeonCompletionBuffs.get(value.getFloor()+"").getAsDouble();
-                    else upperBound += dungeonCompletionBuffs.get(value.getFloor()+"").getAsDouble() * Math.pow(value.getData().getCompletions()/threshold, 1.840896416);
+                    if (value.getData().getCompletions() >= threshold)
+                        upperBound += dungeonCompletionBuffs.get(value.getFloor() + "").getAsDouble();
+                    else
+                        upperBound += dungeonCompletionBuffs.get(value.getFloor() + "").getAsDouble() * Math.pow(value.getData().getCompletions() / threshold, 1.840896416);
                 }
             }
             score = 0;
             for (FloorSpecificData<DungeonStat.PlayedFloor> value : dStat.getPlays().values()) {
                 int runs = value.getData().getCompletions();
-                int excess = 0; if (runs > 1000) {
-                    excess = runs - 1000; runs = 1000;
+                int excess = 0;
+                if (runs > 1000) {
+                    excess = runs - 1000;
+                    runs = 1000;
                 }
 
-                double floorScore = runs * completionFactor.get(value.getFloor()+7).getAsDouble();
+                double floorScore = runs * completionFactor.get(value.getFloor() + 7).getAsDouble();
                 if (excess > 0)
                     floorScore *= Math.log10(excess / 1000.0 + 1) / Math.log10(5) + 1;
                 score += floorScore;
@@ -620,7 +662,8 @@ public class ApiFetchur {
                 level += progress;
             }
 
-            double n; double tempLevel = 0;
+            double n;
+            double tempLevel = 0;
             if (cataXP < dungeonMaxXP)
                 n = 0.2 * Math.pow(level / 50.0, 2.967355422);
             else {
@@ -629,8 +672,9 @@ public class ApiFetchur {
                 n = 0.2 * Math.pow(1 + ((tempLevel - 50) / 50), 2.967355422);
             }
             if (level != 0) {
-                if (cataXP < 569809640) dungeonXPWeight = dungeonOverall * (Math.pow(1.18340401286164044, (level + 1)) - 1.05994990217254) * (1 + n);
-                else  dungeonXPWeight =4000 * (n / 0.15465244570598540);
+                if (cataXP < 569809640)
+                    dungeonXPWeight = dungeonOverall * (Math.pow(1.18340401286164044, (level + 1)) - 1.05994990217254) * (1 + n);
+                else dungeonXPWeight = 4000 * (n / 0.15465244570598540);
             } else dungeonXPWeight = 0;
         }
         double slayerWeight = 0;
@@ -655,7 +699,7 @@ public class ApiFetchur {
                 for (int i = 1; i <= score; i++)
                     effectiveXP += (i * i + i) * Math.pow(scaling, i);
                 effectiveXP = Math.round((1000000 * effectiveXP * (0.05 / scaling)) * 100) / 100.0;
-                double actualXP = ((score*score*score / 6) + (score*score / 2) + (score / 3)) * 100000;
+                double actualXP = ((score * score * score / 6) + (score * score / 2) + (score / 3)) * 100000;
                 double distance = xp - actualXP;
                 double effectiveDistance = distance * Math.pow(scaling, score);
                 return effectiveXP + effectiveDistance;
@@ -682,16 +726,25 @@ public class ApiFetchur {
     }
 
     private static Skill getSkillByLilyName(String lilyName) {
-        switch(lilyName) {
-            case "experience_skill_enchanting": return Skill.ENCHANTING;
-            case "experience_skill_taming": return Skill.TAMING;
-            case "experience_skill_alchemy": return Skill.ALCHEMY;
-            case "experience_skill_mining": return Skill.MINING;
-            case "experience_skill_farming": return Skill.FARMING;
-            case "experience_skill_foraging": return Skill.FORAGING;
-            case "experience_skill_combat": return Skill.COMBAT;
-            case "experience_skill_fishing": return Skill.FISHING;
-            default: return null;
+        switch (lilyName) {
+            case "experience_skill_enchanting":
+                return Skill.ENCHANTING;
+            case "experience_skill_taming":
+                return Skill.TAMING;
+            case "experience_skill_alchemy":
+                return Skill.ALCHEMY;
+            case "experience_skill_mining":
+                return Skill.MINING;
+            case "experience_skill_farming":
+                return Skill.FARMING;
+            case "experience_skill_foraging":
+                return Skill.FORAGING;
+            case "experience_skill_combat":
+                return Skill.COMBAT;
+            case "experience_skill_fishing":
+                return Skill.FISHING;
+            default:
+                return null;
         }
     }
 }
