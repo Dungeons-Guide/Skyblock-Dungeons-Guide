@@ -315,7 +315,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 int i3 = 8 * (flag1 ? -1 : 1);
 
                 GlStateManager.translate(pt2.x, pt2.y, 0);
-                GlStateManager.rotate((float) (yaw2 - 180), 0, 0, 1);
+//                GlStateManager.rotate((float) (yaw2 - 180), 0, 0, 1);
+                GlStateManager.rotate((float) yaw2, 0, 0, 1);
 
                 GlStateManager.scale(1 / scale, 1 / scale, 0);
                 GlStateManager.scale(1 / postScale, 1 / postScale, 0);
