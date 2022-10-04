@@ -163,8 +163,9 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         GlStateManager.scale(scale, scale, 0);
         GlStateManager.scale(postScale, postScale, 0);
         EntityPlayer p = Minecraft.getMinecraft().thePlayer;
-        Point pt = mapProcessor.worldPointToMapPoint(p.getPositionEyes(partialTicks));
-        double yaw = p.prevRotationYawHead + (p.rotationYaw - p.prevRotationYawHead) * partialTicks;
+
+        Vector2d pt = mapProcessor.worldPointToMapPointFLOAT(p.getPositionEyes(partialTicks));
+        double yaw = p.rotationYaw;
         if (this.<Boolean>getParameter("playerCenter").getValue()) {
             if (this.<Boolean>getParameter("rotate").getValue()) {
                 GlStateManager.rotate((float) (180.0 - yaw), 0, 0, 1);
@@ -283,13 +284,12 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
             EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
 
-            if (entityplayer != Minecraft.getMinecraft().thePlayer) continue;
-
-            Point pt2;
+            Vector2d pt2;
             double yaw2;
 
+
             if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == Minecraft.getMinecraft().thePlayer)) {
-                pt2 = mapProcessor.worldPointToMapPoint(entityplayer.getPositionEyes(partialTicks));
+                pt2 = mapProcessor.worldPointToMapPointFLOAT(entityplayer.getPositionEyes(partialTicks));
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
             } else {
                 String iconName = mapProcessor.getMapIconToPlayerMap().get(name);
@@ -298,7 +298,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 if (vec == null) {
                     continue;
                 } else {
-                    pt2 = new Point(vec.func_176112_b() / 2 + 64, vec.func_176113_c() / 2 + 64);
+                    pt2 = new Vector2d(vec.func_176112_b() / 2d + 64, vec.func_176113_c() / 2d + 64);
                     yaw2 = vec.func_176111_d() * 360 / 16.0f;
                 }
             }
@@ -320,9 +320,12 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
                 GlStateManager.scale(1 / scale, 1 / scale, 0);
                 GlStateManager.scale(1 / postScale, 1 / postScale, 0);
+
                 float s = this.<Float>getParameter("playerheadscale").getValue();
                 GlStateManager.scale(s, s, 0);
-                Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, (float) l2, 8, i3, 8, 8, 64.0F, 64.0F);
+
+                // cutting out the player head out of the skin texture
+                Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
                 GL11.glLineWidth(1);
                 RenderUtils.drawUnfilledBox(-4, -4, 4, 4, this.<AColor>getParameter("player_color").getValue());
             }
