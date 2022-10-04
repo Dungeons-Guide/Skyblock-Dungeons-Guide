@@ -27,7 +27,6 @@ buildscript {
         maven { url "https://jitpack.io" }
     }
     dependencies {
-//        classpath "com.github.Skytils:ForgeGradle:6f5327"
         classpath "com.github.kingstefan26:ForgeGradle:4907a75a"
         classpath "com.github.jengelman.gradle.plugins:shadow:6.1.0"
     }
@@ -58,20 +57,18 @@ repositories {
     maven { url "https://jitpack.io" }
 }
 dependencies {
-//    implementation "org.jetbrains:annotations-java5:19.0.0"
-    compile "org.jetbrains:annotations:23.0.0"
-
-    implementation "org.java-websocket:Java-WebSocket:1.5.3"
-    implementation "org.json:json:20220320"
+    implementation "org.jetbrains:annotations-java5:19.0.0"
+    implementation "org.java-websocket:Java-WebSocket:1.5.1"
+    implementation "org.json:json:20171018"
     implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
 
-//    compileOnly files("mods/Hychat-1.12.1-BETA.jar")
-    compileOnly 'org.projectlombok:lombok:1.18.24'
-    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+    compileOnly "org.projectlombok:lombok:1.18.20"
+    compileOnly files("mods/Hychat-1.12.1-BETA.jar")
+    annotationProcessor "org.projectlombok:lombok:1.18.16"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.24"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.22"
+    testCompileOnly "org.projectlombok:lombok:1.18.20"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 }
 
 shadowJar {
