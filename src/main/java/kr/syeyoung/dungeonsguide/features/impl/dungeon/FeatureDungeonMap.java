@@ -28,7 +28,9 @@ import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.features.listener.*;
+import kr.syeyoung.dungeonsguide.features.listener.BossroomEnterListener;
+import kr.syeyoung.dungeonsguide.features.listener.DungeonEndListener;
+import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.block.material.MapColor;
@@ -55,6 +57,7 @@ import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
+import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.Comparator;
 import java.util.List;
@@ -278,7 +281,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         for (int i = 1; i < 20; i++) {
             NetworkPlayerInfo networkPlayerInfo = list.get(i);
 
-            String name = getPlayerName(networkPlayerInfo);
+            String name = getPlayerNameWithChecks(networkPlayerInfo);
             if (name == null) continue;
 
 
@@ -341,7 +344,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
      * @return the username of player
      */
     @Nullable
-    private String getPlayerName(NetworkPlayerInfo networkPlayerInfo) {
+    private String getPlayerNameWithChecks(NetworkPlayerInfo networkPlayerInfo) {
         String name;
         if (networkPlayerInfo.getDisplayName() != null) {
             name = networkPlayerInfo.getDisplayName().getFormattedText();
@@ -356,7 +359,9 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
         name = TextUtils.stripColor(name);
 
-        if(name.contains("(DEAD)")) return null;
+        if(name.contains("(DEAD)")) {
+            return null;
+        }
 
         name = name.replace(" ", "*");
 
