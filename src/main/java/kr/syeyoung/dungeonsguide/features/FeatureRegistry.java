@@ -18,10 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features;
 
-import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
-import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebuggableMap;
-import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomCoordDisplay;
-import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureRoomDebugInfo;
+import kr.syeyoung.dungeonsguide.features.impl.advanced.*;
 import kr.syeyoung.dungeonsguide.features.impl.boss.*;
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureSimonSaysSolver;
 import kr.syeyoung.dungeonsguide.features.impl.boss.terminal.FeatureTerminalSolvers;
@@ -127,6 +124,7 @@ public class FeatureRegistry {
 
 
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
+    public static final FeatureTestPepole TEST_PEPOLE = register(new FeatureTestPepole());
     public static final FeatureDungeonRoomName DUNGEON_ROOMNAME = register(new FeatureDungeonRoomName());
     public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST = register(new FeaturePressAnyKeyToCloseChest());
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
