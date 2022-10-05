@@ -43,7 +43,7 @@ import java.util.stream.Collectors;
 public class ApiFetchur {
     private static final Gson gson = new Gson();
 
-    private static final Map<String, CachedData<PlayerProfile>> playerProfileCache = new ConcurrentHashMap<>();
+    private static final Map<String, CachedData<PlayerSkyblockData>> playerProfileCache = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<String>> nicknameToUID = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
@@ -144,11 +144,11 @@ public class ApiFetchur {
     }
 
 
-    private static final Map<String, CompletableFuture<Optional<PlayerProfile>>> completableFutureMap = new ConcurrentHashMap<>();
+    private static final Map<String, CompletableFuture<Optional<PlayerSkyblockData>>> completableFutureMap = new ConcurrentHashMap<>();
 
-    public static CompletableFuture<Optional<PlayerProfile>> fetchMostRecentProfileAsync(String uid, String apiKey) {
+    public static CompletableFuture<Optional<PlayerSkyblockData>> fetchMostRecentProfileAsync(String uid, String apiKey) {
         if (playerProfileCache.containsKey(uid)) {
-            CachedData<PlayerProfile> cachedData = playerProfileCache.get(uid);
+            CachedData<PlayerSkyblockData> cachedData = playerProfileCache.get(uid);
             if (cachedData.getExpire() > System.currentTimeMillis()) {
                 return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
             }
@@ -162,10 +162,10 @@ public class ApiFetchur {
             cf.completeExceptionally(new IOException("403 for url"));
             return cf;
         }
-        CompletableFuture<Optional<PlayerProfile>> completableFuture = new CompletableFuture<>();
+        CompletableFuture<Optional<PlayerSkyblockData>> completableFuture = new CompletableFuture<>();
         ex.submit(() -> {
             try {
-                Optional<PlayerProfile> playerProfile = fetchMostRecentProfile(uid, apiKey);
+                Optional<PlayerSkyblockData> playerProfile = fetchPlayerProfiles(uid, apiKey);
                 playerProfileCache.put(uid, new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
                 completableFuture.complete(playerProfile);
                 completableFutureMap.remove(uid);
@@ -271,19 +271,65 @@ public class ApiFetchur {
         }
     }
 
-    public static List<PlayerProfile> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
+
+    public static Optional<Integer> getNumberOfSecretsFromAchievement(String uid, String apiKey) throws IOException {
+        JsonObject responce = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
+        if (responce.has("player")) {
+            JsonObject treasures = responce.getAsJsonObject("player");
+            if (treasures.has("achievements")) {
+                treasures = treasures.getAsJsonObject("achievements");
+                if (treasures.has("skyblock_treasure_hunter")) {
+                    return Optional.of(treasures.get("skyblock_treasure_hunter").getAsInt());
+                }
+            }
+        }
+        return Optional.empty();
+    }
+
+
+    public static int getArrayIndex(Object[] arr,Object value) {
+        int k=0;
+        for(int i=0;i<arr.length;i++){
+            if(arr[i]==value){
+                k=i;
+                break;
+            }
+        }
+        return k;
+    }
+
+    public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
         JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
-        if (!json.get("success").getAsBoolean()) return new ArrayList<>();
+        if (!json.get("success").getAsBoolean()) return Optional.empty();
         JsonArray profiles = json.getAsJsonArray("profiles");
         String dashTrimmed = uid.replace("-", "");
 
+
+        PlayerSkyblockData pp = new PlayerSkyblockData();
         ArrayList<PlayerProfile> playerProfiles = new ArrayList<>();
+
+        float lastSave = Long.MIN_VALUE;
+        PlayerProfile lastest = null;
         for (JsonElement jsonElement : profiles) {
             JsonObject semiProfile = jsonElement.getAsJsonObject();
-            if (!semiProfile.has(dashTrimmed)) continue;
-            playerProfiles.add(parseProfile(semiProfile, dashTrimmed));
+            if (!semiProfile.get("members").getAsJsonObject().has(dashTrimmed)) continue;
+            PlayerProfile e = parseProfile(semiProfile, dashTrimmed);
+
+            getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(e::setTotalSecrets);
+
+            float lastSave2 = semiProfile.get("last_save").getAsLong();
+            if (lastSave2 > lastSave) {
+                lastest = e;
+                lastSave = lastSave2;
+            }
+
+            playerProfiles.add(e);
         }
-        return playerProfiles;
+        System.out.println("THE AMMOUT OF PLAYER PROFILES: " + playerProfiles.size());
+        PlayerProfile[] p = new PlayerProfile[playerProfiles.size()];
+        pp.setLastestprofileArrayIndex(getArrayIndex(p, lastest));
+        pp.setPlayerProfiles(playerProfiles.toArray(p));
+        return Optional.of(pp);
     }
 
     public static Optional<PlayerProfile> fetchMostRecentProfile(String uid, String apiKey) throws IOException {
@@ -325,16 +371,9 @@ public class ApiFetchur {
         }
 
         PlayerProfile pp = parseProfile(profile, dashTrimmed);
-        json = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
-        if (json.has("player")) {
-            JsonObject treasures = json.getAsJsonObject("player");
-            if (treasures.has("achievements")) {
-                treasures = treasures.getAsJsonObject("achievements");
-                if (treasures.has("skyblock_treasure_hunter")) {
-                    pp.setTotalSecrets(treasures.get("skyblock_treasure_hunter").getAsInt());
-                }
-            }
-        }
+
+        getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(pp::setTotalSecrets);
+
         return Optional.of(pp);
     }
 

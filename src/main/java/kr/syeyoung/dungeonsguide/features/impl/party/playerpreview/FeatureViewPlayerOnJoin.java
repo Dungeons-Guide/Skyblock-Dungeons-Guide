@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerSkyblockData;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.SkinFetchur;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
@@ -86,7 +87,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     private Rectangle popupRect;
     private String lastuid; // actually current uid
-    private Future<Optional<PlayerProfile>> profileFuture;
+    private Future<Optional<PlayerSkyblockData>> profileFuture;
     private Future<Optional<GameProfile>> gfFuture;
     private Future<SkinFetchur.SkinSet> skinFuture;
     private FakePlayer fakePlayer;
@@ -116,6 +117,9 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         fakePlayer= null;
         drawInv = false;
     }
+
+
+
 
     public void reqRender(String uid) {
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
@@ -161,7 +165,16 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
         try {
             if (fakePlayer == null && skinFuture != null && profileFuture != null && skinFuture.isDone() && profileFuture.isDone() && profileFuture.get().isPresent()) {
-                fakePlayer = new FakePlayer(gfFuture.get().orElse(null), skinFuture.get(), profileFuture.get().orElse(null));
+                if(getCurrentrySelectedProfile(profileFuture.get().get()) != null){
+                    if(skinFuture.get() != null){
+                        currentyselectedprofile = profileFuture.get().get().getLastestprofileArrayIndex();
+                        fakePlayer = new FakePlayer(gfFuture.get().orElse(null), skinFuture.get(), getCurrentrySelectedProfile(profileFuture.get().get()), currentyselectedprofile);
+                    }
+                }
+            } else if ( fakePlayer != null){
+                if(fakePlayer.getProfileNumber() != currentyselectedprofile){
+                    fakePlayer = new FakePlayer(gfFuture.get().orElse(null), skinFuture.get(), getCurrentrySelectedProfile(profileFuture.get().get()), currentyselectedprofile);
+                }
             }
         } catch (InterruptedException | ExecutionException e) {
             plsSetAPIKEY = true;
@@ -169,7 +182,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
         try {
-            render(popupRect, scaledResolution, mouseX, mouseY, plsSetAPIKEY ? null : (profileFuture.isDone() ? profileFuture.get() : null), plsSetAPIKEY);
+            render(popupRect, scaledResolution, mouseX, mouseY, plsSetAPIKEY ? null : (profileFuture.isDone() ? Optional.ofNullable(getCurrentrySelectedProfile(profileFuture.get().get())) : null), plsSetAPIKEY);
         } catch (InterruptedException | ExecutionException e) {
         }
 
@@ -219,11 +232,19 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
         Gui.drawRect(0,193, 90, 220, 0xFF23272a);
         Gui.drawRect(2,195, 88, 218, new Rectangle(2,195,86,23).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
+
+
+        Gui.drawRect(90,193, 180, 220, 0xFF23272a);
+        Gui.drawRect(91,195, 178, 218, new Rectangle(91,195,176,23).contains(relX, relY) ? 0xFFdace72 : 0xdddace72);
+
+
+
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         fr.drawString("Kick", (90 - fr.getStringWidth("Kick")) / 2,(364 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
         fr.drawString("Invite", (90 - fr.getStringWidth("Invite")) / 2,(414 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+        fr.drawString("Change Profile", ((90 - fr.getStringWidth("Change Profile")) / 2) + 90,(414 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
 
         GlStateManager.pushMatrix();
 
@@ -413,15 +434,26 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
         try {
-            PlayerProfile playerProfile = profileFuture.isDone() ? profileFuture.get().orElse(null) : null;
-            if (playerProfile == null) return;
+            PlayerSkyblockData playerData = profileFuture.isDone() ? profileFuture.get().orElse(null) : null;
+            if (playerData == null) return;
             if (Mouse.getEventButton() != -1 && Mouse.isButtonDown(Mouse.getEventButton())) {
                 if (new Rectangle(2, 195, 86, 23).contains(relX, relY)) {
                     // invite
-                    ChatProcessor.INSTANCE.addToChatQueue("/p invite " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"), () -> {}, true);
+                    ChatProcessor.INSTANCE.addToChatQueue("/p invite " + ApiFetchur.fetchNicknameAsync(getCurrentrySelectedProfile(playerData).getMemberUID()).get().orElse("-"), () -> {}, true);
                 } else if (new Rectangle(2, 170, 86, 23).contains(relX, relY)) {
                     // kick
-                    ChatProcessor.INSTANCE.addToChatQueue("/p kick " + ApiFetchur.fetchNicknameAsync(playerProfile.getMemberUID()).get().orElse("-"), () -> {}, true);
+                    ChatProcessor.INSTANCE.addToChatQueue("/p kick " + ApiFetchur.fetchNicknameAsync(getCurrentrySelectedProfile(playerData).getMemberUID()).get().orElse("-"), () -> {}, true);
+                } else if (new Rectangle(90, 195, 86, 23).contains(relX, relY)) {
+//                    Gui.drawRect(0,168, 90, 195, 0xFF23272a);
+//                    Gui.drawRect(2,170, 88, 193, new Rectangle(2,170,86,23).contains(relX, relY) ? 0xFFff7777 : 0xFFFF3333);
+//
+//                    Gui.drawRect(0,193, 90, 220, 0xFF23272a);
+//                    Gui.drawRect(2,195, 88, 218, new Rectangle(2,195,86,23).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
+//
+//
+//                    Gui.drawRect(90,193, 180, 220, 0xFF23272a);
+//                    Gui.drawRect(91,195, 178, 218, new Rectangle(2,195,86,23).contains(relX, relY) ? 0xFFdace72 : 0xdddace72);
+                    icrementProfile(playerData);
                 } else if (new Rectangle(80,159,10,11).contains(relX, relY)) {
                     drawInv = true;
                 }
@@ -432,6 +464,25 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
 
     }
+
+    private void icrementProfile(PlayerSkyblockData data) {
+        if(currentyselectedprofile + 1 >= data.getPlayerProfiles().length){
+            currentyselectedprofile = 0;
+        } else {
+            currentyselectedprofile++;
+        }
+    }
+
+
+    int currentyselectedprofile = 0;
+    PlayerProfile getCurrentrySelectedProfile(PlayerSkyblockData data){
+        if(data == null) return null;
+        if(data.getPlayerProfiles() == null) return null;
+        if(data.getPlayerProfiles().length == 0) return null;
+        if(data.getPlayerProfiles().length < currentyselectedprofile) return null;
+        return data.getPlayerProfiles()[currentyselectedprofile];
+    }
+
 
     public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
         return Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
@@ -515,12 +566,16 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
         private PlayerProfile skyblockProfile;
         private final SkinFetchur.SkinSet skinSet;
         private final PlayerProfile.Armor armor;
+        @Getter
+        private final int profileNumber;
+
         private FakePlayer(World w) {
             super(w, null);
             throw new UnsupportedOperationException("what");
         }
-        public FakePlayer(GameProfile playerProfile, SkinFetchur.SkinSet skinSet, PlayerProfile skyblockProfile) {
+        public FakePlayer(GameProfile playerProfile, SkinFetchur.SkinSet skinSet, PlayerProfile skyblockProfile, int profileNumber) {
             super(Minecraft.getMinecraft().theWorld, playerProfile);
+            this.profileNumber = profileNumber;
             this.skyblockProfile = skyblockProfile;
             this.skinSet = skinSet;
             armor=  skyblockProfile.getCurrentArmor();
