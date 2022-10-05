@@ -20,9 +20,6 @@ package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
 import com.google.common.base.Supplier;
 import com.mojang.authlib.GameProfile;
-import io.github.moulberry.hychat.HyChat;
-import io.github.moulberry.hychat.chat.ChatManager;
-import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
@@ -35,7 +32,9 @@ import kr.syeyoung.dungeonsguide.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.*;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.SkinFetchur;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
@@ -46,7 +45,10 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -63,14 +65,13 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -433,21 +434,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
     }
 
     public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
-        IChatComponent ichatcomponent = null;
-        if (Loader.isModLoaded("hychat")) {
-            try {
-                ChatManager chatManager = HyChat.getInstance().getChatManager();
-                GuiChatBox guiChatBox = chatManager.getFocusedChat();
-
-                int x = guiChatBox.getX(scaledResolution);
-                int y = guiChatBox.getY(scaledResolution);
-                ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
-            } catch (Throwable t) {}
-        }
-        if (ichatcomponent == null) {
-            ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
-        }
-        return ichatcomponent;
+        return Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
     }
 
     @Override
