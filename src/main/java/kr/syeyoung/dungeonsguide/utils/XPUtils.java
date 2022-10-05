@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.utils;
 
-import kr.syeyoung.dungeonsguide.features.impl.party.api.Skill;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses.Skill;
 import lombok.Data;
 
 import java.util.Map;

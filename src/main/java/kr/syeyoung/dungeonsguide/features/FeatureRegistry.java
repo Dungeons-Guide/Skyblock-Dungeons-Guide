@@ -36,7 +36,7 @@ import kr.syeyoung.dungeonsguide.features.impl.party.APIKey;
 import kr.syeyoung.dungeonsguide.features.impl.party.FeaturePartyList;
 import kr.syeyoung.dungeonsguide.features.impl.party.FeaturePartyReady;
 import kr.syeyoung.dungeonsguide.features.impl.party.customgui.FeatureCustomPartyFinder;
-import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
 import kr.syeyoung.dungeonsguide.features.impl.solvers.*;
@@ -161,7 +161,7 @@ public class FeatureRegistry {
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
 
     public static final APIKey PARTYKICKER_APIKEY = register(new APIKey());
-    public static final FeatureViewPlayerOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerOnJoin());
+    public static final FeatureViewPlayerStatsOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerStatsOnJoin());
     public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM = register(new FeatureCustomPartyFinder());
     public static final FeaturePartyList PARTY_LIST = register(new FeaturePartyList());
     public static final FeaturePartyReady PARTY_READY = register(new FeaturePartyReady());
