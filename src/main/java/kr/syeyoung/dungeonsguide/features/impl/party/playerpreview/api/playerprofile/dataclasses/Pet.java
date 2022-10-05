@@ -16,17 +16,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.api;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses;
 
-import lombok.AllArgsConstructor;
 import lombok.Data;
-import lombok.Getter;
 
-@Getter
-@AllArgsConstructor
-public enum Skill {
-    RUNECRAFTING("runecrafting", "Runecrafting"), COMBAT("combat", "Combat"), MINING("mining", "Mining"), ALCHEMY("alchemy", "Alchemy"), FARMING("farming", "Farming"), TAMING("taming", "Taming"), ENCHANTING("enchanting", "Enchanting"), FISHING("fishing", "Fishing"), FORAGING("foraging", "Foraging"), CARPENTRY("carpentry", "Carpentry");
-
-    private final String jsonName;
-    private final String friendlyName;
+@Data
+public class Pet {
+    private String uuid;
+    private String type;
+    private double exp;
+    private boolean active;
+    private String heldItem;
+    private String skin;
 }

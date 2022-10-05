@@ -16,20 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders;
 
-import kr.syeyoung.dungeonsguide.features.impl.party.api.DungeonClass;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.DungeonType;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.Skill;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses.DungeonClass;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses.DungeonType;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses.Skill;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.impl.*;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Set;
 
 public class DataRendererRegistry {
-    private static final Map<String, DataRenderer> dataRendererMap = new HashMap<>();
+    private static final Map<String, IDataRenderer> dataRendererMap = new HashMap<>();
 
-    public static DataRenderer getDataRenderer(String id) {
+    public static IDataRenderer getDataRenderer(String id) {
         return dataRendererMap.get(id);
     }
 

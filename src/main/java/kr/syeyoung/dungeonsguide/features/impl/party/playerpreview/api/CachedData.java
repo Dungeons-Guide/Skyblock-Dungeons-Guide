@@ -16,16 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.api;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api;
 
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
-public class Pet {
-    private String uuid;
-    private String type;
-    private double exp;
-    private boolean active;
-    private String heldItem;
-    private String skin;
+@AllArgsConstructor
+public class CachedData<T> {
+    private final long expire;
+    private final T data;
 }

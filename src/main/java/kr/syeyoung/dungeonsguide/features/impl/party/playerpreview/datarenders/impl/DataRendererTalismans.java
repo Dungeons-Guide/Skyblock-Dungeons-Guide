@@ -16,9 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.impl;
 
-import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -31,10 +32,9 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
-public class DataRendererTalismans implements DataRenderer {
+public class DataRendererTalismans implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         boolean apiDisabled = playerProfile.getTalismans() == null || playerProfile.getInventory() == null;

@@ -16,20 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.impl;
 
-import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.item.ItemStack;
 import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.Arrays;
 
-public class DataRendererLilyWeight implements DataRenderer {
+public class DataRendererLilyWeight implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

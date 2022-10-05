@@ -1,341 +1,40 @@
-/*
- *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- *     Copyright (C) 2021  cyoung06
- *
- *     This program is free software: you can redistribute it and/or modify
- *     it under the terms of the GNU Affero General Public License as published
- *     by the Free Software Foundation, either version 3 of the License, or
- *     (at your option) any later version.
- *
- *     This program is distributed in the hope that it will be useful,
- *     but WITHOUT ANY WARRANTY; without even the implied warranty of
- *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- *     GNU Affero General Public License for more details.
- *
- *     You should have received a copy of the GNU Affero General Public License
- *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
- */
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile;
 
-package kr.syeyoung.dungeonsguide.features.impl.party.api;
-
-import com.google.gson.*;
-import com.mojang.authlib.GameProfile;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonNull;
+import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.ApiFetcher;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses.*;
 import kr.syeyoung.dungeonsguide.utils.XPUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
-import java.io.InputStreamReader;
-import java.net.URL;
-import java.net.URLConnection;
-import java.util.*;
-import java.util.concurrent.*;
+import java.util.Base64;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ExecutionException;
 import java.util.function.BiFunction;
 import java.util.stream.Collectors;
 
-public class ApiFetchur {
-    private static final Gson gson = new Gson();
+public class PlayerProfileParser {
 
-    private static final Map<String, CachedData<PlayerProfile>> playerProfileCache = new ConcurrentHashMap<>();
-    private static final Map<String, CachedData<String>> nicknameToUID = new ConcurrentHashMap<>();
-    private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
-    private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
-
-    private static final ExecutorService ex = Executors.newFixedThreadPool(4);
-
-    private static final Set<String> invalidKeys = new HashSet<>();
-
-    public static void purgeCache() {
-        playerProfileCache.clear();
-        nicknameToUID.clear();
-        UIDtoNickname.clear();
-        UIDtoGameProfile.clear();
-
-        completableFutureMap.clear();
-        completableFutureMap2.clear();
-        completableFutureMap3.clear();
-        completableFutureMap4.clear();
-        invalidKeys.clear();
-        constants = null;
-
-        ex.submit(ApiFetchur::getLilyWeightConstants);
-    }
-
-    static {
-        ex.submit(ApiFetchur::getLilyWeightConstants);
-    }
-
-    public static JsonObject getJson(String url) throws IOException {
-        URLConnection connection = new URL(url).openConnection();
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
-        InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-        String serverres = IOUtils.toString(inputStreamReader);
-        return gson.fromJson(serverres, JsonObject.class);
-    }
-
-    public static JsonArray getJsonArr(String url) throws IOException {
-        URLConnection connection = new URL(url).openConnection();
-        connection.setConnectTimeout(10000);
-        connection.setReadTimeout(10000);
-        return gson.fromJson(new InputStreamReader(connection.getInputStream()), JsonArray.class);
-    }
-
-    private static volatile JsonObject constants;
+    public static volatile JsonObject constants;
 
     public static JsonObject getLilyWeightConstants() {
         if (constants != null) return constants;
         try {
-            JsonObject jsonObject = getJson("https://raw.githubusercontent.com/Antonio32A/lilyweight/master/lib/constants.json");
+            JsonObject jsonObject = ApiFetcher.getJson("https://raw.githubusercontent.com/Antonio32A/lilyweight/master/lib/constants.json");
             constants = jsonObject;
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
         return constants;
-    }
-
-    private static final Map<String, CompletableFuture<Optional<GameProfile>>> completableFutureMap4 = new ConcurrentHashMap<>();
-
-    public static CompletableFuture<Optional<GameProfile>> getSkinGameProfileByUUIDAsync(String uid) {
-        if (UIDtoGameProfile.containsKey(uid)) {
-            CachedData<GameProfile> cachedData = UIDtoGameProfile.get(uid);
-            if (cachedData.getExpire() > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
-            }
-            UIDtoGameProfile.remove(uid);
-        }
-        if (completableFutureMap4.containsKey(uid)) return completableFutureMap4.get(uid);
-
-        CompletableFuture<Optional<GameProfile>> completableFuture = new CompletableFuture<>();
-        fetchNicknameAsync(uid).thenAccept(nick -> {
-            if (!nick.isPresent()) {
-                completableFuture.complete(Optional.empty());
-                return;
-            }
-            ex.submit(() -> {
-                try {
-                    Optional<GameProfile> playerProfile = getSkinGameProfileByUUID(uid, nick.get());
-                    UIDtoGameProfile.put(uid, new CachedData<GameProfile>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
-                    completableFuture.complete(playerProfile);
-                    completableFutureMap4.remove(uid);
-                    return;
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-                completableFuture.complete(Optional.empty());
-                completableFutureMap4.remove(uid);
-            });
-        });
-        completableFutureMap4.put(uid, completableFuture);
-        return completableFuture;
-    }
-
-    public static Optional<GameProfile> getSkinGameProfileByUUID(String uid, String nickname) throws IOException {
-        GameProfile gameProfile = new GameProfile(UUID.fromString(uid), nickname);
-        GameProfile newProf = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
-        return newProf == gameProfile ? Optional.empty() : Optional.of(newProf);
-    }
-
-
-    private static final Map<String, CompletableFuture<Optional<PlayerProfile>>> completableFutureMap = new ConcurrentHashMap<>();
-
-    public static CompletableFuture<Optional<PlayerProfile>> fetchMostRecentProfileAsync(String uid, String apiKey) {
-        if (playerProfileCache.containsKey(uid)) {
-            CachedData<PlayerProfile> cachedData = playerProfileCache.get(uid);
-            if (cachedData.getExpire() > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
-            }
-            playerProfileCache.remove(uid);
-        }
-        if (completableFutureMap.containsKey(uid)) {
-            return completableFutureMap.get(uid);
-        }
-        if (invalidKeys.contains(apiKey)) {
-            CompletableFuture cf = new CompletableFuture();
-            cf.completeExceptionally(new IOException("403 for url"));
-            return cf;
-        }
-        CompletableFuture<Optional<PlayerProfile>> completableFuture = new CompletableFuture<>();
-        ex.submit(() -> {
-            try {
-                Optional<PlayerProfile> playerProfile = fetchMostRecentProfile(uid, apiKey);
-                playerProfileCache.put(uid, new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
-                completableFuture.complete(playerProfile);
-                completableFutureMap.remove(uid);
-            } catch (IOException e) {
-                if (e.getMessage().contains("403 for URL")) {
-                    completableFuture.completeExceptionally(e);
-                    completableFutureMap.remove(uid);
-                    invalidKeys.add(apiKey);
-                } else {
-                    completableFuture.completeExceptionally(e);
-                    completableFutureMap.remove(uid);
-                }
-                e.printStackTrace();
-            }
-        });
-        completableFutureMap.put(uid, completableFuture);
-        return completableFuture;
-    }
-
-    private static final Map<String, CompletableFuture<Optional<String>>> completableFutureMap3 = new ConcurrentHashMap<>();
-
-    public static CompletableFuture<Optional<String>> fetchNicknameAsync(String uid) {
-        if (UIDtoNickname.containsKey(uid)) {
-            CachedData<String> cachedData = UIDtoNickname.get(uid);
-            if (cachedData.getExpire() > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
-            }
-            UIDtoNickname.remove(uid);
-        }
-        if (completableFutureMap3.containsKey(uid)) return completableFutureMap3.get(uid);
-
-
-        CompletableFuture<Optional<String>> completableFuture = new CompletableFuture<>();
-
-        ex.submit(() -> {
-            try {
-                Optional<String> playerProfile = fetchNickname(uid);
-                UIDtoNickname.put(uid, new CachedData<String>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, playerProfile.orElse(null)));
-                if (playerProfile.isPresent())
-                    nicknameToUID.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, uid));
-                completableFuture.complete(playerProfile);
-                completableFutureMap3.remove(uid);
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            completableFuture.complete(Optional.empty());
-            completableFutureMap3.remove(uid);
-        });
-        completableFutureMap3.put(uid, completableFuture);
-
-        return completableFuture;
-    }
-
-    private static final Map<String, CompletableFuture<Optional<String>>> completableFutureMap2 = new ConcurrentHashMap<>();
-
-    public static CompletableFuture<Optional<String>> fetchUUIDAsync(String nickname) {
-        if (nicknameToUID.containsKey(nickname)) {
-            CachedData<String> cachedData = nicknameToUID.get(nickname);
-            if (cachedData.getExpire() > System.currentTimeMillis()) {
-                return CompletableFuture.completedFuture(Optional.ofNullable(cachedData.getData()));
-            }
-            nicknameToUID.remove(nickname);
-        }
-        if (completableFutureMap2.containsKey(nickname)) return completableFutureMap2.get(nickname);
-
-
-        CompletableFuture<Optional<String>> completableFuture = new CompletableFuture<>();
-
-        ex.submit(() -> {
-            try {
-                Optional<String> playerProfile = fetchUUID(nickname);
-                nicknameToUID.put(nickname, new CachedData<String>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, playerProfile.orElse(null)));
-                if (playerProfile.isPresent())
-                    UIDtoNickname.put(playerProfile.orElse(null), new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 60 * 12, nickname));
-
-                completableFuture.complete(playerProfile);
-                completableFutureMap2.remove(nickname);
-                return;
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            completableFuture.complete(Optional.empty());
-            completableFutureMap2.remove(nickname);
-        });
-        completableFutureMap2.put(nickname, completableFuture);
-
-        return completableFuture;
-    }
-
-    public static Optional<String> fetchUUID(String nickname) throws IOException {
-        JsonObject json = getJson("https://api.mojang.com/users/profiles/minecraft/" + nickname);
-        if (json.has("error")) return Optional.empty();
-        return Optional.of(TextUtils.insertDashUUID(json.get("id").getAsString()));
-    }
-
-    public static Optional<String> fetchNickname(String uuid) throws IOException {
-        try {
-            JsonArray json = getJsonArr("https://api.mojang.com/user/profiles/" + uuid.replace("-", "") + "/names");
-            return Optional.of(json.get(json.size() - 1).getAsJsonObject().get("name").getAsString());
-        } catch (Exception e) {
-            return Optional.empty();
-        }
-    }
-
-    public static List<PlayerProfile> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
-        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
-        if (!json.get("success").getAsBoolean()) return new ArrayList<>();
-        JsonArray profiles = json.getAsJsonArray("profiles");
-        String dashTrimmed = uid.replace("-", "");
-
-        ArrayList<PlayerProfile> playerProfiles = new ArrayList<>();
-        for (JsonElement jsonElement : profiles) {
-            JsonObject semiProfile = jsonElement.getAsJsonObject();
-            if (!semiProfile.has(dashTrimmed)) continue;
-            playerProfiles.add(parseProfile(semiProfile, dashTrimmed));
-        }
-        return playerProfiles;
-    }
-
-    public static Optional<PlayerProfile> fetchMostRecentProfile(String uid, String apiKey) throws IOException {
-        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
-        if (!json.get("success").getAsBoolean()) return Optional.empty();
-        JsonArray profiles = json.getAsJsonArray("profiles");
-        String dashTrimmed = uid.replace("-", "");
-
-        JsonObject profile = null;
-        float lastSave = Long.MIN_VALUE;
-        for (JsonElement jsonElement : profiles) {
-            JsonObject semiProfile = jsonElement.getAsJsonObject();
-            if (!semiProfile.getAsJsonObject("members").has(dashTrimmed)) {
-                continue;
-            }
-            JsonElement last_save = semiProfile.get("last_save");
-
-            JsonElement cute_name = semiProfile.get("cute_name");
-            if (cute_name != null) {
-                System.out.println(cute_name.getAsString());
-            } else {
-                System.out.println("THIS SHOULD NOT HAPPEN");
-            }
-
-            if (last_save == null) {
-                return Optional.empty();
-            }
-            float lastSave2 = last_save.getAsLong();
-            if (lastSave2 > lastSave) {
-
-                profile = semiProfile;
-                lastSave = lastSave2;
-            }
-        }
-
-
-        if (profile == null) {
-            return Optional.empty();
-        }
-
-        PlayerProfile pp = parseProfile(profile, dashTrimmed);
-        json = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
-        if (json.has("player")) {
-            JsonObject treasures = json.getAsJsonObject("player");
-            if (treasures.has("achievements")) {
-                treasures = treasures.getAsJsonObject("achievements");
-                if (treasures.has("skyblock_treasure_hunter")) {
-                    pp.setTotalSecrets(treasures.get("skyblock_treasure_hunter").getAsInt());
-                }
-            }
-        }
-        return Optional.of(pp);
     }
 
     public static int getOrDefault(JsonObject jsonObject, String key, int value) {

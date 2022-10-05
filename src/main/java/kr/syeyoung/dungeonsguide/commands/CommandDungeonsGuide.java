@@ -42,8 +42,8 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.events.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerOnJoin;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
@@ -272,17 +272,7 @@ public class CommandDungeonsGuide extends CommandBase {
                     Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
                     return;
                 }
-                for (String member : context.getPartyRawMembers()) {
-                    ApiFetchur.fetchUUIDAsync(member)
-                            .thenAccept(a -> {
-                                if (a == null) {
-                                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e"+member+"§f's Profile §cCouldn't fetch uuid"));
-                                } else {
-                                    ApiFetchur.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
-                                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + member + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
-                                }
-                            });
-                }
+                FeatureViewPlayerStatsOnJoin.processPartyMembers(context);
             });
 //        } else if (args[0].equals("fixschematic")) {
 //            File root = new File(e.getDungeonsGuide().getConfigDir(), "schematics");
@@ -390,15 +380,15 @@ public class CommandDungeonsGuide extends CommandBase {
             }
         } else if (args[0].equals("pv")) {
             try {
-                ApiFetchur.fetchUUIDAsync(args[1])
+                ApiFetcher.fetchUUIDAsync(args[1])
                         .thenAccept(a -> {
-                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + args[1] + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + args[1] + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerStatsOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
                         });
             } catch (Exception e) {
                 e.printStackTrace();
             }
         } else if (args[0].equals("purge")) {
-            ApiFetchur.purgeCache();
+            ApiFetcher.purgeCache();
             CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
             cosmeticsManager.requestPerms();
             cosmeticsManager.requestCosmeticsList();

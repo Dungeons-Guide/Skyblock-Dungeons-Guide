@@ -16,10 +16,11 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.impl;
 
-import kr.syeyoung.dungeonsguide.features.impl.party.api.ClassSpecificData;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses.Skill;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.utils.XPUtils;
@@ -31,18 +32,22 @@ import net.minecraftforge.fml.client.config.GuiUtils;
 import java.awt.*;
 import java.util.Arrays;
 
-public class DataRendererSelectedClassLv implements DataRenderer {
+public class DataRendererSkillLv implements IDataRenderer {
+    private final Skill skill;
+    public DataRendererSkillLv(Skill skill) {
+        this.skill = skill;
+    }
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        ClassSpecificData<PlayerProfile.PlayerClassData> dungeonStatDungeonSpecificData = playerProfile.getPlayerClassData().get(playerProfile.getSelectedClass());
-        if (dungeonStatDungeonSpecificData == null) {
-            fr.drawString("Unknown Selected", 0,0, 0xFF55ffff);
+        Double xp = playerProfile.getSkillXp().get(skill);
+        if (xp == null) {
+            fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
+            fr.drawString("§cSkill API Disabled", 0, fr.FONT_HEIGHT,0xFFFFFFFF);
         } else {
-            XPUtils.XPCalcResult xpCalcResult = XPUtils.getCataXp(dungeonStatDungeonSpecificData.getData().getExperience());
-            fr.drawString(playerProfile.getSelectedClass().getFamilarName(), 0,0, 0xFF55ffff);
-            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(playerProfile.getSelectedClass().getFamilarName()+" "),0,0xFFFFFFFF);
-            fr.drawString("★", fr.getStringWidth(playerProfile.getSelectedClass().getFamilarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
+            XPUtils.XPCalcResult xpCalcResult = XPUtils.getSkillXp(skill, xp);
+            fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
+            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(skill.getFriendlyName()+" "),0,0xFFFFFFFF);
 
             RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
@@ -53,9 +58,8 @@ public class DataRendererSelectedClassLv implements DataRenderer {
     @Override
     public Dimension renderDummy() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("SelectedClass", 0,0, 0xFF55ffff);
-        fr.drawString("99", fr.getStringWidth("SelectedClass "),0,0xFFFFFFFF);
-        fr.drawString("★", fr.getStringWidth("SelectedClass 99 "),0,0xFFAAAAAA);
+        fr.drawString(skill.getFriendlyName(), 0,0, 0xFF55ffff);
+        fr.drawString("99", fr.getStringWidth(skill.getFriendlyName()+" "),0,0xFFFFFFFF);
         RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
         return new Dimension(100, fr.FONT_HEIGHT*2);
     }
@@ -66,11 +70,11 @@ public class DataRendererSelectedClassLv implements DataRenderer {
 
     @Override
     public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
-        ClassSpecificData<PlayerProfile.PlayerClassData> dungeonStatDungeonSpecificData = playerProfile.getPlayerClassData().get(playerProfile.getSelectedClass());
-        if (dungeonStatDungeonSpecificData == null) return;
-        XPUtils.XPCalcResult xpCalcResult = XPUtils.getCataXp(dungeonStatDungeonSpecificData.getData().getExperience());
+        Double xp = playerProfile.getSkillXp().get(skill);
+        if (xp == null) return;
+        XPUtils.XPCalcResult xpCalcResult = XPUtils.getSkillXp(skill, xp);
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GuiUtils.drawHoveringText(Arrays.asList("§bCurrent Lv§7: §e"+xpCalcResult.getLevel(),"§bExp§7: §e"+ TextUtils.format((long)xpCalcResult.getRemainingXp()) + "§7/§e"+TextUtils.format((long)xpCalcResult.getNextLvXp()), "§bTotal Xp§7: §e"+ TextUtils.format((long)dungeonStatDungeonSpecificData.getData().getExperience())),mouseX, mouseY,
+        GuiUtils.drawHoveringText(Arrays.asList("§bCurrent Lv§7: §e"+xpCalcResult.getLevel(),"§bExp§7: §e"+ TextUtils.format((long)xpCalcResult.getRemainingXp()) + "§7/§e"+TextUtils.format((long)xpCalcResult.getNextLvXp()), "§bTotal Xp§7: §e"+ TextUtils.format(xp.longValue())),mouseX, mouseY,
                 scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 }

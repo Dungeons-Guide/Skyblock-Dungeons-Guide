@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;

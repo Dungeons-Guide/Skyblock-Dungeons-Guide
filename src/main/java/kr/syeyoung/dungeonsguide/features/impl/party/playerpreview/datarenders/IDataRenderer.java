@@ -16,14 +16,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.api;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 
-@Getter
-@AllArgsConstructor
-public class FloorSpecificData<T> {
-    private final int floor;
-    private final T data;
+import java.awt.*;
+
+public interface IDataRenderer {
+    Dimension renderData(PlayerProfile playerProfile);
+    void onHover(PlayerProfile playerProfile, int mouseX, int mouseY);
+
+
+    Dimension renderDummy();
+
+    Dimension getDimension();
 }
