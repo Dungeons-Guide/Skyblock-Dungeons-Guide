@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.ApiFetchur;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerSkyblockData;
 import kr.syeyoung.dungeonsguide.features.impl.party.api.SkinFetchur;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
@@ -45,7 +46,10 @@ import lombok.Setter;
 import lombok.SneakyThrows;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.GuiChat;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.RenderHelper;
@@ -62,7 +66,6 @@ import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
-import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -70,6 +73,7 @@ import org.lwjgl.opengl.GL14;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
@@ -84,7 +88,7 @@ public class FeatureViewPlayerOnJoin extends SimpleFeature implements GuiPostRen
 
     private Rectangle popupRect;
     private String lastuid; // actually current uid
-    private Future<Optional<PlayerSkyblockData>> profileFuture;
+    private CompletableFuture<Optional<PlayerSkyblockData>> profileFuture;
     private Future<Optional<GameProfile>> gfFuture;
     private Future<SkinFetchur.SkinSet> skinFuture;
     private FakePlayer fakePlayer;
