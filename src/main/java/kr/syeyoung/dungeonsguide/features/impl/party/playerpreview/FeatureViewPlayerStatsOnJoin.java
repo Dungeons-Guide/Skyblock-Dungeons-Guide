@@ -47,6 +47,7 @@ import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -85,10 +86,17 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         this.parameters.put("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers", "Datarenderssdasd", new ArrayList<>(Arrays.asList(
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
         )), "stringlist"));
+
+
+
+
     }
 
+
+    ChangeProfileWidget profileButtonWidget = new ChangeProfileWidget();
+
     static Minecraft mc = Minecraft.getMinecraft();
-    private Rectangle popupRect;
+    protected Rectangle popupRect;
     private String lastuid; // actually current uid
     private CompletableFuture<Optional<PlayerSkyblockData>> profileFuture;
     private Future<Optional<GameProfile>> gameProfileFuture;
@@ -147,15 +155,15 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
 
         try {
             if (fakePlayer == null && skinFuture != null && profileFuture != null && skinFuture.isDone() && profileFuture.isDone() && profileFuture.get().isPresent()) {
-                if (getCurrentrySelectedProfile(profileFuture.get().get()) != null) {
+                if (profileButtonWidget.getCurrentrySelectedProfile(profileFuture.get().get()) != null) {
                     if (skinFuture.get() != null) {
-                        currentyselectedprofile = profileFuture.get().get().getLastestprofileArrayIndex();
-                        fakePlayer = new FakePlayer(gameProfileFuture.get().orElse(null), skinFuture.get(), getCurrentrySelectedProfile(profileFuture.get().get()), currentyselectedprofile);
+                        profileButtonWidget.setCurrentyselectedprofile(profileFuture.get().get().getLastestprofileArrayIndex());
+                        fakePlayer = new FakePlayer(gameProfileFuture.get().orElse(null), skinFuture.get(), profileButtonWidget.getCurrentrySelectedProfile(profileFuture.get().get()), profileButtonWidget.getCurrentyselectedprofile());
                     }
                 }
             } else if (fakePlayer != null) {
-                if (fakePlayer.getProfileNumber() != currentyselectedprofile) {
-                    fakePlayer = new FakePlayer(gameProfileFuture.get().orElse(null), skinFuture.get(), getCurrentrySelectedProfile(profileFuture.get().get()), currentyselectedprofile);
+                if (fakePlayer.getProfileNumber() != profileButtonWidget.getCurrentyselectedprofile()) {
+                    fakePlayer = new FakePlayer(gameProfileFuture.get().orElse(null), skinFuture.get(), profileButtonWidget.getCurrentrySelectedProfile(profileFuture.get().get()), profileButtonWidget.getCurrentyselectedprofile());
                 }
             }
         } catch (InterruptedException | ExecutionException e) {
@@ -173,18 +181,20 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
             } catch (InterruptedException | ExecutionException e) {
                 throw new RuntimeException(e);
             }
-            PlayerProfile currentrySelectedProfile = getCurrentrySelectedProfile(data);
-            playerProfile = Optional.ofNullable(currentrySelectedProfile);
+            PlayerProfile currentlySelectedProfile = profileButtonWidget.getCurrentrySelectedProfile(data);
+            playerProfile = Optional.ofNullable(currentlySelectedProfile);
         }
 
 
         draw(scaledResolution, mouseX, mouseY, plsSetAPIKEY, playerProfile);
     }
 
+
     private void draw(ScaledResolution scaledResolution, int mouseX, int mouseY, boolean plsSetAPIKEY, Optional<PlayerProfile> playerProfile) {
         GlStateManager.pushMatrix();
         GlStateManager.translate(popupRect.x, popupRect.y, 0);
-        Gui.drawRect(0, 0, popupRect.width, popupRect.height, 0xFF23272a);
+        int backroundGuiColor = 0xFF23272a;
+        Gui.drawRect(0, 0, popupRect.width, popupRect.height, backroundGuiColor);
         Gui.drawRect(2, 2, popupRect.width - 2, popupRect.height - 2, 0XFF2c2f33);
 
         GlStateManager.enableBlend();
@@ -205,18 +215,21 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
             FontRenderer fr = mc.fontRendererObj;
             GL11.glEnable(GL11.GL_SCISSOR_TEST);
             clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
-            Gui.drawRect(0, 168, 90, 195, 0xFF23272a);
+
+            Gui.drawRect(0, 168, 90, 195, backroundGuiColor);
             Gui.drawRect(2, 170, 88, 193, new Rectangle(2, 170, 86, 23).contains(relX, relY) ? 0xFFff7777 : 0xFFFF3333);
-            Gui.drawRect(0, 193, 90, 220, 0xFF23272a);
+
+            Gui.drawRect(0, 193, 90, 220, backroundGuiColor);
             Gui.drawRect(2, 195, 88, 218, new Rectangle(2, 195, 86, 23).contains(relX, relY) ? 0xFF859DF0 : 0xFF7289da);
-            Gui.drawRect(90, 193, 180, 220, 0xFF23272a);
-            Gui.drawRect(91, 195, 178, 218, new Rectangle(91, 195, 176, 23).contains(relX, relY) ? 0xFFdace72 : 0xdddace72);
+
+
+
             GlStateManager.enableBlend();
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             fr.drawString("Kick", (90 - fr.getStringWidth("Kick")) / 2, (364 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
             fr.drawString("Invite", (90 - fr.getStringWidth("Invite")) / 2, (414 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
-            fr.drawString("Change Profile", ((90 - fr.getStringWidth("Change Profile")) / 2) + 90, (414 - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
+
             GlStateManager.pushMatrix();
             GlStateManager.translate(95, 5, 0);
             int culmutativeY = 5;
@@ -243,76 +256,24 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                 GlStateManager.translate(0, dim.height, 0);
             }
             GlStateManager.popMatrix();
-            Gui.drawRect(0, 0, 90, 170, 0xFF23272a);
-            Gui.drawRect(2, 2, 88, 168, 0xFF444444);
-            Gui.drawRect(80, 159, 90, 170, 0xFF23272a);
-            Gui.drawRect(82, 161, 88, 168, 0xFF444444);
             GlStateManager.enableBlend();
             GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+            Gui.drawRect(0, 0, 90, 170, backroundGuiColor);
+            Gui.drawRect(2, 2, 88, 168, 0xFF444444);
+
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-            fr.drawString("§eI", 83, 161, -1);
+
+            profileButtonWidget.drawChangeProfileButton(relX, relY);
+
+
+            Gui.drawRect(78, 156, 90, 170, backroundGuiColor);
+            fr.drawString("§eI", 82, 159, -1);
+
+
+
             GlStateManager.color(1, 1, 1, 1.0F);
             if (fakePlayer != null) {
-                clip(scaledResolution, popupRect.x + 2, popupRect.y + 2, 86, 166);
-                GuiInventory.drawEntityOnScreen(45, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
-
-                String toDraw = fakePlayer.getName();
-                List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(UUID.fromString(TextUtils.insertDashUUID(playerProfile.get().getMemberUID())));
-                CosmeticData prefix = null;
-                CosmeticData color = null;
-                if (activeCosmetics != null) {
-                    for (ActiveCosmetic activeCosmetic : activeCosmetics) {
-                        CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-                        if (cosmeticData != null) {
-                            if (cosmeticData.getCosmeticType().equals("prefix")) prefix = cosmeticData;
-                            if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
-                        }
-                    }
-                }
-                toDraw = (color == null ? "§e" : color.getData().replace("&", "§")) + toDraw;
-                if (prefix != null) toDraw = prefix.getData().replace("&", "§") + " " + toDraw;
-
-                GlStateManager.enableBlend();
-                GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 15, -1);
-
-                ItemStack toHover = null;
-                if (relX > 20 && relX < 70) {
-                    if (33 <= relY && relY <= 66) {
-                        toHover = fakePlayer.getInventory()[3];
-                    } else if (66 <= relY && relY <= 108) {
-                        toHover = fakePlayer.getInventory()[2];
-                    } else if (108 <= relY && relY <= 130) {
-                        toHover = fakePlayer.getInventory()[1];
-                    } else if (130 <= relY && relY <= 154) {
-                        toHover = fakePlayer.getInventory()[0];
-                    }
-                } else if (relX > 0 && relX <= 20) {
-                    if (80 <= relY && relY <= 120) {
-                        toHover = fakePlayer.inventory.mainInventory[fakePlayer.inventory.currentItem];
-                    }
-                }
-
-                if (toHover != null) {
-                    List<String> list = toHover.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
-                    for (int i = 0; i < list.size(); ++i) {
-                        if (i == 0) {
-                            list.set(i, toHover.getRarity().rarityColor + list.get(i));
-                        } else {
-                            list.set(i, EnumChatFormatting.GRAY + list.get(i));
-                        }
-                    }
-                    FontRenderer font = toHover.getItem().getFontRenderer(toHover);
-                    GlStateManager.popMatrix();
-                    GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                    FontRenderer theRenderer = (font == null ? fr : font);
-                    GuiUtils.drawHoveringText(list, mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
-                    GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                    GlStateManager.pushMatrix();
-                    GlStateManager.translate(popupRect.x, popupRect.y, 0);
-                }
-                clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
+                drawFakePlayer(scaledResolution, mouseX, mouseY, playerProfile, relX, relY, fr);
             } else {
                 GlStateManager.enableBlend();
                 GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -356,21 +317,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                     }
 
                     if (toHover != null) {
-                        List<String> list = toHover.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
-                        for (int i = 0; i < list.size(); ++i) {
-                            if (i == 0) {
-                                list.set(i, toHover.getRarity().rarityColor + list.get(i));
-                            } else {
-                                list.set(i, EnumChatFormatting.GRAY + list.get(i));
-                            }
-                        }
-                        FontRenderer font = toHover.getItem().getFontRenderer(toHover);
-                        GlStateManager.popMatrix();
-                        GL11.glDisable(GL11.GL_SCISSOR_TEST);
-                        FontRenderer theRenderer = (font == null ? fr : font);
-                        GuiUtils.drawHoveringText(list, mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
-                        GL11.glEnable(GL11.GL_SCISSOR_TEST);
-                        GlStateManager.pushMatrix();
+                        drawItemStackToolTip(scaledResolution, mouseX, mouseY, fr, toHover);
                     }
                 } else {
                     Gui.drawRect(0, 0, 162, 72, 0xFF666666);
@@ -384,6 +331,161 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
 
 
     }
+
+    private void drawFakePlayer(ScaledResolution scaledResolution, int mouseX, int mouseY, Optional<PlayerProfile> playerProfile, int relX, int relY, FontRenderer fr) {
+        clip(scaledResolution, popupRect.x + 2, popupRect.y + 2, 86, 166);
+        GuiInventory.drawEntityOnScreen(45, 150, 60, -(mouseX - popupRect.x - 75), 0, fakePlayer);
+
+        String toDraw = fakePlayer.getName();
+        List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(UUID.fromString(TextUtils.insertDashUUID(playerProfile.get().getMemberUID())));
+        CosmeticData prefix = null;
+        CosmeticData color = null;
+        if (activeCosmetics != null) {
+            for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+                CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+                if (cosmeticData != null) {
+                    if (cosmeticData.getCosmeticType().equals("prefix")) prefix = cosmeticData;
+                    if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
+                }
+            }
+        }
+        toDraw = (color == null ? "§e" : color.getData().replace("&", "§")) + toDraw;
+        if (prefix != null) toDraw = prefix.getData().replace("&", "§") + " " + toDraw;
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+
+        String profileName = "on w§6" + playerProfile.get().getProfileName();
+        fr.drawString(profileName, (90 - fr.getStringWidth(profileName)) / 2, 15, -1);
+
+
+        fr.drawString(toDraw, (90 - fr.getStringWidth(toDraw)) / 2, 10 - (fr.FONT_HEIGHT / 2), -1);
+
+        ItemStack toHover = null;
+        if (relX > 20 && relX < 70) {
+            if (33 <= relY && relY <= 66) {
+                toHover = fakePlayer.getInventory()[3];
+            } else if (66 <= relY && relY <= 108) {
+                toHover = fakePlayer.getInventory()[2];
+            } else if (108 <= relY && relY <= 130) {
+                toHover = fakePlayer.getInventory()[1];
+            } else if (130 <= relY && relY <= 154) {
+                toHover = fakePlayer.getInventory()[0];
+            }
+        } else if (relX > 0 && relX <= 20) {
+            if (80 <= relY && relY <= 120) {
+                toHover = fakePlayer.inventory.mainInventory[fakePlayer.inventory.currentItem];
+            }
+        }
+
+        if (toHover != null) {
+            drawItemStackToolTip(scaledResolution, mouseX, mouseY, fr, toHover);
+            GlStateManager.translate(popupRect.x, popupRect.y, 0);
+        }
+        clip(scaledResolution, popupRect.x, popupRect.y, popupRect.width, popupRect.height);
+    }
+
+    public void drawItemStackToolTip(ScaledResolution scaledResolution, int mouseX, int mouseY, FontRenderer fr, ItemStack toHover) {
+        List<String> list = toHover.getTooltip(mc.thePlayer, mc.gameSettings.advancedItemTooltips);
+        for (int i = 0; i < list.size(); ++i) {
+            if (i == 0) {
+                list.set(i, toHover.getRarity().rarityColor + list.get(i));
+            } else {
+                list.set(i, EnumChatFormatting.GRAY + list.get(i));
+            }
+        }
+        FontRenderer font = toHover.getItem().getFontRenderer(toHover);
+        GlStateManager.popMatrix();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        FontRenderer theRenderer = (font == null ? fr : font);
+        GuiUtils.drawHoveringText(list, mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, theRenderer);
+        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        GlStateManager.pushMatrix();
+    }
+
+
+    class ChangeProfileWidget {
+        public ChangeProfileWidget(){
+            fr = Minecraft.getMinecraft().fontRendererObj;
+            stringWidth = fr.getStringWidth(buttonText);
+            textx = ((83 - stringWidth) / 2);
+            texty = (324 - fr.FONT_HEIGHT) / 2;
+            blockWidth = stringWidth + 3;
+            blockHeight = fr.FONT_HEIGHT + 2;
+        }
+
+        FontRenderer fr;
+
+        @Getter @Setter
+        int currentyselectedprofile = 0;
+
+        String buttonText = "Switch Profile";
+
+        int stringWidth;
+        int textx;
+        int texty;
+
+        int blockWidth;
+        int blockHeight;
+
+        void drawChangeProfileButton(float relX, float relY){
+
+            boolean contains = isWithinButtonRec(relX, relY);
+
+            Gui.drawRect(textx - 5, texty - 1, textx + blockWidth, texty + blockHeight, contains ? 0xFFFFFFFF : 0xFF30afd3);
+
+            fr.drawString(buttonText, textx, texty + 2, contains ? 0x30afd3 : 0xFFFFFF);
+        }
+
+
+        Rectangle getButtonRec(){
+            return new Rectangle(textx - 5, texty - 1, blockWidth, blockHeight);
+        }
+
+        boolean isWithinButtonRec(float relX, float relY){
+            return getButtonRec().contains(relX, relY);
+        }
+
+        long clickDeBounce = 0;
+        void handleClickProfileButton(PlayerSkyblockData playerData){
+
+            if(System.currentTimeMillis() <= clickDeBounce){
+                  return;
+            } else {
+                clickDeBounce = System.currentTimeMillis() + 200;
+            }
+
+            ScaledResolution scaledResolution = new ScaledResolution(mc);
+            int width = scaledResolution.getScaledWidth();
+            int height = scaledResolution.getScaledHeight();
+            int mouseX = Mouse.getX() * width / mc.displayWidth;
+            int mouseY = height - Mouse.getY() * height / mc.displayHeight - 1;
+
+            int relX = mouseX - popupRect.x;
+            int relY = mouseY - popupRect.y;
+
+            if (isWithinButtonRec(relX, relY)) {
+                if (profileButtonWidget.currentyselectedprofile + 1 >= playerData.getPlayerProfiles().length) {
+                    profileButtonWidget.currentyselectedprofile = 0;
+                } else {
+                    profileButtonWidget.currentyselectedprofile++;
+                }
+            }
+        }
+
+        PlayerProfile getCurrentrySelectedProfile(PlayerSkyblockData data) {
+            if (data == null) return null;
+            if (data.getPlayerProfiles() == null) return null;
+            if (data.getPlayerProfiles().length == 0) return null;
+            if (data.getPlayerProfiles().length < currentyselectedprofile) return null;
+            return data.getPlayerProfiles()[currentyselectedprofile];
+        }
+    }
+
+
+
 
     private void shouldCancelRendering(String uid, int mouseX, int mouseY) {
         if (!((popupRect != null && (popupRect.contains(mouseX, mouseY) || shouldDraw)) || uid != null && uid.equals(lastuid))) {
@@ -414,22 +516,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         GL11.glScissor((x) * scale, mc.displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }
 
-
-    float clickDeBounce = 0;
     @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-
-
-        if(clickDeBounce == 0){
-            clickDeBounce = System.currentTimeMillis() + 50;
-        }else{
-            if (clickDeBounce > System.currentTimeMillis()){
-                return;
-            } else {
-                clickDeBounce = 0;
-            }
-        }
-
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         int width = scaledResolution.getScaledWidth();
         int height = scaledResolution.getScaledHeight();
@@ -461,23 +549,25 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
 
             if (new Rectangle(2, 195, 86, 23).contains(relX, relY)) {
                 // invite
-                ChatProcessor.INSTANCE.addToChatQueue("/p invite " + ApiFetcher.fetchNicknameAsync(getCurrentrySelectedProfile(playerData).getMemberUID()).get().orElse("-"), () -> {
+                ChatProcessor.INSTANCE.addToChatQueue("/p invite " + ApiFetcher.fetchNicknameAsync(profileButtonWidget.getCurrentrySelectedProfile(playerData).getMemberUID()).get().orElse("-"), () -> {
                 }, true);
             }
 
             else if (new Rectangle(2, 170, 86, 23).contains(relX, relY)) {
                 // kick
-                ChatProcessor.INSTANCE.addToChatQueue("/p kick " + ApiFetcher.fetchNicknameAsync(getCurrentrySelectedProfile(playerData).getMemberUID()).get().orElse("-"), () -> {
+                ChatProcessor.INSTANCE.addToChatQueue("/p kick " + ApiFetcher.fetchNicknameAsync(profileButtonWidget.getCurrentrySelectedProfile(playerData).getMemberUID()).get().orElse("-"), () -> {
                 }, true);
             }
 
-            else if (new Rectangle(90, 195, 86, 23).contains(relX, relY)) {
-                incrementProfile(playerData);
-            }
+
 
             else if (new Rectangle(80, 159, 10, 11).contains(relX, relY)) {
                 shouldDraw = true;
             }
+
+
+            this.profileButtonWidget.handleClickProfileButton(playerData);
+
 
 
         } catch (InterruptedException | ExecutionException e) {
@@ -486,24 +576,6 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
 
     }
 
-    private void incrementProfile(PlayerSkyblockData data) {
-        if (currentyselectedprofile + 1 >= data.getPlayerProfiles().length) {
-            currentyselectedprofile = 0;
-        } else {
-            currentyselectedprofile++;
-        }
-    }
-
-
-    int currentyselectedprofile = 0;
-
-    PlayerProfile getCurrentrySelectedProfile(PlayerSkyblockData data) {
-        if (data == null) return null;
-        if (data.getPlayerProfiles() == null) return null;
-        if (data.getPlayerProfiles().length == 0) return null;
-        if (data.getPlayerProfiles().length < currentyselectedprofile) return null;
-        return data.getPlayerProfiles()[currentyselectedprofile];
-    }
 
 
     public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
