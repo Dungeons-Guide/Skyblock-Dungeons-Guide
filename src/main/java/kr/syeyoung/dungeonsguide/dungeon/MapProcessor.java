@@ -22,19 +22,18 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
+import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonMapUpdateEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonRoomDiscoverEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
-import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
-import kr.syeyoung.dungeonsguide.wsresource.StaticResource;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import lombok.Setter;
@@ -48,11 +47,10 @@ import net.minecraftforge.common.MinecraftForge;
 import org.json.JSONObject;
 
 import javax.vecmath.Vector2d;
-import javax.vecmath.Vector2f;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
-import java.util.concurrent.ExecutionException;
+import java.util.Queue;
+import java.util.*;
 
 public class MapProcessor {
 
@@ -210,6 +208,14 @@ public class MapProcessor {
         if (context.getDungeonMin() == null) return null;
         return new Point((worldPoint.getX() - context.getDungeonMin().getX()) / 32, (worldPoint.getZ() - context.getDungeonMin().getZ()) / 32);
     }
+
+    public Vector2d worldPointToMapPointFLOAT(Vec3 worldPoint) {
+        if (context.getDungeonMin() == null) return null;
+        double x = topLeftMapPoint.x + ((worldPoint.xCoord - context.getDungeonMin().getX()) / 32.0f * (unitRoomDimension.width + doorDimension.height));
+        double y = topLeftMapPoint.y + ((worldPoint.zCoord - context.getDungeonMin().getZ()) / 32.0f * (unitRoomDimension.height + doorDimension.height));
+        return new Vector2d(x, y);
+    }
+
     public Point worldPointToMapPoint(Vec3 worldPoint) {
         if (context.getDungeonMin() == null) return null;
         return new Point(topLeftMapPoint.x + (int)((worldPoint.xCoord - context.getDungeonMin().getX()) / 32.0f * (unitRoomDimension.width + doorDimension.height)), topLeftMapPoint.y + (int)((worldPoint.zCoord - context.getDungeonMin().getZ()) / 32.0f * (unitRoomDimension.height + doorDimension.height)));
