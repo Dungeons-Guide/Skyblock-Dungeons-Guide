@@ -254,7 +254,7 @@ public class DungeonsGuide implements DGInterface, CloseListener {
                         }
 
                         @Override
-                        protected void actionPerformed(GuiButton button) throws IOException {
+                        protected void actionPerformed(GuiButton button)  {
                             FMLCommonHandler.instance().exitJava(-1, true);
                         }
                     };
