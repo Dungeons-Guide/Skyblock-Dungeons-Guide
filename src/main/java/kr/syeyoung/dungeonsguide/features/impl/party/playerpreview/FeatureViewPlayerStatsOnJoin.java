@@ -356,7 +356,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 
-        String profileName = "on w§6" + playerProfile.get().getProfileName();
+        String profileName = "on §6" + playerProfile.get().getProfileName();
         fr.drawString(profileName, (90 - fr.getStringWidth(profileName)) / 2, 15, -1);
 
 
