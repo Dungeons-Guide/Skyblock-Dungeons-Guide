@@ -60,7 +60,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
         super("Dungeon.Dungeon Information","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn", true, getFontRenderer().getStringWidth("There is a fairy soul in this room!"), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("warning", new AColor(0xFF, 0x69,0x17,255), new AColor(0, 0,0,0), false));
 
-        this.parameters.put("roomuids", new FeatureParameter("roomuids", "Disabled room Names", "Disable for these rooms", new ArrayList<>(), "stringlist"));
+        addParameter("roomuids", new FeatureParameter("roomuids", "Disabled room Names", "Disable for these rooms", new ArrayList<>(), "stringlist"));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

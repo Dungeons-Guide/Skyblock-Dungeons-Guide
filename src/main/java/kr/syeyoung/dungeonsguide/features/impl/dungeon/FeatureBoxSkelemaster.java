@@ -37,8 +37,8 @@ import java.util.List;
 public class FeatureBoxSkelemaster extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxSkelemaster() {
         super("Dungeon.Mobs", "Box Skeleton Masters", "Box skeleton masters in dungeons", "dungeon.skeletonmasterbox", true);
-        parameters.put("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and skeletonmaster to be boxed", 20, "integer"));
-        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(255,0,0,50), "acolor"));
+        addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and skeletonmaster to be boxed", 20, "integer"));
+        addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(255,0,0,50), "acolor"));
     }
 
 

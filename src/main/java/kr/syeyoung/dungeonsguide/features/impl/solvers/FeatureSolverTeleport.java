@@ -26,8 +26,8 @@ public class FeatureSolverTeleport extends SimpleFeature {
     public FeatureSolverTeleport() {
         super("Solver.Any Floor", "Teleport", "Shows teleport pads you've visited in a teleport maze room",  "solver.teleport");
 
-        this.parameters.put("targetColor", new FeatureParameter<AColor>("targetColor", "Solution Color", "Color of the solution teleport pad", new AColor(0,255,0,100), "acolor"));
-        this.parameters.put("targetColor2", new FeatureParameter<AColor>("targetColor2", "Not-Solution Color", "Color of the solution teleport pads you've been to", new AColor(255,0,0,100), "acolor"));
+        addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Solution Color", "Color of the solution teleport pad", new AColor(0,255,0,100), "acolor"));
+        addParameter("targetColor2", new FeatureParameter<AColor>("targetColor2", "Not-Solution Color", "Color of the solution teleport pads you've been to", new AColor(255,0,0,100), "acolor"));
     }
 
     public AColor getTargetColor() {

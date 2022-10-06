@@ -31,12 +31,19 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRenderListener {
     public FeatureHideAnimals() {
         super("Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
-        parameters.put("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheeps", "Hide Sheeps", true, "boolean"));
-        parameters.put("cow", new FeatureParameter<Boolean>("cow", "Hide Cows", "Hide Cows", true, "boolean"));
-        parameters.put("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, "boolean"));
-        parameters.put("wolf", new FeatureParameter<Boolean>("wolf", "Hide Wolves", "Hide Wolves", true, "boolean"));
-        parameters.put("rabbit", new FeatureParameter<Boolean>("rabbit", "Hide Rabbits", "Hide Rabbits", true, "boolean"));
+        addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheeps", "Hide Sheeps", true, "boolean", nval -> sheep = nval));
+        addParameter("cow", new FeatureParameter<Boolean>("cow", "Hide Cows", "Hide Cows", true, "boolean", nval -> cow = nval));
+        addParameter("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, "boolean", nval -> chicken = nval));
+        addParameter("wolf", new FeatureParameter<Boolean>("wolf", "Hide Wolves", "Hide Wolves", true, "boolean", nval -> wolf = nval));
+        addParameter("rabbit", new FeatureParameter<Boolean>("rabbit", "Hide Rabbits", "Hide Rabbits", true, "boolean", nval -> rabbit = nval));
     }
+
+    boolean sheep;
+    boolean cow;
+    boolean chicken;
+    boolean wolf;
+    boolean rabbit;
+
 
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -49,15 +56,15 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
         if (skyblockStatus.getContext().getBossfightProcessor() == null) return;
         if (!(skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
 
-        if (renderPlayerEvent.entity instanceof EntitySheep && this.<Boolean>getParameter("sheep").getValue()) {
+        if (renderPlayerEvent.entity instanceof EntitySheep && sheep) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityCow && this.<Boolean>getParameter("cow").getValue() ) {
+        } else if (renderPlayerEvent.entity instanceof EntityCow && cow ) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityChicken && this.<Boolean>getParameter("chicken").getValue()) {
+        } else if (renderPlayerEvent.entity instanceof EntityChicken && chicken) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityWolf && this.<Boolean>getParameter("wolf").getValue()) {
+        } else if (renderPlayerEvent.entity instanceof EntityWolf && wolf) {
             renderPlayerEvent.setCanceled(true);
-        } else if (renderPlayerEvent.entity instanceof EntityRabbit && this.<Boolean>getParameter("rabbit").getValue()) {
+        } else if (renderPlayerEvent.entity instanceof EntityRabbit && rabbit) {
             renderPlayerEvent.setCanceled(true);
         }
     }

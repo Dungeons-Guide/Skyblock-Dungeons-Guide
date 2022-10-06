@@ -39,8 +39,11 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
     public FeatureRoomCoordDisplay() {
         super("Advanced", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords", false, getFontRenderer().getStringWidth("X: 48 Y: 100 Z: 48 Facing: Z+"), 10);
         this.setEnabled(false);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.yellow, "color"));
+        addParameter("color", new FeatureParameter<>("color", "Color", "Color of text", Color.yellow, "color", nval -> color = nval.getRGB()));
     }
+
+
+    int color = 0;
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private static final String[] facing = {"Z+", "X-", "Z-", "X+"};
@@ -67,8 +70,6 @@ public class FeatureRoomCoordDisplay extends GuiFeature {
 
         double scale = getFeatureRect().getRectangle().getHeight() / fontRenderer.FONT_HEIGHT;
         GlStateManager.scale(scale, scale, 0);
-
-        int color = this.<Color>getParameter("color").getValue().getRGB();
 
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);

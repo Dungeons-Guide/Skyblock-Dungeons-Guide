@@ -28,8 +28,8 @@ public class FeatureSolverIcefill extends SimpleFeature {
     public FeatureSolverIcefill() {
         super("Solver.Floor 3+", "Icepath (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath");
         this.parameters = new LinkedHashMap<>();
-        this.parameters.put("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), "acolor"));
-        this.parameters.put("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, "float"));
+        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), "acolor"));
+        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, "float"));
     }
     public AColor getLineColor() {
         return this.<AColor>getParameter("lineColor").getValue();

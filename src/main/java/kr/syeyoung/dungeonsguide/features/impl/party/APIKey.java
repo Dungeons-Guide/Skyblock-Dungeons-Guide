@@ -19,9 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListenerGlobal;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -32,7 +30,7 @@ public class APIKey extends SimpleFeature implements ChatListenerGlobal {
 
     public APIKey() {
         super("Misc.API Features", "API KEY", "Sets api key","partykicker.apikey");
-        parameters.put("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "","string"));
+        addParameter("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "","string"));
     }
 
     public String getAPIKey() {

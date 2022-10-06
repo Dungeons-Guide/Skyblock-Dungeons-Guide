@@ -28,13 +28,17 @@ public class FeatureSolverSilverfish extends SimpleFeature {
     public FeatureSolverSilverfish() {
         super("Solver.Floor 3+", "Silverfish (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish");
         this.parameters = new LinkedHashMap<>();
-        this.parameters.put("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), "acolor"));
-        this.parameters.put("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, "float"));
+        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), "acolor", nval -> lineColor = nval));
+        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, "float", nval -> lineWidth = nval));
     }
+
+    AColor lineColor;
+    Float lineWidth;
+
     public AColor getLineColor() {
-        return this.<AColor>getParameter("lineColor").getValue();
+        return lineColor;
     }
     public float getLineWidth() {
-        return this.<Float>getParameter("lineWidth").getValue();
+        return lineWidth;
     }
 }

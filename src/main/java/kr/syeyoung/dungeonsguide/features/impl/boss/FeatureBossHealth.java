@@ -36,9 +36,9 @@ public class FeatureBossHealth extends TextHUDFeature {
     public FeatureBossHealth() {
         super("Bossfight", "Display Boss Health(s)", "Show the health of boss and minibosses in bossfight (Guardians, Priests..)", "bossfight.health", false, getFontRenderer().getStringWidth("The Professor: 4242m"), getFontRenderer().FONT_HEIGHT * 5);
         this.setEnabled(true);
-        parameters.put("totalHealth", new FeatureParameter<Boolean>("totalHealth", "show total health", "Show total health along with current health", false, "boolean"));
-        parameters.put("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, "boolean"));
-        parameters.put("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, "boolean"));
+        addParameter("totalHealth", new FeatureParameter<Boolean>("totalHealth", "show total health", "Show total health along with current health", false, "boolean", nval -> totalHealth = nval));
+        addParameter("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, "boolean", nval -> formatHealth = nval));
+        addParameter("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, "boolean", nval -> ignoreInattackable = nval));
 
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
@@ -46,6 +46,11 @@ public class FeatureBossHealth extends TextHUDFeature {
         getStyles().add(new TextStyle("separator2", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("maxHealth", new AColor(0x55, 0x55,0xFF,255), new AColor(0, 0,0,0), false));
     }
+
+
+    boolean totalHealth;
+    boolean formatHealth;
+    boolean ignoreInattackable;
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
@@ -77,17 +82,14 @@ public class FeatureBossHealth extends TextHUDFeature {
     }
 
     public void addLine(HealthData data, List<StyledText> actualBit) {
-        boolean format = this.<Boolean>getParameter("formatHealth").getValue();
-        boolean total = this.<Boolean>getParameter("totalHealth").getValue();
-        boolean ignore = this.<Boolean>getParameter("ignoreInattackable").getValue();
-        if (ignore && !data.isAttackable()) return;
+        if (ignoreInattackable && !data.isAttackable()) return;
 
         actualBit.add(new StyledText(data.getName(),"title"));
         actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText( (format ? TextUtils.format(data.getHealth()) : data.getHealth()) + (total ? "" : "\n"),"health"));
-        if (total) {
+        actualBit.add(new StyledText( (formatHealth ? TextUtils.format(data.getHealth()) : data.getHealth()) + (totalHealth ? "" : "\n"),"health"));
+        if (totalHealth) {
             actualBit.add(new StyledText("/", "separator2"));
-            actualBit.add(new StyledText( (format ? TextUtils.format(data.getMaxHealth()) : data.getMaxHealth()) +"\n","maxHealth"));
+            actualBit.add(new StyledText( (formatHealth ? TextUtils.format(data.getMaxHealth()) : data.getMaxHealth()) +"\n","maxHealth"));
         }
     }
 

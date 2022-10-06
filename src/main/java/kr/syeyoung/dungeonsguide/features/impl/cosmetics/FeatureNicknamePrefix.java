@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 public class FeatureNicknamePrefix extends SimpleFeature {
     public FeatureNicknamePrefix() {
         super("Cosmetics", "Nickname Prefix", "Click on Edit to choose prefix cosmetic", "cosmetic.prefix");
-        this.parameters.put("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", "string"));
+        addParameter("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", "string"));
     }
 
     @Override

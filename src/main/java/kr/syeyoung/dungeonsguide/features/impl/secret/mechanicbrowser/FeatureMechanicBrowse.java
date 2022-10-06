@@ -51,7 +51,7 @@ import java.util.List;
 public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
     public FeatureMechanicBrowse() {
         super("Dungeon Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
-        parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
+        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
         mGuiMechanicBrowser = new MGuiMechanicBrowser(this);
         mGuiMechanicBrowser.setWorldAndResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
         lastWidth = Minecraft.getMinecraft().displayWidth; lastHeight = Minecraft.getMinecraft().displayHeight;

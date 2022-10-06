@@ -26,8 +26,8 @@ public class FeatureSolverTictactoe extends SimpleFeature {
     public FeatureSolverTictactoe() {
         super("Solver.Any Floor", "Tictactoe", "Shows the best move that could be taken by player in the tictactoe room", "solver.tictactoe");
 
-        this.parameters.put("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box during your turn", new AColor(0,255,255,50), "acolor"));
-        this.parameters.put("targetColor2", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box during enemy turn", new AColor(255,201,0,50), "acolor"));
+        addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box during your turn", new AColor(0,255,255,50), "acolor"));
+        addParameter("targetColor2", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box during enemy turn", new AColor(255,201,0,50), "acolor"));
     }
 
     public AColor getTargetColor() {

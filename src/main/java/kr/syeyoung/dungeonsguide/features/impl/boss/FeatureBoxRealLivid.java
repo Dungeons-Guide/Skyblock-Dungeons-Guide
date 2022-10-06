@@ -33,9 +33,10 @@ import net.minecraft.util.AxisAlignedBB;
 public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxRealLivid() {
         super("Bossfight.Floor 5", "Box Real Livid", "Box Real Livid in bossfight", "bossfight.realLividBox", true);
-        parameters.put("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Livid", new AColor(0,255,0,150), "acolor"));
+        addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Livid", new AColor(0,255,0,150), "acolor", nval -> color = nval));
     }
 
+    AColor color = null;
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
@@ -47,8 +48,7 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
         if (!(skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
         EntityOtherPlayerMP playerMP = ((BossfightProcessorLivid) skyblockStatus.getContext().getBossfightProcessor()).getRealLivid();
 
-        AColor c = this.<AColor>getParameter("color").getValue();
         if (playerMP != null)
-            RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,0,-0.4,0.4,1.8,0.4), c, partialTicks, true);
+            RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,0,-0.4,0.4,1.8,0.4), color, partialTicks, true);
     }
 }

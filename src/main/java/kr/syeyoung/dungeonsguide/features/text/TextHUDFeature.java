@@ -41,9 +41,9 @@ import java.util.List;
 public abstract class TextHUDFeature extends GuiFeature implements StyledTextProvider {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
-        this.parameters.put("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
-        this.parameters.put("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string"));
-        this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
+        addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
+        addParameter("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string"));
+        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
     }
 
     @Override

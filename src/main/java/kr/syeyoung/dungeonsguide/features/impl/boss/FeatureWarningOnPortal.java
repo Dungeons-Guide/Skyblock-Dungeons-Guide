@@ -41,7 +41,7 @@ import java.util.*;
 public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextProvider {
     public FeatureWarningOnPortal() {
         super("Dungeon.Blood Room", "Score Warning on Watcher portal", "Display warnings such as\n- 'NOT ALL ROOMS DISCOVERED'\n- 'NOT ALL ROOMS COMPLETED'\n- 'Expected Score: 304'\n- 'MISSING 3 CRYPTS'\non portal", "bossfight.warningonportal");
-        this.parameters.put("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
+        addParameter("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
         getStyles().add(new TextStyle("warning", new AColor(255, 0,0,255), new AColor(255, 255,255,255), false));
         getStyles().add(new TextStyle("field_name", new AColor(255, 72,255,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("field_separator", new AColor(204, 204,204,255), new AColor(0, 0,0,0), false));

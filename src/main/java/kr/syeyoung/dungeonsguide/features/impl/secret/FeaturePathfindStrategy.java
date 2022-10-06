@@ -26,12 +26,8 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.text.PanelTextParameterConfig;
-import kr.syeyoung.dungeonsguide.features.text.StyledTextRenderer;
-import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MStringSelectionButton;
-import lombok.Data;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 
@@ -42,7 +38,7 @@ import java.util.stream.Collectors;
 public class FeaturePathfindStrategy extends SimpleFeature {
     public FeaturePathfindStrategy() {
         super("Dungeon Secrets", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
-        this.parameters.put("strategy", new FeatureParameter<String>("strategy", "Pathfind Strategy", "Pathfind Strategy", "THETA_STAR", "string"));
+        addParameter("strategy", new FeatureParameter<String>("strategy", "Pathfind Strategy", "Pathfind Strategy", "THETA_STAR", "string"));
 
     }
 

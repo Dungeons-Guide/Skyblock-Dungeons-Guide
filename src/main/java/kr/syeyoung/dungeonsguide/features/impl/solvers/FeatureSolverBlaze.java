@@ -25,22 +25,27 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 public class FeatureSolverBlaze extends SimpleFeature {
     public FeatureSolverBlaze() {
         super("Solver.Floor 2+", "Blaze", "Highlights the blaze that needs to be killed in an blaze room", "solver.blaze");
-        parameters.put("normBlazeColor", new FeatureParameter<AColor>("blazecolor", "Normal Blaze Color", "Normal Blaze Color", new AColor(255,255,255,255), "acolor"));
-        parameters.put("nextBlazeColor", new FeatureParameter<AColor>("blazecolor", "Next Blaze Color", "Next Blaze Color", new AColor(0,255,0,255), "acolor"));
-        parameters.put("nextUpBlazeColor", new FeatureParameter<AColor>("blazecolor", "Next Up Blaze Color", "Color of blaze after next blaze", new AColor(255,255,0,255), "acolor"));
-        parameters.put("blazeborder", new FeatureParameter<AColor>("blazeborder", "Blaze Border Color", "Blaze border color", new AColor(255,255,255,0), "acolor"));
+        addParameter("normBlazeColor", new FeatureParameter<AColor>("blazecolor", "Normal Blaze Color", "Normal Blaze Color", new AColor(255,255,255,255), "acolor", nval -> normBlazeColor = nval));
+        addParameter("nextBlazeColor", new FeatureParameter<AColor>("blazecolor", "Next Blaze Color", "Next Blaze Color", new AColor(0,255,0,255), "acolor", nval -> nextBlazeColor = nval));
+        addParameter("nextUpBlazeColor", new FeatureParameter<AColor>("blazecolor", "Next Up Blaze Color", "Color of blaze after next blaze", new AColor(255,255,0,255), "acolor", nval -> nextUpBlazeColor = nval));
+        addParameter("blazeborder", new FeatureParameter<AColor>("blazeborder", "Blaze Border Color", "Blaze border color", new AColor(255,255,255,0), "acolor", nval -> blazeborder = nval));
     }
 
+    AColor normBlazeColor;
+    AColor nextBlazeColor;
+    AColor nextUpBlazeColor;
+    AColor blazeborder;
+
     public AColor getBlazeColor() {
-        return this.<AColor>getParameter("normBlazeColor").getValue();
+        return normBlazeColor;
     }
     public AColor getNextBlazeColor() {
-        return this.<AColor>getParameter("nextBlazeColor").getValue();
+        return nextBlazeColor;
     }
     public AColor getNextUpBlazeColor() {
-        return this.<AColor>getParameter("nextUpBlazeColor").getValue();
+        return nextUpBlazeColor;
     }
     public AColor getBorder() {
-        return this.<AColor>getParameter("blazeborder").getValue();
+        return blazeborder;
     }
 }

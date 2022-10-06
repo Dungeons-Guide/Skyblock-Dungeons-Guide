@@ -66,19 +66,19 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
     public FeatureDungeonMap() {
         super("Dungeon", "Dungeon Map", "Display dungeon map!", "dungeon.map", true, 128, 128);
         this.setEnabled(false);
-        parameters.put("scale", new FeatureParameter<>("scale", "Scale map", "Whether to scale map to fit screen", true, "boolean"));
-        parameters.put("playerCenter", new FeatureParameter<>("playerCenter", "Center map at player", "Render you in the center", false, "boolean"));
-        parameters.put("rotate", new FeatureParameter<>("rotate", "Rotate map centered at player", "Only works with Center map at player enabled", false, "boolean"));
-        parameters.put("postScale", new FeatureParameter<>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0f, "float"));
-        parameters.put("useplayerheads", new FeatureParameter<>("useplayerheads", "Use player heads instead of arrows", "Option to use player heads instead of arrows", true, "boolean"));
-        parameters.put("showotherplayers", new FeatureParameter<>("showotherplayers", "Show other players", "Option to show other players in map", true, "boolean"));
-        parameters.put("showtotalsecrets", new FeatureParameter<>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, "boolean"));
-        parameters.put("playerheadscale", new FeatureParameter<>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, "float"));
-        parameters.put("textScale", new FeatureParameter<>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, "float"));
+        addParameter("scale", new FeatureParameter<>("scale", "Scale map", "Whether to scale map to fit screen", true, "boolean"));
+        addParameter("playerCenter", new FeatureParameter<>("playerCenter", "Center map at player", "Render you in the center", false, "boolean"));
+        addParameter("rotate", new FeatureParameter<>("rotate", "Rotate map centered at player", "Only works with Center map at player enabled", false, "boolean"));
+        addParameter("postScale", new FeatureParameter<>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0f, "float"));
+        addParameter("useplayerheads", new FeatureParameter<>("useplayerheads", "Use player heads instead of arrows", "Option to use player heads instead of arrows", true, "boolean"));
+        addParameter("showotherplayers", new FeatureParameter<>("showotherplayers", "Show other players", "Option to show other players in map", true, "boolean"));
+        addParameter("showtotalsecrets", new FeatureParameter<>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, "boolean"));
+        addParameter("playerheadscale", new FeatureParameter<>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, "float"));
+        addParameter("textScale", new FeatureParameter<>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, "float"));
 
-        parameters.put("border_color", new FeatureParameter<>("border_color", "Color of the border", "Same as name", new AColor(255, 255, 255, 255), "acolor"));
-        parameters.put("background_color", new FeatureParameter<>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), "acolor"));
-        parameters.put("player_color", new FeatureParameter<>("player_color", "Color of the player border", "Same as name", new AColor(255, 255, 255, 0), "acolor"));
+        addParameter("border_color", new FeatureParameter<>("border_color", "Color of the border", "Same as name", new AColor(255, 255, 255, 255), "acolor"));
+        addParameter("background_color", new FeatureParameter<>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), "acolor"));
+        addParameter("player_color", new FeatureParameter<>("player_color", "Color of the player border", "Same as name", new AColor(255, 255, 255, 0), "acolor"));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

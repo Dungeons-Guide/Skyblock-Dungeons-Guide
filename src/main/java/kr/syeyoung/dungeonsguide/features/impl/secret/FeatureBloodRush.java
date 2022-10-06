@@ -30,7 +30,7 @@ import org.lwjgl.input.Keyboard;
 public class FeatureBloodRush extends SimpleFeature implements KeybindPressedListener {
     public FeatureBloodRush() {
         super("Dungeon Secrets.Blood Rush", "Blood Rush Mode", "Auto pathfind to witherdoors. \nCan be toggled with key set in settings", "secret.bloodrush", false);
-        this.parameters.put("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, "keybind"));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, "keybind"));
     }
 
     @Override

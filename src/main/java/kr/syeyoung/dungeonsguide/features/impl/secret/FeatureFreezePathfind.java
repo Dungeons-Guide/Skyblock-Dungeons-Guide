@@ -18,31 +18,19 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
-import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.Keybinds;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.KeybindPressedListener;
-import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MKeyEditButton;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.settings.GameSettings;
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
 public class FeatureFreezePathfind extends SimpleFeature implements KeybindPressedListener {
     public FeatureFreezePathfind() {
         super("Dungeon Secrets.Keybinds", "Global Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move.\nPress settings to edit the key", "secret.freezepathfind", false);
-        this.parameters.put("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, "keybind"));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, "keybind"));
     }
 
     @Override

@@ -24,10 +24,10 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 public class FeaturePathfindToAll extends SimpleFeature {
     public FeaturePathfindToAll(){
         super("Dungeon Secrets.Pathfind To All", "Start pathfind to all secrets upon entering a room", "Auto browse to all secrets in the room", "secret.secretpathfind.allbrowse", false);
-        this.parameters.put("bat", new FeatureParameter<Boolean>("bat", "Trigger pathfind to Bat", "This feature will trigger pathfind to all bats in this room when entering a room", true, "boolean"));
-        this.parameters.put("chest", new FeatureParameter<Boolean>("chest", "Trigger pathfind to Chest", "This feature will trigger pathfind to all chests in this room when entering a room", true, "boolean"));
-        this.parameters.put("essence", new FeatureParameter<Boolean>("essence", "Trigger pathfind to Essence", "This feature will trigger pathfind to all essences in this room when entering a room", true, "boolean"));
-        this.parameters.put("itemdrop", new FeatureParameter<Boolean>("itemdrop", "Trigger pathfind to Itemdrop", "This feature will trigger pathfind to all itemdrops in this room when entering a room", true, "boolean"));
+        addParameter("bat", new FeatureParameter<Boolean>("bat", "Trigger pathfind to Bat", "This feature will trigger pathfind to all bats in this room when entering a room", true, "boolean"));
+        addParameter("chest", new FeatureParameter<Boolean>("chest", "Trigger pathfind to Chest", "This feature will trigger pathfind to all chests in this room when entering a room", true, "boolean"));
+        addParameter("essence", new FeatureParameter<Boolean>("essence", "Trigger pathfind to Essence", "This feature will trigger pathfind to all essences in this room when entering a room", true, "boolean"));
+        addParameter("itemdrop", new FeatureParameter<Boolean>("itemdrop", "Trigger pathfind to Itemdrop", "This feature will trigger pathfind to all itemdrops in this room when entering a room", true, "boolean"));
     }
 
     public boolean isBat() {

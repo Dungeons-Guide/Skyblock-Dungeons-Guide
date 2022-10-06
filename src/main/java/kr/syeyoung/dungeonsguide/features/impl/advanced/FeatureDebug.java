@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
 public class FeatureDebug extends SimpleFeature {
     public FeatureDebug() {
         super("Advanced", "Debug", "Toggles debug mode", "debug", false);
-        parameters.put("Key", new FeatureParameter<String>("Key", "Secret Key given by syeyoung", "Put the debug enable key here to enable debug mode", "","string"));
+        addParameter("Key", new FeatureParameter<String>("Key", "Secret Key given by syeyoung", "Put the debug enable key here to enable debug mode", "","string"));
     }
     @Override
     public boolean isEnabled() {

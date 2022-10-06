@@ -91,11 +91,9 @@ public class FeatureRegistry {
 
     public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
     public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
-    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {
-        {
-            parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind"));
-        }
-    });
+    public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {{
+            addParameter("key",new FeatureParameter<Integer>("key", "Key","Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind") );
+        }});
 
     public static final SimpleFeature SECRET_BLOOD_RUSH = register(new FeatureBloodRush());
     public static final PathfindLineProperties SECRET_BLOOD_RUSH_LINE_PROPERTIES = register(new PathfindLineProperties("Dungeon Secrets.Blood Rush", "Blood Rush Line Settings", "Line Settings to be used", "secret.lineproperties.bloodrush", false, SECRET_LINE_PROPERTIES_GLOBAL));
@@ -193,7 +191,7 @@ public class FeatureRegistry {
 
     public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.richpresence", true) {
         {
-            parameters.put("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
+            addParameter("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
         }
     });
     public static final PartyInviteViewer DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
@@ -204,7 +202,7 @@ public class FeatureRegistry {
     public static final SimpleFeature DEBUG = register(new FeatureDebug());
     public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Advanced", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false){
         {
-            parameters.put("key", new FeatureParameter<Integer>("key", "Key","Press to edit room", Keyboard.KEY_R, "keybind"));
+            addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to edit room", Keyboard.KEY_R, "keybind"));
         }
     });
 

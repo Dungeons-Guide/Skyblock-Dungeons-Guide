@@ -25,9 +25,7 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
-import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 
@@ -40,14 +38,14 @@ public class PathfindLineProperties extends SimpleFeature {
         this.parent = parent;
         this.parameters = new LinkedHashMap<>();
         if (parent != null)
-            this.parameters.put("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, "boolean"));
-        this.parameters.put("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useParent, "boolean"));
-        this.parameters.put("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the pathfind line", new AColor(0xFFFF0000, true), "acolor"));
-        this.parameters.put("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the pathfind line",1.0f, "float"));
-        this.parameters.put("linerefreshrate", new FeatureParameter<Integer>("linerefreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, "integer"));
-        this.parameters.put("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, "boolean"));
-        this.parameters.put("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), "acolor"));
-        this.parameters.put("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), "acolor"));
+            addParameter("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, "boolean"));
+        addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useParent, "boolean"));
+        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the pathfind line", new AColor(0xFFFF0000, true), "acolor"));
+        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the pathfind line",1.0f, "float"));
+        addParameter("linerefreshrate", new FeatureParameter<Integer>("linerefreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, "integer"));
+        addParameter("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, "boolean"));
+        addParameter("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), "acolor"));
+        addParameter("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), "acolor"));
     }
 
 

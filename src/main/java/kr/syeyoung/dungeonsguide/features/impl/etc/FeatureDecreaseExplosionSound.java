@@ -29,7 +29,7 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 public class FeatureDecreaseExplosionSound extends SimpleFeature implements SoundListener {
     public FeatureDecreaseExplosionSound() {
        super("Misc", "Decrease Explosion sound effect", "Decreases volume of explosions while on skyblock", "qol.explosionsound");
-       parameters.put("sound", new FeatureParameter<Float>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0f, "float"));
+        addParameter("sound", new FeatureParameter<Float>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0f, "float"));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

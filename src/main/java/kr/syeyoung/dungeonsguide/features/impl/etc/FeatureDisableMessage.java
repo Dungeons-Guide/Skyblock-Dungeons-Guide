@@ -57,7 +57,7 @@ public class FeatureDisableMessage extends SimpleFeature implements ChatListener
     public FeatureDisableMessage() {
         super("Misc.Chat", "Disable ability messages", "Do not let ability messages show up in chatbox\nclick on Edit for more precise settings", "fixes.messagedisable", true);
         for (MessageData messageData : PRE_DEFINED) {
-            this.parameters.put(messageData.key, new FeatureParameter<Boolean>(messageData.key, messageData.name, messageData.description, true, "boolean"));
+            addParameter(messageData.key, new FeatureParameter<Boolean>(messageData.key, messageData.name, messageData.description, true, "boolean"));
         }
     }
 

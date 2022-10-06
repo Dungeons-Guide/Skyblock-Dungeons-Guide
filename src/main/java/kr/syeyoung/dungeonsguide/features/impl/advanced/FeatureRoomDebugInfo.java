@@ -39,8 +39,10 @@ public class FeatureRoomDebugInfo extends GuiFeature {
     public FeatureRoomDebugInfo() {
         super("Advanced", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo", false, getFontRenderer().getStringWidth("longestplayernamepos: 100"), getFontRenderer().FONT_HEIGHT * 6);
         this.setEnabled(false);
-        parameters.put("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color"));
+        addParameter("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color", nval -> color = nval.getRGB()));
     }
+
+    int color = 0;
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
@@ -53,7 +55,6 @@ public class FeatureRoomDebugInfo extends GuiFeature {
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-        int color = this.<Color>getParameter("color").getValue().getRGB();
 
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -84,11 +85,11 @@ public class FeatureRoomDebugInfo extends GuiFeature {
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Line 1", 0,0, this.<Color>getParameter("color").getValue().getRGB());
-        fr.drawString("Line 2", 0,10, this.<Color>getParameter("color").getValue().getRGB());
-        fr.drawString("Line 3", 0,20, this.<Color>getParameter("color").getValue().getRGB());
-        fr.drawString("Line 4", 0,30, this.<Color>getParameter("color").getValue().getRGB());
-        fr.drawString("Line 5", 0,40, this.<Color>getParameter("color").getValue().getRGB());
+        fr.drawString("Line 1", 0,0, color);
+        fr.drawString("Line 2", 0,10, color);
+        fr.drawString("Line 3", 0,20, color);
+        fr.drawString("Line 4", 0,30, color);
+        fr.drawString("Line 5", 0,40, color);
     }
 
 }

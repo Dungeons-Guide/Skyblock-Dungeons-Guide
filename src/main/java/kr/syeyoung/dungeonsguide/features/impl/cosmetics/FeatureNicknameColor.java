@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 public class FeatureNicknameColor extends SimpleFeature {
     public FeatureNicknameColor() {
         super("Cosmetics", "Nickname Color", "Click on Edit to choose nickname color cosmetic", "cosmetic.nickname");
-        this.parameters.put("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", "string"));
+        addParameter("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", "string"));
     }
 
     @Override
