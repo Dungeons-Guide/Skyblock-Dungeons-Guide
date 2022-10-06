@@ -29,8 +29,12 @@ public class StompManager implements CloseListener {
 
     private StompClient stompConnection;
 
-    public StompClient getStompConn() {
-        return stompConnection;
+    public void send(StompPayload payload){
+        if(stompConnection != null){
+            stompConnection.sendfake(payload);
+        } else {
+            logger.error("OOPS STOMP MANAGER IS NULL AND SOMEONE TRIED TO SEND SOMETHING THIS SHOULD NOT HAPPEN");
+        }
     }
 
     ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();

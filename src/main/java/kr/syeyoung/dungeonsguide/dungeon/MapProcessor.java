@@ -412,7 +412,7 @@ public class MapProcessor {
         try {
             String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
             if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalsefalsefalse")) {
-                StompManager.getInstance().getStompConn().send(new StompPayload().payload(payload.toString()).header("destination", target.replace("false", "").trim()));
+                StompManager.getInstance().send(new StompPayload().payload(payload.toString()).header("destination", target.replace("false", "").trim()));
             }
         } catch (Throwable e) {
             e.printStackTrace();

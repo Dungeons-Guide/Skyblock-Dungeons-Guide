@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.cosmetics;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.cosmetics.chatreplacers.*;
 import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
@@ -58,33 +57,33 @@ public class CosmeticsManager implements StompMessageSubscription {
     private Set<String> perms = new CopyOnWriteArraySet<>();
 
     public void requestActiveCosmetics() {
-        StompManager.getInstance().getStompConn().send(new StompPayload()
+        StompManager.getInstance().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.activelist")
         );
     }
     public void requestCosmeticsList() {
-        StompManager.getInstance().getStompConn().send(new StompPayload()
+        StompManager.getInstance().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.list")
         );
     }
     public void requestPerms() {
-        StompManager.getInstance().getStompConn().send(new StompPayload()
+        StompManager.getInstance().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/user.perms")
         );
     }
     public void setCosmetic(CosmeticData cosmetic) {
         if (!perms.contains(cosmetic.getReqPerm())) return;
-        StompManager.getInstance().getStompConn().send(new StompPayload()
+        StompManager.getInstance().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.set")
                 .payload(cosmetic.getId().toString())
         );
     }
     public void removeCosmetic(ActiveCosmetic activeCosmetic) {
-        StompManager.getInstance().getStompConn().send(new StompPayload()
+        StompManager.getInstance().send(new StompPayload()
                 .method(StompHeader.SEND)
                 .destination("/app/cosmetic.remove")
                 .payload(activeCosmetic.getActivityUID().toString())

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.wsresource;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,7 +44,7 @@ public class StaticResourceCache implements StompMessageSubscription {
         if (staticResourceMap.containsKey(resourceID)) return CompletableFuture.completedFuture(staticResourceMap.get(resourceID));
         if (staticResourceRequest.containsKey(resourceID)) return staticResourceRequest.get(resourceID);
 
-        StompManager.getInstance().getStompConn().send(new StompPayload().destination("/app/staticresource.get").payload(resourceID.toString()));
+        StompManager.getInstance().send(new StompPayload().destination("/app/staticresource.get").payload(resourceID.toString()));
         CompletableFuture<StaticResource> comp = new CompletableFuture<>();
         staticResourceRequest.put(resourceID, comp);
         return comp;

@@ -161,7 +161,7 @@ public class StompClient extends WebSocketClient {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
     }
 
-    public void send(StompPayload payload) {
+    public void sendfake(StompPayload payload) {
         makeSureStompIsConnected();
         payload.method(StompHeader.SEND);
         if (payload.headers().get("receipt") != null)
