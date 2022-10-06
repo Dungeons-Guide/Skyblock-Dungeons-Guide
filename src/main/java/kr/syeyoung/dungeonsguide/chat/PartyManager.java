@@ -495,7 +495,8 @@ public class PartyManager implements StompMessageSubscription {
     @Override
     public void handle(StompClient stompInterface, StompPayload stompPayload) {
         JSONObject object = new JSONObject(stompPayload.payload());
-        if ("/user/queue/party.check".equals(stompPayload.headers().get("destination"))) {
+        String destination = stompPayload.headers().get("destination");
+        if (destination.equals("/user/queue/party.check")) {
             String playerName = object.getString("player");
             String token = object.getString("token");
             if (partyContext == null) {
@@ -523,20 +524,27 @@ public class PartyManager implements StompMessageSubscription {
                     });
                 }
             }
-        } else if ("/user/queue/party.broadcast".equals(stompPayload.headers().get("destination"))) {
-            try {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(stompPayload.payload()).getString("payload")));
-            } catch (Exception e) {
-                e.printStackTrace();
+        } else if (destination.equals("/user/queue/party.broadcast")) {
+            String playload = new JSONObject(stompPayload.payload()).getString("payload");
+            if(playload.startsWith("C:")){
+                String username = playload.substring(2);
+                partyContext.addDgUser(username);
+            }else {
+                try {
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(stompPayload.payload()).getString("payload")));
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
-        } else if ("/user/queue/party.join".equals(stompPayload.headers().get("destination"))) {
+
+        } else if (destination.equals("/user/queue/party.join")) {
             String playerName = object.getString("player");
             String secret = object.getString("secret");
             if (secret.equals(askToJoinSecret) && partyContext != null && getPartyContext().getPartyRawMembers().size() < maxParty && playerInvAntiSpam.getOrDefault(playerName, 0L)  < System.currentTimeMillis() - 5000) {
                 playerInvAntiSpam.put(playerName, System.currentTimeMillis());
                 ChatProcessor.INSTANCE.addToChatQueue("/p invite "+playerName,() -> {}, true);
             }
-        } else if ("/user/queue/party.askedtojoin.resp".equals(stompPayload.headers().get("destination"))) {
+        } else if (destination.equals("/user/queue/party.askedtojoin.resp")) {
             String invFrom = object.getString("username");
             String token2 = object.getString("token");
             if (!token2.equals(lastToken)) return;

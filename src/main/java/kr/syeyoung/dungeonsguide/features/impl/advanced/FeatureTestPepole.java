@@ -19,6 +19,7 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.*;
@@ -168,12 +169,14 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
 
 
-
     @Override
     public void drawHUD(float partialTicks) {
 
-        if(PartyManager.INSTANCE.getPartyContext() == null && !PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel()) return;
-        if(isAloneInParty()) return;
+        if(PartyManager.INSTANCE.getPartyContext() == null) return;
+        if(!PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel()) return;
+//        if(isAloneInParty()) return;
+
+        ResourceLocation logoLoc = new ResourceLocation("dungeonsguide:textures/dglogox32.png");
 
 
         //        System.out.println(stack.getTagCompound().getCompoundTag("Owner"));
@@ -195,11 +198,8 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
             Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y);
 
-
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
             fr.drawString(partyRawMember, 15, y + 5, 0xffffff);
-
-
 
 
             fr.drawString(genPlayerText(partyRawMember), 16 + fr.getStringWidth(partyRawMember), y + 5, 0xf9f9fa);
@@ -209,8 +209,37 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
             y += 12;
         }
 
+
+        y = 0;
+        for (String partyRawMember : PartyManager.INSTANCE.getPartyContext().getPartyRawMembers()) {
+            if(isDgUser(partyRawMember)){
+                GlStateManager.pushMatrix();
+
+                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+
+                GlStateManager.scale(1,1,1);
+
+                Minecraft.getMinecraft().getTextureManager().bindTexture(logoLoc);
+                Gui.drawModalRectWithCustomSizedTexture( 30, y + 10, 0, 0, 32, 32, 32, 32);
+
+                GlStateManager.scale(1, 1,1);
+
+                GlStateManager.popMatrix();
+            }
+            y += 40;
+        }
+
         RenderHelper.disableStandardItemLighting();
     }
+
+    private boolean isDgUser(String partyRawMember) {
+        if(Objects.equals(partyRawMember, Minecraft.getMinecraft().getSession().getUsername())) return true;
+        return PartyManager.INSTANCE.getPartyContext().isDgUser(partyRawMember);
+    }
+
+
+    int y = 0;
+
 
     private int getColorTextColor(String partyRawMember) {
         if(Objects.equals(genPlayerText(partyRawMember), ": Ready") || Objects.equals(genPlayerText(partyRawMember), ": Not Ready")){

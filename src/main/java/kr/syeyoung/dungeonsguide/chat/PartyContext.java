@@ -18,8 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.chat;
 
+import kr.syeyoung.dungeonsguide.stomp.StompManager;
+import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
+import org.json.JSONObject;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -33,6 +36,8 @@ public class PartyContext {
     private String partyOwner;
     private Set<String> partyModerator; private boolean isModeratorComplete;
     private Set<String> partyMember; private boolean isMemberComplete;
+
+    private Set<String> dgUsers;
 
     private Set<String> partyRawMembers = new HashSet<>(); private boolean isRawMemberComplete;
 
@@ -62,8 +67,20 @@ public class PartyContext {
         this.partyMember.add(partyMember);
         addRawMember(partyMember);
     }
+
+    public void addDgUser(String partyMember) {
+        if (this.dgUsers == null) this.dgUsers = new TreeSet<>(String.CASE_INSENSITIVE_ORDER);
+        this.dgUsers.add(partyMember);
+    }
+
     public void addRawMember(String partyMember){
         partyRawMembers.add(partyMember);
+
+        String actualPayload = "C:"+Minecraft.getMinecraft().getSession().getUsername();
+        StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
+                new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
+                        .put("payload", actualPayload).toString()
+        ));
     }
     public void removeFromParty(String username) {
         if (username.equalsIgnoreCase(partyOwner)) {
@@ -73,7 +90,12 @@ public class PartyContext {
         if (partyMember != null) partyMember.remove(username);
         partyRawMembers.remove(username);
     }
-    
+
+
+
+    public boolean isDgUser(String username) {
+        return dgUsers != null && dgUsers.contains(username);
+    }
     public boolean hasModerator(String username) {
         return partyModerator != null && partyModerator.contains(username);
     }

@@ -24,7 +24,7 @@ public class StompManager implements CloseListener {
     }
 
     public void init() {
-//        connectStomp();
+        connectStomp();
     }
 
     private StompClient stompConnection;
@@ -33,7 +33,7 @@ public class StompManager implements CloseListener {
         if(stompConnection != null){
             stompConnection.sendfake(payload);
         } else {
-            logger.error("OOPS STOMP MANAGER IS NULL AND SOMEONE TRIED TO SEND SOMETHING THIS SHOULD NOT HAPPEN");
+            logger.error("OOPS STOMP CONNECTION IS NULL AND SOMEONE TRIED TO SEND SOMETHING THIS SHOULD NOT HAPPEN");
         }
     }
 
@@ -42,7 +42,7 @@ public class StompManager implements CloseListener {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         logger.info("Stomp Connection closed, trying to reconnect - {} - {}", reason, code);
-//        connectStomp();
+        connectStomp();
     }
 
     public void connectStomp() {
