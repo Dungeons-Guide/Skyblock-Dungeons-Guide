@@ -26,21 +26,14 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FeatureTestPepole extends GuiFeature implements ChatListener, DungeonStartListener {
+    private Float scale;
+
     public FeatureTestPepole() {
         super("Dungeon", "Feuture test", "NOU", "", false, 200, 100);
-        this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 2.0f, "float"));
+//        this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 2.0f, "float"));
 
-    }
+        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
 
-    double getScale(){
-        return (double) this.<Float>getParameter("scale").getValue();
-    }
-
-
-    @Override
-    public void drawScreen(float partialTicks) {
-//        Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(new ItemStack(Items.skull, 1), 100, 100);
-        super.drawScreen(partialTicks);
     }
 
 
@@ -196,7 +189,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            GlStateManager.scale(getScale(),getScale(),1F);
+            GlStateManager.scale(scale,scale,1F);
 
             Gui.drawRect(15, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20, 15 + y, getColorTextColor(partyRawMember));
 

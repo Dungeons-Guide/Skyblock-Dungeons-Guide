@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.config.types.TypeConverterRegistry;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
+import java.util.function.Consumer;
+
 @Data
 @AllArgsConstructor
 public class FeatureParameter<T> {
@@ -32,12 +34,32 @@ public class FeatureParameter<T> {
     private String description;
 
     private T value;
+
+
+//    void setValue(T newval){
+//        value = newval;
+//    }
+
     private T default_value;
     private String value_type;
+    private Consumer<T> changedCallback;
 
     public FeatureParameter(String key, String name, String description, T default_value, String value_type) {
-        this.key = key; this.name = name; this.default_value = default_value;
-        this.description = description; this.value_type = value_type;
+        this.key = key;
+        this.name = name;
+        this.default_value = default_value;
+        this.description = description;
+        this.value_type = value_type;
+    }
+
+    public FeatureParameter(String key, String name, String description, T default_value, String value_type, Consumer<T> changedCallback) {
+        this.key = key;
+        this.name = name;
+        this.default_value = default_value;
+        this.description = description;
+        this.value_type = value_type;
+        this.changedCallback = changedCallback;
+        changedCallback.accept(default_value);
     }
 
     public void setToDefault() {
@@ -47,5 +69,12 @@ public class FeatureParameter<T> {
 
     public T getValue() {
         return value == null ? default_value : value;
+    }
+
+    public void setValue(T newValue){
+        value = newValue;
+        if(changedCallback != null){
+            changedCallback.accept(newValue);
+        }
     }
 }

@@ -47,6 +47,11 @@ public abstract class AbstractFeature {
 
     protected Map<String, FeatureParameter> parameters = new HashMap<String, FeatureParameter>();
 
+    protected void addParameter(String name, FeatureParameter f){
+        parameters.put(name, f);
+    }
+
+
     protected AbstractFeature(String category, String name, String description, String key) {
         this.category = category;
         this.name = name;
