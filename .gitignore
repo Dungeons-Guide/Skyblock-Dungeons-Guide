@@ -9,6 +9,7 @@ logs/*
 config/*
 crash-reports/*
 run/*
+jars/*
 screenshots/*
 DEBUG/*
 sdk/*
