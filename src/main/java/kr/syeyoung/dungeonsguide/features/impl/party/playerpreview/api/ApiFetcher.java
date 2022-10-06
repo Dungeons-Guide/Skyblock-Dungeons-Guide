@@ -288,29 +288,47 @@ public class ApiFetcher {
     }
 
     public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
+        System.out.println("Featching player profiles");
         JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
         if (!json.get("success").getAsBoolean()) return Optional.empty();
+        System.out.println("Downloaded data from api");
         JsonArray profiles = json.getAsJsonArray("profiles");
         String dashTrimmed = uid.replace("-", "");
 
 
         PlayerSkyblockData pp = new PlayerSkyblockData();
         ArrayList<PlayerProfile> playerProfiles = new ArrayList<>();
-
+        System.out.println("Saving and parsing data");
         float lastSave = Long.MIN_VALUE;
         PlayerProfile lastest = null;
         for (JsonElement jsonElement : profiles) {
             JsonObject semiProfile = jsonElement.getAsJsonObject();
-            if (!semiProfile.get("members").getAsJsonObject().has(dashTrimmed)) continue;
+            if (!semiProfile.get("members").getAsJsonObject().has(dashTrimmed)) {
+                System.out.println("Profile does not appear to have the player???");
+                continue;
+            }
+
+            System.out.println("Parsing profile");
             PlayerProfile e = PlayerProfileParser.parseProfile(semiProfile, dashTrimmed);
 
-            getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(e::setTotalSecrets);
+            System.out.println("Finished Parsing Profile");
 
-            float lastSave2 = semiProfile.get("last_save").getAsLong();
-            if (lastSave2 > lastSave) {
-                lastest = e;
-                lastSave = lastSave2;
+
+            System.out.println("Getting nm of secrets from achivment");
+            getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(e::setTotalSecrets);
+            System.out.println("finished getting secrets from achivment");
+
+
+            System.out.println("Gettign last save");
+            JsonElement last_save = semiProfile.get("last_save");
+            if(last_save != null){
+                float lastSave2 = last_save.getAsLong();
+                if (lastSave2 > lastSave) {
+                    lastest = e;
+                    lastSave = lastSave2;
+                }
             }
+            System.out.println("Finished getting last save");
 
             playerProfiles.add(e);
         }
