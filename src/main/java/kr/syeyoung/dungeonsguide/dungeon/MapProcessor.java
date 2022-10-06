@@ -214,6 +214,13 @@ public class MapProcessor {
         return new Point(topLeftMapPoint.x + (int)((worldPoint.xCoord - context.getDungeonMin().getX()) / 32.0f * (unitRoomDimension.width + doorDimension.height)), topLeftMapPoint.y + (int)((worldPoint.zCoord - context.getDungeonMin().getZ()) / 32.0f * (unitRoomDimension.height + doorDimension.height)));
     }
 
+    public Vector2d worldPointToMapPointFLOAT(Vec3 worldPoint) {
+        if (context.getDungeonMin() == null) return null;
+        double x = topLeftMapPoint.x + ((worldPoint.xCoord - context.getDungeonMin().getX()) / 32.0f * (unitRoomDimension.width + doorDimension.height));
+        double y = topLeftMapPoint.y + ((worldPoint.zCoord - context.getDungeonMin().getZ()) / 32.0f * (unitRoomDimension.height + doorDimension.height));
+        return new Vector2d(x, y);
+    }
+
     private void processMap(byte[] mapData) {
         int height = (int)((128.0 - topLeftMapPoint.y) / (unitRoomDimension.height + doorDimension.height));
         int width = (int) ((128.0 - topLeftMapPoint.x) / (unitRoomDimension.width + doorDimension.height));
