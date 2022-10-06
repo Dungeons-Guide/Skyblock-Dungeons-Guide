@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
@@ -181,8 +182,6 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         if(PartyManager.INSTANCE.getPartyContext() == null && !PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel()) return;
         if(isAloneInParty()) return;
 
-        Gui.drawRect(0,0,1000, 1000, 0xaa212121);
-
 
         //        System.out.println(stack.getTagCompound().getCompoundTag("Owner"));
         FontRenderer fr = getFontRenderer();
@@ -192,20 +191,27 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
         int y = 0;
         for (String partyRawMember : PartyManager.INSTANCE.getPartyContext().getPartyRawMembers()) {
+
             GlStateManager.pushMatrix();
 
             GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
             GlStateManager.scale(getScale(),getScale(),1F);
 
+            Gui.drawRect(15, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20, 15 + y, getColorTextColor(partyRawMember));
+
             Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y);
 
-            fr.drawString(partyRawMember, 15, y + 5, 0xFFFFFF);
+
+            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
+            fr.drawString(partyRawMember, 15, y + 5, 0xffffff);
 
 
-            boolean isPlayerReady = ready.contains(partyRawMember);
 
-            fr.drawString(genPlayerText(partyRawMember), 16 + fr.getStringWidth(partyRawMember), y + 5, isPlayerReady ? 0x00FF00 : 0xFF0000);
+
+            fr.drawString(genPlayerText(partyRawMember), 16 + fr.getStringWidth(partyRawMember), y + 5, 0xf9f9fa);
+
+
             GlStateManager.popMatrix();
             y += 12;
         }
@@ -213,17 +219,35 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         RenderHelper.disableStandardItemLighting();
     }
 
+    private int getColorTextColor(String partyRawMember) {
+        if(Objects.equals(genPlayerText(partyRawMember), ": Ready") || Objects.equals(genPlayerText(partyRawMember), ": Not Ready")){
+            boolean isPlayerReady = ready.contains(partyRawMember);
+            return isPlayerReady ? 0xFF12bc00 : 0xFFd70022;
+        }
+
+
+        return 0xFF38383d;
+    }
+
 
     String genPlayerText(String username){
-        if(isPlayerInDungeon(username)){
-            return ": In Dungeon";
-        }
 
-        if(ready.contains(username)){
-            return ": Ready";
-        }
+        if(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()){
+            if(Objects.equals(username, Minecraft.getMinecraft().getSession().getUsername())){
+                return ": In Dungeon";
+            }
+            else if(isPlayerInDungeon(username)){
+                return ": In Dungeon";
+            }else {
+                return ": Somewhere";
+            }
+        } else {
+            if(ready.contains(username)){
+                return ": Ready";
+            }
 
-        return ": Not Ready";
+            return ": Not Ready";
+        }
     }
 
 
