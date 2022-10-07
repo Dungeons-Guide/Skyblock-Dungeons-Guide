@@ -19,24 +19,20 @@
 package kr.syeyoung.dungeonsguide.utils.cursor;
 
 import com.google.common.io.LittleEndianDataInputStream;
-import com.google.common.io.LittleEndianDataOutputStream;
 import com.twelvemonkeys.imageio.plugins.bmp.CURImageReader;
-import com.twelvemonkeys.imageio.plugins.bmp.CURImageReaderSpi;
-import com.twelvemonkeys.imageio.plugins.bmp.ICOImageReader;
 import lombok.Data;
 
 import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.image.BufferedImage;
-import java.io.*;
+import java.io.BufferedInputStream;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 
 public class CursorReader {
     public static List<CursorData> readFromInputStream(InputStream inputStream) throws IOException {
-        System.out.println(inputStream);
         LittleEndianDataInputStream dataInputStream = new LittleEndianDataInputStream(new BufferedInputStream(inputStream));
         dataInputStream.mark(Integer.MAX_VALUE);
 

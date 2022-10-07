@@ -19,14 +19,11 @@
 package kr.syeyoung.dungeonsguide.utils.cursor;
 
 import com.google.common.base.Throwables;
-import com.sun.jna.Memory;
 import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import org.apache.commons.io.IOUtils;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
@@ -35,13 +32,11 @@ import org.lwjgl.LWJGLUtil;
 import org.lwjgl.input.Cursor;
 import sun.misc.Unsafe;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.lang.reflect.Array;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
-import java.nio.Buffer;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
@@ -55,6 +50,9 @@ import java.util.stream.Collectors;
 public class GLCursors {
 
     static Logger logger = LogManager.getLogger("DG-GlCursors");
+
+    static boolean verbose = false;
+
     private static Unsafe unsafe;
     private static Class cursorElement;
     private static Constructor constructor;
@@ -99,7 +97,7 @@ public class GLCursors {
                         break;
                 }
             } catch (Throwable e) {
-                logger.error("Error occured while loading cursor: {}", value);
+                if(verbose) logger.error("Error occured while loading cursor: {}", value);
                 e.printStackTrace();
             }
             try {
@@ -117,12 +115,12 @@ public class GLCursors {
 
                         CursorReader.CursorData cursorData =
                                 cursorDataList2.size() == 0 ? cursorDataList.get(0) : cursorDataList2.get(0);
-                        logger.info(cursorData);
+                        if(verbose) logger.info(cursorData);
                         bufferedImage = cursorData.getBufferedImage();
                         hotspotX = cursorData.getXHotSpot();
                         hotspotY = cursorData.getYHotSpot();
                     } catch (Throwable t) {
-                        logger.error("loading currsor failed with message, {}", String.valueOf(Throwables.getRootCause(t)));
+                        if(verbose) logger.error("loading currsor failed with message, {}", String.valueOf(Throwables.getRootCause(t)));
                     }
 
 
@@ -147,7 +145,7 @@ public class GLCursors {
                     c = new Cursor(effWidth, effHeight, hotspotX, height - hotspotY - 1,1,intBuffer, null);
                 }
             } catch (Throwable e) {
-                logger.error("Error occured while loading cursor from resource:  "+value);
+                if(verbose) logger.error("Error occured while loading cursor from resource:  "+value);
                 e.printStackTrace();
             }
             if (c != null) {
@@ -157,14 +155,14 @@ public class GLCursors {
                     for (Field declaredField : cursor.getClass().getDeclaredFields()) {
                         declaredField.setAccessible(true);
                         Object obj = declaredField.get(cursor);
-                        logger.info(declaredField.getName()+": "+obj+" - "+(obj instanceof ByteBuffer));
+                        if(verbose) logger.info(declaredField.getName()+": "+obj+" - "+(obj instanceof ByteBuffer));
                         if (obj instanceof ByteBuffer) {
                             ByteBuffer b = (ByteBuffer) declaredField.get(cursor);
                             StringBuilder sb = new StringBuilder("Contents: ");
                             for (int i = 0; i < b.limit(); i++) {
                                 sb.append(Integer.toHexString(b.get(i) & 0xFF)).append(" ");
                             }
-                            logger.info(sb.toString());
+                            if(verbose) logger.info(sb.toString());
                         }
                     }
                 } catch (IllegalAccessException e) {
