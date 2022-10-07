@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
 import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
 import lombok.Getter;
-import net.minecraft.client.gui.*;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -38,7 +38,10 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import java.io.*;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.PrintStream;
 import java.net.URL;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
@@ -99,8 +102,12 @@ public class Main {
             "cwlg3MbX3rFl9so/fhVf4p9oXZK3ve7z5D6XSSDRYECvsKIa08WAxJ/U6n204E/4" +
             "xUF+3ZgFPdzZGn2PU7SsnOsCAwEAAQ==";
 
+
+
     @EventHandler
     public void preInit(final FMLPreInitializationEvent preInitializationEvent) {
+        MinecraftForge.EVENT_BUS.register(new YoMamaOutdated());
+
         try {
             try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
                 progressBar = ProgressManager.push("DungeonsGuide", premiumControlClass == null ? 7 : 6);
