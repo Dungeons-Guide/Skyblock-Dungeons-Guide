@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
 
 import com.mojang.authlib.GameProfile;
-//import io.github.moulberry.hychat.HyChat;
-//import io.github.moulberry.hychat.chat.ChatManager;
-//import io.github.moulberry.hychat.gui.GuiChatBox;
+import io.github.moulberry.hychat.HyChat;
+import io.github.moulberry.hychat.chat.ChatManager;
+import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.PartyContext;
@@ -65,6 +65,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.fml.client.config.GuiUtils;
+import net.minecraftforge.fml.common.Loader;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -579,22 +580,20 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
 
     public IChatComponent getHoveredComponent(ScaledResolution scaledResolution) {
         IChatComponent ichatcomponent = null;
-//        if (Loader.isModLoaded("hychat")) {
-//            try {
-//                ChatManager chatManager = HyChat.getInstance().getChatManager();
-//                GuiChatBox guiChatBox = chatManager.getFocusedChat();
-//
-//                int x = guiChatBox.getX(scaledResolution);
-//                int y = guiChatBox.getY(scaledResolution);
-//                ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
-//            } catch (Throwable t) {}
-//        }
+        if (Loader.isModLoaded("hychat")) {
+            try {
+                ChatManager chatManager = HyChat.getInstance().getChatManager();
+                GuiChatBox guiChatBox = chatManager.getFocusedChat();
+
+                int x = guiChatBox.getX(scaledResolution);
+                int y = guiChatBox.getY(scaledResolution);
+                ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
+            } catch (Throwable t) {}
+        }
         if (ichatcomponent == null) {
             ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
         }
         return ichatcomponent;
-
-//        return Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
     }
 
     @Override
