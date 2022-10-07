@@ -21,7 +21,10 @@ package kr.syeyoung.dungeonsguide.utils;
 import com.google.common.base.Throwables;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.auth.AuthUtil;
+import kr.syeyoung.dungeonsguide.events.AuthChangedEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
@@ -30,10 +33,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.security.*;
 import java.security.cert.CertificateException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
 
 public class AhUtils {
     public static volatile Map<String, AuctionData> auctions = new HashMap<String, AuctionData>();
@@ -43,6 +43,13 @@ public class AhUtils {
     public static Timer timer = new Timer();
 
     public static int totalAuctions = 0;
+
+    @SubscribeEvent
+    public void onAuthChanged(AuthChangedEvent event) {
+        if(AuthManager.getInstance().isPlebUser()){
+            registerTimer();
+        }
+    }
 
     public static void registerTimer() {
         timer.schedule(new TimerTask() {

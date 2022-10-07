@@ -111,7 +111,7 @@ public class Main {
             AuthManager.getInstance().setBaseserverurl(SERVER_URL);
 
 
-            String version;
+            String version = null;
             try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class")) {
                 if (resourceAsStream == null) {
                     if (System.getProperty("dg.version") == null) {
@@ -119,8 +119,6 @@ public class Main {
                     } else {
                         version = System.getProperty("dg.version");
                     }
-                } else {
-                    version = null;
                 }
             }
 
@@ -131,10 +129,12 @@ public class Main {
             ResourceManager.getInstance().setBaseUrl(SERVER_URL);
             ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(SOME_FUNNY_KEY_THING);
 
-            try {
-                ResourceManager.getInstance().downloadAssets(version);
-            } catch (InvalidDungeonsGuideCredentialsException e) {
-                logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
+            if(!AuthManager.getInstance().isPlebUser()){
+                try {
+                    ResourceManager.getInstance().downloadAssets(version);
+                } catch (InvalidDungeonsGuideCredentialsException e) {
+                    logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
+                }
             }
 
             URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());

@@ -18,9 +18,7 @@
 
 package kr.syeyoung.dungeonsguide;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.PartyManager;
 import kr.syeyoung.dungeonsguide.commands.CommandDungeonsGuide;
@@ -31,14 +29,9 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.eventlistener.DungeonListener;
 import kr.syeyoung.dungeonsguide.eventlistener.FeatureListener;
 import kr.syeyoung.dungeonsguide.eventlistener.PacketListener;
-import kr.syeyoung.dungeonsguide.events.AuthChangedEvent;
-import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
-import kr.syeyoung.dungeonsguide.stomp.CloseListener;
-import kr.syeyoung.dungeonsguide.stomp.StompClient;
-import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
@@ -62,15 +55,11 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Set;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
 
 public class DungeonsGuide {
 
@@ -134,7 +123,7 @@ public class DungeonsGuide {
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
         MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
 
-        AhUtils.registerTimer();
+        MinecraftForge.EVENT_BUS.register(new AhUtils());
 
         progressbar.step("Loading RoomData's");
         try {

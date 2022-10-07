@@ -3,7 +3,6 @@ package kr.syeyoung.dungeonsguide.auth;
 import com.google.common.base.Throwables;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuth;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
@@ -20,6 +19,7 @@ import org.apache.logging.log4j.Logger;
 import java.io.IOException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
+import java.util.Objects;
 
 
 public class AuthManager {
@@ -104,6 +104,22 @@ public class AuthManager {
             reauth();
         }
         tickCounter++;
+
+    }
+
+    public boolean isPlebUser(){
+        return Objects.equals(getInstance().getPlanType(), "OPENSOURCE");
+    }
+
+    public String getPlanType(){
+        if(getToken() == null) return null;
+
+
+       JsonObject jwt = DgAuthUtil.getJwtPayload(getToken());
+
+       if(!jwt.has("plan")) return null;
+
+       return jwt.get("plan").getAsString();
 
     }
 

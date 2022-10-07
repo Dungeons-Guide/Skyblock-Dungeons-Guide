@@ -3,6 +3,8 @@ package kr.syeyoung.dungeonsguide.auth;
 import lombok.Setter;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.codec.binary.Base64;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
@@ -22,6 +24,8 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
 public class ResourceManager {
+
+    Logger logger = LogManager.getLogger("ResourceManager");
 
     @Setter
     private String baseUrl;
@@ -48,13 +52,19 @@ public class ResourceManager {
 
 
     public void downloadAssets(String version) throws InvalidDungeonsGuideCredentialsException {
-        if(AuthManager.getInstance().getToken() == null) throw new InvalidDungeonsGuideCredentialsException("Not Authenticated");
+        if(AuthManager.getInstance().getToken() == null) throw new InvalidDungeonsGuideCredentialsException("Not Authenticated while downloading assets");
         try {
             // version not being null indicates that the user is "premium"
             // so we download the special version
             if (version != null)
                 downloadSafe( baseUrl + "/resource/version?v=" + version, true);
-            downloadSafe(baseUrl + "/resource/roomdata", false);
+
+            if(!AuthManager.getInstance().isPlebUser()){
+                downloadSafe(baseUrl + "/resource/roomdata", false);
+            } else {
+                logger.error("The current User is a pleb not downloading user data");
+            }
+
         } catch (Exception t) {
             t.printStackTrace();
         }
