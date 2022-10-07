@@ -37,6 +37,7 @@ Join Our [Discord!](https://discord.gg/vuGsXhY5Bv)
 - **Fairy Soul Finder** (Shows the location of dungeon fairy souls.)
 
 ### QOL Features
+- **Secrets Chest Close** (Hit any key while in a secret chest to close it.)
 - **Ability Cooldown** (Shows ability cooldowns.)
 - **Spirit Boots Fixer** (Fixes spirit boots changing your hand to air.)
 - **Blood Room Warning** (Shows dungeon progress and if you should enter the boss arena or not.)
