@@ -16,8 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders;
 
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -34,10 +35,10 @@ import java.util.List;
 import java.util.Set;
 
 public class DataRendererEditor extends MPanel {
-    private final FeatureViewPlayerOnJoin feature;
+    private final FeatureViewPlayerStatsOnJoin feature;
 
-    public DataRendererEditor(FeatureViewPlayerOnJoin featureViewPlayerOnJoin) {
-        this.feature = featureViewPlayerOnJoin;
+    public DataRendererEditor(FeatureViewPlayerStatsOnJoin featureViewPlayerStatsOnJoin) {
+        this.feature = featureViewPlayerStatsOnJoin;
     }
 
     @Override
@@ -84,7 +85,7 @@ public class DataRendererEditor extends MPanel {
         for (String datarenderers : feature.<List<String>>getParameter("datarenderers").getValue()) {
 
             if (0 <= selectedX && selectedX <= hamburgerWidth+11 && currentlySelected != null) {
-                DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
+                IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
                 Dimension dim;
                 if (dataRenderer == null) dim = new Dimension(0,fr.FONT_HEIGHT*2);
                 else dim = dataRenderer.getDimension();
@@ -115,7 +116,7 @@ public class DataRendererEditor extends MPanel {
                 }
             }
 
-            DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+            IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
             clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
 
@@ -144,7 +145,7 @@ public class DataRendererEditor extends MPanel {
         }
 
         if (currentlySelected != null && new Rectangle(0,5+fr.FONT_HEIGHT + 3, hamburgerWidth+11, 232).contains(selectedX, selectedY) && !drewit) {
-            DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
+            IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
             Dimension dim;
                 clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             GlStateManager.enableBlend();
@@ -178,7 +179,7 @@ public class DataRendererEditor extends MPanel {
         rest.removeAll( feature.<List<String>>getParameter("datarenderers").getValue());
         rest.remove(currentlySelected);
         for (String datarenderers : rest) {
-            DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+            IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
             clip(scissor.x + 156 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
             GlStateManager.enableBlend();
@@ -208,7 +209,7 @@ public class DataRendererEditor extends MPanel {
             if (currentlySelected != null) {
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(selectedX+hamburgerWidth+1, selectedY, 0);
-                DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
+                IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
                 Dimension dim;
                 GlStateManager.enableBlend();
                 GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -247,7 +248,7 @@ public class DataRendererEditor extends MPanel {
             rest.remove(currentlySelected);
             int culmutativeY  = -scrollY;
             for (String datarenderers : rest) {
-                DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+                IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
                 Dimension dim;
                 if (dataRenderer == null) {
                     dim = new Dimension(0, fr.FONT_HEIGHT * 2);
@@ -270,7 +271,7 @@ public class DataRendererEditor extends MPanel {
             List<String> rest = feature.<List<String>>getParameter("datarenderers").getValue();
             int culmutativeY  = 0;
             for (String datarenderers : rest) {
-                DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+                IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
                 Dimension dim;
                 if (dataRenderer == null) {
                     dim = new Dimension(0, fr.FONT_HEIGHT * 2);
@@ -317,7 +318,7 @@ public class DataRendererEditor extends MPanel {
             int index = asdasdkasd.size();
             for (int i = 0; i <asdasdkasd.size(); i++) {
                 String datarenderers = asdasdkasd.get(i);
-                DataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+                IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
                 Dimension dim;
                 if (dataRenderer == null) {
                     dim = new Dimension(0, fr.FONT_HEIGHT * 2);

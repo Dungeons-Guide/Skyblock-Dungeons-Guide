@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.api;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses;
 
 import lombok.Data;
 

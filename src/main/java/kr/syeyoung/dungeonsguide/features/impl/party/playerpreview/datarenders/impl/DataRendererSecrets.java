@@ -16,41 +16,38 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.impl;
 
-import kr.syeyoung.dungeonsguide.features.impl.party.api.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
+import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.awt.*;
 
-public class DataRendererSetUrOwn implements DataRenderer {
+public class DataRendererSecrets implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§aCustomize at /dg", 0,0,-1);
-        fr.drawString("§a-> Party Kicker", 0,fr.FONT_HEIGHT,-1);
-        fr.drawString("§a-> View Player Stats", 0,fr.FONT_HEIGHT*2,-1);
-        fr.drawString("§a-> Edit", 0,fr.FONT_HEIGHT*3,-1);
-        return new Dimension(100, fr.FONT_HEIGHT*4);
-    }
-
-    @Override
-    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
-
+        double theint = playerProfile.getTotalSecrets()/ (double)playerProfile.getDungeonStats().values().stream().flatMap(s -> s.getData().getPlays().values().stream())
+                .map(fs -> fs.getData().getWatcherKills()).reduce(0, Integer::sum);
+        fr.drawString("§eSecrets §b"+playerProfile.getTotalSecrets()+" §7("+
+                String.format("%.2f", theint)+"/run)", 0,0,-1);
+        return new Dimension(100, fr.FONT_HEIGHT);
     }
 
     @Override
     public Dimension renderDummy() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§aCustomize at /dg", 0,0,-1);
-        fr.drawString("§a-> Party Kicker", 0,fr.FONT_HEIGHT,-1);
-        fr.drawString("§a-> View Player Stats", 0,fr.FONT_HEIGHT*2,-1);
-        fr.drawString("§a-> Edit", 0,fr.FONT_HEIGHT*3,-1);
-        return new Dimension(100, fr.FONT_HEIGHT*4);
+        fr.drawString("§eSecrets §b99999 §7(X/run)", 0,0,-1);
+        return new Dimension(100, fr.FONT_HEIGHT);
     }
     @Override
     public Dimension getDimension() {
-        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT*4);
+        return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
+    }
+
+    @Override
+    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
     }
 }

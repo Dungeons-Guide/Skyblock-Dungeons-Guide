@@ -16,14 +16,31 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.features.impl.party.api;
+package kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerprofile.dataclasses;
 
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 
-@AllArgsConstructor
+import java.util.HashMap;
+import java.util.Map;
+
 @Getter
-public class ClassSpecificData<T> {
-    private final DungeonClass dungeonClass;
-    private final T data;
+@AllArgsConstructor
+public enum DungeonClass {
+    MAGE("mage", "Mage"), ARCHER("archer","Archer"), HEALER("healer", "Healer"), TANK("tank", "Tank"), BERSERK("berserk", "Berserk");
+
+
+    private final String jsonName;
+    private final String familarName;
+    private static final Map<String, DungeonClass> jsonNameToClazz = new HashMap<>();
+    static {
+        for (DungeonClass value : values()) {
+            jsonNameToClazz.put(value.getJsonName(), value);
+        }
+    }
+
+    public static DungeonClass getClassByJsonName(String name) {
+        return jsonNameToClazz.get(name);
+    }
+
 }
