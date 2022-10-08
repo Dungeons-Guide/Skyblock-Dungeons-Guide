@@ -209,6 +209,8 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         register(new SkyblockAbility("Rejuvenate", -1, -1, "VAMPIRE_WITCH_MASK"));
         register(new SkyblockAbility("Terrain Toss", 250, 1, "YETI_SWORD"));
         register(new SkyblockAbility("Instant Transmission", 50, -1, "ASPECT_OF_THE_END"));
+        register(new SkyblockAbility("Ether Transmission", 180, -1, "ASPECT_OF_THE_END"));
+        register(new SkyblockAbility("Ether Transmission", 180, -1, "ASPECT_OF_THE_VOID"));
         register(new SkyblockAbility("Detonate", -1, 60, "CREEPER_LEGGINGS"));
         register(new SkyblockAbility("Extreme Focus", -1, -1, "END_STONE_SWORD"));
         register(new SkyblockAbility("Leap", 50, 1, "LEAPING_SWORD"));
