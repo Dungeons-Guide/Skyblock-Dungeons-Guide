@@ -16,15 +16,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
-import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Data
 @AllArgsConstructor
-public class StompConnectedEvent extends Event {
-    private StompClient stompInterface;
+public class PlayerInteractEntityEvent extends Event {
+
+    @Getter @Setter
+    private boolean attack;
+    @Getter @Setter
+    private Entity entity;
+
+    @Override
+    public boolean isCancelable() {
+        return true;
+    }
 }

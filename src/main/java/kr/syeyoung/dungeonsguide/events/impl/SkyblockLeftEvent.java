@@ -16,9 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class DungeonLeftEvent extends Event {
+public class SkyblockLeftEvent extends Event {
 }

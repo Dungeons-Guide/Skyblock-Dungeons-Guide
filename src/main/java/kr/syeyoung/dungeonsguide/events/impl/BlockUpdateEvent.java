@@ -16,15 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
-import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Data @AllArgsConstructor
-public class DiscordUserJoinRequestEvent extends Event {
-    private DiscordUser discordUser;
-    private boolean isInvite;
+import java.util.HashSet;
+import java.util.Set;
+
+public abstract class BlockUpdateEvent extends Event {
+    @Getter @Setter
+    private Set<Tuple<BlockPos, IBlockState>> updatedBlocks = new HashSet<>();
+
+    public static class Pre extends BlockUpdateEvent {};
+    public static class Post extends BlockUpdateEvent {};
 }

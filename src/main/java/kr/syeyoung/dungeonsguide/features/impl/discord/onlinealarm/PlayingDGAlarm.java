@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.discord.onlinealarm;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.events.DiscordUserUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.ImageTexture;

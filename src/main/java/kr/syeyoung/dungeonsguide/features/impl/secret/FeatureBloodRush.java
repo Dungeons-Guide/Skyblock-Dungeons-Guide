@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
-import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;

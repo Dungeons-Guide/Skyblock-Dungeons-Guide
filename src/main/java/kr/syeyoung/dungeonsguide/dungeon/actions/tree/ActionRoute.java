@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.actions.tree;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;

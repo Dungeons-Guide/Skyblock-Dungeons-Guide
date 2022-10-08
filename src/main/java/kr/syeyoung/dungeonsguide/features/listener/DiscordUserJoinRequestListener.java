@@ -18,8 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.listener;
 
-import kr.syeyoung.dungeonsguide.events.DiscordUserJoinRequestEvent;
-import kr.syeyoung.dungeonsguide.events.DiscordUserUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.DiscordUserJoinRequestEvent;
 
 public interface DiscordUserJoinRequestListener {
     void onDiscordUserJoinRequest(DiscordUserJoinRequestEvent event);

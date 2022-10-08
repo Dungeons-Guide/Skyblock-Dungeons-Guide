@@ -18,8 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.cosmetics;
 
-import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
-import net.minecraft.network.Packet;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerListItemPacketEvent;
 import net.minecraft.network.play.INetHandlerPlayClient;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraftforge.common.MinecraftForge;

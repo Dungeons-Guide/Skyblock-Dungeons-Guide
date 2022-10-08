@@ -6,7 +6,7 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuth;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
-import kr.syeyoung.dungeonsguide.events.AuthChangedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;

@@ -18,8 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.listener;
 
-import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
-import net.minecraftforge.client.event.GuiScreenEvent;
+import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 
 public interface GuiUpdateListener {
     void onGuiUpdate(WindowUpdateEvent windowUpdateEvent);

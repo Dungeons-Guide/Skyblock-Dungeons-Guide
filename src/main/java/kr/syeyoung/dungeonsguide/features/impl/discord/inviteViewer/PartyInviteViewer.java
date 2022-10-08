@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.events.DiscordUserJoinRequestEvent;
+import kr.syeyoung.dungeonsguide.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
 import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;

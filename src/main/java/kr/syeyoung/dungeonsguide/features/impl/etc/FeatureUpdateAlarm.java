@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
-import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;

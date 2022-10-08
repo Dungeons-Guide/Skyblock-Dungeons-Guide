@@ -18,13 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
-import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
@@ -32,9 +31,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiOpenEvent;
-
-import java.util.HashSet;
-import java.util.Set;
 
 public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenListener, GuiUpdateListener {
     public FeatureCustomPartyFinder() {

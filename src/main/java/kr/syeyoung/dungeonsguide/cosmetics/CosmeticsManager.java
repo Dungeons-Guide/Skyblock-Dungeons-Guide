@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.cosmetics;
 
 import kr.syeyoung.dungeonsguide.cosmetics.chatreplacers.*;
-import kr.syeyoung.dungeonsguide.events.PlayerListItemPacketEvent;
-import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerListItemPacketEvent;
+import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.*;
 import lombok.Getter;
 import lombok.Setter;

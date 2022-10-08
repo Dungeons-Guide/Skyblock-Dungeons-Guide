@@ -16,15 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Data
-@AllArgsConstructor
-public class PlayerListItemPacketEvent extends Event {
-    private S38PacketPlayerListItem packetPlayerListItem;
+@Data @AllArgsConstructor
+public class KeyBindPressedEvent extends Event {
+    private int key;
 }

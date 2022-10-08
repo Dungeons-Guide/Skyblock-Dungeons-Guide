@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.listener;
 
-import kr.syeyoung.dungeonsguide.events.DiscordUserUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.DiscordUserUpdateEvent;
 
 public interface DiscordUserUpdateListener {
     void onDiscordUserUpdate(DiscordUserUpdateEvent event);

@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.wsresource;
 
-import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.json.JSONObject;

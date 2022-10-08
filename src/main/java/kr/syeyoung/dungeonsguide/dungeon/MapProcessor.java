@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.dungeon.events.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonRoomDiscoverEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.events.DungeonContextInitializationEvent;
+import kr.syeyoung.dungeonsguide.events.impl.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;

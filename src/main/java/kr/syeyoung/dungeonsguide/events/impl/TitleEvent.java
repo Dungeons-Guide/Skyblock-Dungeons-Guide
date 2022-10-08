@@ -16,18 +16,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.network.play.server.S2FPacketSetSlot;
-import net.minecraft.network.play.server.S30PacketWindowItems;
 import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
 @AllArgsConstructor
-public class WindowUpdateEvent extends Event {
-    S30PacketWindowItems windowItems;
-    S2FPacketSetSlot packetSetSlot;
+public class TitleEvent extends Event {
+    S45PacketTitle packetTitle;
 }

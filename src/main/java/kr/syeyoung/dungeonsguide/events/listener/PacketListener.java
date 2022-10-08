@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.eventlistener;
+package kr.syeyoung.dungeonsguide.events.listener;
 
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
@@ -25,7 +25,10 @@ import io.netty.channel.ChannelPromise;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.cosmetics.CustomPacketPlayerListItem;
-import kr.syeyoung.dungeonsguide.events.*;
+import kr.syeyoung.dungeonsguide.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.impl.TitleEvent;
+import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;

@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight;
 
-import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
-import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import lombok.*;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;

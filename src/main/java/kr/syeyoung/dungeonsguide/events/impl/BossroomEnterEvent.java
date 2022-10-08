@@ -16,15 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Data
-@AllArgsConstructor
-public class TitleEvent extends Event {
-    S45PacketTitle packetTitle;
+public class BossroomEnterEvent extends Event {
 }

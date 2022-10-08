@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.events.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.events.BossroomEnterEvent;
+import kr.syeyoung.dungeonsguide.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;

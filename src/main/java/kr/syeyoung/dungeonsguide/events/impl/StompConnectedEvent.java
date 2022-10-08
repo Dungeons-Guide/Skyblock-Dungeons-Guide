@@ -16,9 +16,15 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
+import kr.syeyoung.dungeonsguide.stomp.StompClient;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class DungeonEndedEvent extends Event {
+@Data
+@AllArgsConstructor
+public class StompConnectedEvent extends Event {
+    private StompClient stompInterface;
 }

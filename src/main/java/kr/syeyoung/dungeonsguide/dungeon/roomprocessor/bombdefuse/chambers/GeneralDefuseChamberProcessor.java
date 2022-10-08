@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse.chambers;
 
-import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
-import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import lombok.Getter;

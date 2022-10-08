@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor;
 
-import kr.syeyoung.dungeonsguide.events.BlockUpdateEvent;
-import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.events.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;

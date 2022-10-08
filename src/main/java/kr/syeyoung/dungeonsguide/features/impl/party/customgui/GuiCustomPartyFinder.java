@@ -18,14 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
-import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
+import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.gui.MGui;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
-import net.minecraft.util.MathHelper;
 
 import java.awt.*;
 

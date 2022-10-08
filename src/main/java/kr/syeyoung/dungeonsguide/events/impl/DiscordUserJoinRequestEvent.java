@@ -16,13 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
+import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data @AllArgsConstructor
-public class KeyBindPressedEvent extends Event {
-    private int key;
+public class DiscordUserJoinRequestEvent extends Event {
+    private DiscordUser discordUser;
+    private boolean isInvite;
 }

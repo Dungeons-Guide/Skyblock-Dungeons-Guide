@@ -16,24 +16,9 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events;
+package kr.syeyoung.dungeonsguide.events.impl;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.Setter;
-import net.minecraft.entity.Entity;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@AllArgsConstructor
-public class PlayerInteractEntityEvent extends Event {
-
-    @Getter @Setter
-    private boolean attack;
-    @Getter @Setter
-    private Entity entity;
-
-    @Override
-    public boolean isCancelable() {
-        return true;
-    }
+public class DungeonLeftEvent extends Event {
 }

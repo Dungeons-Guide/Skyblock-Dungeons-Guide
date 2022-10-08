@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.listener;
 
-import kr.syeyoung.dungeonsguide.events.KeyBindPressedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
 
 public interface KeybindPressedListener {
     void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent);

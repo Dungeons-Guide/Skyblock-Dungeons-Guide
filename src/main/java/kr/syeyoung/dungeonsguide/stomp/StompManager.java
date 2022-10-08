@@ -2,7 +2,7 @@ package kr.syeyoung.dungeonsguide.stomp;
 
 import com.google.common.base.Throwables;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
