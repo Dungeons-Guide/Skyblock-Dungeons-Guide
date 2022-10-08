@@ -18,11 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.gui.elements;
 
-import kr.syeyoung.dungeonsguide.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.roomedit.gui.GuiDungeonValueEdit;
-import kr.syeyoung.dungeonsguide.roomedit.valueedit.ValueEditOffsetPointSet;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.dungeon.roomedit.gui.GuiDungeonValueEdit;
+import kr.syeyoung.dungeonsguide.dungeon.roomedit.valueedit.ValueEditOffsetPointSet;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;

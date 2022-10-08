@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.EntityLivingRenderListener;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorThorn;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import net.minecraft.entity.passive.*;
 import net.minecraftforge.client.event.RenderLivingEvent;
 

@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.*;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;

@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MList;
 import kr.syeyoung.dungeonsguide.gui.elements.MPanelScaledGUI;
 import kr.syeyoung.dungeonsguide.gui.elements.MScrollablePanel;
-import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.features.listener.TitleListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorThorn;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.network.play.server.S45PacketTitle;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;

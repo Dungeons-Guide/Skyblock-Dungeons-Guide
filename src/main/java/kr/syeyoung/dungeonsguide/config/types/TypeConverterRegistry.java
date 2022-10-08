@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.config.types;
 
-import kr.syeyoung.dungeonsguide.roomedit.Parameter;
-
 import java.util.HashMap;
 import java.util.Map;
 

@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.pathfinding.NodeProcessorDungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;

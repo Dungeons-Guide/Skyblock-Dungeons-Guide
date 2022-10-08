@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorThorn;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 
 import java.util.ArrayList;
 import java.util.Arrays;

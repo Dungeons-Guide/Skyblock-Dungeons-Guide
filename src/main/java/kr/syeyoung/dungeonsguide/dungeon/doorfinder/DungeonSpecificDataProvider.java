@@ -18,8 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
-import kr.syeyoung.dungeonsguide.roomprocessor.RoomProcessor;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessor;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 

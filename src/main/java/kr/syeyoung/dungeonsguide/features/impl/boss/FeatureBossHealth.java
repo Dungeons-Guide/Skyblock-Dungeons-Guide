@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.HealthData;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.HealthData;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 
 import java.util.ArrayList;

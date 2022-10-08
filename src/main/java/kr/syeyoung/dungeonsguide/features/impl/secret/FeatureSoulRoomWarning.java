@@ -39,7 +39,7 @@ import kr.syeyoung.dungeonsguide.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.gui.elements.MStringSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MToggleButton;
-import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;

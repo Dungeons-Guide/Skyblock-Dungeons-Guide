@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.InteractListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorNecron;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;

@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
-import kr.syeyoung.dungeonsguide.roomprocessor.bossfight.BossfightProcessorLivid;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorLivid;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.util.AxisAlignedBB;

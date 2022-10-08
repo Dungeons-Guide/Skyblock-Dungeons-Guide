@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
