@@ -29,6 +29,12 @@ public class StompManager implements CloseListener {
 
     private StompClient stompConnection;
 
+
+    public boolean isStompConnected(){
+        if(stompConnection != null && stompConnection.getStompClientStatus() == StompClient.StompClientStatus.CONNECTED) return true;
+        return false;
+    }
+
     public void send(StompPayload payload){
         if(stompConnection != null){
             stompConnection.sendfake(payload);

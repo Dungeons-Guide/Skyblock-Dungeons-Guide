@@ -32,10 +32,7 @@ import kr.syeyoung.dungeonsguide.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.impl.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.stomp.StompManager;
-import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
-import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -45,7 +42,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
-import org.json.JSONObject;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -396,35 +392,22 @@ public class MapProcessor {
 
     private boolean processed = false;
     private void processFinishedMap(byte[] mapData) {
+        System.out.println("processFinishedMap STARTED");
         if (MapUtils.getMapColorAt(mapData, 0, 0) == 0) return;
         if (processed) return;
         processed = true;
+
         MapUtils.clearMap();
         MapUtils.record(mapData, 0, 0, Color.GREEN);
 
-        int skill = MapUtils.readNumber(mapData, 51, 35, 9);
-        int exp = MapUtils.readNumber(mapData, 51, 54, 9);
-        int time = MapUtils.readNumber(mapData, 51, 73, 9);
-        int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
-        DungeonsGuide.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
-        JSONObject payload = new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
-                .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
-                .put("timeScore", time)
-                .put("completionStage", context.getBossRoomEnterSeconds() == -1 ? 0 :
-                                    context.isDefeated() ? 2 : 1)
-                .put("percentage", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getPercentage() / 100.0)
-                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
-        DungeonsGuide.sendDebugChat(new ChatComponentText(payload.toString()));
 
-        try {
-            String target = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.DATA_COLLECTION).get().getValue();
-            if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalsefalsefalse")) {
-                StompManager.getInstance().send(new StompPayload().payload(payload.toString()).header("destination", target.replace("false", "").trim()));
-            }
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        FeatureRegistry.ETC_COLLECT_SCORE.collectDungeonRunData(mapData, context);
+
+
+        System.out.println("processFinishedMap FINISHED");
     }
+
+
 
     public void tick() {
         if (waitCnt < 5) {
