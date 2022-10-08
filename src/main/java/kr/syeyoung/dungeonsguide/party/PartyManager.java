@@ -16,8 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.chat;
+package kr.syeyoung.dungeonsguide.party;
 
+import kr.syeyoung.dungeonsguide.chat.ChatProcessResult;
+import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.ChatSubscriber;
 import kr.syeyoung.dungeonsguide.events.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.stomp.*;

@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
-import kr.syeyoung.dungeonsguide.chat.PartyManager;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.events.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;

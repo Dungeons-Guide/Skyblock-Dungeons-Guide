@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.chat;
+package kr.syeyoung.dungeonsguide.party;
 
 import lombok.Data;
 import net.minecraft.client.Minecraft;

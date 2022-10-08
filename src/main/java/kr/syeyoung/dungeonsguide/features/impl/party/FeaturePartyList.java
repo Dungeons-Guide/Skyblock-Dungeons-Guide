@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party;
 
-import kr.syeyoung.dungeonsguide.chat.PartyContext;
-import kr.syeyoung.dungeonsguide.chat.PartyManager;
+import kr.syeyoung.dungeonsguide.party.PartyContext;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;

@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
-import kr.syeyoung.dungeonsguide.chat.PartyManager;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.config.Config;
