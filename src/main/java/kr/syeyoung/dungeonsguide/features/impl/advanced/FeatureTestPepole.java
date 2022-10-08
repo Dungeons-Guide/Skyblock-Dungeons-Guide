@@ -1,11 +1,11 @@
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,16 +31,17 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
     public FeatureTestPepole() {
         super("Dungeon", "Feuture test", "NOU", "", false, 200, 100);
-//        this.parameters.put("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 2.0f, "float"));
 
-        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
+
+        addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
 
     }
 
 
     HashMap<String, ItemStack> SkullCashe = new HashMap<>();
-    public ItemStack getSkullByUserName(String username){
-        if(SkullCashe.containsKey(username)) return SkullCashe.get(username);
+
+    public ItemStack getSkullByUserName(String username) {
+        if (SkullCashe.containsKey(username)) return SkullCashe.get(username);
         ItemStack stack = new ItemStack(Items.skull, 1, 3);
         stack.setTagCompound(new NBTTagCompound());
         stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
@@ -53,10 +54,11 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
     private static final List<String> readyPhrase = Arrays.asList("r", "rdy", "ready");
     private static final List<String> negator = Arrays.asList("not ", "not", "n", "n ");
     private static final Map<String, Boolean> readynessIndicator = new HashMap<>();
+
     static {
         readyPhrase.forEach(val -> readynessIndicator.put(val, true));
         for (String s : negator) {
-            readyPhrase.forEach(val -> readynessIndicator.put(s+val, false));
+            readyPhrase.forEach(val -> readynessIndicator.put(s + val, false));
         }
         readynessIndicator.put("dont start", false);
         readynessIndicator.put("don't start", false);
@@ -71,7 +73,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (!txt.startsWith("§r§9Party §8>")) return;
 
-        String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":")+1)).trim().toLowerCase();
+        String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":") + 1)).trim().toLowerCase();
 
 
         String usernamearea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
@@ -86,14 +88,14 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         Boolean status = null;
         String longestMatch = "";
         for (Map.Entry<String, Boolean> stringBooleanEntry : readynessIndicator.entrySet()) {
-            if (chat.startsWith(stringBooleanEntry.getKey()) || chat.endsWith(stringBooleanEntry.getKey()) || (stringBooleanEntry.getKey().length()>=3 && chat.contains(stringBooleanEntry.getKey()))) {
+            if (chat.startsWith(stringBooleanEntry.getKey()) || chat.endsWith(stringBooleanEntry.getKey()) || (stringBooleanEntry.getKey().length() >= 3 && chat.contains(stringBooleanEntry.getKey()))) {
                 if (stringBooleanEntry.getKey().length() > longestMatch.length()) {
                     longestMatch = stringBooleanEntry.getKey();
                     status = stringBooleanEntry.getValue();
                 }
             }
         }
-        if (status == null);
+        if (status == null) ;
         else if (status) ready.add(username);
         else ready.remove(username);
 
@@ -104,8 +106,8 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         ready.clear();
     }
 
-    boolean isAloneInParty(){
-        if(PartyManager.INSTANCE.getPartyContext() != null){
+    boolean isAloneInParty() {
+        if (PartyManager.INSTANCE.getPartyContext() != null) {
             return PartyManager.INSTANCE.getPartyContext().getPartyRawMembers().size() == 1;
         }
         return false;
@@ -144,7 +146,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         return name;
     }
 
-    boolean isPlayerInDungeon(String username){
+    boolean isPlayerInDungeon(String username) {
 
         List<NetworkPlayerInfo> list = new ArrayList<>(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
 
@@ -158,8 +160,8 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
             EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
 
 
-            if(entityplayer != null && (!entityplayer.isInvisible())){
-                if(name == username) return true;
+            if (entityplayer != null && (!entityplayer.isInvisible())) {
+                if (name == username) return true;
             }
 
 
@@ -168,81 +170,65 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
     }
 
 
-
     @Override
     public void drawHUD(float partialTicks) {
 
-        if(PartyManager.INSTANCE.getPartyContext() == null) return;
-        if(!PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel()) return;
+        if (PartyManager.INSTANCE.getPartyContext() == null) return;
+        if (!PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel()) return;
 //        if(isAloneInParty()) return;
 
         ResourceLocation logoLoc = new ResourceLocation("dungeonsguide:textures/dglogox32.png");
 
-
-        //        System.out.println(stack.getTagCompound().getCompoundTag("Owner"));
         FontRenderer fr = getFontRenderer();
-
-        RenderHelper.enableStandardItemLighting();
 
 
         int y = 0;
         for (String partyRawMember : PartyManager.INSTANCE.getPartyContext().getPartyRawMembers()) {
 
+            boolean isDgUser = isDgUser(partyRawMember);
+
+            int xOffset = isDgUser ? 9 : -2;
+
             GlStateManager.pushMatrix();
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
 
-            GlStateManager.scale(scale,scale,1F);
+            GlStateManager.scale(scale, scale, 1F);
 
-            Gui.drawRect(15, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20, 15 + y, getColorTextColor(partyRawMember));
+            Gui.drawRect(15 + xOffset, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20 + xOffset, 15 + y, getColorTextColor(partyRawMember));
 
-            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y);
+            RenderHelper.enableStandardItemLighting();
+            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), xOffset, y + 1);
+            RenderHelper.disableStandardItemLighting();
 
-            GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-            fr.drawString(partyRawMember, 15, y + 5, 0xffffff);
+            fr.drawString(partyRawMember, 15 + xOffset, y + 5, 0xffffff);
 
 
-            fr.drawString(genPlayerText(partyRawMember), 16 + fr.getStringWidth(partyRawMember), y + 5, 0xf9f9fa);
+            fr.drawString(genPlayerText(partyRawMember), 16 + fr.getStringWidth(partyRawMember) + xOffset, y + 5, 0xf9f9fa);
+
+            if (isDgUser) {
+
+                GlStateManager.translate(0, y + 3.5F, 200F);
+                GlStateManager.scale(0.32F, 0.32F, 1F);
+                Minecraft.getMinecraft().getTextureManager().bindTexture(logoLoc);
+                Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 32, 32, 32, 32);
+            }
 
 
             GlStateManager.popMatrix();
+
             y += 12;
         }
 
-
-        y = 0;
-        for (String partyRawMember : PartyManager.INSTANCE.getPartyContext().getPartyRawMembers()) {
-            if(isDgUser(partyRawMember)){
-                GlStateManager.pushMatrix();
-
-                GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
-
-                GlStateManager.scale(1,1,1);
-
-                Minecraft.getMinecraft().getTextureManager().bindTexture(logoLoc);
-                Gui.drawModalRectWithCustomSizedTexture( 30, y + 10, 0, 0, 32, 32, 32, 32);
-
-                GlStateManager.scale(1, 1,1);
-
-                GlStateManager.popMatrix();
-            }
-            y += 40;
-        }
-
-        RenderHelper.disableStandardItemLighting();
     }
 
     private boolean isDgUser(String partyRawMember) {
-        if(Objects.equals(partyRawMember, Minecraft.getMinecraft().getSession().getUsername())) return true;
+        if (Objects.equals(partyRawMember, Minecraft.getMinecraft().getSession().getUsername())) return true;
         return PartyManager.INSTANCE.getPartyContext().isDgUser(partyRawMember);
     }
 
 
-    int y = 0;
-
-
     private int getColorTextColor(String partyRawMember) {
-        if(Objects.equals(genPlayerText(partyRawMember), ": Ready") || Objects.equals(genPlayerText(partyRawMember), ": Not Ready")){
+        if (Objects.equals(genPlayerText(partyRawMember), ": Ready") || Objects.equals(genPlayerText(partyRawMember), ": Not Ready")) {
             boolean isPlayerReady = ready.contains(partyRawMember);
             return isPlayerReady ? 0xFF12bc00 : 0xFFd70022;
         }
@@ -252,19 +238,18 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
     }
 
 
-    String genPlayerText(String username){
+    String genPlayerText(String username) {
 
-        if(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()){
-            if(Objects.equals(username, Minecraft.getMinecraft().getSession().getUsername())){
+        if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) {
+            if (Objects.equals(username, Minecraft.getMinecraft().getSession().getUsername())) {
                 return ": In Dungeon";
-            }
-            else if(isPlayerInDungeon(username)){
+            } else if (isPlayerInDungeon(username)) {
                 return ": In Dungeon";
-            }else {
+            } else {
                 return ": Somewhere";
             }
         } else {
-            if(ready.contains(username)){
+            if (ready.contains(username)) {
                 return ": Ready";
             }
 
