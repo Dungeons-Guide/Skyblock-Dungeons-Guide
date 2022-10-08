@@ -88,9 +88,8 @@ public class StompClient extends WebSocketClient {
                 case NACK:
                 case DISCONNECT:
                 case STOMP:
-                case CONNECTED:
                     break;
-                case CONNECT:
+                case CONNECTED:
                     stompClientStatus = StompClientStatus.CONNECTED;
 
                     String serverHeartbeat = payload.headers().get("heart-beat");
@@ -98,8 +97,8 @@ public class StompClient extends WebSocketClient {
                         int heartbeatMS = 30;
                         this.heartbeat = ex.scheduleAtFixedRate(() -> send("\n"), heartbeatMS-1, heartbeatMS-1, TimeUnit.SECONDS);
                     }
-                    break;
 
+                    break;
                 case MESSAGE:
                     handleMessage(payload);
                     break;
@@ -116,6 +115,7 @@ public class StompClient extends WebSocketClient {
                     stompClientStatus = StompClientStatus.ERROR;
                     this.close();
                     break;
+
             }
         } catch (Exception e) {
             e.printStackTrace();
