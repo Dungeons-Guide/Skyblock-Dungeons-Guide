@@ -38,7 +38,7 @@ import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
 
-public class PartyManager implements StompMessageSubscription {
+public class PartyManager {
     public static final PartyManager INSTANCE = new PartyManager();
     @Getter
     private PartyContext partyContext;
@@ -512,11 +512,25 @@ public class PartyManager implements StompMessageSubscription {
 
     private Map<String, Long> playerInvAntiSpam = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
-    @Override
-    public void handle(StompClient stompInterface, StompPayload stompPayload) {
-        JSONObject object = new JSONObject(stompPayload.payload());
-        String destination = stompPayload.headers().get("destination");
-        if (destination.equals("/user/queue/party.check")) {
+    @SubscribeEvent
+    public void stompConnect(StompConnectedEvent event) {
+
+        event.getStompInterface().subscribe("/user/queue/party.resp", payload -> {
+            JSONObject object = new JSONObject(payload.getStompPayload());
+
+            String str = object.getString("status");
+            if ("success".equals(str) && partyContext != null) {
+                getPartyContext().setPartyID(object.getString("partyId"));
+                if (askToJoinSecret != null) {
+                    updateAskToJoin();
+                }
+            } else if (partyContext != null){
+                getPartyContext().setPartyID(null);
+            }
+        });
+
+        event.getStompInterface().subscribe("/user/queue/party.check", payload -> {
+            JSONObject object = new JSONObject(payload.getStompPayload());
             String playerName = object.getString("player");
             String token = object.getString("token");
             if (partyContext == null) {
@@ -544,27 +558,31 @@ public class PartyManager implements StompMessageSubscription {
                     });
                 }
             }
-        } else if (destination.equals("/user/queue/party.broadcast")) {
-            String playload = new JSONObject(stompPayload.payload()).getString("payload");
+        });
+        event.getStompInterface().subscribe("/user/queue/party.broadcast", payload -> {
+            String broadCastPlayload = new JSONObject(payload.getStompPayload()).getString("payload");
             System.out.println("Received broadcast");
-            if(playload.startsWith("C:")) {
-                FeatureTestPepole.handlePartyBroadCast(playload);
+            if(broadCastPlayload.startsWith("C:")) {
+                FeatureTestPepole.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(stompPayload.payload()).getString("payload")));
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload.getStompPayload()).getString("payload")));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
-
-        } else if (destination.equals("/user/queue/party.join")) {
+        });
+        event.getStompInterface().subscribe("/user/queue/party.join", payload -> {
+            JSONObject object = new JSONObject(payload.getStompPayload());
             String playerName = object.getString("player");
             String secret = object.getString("secret");
             if (secret.equals(askToJoinSecret) && partyContext != null && getPartyContext().getPartyRawMembers().size() < maxParty && playerInvAntiSpam.getOrDefault(playerName, 0L)  < System.currentTimeMillis() - 5000) {
                 playerInvAntiSpam.put(playerName, System.currentTimeMillis());
                 ChatProcessor.INSTANCE.addToChatQueue("/p invite "+playerName,() -> {}, true);
             }
-        } else if (destination.equals("/user/queue/party.askedtojoin.resp")) {
+        });
+        event.getStompInterface().subscribe("/user/queue/party.askedtojoin.resp", payload -> {
+            JSONObject object = new JSONObject(payload.getStompPayload());
             String invFrom = object.getString("username");
             String token2 = object.getString("token");
             if (!token2.equals(lastToken)) return;
@@ -586,31 +604,9 @@ public class PartyManager implements StompMessageSubscription {
                 }
                 return ChatProcessResult.NONE;
             });
-        } else {
-            String str = object.getString("status");
-            if ("success".equals(str) && partyContext != null) {
-                getPartyContext().setPartyID(object.getString("partyId"));
-                if (askToJoinSecret != null) {
-                    updateAskToJoin();
-                }
-            } else if (partyContext != null){
-                getPartyContext().setPartyID(null);
-            }
-        }
-    }
+        });
 
-    @SubscribeEvent
-    public void stompConnect(StompConnectedEvent stompConnectedEvent) {
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.resp").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.check").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.broadcast").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.join").build());
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/party.askedtojoin.resp").build());
+
     }
 
     private String lastToken;

@@ -42,7 +42,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.CopyOnWriteArraySet;
 
-public class CosmeticsManager implements StompMessageSubscription {
+public class CosmeticsManager {
     @Getter
     private Map<UUID, CosmeticData> cosmeticDataMap = new ConcurrentHashMap<>();
     @Getter
@@ -90,11 +90,30 @@ public class CosmeticsManager implements StompMessageSubscription {
         );
     }
 
-    @Override
-    public void handle(StompClient stompInterface, StompPayload stompPayload) {
-        String destination = stompPayload.headers().get("destination");
-        if (destination.equals("/topic/cosmetic.set")) {
-            JSONObject jsonObject = new JSONObject(stompPayload.payload());
+    private void rebuildCaches() {
+        activeCosmeticByType = new HashMap<>();
+        activeCosmeticByPlayer = new HashMap<>();
+        Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerName = new HashMap<>();
+        for (ActiveCosmetic value : activeCosmeticMap.values()) {
+            CosmeticData cosmeticData = cosmeticDataMap.get(value.getCosmeticData());
+            if (cosmeticData != null) {
+                List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
+                cosmeticsByTypeList.add(value);
+            }
+            List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(value.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
+            activeCosmetics.add(value);
+            activeCosmetics = activeCosmeticByPlayerName.computeIfAbsent(value.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
+            activeCosmetics.add(value);
+        }
+
+        this.activeCosmeticByPlayerNameLowerCase = activeCosmeticByPlayerName;
+    }
+
+    @SubscribeEvent
+    public void stompConnect(StompConnectedEvent e) {
+
+        e.getStompInterface().subscribe("/topic/cosmetic.set", payload -> {
+            JSONObject jsonObject = new JSONObject(payload.getStompPayload());
             ActiveCosmetic activeCosmetic = new ActiveCosmetic();
             activeCosmetic.setActivityUID(UUID.fromString(jsonObject.getString("activityUID")));
             activeCosmetic.setPlayerUID(UUID.fromString(jsonObject.getString("playerUID")));
@@ -139,18 +158,24 @@ public class CosmeticsManager implements StompMessageSubscription {
                     EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(activeCosmetic.getPlayerUID());
                     if (entityPlayer != null) entityPlayer.refreshDisplayName();
                 }
-            } catch (Exception e) {e.printStackTrace();}
+            } catch (Exception exception) {exception.printStackTrace();}
+        });
 
-        } else if (destination.equals("/user/queue/reply/user.perms")) {
-            JSONArray object = new JSONArray(stompPayload.payload());
+
+        e.getStompInterface().subscribe("/user/queue/reply/user.perms", payload -> {
+            JSONArray object = new JSONArray(payload.getStompPayload());
             Set<String> cache = new HashSet<>();
             for (Object o : object) {
                 cache.add((String) o);
             }
             this.perms = cache;
-        } else if (destination.equals("/user/queue/reply/cosmetic.activelist")) {
-            Map<UUID, ActiveCosmetic> activeCosmeticMap = new HashMap<>();
-            JSONArray object = new JSONArray(stompPayload.payload());
+        });
+
+
+
+        e.getStompInterface().subscribe("/user/queue/reply/cosmetic.activelist", payload -> {
+            activeCosmeticMap = new HashMap<>();
+            JSONArray object = new JSONArray(payload.getStompPayload());
             for (Object o : object) {
                 JSONObject jsonObject = (JSONObject) o;
                 ActiveCosmetic cosmeticData = new ActiveCosmetic();
@@ -165,12 +190,15 @@ public class CosmeticsManager implements StompMessageSubscription {
                         EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
                         if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
-                } catch (Exception e) {e.printStackTrace();}
+                } catch (Exception exception) {exception.printStackTrace();}
             }
-            this.activeCosmeticMap = activeCosmeticMap;
             rebuildCaches();
-        } else if (destination.equals("/user/queue/reply/cosmetic.list")) {
-            JSONArray object = new JSONArray(stompPayload.payload());
+        });
+
+
+
+        e.getStompInterface().subscribe("/user/queue/reply/cosmetic.list", payload -> {
+            JSONArray object = new JSONArray(payload.getStompPayload());
             Map<UUID, CosmeticData> newCosmeticList = new HashMap<>();
             for (Object o : object) {
                 JSONObject jsonObject = (JSONObject) o;
@@ -185,40 +213,8 @@ public class CosmeticsManager implements StompMessageSubscription {
 
             cosmeticDataMap = newCosmeticList;
             rebuildCaches();
-        }
-    }
+        });
 
-    private void rebuildCaches() {
-        Map<String, List<ActiveCosmetic>> activeCosmeticByType = new HashMap<>();
-        Map<UUID, List<ActiveCosmetic>> activeCosmeticByPlayer = new HashMap<>();
-        Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerName = new HashMap<>();
-        for (ActiveCosmetic value : activeCosmeticMap.values()) {
-            CosmeticData cosmeticData = cosmeticDataMap.get(value.getCosmeticData());
-            if (cosmeticData != null) {
-                List<ActiveCosmetic> cosmeticsByTypeList = activeCosmeticByType.computeIfAbsent(cosmeticData.getCosmeticType(), a-> new CopyOnWriteArrayList<>());
-                cosmeticsByTypeList.add(value);
-            }
-            List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.computeIfAbsent(value.getPlayerUID(), a-> new CopyOnWriteArrayList<>());
-            activeCosmetics.add(value);
-            activeCosmetics = activeCosmeticByPlayerName.computeIfAbsent(value.getUsername().toLowerCase(), a-> new CopyOnWriteArrayList<>());
-            activeCosmetics.add(value);
-        }
-
-        this.activeCosmeticByPlayerNameLowerCase = activeCosmeticByPlayerName;
-        this.activeCosmeticByPlayer = activeCosmeticByPlayer;
-        this.activeCosmeticByType = activeCosmeticByType;
-    }
-
-    @SubscribeEvent
-    public void stompConnect(StompConnectedEvent e) {
-        e.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/topic/cosmetic.set").build());
-        e.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/user.perms").build());
-        e.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/cosmetic.activelist").build());
-        e.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/reply/cosmetic.list").build());
 
         requestCosmeticsList();
         requestActiveCosmetics();
@@ -270,7 +266,8 @@ public class CosmeticsManager implements StompMessageSubscription {
     public void nameFormat(PlayerEvent.NameFormat nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
         if (activeCosmetics == null) return;
-        CosmeticData color=null, prefix=null;
+        CosmeticData color=null;
+        CosmeticData prefix=null;
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
             CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
             if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {

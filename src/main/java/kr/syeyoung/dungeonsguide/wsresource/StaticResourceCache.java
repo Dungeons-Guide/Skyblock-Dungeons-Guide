@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.CompletableFuture;
 
-public class StaticResourceCache implements StompMessageSubscription {
+public class StaticResourceCache {
     public static final StaticResourceCache INSTANCE = new StaticResourceCache();
 
     private Map<UUID, StaticResource> staticResourceMap = new HashMap<>();
@@ -50,23 +50,21 @@ public class StaticResourceCache implements StompMessageSubscription {
         return comp;
     }
 
-    @Override
-    public void handle(StompClient stompInterface, StompPayload stompPayload) {
-        JSONObject object = new JSONObject(stompPayload.payload());
-        StaticResource staticResource = new StaticResource();
-        staticResource.setResourceID(UUID.fromString(object.getString("resourceID")));
-        staticResource.setExists(object.getBoolean("exists"));
-        staticResource.setValue((!object.has("value") || object.isNull("value")) ? null : object.getString("value"));
-
-        staticResourceMap.put(staticResource.getResourceID(), staticResource);
-        CompletableFuture<StaticResource> completed = staticResourceRequest.remove(staticResource.getResourceID());
-        if (completed != null) completed.complete(staticResource);
-    }
-
     @SubscribeEvent
-    public void stompConnect(StompConnectedEvent stompConnectedEvent) {
-        stompConnectedEvent.getStompInterface().subscribe(StompSubscription.builder()
-                .stompMessageSubscription(this).ackMode(StompSubscription.AckMode.AUTO).destination("/user/queue/staticresource.get").build());
+    public void stompConnect(StompConnectedEvent event) {
+
+        event.getStompInterface().subscribe("/user/queue/staticresource.get", payload -> {
+            JSONObject object = new JSONObject(payload.getStompPayload());
+            StaticResource staticResource = new StaticResource();
+            staticResource.setResourceID(UUID.fromString(object.getString("resourceID")));
+            staticResource.setExists(object.getBoolean("exists"));
+            staticResource.setValue((!object.has("value") || object.isNull("value")) ? null : object.getString("value"));
+
+            staticResourceMap.put(staticResource.getResourceID(), staticResource);
+            CompletableFuture<StaticResource> completed = staticResourceRequest.remove(staticResource.getResourceID());
+            if (completed != null) completed.complete(staticResource);
+        });
+
 
         getResource(BONUS_SCORE);
         getResource(TRIVIA_ANSWERS);

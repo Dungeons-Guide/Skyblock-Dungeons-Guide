@@ -26,17 +26,12 @@ import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
-public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, StompMessageSubscription, TickListener {
+public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, TickListener {
     public FeatureUpdateAlarm() {
         super("Misc", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
     }
 
     private StompPayload stompPayload;
-    @Override
-    public void handle(StompClient stompInterface, StompPayload stompPayload) {
-        this.stompPayload = stompPayload;
-    }
-
     @Override
     public void onTick() {
         if (stompPayload != null) {
@@ -48,13 +43,14 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
 
     @Override
     public void onStompConnected(StompConnectedEvent event) {
-        event.getStompInterface().subscribe(StompSubscription.builder()
-                .destination("/topic/updates")
-                .ackMode(StompSubscription.AckMode.AUTO)
-                .stompMessageSubscription(this).build());
-        event.getStompInterface().subscribe(StompSubscription.builder()
-                .destination("/user/queue/messages")
-                .ackMode(StompSubscription.AckMode.AUTO)
-                .stompMessageSubscription(this).build());
+
+        event.getStompInterface().subscribe("/topic/updates", payload -> {
+            this.stompPayload = payload.getStompPayload();
+        });
+
+        event.getStompInterface().subscribe("/user/queue/messages", payload -> {
+            this.stompPayload = payload.getStompPayload();
+        });
+
     }
 }
