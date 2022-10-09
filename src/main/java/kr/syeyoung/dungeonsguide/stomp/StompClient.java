@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.stomp;
 
 import lombok.Getter;
+import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.java_websocket.client.WebSocketClient;
@@ -36,9 +37,8 @@ import java.util.function.Consumer;
 public class StompClient extends WebSocketClient {
 
     Logger logger = LogManager.getLogger("StompClient");
-    public StompClient(URI serverUri, final String token, CloseListener closeListener) throws InterruptedException {
+    public StompClient(URI serverUri, final String token) throws InterruptedException {
         super(serverUri);
-        this.closeListener = closeListener;
 
 
         addHeader("Authorization", token);
@@ -53,7 +53,6 @@ public class StompClient extends WebSocketClient {
         logger.info("fully connected");
     }
 
-    private final CloseListener closeListener;
 
     @Getter
     private volatile StompClientStatus stompClientStatus = StompClientStatus.CONNECTING;
@@ -124,23 +123,6 @@ public class StompClient extends WebSocketClient {
     }
 
     private void handleMessage(StompPayload payload) {
-//        StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
-//        try {
-//            stompSubscription.getStompMessageSubscription().handle(this, payload);
-//            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-//                send(new StompPayload().method(StompHeader.ACK)
-//                        .header("id", payload.headers().get("ack")).getBuilt()
-//                );
-//            }
-//        } catch (Exception e) {
-//            e.printStackTrace();
-//            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-//                send(new StompPayload().method(StompHeader.NACK)
-//                        .header("id", payload.headers().get("ack")).getBuilt()
-//                );
-//            }
-//        }
-
         Consumer<StompSubscriptionReceived> listener = stompSubscriptionMapz.get(Integer.parseInt(payload.headers().get("subscription")));
 
         try {
@@ -149,14 +131,14 @@ public class StompClient extends WebSocketClient {
             e.printStackTrace();
         }
 
-
-
     }
 
     @Override
     public void onClose(int code, String reason, boolean remote) {
         if (heartbeat != null) heartbeat.cancel(true);
-        closeListener.onClose(code, reason, remote);
+
+        MinecraftForge.EVENT_BUS.post(new StompDiedEvent(code, reason, remote));
+
     }
 
     @Override
@@ -166,7 +148,6 @@ public class StompClient extends WebSocketClient {
 
 
     private Map<Integer, Consumer<StompSubscriptionReceived>> stompSubscriptionMapz = new HashMap<>();
-    private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<>();
     private final Map<Integer, StompPayload> receiptMap = new HashMap<>();
 
     private int idIncrement = 0;
@@ -181,19 +162,6 @@ public class StompClient extends WebSocketClient {
         if (payload.headers().get("receipt") != null)
             receiptMap.put(Integer.parseInt(payload.headers().get("receipt")), payload);
         send(payload.getBuilt());
-    }
-
-    public void subscribe(StompSubscription stompSubscription) {
-        makeSureStompIsConnected();
-        stompSubscription.setId(++idIncrement);
-
-        send(new StompPayload().method(StompHeader.SUBSCRIBE)
-                .header("id",String.valueOf(stompSubscription.getId()))
-                .destination(stompSubscription.getDestination())
-                .header("ack", stompSubscription.getAckMode().getValue()).getBuilt()
-        );
-
-        stompSubscriptionMap.put(stompSubscription.getId(), stompSubscription);
     }
 
     public void subscribe(String destination, Consumer<StompSubscriptionReceived> listner) {
@@ -211,14 +179,6 @@ public class StompClient extends WebSocketClient {
         stompSubscriptionMapz.put(id, listner);
     }
 
-
-    public void unsubscribe(StompSubscription stompSubscription) {
-        makeSureStompIsConnected();
-        send(new StompPayload().method(StompHeader.UNSUBSCRIBE)
-                .header("id",String.valueOf(stompSubscription.getId())).getBuilt()
-        );
-        stompSubscriptionMap.remove(stompSubscription.getId());
-    }
 
     public void disconnect() {
         makeSureStompIsConnected();
