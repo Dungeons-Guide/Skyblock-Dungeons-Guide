@@ -31,6 +31,7 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
+import java.util.function.Consumer;
 
 public class StompClient extends WebSocketClient {
 
@@ -51,6 +52,7 @@ public class StompClient extends WebSocketClient {
         while(this.stompClientStatus == StompClientStatus.CONNECTING);
         logger.info("fully connected");
     }
+
     private final CloseListener closeListener;
 
     @Getter
@@ -62,7 +64,6 @@ public class StompClient extends WebSocketClient {
     private ScheduledFuture heartbeat = null;
 
     private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1);
-
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         send(new StompPayload().method(StompHeader.CONNECT)
@@ -123,22 +124,33 @@ public class StompClient extends WebSocketClient {
     }
 
     private void handleMessage(StompPayload payload) {
-        StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
+//        StompSubscription stompSubscription = stompSubscriptionMap.get(Integer.parseInt(payload.headers().get("subscription")));
+//        try {
+//            stompSubscription.getStompMessageSubscription().handle(this, payload);
+//            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+//                send(new StompPayload().method(StompHeader.ACK)
+//                        .header("id", payload.headers().get("ack")).getBuilt()
+//                );
+//            }
+//        } catch (Exception e) {
+//            e.printStackTrace();
+//            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
+//                send(new StompPayload().method(StompHeader.NACK)
+//                        .header("id", payload.headers().get("ack")).getBuilt()
+//                );
+//            }
+//        }
+
+        Consumer<StompSubscriptionReceived> listener = stompSubscriptionMapz.get(Integer.parseInt(payload.headers().get("subscription")));
+
         try {
-            stompSubscription.getStompMessageSubscription().handle(this, payload);
-            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-                send(new StompPayload().method(StompHeader.ACK)
-                        .header("id", payload.headers().get("ack")).getBuilt()
-                );
-            }
+            listener.accept(new StompSubscriptionReceived(this, payload));
         } catch (Exception e) {
             e.printStackTrace();
-            if (stompSubscription.getAckMode() != StompSubscription.AckMode.AUTO) {
-                send(new StompPayload().method(StompHeader.NACK)
-                        .header("id", payload.headers().get("ack")).getBuilt()
-                );
-            }
         }
+
+
+
     }
 
     @Override
@@ -152,6 +164,8 @@ public class StompClient extends WebSocketClient {
         ex.printStackTrace();
     }
 
+
+    private Map<Integer, Consumer<StompSubscriptionReceived>> stompSubscriptionMapz = new HashMap<>();
     private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<>();
     private final Map<Integer, StompPayload> receiptMap = new HashMap<>();
 
@@ -181,6 +195,22 @@ public class StompClient extends WebSocketClient {
 
         stompSubscriptionMap.put(stompSubscription.getId(), stompSubscription);
     }
+
+    public void subscribe(String destination, Consumer<StompSubscriptionReceived> listner) {
+        makeSureStompIsConnected();
+        int id = ++idIncrement;
+
+        send(new StompPayload()
+                .method(StompHeader.SUBSCRIBE)
+                .header("id", String.valueOf(id))
+                .destination(destination)
+                .header("ack", "auto")
+                .getBuilt()
+        );
+
+        stompSubscriptionMapz.put(id, listner);
+    }
+
 
     public void unsubscribe(StompSubscription stompSubscription) {
         makeSureStompIsConnected();
