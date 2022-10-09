@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
+import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
@@ -29,6 +30,8 @@ import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
 import java.util.*;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -147,11 +150,39 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
     HashMap<String, ItemStack> SkullCashe = new HashMap<>();
 
+
+
+    ExecutorService executor = Executors.newFixedThreadPool(5);
+
+
     public ItemStack getSkullByUserName(String username) {
         if (SkullCashe.containsKey(username)) return SkullCashe.get(username);
         ItemStack stack = new ItemStack(Items.skull, 1, 3);
-        stack.setTagCompound(new NBTTagCompound());
-        stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
+
+        executor.submit(() -> {
+            EntityPlayer playerEntityByName = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(username);
+            if(playerEntityByName == null || playerEntityByName.getGameProfile() == null) {
+                stack.setTagCompound(new NBTTagCompound());
+                stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
+                return;
+            }
+
+            // this line should trick mineshaft to caching the player skin
+            // im doing this bc just setting SkullOwner downloads the skin on main thread
+            // thus causing a lag spike
+            Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(playerEntityByName.getGameProfile());
+
+            if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
+                Minecraft.getMinecraft().getSkinManager().loadSkin((MinecraftProfileTexture)map.get(MinecraftProfileTexture.Type.SKIN), MinecraftProfileTexture.Type.SKIN);
+            }
+
+
+
+            stack.setTagCompound(new NBTTagCompound());
+            stack.getTagCompound().setTag("SkullOwner", new NBTTagString(username));
+
+        });
+
         SkullCashe.put(username, stack);
         return stack;
     }
