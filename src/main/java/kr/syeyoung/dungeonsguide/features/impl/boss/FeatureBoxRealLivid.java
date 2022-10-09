@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -42,7 +43,8 @@ public class FeatureBoxRealLivid extends SimpleFeature {
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @SubscribeEvent
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(RenderWorldLastEvent postRender) {
+        float partialTicks = postRender.partialTicks;
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
         if (skyblockStatus.getContext() == null) return;

@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.features.impl.etc;
 import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,11 +32,11 @@ public class FeatureUpdateAlarm extends SimpleFeature implements TickListener {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
-    private StompPayload stompPayload;
+    private String stompPayload;
     @Override
     public void onTick() {
         if (stompPayload != null) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(stompPayload.payload()));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(stompPayload));
             stompPayload = null;
             Minecraft.getMinecraft().thePlayer.playSound("random.successful_hit", 1f,1f);
         }

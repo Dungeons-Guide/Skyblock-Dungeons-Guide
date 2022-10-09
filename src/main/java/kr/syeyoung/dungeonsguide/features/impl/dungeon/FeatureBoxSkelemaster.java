@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.Nullable;
@@ -46,7 +47,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature {
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @SubscribeEvent
-    public void drawWorld(float partialTicks) {
+    public void drawWorld(RenderWorldLastEvent postRender) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
 
@@ -64,7 +65,7 @@ public class FeatureBoxSkelemaster extends SimpleFeature {
         });
         AColor c = this.<AColor>getParameter("color").getValue();
         for (EntityArmorStand entitySkeleton : skeletonList) {
-            RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
+            RenderUtils.highlightBox(entitySkeleton, c, postRender.partialTicks, true);
         }
     }
 }
