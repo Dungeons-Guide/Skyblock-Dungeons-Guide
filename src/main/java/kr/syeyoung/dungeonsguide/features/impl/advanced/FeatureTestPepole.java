@@ -6,6 +6,8 @@ import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
+import kr.syeyoung.dungeonsguide.stomp.StompManager;
+import kr.syeyoung.dungeonsguide.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -21,20 +23,125 @@ import net.minecraft.nbt.NBTTagString;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.json.JSONObject;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FeatureTestPepole extends GuiFeature implements ChatListener, DungeonStartListener {
+
+    Logger logger = LogManager.getLogger("FeatureTestPepole");
     private Float scale;
+    private Set<String> lastmebersRaw;
+    private boolean broadcastLock;
 
     public FeatureTestPepole() {
         super("Dungeon", "Feuture test", "NOU", "", false, 200, 100);
 
 
         addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
+        MinecraftForge.EVENT_BUS.register(this);
 
+//        (new Thread(() -> {
+//            while (true){
+//                handleSelfBroadcasts();
+//            }
+//        }) ).start();
+    }
+
+    public static void handlePartyBroadCast(String playload) {
+        String[] messagge = playload.substring(2).split(":");
+
+//                String random = messagge[1];
+        String username = messagge[0];
+        System.out.println("Broadcast was a self broadcast with: " + username);
+        PartyManager.INSTANCE.getPartyContext().addDgUser(username);
+
+//                String actualPayload = "ACK" + random + ":" + username + ":" + Minecraft.getMinecraft().getSession().getUsername();
+//                StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
+//                        new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
+//                                .put("payload", actualPayload).toString()
+//                ));
+
+//            } else if (playload.startsWith("ACK")){
+//                String ACKnick = playload.substring(3);
+//                String[] nicks = ACKnick.split(":");
+//                if(Objects.equals(nicks[0], Minecraft.getMinecraft().getSession().getUsername())) {
+//                    FeatureTestPepole.addACK(new Tuple<String, String>(nicks[1], nicks[2]));
+//                }
+    }
+
+//    static List<Tuple<String, String>> acknicks = new ArrayList<>();
+//
+//    static List<Tuple<Integer, Long>> sentContros = new ArrayList<>();
+
+//    public static void addACK(Tuple<String,String> acKnick) {
+//        acknicks.add(acKnick);
+//    }
+
+    public void broadcastYourself() {
+        if (PartyManager.INSTANCE.getPartyContext().getPartyID() == null) {
+            return;
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        logger.info("Sending self broadcast");
+//        int control = (new Random()).nextInt(1000);
+        String actualPayload = "C:" + Minecraft.getMinecraft().getSession().getUsername() + ":" + 222;
+        StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
+                new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
+                        .put("payload", actualPayload).toString()
+        ));
+//        sentContros.add(new Tuple<>(control, System.currentTimeMillis()));
+        broadcastLock = false;
+    }
+
+    public void handleSelfBroadcasts(){
+        if(broadcastLock) {
+            broadcastYourself();
+            return;
+        }
+
+
+//        for (Tuple<String, String> acknick : acknicks) {
+//            int a = Integer.parseInt(acknick.getFirst());
+//            for (Tuple<Integer, Long> sentContro : sentContros) {
+//                if(sentContro.getFirst() == a){
+//                    acknicks.remove(acknick);
+//                    sentContros.remove(a);
+//                    if(sentContro.getSecond() + 500 > System.currentTimeMillis()){
+//                        broadcastLock = true;
+//                        broadcastYourself();
+//                        break;
+//                    }
+//                }
+//            }
+//
+//        }
+
+
+        if(PartyManager.INSTANCE.getPartyContext() == null) return;
+
+        if(lastmebersRaw == null ) {
+            lastmebersRaw = PartyManager.INSTANCE.getPartyContext().getPartyRawMembers();
+            return;
+        }
+
+        Set<String> membersRaw = PartyManager.INSTANCE.getPartyContext().getPartyRawMembers();
+
+        if(!membersRaw.equals(lastmebersRaw)){
+            logger.info("members changed unlocking locking broadcast");
+            broadcastLock = true;
+            broadcastYourself();
+            lastmebersRaw = membersRaw;
+        }
     }
 
 
@@ -197,7 +304,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
             Gui.drawRect(15 + xOffset, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20 + xOffset, 15 + y, getColorTextColor(partyRawMember));
 
             RenderHelper.enableStandardItemLighting();
-            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), xOffset, y + 1);
+            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y + 1);
             RenderHelper.disableStandardItemLighting();
 
             fr.drawString(partyRawMember, 15 + xOffset, y + 5, 0xffffff);
@@ -207,7 +314,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
             if (isDgUser) {
 
-                GlStateManager.translate(0, y + 3.5F, 200F);
+                GlStateManager.translate(xOffset + 5, y + 3.5F, 200F);
                 GlStateManager.scale(0.32F, 0.32F, 1F);
                 Minecraft.getMinecraft().getTextureManager().bindTexture(logoLoc);
                 Gui.drawModalRectWithCustomSizedTexture(0, 0, 0, 0, 32, 32, 32, 32);
