@@ -4,7 +4,6 @@ import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.stomp.StompManager;
@@ -25,6 +24,7 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
@@ -35,7 +35,7 @@ import java.util.concurrent.Executors;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FeatureTestPepole extends GuiFeature implements ChatListener, DungeonStartListener {
+public class FeatureTestPepole extends GuiFeature implements DungeonStartListener {
 
     Logger logger = LogManager.getLogger("FeatureTestPepole");
     private Float scale;
@@ -206,7 +206,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         readynessIndicator.put("go", true);
     }
 
-    @Override
+    @SubscribeEvent
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (!txt.startsWith("§r§9Party §8>")) return;

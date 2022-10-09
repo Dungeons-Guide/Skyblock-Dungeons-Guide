@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -32,15 +31,18 @@ import net.minecraft.inventory.Slot;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-public class FeatureGoodParties extends SimpleFeature implements GuiPostRenderListener {
+public class FeatureGoodParties extends SimpleFeature {
     public FeatureGoodParties() {
         super("Party Kicker", "Highlight parties in party viewer", "Highlight parties you can't join with red", "partykicker.goodparty",true);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @Override
+    @SubscribeEvent
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!isEnabled()) return;
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;

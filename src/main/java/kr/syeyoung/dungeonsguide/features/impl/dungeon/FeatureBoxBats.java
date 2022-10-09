@@ -24,26 +24,28 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 
-public class FeatureBoxBats extends SimpleFeature implements WorldRenderListener {
+public class FeatureBoxBats extends SimpleFeature {
     public FeatureBoxBats() {
         super("Dungeon.Mobs", "Box Bats", "Box bats in dungeons\nDoes not appear through walls", "dungeon.batbox", true);
         addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and bats to be boxed", 20, "integer"));
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Bats", new AColor(255,0,0,50), "acolor"));
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    @Override
+    @SubscribeEvent
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;

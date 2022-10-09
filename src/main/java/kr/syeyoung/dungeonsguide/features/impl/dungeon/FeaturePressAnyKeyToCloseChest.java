@@ -22,23 +22,24 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.boss.FeatureChestPrice;
-import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
-import kr.syeyoung.dungeonsguide.features.listener.KeyInputListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
-public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements KeyInputListener, GuiClickListener {
+public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     public FeaturePressAnyKeyToCloseChest() {
         super("Dungeon", "Press Any Mouse Button or Key to close Secret Chest", "dungeon.presskeytoclose");
         addParameter("threshold", new FeatureParameter<Integer>("threshold", "Price Threshold", "The maximum price of item for chest to be closed. Default 1m", 1000000, "integer"));
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @Override
+    @SubscribeEvent
     public void onKeyInput(GuiScreenEvent.KeyboardInputEvent keyboardInputEvent) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if (!isEnabled()) return;
@@ -62,7 +63,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature implements Key
         }
     }
 
-    @Override
+    @SubscribeEvent
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
         if (!isEnabled()) return;

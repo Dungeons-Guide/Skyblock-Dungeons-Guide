@@ -18,29 +18,31 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonEndListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class FeatureWatcherWarning extends TextHUDFeature implements ChatListener, DungeonEndListener {
+public class FeatureWatcherWarning extends TextHUDFeature implements DungeonEndListener {
 
     public FeatureWatcherWarning() {
         super("Dungeon.Blood Room","Watcher Spawn Alert", "Alert when watcher says 'That will be enough for now'", "dungen.watcherwarn", true, getFontRenderer().getStringWidth("Watcher finished spawning all mobs!"), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("warning", new AColor(0xFF, 0x69,0x17,255), new AColor(0, 0,0,0), false));
         setEnabled(false);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -67,7 +69,7 @@ public class FeatureWatcherWarning extends TextHUDFeature implements ChatListene
         return text;
     }
 
-    @Override
+    @SubscribeEvent
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.message.getFormattedText().equals("§r§c[BOSS] The Watcher§r§f: That will be enough for now.§r"))  {
             warning = System.currentTimeMillis() + 2500;

@@ -20,15 +20,16 @@ package kr.syeyoung.dungeonsguide.features.impl.boss;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.EntityLivingRenderListener;
-import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import net.minecraft.entity.passive.*;
 import net.minecraftforge.client.event.RenderLivingEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 
-public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRenderListener {
+public class FeatureHideAnimals extends SimpleFeature {
     public FeatureHideAnimals() {
         super("Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
         addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheeps", "Hide Sheeps", true, "boolean", nval -> sheep = nval));
@@ -36,6 +37,7 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
         addParameter("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, "boolean", nval -> chicken = nval));
         addParameter("wolf", new FeatureParameter<Boolean>("wolf", "Hide Wolves", "Hide Wolves", true, "boolean", nval -> wolf = nval));
         addParameter("rabbit", new FeatureParameter<Boolean>("rabbit", "Hide Rabbits", "Hide Rabbits", true, "boolean", nval -> rabbit = nval));
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     boolean sheep;
@@ -48,7 +50,7 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    @Override
+    @SubscribeEvent
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
@@ -67,10 +69,5 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
         } else if (renderPlayerEvent.entity instanceof EntityRabbit && rabbit) {
             renderPlayerEvent.setCanceled(true);
         }
-    }
-
-    @Override
-    public void onEntityRenderPost(RenderLivingEvent.Post renderPlayerEvent) {
-
     }
 }

@@ -19,17 +19,19 @@
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.TooltipListener;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class FeatureTooltipDungeonStat extends SimpleFeature implements TooltipListener {
+public class FeatureTooltipDungeonStat extends SimpleFeature {
     public FeatureTooltipDungeonStat() {
         super("Misc", "Dungeon Item Stats", "Shows quality of dungeon items (floor, percentage)", "tooltip.dungeonitem");
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @Override
+    @SubscribeEvent
     public void onTooltip(ItemTooltipEvent event) {
         if (!isEnabled()) return;
 

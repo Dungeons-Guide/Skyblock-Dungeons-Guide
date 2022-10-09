@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.*;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -31,10 +30,13 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenListener, GuiUpdateListener {
+public class FeatureCustomPartyFinder extends SimpleFeature {
     public FeatureCustomPartyFinder() {
         super("Party","Custom Party Finder","Custom Party Finder", "party.customfinder", true);
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Getter
@@ -48,7 +50,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
     private String lastClass = "";
 
     GuiCustomPartyFinder guiCustomPartyFinder;
-    @Override
+    @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         if (event.gui == null) guiCustomPartyFinder = null;
         if (!isEnabled()) return;
@@ -67,7 +69,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature implements GuiOpenLi
         event.gui = guiCustomPartyFinder;
     }
 
-    @Override
+    @SubscribeEvent
     public void onGuiUpdate(WindowUpdateEvent windowUpdateEvent) {
         if (guiCustomPartyFinder != null) {
             guiCustomPartyFinder.onChestUpdate(windowUpdateEvent);

@@ -20,25 +20,26 @@ package kr.syeyoung.dungeonsguide.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.Slot;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenListener, TickListener, GuiPostRenderListener, GuiClickListener, TooltipListener {
+public class FeatureTerminalSolvers extends SimpleFeature implements TickListener {
     public FeatureTerminalSolvers() {
         super("Solver.Floor 7+.Bossfight","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, startswith, order, navigate, correct panes)", "bossfight.terminals");
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public static final List<TerminalSolutionProvider> solutionProviders = new ArrayList<TerminalSolutionProvider>();
@@ -55,7 +56,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
     private TerminalSolution solution;
     private final List<Slot> clicked = new ArrayList<Slot>();
 
-    @Override
+    @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent event) {
         if (!isEnabled()) return;
         solution = null;
@@ -87,7 +88,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         solution = solutionProvider.provideSolution(cc, clicked);
     }
 
-    @Override
+    @SubscribeEvent
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
@@ -130,7 +131,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         GlStateManager.enableLighting();
     }
 
-    @Override
+    @SubscribeEvent
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         if (Mouse.getEventButton() == -1) return;
@@ -146,7 +147,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         }
     }
 
-    @Override
+    @SubscribeEvent
     public void onTooltip(ItemTooltipEvent event) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;

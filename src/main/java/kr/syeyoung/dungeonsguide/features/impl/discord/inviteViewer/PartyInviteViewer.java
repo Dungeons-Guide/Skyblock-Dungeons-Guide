@@ -31,6 +31,9 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -39,9 +42,10 @@ import java.util.*;
 import java.util.List;
 import java.util.concurrent.*;
 
-public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderListener, ScreenRenderListener, TickListener, GuiClickListener, DiscordUserJoinRequestListener {
+public class PartyInviteViewer extends SimpleFeature implements ScreenRenderListener, TickListener {
     public PartyInviteViewer() {
         super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.party_invite_viewer");
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -49,7 +53,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
         return false;
     }
 
-    @Override
+    @SubscribeEvent
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         renderRequests(true);
     }
@@ -86,7 +90,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
     }
 
 
-    @Override
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         int mouseX = Mouse.getX();
@@ -303,7 +307,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
         GlStateManager.popMatrix();
     }
 
-    @Override
+    @SubscribeEvent
     public void onDiscordUserJoinRequest(DiscordUserJoinRequestEvent event) {
         PartyJoinRequest partyInvite = new PartyJoinRequest();
         partyInvite.setDiscordUser(event.getDiscordUser());

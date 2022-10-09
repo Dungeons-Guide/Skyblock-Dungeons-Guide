@@ -22,14 +22,15 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.regex.Pattern;
 
-public class FeatureDisableMessage extends SimpleFeature implements ChatListener {
+public class FeatureDisableMessage extends SimpleFeature {
     @Data
     @AllArgsConstructor
     public static class MessageData {
@@ -59,11 +60,12 @@ public class FeatureDisableMessage extends SimpleFeature implements ChatListener
         for (MessageData messageData : PRE_DEFINED) {
             addParameter(messageData.key, new FeatureParameter<Boolean>(messageData.key, messageData.name, messageData.description, true, "boolean"));
         }
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    @Override
+    @SubscribeEvent
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!isEnabled()) return;

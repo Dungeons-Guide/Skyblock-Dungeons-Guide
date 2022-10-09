@@ -21,33 +21,34 @@ package kr.syeyoung.dungeonsguide.features.impl.boss.terminal;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.features.listener.InteractListener;
-import kr.syeyoung.dungeonsguide.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
+import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRenderListener, TickListener, InteractListener {
+public class FeatureSimonSaysSolver extends SimpleFeature implements TickListener {
     public FeatureSimonSaysSolver() {
         super("Solver.Floor 7+.Bossfight","Simon Says Solver","Solver for Simon says puzzle", "bossfight.simonsays2");
+        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private final SkyblockStatus ss = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private final List<BlockPos> orderbuild = new ArrayList<BlockPos>();
     private final LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
 
-    @Override
+    @SubscribeEvent
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         DungeonContext dc = ss.getContext();
@@ -94,7 +95,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         }
     }
 
-    @Override
+    @SubscribeEvent
     public void onInteract(PlayerInteractEvent event) {
         if (!isEnabled()) return;
 

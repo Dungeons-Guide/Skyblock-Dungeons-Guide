@@ -18,23 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements ChatListener {
+public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
         super("Dungeon.Dungeon Information", "Display # Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom", true, getFontRenderer().getStringWidth("Secrets In Room: 8/8"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
+        MinecraftForge.EVENT_BUS.register(this);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("currentSecrets", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
@@ -85,7 +87,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements 
         return actualBit;
     }
 
-    @Override
+    @SubscribeEvent
     public void onChat(ClientChatReceivedEvent chat) {
         if (chat.type != 2) return;
         String text = chat.message.getFormattedText();
