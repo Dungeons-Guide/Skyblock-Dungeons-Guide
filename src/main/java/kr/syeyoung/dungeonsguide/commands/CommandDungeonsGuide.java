@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
 import kr.syeyoung.dungeonsguide.party.PartyContext;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
-import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.config.guiconfig.NestedCategory;

@@ -16,14 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events.impl;
+package kr.syeyoung.dungeonsguide.discord.rpc;
 
-import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
-import lombok.AllArgsConstructor;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.GameSDK;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.datastruct.DiscordUser;
 import lombok.Data;
-import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Data @AllArgsConstructor
-public class DiscordUserUpdateEvent extends Event {
-    private JDiscordRelation prev, current;
+@Data
+public class JDiscordUser {
+    private long id;
+    private String username, discriminator, avatar;
+    private boolean bot;
+
+    public static JDiscordUser fromJNA(DiscordUser discordUser) {
+        JDiscordUser jDiscordUser = new JDiscordUser();
+        jDiscordUser.id = discordUser.id.longValue();
+        jDiscordUser.username = GameSDK.readString(discordUser.username);
+        jDiscordUser.discriminator = GameSDK.readString(discordUser.discriminator);
+        jDiscordUser.avatar = GameSDK.readString(discordUser.avatar);
+        jDiscordUser.bot = discordUser.bot;
+        return jDiscordUser;
+    }
 }

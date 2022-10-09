@@ -16,14 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events.impl;
+package kr.syeyoung.dungeonsguide.discord.gamesdk.jna.interfacestruct;
 
-import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import com.sun.jna.Callback;
+import com.sun.jna.Library;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.GameSDKTypeMapper;
 
-@Data @AllArgsConstructor
-public class DiscordUserUpdateEvent extends Event {
-    private JDiscordRelation prev, current;
+import java.util.Collections;
+import java.util.Map;
+
+public interface GameSDKCallback extends Callback {
+    public static final Map<String, Object> OPTIONS = Collections.singletonMap(Library.OPTION_TYPE_MAPPER, GameSDKTypeMapper.INSTANCE);
 }

@@ -19,17 +19,16 @@
 package kr.syeyoung.dungeonsguide.features.impl.discord.invteTooltip;
 
 import com.sun.jna.Pointer;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordActivityActionType;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordActivityManager;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.interfacestruct.IDiscordCore;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.typedef.DiscordSnowflake;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.enumuration.EDiscordActivityActionType;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.interfacestruct.IDiscordActivityManager;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.interfacestruct.IDiscordCore;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.typedef.DiscordSnowflake;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
-import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
-import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;

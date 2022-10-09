@@ -26,9 +26,9 @@ import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.ImageTexture
 import kr.syeyoung.dungeonsguide.features.listener.DiscordUserUpdateListener;
 import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.rpc.JDiscordActivity;
-import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
+import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordActivity;
+import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;

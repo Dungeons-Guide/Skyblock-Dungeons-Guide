@@ -16,14 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events.impl;
+package kr.syeyoung.dungeonsguide.discord.gamesdk.jna.typedef;
 
-import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraftforge.fml.common.eventhandler.Event;
+import com.sun.jna.IntegerType;
 
-@Data @AllArgsConstructor
-public class DiscordUserUpdateEvent extends Event {
-    private JDiscordRelation prev, current;
+public class UInt8 extends IntegerType {
+    public static final int SIZE = 1;
+    public UInt8() {
+        this(0);
+    }
+    public UInt8(long value) {
+        super(SIZE, value, true);
+    }
 }

@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.events.listener.FeatureListener;
 import kr.syeyoung.dungeonsguide.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
-import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;

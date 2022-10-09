@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.discord.invteTooltip.MTooltipInvite;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
-import kr.syeyoung.dungeonsguide.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;

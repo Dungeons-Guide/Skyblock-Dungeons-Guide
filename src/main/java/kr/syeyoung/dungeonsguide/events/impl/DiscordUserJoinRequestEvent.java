@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.events.impl;
 
-import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.datastruct.DiscordUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraftforge.fml.common.eventhandler.Event;

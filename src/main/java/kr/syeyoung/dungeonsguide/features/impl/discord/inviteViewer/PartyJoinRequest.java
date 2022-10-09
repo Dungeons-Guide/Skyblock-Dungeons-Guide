@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer;
 
-import kr.syeyoung.dungeonsguide.gamesdk.GameSDK;
-import kr.syeyoung.dungeonsguide.gamesdk.jna.datastruct.DiscordUser;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.GameSDK;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.datastruct.DiscordUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;

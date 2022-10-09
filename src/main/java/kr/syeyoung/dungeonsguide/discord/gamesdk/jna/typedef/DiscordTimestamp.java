@@ -16,14 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.events.impl;
+package kr.syeyoung.dungeonsguide.discord.gamesdk.jna.typedef;
 
-import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraftforge.fml.common.eventhandler.Event;
-
-@Data @AllArgsConstructor
-public class DiscordUserUpdateEvent extends Event {
-    private JDiscordRelation prev, current;
+public class DiscordTimestamp extends Int64 {
+    public DiscordTimestamp() {
+        this(0);
+    }
+    public DiscordTimestamp(long value) {
+        super(value);
+    }
 }

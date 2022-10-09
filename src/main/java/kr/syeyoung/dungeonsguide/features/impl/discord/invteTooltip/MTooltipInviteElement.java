@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.ImageTexture;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
