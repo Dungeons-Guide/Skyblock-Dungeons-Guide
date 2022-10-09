@@ -118,9 +118,8 @@ public class DungeonsGuide {
         MinecraftForge.EVENT_BUS.register(new PacketListener());
         MinecraftForge.EVENT_BUS.register(new Keybinds());
 
-//        MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(ChatProcessor.INSTANCE);
         MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(ChatProcessor.INSTANCE);
         MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
 
         MinecraftForge.EVENT_BUS.register(new AhUtils());

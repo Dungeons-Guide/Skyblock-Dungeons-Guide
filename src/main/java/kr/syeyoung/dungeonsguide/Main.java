@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
 import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
-import lombok.Getter;
 import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -56,8 +55,6 @@ public class Main {
     private boolean showedError = false;
 
     Logger logger = LogManager.getLogger("DG-main");
-    @Getter
-    private static boolean offlineMode = false;
 
 
     @EventHandler
@@ -137,11 +134,7 @@ public class Main {
             ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(SOME_FUNNY_KEY_THING);
 
             if(!AuthManager.getInstance().isPlebUser()){
-                try {
-                    ResourceManager.getInstance().downloadAssets(version);
-                } catch (InvalidDungeonsGuideCredentialsException e) {
-                    logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
-                }
+                downloadAssets(version);
             }
 
             URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
@@ -155,6 +148,14 @@ public class Main {
 
         } catch (IOException e) {
             handleException(e);
+        }
+    }
+
+    private void downloadAssets(String version) {
+        try {
+            ResourceManager.getInstance().downloadAssets(version);
+        } catch (InvalidDungeonsGuideCredentialsException e) {
+            logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
         }
     }
 
