@@ -89,7 +89,7 @@ public class ChatProcessor {
     public void onMessage(ClientChatReceivedEvent chatReceivedEvent) {
         if (chatReceivedEvent.type == 2) return;
         String txt = chatReceivedEvent.message.getFormattedText();
-        logger.log(Level.INFO, "[CHAT] "+txt);
+        logger.info("[CHAT] {}", txt);
 
         int processed = 0;
         int listenened = 0;

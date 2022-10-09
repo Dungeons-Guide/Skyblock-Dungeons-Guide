@@ -112,8 +112,8 @@ public class CosmeticsManager {
     @SubscribeEvent
     public void stompConnect(StompConnectedEvent e) {
 
-        e.getStompInterface().subscribe("/topic/cosmetic.set", payload -> {
-            JSONObject jsonObject = new JSONObject(payload.getStompPayload());
+        e.getStompInterface().subscribe("/topic/cosmetic.set", (stompClient, payload) -> {
+            JSONObject jsonObject = new JSONObject(payload);
             ActiveCosmetic activeCosmetic = new ActiveCosmetic();
             activeCosmetic.setActivityUID(UUID.fromString(jsonObject.getString("activityUID")));
             activeCosmetic.setPlayerUID(UUID.fromString(jsonObject.getString("playerUID")));
@@ -162,8 +162,8 @@ public class CosmeticsManager {
         });
 
 
-        e.getStompInterface().subscribe("/user/queue/reply/user.perms", payload -> {
-            JSONArray object = new JSONArray(payload.getStompPayload());
+        e.getStompInterface().subscribe("/user/queue/reply/user.perms", (stompClient ,payload) -> {
+            JSONArray object = new JSONArray(payload);
             Set<String> cache = new HashSet<>();
             for (Object o : object) {
                 cache.add((String) o);
@@ -173,9 +173,9 @@ public class CosmeticsManager {
 
 
 
-        e.getStompInterface().subscribe("/user/queue/reply/cosmetic.activelist", payload -> {
+        e.getStompInterface().subscribe("/user/queue/reply/cosmetic.activelist", (stompClient, payload) -> {
             activeCosmeticMap = new HashMap<>();
-            JSONArray object = new JSONArray(payload.getStompPayload());
+            JSONArray object = new JSONArray(payload);
             for (Object o : object) {
                 JSONObject jsonObject = (JSONObject) o;
                 ActiveCosmetic cosmeticData = new ActiveCosmetic();
@@ -197,8 +197,8 @@ public class CosmeticsManager {
 
 
 
-        e.getStompInterface().subscribe("/user/queue/reply/cosmetic.list", payload -> {
-            JSONArray object = new JSONArray(payload.getStompPayload());
+        e.getStompInterface().subscribe("/user/queue/reply/cosmetic.list", (stompClient ,payload) -> {
+            JSONArray object = new JSONArray(payload);
             Map<UUID, CosmeticData> newCosmeticList = new HashMap<>();
             for (Object o : object) {
                 JSONObject jsonObject = (JSONObject) o;

@@ -515,8 +515,8 @@ public class PartyManager {
     @SubscribeEvent
     public void stompConnect(StompConnectedEvent event) {
 
-        event.getStompInterface().subscribe("/user/queue/party.resp", payload -> {
-            JSONObject object = new JSONObject(payload.getStompPayload());
+        event.getStompInterface().subscribe("/user/queue/party.resp", (stompClient ,payload) -> {
+            JSONObject object = new JSONObject(payload);
 
             String str = object.getString("status");
             if ("success".equals(str) && partyContext != null) {
@@ -529,8 +529,8 @@ public class PartyManager {
             }
         });
 
-        event.getStompInterface().subscribe("/user/queue/party.check", payload -> {
-            JSONObject object = new JSONObject(payload.getStompPayload());
+        event.getStompInterface().subscribe("/user/queue/party.check", (stompClient ,payload) -> {
+            JSONObject object = new JSONObject(payload);
             String playerName = object.getString("player");
             String token = object.getString("token");
             if (partyContext == null) {
@@ -559,21 +559,21 @@ public class PartyManager {
                 }
             }
         });
-        event.getStompInterface().subscribe("/user/queue/party.broadcast", payload -> {
-            String broadCastPlayload = new JSONObject(payload.getStompPayload()).getString("payload");
+        event.getStompInterface().subscribe("/user/queue/party.broadcast", (stompClient ,payload) -> {
+            String broadCastPlayload = new JSONObject(payload).getString("payload");
             System.out.println("Received broadcast");
             if(broadCastPlayload.startsWith("C:")) {
                 FeatureTestPepole.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload.getStompPayload()).getString("payload")));
+                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
             }
         });
-        event.getStompInterface().subscribe("/user/queue/party.join", payload -> {
-            JSONObject object = new JSONObject(payload.getStompPayload());
+        event.getStompInterface().subscribe("/user/queue/party.join", (stompClient ,payload) -> {
+            JSONObject object = new JSONObject(payload);
             String playerName = object.getString("player");
             String secret = object.getString("secret");
             if (secret.equals(askToJoinSecret) && partyContext != null && getPartyContext().getPartyRawMembers().size() < maxParty && playerInvAntiSpam.getOrDefault(playerName, 0L)  < System.currentTimeMillis() - 5000) {
@@ -581,8 +581,8 @@ public class PartyManager {
                 ChatProcessor.INSTANCE.addToChatQueue("/p invite "+playerName,() -> {}, true);
             }
         });
-        event.getStompInterface().subscribe("/user/queue/party.askedtojoin.resp", payload -> {
-            JSONObject object = new JSONObject(payload.getStompPayload());
+        event.getStompInterface().subscribe("/user/queue/party.askedtojoin.resp", (stompClient ,payload) -> {
+            JSONObject object = new JSONObject(payload);
             String invFrom = object.getString("username");
             String token2 = object.getString("token");
             if (!token2.equals(lastToken)) return;

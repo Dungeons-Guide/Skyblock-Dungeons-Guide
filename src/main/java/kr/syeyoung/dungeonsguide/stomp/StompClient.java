@@ -32,7 +32,6 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
-import java.util.function.Consumer;
 
 public class StompClient extends WebSocketClient {
 
@@ -100,7 +99,12 @@ public class StompClient extends WebSocketClient {
 
                     break;
                 case MESSAGE:
-                    handleMessage(payload);
+                    String subscriptionName = payload.headers().get("subscription");
+                    int subscriptionId = Integer.parseInt(subscriptionName);
+                    StompSubscription listener = stompSubscriptionMap.get(subscriptionId);
+
+                    listener.process(this, payload);
+
                     break;
                 case RECEIPT:
                     String receiptId = payload.headers().get("receipt-id");
@@ -122,17 +126,6 @@ public class StompClient extends WebSocketClient {
         }
     }
 
-    private void handleMessage(StompPayload payload) {
-        Consumer<StompSubscriptionReceived> listener = stompSubscriptionMapz.get(Integer.parseInt(payload.headers().get("subscription")));
-
-        try {
-            listener.accept(new StompSubscriptionReceived(this, payload));
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
-
     @Override
     public void onClose(int code, String reason, boolean remote) {
         if (heartbeat != null) heartbeat.cancel(true);
@@ -147,7 +140,7 @@ public class StompClient extends WebSocketClient {
     }
 
 
-    private Map<Integer, Consumer<StompSubscriptionReceived>> stompSubscriptionMapz = new HashMap<>();
+    private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<>();
     private final Map<Integer, StompPayload> receiptMap = new HashMap<>();
 
     private int idIncrement = 0;
@@ -164,7 +157,7 @@ public class StompClient extends WebSocketClient {
         send(payload.getBuilt());
     }
 
-    public void subscribe(String destination, Consumer<StompSubscriptionReceived> listner) {
+    public void subscribe(String destination, StompSubscription listener) {
         makeSureStompIsConnected();
         int id = ++idIncrement;
 
@@ -176,7 +169,7 @@ public class StompClient extends WebSocketClient {
                 .getBuilt()
         );
 
-        stompSubscriptionMapz.put(id, listner);
+        stompSubscriptionMap.put(id, listener);
     }
 
 

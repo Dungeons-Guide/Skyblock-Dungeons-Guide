@@ -44,12 +44,12 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
     @Override
     public void onStompConnected(StompConnectedEvent event) {
 
-        event.getStompInterface().subscribe("/topic/updates", payload -> {
-            this.stompPayload = payload.getStompPayload();
+        event.getStompInterface().subscribe("/topic/updates", (stompClient ,payload) -> {
+            this.stompPayload = payload;
         });
 
-        event.getStompInterface().subscribe("/user/queue/messages", payload -> {
-            this.stompPayload = payload.getStompPayload();
+        event.getStompInterface().subscribe("/user/queue/messages", (stompClient ,payload) -> {
+            this.stompPayload = payload;
         });
 
     }

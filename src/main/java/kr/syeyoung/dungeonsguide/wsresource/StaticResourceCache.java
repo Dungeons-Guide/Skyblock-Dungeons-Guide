@@ -53,8 +53,8 @@ public class StaticResourceCache {
     @SubscribeEvent
     public void stompConnect(StompConnectedEvent event) {
 
-        event.getStompInterface().subscribe("/user/queue/staticresource.get", payload -> {
-            JSONObject object = new JSONObject(payload.getStompPayload());
+        event.getStompInterface().subscribe("/user/queue/staticresource.get", (stompClient ,payload) -> {
+            JSONObject object = new JSONObject(payload);
             StaticResource staticResource = new StaticResource();
             staticResource.setResourceID(UUID.fromString(object.getString("resourceID")));
             staticResource.setExists(object.getBoolean("exists"));
