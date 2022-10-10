@@ -290,6 +290,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
         // 19 iterations bc we only want to scan the player part of tab list
         for (int i = 1; i < 20; i++) {
+            if(list.size() < i) break;
             NetworkPlayerInfo networkPlayerInfo = list.get(i);
 
             String name = getPlayerNameWithChecks(networkPlayerInfo);
