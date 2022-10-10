@@ -22,7 +22,6 @@ import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
@@ -31,11 +30,11 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
         super("Misc", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
     }
 
-    private StompPayload stompPayload;
+    private String stompPayload;
     @Override
     public void onTick() {
         if (stompPayload != null) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(stompPayload.payload()));
+            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(stompPayload));
             stompPayload = null;
             Minecraft.getMinecraft().thePlayer.playSound("random.successful_hit", 1f,1f);
         }
