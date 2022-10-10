@@ -116,7 +116,7 @@ public class FeatureRegistry {
 
 
     public static final FeatureDungeonMap DUNGEON_MAP;
-    public static final FeatureTestPepole TEST_PEPOLE;
+    public static FeatureTestPepole TEST_PEPOLE;
     public static final FeatureDungeonRoomName DUNGEON_ROOMNAME;
     public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST;
     public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER;
@@ -229,7 +229,7 @@ public class FeatureRegistry {
             DUNGEON_BOXSKELEMASTER = register(new FeatureBoxSkelemaster());
             DUNGEON_CLOSECHEST = register(new FeaturePressAnyKeyToCloseChest());
             DUNGEON_ROOMNAME = register(new FeatureDungeonRoomName());
-            TEST_PEPOLE = register(new FeatureTestPepole());
+//            TEST_PEPOLE = register(new FeatureTestPepole());
             DUNGEON_MAP = register(new FeatureDungeonMap());
             SOLVER_BOMBDEFUSE = register(new FeatureSolverBombdefuse());
             SOLVER_KAHOOT = register(new FeatureSolverKahoot());

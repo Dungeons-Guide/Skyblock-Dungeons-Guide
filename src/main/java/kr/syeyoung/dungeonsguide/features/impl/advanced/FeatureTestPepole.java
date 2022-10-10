@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
+import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
@@ -14,21 +15,28 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
+import net.minecraft.client.renderer.*;
+import net.minecraft.client.renderer.texture.ITextureObject;
+import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
+import net.minecraft.client.resources.DefaultPlayerSkin;
+import net.minecraft.client.resources.SkinManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
 import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.json.JSONObject;
 
+import java.awt.image.BufferedImage;
+import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -309,6 +317,64 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
     }
 
 
+    public final Map<String, Boolean> cachedProfiles = new HashMap<>();
+
+
+    void renderItem(GameProfile stack, int x, int y){
+
+
+//        GameProfile a = new GameProfile();
+
+        GameProfile toDraw = cachedProfiles.get(stack.getName()) ? stack : null;
+
+        TileEntitySkullRenderer.instance.renderSkull(x, y, -0.5F, EnumFacing.UP, 180.0F, 1, stack, -1);
+
+        if(toDraw == null && !cachedProfiles.containsKey(stack.getName())){
+            cachedProfiles.put(stack.getName(), false);
+            new Thread(() -> {
+                Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(stack);
+
+                if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {
+
+                    MinecraftProfileTexture profileTexture =  map.get(MinecraftProfileTexture.Type.SKIN);
+
+                    final ResourceLocation resourceLocation = new ResourceLocation("skins/" + profileTexture.getHash());
+                    ITextureObject iTextureObject = Minecraft.getMinecraft().getTextureManager().getTexture(resourceLocation);
+                    if (iTextureObject == null) {
+
+                        String skinCacheDir = ReflectionHelper.getPrivateValue(SkinManager.class, Minecraft.getMinecraft().getSkinManager(), "field_152796_d", "skinCacheDir");
+
+                        File file = new File(skinCacheDir, profileTexture.getHash().length() > 2 ? profileTexture.getHash().substring(0, 2) : "xx");
+                        File file2 = new File(file, profileTexture.getHash());
+                        final IImageBuffer iImageBuffer =  new ImageBufferDownload();
+                        ThreadDownloadImageData threadDownloadImageData = new ThreadDownloadImageData(file2, profileTexture.getUrl(), DefaultPlayerSkin.getDefaultSkinLegacy(), new IImageBuffer() {
+
+                            public BufferedImage parseUserSkin(BufferedImage image) {
+                                if (iImageBuffer != null) {
+                                    image = iImageBuffer.parseUserSkin(image);
+                                }
+
+                                return image;
+                            }
+
+                            public void skinAvailable() {
+                                if (iImageBuffer != null) {
+                                    iImageBuffer.skinAvailable();
+                                }
+                            }
+                        });
+                        Minecraft.getMinecraft().getTextureManager().loadTexture(resourceLocation, threadDownloadImageData);
+                    }
+                }
+
+                cachedProfiles.replace(stack.getName(), true);
+            }).start();
+        }
+
+
+
+    }
+
     @Override
     public void drawHUD(float partialTicks) {
 
@@ -336,7 +402,8 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
             Gui.drawRect(15 + xOffset, 5 + y, fr.getStringWidth(partyRawMember + genPlayerText(partyRawMember)) + 20 + xOffset, 15 + y, getColorTextColor(partyRawMember));
 
             RenderHelper.enableStandardItemLighting();
-            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y + 1);
+            renderItem(Minecraft.getMinecraft().theWorld.getPlayerEntityByName(partyRawMember).getGameProfile(), 0, y + 1);
+//            Minecraft.getMinecraft().getRenderItem().renderItemAndEffectIntoGUI(getSkullByUserName(partyRawMember), 0, y + 1);
             RenderHelper.disableStandardItemLighting();
 
             fr.drawString(partyRawMember, 15 + xOffset, y + 5, 0xffffff);
