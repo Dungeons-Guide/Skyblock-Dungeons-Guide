@@ -46,7 +46,7 @@ import java.net.URL;
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main {
     public static final String MOD_ID = "skyblock_dungeons_guide";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "3.8";
 
 
     private boolean isLoaded = false;
@@ -103,7 +103,11 @@ public class Main {
 
     @EventHandler
     public void preInit(final FMLPreInitializationEvent preInitializationEvent) {
-        MinecraftForge.EVENT_BUS.register(new YoMamaOutdated());
+        YoMamaOutdated target = new YoMamaOutdated();
+        MinecraftForge.EVENT_BUS.register(target);
+        if(target.isUsingOutdatedDg) {
+            return;
+        }
 
         try {
             try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
