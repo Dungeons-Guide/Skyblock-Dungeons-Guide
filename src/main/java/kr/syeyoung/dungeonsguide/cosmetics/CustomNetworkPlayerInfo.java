@@ -30,56 +30,58 @@ import net.minecraft.util.IChatComponent;
 import java.util.List;
 
 public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
-    public CustomNetworkPlayerInfo(GameProfile p_i46294_1_) {
-        super(p_i46294_1_);
+    public CustomNetworkPlayerInfo(GameProfile gameProfile) {
+        super(gameProfile);
     }
 
-    public CustomNetworkPlayerInfo(S38PacketPlayerListItem.AddPlayerData p_i46295_1_) {
-        super(p_i46295_1_);
+    public CustomNetworkPlayerInfo(S38PacketPlayerListItem.AddPlayerData playerData) {
+        super(playerData);
         setDisplayName(super.getDisplayName());
     }
 
 
     private IChatComponent displayName;
-    private String playernameLowercase;
-    private String unformatted;
-    private String actualName;
+    private String unformattedDisplayText;
+    private String playerNameWithoutColor;
+
     @Override
     public void setDisplayName(IChatComponent displayNameIn) {
         displayName = displayNameIn;
         if (displayName == null) {
-            playernameLowercase = null;
-            unformatted = null;
+            unformattedDisplayText = null;
             return;
         }
 
-        unformatted = displayName.getUnformattedText();
+        unformattedDisplayText = displayName.getUnformattedTextForChat();
 
 
-        actualName = "";
-        for (String s : unformatted.split(" ")) {
+        playerNameWithoutColor = "";
+        for (String s : unformattedDisplayText.split(" ")) {
             String strippped = TextUtils.stripColor(s);
-            if (strippped.startsWith("[")) continue;
-            actualName = strippped;
+            if (strippped.startsWith("[")) {
+                continue;
+            }
+            playerNameWithoutColor = strippped;
             break;
         }
-        playernameLowercase = actualName.toLowerCase();
     }
 
     public IChatComponent getDisplayName()
     {
 
-        String semi_name;
+        String rawPlayerString;
         String actualName;
         List<ActiveCosmetic> activeCosmetics;
-        if (playernameLowercase != null) {
-            activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(playernameLowercase);
-            semi_name = unformatted;
-            actualName = this.actualName;
+
+        // in case that the set player name is not called we do this
+        if (playerNameWithoutColor != null) {
+            activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(playerNameWithoutColor.toLowerCase());
+            rawPlayerString = unformattedDisplayText;
+            actualName = this.playerNameWithoutColor;
         } else {
-            semi_name = ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
+            rawPlayerString = ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
             actualName = "";
-            for (String s : semi_name.split(" ")) {
+            for (String s : rawPlayerString.split(" ")) {
                 String strippped = TextUtils.stripColor(s);
                 if (strippped.startsWith("[")) continue;
                 actualName = strippped;
@@ -96,8 +98,11 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
             if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
         }
 
-        if (color != null) semi_name = semi_name.replace(actualName, color.getData()+actualName);
-
-        return new ChatComponentText(semi_name);
+        if (color != null) {
+            String coloredName = color.getData() + actualName;
+            return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
+        } else {
+            return new ChatComponentText(rawPlayerString);
+        }
     }
 }
