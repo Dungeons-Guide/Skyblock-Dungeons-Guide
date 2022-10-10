@@ -103,7 +103,7 @@ public class StompClient extends WebSocketClient {
                     int subscriptionId = Integer.parseInt(subscriptionName);
                     StompSubscription listener = stompSubscriptionMap.get(subscriptionId);
 
-                    listener.process(this, payload.payload());
+                    listener.process(this, payload);
 
                     break;
                 case RECEIPT:

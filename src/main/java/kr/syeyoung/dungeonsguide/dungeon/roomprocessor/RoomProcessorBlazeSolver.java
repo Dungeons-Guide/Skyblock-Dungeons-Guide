@@ -28,13 +28,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.monster.EntityBlaze;
-import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
+import net.minecraft.util.*;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 import java.util.ArrayList;
@@ -54,7 +49,6 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
         Object highToLow = dungeonRoom.getDungeonRoomInfo().getProperties().get("order");
         if (highToLow == null) this.highToLow = false;
         else this.highToLow = (Boolean) highToLow;
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     @Override
@@ -106,9 +100,8 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
     }
 
 
-    @SubscribeEvent
-    public void drawWorld(RenderWorldLastEvent postRender) {
-        float partialTicks = postRender.partialTicks;
+    @Override
+    public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
         if (!FeatureRegistry.SOLVER_BLAZE.isEnabled()) return;
         if (next == null) return;

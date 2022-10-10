@@ -56,12 +56,8 @@ public class FeaturePenguins extends SimpleFeature {
 
     }
     @SubscribeEvent
-    public void onTextureStitch(TextureStitchEvent.Post event) {
-        model = objModel.bake(objModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
-    }
-
-    @SubscribeEvent
-    public void onTextureStitch(TextureStitchEvent.Pre event) {
+    public void onTextureStitch(TextureStitchEvent event) {
+        if (event instanceof TextureStitchEvent.Pre) {
             objModel = null;
             ResourceLocation modelResourceLocation = new ResourceLocation("dungeonsguide:models/penguin.obj");
             try {
@@ -74,8 +70,12 @@ public class FeaturePenguins extends SimpleFeature {
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
+        }
+        if (objModel != null && event instanceof TextureStitchEvent.Post) {
+            model = objModel.bake(objModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+        }
     }
+
 
     private OBJModel objModel;
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

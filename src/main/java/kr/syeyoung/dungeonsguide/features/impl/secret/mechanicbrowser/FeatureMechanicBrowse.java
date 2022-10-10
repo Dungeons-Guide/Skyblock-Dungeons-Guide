@@ -37,7 +37,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
@@ -127,7 +126,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
     }
 
     @SubscribeEvent
-    public void drawWorld(RenderWorldLastEvent postRender) {
+    public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) return;
@@ -146,7 +145,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
                         a.highlight(new Color(0,255,255,50), id +" ("+(
                                 dungeonRoom.getMechanics().get(id).getRepresentingPoint(dungeonRoom) != null ?
                                 String.format("%.1f", MathHelper.sqrt_double((dungeonRoom.getMechanics().get(id)).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
-                                +"m)", dungeonRoom, postRender.partialTicks);
+                                +"m)", dungeonRoom, partialTicks);
                     });
         }
     }

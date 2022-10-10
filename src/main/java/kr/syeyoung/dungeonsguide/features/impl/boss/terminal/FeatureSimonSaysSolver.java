@@ -29,7 +29,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -50,8 +49,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements TickListene
     private final LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
 
     @SubscribeEvent
-    public void drawWorld(RenderWorldLastEvent postRender) {
-        float partialTicks = postRender.partialTicks;
+    public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         DungeonContext dc = ss.getContext();
         if (dc == null) {
