@@ -21,6 +21,9 @@ import java.io.IOException;
 import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeUnit;
 
 
 public class AuthManager {
@@ -68,29 +71,16 @@ public class AuthManager {
 
 
         MinecraftForge.EVENT_BUS.register(this);
-        new Thread(() -> {
-            while (true) {
-                if (getToken() == null) {
-                    try {
-                        Thread.sleep(20);
-                    } catch (InterruptedException e) {
-                        e.printStackTrace();
-                    }
-                    continue;
-                }
 
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        scheduler.scheduleAtFixedRate(() -> {
+            if (getToken() != null) {
                 JsonObject obj = DgAuthUtil.getJwtPayload(getToken());
-                if (!obj.get("uuid").getAsString().replaceAll("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
+                if (!obj.get("uuid").getAsString().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                     shouldReAuth = true;
                 }
-
-                try {
-                    Thread.sleep(100L);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
             }
-        }, "minecraft session change listener thread").start();
+        }, 10,100, TimeUnit.MILLISECONDS);
     }
 
     boolean shouldReAuth = true;
