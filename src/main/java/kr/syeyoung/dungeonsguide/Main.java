@@ -56,9 +56,11 @@ public class Main {
 
     Logger logger = LogManager.getLogger("DG-main");
 
+    YoMamaOutdated yoMamaOutdated;
 
     @EventHandler
     public void initEvent(final FMLInitializationEvent initializationEvent) {
+        if(yoMamaOutdated == null || yoMamaOutdated.isUsingOutdatedDg) return;
         MinecraftForge.EVENT_BUS.register(this);
         try {
             logger.info("init-ing DungeonsGuide");
@@ -103,9 +105,10 @@ public class Main {
 
     @EventHandler
     public void preInit(final FMLPreInitializationEvent preInitializationEvent) {
-        YoMamaOutdated target = new YoMamaOutdated();
-        MinecraftForge.EVENT_BUS.register(target);
-        if(target.isUsingOutdatedDg) {
+
+        yoMamaOutdated = new YoMamaOutdated();
+        MinecraftForge.EVENT_BUS.register(yoMamaOutdated);
+        if(yoMamaOutdated.isUsingOutdatedDg) {
             return;
         }
 
