@@ -22,6 +22,8 @@ import com.google.common.collect.ImmutableMap;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.PlayerRenderListener;
+import kr.syeyoung.dungeonsguide.features.listener.TextureStichListener;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -32,30 +34,24 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.client.resources.model.IBakedModel;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemBlock;
-import net.minecraft.item.ItemBow;
-import net.minecraft.item.ItemStack;
+import net.minecraft.item.*;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.RenderPlayerEvent;
 import net.minecraftforge.client.event.TextureStitchEvent;
 import net.minecraftforge.client.model.ModelLoader;
 import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.IOException;
 
 
-public class FeaturePenguins extends SimpleFeature {
+public class FeaturePenguins extends SimpleFeature implements PlayerRenderListener, TextureStichListener {
     public FeaturePenguins() {
         super("Misc", "Penguins", "Awwww", "etc.penguin", false);
         OBJLoader.instance.addDomain("dungeonsguide");
-        MinecraftForge.EVENT_BUS.register(this);
 
     }
-    @SubscribeEvent
+    @Override
     public void onTextureStitch(TextureStitchEvent event) {
         if (event instanceof TextureStitchEvent.Pre) {
             objModel = null;
@@ -81,7 +77,7 @@ public class FeaturePenguins extends SimpleFeature {
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private IBakedModel model;
 
-    @SubscribeEvent
+    @Override
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
 
         if (!isEnabled()) return;
@@ -163,6 +159,10 @@ public class FeaturePenguins extends SimpleFeature {
         renderPlayerEvent.renderer.renderName((AbstractClientPlayer) renderPlayerEvent.entityPlayer, renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z);
 
 
+    }
+
+    @Override
+    public void onEntityRenderPost(RenderPlayerEvent.Post renderPlayerEvent) {
     }
 
 }

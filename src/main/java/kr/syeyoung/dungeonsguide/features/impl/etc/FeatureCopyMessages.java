@@ -19,22 +19,20 @@
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class FeatureCopyMessages extends SimpleFeature {
+public class FeatureCopyMessages extends SimpleFeature implements ChatListener {
     public FeatureCopyMessages() {
         super("Misc.Chat", "Copy Chat Messages", "Click on copy to copy", "etc.copymsg");
         setEnabled(false);
-        MinecraftForge.EVENT_BUS.register(this);
     }
-    @SubscribeEvent
+    @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (!isEnabled()) return;
         if (clientChatReceivedEvent.type == 2) return;

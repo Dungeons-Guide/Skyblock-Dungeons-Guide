@@ -18,28 +18,36 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
+import kr.syeyoung.dungeonsguide.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonQuitListener;
+import kr.syeyoung.dungeonsguide.features.listener.GuiOpenListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraftforge.client.event.GuiOpenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL14;
 
+import java.awt.*;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQuitListener {
+public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQuitListener, GuiOpenListener {
     public FeatureCooldownCounter() {
         super("Dungeon", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("number", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private long leftDungeonTime = 0L;
@@ -85,7 +93,7 @@ public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQui
         leftDungeonTime = System.currentTimeMillis();
     }
 
-    @SubscribeEvent
+    @Override
     public void onGuiOpen(GuiOpenEvent rendered) {
         if (!(rendered.gui instanceof GuiChest)) return;
         ContainerChest chest = (ContainerChest) ((GuiChest) rendered.gui).inventorySlots;

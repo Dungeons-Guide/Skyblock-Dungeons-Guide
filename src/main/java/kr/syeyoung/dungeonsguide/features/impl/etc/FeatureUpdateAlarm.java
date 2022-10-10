@@ -20,17 +20,15 @@ package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.stomp.StompPayload;
+import kr.syeyoung.dungeonsguide.stomp.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class FeatureUpdateAlarm extends SimpleFeature implements TickListener {
+public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, TickListener {
     public FeatureUpdateAlarm() {
         super("Misc", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     private StompPayload stompPayload;
@@ -43,7 +41,7 @@ public class FeatureUpdateAlarm extends SimpleFeature implements TickListener {
         }
     }
 
-    @SubscribeEvent
+    @Override
     public void onStompConnected(StompConnectedEvent event) {
 
         event.getStompInterface().subscribe("/topic/updates", (stompClient ,payload) -> {

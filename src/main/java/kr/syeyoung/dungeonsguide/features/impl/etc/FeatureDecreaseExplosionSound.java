@@ -18,25 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.SoundListener;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraftforge.client.event.sound.PlaySoundEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class FeatureDecreaseExplosionSound extends SimpleFeature {
+public class FeatureDecreaseExplosionSound extends SimpleFeature implements SoundListener {
     public FeatureDecreaseExplosionSound() {
        super("Misc", "Decrease Explosion sound effect", "Decreases volume of explosions while on skyblock", "qol.explosionsound");
         addParameter("sound", new FeatureParameter<Float>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0f, "float"));
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    @SubscribeEvent
+    @Override
     public void onSound(PlaySoundEvent soundEvent) {
         if (!skyblockStatus.isOnSkyblock()) return;
 

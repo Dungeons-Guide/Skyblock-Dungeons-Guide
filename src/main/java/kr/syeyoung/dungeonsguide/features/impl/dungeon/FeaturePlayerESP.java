@@ -22,29 +22,27 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.PlayerRenderListener;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.InventoryPlayer;
 import net.minecraft.item.ItemStack;
 import net.minecraftforge.client.event.RenderPlayerEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 
 
-public class FeaturePlayerESP extends SimpleFeature {
+public class FeaturePlayerESP extends SimpleFeature implements PlayerRenderListener {
     public FeaturePlayerESP() {
         super("Dungeon.Teammates", "See players through walls", "See players through walls", "dungeon.playeresp", false);
         setEnabled(false);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     private boolean preCalled = false;
-    @SubscribeEvent
+    @Override
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
 
 
@@ -105,4 +103,9 @@ public class FeaturePlayerESP extends SimpleFeature {
         preCalled = false;
 
     }
+
+    @Override
+    public void onEntityRenderPost(RenderPlayerEvent.Post renderPlayerEvent) {
+    }
+
 }

@@ -20,19 +20,17 @@ package kr.syeyoung.dungeonsguide.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.ChatListenerGlobal;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
-public class APIKey extends SimpleFeature {
+public class APIKey extends SimpleFeature implements ChatListenerGlobal {
 
     public APIKey() {
         super("Misc.API Features", "API KEY", "Sets api key","partykicker.apikey");
         addParameter("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "","string"));
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public String getAPIKey() {
@@ -40,7 +38,7 @@ public class APIKey extends SimpleFeature {
     }
 
 
-    @SubscribeEvent
+    @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         String str = clientChatReceivedEvent.message.getFormattedText();

@@ -22,13 +22,16 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.events.impl.*;
+import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.*;
+import net.minecraftforge.client.event.sound.PlaySoundEvent;
+import net.minecraftforge.event.entity.player.ItemTooltipEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -53,6 +56,263 @@ public class FeatureListener {
         }
     }
 
+    @SubscribeEvent
+    public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof KeybindPressedListener) {
+                    ((KeybindPressedListener) abstractFeature).onKeybindPress(keyBindPressedEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onStomp(StompConnectedEvent stompConnectedEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof StompConnectedListener) {
+                    ((StompConnectedListener) abstractFeature).onStompConnected(stompConnectedEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onStomp(TextureStitchEvent.Pre textureStitchEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TextureStichListener) {
+                    ((TextureStichListener) abstractFeature).onTextureStitch(textureStitchEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onStomp(TextureStitchEvent.Post textureStitchEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TextureStichListener) {
+                    ((TextureStichListener) abstractFeature).onTextureStitch(textureStitchEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onDiscordUserUpdate(DiscordUserUpdateEvent discordUserUpdateEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DiscordUserUpdateListener) {
+                    ((DiscordUserUpdateListener) abstractFeature).onDiscordUserUpdate(discordUserUpdateEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onDiscordUserUpdate(DiscordUserJoinRequestEvent discordUserUpdateEvent) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof DiscordUserJoinRequestListener) {
+                    ((DiscordUserJoinRequestListener) abstractFeature).onDiscordUserJoinRequest(discordUserUpdateEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onWindowUpdate(WindowUpdateEvent windowUpdateEvent) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiUpdateListener) {
+                    ((GuiUpdateListener) abstractFeature).onGuiUpdate(windowUpdateEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(RenderLivingEvent.Pre preRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof EntityLivingRenderListener) {
+                    ((EntityLivingRenderListener) abstractFeature).onEntityRenderPre(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onSound(PlaySoundEvent soundEvent) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof SoundListener) {
+                    ((SoundListener) abstractFeature).onSound(soundEvent);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onRender(RenderLivingEvent.Post preRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof EntityLivingRenderListener) {
+                    ((EntityLivingRenderListener) abstractFeature).onEntityRenderPost(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(TitleEvent titleEvent) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TitleListener) {
+                    ((TitleListener) abstractFeature).onTitle(titleEvent.getPacketTitle());
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(RenderPlayerEvent.Pre preRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof PlayerRenderListener) {
+                    ((PlayerRenderListener) abstractFeature).onEntityRenderPre(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onRender(RenderPlayerEvent.Post preRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof PlayerRenderListener) {
+                    ((PlayerRenderListener) abstractFeature).onEntityRenderPost(preRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+
+    @SubscribeEvent
+    public void onRenderWorld(RenderWorldLastEvent postRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof WorldRenderListener) {
+                    ((WorldRenderListener) abstractFeature).drawWorld(postRender.partialTicks);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onInteract(PlayerInteractEvent postRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof InteractListener) {
+                    ((InteractListener) abstractFeature).onInteract(postRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+
+    @SubscribeEvent
+    public void onRenderWorld(ClientChatReceivedEvent postRender) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof ChatListener) {
+                    ((ChatListener) abstractFeature).onChat(postRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void onChatGlobal(ClientChatReceivedEvent postRender) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof ChatListenerGlobal) {
+                    ((ChatListenerGlobal) abstractFeature).onChat(postRender);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent
+    public void dungeonTooltip(ItemTooltipEvent event) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof TooltipListener) {
+                    ((TooltipListener) abstractFeature).onTooltip(event);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent tick) {
@@ -69,6 +329,85 @@ public class FeatureListener {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
+        }
+    }
+    @SubscribeEvent
+    public void onGuiOpen(GuiOpenEvent tick) {
+            try {
+                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+                if (!skyblockStatus.isOnSkyblock()) return;
+
+                for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                    if (abstractFeature instanceof GuiOpenListener) {
+                        ((GuiOpenListener) abstractFeature).onGuiOpen(tick);
+                    }
+                }
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+    }
+    @SubscribeEvent
+    public void onGuiRender(GuiScreenEvent.DrawScreenEvent.Post render) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiPostRenderListener) {
+                    ((GuiPostRenderListener) abstractFeature).onGuiPostRender(render);
+                }
+            }
+            GlStateManager.enableBlend();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onGuiRender(GuiScreenEvent.DrawScreenEvent.Pre render) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiPreRenderListener) {
+                    ((GuiPreRenderListener) abstractFeature).onGuiPreRender(render);
+                }
+            }
+            GlStateManager.enableBlend();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onGuiRender(GuiScreenEvent.BackgroundDrawnEvent render) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiBackgroundRenderListener) {
+                    ((GuiBackgroundRenderListener) abstractFeature).onGuiBGRender(render);
+                }
+            }
+            GlStateManager.enableBlend();
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
+    public void onGuiEvent(GuiScreenEvent.MouseInputEvent.Pre input) {
+        try {
+            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+            if (!skyblockStatus.isOnSkyblock()) return;
+
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof GuiClickListener) {
+                    ((GuiClickListener) abstractFeature).onMouseInput(input);
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
     @SubscribeEvent
@@ -89,6 +428,18 @@ public class FeatureListener {
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof SkyblockLeaveListener) {
                     ((SkyblockLeaveListener) abstractFeature).onSkyblockQuit();
+                }
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
+    }
+    @SubscribeEvent
+    public void onKey(GuiScreenEvent.KeyboardInputEvent event) {
+        try {
+            for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+                if (abstractFeature instanceof KeyInputListener) {
+                    ((KeyInputListener) abstractFeature).onKeyInput(event);
                 }
             }
         } catch (Throwable t) {

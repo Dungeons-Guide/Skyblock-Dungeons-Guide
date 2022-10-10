@@ -19,15 +19,16 @@
 package kr.syeyoung.dungeonsguide.features.impl.discord.onlinealarm;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordActivity;
-import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.impl.discord.inviteViewer.ImageTexture;
+import kr.syeyoung.dungeonsguide.features.listener.DiscordUserUpdateListener;
 import kr.syeyoung.dungeonsguide.features.listener.ScreenRenderListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
+import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
+import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordActivity;
+import kr.syeyoung.dungeonsguide.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -36,8 +37,6 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -47,10 +46,9 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class PlayingDGAlarm extends SimpleFeature implements ScreenRenderListener, TickListener {
+public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateListener, ScreenRenderListener, TickListener {
     public PlayingDGAlarm() {
         super("Discord", "Friend Online Notification","Notifies you in bottom when your discord friend has launched a Minecraft with DG!\n\nRequires the Friend's Discord RPC to be enabled", "discord.playingalarm");
-        MinecraftForge.EVENT_BUS.register(this);
     }
     private List<PlayerOnline> notif = new CopyOnWriteArrayList<>();
 
@@ -151,7 +149,7 @@ public class PlayingDGAlarm extends SimpleFeature implements ScreenRenderListene
         private long end;
     }
 
-    @SubscribeEvent
+    @Override
     public void onDiscordUserUpdate(DiscordUserUpdateEvent event) {
         JDiscordRelation prev = event.getPrev(), current = event.getCurrent();
         if (!isDisplayable(prev) && isDisplayable(current)) {

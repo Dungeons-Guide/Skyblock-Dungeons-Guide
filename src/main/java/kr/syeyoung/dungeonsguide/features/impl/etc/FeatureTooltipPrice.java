@@ -20,29 +20,26 @@ package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.TooltipListener;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.entity.player.ItemTooltipEvent;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 
 import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FeatureTooltipPrice extends SimpleFeature {
+public class FeatureTooltipPrice extends SimpleFeature implements TooltipListener {
     public FeatureTooltipPrice() {
         super("Misc.API Features", "Item Price", "Shows price of items", "tooltip.price");
         addParameter("reqShift", new FeatureParameter<Boolean>("reqShift", "Require Shift", "If shift needs to be pressed in order for this feature to be activated", false, "boolean"));
         setEnabled(false);
-        MinecraftForge.EVENT_BUS.register(this);
-
     }
 
-    @SubscribeEvent
+    @Override
     public void onTooltip(ItemTooltipEvent event) {
         if (!isEnabled()) return;
 

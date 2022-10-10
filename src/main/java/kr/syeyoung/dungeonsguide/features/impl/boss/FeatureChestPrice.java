@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.features.impl.boss;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.GuiBackgroundRenderListener;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -33,8 +34,6 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -42,13 +41,12 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FeatureChestPrice extends SimpleFeature {
+public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRenderListener {
     public FeatureChestPrice() {
         super("Bossfight", "Show Profit of Dungeon Chests","Show Profit of Dungeon Chests", "bossfight.profitchest", false);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
-    @SubscribeEvent
+    @Override
     public void onGuiBGRender(GuiScreenEvent.BackgroundDrawnEvent rendered) {
         if (!isEnabled()) return;
         if (!(rendered.gui instanceof GuiChest)) return;

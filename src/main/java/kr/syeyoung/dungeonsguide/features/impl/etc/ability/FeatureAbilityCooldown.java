@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
@@ -33,19 +34,16 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FeatureAbilityCooldown extends TextHUDFeature implements TickListener {
+public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListener, TickListener {
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureAbilityCooldown() {
         super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2", false, 100, getFontRenderer().FONT_HEIGHT * 5);
-        MinecraftForge.EVENT_BUS.register(this);
         getStyles().add(new TextStyle("abilityname", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("number", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
@@ -305,7 +303,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements TickListen
     Pattern thePattern3 = Pattern.compile("§r§aUsed (.+)§r§a!§r");
 
     private String lastActionbarAbility;
-    @SubscribeEvent
+    @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) {
             Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());

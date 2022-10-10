@@ -21,21 +21,19 @@ package kr.syeyoung.dungeonsguide.features.impl.secret;
 import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.KeybindPressedListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 
-public class FeatureTogglePathfind extends SimpleFeature {
+public class FeatureTogglePathfind extends SimpleFeature implements KeybindPressedListener {
     public FeatureTogglePathfind() {
         super("Dungeon Secrets.Keybinds", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nPress settings to edit the key", "secret.togglePathfind");
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle pathfind lines", Keyboard.KEY_NONE, "keybind"));
-        MinecraftForge.EVENT_BUS.register(this);
     }
     public boolean togglePathfindStatus = false;
 
-    @SubscribeEvent
+    @Override
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
             togglePathfindStatus = !togglePathfindStatus;

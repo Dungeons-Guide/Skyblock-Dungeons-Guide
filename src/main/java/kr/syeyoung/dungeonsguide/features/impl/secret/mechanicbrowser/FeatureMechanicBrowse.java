@@ -24,34 +24,33 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
+import kr.syeyoung.dungeonsguide.features.listener.GuiPreRenderListener;
+import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.gui.elements.MPassiveLabelAndElement;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
+import net.minecraft.client.gui.*;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.io.IOException;
+import java.util.*;
 import java.util.List;
-import java.util.Optional;
 
-public class FeatureMechanicBrowse extends GuiFeature {
+public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
     public FeatureMechanicBrowse() {
         super("Dungeon Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
-        MinecraftForge.EVENT_BUS.register(this);
         addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
         mGuiMechanicBrowser = new MGuiMechanicBrowser(this);
         mGuiMechanicBrowser.setWorldAndResolution(Minecraft.getMinecraft(), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight);
@@ -106,7 +105,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
     @Override
     public void drawHUD(float partialTicks) { }
 
-    @SubscribeEvent
+    @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         try {
@@ -117,7 +116,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
     }
 
 
-    @SubscribeEvent
+    @Override
     public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
         if (!isEnabled()) return;
         int i = Mouse.getEventX();
@@ -125,7 +124,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
         mGuiMechanicBrowser.drawScreen(i, j, rendered.renderPartialTicks);
     }
 
-    @SubscribeEvent
+    @Override
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

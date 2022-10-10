@@ -24,6 +24,8 @@ import io.github.moulberry.hychat.chat.ChatManager;
 import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.party.PartyContext;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
@@ -40,8 +42,9 @@ import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.playerpro
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.DataRendererRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.datarenders.IDataRenderer;
-import kr.syeyoung.dungeonsguide.party.PartyContext;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
+import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.features.listener.GuiClickListener;
+import kr.syeyoung.dungeonsguide.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -61,11 +64,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.GuiScreenEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.client.config.GuiUtils;
 import net.minecraftforge.fml.common.Loader;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -77,7 +77,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
+public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPostRenderListener, ChatListener, GuiClickListener {
 
     public FeatureViewPlayerStatsOnJoin() {
         super("Party", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
@@ -87,7 +87,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
         )), "stringlist"));
 
-        MinecraftForge.EVENT_BUS.register(this);
+
 
 
     }
@@ -105,7 +105,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     private boolean shouldDraw = false;
 
 
-    @SubscribeEvent
+    @Override
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!(mc.currentScreen instanceof GuiChat)) {
             cancelRender();
@@ -516,7 +516,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         GL11.glScissor((x) * scale, mc.displayHeight - (y + height) * scale, (width) * scale, height * scale);
     }
 
-    @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
+    @Override
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         int width = scaledResolution.getScaledWidth();
@@ -596,7 +596,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         return ichatcomponent;
     }
 
-    @SubscribeEvent
+    @Override
     public void onChat(ClientChatReceivedEvent event) {
         if (!isEnabled()) return;
         String str = event.message.getFormattedText();

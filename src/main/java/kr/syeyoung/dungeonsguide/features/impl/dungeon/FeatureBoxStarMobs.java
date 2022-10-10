@@ -24,28 +24,26 @@ import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 
-public class FeatureBoxStarMobs extends SimpleFeature {
+public class FeatureBoxStarMobs extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxStarMobs() {
         super("Dungeon.Mobs", "Box Starred mobs", "Box Starred mobs in dungeons", "dungeon.starmobbox", false);
         addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and starred mobs to be boxed", 20, "integer"));
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Starred mobs", new AColor(0,255,255,50), "acolor"));
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    @SubscribeEvent
+    @Override
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
