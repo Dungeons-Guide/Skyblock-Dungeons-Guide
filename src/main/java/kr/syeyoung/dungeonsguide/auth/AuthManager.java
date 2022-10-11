@@ -80,7 +80,7 @@ public class AuthManager {
                     shouldReAuth = true;
                 }
             }
-        }, 10,100, TimeUnit.MILLISECONDS);
+        }, 10,2000, TimeUnit.MILLISECONDS);
     }
 
     boolean shouldReAuth = true;
