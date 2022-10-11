@@ -20,10 +20,12 @@ package kr.syeyoung.dungeonsguide.events.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class PlayerListItemPacketEvent extends Event {
     private S38PacketPlayerListItem packetPlayerListItem;

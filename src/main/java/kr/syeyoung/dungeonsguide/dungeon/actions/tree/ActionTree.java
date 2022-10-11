@@ -24,10 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 
 @Data
 public class ActionTree implements Cloneable {
@@ -39,6 +36,13 @@ public class ActionTree implements Cloneable {
     @Override
     public int hashCode() { return current == null ? 0 : current.hashCode(); }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        ActionTree that = (ActionTree) o;
+        return Objects.equals(parent, that.parent) && Objects.equals(current, that.current) && Objects.equals(children, that.children);
+    }
 
     public static ActionTree buildActionTree(Set<Action> actions, DungeonRoom dungeonRoom) {
         ActionRoot root = new ActionRoot();

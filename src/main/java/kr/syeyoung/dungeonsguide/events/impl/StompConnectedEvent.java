@@ -21,9 +21,11 @@ package kr.syeyoung.dungeonsguide.events.impl;
 import kr.syeyoung.dungeonsguide.stomp.StompClient;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class StompConnectedEvent extends Event {
     private StompClient stompInterface;

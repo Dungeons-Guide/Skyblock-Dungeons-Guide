@@ -20,11 +20,13 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 public class ActionRoot extends AbstractAction {
     private Set<Action> preRequisite = new HashSet<Action>();
 

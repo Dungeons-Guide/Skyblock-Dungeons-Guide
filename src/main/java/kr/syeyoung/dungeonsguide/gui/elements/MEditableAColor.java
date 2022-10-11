@@ -44,7 +44,6 @@ public class MEditableAColor extends MPanel {
     private Dimension size = new Dimension(20,15);
 
     @Getter
-    @Setter
     private boolean enableEdit = false;
 
     @Getter

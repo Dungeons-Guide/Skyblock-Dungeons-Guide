@@ -19,12 +19,11 @@
 package kr.syeyoung.dungeonsguide.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -50,7 +49,7 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
     private MTextField filterWhitelist, filterBlacklist, highlightNote, blacklistClassTxt;
     private MIntegerSelectionButton integerSelection;
 
-    @Getter @Setter
+    @Getter
     boolean delistable = false;
 
     public void setDelistable(boolean delistable) {

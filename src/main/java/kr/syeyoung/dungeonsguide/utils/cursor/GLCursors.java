@@ -47,10 +47,12 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 
+@SuppressWarnings("unsafe")
 public class GLCursors {
 
     static Logger logger = LogManager.getLogger("DG-GlCursors");
 
+    @SuppressWarnings("unsafe")
     static boolean verbose = false;
 
     private static Unsafe unsafe;

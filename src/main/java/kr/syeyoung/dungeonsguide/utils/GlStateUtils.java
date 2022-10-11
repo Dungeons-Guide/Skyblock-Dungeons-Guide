@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.utils;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.lang.reflect.Field;

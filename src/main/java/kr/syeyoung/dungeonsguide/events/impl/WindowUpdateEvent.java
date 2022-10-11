@@ -20,11 +20,13 @@ package kr.syeyoung.dungeonsguide.events.impl;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraft.network.play.server.S2FPacketSetSlot;
 import net.minecraft.network.play.server.S30PacketWindowItems;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class WindowUpdateEvent extends Event {
     S30PacketWindowItems windowItems;

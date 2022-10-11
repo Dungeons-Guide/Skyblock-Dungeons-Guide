@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.gui.elements;
 
-import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
@@ -31,7 +30,7 @@ import java.awt.*;
 
 public class MScrollBar extends MPanel {
     private final Axis axis;
-    @Setter
+
     @Getter
     private int thumbSize, max, min;
     @Setter

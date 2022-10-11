@@ -21,9 +21,12 @@ package kr.syeyoung.dungeonsguide.events.impl;
 import kr.syeyoung.dungeonsguide.discord.gamesdk.jna.datastruct.DiscordUser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import net.minecraftforge.fml.common.eventhandler.Event;
 
-@Data @AllArgsConstructor
+@Data
+@EqualsAndHashCode(callSuper=false)
+@AllArgsConstructor
 public class DiscordUserJoinRequestEvent extends Event {
     private DiscordUser discordUser;
     private boolean isInvite;
