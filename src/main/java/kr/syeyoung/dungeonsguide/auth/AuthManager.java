@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.auth;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
@@ -23,6 +24,7 @@ import java.security.NoSuchAlgorithmException;
 import java.util.Objects;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 
@@ -72,7 +74,8 @@ public class AuthManager {
 
         MinecraftForge.EVENT_BUS.register(this);
 
-        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
+        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DgAuth Pool").build();
+        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, namedThreadFactory);
         scheduler.scheduleAtFixedRate(() -> {
             if (getToken() != null) {
                 JsonObject obj = DgAuthUtil.getJwtPayload(getToken());
