@@ -57,11 +57,15 @@ public class YoMamaOutdated {
     public void onGuiOpen(GuiOpenEvent event) {
         if (!showedError && isUsingOutdatedDg) {
             showedError = true;
+
+            GuiScreen ogGui = event.gui;
+
             event.gui = new GuiScreen() {
                 @Override
                 public void initGui() {
                     ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
                     this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2-100,sr.getScaledHeight()-70 ,"Close Minecraft"));
+                    this.buttonList.add(new GuiButton(1, sr.getScaledWidth()/2-100,sr.getScaledHeight()-40 ,"Play Without DG"));
                 }
 
                 @Override
@@ -69,6 +73,8 @@ public class YoMamaOutdated {
                     super.actionPerformed(button);
                     if (button.id == 0) {
                         FMLCommonHandler.instance().exitJava(-1,true);
+                    } else if (button.id == 1) {
+                        Minecraft.getMinecraft().displayGuiScreen(ogGui);
                     }
                 }
 
