@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomedit.panes;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
@@ -150,7 +150,7 @@ public class GeneralEditPane extends MPanel {
                     try {
                         NBTTagCompound nbtTagCompound2 = createNBT();
 
-                        File f=new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/"+
+                        File f=new File(Main.getConfigDir(), "schematics/"+
                                 dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
 
                         Method method = null;

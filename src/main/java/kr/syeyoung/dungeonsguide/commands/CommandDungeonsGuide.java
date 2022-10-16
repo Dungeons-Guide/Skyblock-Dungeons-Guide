@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
 import kr.syeyoung.dungeonsguide.party.PartyContext;
@@ -97,11 +98,11 @@ public class CommandDungeonsGuide extends CommandBase {
         if (args.length == 0) {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("saverooms")) {
-            DungeonRoomInfoRegistry.saveAll(DungeonsGuide.getDungeonsGuide().getConfigDir());
+            DungeonRoomInfoRegistry.saveAll(Main.getConfigDir());
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
         } else if (args[0].equalsIgnoreCase("loadrooms")) {
             try {
-                DungeonRoomInfoRegistry.loadAll(DungeonsGuide.getDungeonsGuide().getConfigDir());
+                DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
                 return;
             } catch (BadPaddingException e) {
@@ -175,7 +176,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 t.printStackTrace();
             }
         } else if (args[0].equals("process") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
-            File root = DungeonsGuide.getDungeonsGuide().getConfigDir();
+            File root = Main.getConfigDir();
             File dir = new File(root, "processorinput");
             File outsecret = new File(root, "processoroutsecret");
             for (File f : dir.listFiles()) {
@@ -198,7 +199,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 }
             }
         } else if (args[0].equals("check") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
-            File root = DungeonsGuide.getDungeonsGuide().getConfigDir();
+            File root = Main.getConfigDir();
             for (File f : root.listFiles()) {
                 if (!f.getName().endsWith(".roomdata")) continue;
                 try {
@@ -352,7 +353,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
         } else if (args[0].equalsIgnoreCase("saverun")) {
             try {
-                File f = DungeonsGuide.getDungeonsGuide().getConfigDir();
+                File f = Main.getConfigDir();
                 File runDir = new File(f, "dungeonruns");
                 runDir.mkdirs();
 
@@ -418,7 +419,7 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equals("createFakeRoom") && Minecraft.getMinecraft().getSession().getPlayerID().replace("-", "").equals("e686fe0aab804a71ac7011dc8c2b534c")) {
 
             // load schematic
-            File f = new File(DungeonsGuide.getDungeonsGuide().getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
+            File f = new File(Main.getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
             NBTTagCompound compound;
             try {
                 compound = CompressedStreamTools.readCompressed(new FileInputStream(f));

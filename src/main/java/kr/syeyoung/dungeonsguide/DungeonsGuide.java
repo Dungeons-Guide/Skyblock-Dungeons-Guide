@@ -20,18 +20,17 @@ package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
+import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.events.listener.FeatureListener;
 import kr.syeyoung.dungeonsguide.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
-import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
@@ -39,13 +38,11 @@ import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -53,12 +50,10 @@ import org.apache.logging.log4j.Logger;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
-import java.util.List;
 import java.util.Set;
 
 public class DungeonsGuide {
@@ -126,7 +121,7 @@ public class DungeonsGuide {
 
         progressbar.step("Loading RoomData's");
         try {
-            DungeonRoomInfoRegistry.loadAll(configDir);
+            DungeonRoomInfoRegistry.loadAll(Main.configDir);
         } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |
                  IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             e.printStackTrace();
@@ -155,31 +150,6 @@ public class DungeonsGuide {
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
     }
-
-    @Getter
-    private boolean firstTimeUsingDG = false;
-
-    public void pre(FMLPreInitializationEvent event) {
-        configDir = new File(event.getModConfigurationDirectory(), "dungeonsguide");
-        File configFile = new File(configDir, "config.json");
-        if (!configFile.exists()) {
-            configDir.mkdirs();
-            firstTimeUsingDG = true;
-        }
-        Config.f = configFile;
-        Minecraft.getMinecraft().getFramebuffer().enableStencil();
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack());
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-    }
-
-    @Getter
-    private File configDir;
 
 
     public SkyblockStatus getSkyblockStatus() {

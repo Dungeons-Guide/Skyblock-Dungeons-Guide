@@ -199,15 +199,6 @@ public class DungeonListener {
 
 
     @SubscribeEvent
-    public void onHypixelJoin(HypixelJoinedEvent skyblockJoinedEvent) {
-        if (DungeonsGuide.getDungeonsGuide().isFirstTimeUsingDG()) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fThank you for installing DungeonsGuide, the most intelligent skyblock dungeon mod!"));
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fThe gui for relocating GUI Elements and enabling or disabling features can be opened by typing §e/dg"));
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fType §e/dg help §fto view full list of commands offered by dungeons guide!"));
-        }
-    }
-
-    @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         try {
             if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
