@@ -24,10 +24,15 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum EDungeonDoorType {
-    NONE(false, false, false,"?"), ENTRANCE(true, false, false, "entrance"), WITHER(true, true,true,"withergate"),WITHER_FAIRY(true, false,true,"wither-fairy-gate"), BLOOD(true, true,true, "bloodgate"), UNOPEN(true, false, false,"gate");
+    NONE(false, false, false,"?"), ENTRANCE(true, false, false, "entrance"),
+    WITHER(true, true,true,"withergate"),
+    WITHER_FAIRY(true, false,true,"wither-fairy-gate"),
+    BLOOD(true, true,true, "bloodgate"),
+    UNOPEN(true, false, false,"gate");
 
-    private boolean exist;
-    private boolean keyRequired;
-    private boolean headToBlood;
-    private String name;
+
+    private final boolean exist;
+    private final boolean keyRequired;
+    private final boolean headToBlood;
+    private final String name;
 }

@@ -39,7 +39,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionKill extends AbstractAction {
-    private Set<Action> preRequisite = new HashSet<Action>();
+    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
     private Predicate<Entity> predicate = Predicates.alwaysFalse();
     private int radius;
@@ -49,7 +49,7 @@ public class ActionKill extends AbstractAction {
     }
 
     @Override
-    public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
         return preRequisite;
     }
 

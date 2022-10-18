@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 
@@ -27,7 +27,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 public interface DungeonMechanic extends Serializable {
-    Set<Action> getAction(String state, DungeonRoom dungeonRoom);
+    Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom);
 
     void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
 

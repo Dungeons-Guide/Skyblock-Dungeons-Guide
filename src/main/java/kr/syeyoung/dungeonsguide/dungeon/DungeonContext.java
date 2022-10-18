@@ -56,17 +56,17 @@ public class DungeonContext {
     private BlockPos dungeonMin;
 
     @Getter
-    private final Map<Point, DungeonRoom> roomMapper = new HashMap<Point, DungeonRoom>();
+    private final Map<Point, DungeonRoom> roomMapper = new HashMap<>();
     @Getter
-    private final List<DungeonRoom> dungeonRoomList = new ArrayList<DungeonRoom>();
+    private final List<DungeonRoom> dungeonRoomList = new ArrayList<>();
 
     @Getter
-    private final List<RoomProcessor> globalRoomProcessors = new ArrayList<RoomProcessor>();
+    private final List<RoomProcessor> globalRoomProcessors = new ArrayList<>();
 
     @Getter
-    private final Map<String, Integer> deaths = new HashMap<String, Integer>();
+    private final Map<String, Integer> deaths = new HashMap<>();
     @Getter
-    private final List<String[]> milestoneReached = new ArrayList<String[]>();
+    private final List<String[]> milestoneReached = new ArrayList<>();
     @Getter
     @Setter
     private long BossRoomEnterSeconds = -1;
@@ -103,10 +103,10 @@ public class DungeonContext {
     private BossfightProcessor bossfightProcessor;
 
     @Getter
-    private final Set<String> players = new HashSet<String>();
+    private final Set<String> players = new HashSet<>();
 
     @Getter
-    private final List<DungeonEvent> events = new ArrayList<DungeonEvent>();
+    private final List<DungeonEvent> events = new ArrayList<>();
 
     public DungeonContext(World world) {
         this.world = world;
@@ -118,16 +118,18 @@ public class DungeonContext {
 
             secretPercentage = doorFinder.secretPercentage(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             maxSpeed = doorFinder.speedSecond(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
-        } else mapProcessor.setBugged(true);
+        } else {
+            mapProcessor.setBugged(true);
+        }
         init = System.currentTimeMillis();
     }
 
     public void createEvent(DungeonEventData eventData) {
-        events.add(new DungeonEvent(eventData));
+//        events.add(new DungeonEvent(eventData));
     }
 
 
-    private final Rectangle roomBoundary = new Rectangle(-10,-10,138,138);
+    private final Rectangle roomBoundary = new Rectangle(-10, -10, 138, 138);
 
     public void tick() {
         mapProcessor.tick();
@@ -145,14 +147,13 @@ public class DungeonContext {
             }
         }
         List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
-        try {
-            for (int i = 1; i < 20; i++) {
-                NetworkPlayerInfo networkPlayerInfo = list.get(i);
-                String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
-                if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
-                players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
-            }
-        } catch (Exception e) {}
+
+        for (int i = 1; i < 20; i++) {
+            NetworkPlayerInfo networkPlayerInfo = list.get(i);
+            String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
+            if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
+            players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
+        }
 
         if (latestSecretCnt != FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) {
             int newSecretCnt = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound();
@@ -174,6 +175,7 @@ public class DungeonContext {
     private boolean ended = false;
     @Getter
     private boolean defeated = false;
+
     public void onChat(ClientChatReceivedEvent event) {
         IChatComponent component = event.message;
         String formatted = component.getFormattedText();
@@ -186,8 +188,8 @@ public class DungeonContext {
             int x = Integer.parseInt(coords.split("/")[0]);
             int z = Integer.parseInt(coords.split("/")[1]);
             int secrets2 = Integer.parseInt(secrets);
-            Point roomPt = mapProcessor.worldPointToRoomPoint(new BlockPos(x,70,z));
-            DungeonsGuide.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: "+roomPt.x+" / " + roomPt.y + " total secrets "+secrets2));
+            Point roomPt = mapProcessor.worldPointToRoomPoint(new BlockPos(x, 70, z));
+            DungeonsGuide.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2));
             DungeonRoom dr = roomMapper.get(roomPt);
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);

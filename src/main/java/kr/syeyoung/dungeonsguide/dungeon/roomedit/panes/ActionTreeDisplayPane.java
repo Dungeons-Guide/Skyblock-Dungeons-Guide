@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomedit.panes;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionTree;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionTreeUtil;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -43,14 +43,14 @@ public class ActionTreeDisplayPane extends MPanel {
 
     private final DungeonRoom dungeonRoom;
     private final ActionTree tree;
-    private List<Action> linearified;
+    private List<AbstractAction> linearified;
     public ActionTreeDisplayPane(DungeonRoom dungeonRoom, ActionTree tree) {
         this.dungeonRoom = dungeonRoom;
         this.tree = tree;
         try {
             this.linearified = ActionTreeUtil.linearifyActionTree(tree);
         } catch (Exception e) {
-            linearified = new ArrayList<Action>();
+            linearified = new ArrayList<AbstractAction>();
             e.printStackTrace();
         }
         scale = 1.0f;
@@ -130,11 +130,11 @@ public class ActionTreeDisplayPane extends MPanel {
         return Math.max(xOff, dim.width);
     }
 
-    public void renderLinearified(List<Action> actions, int x, int y, FontRenderer fr) {
+    public void renderLinearified(List<AbstractAction> actions, int x, int y, FontRenderer fr) {
         Point lastPt = null;
         int y2 = y;
 
-        for (Action action : actions) {
+        for (AbstractAction action : actions) {
             Dimension dim = renderAction(action, x, y2, fr);
             if (lastPt != null) {
                 GlStateManager.pushMatrix();
@@ -164,7 +164,7 @@ public class ActionTreeDisplayPane extends MPanel {
         }
     }
 
-    public Dimension renderAction(Action action, int x, int y, FontRenderer fr) {
+    public Dimension renderAction(AbstractAction action, int x, int y, FontRenderer fr) {
         String[] lines = action.toString().split("\n");
         int maxWidth = 0;
         for (String line : lines) {

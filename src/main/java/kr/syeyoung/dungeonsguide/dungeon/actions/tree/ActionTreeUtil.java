@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions.tree;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 
 import java.util.*;
 
 public class ActionTreeUtil {
-    public static List<Action> linearifyActionTree(ActionTree input) {
+    public static List<AbstractAction> linearifyActionTree(ActionTree input) {
         ActionTree tree = copyActionTree(input);
 
-        List<Action> actions = new ArrayList<Action>();
+        List<AbstractAction> actions = new ArrayList<AbstractAction>();
 
         int plsHalt = 0;
         while (tree.getChildren().size() != 0) {

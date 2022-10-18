@@ -31,7 +31,7 @@ import java.util.Set;
 public class DungeonDoor {
     private final World w;
     private final BlockPos position;
-    private EDungeonDoorType type;
+    private final EDungeonDoorType type;
     private boolean isZDir;
 
     private static final Set<Block> legalBlocks = Sets.newHashSet(Blocks.coal_block, Blocks.barrier, Blocks.monster_egg, Blocks.air, Blocks.stained_hardened_clay);
@@ -45,33 +45,39 @@ public class DungeonDoor {
         this.type = type;
         boolean exist = type.isExist();
 
-        for (int x = -1; x<=1; x++)
-            for (int y = -1; y<=1; y++)
+        for (int x = -1; x<=1; x++) {
+            for (int y = -1; y<=1; y++) {
                 for (int z = -1; z<=1; z++) {
                     BlockPos pos2 = pos.add(x,y,z);
                     Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
                     if (itshouldbeall != block) exist = false;
                 }
+            }
+        }
         if (exist) {
             BlockPos ZCheck = pos.add(0,0,2);
             isZDir = world.getChunkFromBlockCoords(ZCheck).getBlock(ZCheck) == Blocks.air;
 
             if (isZDir) {
-                for (int x = -1; x<=1; x++)
-                    for (int y = -1; y<=1; y++)
+                for (int x = -1; x<=1; x++) {
+                    for (int y = -1; y<=1; y++) {
                         for (int z = -2; z<=2; z+=4) {
                             BlockPos pos2 = pos.add(x,y,z);
                             Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
                             if (block != Blocks.air) exist = false;
                         }
+                    }
+                }
             } else {
-                for (int x = -2; x<=2; x+=4)
-                    for (int y = -1; y<=1; y++)
+                for (int x = -2; x<=2; x+=4) {
+                    for (int y = -1; y<=1; y++) {
                         for (int z = -1; z<=1; z++) {
                             BlockPos pos2 = pos.add(x,y,z);
                             Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
                             if (block != Blocks.air) exist = false;
                         }
+                    }
+                }
             }
         }
         if (!exist) {

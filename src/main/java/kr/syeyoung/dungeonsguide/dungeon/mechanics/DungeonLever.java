@@ -37,11 +37,11 @@ public class DungeonLever implements DungeonMechanic {
     private String triggering = "";
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
             ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
@@ -54,8 +54,8 @@ public class DungeonLever implements DungeonMechanic {
         }
 
         if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         if (!state.equalsIgnoreCase(getCurrentState(dungeonRoom))){
             ActionClick actionClick;
             preRequisites.add(actionClick = new ActionClick(leverPoint));

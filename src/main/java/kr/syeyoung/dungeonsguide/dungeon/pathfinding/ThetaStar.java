@@ -190,11 +190,9 @@ public class ThetaStar {
         return MathHelper.sqrt_float(x * x + y * y + z * z);
     }
 
-    @RequiredArgsConstructor
     @Data
     public static final class Node {
         @Data
-        @RequiredArgsConstructor
         public static final class Coordinate {
             private final int x, y, z;
         }

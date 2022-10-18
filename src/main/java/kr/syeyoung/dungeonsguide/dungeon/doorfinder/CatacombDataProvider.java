@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
-import com.google.common.base.Predicate;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.*;
@@ -27,59 +26,36 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import javax.vecmath.Vector2d;
 import java.util.Collection;
 import java.util.Set;
 
-public class CatacombDataProvider implements DungeonSpecificDataProvider {
+public class CatacombDataProvider extends DungeonSpecificDataProvider {
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
     @Override
-    public BlockPos findDoor(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
-            @Override
-            public boolean apply(EntityArmorStand input) {
-                return input.getName().equals("§bMort");
-            }
-        });
+    public Vector2d findDoorOffset(World w, String dungeonName) {
+        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
 
-        if (armorStand.size() != 0) {
-            EntityArmorStand mort = armorStand.iterator().next();
-            BlockPos pos = mort.getPosition();
-            pos = pos.add(0, 3, 0);
-            for (int i = 0; i < 5; i++) {
-                for (Vector2d vector2d:directions) {
-                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                        return pos.add(vector2d.x * (i + 2), -2, vector2d.y * (i+2));
-                    }
-                }
-            }
+        if (!armorStand.isEmpty()) {
+            return getVector2d(w, armorStand, directions);
         }
         return null;
     }
 
-    @Override
-    public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, new Predicate<EntityArmorStand>() {
-            @Override
-            public boolean apply(EntityArmorStand input) {
-                return input.getName().equals("§bMort");
-            }
-        });
-
-        if (armorStand.size() != 0) {
-            EntityArmorStand mort = armorStand.iterator().next();
-            BlockPos pos = mort.getPosition();
-            pos = pos.add(0, 3, 0);
-            for (int i = 0; i < 5; i++) {
-                for (Vector2d vector2d:directions) {
-                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                        return vector2d;
-                    }
+    @Nullable
+    static Vector2d getVector2d(World w, Collection<EntityArmorStand> armorStand, Set<Vector2d> directions) {
+        EntityArmorStand mort = armorStand.iterator().next();
+        BlockPos pos = mort.getPosition();
+        pos = pos.add(0, 3, 0);
+        for (int i = 0; i < 5; i++) {
+            for (Vector2d vector2d: directions) {
+                BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
+                if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
+                    return vector2d;
                 }
             }
         }
@@ -93,57 +69,59 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
         DungeonsGuide.sendDebugChat(new ChatComponentText("Floor: "+floor+ " Building bossfight processor"));
-        if (floor.equals("F1")) {
-            return new BossfightProcessorBonzo();
-        } else if (floor.equals("F2")) {
-            return new BossfightProcessorScarf();
-        } else if (floor.equals("F3")) {
-            return new BossfightProcessorProf();
-        } else if (floor.equals("F4")) {
-            return new BossfightProcessorThorn();
-        } else if (floor.equals("F5")) {
-            return new BossfightProcessorLivid(false);
-        } else if (floor.equals("F6")) {
-            return new BossfightProcessorSadan();
-        } else if (floor.equals("F7")) {
-            return new BossfightProcessorNecron();
+        switch (floor) {
+            case "F1":
+                return new BossfightProcessorBonzo();
+            case "F2":
+                return new BossfightProcessorScarf();
+            case "F3":
+                return new BossfightProcessorProf();
+            case "F4":
+                return new BossfightProcessorThorn();
+            case "F5":
+                return new BossfightProcessorLivid(false);
+            case "F6":
+                return new BossfightProcessorSadan();
+            case "F7":
+                return new BossfightProcessorNecron();
+            default:
+                return null;
         }
-        return null;
     }
 
     @Override
     public boolean isTrapSpawn(String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        if (floor.equals("F3")) {
-            return true;
-        } else if (floor.equals("F4")) {
-            return true;
-        } else if (floor.equals("F5")) {
-            return true;
-        } else if (floor.equals("F6")) {
-            return true;
-        } else return floor.equals("F7");
+        switch (floor) {
+            case "F3":
+            case "F4":
+            case "F5":
+            case "F6":
+                return true;
+            default:
+                return floor.equals("F7");
+        }
     }
 
     @Override
     public double secretPercentage(String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        if (floor.equals("F1")) {
-            return 0.3;
-        } else if (floor.equals("F2")) {
-            return 0.4;
-        } else if (floor.equals("F3")) {
-            return 0.5;
-        } else if (floor.equals("F4")) {
-            return 0.6;
-        } else if (floor.equals("F5")) {
-            return 0.7;
-        } else if (floor.equals("F6")) {
-            return 0.85;
-        } else if (floor.equals("F7")) {
-            return 1.0;
-        } else if (floor.equals("E")) {
-            return 0.3;
+        switch (floor) {
+            case "F1":
+            case "E":
+                return 0.3;
+            case "F2":
+                return 0.4;
+            case "F3":
+                return 0.5;
+            case "F4":
+                return 0.6;
+            case "F5":
+                return 0.7;
+            case "F6":
+                return 0.85;
+            case "F7":
+                return 1.0;
         }
         return 1.0;
     }
@@ -151,20 +129,16 @@ public class CatacombDataProvider implements DungeonSpecificDataProvider {
     @Override
     public int speedSecond(String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        if (floor.equals("F1")) {
-            return 600;
-        } else if (floor.equals("F2")) {
-            return 600;
-        } else if (floor.equals("F3")) {
-            return 600;
-        } else if (floor.equals("F4")) {
-            return 600;
-        } else if (floor.equals("F5")) {
-            return 720;
-        } else if (floor.equals("F6")) {
-            return 600;
-        } else if (floor.equals("F7")) {
-            return 720;
+        switch (floor) {
+            case "F1":
+            case "F2":
+            case "F3":
+            case "F4":
+            case "F6":
+                return 600;
+            case "F5":
+            case "F7":
+                return 720;
         }
         return 600;
     }

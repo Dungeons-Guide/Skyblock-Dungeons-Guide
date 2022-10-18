@@ -26,7 +26,7 @@ import java.util.List;
 
 @Data
 public class OffsetPointSet implements Cloneable, Serializable {
-    private List<OffsetPoint> offsetPointList = new ArrayList<OffsetPoint>();
+    private List<OffsetPoint> offsetPointList = new ArrayList<>();
 
     @Override
     public Object clone() throws CloneNotSupportedException {

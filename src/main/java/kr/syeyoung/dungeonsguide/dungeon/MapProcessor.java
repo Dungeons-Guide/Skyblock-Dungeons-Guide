@@ -71,7 +71,7 @@ public class MapProcessor {
     @Setter
     private boolean bugged = false;
 
-    private final List<Point> roomsFound = new ArrayList<Point>();
+    private final List<Point> roomsFound = new ArrayList<>();
 
     private boolean axisMatch = false;
 

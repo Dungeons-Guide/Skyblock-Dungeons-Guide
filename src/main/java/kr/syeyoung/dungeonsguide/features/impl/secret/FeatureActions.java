@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.features.impl.secret;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
@@ -125,7 +125,7 @@ public class FeatureActions extends TextHUDFeature {
                 actualBit.add(new StyledText((i == path.getCurrent() ? ">" : " ") +" ","current"));
                 actualBit.add(new StyledText(i+"","number"));
                 actualBit.add(new StyledText(". ","dot"));
-                Action action = path.getActions().get(i);
+                AbstractAction action = path.getActions().get(i);
                 String[] str = action.toString().split("\n");
                 actualBit.add(new StyledText(str[0] + " ","action"));
                 actualBit.add(new StyledText("(","afterline"));

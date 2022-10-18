@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions.tree;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionRoot;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
@@ -30,7 +30,7 @@ import java.util.*;
 public class ActionTree implements Cloneable {
     @EqualsAndHashCode.Exclude
     private Set<ActionTree> parent;
-    private Action current;
+    private AbstractAction current;
     private Set<ActionTree> children;
 
     @Override
@@ -44,26 +44,26 @@ public class ActionTree implements Cloneable {
         return Objects.equals(parent, that.parent) && Objects.equals(current, that.current) && Objects.equals(children, that.children);
     }
 
-    public static ActionTree buildActionTree(Set<Action> actions, DungeonRoom dungeonRoom) {
+    public static ActionTree buildActionTree(Set<AbstractAction> actions, DungeonRoom dungeonRoom) {
         ActionRoot root = new ActionRoot();
         root.setPreRequisite(actions);
         ActionTree tree = new ActionTree();
-        tree.setParent(new HashSet<ActionTree>());
+        tree.setParent(new HashSet<>());
         tree.setCurrent(root);
-        HashSet<ActionTree> set = new HashSet();
-        for (Action action : actions) {
-            set.add(buildActionTree(tree, action, dungeonRoom, new HashMap<Action, ActionTree>()));
+        HashSet<ActionTree> set = new HashSet<>();
+        for (AbstractAction action : actions) {
+            set.add(buildActionTree(tree, action, dungeonRoom, new HashMap<>()));
         }
         tree.setChildren(set);
         return tree;
     }
-    public static ActionTree buildActionTree(Action actions, DungeonRoom dungeonRoom) {
-        return buildActionTree(null, actions, dungeonRoom, new HashMap<Action, ActionTree>());
+    public static ActionTree buildActionTree(AbstractAction actions, DungeonRoom dungeonRoom) {
+        return buildActionTree(null, actions, dungeonRoom, new HashMap<>());
     }
 
 
 
-    private static ActionTree buildActionTree(ActionTree parent, Action action, DungeonRoom dungeonRoom, Map<Action, ActionTree> alreadyBuilt) {
+    private static ActionTree buildActionTree(ActionTree parent, AbstractAction action, DungeonRoom dungeonRoom, Map<AbstractAction, ActionTree> alreadyBuilt) {
         if (action == null) return null;
         if (alreadyBuilt.containsKey(action))  {
             ActionTree tree = alreadyBuilt.get(action);
@@ -77,8 +77,8 @@ public class ActionTree implements Cloneable {
         if (parent != null)
             tree.getParent().add(parent);
         tree.setCurrent(action);
-        HashSet<ActionTree> set = new HashSet();
-        for (Action action2 : action.getPreRequisites(dungeonRoom)) {
+        HashSet<ActionTree> set = new HashSet<>();
+        for (AbstractAction action2 : action.getPreRequisites(dungeonRoom)) {
             set.add(buildActionTree(tree, action2, dungeonRoom, alreadyBuilt));
         }
         tree.setChildren(set);

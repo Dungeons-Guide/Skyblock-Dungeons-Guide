@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -42,10 +42,10 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
             ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
@@ -60,8 +60,8 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;

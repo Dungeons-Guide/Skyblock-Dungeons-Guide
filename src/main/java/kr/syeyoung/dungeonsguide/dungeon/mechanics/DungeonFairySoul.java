@@ -39,10 +39,10 @@ public class DungeonFairySoul implements DungeonMechanic {
 
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
             ActionInteract actionClick= new ActionInteract(secretPoint);
             actionClick.setPredicate(PredicateArmorStand.INSTANCE);

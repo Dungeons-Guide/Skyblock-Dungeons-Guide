@@ -18,21 +18,57 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
+import java.util.Collection;
+import java.util.Set;
 
-public interface DungeonSpecificDataProvider {
-    BlockPos findDoor(World w, String dungeonName);
-    Vector2d findDoorOffset(World w, String dungeonName);
+public abstract class DungeonSpecificDataProvider {
 
-    BossfightProcessor createBossfightProcessor(World w, String dungeonName);
+    private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
-    boolean isTrapSpawn(String dungeonName);
+    public BlockPos findDoor(World w, String dungeonName) {
+        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
 
-    double secretPercentage(String dungeonName);
+        if (!armorStand.isEmpty()) {
+            EntityArmorStand mort = armorStand.iterator().next();
+            BlockPos pos = mort.getPosition();
+            pos = pos.add(0, 3, 0);
+            for (int i = 0; i < 5; i++) {
+                for (Vector2d vector2d:directions) {
+                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
+                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
+                        return pos.add(vector2d.x * (i + 2), -2, vector2d.y * (i+2));
+                    }
+                }
+            }
+        }
+        return null;
+    }
 
-    int speedSecond(String dungeonName);
+    public Vector2d findDoorOffset(World w, String dungeonName) {
+        return null;
+    }
+
+    public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
+        return null;
+    }
+
+    public boolean isTrapSpawn(String dungeonName) {
+        return false;
+    }
+
+    public double secretPercentage(String dungeonName) {
+        return 0;
+    }
+
+    public int speedSecond(String dungeonName) {
+        return 0;
+    }
 }

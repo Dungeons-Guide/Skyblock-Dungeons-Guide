@@ -39,7 +39,7 @@ public class ActionRoute {
     @Getter
     private int current;
     @Getter
-    private final List<Action> actions;
+    private final List<AbstractAction> actions;
 
     private final DungeonRoom dungeonRoom;
 
@@ -59,19 +59,19 @@ public class ActionRoute {
         this.dungeonRoom = dungeonRoom;
     }
 
-    public Action next() {
+    public AbstractAction next() {
         current ++;
         if (current >= actions.size()) current = actions.size() - 1;
         return actions.get(current);
     }
 
-    public Action prev() {
+    public AbstractAction prev() {
         current --;
         if (current < 0) current = 0;
         return actions.get(current);
     }
 
-    public Action getCurrentAction() {
+    public AbstractAction getCurrentAction() {
         return actions.get(current);
     }
 
@@ -95,7 +95,7 @@ public class ActionRoute {
     }
 
     public void onTick() {
-        Action current = getCurrentAction();
+        AbstractAction current = getCurrentAction();
 
         current.onTick(dungeonRoom, actionRouteProperties);
         if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir)) actions.get(this.current-1).onTick(dungeonRoom, actionRouteProperties );

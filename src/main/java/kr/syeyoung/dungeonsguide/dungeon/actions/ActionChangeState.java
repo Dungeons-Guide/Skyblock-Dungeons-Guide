@@ -32,7 +32,7 @@ import java.util.Set;
 @EqualsAndHashCode(callSuper=false)
 public class ActionChangeState extends AbstractAction{
     @EqualsAndHashCode.Exclude
-    private Set<Action> preRequisite2 = new HashSet<Action>();
+    private Set<AbstractAction> preRequisite2 = new HashSet<AbstractAction>();
 
     private String mechanicName;
     private String state;
@@ -43,8 +43,8 @@ public class ActionChangeState extends AbstractAction{
     }
 
     @Override
-    public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
-        Set<Action> set = new HashSet<Action>();
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
+        Set<AbstractAction> set = new HashSet<AbstractAction>();
         set.addAll(preRequisite2);
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (mechanic!= null)

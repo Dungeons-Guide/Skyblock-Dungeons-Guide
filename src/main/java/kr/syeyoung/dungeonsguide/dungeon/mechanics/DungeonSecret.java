@@ -44,7 +44,7 @@ import java.util.List;
 public class DungeonSecret implements DungeonMechanic {
     private static final long serialVersionUID = 8784808599222706537L;
 
-    private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
+    private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
     private SecretType secretType = SecretType.CHEST;
     private List<String> preRequisite = new ArrayList<String>();
 
@@ -55,16 +55,16 @@ public class DungeonSecret implements DungeonMechanic {
             if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if (chest.numPlayersUsing > 0) {
-                    dungeonRoom.getRoomContext().put("c-"+pos.toString(), 2);
+                    dungeonRoom.getRoomContext().put("c-" + pos.toString(), 2);
                 } else {
-                    dungeonRoom.getRoomContext().put("c-"+pos.toString(), 1);
+                    dungeonRoom.getRoomContext().put("c-" + pos.toString(), 1);
                 }
             }
         } else if (secretType == SecretType.ESSENCE) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
-                dungeonRoom.getRoomContext().put("e-"+pos.toString(), true);
+                dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
             }
         } else if (secretType == SecretType.ITEM_DROP) {
             Vec3 pos = new Vec3(secretPoint.getBlockPos(dungeonRoom));
@@ -87,8 +87,8 @@ public class DungeonSecret implements DungeonMechanic {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
-            if (dungeonRoom.getRoomContext().containsKey("c-"+pos.toString()))
-                return ((int)dungeonRoom.getRoomContext().get("c-"+pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
+            if (dungeonRoom.getRoomContext().containsKey("c-" + pos.toString()))
+                return ((int) dungeonRoom.getRoomContext().get("c-" + pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
             if (blockState.getBlock() == Blocks.air) {
                 return SecretStatus.DEFINITELY_NOT;
@@ -98,7 +98,7 @@ public class DungeonSecret implements DungeonMechanic {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if (chest.numPlayersUsing > 0) {
                     return SecretStatus.FOUND;
-                } else{
+                } else {
                     return SecretStatus.CREATED;
                 }
             }
@@ -106,10 +106,10 @@ public class DungeonSecret implements DungeonMechanic {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
-                dungeonRoom.getRoomContext().put("e-"+pos.toString(), true);
+                dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
                 return SecretStatus.DEFINITELY_NOT;
             } else {
-                if (dungeonRoom.getRoomContext().containsKey("e-"+pos.toString()))
+                if (dungeonRoom.getRoomContext().containsKey("e-" + pos.toString()))
                     return SecretStatus.FOUND;
                 return SecretStatus.NOT_SURE;
             }
@@ -124,7 +124,7 @@ public class DungeonSecret implements DungeonMechanic {
             return SecretStatus.NOT_SURE;
         } else {
             Vec3 pos = new Vec3(secretPoint.getBlockPos(dungeonRoom));
-            if (dungeonRoom.getRoomContext().containsKey("i-"+ pos))
+            if (dungeonRoom.getRoomContext().containsKey("i-" + pos))
                 return SecretStatus.FOUND;
             Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
             if (player.squareDistanceTo(pos) < 16) {
@@ -143,10 +143,10 @@ public class DungeonSecret implements DungeonMechanic {
     }
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
             ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
@@ -157,10 +157,11 @@ public class DungeonSecret implements DungeonMechanic {
             }
             return base;
         }
-        if (!"found".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+        if (!"found".equalsIgnoreCase(state))
+            throw new IllegalArgumentException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return new HashSet<>();
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         if (secretType == SecretType.CHEST || secretType == SecretType.ESSENCE) {
             ActionClick actionClick;
             preRequisites.add(actionClick = new ActionClick(secretPoint));
@@ -172,28 +173,27 @@ public class DungeonSecret implements DungeonMechanic {
             actionKill.setRadius(10);
             preRequisites = actionKill.getPreRequisite();
         }
-        {
-            ActionMove actionMove = new ActionMove(secretPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
+
+        ActionMove actionMove = new ActionMove(secretPoint);
+        preRequisites.add(actionMove);
+        preRequisites = actionMove.getPreRequisite();
+
+        for (String str : preRequisite) {
+            if (str.isEmpty()) continue;
+            ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+            preRequisites.add(actionChangeState);
         }
-        {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
-            }
-        }
+
         return base;
     }
 
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, color,partialTicks);
-        RenderUtils.drawTextAtWorld(getSecretType().name(), pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.highlightBlock(pos, color, partialTicks);
+        RenderUtils.drawTextAtWorld(getSecretType().name(), pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
     public enum SecretType {
@@ -228,10 +228,12 @@ public class DungeonSecret implements DungeonMechanic {
         if (status == SecretStatus.FOUND) return Sets.newHashSet("navigate");
         else return Sets.newHashSet("found", "navigate");
     }
+
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("found"/*, "definitely_not", "not_sure", "created", "error"*/);
     }
+
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;

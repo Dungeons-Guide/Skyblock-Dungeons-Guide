@@ -27,13 +27,13 @@ import kr.syeyoung.dungeonsguide.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.secret.FeaturePathfindStrategy;
 import kr.syeyoung.dungeonsguide.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessorGenerator;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.secret.FeaturePathfindStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,8 +50,8 @@ import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledFuture;
@@ -69,7 +69,7 @@ public class DungeonRoom {
 
     private final DungeonContext context;
 
-    private final List<DungeonDoor> doors = new ArrayList<DungeonDoor>();
+    private final List<DungeonDoor> doors = new ArrayList<>();
 
     private DungeonRoomInfo dungeonRoomInfo;
 
@@ -83,10 +83,10 @@ public class DungeonRoom {
     private Map<String, DungeonMechanic> cached = null;
 
     @Getter
-    private World cachedWorld;
+    private final World cachedWorld;
     public Map<String, DungeonMechanic> getMechanics() {
         if (cached == null || EditingContext.getEditingContext() != null) {
-            cached = new HashMap<String, DungeonMechanic>(dungeonRoomInfo.getMechanics());
+            cached = new HashMap<>(dungeonRoomInfo.getMechanics());
             int index = 0;
             for (DungeonDoor door : doors) {
                 if (door.getType().isExist()) cached.put((door.getType().getName())+"-"+(++index), new DungeonRoomDoor(this, door));
@@ -100,47 +100,43 @@ public class DungeonRoom {
         this.currentState = currentState;
     }
 
-    private Map<BlockPos, AStarFineGrid> activeBetterAStar = new HashMap<>();
-    private Map<BlockPos, AStarCornerCut> activeBetterAStarCornerCut = new HashMap<>();
-    private Map<BlockPos, ThetaStar> activeThetaStar = new HashMap<>();
+    private final Map<BlockPos, AStarFineGrid> activeBetterAStar = new HashMap<>();
+    private final Map<BlockPos, AStarCornerCut> activeBetterAStarCornerCut = new HashMap<>();
+    private final Map<BlockPos, ThetaStar> activeThetaStar = new HashMap<>();
 
     public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist, int timeout) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.JPS_LEGACY) {
-            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+            return asyncPathFinder.schedule(() -> {
                 BlockPos min = new BlockPos(getMin().getX(), 0, getMin().getZ());
                 BlockPos max=  new BlockPos(getMax().getX(), 255, getMax().getZ());
                 JPSPathfinder pathFinder = new JPSPathfinder(this);
                 pathFinder.pathfind(entityIn.getPositionVector(), new Vec3(targetPos).addVector(0.5, 0.5, 0.5), 1.5f,timeout);
                 return pathFinder.getRoute();
             }, 0, TimeUnit.MILLISECONDS);
-            return sf;
         } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID) {
-            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+            return asyncPathFinder.schedule(() -> {
                 AStarFineGrid pathFinder =
                         activeBetterAStar.computeIfAbsent(targetPos, (pos) -> new AStarFineGrid(this, new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5)));
                 pathFinder.pathfind(entityIn.getPositionVector(),timeout);
                 return pathFinder.getRoute();
             }, 0, TimeUnit.MILLISECONDS);
-            return sf;
         }else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_DIAGONAL) {
-            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+            return asyncPathFinder.schedule(() -> {
                 AStarCornerCut pathFinder =
                         activeBetterAStarCornerCut.computeIfAbsent(targetPos, (pos) -> new AStarCornerCut(this, new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5)));
                 pathFinder.pathfind(entityIn.getPositionVector(),timeout);
                 return pathFinder.getRoute();
             }, 0, TimeUnit.MILLISECONDS);
-            return sf;
         } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.THETA_STAR) {
-            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+            return asyncPathFinder.schedule(() -> {
                 ThetaStar pathFinder =
                         activeThetaStar.computeIfAbsent(targetPos, (pos) -> new ThetaStar(this, new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5)));
                 pathFinder.pathfind(entityIn.getPositionVector(),timeout);
                 return pathFinder.getRoute();
             }, 0, TimeUnit.MILLISECONDS);
-            return sf;
         } else {
-            ScheduledFuture<List<Vec3>> sf =  asyncPathFinder.schedule(() -> {
+            return asyncPathFinder.schedule(() -> {
                 PathFinder pathFinder = new PathFinder(nodeProcessorDungeonRoom);
                 PathEntity latest = pathFinder.createEntityPathTo(blockaccess, entityIn, targetPos, dist);
                 if (latest != null) {
@@ -153,7 +149,6 @@ public class DungeonRoom {
                 }
                 return new ArrayList<>();
             }, 0, TimeUnit.MILLISECONDS);
-            return sf;
         }
     }
 
@@ -162,7 +157,7 @@ public class DungeonRoom {
     private final NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
     @Getter
-    private final Map<String, Object> roomContext = new HashMap<String, Object>();
+    private final Map<String, Object> roomContext = new HashMap<>();
 
     @AllArgsConstructor
     @Getter
@@ -302,9 +297,14 @@ public class DungeonRoom {
 
 
 
-    long arr[];
+    long[] arr;
     // These values are doubled
-    private final int minx, miny, minz, maxx, maxy, maxz;
+    private final int minx;
+    private final int miny;
+    private final int minz;
+    private final int maxx;
+    private final int maxy;
+    private final int maxz;
     private final int lenx, leny, lenz;
     private static final float playerWidth = 0.3f;
     public boolean isBlocked(int x,int y, int z) {

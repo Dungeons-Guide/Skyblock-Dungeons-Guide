@@ -28,13 +28,13 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionRoot extends AbstractAction {
-    private Set<Action> preRequisite = new HashSet<Action>();
+    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
 
     public ActionRoot() {
     }
 
     @Override
-    public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
         return preRequisite;
     }
 

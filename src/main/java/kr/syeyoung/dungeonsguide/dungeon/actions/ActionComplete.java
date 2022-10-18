@@ -25,7 +25,7 @@ import java.util.Set;
 
 public class ActionComplete extends AbstractAction {
     @Override
-    public Set<Action> getPreRequisites(DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
         return Collections.emptySet();
     }
 

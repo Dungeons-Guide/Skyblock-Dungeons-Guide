@@ -41,10 +41,10 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
 
             int leastY = Integer.MAX_VALUE;
             OffsetPoint thatPt = null;
@@ -69,8 +69,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
             ActionBreakWithSuperBoom actionClick;
             preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint(dungeonRoom)));

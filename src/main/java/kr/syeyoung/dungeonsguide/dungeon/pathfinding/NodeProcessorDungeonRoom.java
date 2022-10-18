@@ -28,6 +28,7 @@ import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.Vec3i;
+import net.minecraft.world.World;
 import net.minecraft.world.pathfinder.NodeProcessor;
 
 import java.util.Set;
@@ -35,6 +36,7 @@ import java.util.Set;
 public class NodeProcessorDungeonRoom extends NodeProcessor {
     private final DungeonRoom dungeonRoom;
     private final BlockPos sub;
+
     public NodeProcessorDungeonRoom(DungeonRoom dungeonRoom) {
         this.dungeonRoom = dungeonRoom;
         sub = dungeonRoom.getMax().subtract(dungeonRoom.getMin());
@@ -42,41 +44,44 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
 
     @Override
     public PathPoint getPathPointTo(Entity entityIn) {
-        return openPoint((int)entityIn.posX - dungeonRoom.getMin().getX(), (int)entityIn.posY - dungeonRoom.getMin().getY(),
-                (int)entityIn.posZ - dungeonRoom.getMin().getZ());
+        return openPoint((int) entityIn.posX - dungeonRoom.getMin().getX(), (int) entityIn.posY - dungeonRoom.getMin().getY(),
+                (int) entityIn.posZ - dungeonRoom.getMin().getZ());
     }
 
     @Override
     public PathPoint getPathPointToCoords(Entity entityIn, double x, double y, double z) {
-        return openPoint((int)x- dungeonRoom.getMin().getX(), (int)y - dungeonRoom.getMin().getY(),
-                (int)z - dungeonRoom.getMin().getZ());
+        return openPoint((int) x - dungeonRoom.getMin().getX(), (int) y - dungeonRoom.getMin().getY(),
+                (int) z - dungeonRoom.getMin().getZ());
     }
 
-    private static final EnumFacing[] values2 = new EnumFacing[6];
-    static {
-        values2[0] = EnumFacing.DOWN;
-        values2[1] = EnumFacing.NORTH;
-        values2[2] = EnumFacing.SOUTH;
-        values2[3] = EnumFacing.EAST;
-        values2[4] = EnumFacing.WEST;
-        values2[5] = EnumFacing.UP;
-    }
+    private static final EnumFacing[] values2 = new EnumFacing[] {
+        EnumFacing.DOWN, EnumFacing.NORTH, EnumFacing.SOUTH, EnumFacing.EAST, EnumFacing.WEST, EnumFacing.UP
+    };
+
+
 
     @Override
     public int findPathOptions(PathPoint[] pathOptions, Entity entityIn, PathPoint currentPoint, PathPoint targetPoint, float maxDistance) {
 
         int i = 0;
-        for (EnumFacing ef:values2) {
+        for (EnumFacing ef : values2) {
             Vec3i dir = ef.getDirectionVec();
             int newX = currentPoint.xCoord + dir.getX();
             int newY = currentPoint.yCoord + dir.getY();
             int newZ = currentPoint.zCoord + dir.getZ();
+
             if (newX < 0 || newZ < 0) continue;
-            if (newX > sub.getX()|| newZ > sub.getZ()) continue;
-            IBlockState curr = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ));
-            IBlockState up = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY + 1, newZ));
-            if (isValidBlock(curr)
-                && isValidBlock(up )) {
+            if (newX > sub.getX() || newZ > sub.getZ()) continue;
+
+            BlockPos add1 = dungeonRoom.getMin().add(newX, newY, newZ);
+            World playerWorld = entityIn.getEntityWorld();
+
+            IBlockState curr = playerWorld.getBlockState(add1);
+
+
+            IBlockState up = playerWorld.getBlockState(dungeonRoom.getMin().add(newX, newY + 1, newZ));
+
+            if (isValidBlock(curr) && isValidBlock(up)) {
                 PathPoint pt = openPoint(newX, newY, newZ);
                 if (pt.visited) continue;
                 pathOptions[i++] = pt;
@@ -85,12 +90,12 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
 
             if (curr.getBlock() == Blocks.air) {
                 if (up.getBlock() == Blocks.stone_slab
-                || up.getBlock() == Blocks.wooden_slab
-                || up.getBlock() == Blocks.stone_slab2) {
-                    IBlockState up2 = entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY -1, newZ));
+                        || up.getBlock() == Blocks.wooden_slab
+                        || up.getBlock() == Blocks.stone_slab2) {
+                    IBlockState up2 = playerWorld.getBlockState(dungeonRoom.getMin().add(newX, newY - 1, newZ));
                     if (up2.getBlock() == Blocks.stone_slab
-                                || up2.getBlock() == Blocks.wooden_slab
-                                || up2.getBlock() == Blocks.stone_slab2) {
+                            || up2.getBlock() == Blocks.wooden_slab
+                            || up2.getBlock() == Blocks.stone_slab2) {
                         PathPoint pt = openPoint(newX, newY, newZ);
                         if (pt.visited) continue;
                         pathOptions[i++] = pt;
@@ -99,23 +104,21 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                 }
             }
 
-            if (dir.getY() == 0 && curr.getBlock() == Blocks.iron_bars && up.getBlock() == Blocks.air &&
-                entityIn.getEntityWorld().getBlockState(new BlockPos(currentPoint.xCoord, currentPoint.yCoord, currentPoint.zCoord)).getBlock() != Blocks.iron_bars) {
+            if (dir.getY() == 0
+                    && curr.getBlock() == Blocks.iron_bars
+                    && up.getBlock() == Blocks.air
+                    && playerWorld.getBlockState(new BlockPos(currentPoint.xCoord, currentPoint.yCoord, currentPoint.zCoord)).getBlock() != Blocks.iron_bars) {
+
                 boolean theFlag = false;
                 if (dir.getZ() == 0) {
-                    if (entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)
-                            .add(0,0,1)).getBlock() == Blocks.air) {
-                        theFlag = true;
-                    } else if (entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)
-                            .add(0,0,-1)).getBlock() == Blocks.air) {
+                    if (playerWorld.getBlockState(
+                            add1.add(0, 0, 1)).getBlock() == Blocks.air ||
+                            playerWorld.getBlockState(add1.add(0, 0, -1)).getBlock() == Blocks.air) {
                         theFlag = true;
                     }
                 } else if (dir.getX() == 0) {
-                    if (entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)
-                            .add(-1,0,0)).getBlock() == Blocks.air) {
-                        theFlag = true;
-                    } else if (entityIn.getEntityWorld().getBlockState(dungeonRoom.getMin().add(newX, newY, newZ)
-                            .add(1,0,0)).getBlock() == Blocks.air) {
+                    if (playerWorld.getBlockState(add1.add(-1, 0, 0)).getBlock() == Blocks.air ||
+                            playerWorld.getBlockState(add1.add(1, 0, 0)).getBlock() == Blocks.air) {
                         theFlag = true;
                     }
                 }
@@ -123,7 +126,6 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                     PathPoint pt = openPoint(newX, newY, newZ);
                     if (pt.visited) continue;
                     pathOptions[i++] = pt;
-                    continue;
                 }
             }
         }
@@ -131,11 +133,11 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
     }
 
     public static final Set<Block> allowed = Sets.newHashSet(Blocks.air, Blocks.water, Blocks.lava, Blocks.flowing_water, Blocks.flowing_lava, Blocks.vine, Blocks.ladder
-    , Blocks.standing_sign, Blocks.wall_sign, Blocks.trapdoor, Blocks.iron_trapdoor, Blocks.wooden_button, Blocks.stone_button, Blocks.fire,
+            , Blocks.standing_sign, Blocks.wall_sign, Blocks.trapdoor, Blocks.iron_trapdoor, Blocks.wooden_button, Blocks.stone_button, Blocks.fire,
             Blocks.torch, Blocks.rail, Blocks.golden_rail, Blocks.activator_rail, Blocks.detector_rail, Blocks.carpet, Blocks.redstone_torch);
     public static final IBlockState preBuilt = Blocks.stone.getStateFromMeta(2);
+
     public static boolean isValidBlock(IBlockState state) {
-        Block b = state.getBlock();
-        return state.equals(preBuilt) || allowed.contains(b);
+        return state.equals(preBuilt) || allowed.contains(state.getBlock());
     }
 }
