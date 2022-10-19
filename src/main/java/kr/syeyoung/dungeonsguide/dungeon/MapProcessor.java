@@ -51,16 +51,15 @@ import java.util.*;
 
 public class MapProcessor {
 
+    private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0, 1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1, 0));
+    private static final Set<Vector2d> door_dirs = Sets.newHashSet(new Vector2d(0, 0.5), new Vector2d(0, -0.5), new Vector2d(0.5, 0), new Vector2d(-0.5, 0));
     private final DungeonContext context;
-
-    private byte[] lastMapData;
-
-    @Getter
-    private MapData lastMapData2;
-
     @Getter
     private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
-
+    private final List<Point> roomsFound = new ArrayList<>();
+    private byte[] lastMapData;
+    @Getter
+    private MapData lastMapData2;
     @Getter
     @Setter
     private Dimension unitRoomDimension;
@@ -70,27 +69,20 @@ public class MapProcessor {
     @Getter
     @Setter
     private Point topLeftMapPoint;
-
     @Setter
     private boolean bugged = false;
-
-    private final List<Point> roomsFound = new ArrayList<>();
-
     private boolean axisMatch = false;
-
     @Getter
     private boolean initialized = false;
-
     @Getter
     private int undiscoveredRoom = 0;
+    private int waitCnt = 0;
+    private int stabilizationTick = 0;
+    private boolean processed = false;
 
     public MapProcessor(DungeonContext context) {
         this.context = context;
     }
-
-    private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0, 1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1, 0));
-
-    private int waitCnt = 0;
 
     private void buildMap(final byte[] mapData) {
         final Point startroom = MapUtils.findFirstColorWithIn(mapData, (byte) 30, new Rectangle(0, 0, 128, 128));
@@ -203,8 +195,7 @@ public class MapProcessor {
     }
 
     public Point roomPointToMapPoint(Point roomPoint) {
-        return new Point(roomPoint.x * (unitRoomDimension.width + doorDimension.height) + topLeftMapPoint.x,
-                roomPoint.y * (unitRoomDimension.height + doorDimension.height) + topLeftMapPoint.y);
+        return new Point(roomPoint.x * (unitRoomDimension.width + doorDimension.height) + topLeftMapPoint.x, roomPoint.y * (unitRoomDimension.height + doorDimension.height) + topLeftMapPoint.y);
     }
 
     public BlockPos roomPointToWorldPoint(Point roomPoint) {
@@ -268,7 +259,6 @@ public class MapProcessor {
                 if (color != 0 && color != 85) {
                     MapUtils.record(mapData, mapPoint.x, mapPoint.y, new Color(0, 255, 255, 80));
                     DungeonRoom rooms = buildRoom(mapData, new Point(x, y));
-                    if (rooms == null) continue;
                     context.createEvent(new DungeonRoomDiscoverEvent(rooms.getUnitPoints().get(0), rooms.getRoomMatcher().getRotation(), new SerializableBlockPos(rooms.getMin()), new SerializableBlockPos(rooms.getMax()), rooms.getShape(), rooms.getColor(), rooms.getDungeonRoomInfo().getUuid(), rooms.getDungeonRoomInfo().getName(), rooms.getDungeonRoomInfo().getProcessorId()));
                     DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + rooms.getShape() + " color: " + rooms.getColor() + " unitPos: " + x + "," + y));
                     DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + rooms.getMin() + " mapMx: " + rooms.getMax()));
@@ -296,8 +286,6 @@ public class MapProcessor {
             }
         }
     }
-
-    private static final Set<Vector2d> door_dirs = Sets.newHashSet(new Vector2d(0, 0.5), new Vector2d(0, -0.5), new Vector2d(0.5, 0), new Vector2d(-0.5, 0));
 
     private DungeonRoom buildRoom(byte[] mapData, Point unitPoint) {
         Queue<Point[]> toCheck = new LinkedList<Point[]>();
@@ -426,10 +414,6 @@ public class MapProcessor {
         return false;
     }
 
-    private int stabilizationTick = 0;
-
-    private boolean processed = false;
-
     private void processFinishedMap(byte[] mapData) {
         if (MapUtils.getMapColorAt(mapData, 0, 0) == 0) {
             return;
@@ -494,43 +478,6 @@ public class MapProcessor {
 
         if ((lastMapData2 != null) && (mapIconToPlayerMap.size() < context.getPlayers().size()) && initialized) {
 
-//            label: for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
-//                if (mapIconToPlayerMap.containsValue(stringVec4bEntry.getKey())) continue;
-//                int x = stringVec4bEntry.getValue().func_176112_b() /2 + 64;
-//                int y = stringVec4bEntry.getValue().func_176113_c() /2 + 64;
-//                BlockPos mapPos = mapPointToWorldPoint(new Point(x, y));
-//                String potentialPlayer = null;
-//                for (String player : context.getPlayers()) { // check nearby players
-//                    if (mapIconToPlayerMap.containsKey(player)) {
-//                        continue;
-//                    }
-//                    EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
-//                    if (entityPlayer == null || entityPlayer.isInvisible()) continue;
-//                    BlockPos pos = entityPlayer.getPosition();
-//                    int dx = mapPos.getX() - pos.getX();
-//                    int dz = mapPos.getZ() - pos.getZ();
-//                    if (dx * dx + dz * dz < 100) {
-//                        if (potentialPlayer != null) continue label;
-//                        potentialPlayer = player;
-//                    }
-//                }
-//                if (potentialPlayer == null) continue;
-//
-//                for (Map.Entry<String, Vec4b> stringVec4bEntry2 : lastMapData2.mapDecorations.entrySet()) { // check nearby markers
-//                    if (mapIconToPlayerMap.containsValue(stringVec4bEntry.getKey())) continue;
-//                    if (stringVec4bEntry.getKey().equals(stringVec4bEntry2.getKey())) continue;
-//                    int x2 = stringVec4bEntry2.getValue().func_176112_b() /2 + 64;
-//                    int y2 = stringVec4bEntry2.getValue().func_176113_c() /2 + 64;
-//                    int dx = x2 - x;
-//                    int dy = y2 - y;
-//                    if (dx * dx + dy * dy < 100) {
-//                        continue label;
-//                    }
-//                }
-//                mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
-//            }
-
-
             for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
                 String mapDecString = stringVec4bEntry.getKey();
                 Vec4b vec4 = stringVec4bEntry.getValue();
@@ -544,11 +491,9 @@ public class MapProcessor {
                     String potentialPlayer = null;
 
                     for (String player : context.getPlayers()) {
-                        if (!mapIconToPlayerMap.containsKey(player)) {
-                            if (isPlayerNear(player, mapPos)) {
-                                potentialPlayer = player;
-                                break;
-                            }
+                        if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, mapPos)) {
+                            potentialPlayer = player;
+                            break;
                         }
                     }
 
@@ -572,8 +517,6 @@ public class MapProcessor {
                                     break;
                                 }
                             }
-
-
                         }
 
                         if (shouldSave) {
@@ -582,7 +525,6 @@ public class MapProcessor {
 
 
                     }
-
 
                 }
             }
@@ -598,9 +540,7 @@ public class MapProcessor {
             BlockPos pos = entityPlayer.getPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
-            if (dx * dx + dz * dz < 100) {
-                return true;
-            }
+            return dx * dx + dz * dz < 100;
 
         }
 

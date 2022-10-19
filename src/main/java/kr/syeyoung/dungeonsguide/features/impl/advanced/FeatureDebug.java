@@ -18,48 +18,59 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
-import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.gui.MPanel;
-import kr.syeyoung.dungeonsguide.gui.elements.MLabel;
+import lombok.Getter;
 
 public class FeatureDebug extends SimpleFeature {
+    @Getter
+    private static Boolean trapfix;
+
     public FeatureDebug() {
         super("Advanced", "Debug", "Toggles debug mode", "debug", false);
-        addParameter("Key", new FeatureParameter<String>("Key", "Secret Key given by syeyoung", "Put the debug enable key here to enable debug mode", "","string"));
-    }
-    @Override
-    public boolean isEnabled() {
-        return "just hide it".equals(this.<String>getParameter("Key").getValue());
-    }
-    @Override
-    public boolean isDisyllable() {
-        return false;
+//        addParameter("Key", new FeatureParameter<String>("Key", "Secret Key given by syeyoung", "Put the debug enable key here to enable debug mode", "", "string"));
+
+        addParameter("swtich", new FeatureParameter<>("swtich", "Enable Debug", "Enables debug mode", false, "boolean"));
+
+
+        addParameter("TrapRoomFix", new FeatureParameter<>("TrapRoomFix", "Enable trap", "trap ", false, "boolean", nval -> this.trapfix = nval));
     }
 
+
     @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-                MFeatureEdit featureEdit = new MFeatureEdit(FeatureDebug.this, rootConfigPanel);
-                for (FeatureParameter parameter: getParameters()) {
-                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureDebug.this, parameter, rootConfigPanel));
-                }
-                featureEdit.addParameterEdit("IsEnabled", new MParameterEdit(FeatureDebug.this, new FeatureParameter("Key Status", "Key Status", "Key Enabled? Or not?", "", "idk"), rootConfigPanel, new MLabel() {
-                    @Override
-                    public String getText() {
-                        return isEnabled() ? "Enabled!" : "Incorrect Key";
-                    }
-                }, (a) -> false));
-                return featureEdit;
-            }
-        });
-        return "base." + getKey() ;
+    public boolean isEnabled() {
+        return this.<Boolean>getParameter("swtich").getValue();
     }
+
+
+//    @Override
+//    public boolean isDisyllable() {
+//        return false;
+//    }
+
+//    @Override
+//    public String getEditRoute(RootConfigPanel rootConfigPanel) {
+//        ConfigPanelCreator.map.put("base." + getKey(), () -> {
+//            MFeatureEdit featureEdit = new MFeatureEdit(FeatureDebug.this, rootConfigPanel);
+//            for (FeatureParameter<?> parameter : getParameters()) {
+//                featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureDebug.this, parameter, rootConfigPanel));
+//            }
+//            featureEdit.addParameterEdit("IsEnabled",
+//                    new MParameterEdit(
+//                            FeatureDebug.this,
+//                            new FeatureParameter<>("Key Status", "Key Status", "Key Enabled? Or not?", "", "idk"),
+//                            rootConfigPanel,
+//                            new MLabel() {
+//                                @Override
+//                                public String getText() {
+//                                    return isEnabled() ? "Enabled!" : "Incorrect Key";
+//                                }
+//                            },
+//                            (a) -> false
+//                    )
+//            );
+//            return featureEdit;
+//        });
+//        return "base." + getKey();
+//    }
 }

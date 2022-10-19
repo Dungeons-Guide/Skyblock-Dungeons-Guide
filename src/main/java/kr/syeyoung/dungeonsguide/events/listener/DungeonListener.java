@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.events.impl.*;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
@@ -170,6 +171,7 @@ public class DungeonListener {
         if (isOnSkyblock) {
             DungeonContext context = god.getContext();
             if (context != null) {
+                context.getMapProcessor().tick();
                 context.tick();
             } else {
                 if (skyblockStatus.isOnDungeon()) {
@@ -397,13 +399,36 @@ public class DungeonListener {
         }
     }
 
-    @SubscribeEvent()
+
+    String getCurrentRoomName(){
+        EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
+
+        DungeonContext context = god.getContext();
+        Point roomPt = context.getMapProcessor().worldPointToRoomPoint(player.getPosition());
+        DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+        String in = "unknown";
+        if (dungeonRoom != null){
+            in = dungeonRoom.getDungeonRoomInfo().getName();
+        }
+
+        return in;
+    }
+
+    @SubscribeEvent
     public void onBlockChange(BlockUpdateEvent.Post postInteract) {
         if (!SkyblockStatus.isInDungeon()) return;
+
 
         DungeonContext context = god.getContext();
 
         if (god.getContext() != null) {
+            if(FeatureDebug.getTrapfix()){
+                System.out.println(getCurrentRoomName());
+                if(getCurrentRoomName().equals("Trap-very-hard2")) {
+                    return;
+                }
+            }
+
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 

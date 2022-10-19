@@ -18,23 +18,19 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionChangeState implements AbstractAction {
+public class ActionChangeState extends AbstractAction {
     @EqualsAndHashCode.Exclude
     private Set<AbstractAction> preRequisite2 = new HashSet<AbstractAction>();
 
@@ -47,39 +43,8 @@ public class ActionChangeState implements AbstractAction {
     }
 
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
-
-    }
-
-    @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
     public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        Set<AbstractAction> set = new HashSet<AbstractAction>();
-        set.addAll(preRequisite2);
+        Set<AbstractAction> set = new HashSet<>(preRequisite2);
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (mechanic!= null)
             set.addAll(mechanic.getAction(state, dungeonRoom));
@@ -93,14 +58,18 @@ public class ActionChangeState implements AbstractAction {
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
-        if (state.equalsIgnoreCase("navigate"))
+        if (state.equalsIgnoreCase("navigate")) {
             return true;
-        if (mechanic== null)
+        }
+        if (mechanic == null) {
             return false;
-        if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() != DungeonSecret.SecretType.CHEST)
+        }
+        if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() != DungeonSecret.SecretType.CHEST) {
             return true;
-        if (mechanic instanceof DungeonDummy)
+        }
+        if (mechanic instanceof DungeonDummy) {
             return true;
+        }
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
     }
 }

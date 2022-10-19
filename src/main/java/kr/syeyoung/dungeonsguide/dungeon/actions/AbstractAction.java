@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -26,20 +26,36 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.Set;
 
-public interface AbstractAction {
-    void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties);
+public abstract class AbstractAction {
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties){
 
-    void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag);
+    }
 
-    void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties);
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
-    void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties);
+    }
 
-    void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties);
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRouteProperties actionRouteProperties) {
 
-    void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties);
+    }
 
-    Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom);
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties) {
 
-    boolean isComplete(DungeonRoom dungeonRoom);
+    }
+
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
+        return null;
+    }
+
+    public boolean isComplete(DungeonRoom dungeonRoom) {
+        return false;
+    }
 }

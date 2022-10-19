@@ -136,7 +136,7 @@ public class DungeonContext {
     private final Rectangle roomBoundary = new Rectangle(-10, -10, 138, 138);
 
     public void tick() {
-        mapProcessor.tick();
+
 
         if (mapProcessor.isInitialized() && BossRoomEnterSeconds == -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
             BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;

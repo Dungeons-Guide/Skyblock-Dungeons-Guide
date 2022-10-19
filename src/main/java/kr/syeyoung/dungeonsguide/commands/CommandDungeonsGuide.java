@@ -165,7 +165,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSession Expire§7: §e" + sdf.format(new Date(obj.get("exp").getAsLong() * 1000))));
         } else if (args[0].equalsIgnoreCase("pathfind")) {
             try {
-                DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
+                DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 if (thePlayer == null) return;
                 if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
@@ -361,7 +361,7 @@ public class CommandDungeonsGuide extends CommandBase {
 
                 File runFile = new File(runDir, UUID.randomUUID() + ".dgrun");
 
-                DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
+                DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
                 if (dungeonContext == null) {
                     sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
                     return;

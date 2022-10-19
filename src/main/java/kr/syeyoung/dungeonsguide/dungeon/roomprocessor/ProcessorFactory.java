@@ -28,7 +28,7 @@ import java.util.Map;
 import java.util.Set;
 
 public class ProcessorFactory {
-    private static final Map<String, RoomProcessorGenerator> map = new HashMap<String, RoomProcessorGenerator>();
+    private static final Map<String, RoomProcessorGenerator> map = new HashMap<>();
 
     public static RoomProcessorGenerator getRoomProcessorGenerator(String processorId) {
         return map.get(processorId);

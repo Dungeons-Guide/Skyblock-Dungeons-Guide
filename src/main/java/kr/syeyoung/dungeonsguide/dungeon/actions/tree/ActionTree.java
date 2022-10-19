@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.ActionRoot;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import org.jetbrains.annotations.NotNull;
 
 import java.util.*;
 
@@ -63,8 +64,7 @@ public class ActionTree implements Cloneable {
 
 
 
-    private static ActionTree buildActionTree(ActionTree parent, AbstractAction action, DungeonRoom dungeonRoom, Map<AbstractAction, ActionTree> alreadyBuilt) {
-        if (action == null) return null;
+    private static ActionTree buildActionTree(ActionTree parent, @NotNull AbstractAction action,@NotNull DungeonRoom dungeonRoom, @NotNull Map<AbstractAction, ActionTree> alreadyBuilt) {
         if (alreadyBuilt.containsKey(action))  {
             ActionTree tree = alreadyBuilt.get(action);
             tree.getParent().add(parent);
@@ -73,14 +73,21 @@ public class ActionTree implements Cloneable {
 
         ActionTree tree = new ActionTree();
         alreadyBuilt.put(action, tree);
-        tree.setParent(new HashSet<ActionTree>());
-        if (parent != null)
+        tree.setParent(new HashSet<>());
+        if (parent != null) {
             tree.getParent().add(parent);
+        }
         tree.setCurrent(action);
         HashSet<ActionTree> set = new HashSet<>();
-        for (AbstractAction action2 : action.getPreRequisites(dungeonRoom)) {
-            set.add(buildActionTree(tree, action2, dungeonRoom, alreadyBuilt));
+
+        Set<AbstractAction> preRequisites = action.getPreRequisites(dungeonRoom);
+        if(preRequisites != null){
+            for (AbstractAction action2 : preRequisites) {
+                ActionTree e = buildActionTree(tree, action2, dungeonRoom, alreadyBuilt);
+                set.add(e);
+            }
         }
+
         tree.setChildren(set);
         return tree;
     }

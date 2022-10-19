@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
@@ -76,9 +77,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void tick() {
-        if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled())
+        if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
             searchForNextTarget();
-        if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
+        }else if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
                     DungeonSecret dungeonSecret = (DungeonSecret) value.getValue();
@@ -92,8 +93,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
                 }
             }
-        }
-        if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
+        } else if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonRoomDoor) {
                     DungeonRoomDoor dungeonDoor = (DungeonRoomDoor) value.getValue();
@@ -300,12 +300,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return path.get(id);
     }
 
-    public String pathfind(String mechanic, String state, ActionRoute.ActionRouteProperties actionRouteProperties) {
-        String str;
-        pathfind(str = UUID.randomUUID().toString(), mechanic, state, actionRouteProperties);
+    public String pathfind(String mechanic, String state, ActionRouteProperties actionRouteProperties) {
+        String str = UUID.randomUUID().toString();
+        pathfind(str, mechanic, state, actionRouteProperties);
         return str;
     }
-    public void pathfind(String id, String mechanic, String state, ActionRoute.ActionRouteProperties actionRouteProperties) {
+    public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties) {
         path.put(id, new ActionRoute(getDungeonRoom(), mechanic, state, actionRouteProperties));
     }
     public void cancelAll() {

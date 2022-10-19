@@ -18,11 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions.tree;
 
-import kr.syeyoung.dungeonsguide.config.types.AColor;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
-import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
@@ -51,24 +50,37 @@ public class ActionRoute {
         this.state = state;
         this.actionRouteProperties = actionRouteProperties;
 
+        System.out.println("Creating Action Route with mechanic:" + mechanic + " State:" + state);
         ActionChangeState actionChangeState = new ActionChangeState(mechanic, state);
         ActionTree tree= ActionTree.buildActionTree(actionChangeState, dungeonRoom);
         actions = ActionTreeUtil.linearifyActionTree(tree);
         actions.add(new ActionComplete());
+        DungeonsGuide.sendDebugChat("Created ActionRoute with " + actions.size() + " steps");
+        DungeonsGuide.sendDebugChat("========== STEPS ==========");
+        for (AbstractAction action : actions) {
+            DungeonsGuide.sendDebugChat(action.toString());
+        }
+        DungeonsGuide.sendDebugChat("=========== END ===========");
+
+
         current = 0;
         this.dungeonRoom = dungeonRoom;
     }
 
     public AbstractAction next() {
         current ++;
-        if (current >= actions.size()) current = actions.size() - 1;
-        return actions.get(current);
+        if (current >= actions.size()) {
+            current = actions.size() - 1;
+        }
+        return getCurrentAction();
     }
 
     public AbstractAction prev() {
         current --;
-        if (current < 0) current = 0;
-        return actions.get(current);
+        if (current < 0) {
+            current = 0;
+        }
+        return getCurrentAction();
     }
 
     public AbstractAction getCurrentAction() {
@@ -84,9 +96,17 @@ public class ActionRoute {
         getCurrentAction().onLivingDeath(dungeonRoom, event, actionRouteProperties );
     }
     public void onRenderWorld(float partialTicks, boolean flag) {
-        if (current -1 >= 0 && (
-                (actions.get(current-1) instanceof ActionMove && ((ActionMove) actions.get(current-1)).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25)
-                        || (actions.get(current-1) instanceof ActionMoveNearestAir  && ((ActionMoveNearestAir) actions.get(current-1)).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25))) actions.get(current-1).onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag );
+
+        if (current -1 >= 0) {
+            AbstractAction abstractAction = actions.get(current - 1);
+            if(((abstractAction instanceof ActionMove && ((ActionMove) abstractAction).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25)
+                            || (abstractAction instanceof ActionMoveNearestAir  && ((ActionMoveNearestAir) abstractAction).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25))){
+                abstractAction.onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag );
+            }
+        }
+        getCurrentAction().onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
+
+
         getCurrentAction().onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
     }
 
@@ -104,21 +124,13 @@ public class ActionRoute {
             this.current = actions.size() - 1;
         }
 
-        if (currentAction.isComplete(dungeonRoom))
+        if (currentAction.isComplete(dungeonRoom)) {
             next();
+        }
     }
 
-    public void onLivingInteract(PlayerInteractEntityEvent event) { getCurrentAction().onLivingInteract(dungeonRoom, event, actionRouteProperties ); }
-
-    @Data
-    public static class ActionRouteProperties {
-        private boolean pathfind;
-        private int lineRefreshRate;
-        private AColor lineColor;
-        private float lineWidth;
-
-        private boolean beacon;
-        private AColor beaconColor;
-        private AColor beaconBeamColor;
+    public void onLivingInteract(PlayerInteractEntityEvent event) {
+        getCurrentAction().onLivingInteract(dungeonRoom, event, actionRouteProperties );
     }
+
 }

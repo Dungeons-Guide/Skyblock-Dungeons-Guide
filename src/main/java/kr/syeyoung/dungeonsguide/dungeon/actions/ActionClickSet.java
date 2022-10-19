@@ -18,31 +18,28 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
-import com.google.common.base.Predicate;
-import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionClickSet implements AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
+public class ActionClickSet extends AbstractAction {
+    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPointSet target;
-    private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
+    private Predicate<ItemStack> predicate = stack -> true;
 
     public ActionClickSet(OffsetPointSet target) {
         this.target = target;
@@ -60,11 +57,10 @@ public class ActionClickSet implements AbstractAction {
 
     private boolean clicked = false;
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties) {
         if (clicked) return;
         for (OffsetPoint pt2: target.getOffsetPointList()) {
-            if (pt2.getBlockPos(dungeonRoom).equals(event.pos) &&
-                    (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
+            if (pt2.getBlockPos(dungeonRoom).equals(event.pos) && predicate.test(event.entityLiving.getHeldItem())) {
                 clicked = true;
             }
         }
@@ -72,7 +68,7 @@ public class ActionClickSet implements AbstractAction {
     }
 
     @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
         float xAcc = 0;
         float yAcc = 0;
         float zAcc = 0;
@@ -87,27 +83,6 @@ public class ActionClickSet implements AbstractAction {
 
         RenderUtils.drawTextAtWorld("Click", xAcc / size, yAcc / size, zAcc / size, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
-
-    @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return clicked;

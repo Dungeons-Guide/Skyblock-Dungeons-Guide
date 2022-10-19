@@ -198,6 +198,8 @@ public class FeatureRegistry {
 
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS;
 
+    private static final FeatureDebugTrap ADVANCED_BAT;
+
     static {
         try {
             SECRET_LINE_PROPERTIES_GLOBAL = register(new PathfindLineProperties("Dungeon Secrets", "Global Line Settings", "Global Line Settings", "secret.lineproperties.global", true, null));
@@ -304,6 +306,7 @@ public class FeatureRegistry {
             ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
             ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
             ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
+            ADVANCED_BAT = register(new FeatureDebugTrap());
         } catch (Exception e) {
             System.out.println(e);
             throw new RuntimeException(e);

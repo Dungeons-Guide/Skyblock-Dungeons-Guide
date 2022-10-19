@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
-import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
@@ -101,8 +101,8 @@ public class PathfindLineProperties extends SimpleFeature {
     public AColor getTargetColor() {
         return isGlobal() ? parent.getTargetColor() : this.<AColor>getParameter("beamTargetColor").getValue();
     }
-    public ActionRoute.ActionRouteProperties getRouteProperties() {
-        ActionRoute.ActionRouteProperties actionRouteProperties = new ActionRoute.ActionRouteProperties();
+    public ActionRouteProperties getRouteProperties() {
+        ActionRouteProperties actionRouteProperties = new ActionRouteProperties();
         actionRouteProperties.setPathfind(isPathfind());
         actionRouteProperties.setLineColor(getLineColor());
         actionRouteProperties.setLineWidth(getLineWidth());

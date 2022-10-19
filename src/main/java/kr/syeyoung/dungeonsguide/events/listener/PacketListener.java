@@ -18,12 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.events.listener;
 
+import com.google.common.base.Stopwatch;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.ChannelPromise;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.cosmetics.CustomPacketPlayerListItem;
 import kr.syeyoung.dungeonsguide.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
@@ -43,6 +44,9 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 import java.util.Arrays;
+import java.util.concurrent.TimeUnit;
+
+import static kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebugTrap.updateVal;
 
 @ChannelHandler.Sharable
 public class PacketListener extends ChannelDuplexHandler {
@@ -110,6 +114,10 @@ public class PacketListener extends ChannelDuplexHandler {
 
         @Override
         public void processPacket(INetHandlerPlayClient handler) {
+
+
+            Stopwatch stopwatch = Stopwatch.createStarted();
+
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(),getBlockState()));
             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
@@ -117,6 +125,14 @@ public class PacketListener extends ChannelDuplexHandler {
             blockUpdateEvent = new BlockUpdateEvent.Post();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(), getBlockState()));
             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+
+            stopwatch.stop(); // optional
+            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            updateVal(elapsed);
+
+
+
+
         }
 
         @Override
@@ -138,6 +154,11 @@ public class PacketListener extends ChannelDuplexHandler {
         }
         @Override
         public void processPacket(INetHandlerPlayClient handler) {
+
+            Stopwatch stopwatch = Stopwatch.createStarted();
+
+
+
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
@@ -149,6 +170,14 @@ public class PacketListener extends ChannelDuplexHandler {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+
+
+
+            
+            stopwatch.stop(); // optional
+            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
+            updateVal(elapsed);
+
         }
 
         @Override

@@ -38,6 +38,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
@@ -74,6 +75,10 @@ public class DungeonsGuide {
     public static void sendDebugChat(IChatComponent iChatComponent) {
         if (FeatureRegistry.DEBUG.isEnabled())
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
+    }
+
+    public static void sendDebugChat(String text) {
+        sendDebugChat(new ChatComponentText(text));
     }
 
     @Getter

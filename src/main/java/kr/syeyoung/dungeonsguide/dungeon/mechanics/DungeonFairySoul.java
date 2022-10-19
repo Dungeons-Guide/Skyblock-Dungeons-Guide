@@ -26,11 +26,13 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStan
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.List;
 import java.util.*;
+import java.util.function.Predicate;
 
 @Data
 public class DungeonFairySoul implements DungeonMechanic {
@@ -44,24 +46,18 @@ public class DungeonFairySoul implements DungeonMechanic {
         if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<AbstractAction> base;
         Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-        {
-            ActionInteract actionClick= new ActionInteract(secretPoint);
-            actionClick.setPredicate(PredicateArmorStand.INSTANCE);
-            actionClick.setRadius(3);
-            preRequisites.add(actionClick);
-            preRequisites = actionClick.getPreRequisite();
-        }
-        {
-            ActionMove actionMove = new ActionMove(secretPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
-        {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
-            }
+        ActionInteract actionClick= new ActionInteract(secretPoint);
+        actionClick.setPredicate((Predicate<Entity>) PredicateArmorStand.INSTANCE);
+        actionClick.setRadius(3);
+        preRequisites.add(actionClick);
+        preRequisites = actionClick.getPreRequisite();
+        ActionMove actionMove = new ActionMove(secretPoint);
+        preRequisites.add(actionMove);
+        preRequisites = actionMove.getPreRequisite();
+        for (String str : preRequisite) {
+            if (str.isEmpty()) continue;
+            ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+            preRequisites.add(actionChangeState);
         }
         return base;
     }

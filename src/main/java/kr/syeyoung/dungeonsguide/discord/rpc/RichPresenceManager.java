@@ -197,13 +197,13 @@ public class RichPresenceManager implements Runnable {
                 latestDiscordActivity.party.discordActivityParty.current_size = new Int32(Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyRawMembers).map(Set::size).orElse(1));
                 latestDiscordActivity.party.discordActivityParty.max_size = new Int32(PartyManager.INSTANCE.getMaxParty());
 
-            if (skyblockStatus.getContext() != null) {
-                DungeonContext dungeonContext = skyblockStatus.getContext();
-                long init = dungeonContext.getInit();
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+            if (context != null) {
+                long init = context.getInit();
                 latestDiscordActivity.timestamps.start = new DiscordTimestamp(init);
 
-                if (dungeonContext.getBossfightProcessor() != null) {
-                    GameSDK.writeString(latestDiscordActivity.details, "Fighting "+dungeonContext.getBossfightProcessor().getBossName()+": "+dungeonContext.getBossfightProcessor().getCurrentPhase());
+                if (context.getBossfightProcessor() != null) {
+                    GameSDK.writeString(latestDiscordActivity.details, "Fighting "+context.getBossfightProcessor().getBossName()+": "+context.getBossfightProcessor().getCurrentPhase());
                 } else {
                     GameSDK.writeString(latestDiscordActivity.details, "Clearing Rooms");
                 }

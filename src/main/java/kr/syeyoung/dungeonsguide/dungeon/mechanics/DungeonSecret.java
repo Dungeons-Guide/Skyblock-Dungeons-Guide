@@ -23,23 +23,25 @@ import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.pathfinding.NodeProcessorDungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
+import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import java.awt.*;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 @Data
 public class DungeonSecret implements DungeonMechanic {
@@ -168,9 +170,9 @@ public class DungeonSecret implements DungeonMechanic {
             preRequisites.add(actionClick = new ActionClick(secretPoint));
             preRequisites = actionClick.getPreRequisite();
         } else if (secretType == SecretType.BAT) {
-            ActionKill actionKill;
-            preRequisites.add(actionKill = new ActionKill(secretPoint));
-            actionKill.setPredicate(PredicateBat.INSTANCE);
+            ActionKill actionKill = new ActionKill(secretPoint);
+            preRequisites.add(actionKill);
+            actionKill.setPredicate(EntityBat.class::isInstance);
             actionKill.setRadius(10);
             preRequisites = actionKill.getPreRequisite();
         }

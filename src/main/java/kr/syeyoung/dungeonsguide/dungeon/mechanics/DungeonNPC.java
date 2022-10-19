@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStan
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
+import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -33,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Predicate;
 
 @Data
 public class DungeonNPC implements DungeonMechanic {
@@ -48,7 +50,7 @@ public class DungeonNPC implements DungeonMechanic {
         Set<AbstractAction> base;
         Set<AbstractAction> preRequisites = base = new HashSet<>();
         ActionInteract actionClick = new ActionInteract(secretPoint);
-        actionClick.setPredicate(PredicateArmorStand.INSTANCE);
+        actionClick.setPredicate((Predicate<Entity>) PredicateArmorStand.INSTANCE);
         actionClick.setRadius(3);
         preRequisites.add(actionClick);
         preRequisites = actionClick.getPreRequisite();

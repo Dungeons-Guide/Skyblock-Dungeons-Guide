@@ -73,9 +73,13 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
     public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
         toggleTooltip(openGUI());
 
+        if(Minecraft.getMinecraft().thePlayer == null) return;
+
+
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
                 .map(a -> DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getRoomMapper().get(a));
+
 
         DungeonRoom dungeonRoom = dungeonRoomOpt.orElse(null);
         renderTick(dungeonRoom);

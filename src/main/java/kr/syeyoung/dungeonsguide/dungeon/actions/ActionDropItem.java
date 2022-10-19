@@ -20,18 +20,15 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraftforge.event.entity.living.LivingDeathEvent;
-import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -39,9 +36,9 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-@EqualsAndHashCode(callSuper=false)
-public class ActionDropItem implements AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
+@EqualsAndHashCode(callSuper = false)
+public class ActionDropItem extends AbstractAction {
+    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPoint target;
     private Predicate<EntityItem> predicate = Predicates.alwaysTrue();
 
@@ -56,47 +53,30 @@ public class ActionDropItem implements AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
+        BlockPos secretLocation = target.getBlockPos(dungeonRoom);
         List<EntityItem> item = dungeonRoom.getContext().getWorld().getEntitiesWithinAABB(EntityItem.class,
-                AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1));
-        if (item.size() == 0) return false;
+                AxisAlignedBB.fromBounds(
+                        secretLocation.getX(),
+                        secretLocation.getY(),
+                        secretLocation.getZ(),
+                        secretLocation.getX() + 1,
+                        secretLocation.getY() + 1,
+                        secretLocation.getZ() + 1));
+        if (item.isEmpty()) {
+            return false;
+        }
         return (predicate == null || predicate.apply(item.get(0)));
     }
-
     @Override
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
+        RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, true);
         RenderUtils.drawTextAtWorld("Drop Item", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
-    @Override
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
 
     @Override
     public String toString() {
-        return "DropItem\n- target: "+target.toString()+"\n- predicate: "+predicate.getClass().getSimpleName();
+        return "DropItem\n- target: " + target.toString() + "\n- predicate: " + predicate.getClass().getSimpleName();
     }
 }
