@@ -26,7 +26,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.util.Tuple;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -34,8 +33,6 @@ import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
 
 public class MGui extends GuiScreen {
 
@@ -43,7 +40,7 @@ public class MGui extends GuiScreen {
     private final MRootPanel mainPanel = new MRootPanel();
     private boolean isOpen = false;
 
-    public MGui(){
+    public MGui() {
         try {
             Mouse.setNativeCursor(GLCursors.getCursor(EnumCursor.DEFAULT));
         } catch (Throwable e) {
@@ -57,30 +54,25 @@ public class MGui extends GuiScreen {
         Keyboard.enableRepeatEvents(true);
         isOpen = true;
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        mainPanel.setBounds(new Rectangle(0,0,Minecraft.getMinecraft().displayWidth,Minecraft.getMinecraft().displayHeight));
+        mainPanel.setBounds(new Rectangle(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
     }
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        try {
-
-            int i = Mouse.getEventX();
-            int j = this.mc.displayHeight - Mouse.getEventY();
-            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-            GlStateManager.pushMatrix();
-            GlStateManager.disableDepth();
-            GlStateManager.enableBlend();
-            GlStateManager.enableAlpha();
-            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-            GlStateManager.color(1, 1, 1, 1);
-            GlStateManager.scale(1.0/scaledResolution.getScaleFactor(), 1.0/scaledResolution.getScaleFactor(), 1.0d);
-            mainPanel.render0(1, new Point(0,0), new Rectangle(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
-            GlStateManager.popMatrix();
-            GlStateManager.enableBlend();
-            GlStateManager.enableDepth();
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
+        int i = Mouse.getEventX();
+        int j = this.mc.displayHeight - Mouse.getEventY();
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        GlStateManager.pushMatrix();
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
+        mainPanel.render0(1, new Point(0, 0), new Rectangle(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
+        GlStateManager.popMatrix();
+        GlStateManager.enableBlend();
+        GlStateManager.enableDepth();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
@@ -94,6 +86,7 @@ public class MGui extends GuiScreen {
                 e.printStackTrace();
         }
     }
+
     public void keyHeld(int keyCode, char typedChar) throws IOException {
         try {
             mainPanel.keyHeld0(typedChar, keyCode);
@@ -102,6 +95,7 @@ public class MGui extends GuiScreen {
                 e.printStackTrace();
         }
     }
+
     public void keyReleased(int keyCode, char typedChar) throws IOException {
         try {
             mainPanel.keyReleased0(typedChar, keyCode);
@@ -116,10 +110,10 @@ public class MGui extends GuiScreen {
         try {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             mainPanel.mouseClicked0(mouseX, mouseY
-                    ,mouseX, mouseY, mouseButton);
+                    , mouseX, mouseY, mouseButton);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
-            e.printStackTrace();
+                e.printStackTrace();
         }
     }
 
@@ -141,10 +135,10 @@ public class MGui extends GuiScreen {
     public void mouseReleased(int mouseX, int mouseY, int state) {
         try {
             mainPanel.mouseReleased0(mouseX, mouseY
-                    ,mouseX,mouseY , state);
+                    , mouseX, mouseY, state);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
-            e.printStackTrace();
+                e.printStackTrace();
         }
     }
 
@@ -152,17 +146,17 @@ public class MGui extends GuiScreen {
     public void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
         try {
             mainPanel.mouseClickMove0(mouseX, mouseY
-                    ,mouseX ,mouseY, clickedMouseButton, timeSinceLastClick);
+                    , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
-            e.printStackTrace();
+                e.printStackTrace();
         }
     }
 
     public void mouseMove(int mouseX, int mouseY) {
         try {
             mainPanel.mouseMoved0(mouseX, mouseY
-                    ,mouseX ,mouseY);
+                    , mouseX, mouseY);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                 e.printStackTrace();
@@ -186,29 +180,22 @@ public class MGui extends GuiScreen {
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
 
-            if (Mouse.getEventButtonState())
-            {
-                if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0)
-                {
+            if (Mouse.getEventButtonState()) {
+                if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {
                     return;
                 }
 
                 this.eventButton = k;
                 this.lastMouseEvent = Minecraft.getSystemTime();
                 this.mouseClicked(i, j, this.eventButton);
-            }
-            else if (k != -1)
-            {
-                if (this.mc.gameSettings.touchscreen && --this.touchValue > 0)
-                {
+            } else if (k != -1) {
+                if (this.mc.gameSettings.touchscreen && --this.touchValue > 0) {
                     return;
                 }
 
                 this.eventButton = -1;
                 this.mouseReleased(i, j, k);
-            }
-            else if (this.eventButton != -1 && this.lastMouseEvent > 0L)
-            {
+            } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
                 long l = Minecraft.getSystemTime() - this.lastMouseEvent;
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
@@ -228,20 +215,19 @@ public class MGui extends GuiScreen {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                mainPanel.mouseScrolled0(i, j,i,j, wheel);
+                mainPanel.mouseScrolled0(i, j, i, j, wheel);
             }
             lastX = i;
             lastY = j;
         } catch (Throwable e) {
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
-    public void handleKeyboardInput() throws IOException
-    {
+
+    public void handleKeyboardInput() throws IOException {
         if (!isOpen) return;
 
-        if (Keyboard.getEventKeyState())
-        {
+        if (Keyboard.getEventKeyState()) {
             if (Keyboard.isRepeatEvent())
                 this.keyHeld(Keyboard.getEventKey(), Keyboard.getEventCharacter());
             else

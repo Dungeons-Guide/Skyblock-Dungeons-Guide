@@ -16,20 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic;
 
-import lombok.Getter;
-import net.minecraft.util.Vec3;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-
-public class DungeonActionManager {
-    @Getter
-    private static final Map<Integer , Vec3> spawnLocation = new HashMap<>();
-
-    @Getter
-    private static final List<Integer> killeds = new ArrayList<>();
+public interface RouteBlocker {
+    boolean isBlocking(DungeonRoom dungeonRoom);
 }

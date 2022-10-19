@@ -19,9 +19,10 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.pathfinding.NodeProcessorDungeonRoom;
@@ -115,9 +116,9 @@ public class DungeonSecret implements DungeonMechanic {
             }
         } else if (secretType == SecretType.BAT) {
             Vec3 spawn = new Vec3(secretPoint.getBlockPos(dungeonRoom));
-            for (Integer killed : DungeonActionManager.getKilleds()) {
-                if (DungeonActionManager.getSpawnLocation().get(killed) == null) continue;
-                if (DungeonActionManager.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
+            for (Integer killed : DungeonActionContext.getKilleds()) {
+                if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
+                if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
                     return SecretStatus.FOUND;
                 }
             }

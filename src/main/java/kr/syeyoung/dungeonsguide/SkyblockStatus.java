@@ -19,31 +19,26 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.commands.*;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.scoreboard.*;
-import net.minecraftforge.client.ClientCommandHandler;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraft.scoreboard.Score;
+import net.minecraft.scoreboard.ScoreObjective;
+import net.minecraft.scoreboard.ScorePlayerTeam;
+import net.minecraft.scoreboard.Scoreboard;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.File;
-import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Collection;
 import java.util.Set;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class SkyblockStatus {
+
+
+    public static boolean isInDungeon(){
+        return DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon();
+    }
+
     @Getter
     private boolean isOnSkyblock;
     private boolean isOnDungeon;
@@ -54,14 +49,6 @@ public class SkyblockStatus {
 
     @Getter @Setter
     private boolean forceIsOnDungeon;
-
-    @Getter
-    @Setter
-    private DungeonContext context;
-
-    @Getter
-    @Setter
-    private int percentage;
 
     @Getter @Setter
     private String dungeonName;
@@ -111,7 +98,7 @@ public class SkyblockStatus {
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
             if (strippedLine.contains("Cleared: ")) {
                 foundDungeon = true;
-                percentage = Integer.parseInt(strippedLine.substring(9).split(" ")[0]);
+                DungeonsGuide.getDungeonsGuide().getDungeonGodObject().percentage = Integer.parseInt(strippedLine.substring(9).split(" ")[0]);
             }
             if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
                 dungeonName = strippedLine.trim();
@@ -119,5 +106,13 @@ public class SkyblockStatus {
         }
 
         isOnDungeon = foundDungeon;
+    }
+
+    public DungeonContext getContext() {
+        return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+    }
+
+    public void setContext(DungeonContext o) {
+        DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(o);
     }
 }

@@ -19,17 +19,19 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
 import com.google.common.io.Files;
+import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.jetbrains.annotations.NotNull;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.*;
-import java.net.URL;
 import java.nio.charset.Charset;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -42,8 +44,23 @@ public class DungeonRoomInfoRegistry {
     private static final Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
     private static final Map<UUID, DungeonRoomInfo> uuidMap = new HashMap<UUID, DungeonRoomInfo>();
 
-    public static void register(DungeonRoomInfo dungeonRoomInfo) {
-        if (dungeonRoomInfo == null) throw new NullPointerException("what the fak parameter is noll?");
+    static Gson gson = new Gson();
+
+    public static void register(@NotNull DungeonRoomInfo dungeonRoomInfo) {
+
+        System.out.println("Loading room: " + dungeonRoomInfo.getUuid());
+
+        File file = new File(Main.getConfigDir() + "/" + "rooms" + "/" + dungeonRoomInfo.getUuid() + ".json");
+        if(!file.exists()){
+            try {
+                FileUtils.writeStringToFile(file, gson.toJson(dungeonRoomInfo));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+
+
         if (uuidMap.containsKey(dungeonRoomInfo.getUuid())) {
             DungeonRoomInfo dri1 = uuidMap.get(dungeonRoomInfo.getUuid());
             registered.remove(dri1);
@@ -54,7 +71,9 @@ public class DungeonRoomInfoRegistry {
         registered.add(dungeonRoomInfo);
         uuidMap.put(dungeonRoomInfo.getUuid(), dungeonRoomInfo);
         List<DungeonRoomInfo> roomInfos = shapeMap.get(dungeonRoomInfo.getShape());
-        if (roomInfos == null) roomInfos = new ArrayList<DungeonRoomInfo>();
+        if (roomInfos == null) {
+            roomInfos = new ArrayList<>();
+        }
         roomInfos.add(dungeonRoomInfo);
         shapeMap.put(dungeonRoomInfo.getShape(), roomInfos);
     }
@@ -81,8 +100,8 @@ public class DungeonRoomInfoRegistry {
     public static void saveAll(File dir) {
         dir.mkdirs();
         boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
-        String nameidstring = "name,uuid,processsor,secrets";
-        String ids = "";
+        StringBuilder nameidstring = new StringBuilder("name,uuid,processsor,secrets");
+        StringBuilder ids = new StringBuilder();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
                 if (!dungeonRoomInfo.isUserMade() && !isDev) continue;
@@ -92,14 +111,14 @@ public class DungeonRoomInfoRegistry {
                 oos.flush();
                 oos.close();
 
-                nameidstring += "\n"+dungeonRoomInfo.getName()+","+dungeonRoomInfo.getUuid() +","+dungeonRoomInfo.getProcessorId()+","+dungeonRoomInfo.getTotalSecrets();
-                ids += "roomdata/"+dungeonRoomInfo.getUuid() +".roomdata\n";
+                nameidstring.append("\n").append(dungeonRoomInfo.getName()).append(",").append(dungeonRoomInfo.getUuid()).append(",").append(dungeonRoomInfo.getProcessorId()).append(",").append(dungeonRoomInfo.getTotalSecrets());
+                ids.append("roomdata/").append(dungeonRoomInfo.getUuid()).append(".roomdata\n");
             } catch (Exception e) {e.printStackTrace();}
         }
 
         try {
-            Files.write(nameidstring, new File(dir, "roomidmapping.csv"), Charset.defaultCharset());
-            Files.write(ids, new File(dir, "datas.txt"), Charset.defaultCharset());
+            Files.write(nameidstring.toString(), new File(dir, "roomidmapping.csv"), Charset.defaultCharset());
+            Files.write(ids.toString(), new File(dir, "datas.txt"), Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -125,7 +144,9 @@ public class DungeonRoomInfoRegistry {
                     e.printStackTrace();
                 }
             }
-        } catch (Exception e) {e.printStackTrace();}
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         for (File f : dir.listFiles()) {
             if (!f.getName().endsWith(".roomdata")) continue;
             try {

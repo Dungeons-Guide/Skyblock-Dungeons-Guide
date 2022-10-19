@@ -18,12 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomfinder;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.utils.ShortUtils;
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
+import net.minecraft.util.ChatComponentText;
 
 import java.util.List;
 
@@ -48,8 +50,7 @@ public class RoomMatcher {
         for (int z = 0; z < zz; z ++) {
             for (int x = 0; x < xx; x++) {
                 if (x % 8 == 0 && z % 8 == 0 && dungeonRoom.getContext().getWorld().getChunkFromBlockCoords(dungeonRoom.getRelativeBlockPosAt(x, 0, z)).isEmpty()) {
-                    throw new IllegalStateException("chunk is not loaded");
-
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("Chunk Not loaded in Room Matcher"));
                 }
             }
         }

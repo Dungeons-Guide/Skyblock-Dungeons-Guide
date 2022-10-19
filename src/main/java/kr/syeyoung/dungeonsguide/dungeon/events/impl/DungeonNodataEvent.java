@@ -16,10 +16,14 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.mechanics;
+package kr.syeyoung.dungeonsguide.dungeon.events.impl;
 
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public interface RouteBlocker {
-    boolean isBlocking(DungeonRoom dungeonRoom);
+@Data
+@AllArgsConstructor
+public class DungeonNodataEvent implements DungeonEventData {
+    private String eventName;
 }

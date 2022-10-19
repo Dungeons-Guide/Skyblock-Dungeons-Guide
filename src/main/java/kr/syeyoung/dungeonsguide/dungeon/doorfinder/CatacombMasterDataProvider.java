@@ -43,9 +43,6 @@ public class CatacombMasterDataProvider extends DungeonSpecificDataProvider {
         }
         return null;
     }
-    /*
-     *
-    * */
 
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {

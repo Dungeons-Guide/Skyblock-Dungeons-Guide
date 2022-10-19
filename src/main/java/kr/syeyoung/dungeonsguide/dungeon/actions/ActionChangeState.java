@@ -18,19 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionChangeState extends AbstractAction{
+public class ActionChangeState implements AbstractAction {
     @EqualsAndHashCode.Exclude
     private Set<AbstractAction> preRequisite2 = new HashSet<AbstractAction>();
 
@@ -40,6 +44,36 @@ public class ActionChangeState extends AbstractAction{
     public ActionChangeState(String mechanicName, String state) {
         this.mechanicName = mechanicName;
         this.state = state;
+    }
+
+    @Override
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
+
+    }
+
+    @Override
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
     }
 
     @Override

@@ -16,18 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.events;
+package kr.syeyoung.dungeonsguide.dungeon;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import lombok.Getter;
+import net.minecraft.util.Vec3;
 
-@Data
-@AllArgsConstructor
-public class DungeonMapUpdateEvent implements DungeonEventData {
-    private byte[] map;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-    @Override
-    public String getEventName() {
-        return "MAP_UPDATE";
-    }
+public class DungeonActionContext {
+    @Getter
+    private static final Map<Integer, Vec3> spawnLocation = new HashMap<>();
+
+    @Getter
+    private static final List<Integer> killeds = new ArrayList<>();
 }

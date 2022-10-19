@@ -61,9 +61,6 @@ public class CatacombDataProvider extends DungeonSpecificDataProvider {
         }
         return null;
     }
-    /*
-     *
-    * */
 
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
@@ -120,26 +117,20 @@ public class CatacombDataProvider extends DungeonSpecificDataProvider {
                 return 0.7;
             case "F6":
                 return 0.85;
-            case "F7":
+            default:
                 return 1.0;
         }
-        return 1.0;
     }
 
     @Override
     public int speedSecond(String dungeonName) {
         String floor = dungeonName.substring(14).trim();
         switch (floor) {
-            case "F1":
-            case "F2":
-            case "F3":
-            case "F4":
-            case "F6":
-                return 600;
             case "F5":
             case "F7":
                 return 720;
+            default:
+                return 600;
         }
-        return 600;
     }
 }

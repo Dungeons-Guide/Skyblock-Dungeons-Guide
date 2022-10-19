@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;

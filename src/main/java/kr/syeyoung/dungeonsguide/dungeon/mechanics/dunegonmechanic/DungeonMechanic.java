@@ -16,26 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.events;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic;
 
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.UUID;
+import java.io.Serializable;
+import java.util.Set;
 
-@Data
-@AllArgsConstructor
-public class DungeonStateChangeEvent implements DungeonEventData {
-    private Point unitPt;
-    private String roomName;
-    private DungeonRoom.RoomState from;
-    private DungeonRoom.RoomState to;
+public interface DungeonMechanic extends Serializable {
+    Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom);
 
-    @Override
-    public String getEventName() {
-        return "ROOM_STATE_CHANGE";
-    }
+    void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
+
+    String getCurrentState(DungeonRoom dungeonRoom);
+
+    Set<String> getPossibleStates(DungeonRoom dungeonRoom);
+    Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
+
+    OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom);
 }

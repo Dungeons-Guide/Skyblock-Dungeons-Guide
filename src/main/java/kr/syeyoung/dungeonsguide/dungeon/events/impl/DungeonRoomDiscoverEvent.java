@@ -16,25 +16,31 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.mechanics;
+package kr.syeyoung.dungeonsguide.dungeon.events.impl;
 
-import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
+import kr.syeyoung.dungeonsguide.dungeon.events.SerializableBlockPos;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
 import java.awt.*;
-import java.io.Serializable;
-import java.util.Set;
+import java.util.UUID;
 
-public interface DungeonMechanic extends Serializable {
-    Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom);
+@Data
+@AllArgsConstructor
+public class DungeonRoomDiscoverEvent implements DungeonEventData {
+    private Point unitPt;
+    private int rotation;
+    private SerializableBlockPos min;
+    private SerializableBlockPos max;
+    private int shape;
+    private int color;
+    private UUID roomUID;
+    private String roomName;
+    private String roomProc;
 
-    void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
-
-    String getCurrentState(DungeonRoom dungeonRoom);
-
-    Set<String> getPossibleStates(DungeonRoom dungeonRoom);
-    Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
-
-    OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom);
+    @Override
+    public String getEventName() {
+        return "ROOM_DISCOVER";
+    }
 }

@@ -26,32 +26,20 @@ import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.Set;
 
-public abstract class AbstractAction {
-    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+public interface AbstractAction {
+    void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties);
 
-    }
+    void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag);
 
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
+    void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties);
 
-    }
+    void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties);
 
-    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+    void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties);
 
-    }
+    void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties);
 
-    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+    Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom);
 
-    }
-
-    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
-
-    }
-
-    public abstract Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom);
-
-    public abstract boolean isComplete(DungeonRoom dungeonRoom);
+    boolean isComplete(DungeonRoom dungeonRoom);
 }

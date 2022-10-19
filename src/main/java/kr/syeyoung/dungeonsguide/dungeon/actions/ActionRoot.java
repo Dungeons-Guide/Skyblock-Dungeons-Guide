@@ -18,19 +18,50 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashSet;
 import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionRoot extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
+public class ActionRoot implements AbstractAction {
+    private Set<AbstractAction> preRequisite = new HashSet<>();
 
-    public ActionRoot() {
+    @Override
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
+
+    }
+
+    @Override
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
     }
 
     @Override

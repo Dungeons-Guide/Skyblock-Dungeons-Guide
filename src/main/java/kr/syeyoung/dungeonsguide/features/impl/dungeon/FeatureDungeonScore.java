@@ -176,7 +176,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
 
     public int getPercentage() {
-        return skyblockStatus.getPercentage();
+        return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().percentage;
     }
     public int getCompleteRooms() {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {

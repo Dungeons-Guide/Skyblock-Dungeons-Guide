@@ -26,7 +26,9 @@ import java.io.Serializable;
 
 @Data @AllArgsConstructor
 public class SerializableBlockPos implements Serializable {
-    private int x, y, z;
+    private int x;
+    private int y;
+    private int z;
 
     public SerializableBlockPos(BlockPos pos) {
         this.x = pos.getX();

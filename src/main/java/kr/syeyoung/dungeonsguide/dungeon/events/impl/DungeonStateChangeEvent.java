@@ -16,30 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.events;
+package kr.syeyoung.dungeonsguide.dungeon.events.impl;
 
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
+import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class DungeonRoomDiscoverEvent implements DungeonEventData {
+public class DungeonStateChangeEvent implements DungeonEventData {
     private Point unitPt;
-    private int rotation;
-    private SerializableBlockPos min;
-    private SerializableBlockPos max;
-    private int shape;
-    private int color;
-    private UUID roomUID;
     private String roomName;
-    private String roomProc;
+    private DungeonRoom.RoomState from;
+    private DungeonRoom.RoomState to;
 
     @Override
     public String getEventName() {
-        return "ROOM_DISCOVER";
+        return "ROOM_STATE_CHANGE";
     }
 }

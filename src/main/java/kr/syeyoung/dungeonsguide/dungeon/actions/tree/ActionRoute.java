@@ -95,16 +95,16 @@ public class ActionRoute {
     }
 
     public void onTick() {
-        AbstractAction current = getCurrentAction();
+        AbstractAction currentAction = getCurrentAction();
 
-        current.onTick(dungeonRoom, actionRouteProperties);
+        currentAction.onTick(dungeonRoom, actionRouteProperties);
         if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir)) actions.get(this.current-1).onTick(dungeonRoom, actionRouteProperties );
 
         if (dungeonRoom.getMechanics().get(mechanic).getCurrentState(dungeonRoom).equals(state)) {
             this.current = actions.size() - 1;
         }
 
-        if (current.isComplete(dungeonRoom))
+        if (currentAction.isComplete(dungeonRoom))
             next();
     }
 

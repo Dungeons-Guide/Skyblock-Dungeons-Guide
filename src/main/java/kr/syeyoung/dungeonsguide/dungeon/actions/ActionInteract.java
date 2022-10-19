@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -31,6 +31,8 @@ import lombok.EqualsAndHashCode;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.HashSet;
@@ -38,7 +40,7 @@ import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionInteract extends AbstractAction {
+public class ActionInteract implements AbstractAction {
     private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
     private Predicate<Entity> predicate = Predicates.alwaysFalse();
@@ -63,17 +65,38 @@ public class ActionInteract extends AbstractAction {
     public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
         if (interacted) return;
 
-        Vec3 spawnLoc = DungeonActionManager.getSpawnLocation().get(event.getEntity().getEntityId());
+        Vec3 spawnLoc = DungeonActionContext.getSpawnLocation().get(event.getEntity().getEntityId());
         if (spawnLoc == null) return;
         if (target.getBlockPos(dungeonRoom).distanceSq(spawnLoc.xCoord, spawnLoc.yCoord, spawnLoc.zCoord) > radius * radius) return;
         if (!predicate.apply(event.getEntity())) return;
         interacted = true;
     }
+
+    @Override
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Interact", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+    }
+
+    @Override
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
     }
 
     @Override

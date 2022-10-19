@@ -20,13 +20,13 @@ package kr.syeyoung.dungeonsguide.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -177,11 +177,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (en == null) return;
 
             ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            if (DungeonActionManager.getSpawnLocation().containsKey(en.getEntityId())) {
+            if (DungeonActionContext.getSpawnLocation().containsKey(en.getEntityId())) {
                 GlStateManager.enableBlend();
                 GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                fr.drawString("Spawned at " + DungeonActionManager.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
+                fr.drawString("Spawned at " + DungeonActionContext.getSpawnLocation().get(en.getEntityId()), sr.getScaledWidth() / 2, sr.getScaledHeight() / 2, 0xFFFFFFFF);
             }
         }
     }
@@ -409,7 +409,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         DungeonSecret secret = new DungeonSecret();
                         secret.setSecretType(DungeonSecret.SecretType.BAT);
                         secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                                DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                                DungeonActionContext.getSpawnLocation().get(deathEvent.entity.getEntityId())
                         ));
                         ((GuiDungeonRoomEdit) screen).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                                 secret);
@@ -420,7 +420,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     DungeonSecret secret = new DungeonSecret();
                     secret.setSecretType(DungeonSecret.SecretType.BAT);
                     secret.setSecretPoint(new OffsetPoint(dungeonRoom,
-                            DungeonActionManager.getSpawnLocation().get(deathEvent.entity.getEntityId())
+                            DungeonActionContext.getSpawnLocation().get(deathEvent.entity.getEntityId())
                     ));
                     ((GuiDungeonRoomEdit) EditingContext.getEditingContext().getCurrent()).getSep().createNewMechanic("BAT-"+ UUID.randomUUID(),
                             secret);

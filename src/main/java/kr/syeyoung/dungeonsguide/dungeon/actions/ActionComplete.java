@@ -18,12 +18,46 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions;
 
+import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.Collections;
 import java.util.Set;
 
-public class ActionComplete extends AbstractAction {
+public class ActionComplete implements AbstractAction {
+    @Override
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
+
+    }
+
+    @Override
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
     @Override
     public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
         return Collections.emptySet();

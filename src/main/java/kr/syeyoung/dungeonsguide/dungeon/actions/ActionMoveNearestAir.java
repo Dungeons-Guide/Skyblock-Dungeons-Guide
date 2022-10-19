@@ -21,11 +21,14 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Vec3;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,7 +38,7 @@ import java.util.concurrent.Future;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionMoveNearestAir extends AbstractAction {
+public class ActionMoveNearestAir implements AbstractAction {
     private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
 
@@ -54,8 +57,28 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
 
     @Override
+    public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties, boolean flag) {
         ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses);
+    }
+
+    @Override
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
     }
 
     private int tick = -1;

@@ -16,18 +16,19 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.events;
+package kr.syeyoung.dungeonsguide.dungeon.events.impl;
 
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DungeonPuzzleFailureEvent implements DungeonEventData {
-    private String playerName;
-    private String message;
+public class DungeonMapUpdateEvent implements DungeonEventData {
+    private byte[] map;
+
     @Override
     public String getEventName() {
-        return "PUZZLE_FAILURE";
+        return "MAP_UPDATE";
     }
 }

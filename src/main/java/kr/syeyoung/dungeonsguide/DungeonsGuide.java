@@ -25,8 +25,7 @@ import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.events.listener.DungeonListener;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonGodObject;
 import kr.syeyoung.dungeonsguide.events.listener.FeatureListener;
 import kr.syeyoung.dungeonsguide.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -47,13 +46,7 @@ import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
-import java.security.InvalidAlgorithmParameterException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
 import java.util.Set;
 
 public class DungeonsGuide {
@@ -64,6 +57,8 @@ public class DungeonsGuide {
     private CosmeticsManager cosmeticsManager;
 
     Logger logger = LogManager.getLogger("DungeonsGuide");
+    @Getter
+    private DungeonGodObject dungeonGodObject;
 
     private DungeonsGuide() {
     }
@@ -99,8 +94,11 @@ public class DungeonsGuide {
 
         progressbar.step("Registering Events & Commands");
 
+
+        this.dungeonGodObject = new DungeonGodObject();
+        dungeonGodObject.init();
+
         skyblockStatus = new SkyblockStatus();
-        MinecraftForge.EVENT_BUS.register(new DungeonListener());
 
         CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
@@ -119,15 +117,8 @@ public class DungeonsGuide {
 
         MinecraftForge.EVENT_BUS.register(new AhUtils());
 
-        progressbar.step("Loading RoomData's");
-        try {
-            DungeonRoomInfoRegistry.loadAll(Main.configDir);
-        } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |
-                 IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
-            e.printStackTrace();
-        }
-        progressbar.step("Opening connection");
 
+        progressbar.step("Opening connection");
         cosmeticsManager = new CosmeticsManager();
         MinecraftForge.EVENT_BUS.register(cosmeticsManager);
 
@@ -139,10 +130,14 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
-        if (FeatureRegistry.ETC_REPARTY.isEnabled())
+        if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
             ClientCommandHandler.instance.registerCommand(commandReparty);
-        if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled())
+        }
+
+        if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled()) {
             System.setProperty("dg.safe", "true");
+        }
+
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         TimeScoreUtil.init();
 

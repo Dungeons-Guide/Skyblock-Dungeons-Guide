@@ -16,24 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.events;
+package kr.syeyoung.dungeonsguide.dungeon.events.impl;
 
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
-import java.awt.*;
-
 @Data
 @AllArgsConstructor
-public class DungeonSecretCountChangeEvent implements DungeonEventData {
-    private int prevCount;
-    private int newCount;
-    private int totalSecret;
-    private boolean sureTotalSecret;
+public class DungeonCryptBrokenEvent implements DungeonEventData {
+    private int prevCrypts;
+    private int newCrypts;
 
     @Override
     public String getEventName() {
-        return "SECRET_CNT_CHANGE";
+        return "CRYPTS_CHANGE";
     }
 }

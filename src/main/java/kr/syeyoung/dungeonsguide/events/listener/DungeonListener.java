@@ -21,8 +21,9 @@ package kr.syeyoung.dungeonsguide.events.listener;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.Config;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonActionManager;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonGodObject;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.gui.GuiDungeonAddSet;
@@ -39,7 +40,6 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.passive.EntityBat;
@@ -70,6 +70,13 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class DungeonListener {
+
+    private DungeonGodObject god;
+
+    public DungeonListener(DungeonGodObject god) {
+        this.god = god;
+    }
+
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Unload event) {
         try {
@@ -77,21 +84,26 @@ public class DungeonListener {
         } catch (IOException e) {
             e.printStackTrace();
         }
-        DungeonActionManager.getSpawnLocation().clear();
-        DungeonActionManager.getKilleds().clear();
+        DungeonActionContext.getSpawnLocation().clear();
+        DungeonActionContext.getKilleds().clear();
     }
 
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        if (!skyblockStatus.isOnDungeon()) return;
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
-            DungeonContext context = skyblockStatus.getContext();
+        if (context != null) {
+
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            if (thePlayer == null) return;
-            if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onPostGuiRender(e);
+            if (thePlayer == null) {
+                return;
+            }
+            if (context.getBossfightProcessor() != null) {
+                context.getBossfightProcessor().onPostGuiRender(e);
+            }
+
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
@@ -99,6 +111,7 @@ public class DungeonListener {
                 dungeonRoom.getRoomProcessor().onPostGuiRender(e);
             }
         }
+
         GlStateManager.enableBlend();
         GlStateManager.color(1, 1, 1, 1);
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -108,12 +121,10 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        if (!skyblockStatus.isOnDungeon()) return;
-
-        if (skyblockStatus.getContext() != null) {
-            DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
+        if (context != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             if (thePlayer == null) return;
             if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onEntityUpdate(e);
@@ -150,29 +161,33 @@ public class DungeonListener {
 
         if (isOnDungeon && !skyblockStatus.isOnDungeon()) {
             MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
-            skyblockStatus.setContext(null);
+            god.setContext(null);
             if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
                 MapUtils.clearMap();
             }
             return;
         }
         if (isOnSkyblock) {
-            if (skyblockStatus.getContext() != null) {
-                skyblockStatus.getContext().tick();
+            DungeonContext context = god.getContext();
+            if (context != null) {
+                context.tick();
             } else {
                 if (skyblockStatus.isOnDungeon()) {
-                    skyblockStatus.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
+                    god.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
                     MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
                 }
             }
         }
 
 
-        if (skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null) {
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            if (thePlayer == null) return;
+        DungeonContext context = god.getContext();
+        if (skyblockStatus.isOnDungeon() && context != null) {
 
-            DungeonContext context = skyblockStatus.getContext();
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            if (thePlayer == null) {
+                return;
+            }
+
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().tick();
@@ -181,6 +196,7 @@ public class DungeonListener {
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+
             if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
                 dungeonRoom.getRoomProcessor().tick();
             }
@@ -195,11 +211,11 @@ public class DungeonListener {
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
             return;
 
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        if (skyblockStatus.getContext() != null) {
-            DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
+        if (context != null) {
+
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
@@ -223,27 +239,29 @@ public class DungeonListener {
 
     @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
         if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
             MinecraftForge.EVENT_BUS.post(new DungeonEndedEvent());
         }
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
+        if (context != null) {
+
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             context.onChat(clientChatReceivedEvent);
 
             if (context.getBossfightProcessor() != null) {
-                if (clientChatReceivedEvent.type == 2)
+                if (clientChatReceivedEvent.type == 2) {
                     context.getBossfightProcessor().actionbarReceived(clientChatReceivedEvent.message);
-                else
+                } else {
                     context.getBossfightProcessor().chatReceived(clientChatReceivedEvent.message);
+                }
             }
+
             RoomProcessor roomProcessor = null;
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             if (dungeonRoom != null) {
@@ -257,10 +275,13 @@ public class DungeonListener {
                     }
                 }
             }
-            if (clientChatReceivedEvent.type == 2) return;
+            if (clientChatReceivedEvent.type == 2) {
+                return;
+            }
             for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
-                if (globalRoomProcessor == roomProcessor) continue;
-                globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
+                if (globalRoomProcessor != roomProcessor) {
+                    globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);
+                }
             }
         }
     }
@@ -268,11 +289,13 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
-        if (context == null) return;
+        DungeonContext context = god.getContext();
+        if (context == null) {
+            return;
+        }
+
         if (FeatureRegistry.DEBUG.isEnabled()) {
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 for (DungeonDoor door : dungeonRoom.getDoors()) {
@@ -282,39 +305,34 @@ public class DungeonListener {
         }
 
 
-        if (skyblockStatus.getContext() != null) {
+        if (context.getBossfightProcessor() != null) {
+            context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+        }
 
-            if (context.getBossfightProcessor() != null) {
-                context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+        Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+
+        DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+        if (dungeonRoom != null) {
+            if (dungeonRoom.getRoomProcessor() != null) {
+                dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
             }
+        }
 
-            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+        if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null) {
 
-            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-            FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-            if (dungeonRoom != null) {
-                if (dungeonRoom.getRoomProcessor() != null) {
-                    dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
-                }
+            Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
+            BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
+            for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
+                boolean blocked = dungeonRoom.isBlocked(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+
+                RenderUtils.highlightBox(
+                        AxisAlignedBB.fromBounds(
+                                allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
+                                allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
+                        ), blocked ? new Color(0x55FF0000, true) : new Color(0x3300FF00, true), renderWorldLastEvent.partialTicks, false);
+
             }
-
-            if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null) {
-
-                Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
-                BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
-                for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                    boolean blocked = dungeonRoom.isBlocked(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-
-                    RenderUtils.highlightBox(
-                            AxisAlignedBB.fromBounds(
-                                    allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
-                                    allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
-                            ), blocked ? new Color(0x55FF0000, true) : new Color(0x3300FF00, true), renderWorldLastEvent.partialTicks, false);
-
-                }
-            }
-
         }
 
         if (EditingContext.getEditingContext() != null) {
@@ -337,19 +355,17 @@ public class DungeonListener {
 
     @SubscribeEvent()
     public void onKey2(KeyBindPressedEvent keyInputEvent) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
+        if (god.getContext() != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onKeybindPress(keyInputEvent);
             }
-            RoomProcessor roomProcessor = null;
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             if (dungeonRoom != null) {
                 if (dungeonRoom.getRoomProcessor() != null) {
@@ -361,19 +377,17 @@ public class DungeonListener {
 
     @SubscribeEvent()
     public void onInteract(PlayerInteractEntityEvent interact) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
+        if (god.getContext() != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onInteract(interact);
             }
-            RoomProcessor roomProcessor = null;
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             if (dungeonRoom != null) {
                 if (dungeonRoom.getRoomProcessor() != null) {
@@ -385,19 +399,17 @@ public class DungeonListener {
 
     @SubscribeEvent()
     public void onBlockChange(BlockUpdateEvent.Post postInteract) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
+        if (god.getContext() != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onBlockUpdate(postInteract);
             }
-            RoomProcessor roomProcessor = null;
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             if (dungeonRoom != null) {
                 if (dungeonRoom.getRoomProcessor() != null) {
@@ -412,7 +424,7 @@ public class DungeonListener {
         if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
-                DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
+                DungeonContext context = god.getContext();
                 if (context == null) {
                     Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Not in dungeons"));
                     return;
@@ -440,19 +452,18 @@ public class DungeonListener {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
         if (!keyInputEvent.world.isRemote) return;
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
+        if (context != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onInteractBlock(keyInputEvent);
             }
-            RoomProcessor roomProcessor = null;
+
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             if (dungeonRoom != null) {
                 if (dungeonRoom.getRoomProcessor() != null) {
@@ -463,32 +474,30 @@ public class DungeonListener {
     }
 
     @Getter
-    private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<Integer, Vec3>();
+    private final Map<Integer, Vec3> entityIdToPosMap = new HashMap<>();
 
     @SubscribeEvent
     public void onEntitySpawn(EntityJoinWorldEvent spawn) {
-        DungeonActionManager.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
+        DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 
 
     @SubscribeEvent
     public void onEntityDeSpawn(LivingDeathEvent deathEvent) {
         if (deathEvent.entityLiving instanceof EntityBat)
-            DungeonActionManager.getKilleds().add(deathEvent.entity.getEntityId());
+            DungeonActionContext.getKilleds().add(deathEvent.entity.getEntityId());
 
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isInDungeon()) return;
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = god.getContext();
 
-        if (skyblockStatus.getContext() != null) {
+        if (god != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onEntityDeath(deathEvent);
             }
-            RoomProcessor roomProcessor = null;
             DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
             if (dungeonRoom != null) {
                 if (dungeonRoom.getRoomProcessor() != null) {
@@ -498,7 +507,7 @@ public class DungeonListener {
         }
 
         if (!(deathEvent.entityLiving instanceof EntityBat))
-            DungeonActionManager.getSpawnLocation().remove(deathEvent.entity.getEntityId());
+            DungeonActionContext.getSpawnLocation().remove(deathEvent.entity.getEntityId());
     }
 
 }

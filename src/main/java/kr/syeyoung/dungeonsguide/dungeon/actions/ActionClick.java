@@ -23,11 +23,13 @@ import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
@@ -36,7 +38,7 @@ import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionClick extends AbstractAction {
+public class ActionClick implements AbstractAction {
     private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
     private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
@@ -70,6 +72,26 @@ public class ActionClick extends AbstractAction {
         BlockPos pos = target.getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, true);
         RenderUtils.drawTextAtWorld("Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
+    }
+
+    @Override
+    public void onLivingDeath(DungeonRoom dungeonRoom, LivingDeathEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onRenderScreen(DungeonRoom dungeonRoom, float partialTicks, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onLivingInteract(DungeonRoom dungeonRoom, PlayerInteractEntityEvent event, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
+    }
+
+    @Override
+    public void onTick(DungeonRoom dungeonRoom, ActionRoute.ActionRouteProperties actionRouteProperties) {
+
     }
 
 

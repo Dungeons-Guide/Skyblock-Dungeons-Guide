@@ -16,13 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.dungeon.events;
+package kr.syeyoung.dungeonsguide.dungeon.events.impl;
 
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class DungeonNodataEvent implements DungeonEventData {
-    private String eventName;
+public class DungeonDeathEvent implements DungeonEventData {
+    private String playerName;
+    private String message;
+    private int cnt;
+
+    @Override
+    public String getEventName() {
+        return "PLAYER_DEATH";
+    }
 }

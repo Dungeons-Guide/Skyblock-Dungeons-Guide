@@ -22,6 +22,10 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.events.*;
+import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonCryptBrokenEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonNodataEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonPuzzleFailureEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonSecretCountChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -148,11 +152,13 @@ public class DungeonContext {
         }
         List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
 
-        for (int i = 1; i < 20; i++) {
-            NetworkPlayerInfo networkPlayerInfo = list.get(i);
-            String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
-            if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
-            players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
+        if(list.size() >= 20){
+            for (int i = 1; i < 20; i++) {
+                NetworkPlayerInfo networkPlayerInfo = list.get(i);
+                String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
+                if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
+                players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
+            }
         }
 
         if (latestSecretCnt != FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) {
