@@ -70,6 +70,7 @@ public class ActionMove extends AbstractAction {
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
         if (actionRouteProperties.isBeacon()) {
+
             RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
             RenderUtils.highlightBlock(pos, actionRouteProperties.getBeaconColor(), partialTicks);
         }

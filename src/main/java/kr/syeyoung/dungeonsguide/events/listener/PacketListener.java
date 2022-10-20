@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.events.impl.TitleEvent;
 import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
@@ -116,11 +115,11 @@ public class PacketListener extends ChannelDuplexHandler {
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(),getBlockState()));
 
 
-            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
             super.processPacket(handler);
             blockUpdateEvent = new BlockUpdateEvent.Post();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(), getBlockState()));
-            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
 
 
 
@@ -152,13 +151,13 @@ public class PacketListener extends ChannelDuplexHandler {
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
-            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
             super.processPacket(handler);
             blockUpdateEvent = new BlockUpdateEvent.Post();
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
-            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
 
 
         }

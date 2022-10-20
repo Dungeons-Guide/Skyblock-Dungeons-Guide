@@ -18,26 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
-import lombok.Getter;
 
 public class FeatureDebug extends SimpleFeature {
-    @Getter
-    private static Boolean trapfix;
 
     public FeatureDebug() {
         super("Advanced", "Debug", "Toggles debug mode", "debug", false);
-//        addParameter("Key", new FeatureParameter<String>("Key", "Secret Key given by syeyoung", "Put the debug enable key here to enable debug mode", "", "string"));
 
         addParameter("swtich", new FeatureParameter<>("swtich", "Enable Debug", "Enables debug mode", false, "boolean"));
-
-
-        addParameter("TrapRoomFix", new FeatureParameter<>("TrapRoomFix", "Enable trap", "trap ", false, "boolean", nval -> {
-            this.trapfix = nval;
-            DungeonsGuide.sendDebugChat("Trap room fix: " + trapfix);
-        }));
     }
 
 
@@ -46,35 +35,4 @@ public class FeatureDebug extends SimpleFeature {
         return this.<Boolean>getParameter("swtich").getValue();
     }
 
-
-//    @Override
-//    public boolean isDisyllable() {
-//        return false;
-//    }
-
-//    @Override
-//    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-//        ConfigPanelCreator.map.put("base." + getKey(), () -> {
-//            MFeatureEdit featureEdit = new MFeatureEdit(FeatureDebug.this, rootConfigPanel);
-//            for (FeatureParameter<?> parameter : getParameters()) {
-//                featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureDebug.this, parameter, rootConfigPanel));
-//            }
-//            featureEdit.addParameterEdit("IsEnabled",
-//                    new MParameterEdit(
-//                            FeatureDebug.this,
-//                            new FeatureParameter<>("Key Status", "Key Status", "Key Enabled? Or not?", "", "idk"),
-//                            rootConfigPanel,
-//                            new MLabel() {
-//                                @Override
-//                                public String getText() {
-//                                    return isEnabled() ? "Enabled!" : "Incorrect Key";
-//                                }
-//                            },
-//                            (a) -> false
-//                    )
-//            );
-//            return featureEdit;
-//        });
-//        return "base." + getKey();
-//    }
 }

@@ -35,7 +35,6 @@ import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.events.impl.*;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import kr.syeyoung.dungeonsguide.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import lombok.Getter;
@@ -422,12 +421,6 @@ public class DungeonListener {
         DungeonContext context = god.getContext();
 
         if (god.getContext() != null) {
-            if(FeatureDebug.getTrapfix()){
-                System.out.println(getCurrentRoomName());
-                if(getCurrentRoomName().equals("Trap-very-hard2")) {
-                    return;
-                }
-            }
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
