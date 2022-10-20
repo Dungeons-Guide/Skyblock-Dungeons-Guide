@@ -200,6 +200,8 @@ public class FeatureRegistry {
 
     private static final FeatureDebugTrap ADVANCED_BAT;
 
+    public static final SimpleFeature RENDER_BREACONS;
+
     static {
         try {
             SECRET_LINE_PROPERTIES_GLOBAL = register(new PathfindLineProperties("Dungeon Secrets", "Global Line Settings", "Global Line Settings", "secret.lineproperties.global", true, null));
@@ -255,6 +257,8 @@ public class FeatureRegistry {
             SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {{
                 addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind"));
             }});
+
+            RENDER_BREACONS = register(new SimpleFeature("Dungeon Secrets.Render Beacons", "Render beacons", "Should the mod not render beacons on secret", "secret.beacons", false));
             SECRET_AUTO_START = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
             SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon Secrets.Legacy AutoPathfind", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
             BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());

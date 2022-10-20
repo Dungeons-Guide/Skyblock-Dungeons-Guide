@@ -70,8 +70,9 @@ public class ActionMove extends AbstractAction {
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
         if (actionRouteProperties.isBeacon()) {
-
-            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
+            if(!FeatureRegistry.RENDER_BREACONS.isEnabled()){
+                RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
+            }
             RenderUtils.highlightBlock(pos, actionRouteProperties.getBeaconColor(), partialTicks);
         }
         RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
