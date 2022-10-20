@@ -72,7 +72,7 @@ public class Main {
 
     @EventHandler
     public void initEvent(final FMLInitializationEvent initializationEvent) {
-        if(yoMamaOutdated == null || yoMamaOutdated.isUsingOutdatedDg) return;
+//        if(yoMamaOutdated == null || yoMamaOutdated.isUsingOutdatedDg) return;
         MinecraftForge.EVENT_BUS.register(this);
         try {
             logger.info("init-ing DungeonsGuide");
@@ -171,9 +171,9 @@ public class Main {
 
         yoMamaOutdated = new YoMamaOutdated();
         MinecraftForge.EVENT_BUS.register(yoMamaOutdated);
-        if(yoMamaOutdated.isUsingOutdatedDg) {
-            return;
-        }
+//        if(yoMamaOutdated.isUsingOutdatedDg) {
+//            return;
+//        }
 
         try {
             try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {

@@ -36,7 +36,7 @@ public class YoMamaOutdated {
 
         try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
             HttpGet httpget = new HttpGet( "https://dungeonsguide.kingstefan26.workers.dev/outdated");
-            Header[] haeders = {new BasicHeader("User-Agent", "DungeonsGuide/" + Main.VERSION), new BasicHeader("Player-Uuid", Minecraft.getMinecraft().getSession().getPlayerID())};
+            Header[] haeders = {new BasicHeader("User-Agent", "DungeonsGuide/" + Main.VERSION)};
             httpget.setHeaders(haeders);
             HttpResponse httpresponse = httpclient.execute(httpget);
 
@@ -65,7 +65,7 @@ public class YoMamaOutdated {
                 public void initGui() {
                     ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
                     this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2-100,sr.getScaledHeight()-70 ,"Close Minecraft"));
-                    this.buttonList.add(new GuiButton(1, sr.getScaledWidth()/2-100,sr.getScaledHeight()-40 ,"Play Without DG"));
+                    this.buttonList.add(new GuiButton(1, sr.getScaledWidth()/2-100,sr.getScaledHeight()-40 ,"Ignore"));
                 }
 
                 @Override
