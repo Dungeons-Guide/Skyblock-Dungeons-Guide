@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.events.listener;
 
-import com.google.common.base.Stopwatch;
 import io.netty.channel.ChannelDuplexHandler;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -31,6 +30,7 @@ import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.events.impl.TitleEvent;
 import kr.syeyoung.dungeonsguide.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebug;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
@@ -44,9 +44,6 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.network.FMLNetworkEvent;
 
 import java.util.Arrays;
-import java.util.concurrent.TimeUnit;
-
-import static kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureDebugTrap.updateVal;
 
 @ChannelHandler.Sharable
 public class PacketListener extends ChannelDuplexHandler {
@@ -115,20 +112,15 @@ public class PacketListener extends ChannelDuplexHandler {
         @Override
         public void processPacket(INetHandlerPlayClient handler) {
 
-
-            Stopwatch stopwatch = Stopwatch.createStarted();
-
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(),getBlockState()));
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+
+
+            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
             super.processPacket(handler);
             blockUpdateEvent = new BlockUpdateEvent.Post();
             blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(getBlockPosition(), getBlockState()));
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
-
-            stopwatch.stop(); // optional
-            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-            updateVal(elapsed);
+            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
 
 
 
@@ -155,28 +147,19 @@ public class PacketListener extends ChannelDuplexHandler {
         @Override
         public void processPacket(INetHandlerPlayClient handler) {
 
-            Stopwatch stopwatch = Stopwatch.createStarted();
-
-
 
             BlockUpdateEvent blockUpdateEvent = new BlockUpdateEvent.Pre();
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
             super.processPacket(handler);
             blockUpdateEvent = new BlockUpdateEvent.Post();
             for (S22PacketMultiBlockChange.BlockUpdateData changedBlock : getChangedBlocks()) {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
-            MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
+            if(!FeatureDebug.getTrapfix()) MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
 
-
-
-            
-            stopwatch.stop(); // optional
-            long elapsed = stopwatch.elapsed(TimeUnit.MILLISECONDS);
-            updateVal(elapsed);
 
         }
 

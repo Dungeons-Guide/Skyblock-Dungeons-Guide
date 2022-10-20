@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import lombok.Getter;
@@ -33,7 +34,10 @@ public class FeatureDebug extends SimpleFeature {
         addParameter("swtich", new FeatureParameter<>("swtich", "Enable Debug", "Enables debug mode", false, "boolean"));
 
 
-        addParameter("TrapRoomFix", new FeatureParameter<>("TrapRoomFix", "Enable trap", "trap ", false, "boolean", nval -> this.trapfix = nval));
+        addParameter("TrapRoomFix", new FeatureParameter<>("TrapRoomFix", "Enable trap", "trap ", false, "boolean", nval -> {
+            this.trapfix = nval;
+            DungeonsGuide.sendDebugChat("Trap room fix: " + trapfix);
+        }));
     }
 
 

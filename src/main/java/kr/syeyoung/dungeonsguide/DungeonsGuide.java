@@ -73,6 +73,7 @@ public class DungeonsGuide {
     }
 
     public static void sendDebugChat(IChatComponent iChatComponent) {
+        if(FeatureRegistry.DEBUG == null) return;
         if (FeatureRegistry.DEBUG.isEnabled())
             Minecraft.getMinecraft().thePlayer.addChatMessage(iChatComponent);
     }
