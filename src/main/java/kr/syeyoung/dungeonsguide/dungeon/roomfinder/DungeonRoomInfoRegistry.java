@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
 
@@ -48,16 +47,16 @@ public class DungeonRoomInfoRegistry {
 
     public static void register(@NotNull DungeonRoomInfo dungeonRoomInfo) {
 
-        System.out.println("Loading room: " + dungeonRoomInfo.getUuid());
-
-        File file = new File(Main.getConfigDir() + "/" + "rooms" + "/" + dungeonRoomInfo.getUuid() + ".json");
-        if(!file.exists()){
-            try {
-                FileUtils.writeStringToFile(file, gson.toJson(dungeonRoomInfo));
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-        }
+//        System.out.println("Loading room: " + dungeonRoomInfo.getUuid());
+//
+//        File file = new File(Main.getConfigDir() + "/" + "rooms" + "/" + dungeonRoomInfo.getUuid() + ".json");
+//        if(!file.exists()){
+//            try {
+//                FileUtils.writeStringToFile(file, gson.toJson(dungeonRoomInfo));
+//            } catch (IOException e) {
+//                throw new RuntimeException(e);
+//            }
+//        }
 
 
 
