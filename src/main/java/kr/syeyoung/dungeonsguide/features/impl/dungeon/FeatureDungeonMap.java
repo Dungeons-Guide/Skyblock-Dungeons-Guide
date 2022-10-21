@@ -217,26 +217,33 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 String str = "";
                 str += dungeonRoom.getTotalSecrets() == -1 ? "?" : String.valueOf(dungeonRoom.getTotalSecrets());
                 str += " ";
-                if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED) {
-                    str += "✔";
-                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS) {
-                    str += "☑";
-                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED) {
-                    str += "☐";
-                } else if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED) {
-                    str += "❌";
+
+                DungeonRoom.RoomState currentState = dungeonRoom.getCurrentState();
+                switch (currentState) {
+                    case FINISHED:
+                    case COMPLETE_WITHOUT_SECRETS:
+                        str += "✔";
+                        break;
+                    case DISCOVERED:
+                        str += "☐";
+                        break;
+                    case FAILED:
+                        str += "❌";
+                        break;
                 }
 
 
                 GlStateManager.enableBlend();
                 GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                 GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FINISHED)
+                if (currentState == DungeonRoom.RoomState.FINISHED) {
                     fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), 0xFF00FF00);
-                else {
-                    if (dungeonRoom.getColor() == 74)
+                } else {
+                    if (dungeonRoom.getColor() == 74) {
                         fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), 0xff000000);
-                    else fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), 0xFFFFFFFF);
+                    } else {
+                        fr.drawString(str, -(fr.getStringWidth(str) / 2), -(fr.FONT_HEIGHT / 2), 0xFFFFFFFF);
+                    }
                 }
 
                 GlStateManager.popMatrix();
