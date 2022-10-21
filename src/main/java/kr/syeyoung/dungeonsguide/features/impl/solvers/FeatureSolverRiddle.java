@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 
 public class FeatureSolverRiddle extends SimpleFeature {
     public FeatureSolverRiddle() {
-        super("Solver.Any Floor", "Riddle", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle");
+        super("Dungeon.Solvers.Any Floor", "Riddle", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle");
 
         addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box", new AColor(0,255,0,50), "acolor"));
     }

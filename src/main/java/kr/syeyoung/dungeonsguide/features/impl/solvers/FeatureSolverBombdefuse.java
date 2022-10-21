@@ -24,7 +24,7 @@ import org.lwjgl.input.Keyboard;
 
 public class FeatureSolverBombdefuse extends SimpleFeature {
     public FeatureSolverBombdefuse() {
-        super("Solver.Floor 7+", "Bomb Defuse", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse");
+        super("Dungeon.Solvers.Floor 7+", "Bomb Defuse", "Communicates with others dg using key 'F' for solutions and displays it",  "solver.bombdefuse");
         addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to send solution in chat", Keyboard.KEY_NONE, "keybind"));
     }
 }

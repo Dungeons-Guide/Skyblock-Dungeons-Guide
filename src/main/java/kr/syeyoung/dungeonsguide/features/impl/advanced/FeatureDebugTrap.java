@@ -16,7 +16,7 @@ import java.util.List;
 
 public class FeatureDebugTrap extends TextHUDFeature {
     public FeatureDebugTrap() {
-        super("Advanced", "Display the current amount of bat entities", "", "advanced.bat", false, getFontRenderer().getStringWidth("You're in puzzle-tictactoe"), getFontRenderer().FONT_HEIGHT);
+        super("Debug", "Display the current amount of bat entities", "", "advanced.bat", false, getFontRenderer().getStringWidth("You're in puzzle-tictactoe"), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("in", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("roomname", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
     }

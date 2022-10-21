@@ -32,7 +32,7 @@ import net.minecraft.util.AxisAlignedBB;
 
 public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderListener {
     public FeatureBoxRealLivid() {
-        super("Bossfight.Floor 5", "Box Real Livid", "Box Real Livid in bossfight", "bossfight.realLividBox", true);
+        super("Dungeon.Bossfight.Floor 5", "Box Real Livid", "Box Real Livid in bossfight", "Dungeon.Bossfight.realLividBox", true);
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Livid", new AColor(0,255,0,150), "acolor", nval -> color = nval));
     }
 

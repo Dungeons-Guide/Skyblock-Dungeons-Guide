@@ -32,7 +32,7 @@ import java.util.LinkedHashMap;
 
 public class FeatureCreateRefreshLine extends SimpleFeature {
     public FeatureCreateRefreshLine() {
-        super("Dungeon Secrets.Keybinds", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nPress settings to edit the key", "secret.refreshPathfind", true);
+        super("Dungeon.Secrets.Keybinds", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nPress settings to edit the key", "secret.refreshPathfind", true);
         this.parameters = new LinkedHashMap<>();
         addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", Keyboard.KEY_NONE, "keybind"));
         addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Force Enable pathfind for future actions when used", false, "boolean"));

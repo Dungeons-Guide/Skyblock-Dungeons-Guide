@@ -30,7 +30,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 
 public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRenderListener {
     public FeatureHideAnimals() {
-        super("Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
+        super("Dungeon.Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
         addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheeps", "Hide Sheeps", true, "boolean", nval -> sheep = nval));
         addParameter("cow", new FeatureParameter<Boolean>("cow", "Hide Cows", "Hide Cows", true, "boolean", nval -> cow = nval));
         addParameter("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, "boolean", nval -> chicken = nval));

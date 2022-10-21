@@ -37,7 +37,7 @@ import java.util.stream.Collectors;
 
 public class FeaturePathfindStrategy extends SimpleFeature {
     public FeaturePathfindStrategy() {
-        super("Dungeon Secrets", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
+        super("Dungeon.Secrets.Preferences", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
         addParameter("strategy", new FeatureParameter<String>("strategy", "Pathfind Strategy", "Pathfind Strategy", "THETA_STAR", "string"));
 
     }

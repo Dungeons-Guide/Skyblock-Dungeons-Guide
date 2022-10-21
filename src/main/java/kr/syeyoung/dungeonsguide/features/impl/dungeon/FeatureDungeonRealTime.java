@@ -33,7 +33,7 @@ import java.util.List;
 
 public class FeatureDungeonRealTime extends TextHUDFeature implements DungeonStartListener, DungeonQuitListener {
     public FeatureDungeonRealTime() {
-        super("Dungeon.Dungeon Information", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime", true, getFontRenderer().getStringWidth("Time(Real): 59m 59s"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon.HUDs", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime", true, getFontRenderer().getStringWidth("Time(Real): 59m 59s"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("discriminator", new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));

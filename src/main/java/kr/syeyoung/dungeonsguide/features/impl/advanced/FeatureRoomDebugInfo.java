@@ -37,7 +37,7 @@ import java.awt.*;
 
 public class FeatureRoomDebugInfo extends GuiFeature {
     public FeatureRoomDebugInfo() {
-        super("Advanced", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo", false, getFontRenderer().getStringWidth("longestplayernamepos: 100"), getFontRenderer().FONT_HEIGHT * 6);
+        super("Debug", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo", false, getFontRenderer().getStringWidth("longestplayernamepos: 100"), getFontRenderer().FONT_HEIGHT * 6);
         this.setEnabled(false);
         addParameter("color", new FeatureParameter<Color>("color", "Color", "Color of text", Color.white, "color", nval -> color = nval.getRGB()));
     }

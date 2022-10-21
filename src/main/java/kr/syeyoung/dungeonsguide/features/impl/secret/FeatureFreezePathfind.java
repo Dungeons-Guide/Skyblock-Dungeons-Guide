@@ -29,7 +29,7 @@ import org.lwjgl.input.Keyboard;
 
 public class FeatureFreezePathfind extends SimpleFeature implements KeybindPressedListener {
     public FeatureFreezePathfind() {
-        super("Dungeon Secrets.Keybinds", "Global Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move.\nPress settings to edit the key", "secret.freezepathfind", false);
+        super("Dungeon.Secrets.Keybinds", "Global Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move.\nPress settings to edit the key", "secret.freezepathfind", false);
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, "keybind"));
     }
 

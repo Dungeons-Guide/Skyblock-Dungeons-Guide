@@ -20,10 +20,8 @@ package kr.syeyoung.dungeonsguide.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.inventory.ContainerChest;
@@ -38,7 +36,7 @@ import java.util.List;
 
 public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenListener, TickListener, GuiPostRenderListener, GuiClickListener, TooltipListener {
     public FeatureTerminalSolvers() {
-        super("Solver.Floor 7+.Bossfight","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, startswith, order, navigate, correct panes)", "bossfight.terminals");
+        super("Dungeon.Bossfight.Floor 7+","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, startswith, order, navigate, correct panes)", "bossfight.terminals");
     }
 
     public static final List<TerminalSolutionProvider> solutionProviders = new ArrayList<TerminalSolutionProvider>();

@@ -18,21 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.advanced;
 
-import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 
 public class FeatureDebug extends SimpleFeature {
 
     public FeatureDebug() {
-        super("Advanced", "Debug", "Toggles debug mode", "debug", false);
+        super("Debug", "Debug", "Toggles debug mode", "debug", false);
 
-        addParameter("swtich", new FeatureParameter<>("swtich", "Enable Debug", "Enables debug mode", false, "boolean"));
     }
 
-
-    @Override
-    public boolean isEnabled() {
-        return this.<Boolean>getParameter("swtich").getValue();
-    }
 
 }

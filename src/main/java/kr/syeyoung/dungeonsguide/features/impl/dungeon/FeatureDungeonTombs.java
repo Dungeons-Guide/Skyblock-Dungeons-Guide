@@ -35,7 +35,7 @@ import java.util.List;
 
 public class FeatureDungeonTombs extends TextHUDFeature {
     public FeatureDungeonTombs() {
-        super("Dungeon.Dungeon Information", "Display # of Crypts", "Display how much total crypts have been blown up in a dungeon run", "dungeon.stats.tombs", true, getFontRenderer().getStringWidth("Crypts: 42"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon.HUDs", "Display # of Crypts", "Display how much total crypts have been blown up in a dungeon run", "dungeon.stats.tombs", true, getFontRenderer().getStringWidth("Crypts: 42"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
