@@ -42,6 +42,8 @@ import net.minecraft.item.ItemStack;
 import net.minecraft.util.*;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -51,6 +53,7 @@ import java.util.*;
 
 public class MapProcessor {
 
+    Logger logger = LogManager.getLogger("MapProcessor");
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0, 1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1, 0));
     private static final Set<Vector2d> door_dirs = Sets.newHashSet(new Vector2d(0, 0.5), new Vector2d(0, -0.5), new Vector2d(0.5, 0), new Vector2d(-0.5, 0));
     private final DungeonContext context;
@@ -476,14 +479,21 @@ public class MapProcessor {
         }
 
 
+        getPlayersFromMap();
+
+    }
+
+    private void getPlayersFromMap() {
         if ((lastMapData2 != null) && (mapIconToPlayerMap.size() < context.getPlayers().size()) && initialized) {
+
+            logger.info("Getting players from map");
 
             for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
                 String mapDecString = stringVec4bEntry.getKey();
                 Vec4b vec4 = stringVec4bEntry.getValue();
 
-                if (mapIconToPlayerMap.containsValue(mapDecString)) {
-
+                if (!mapIconToPlayerMap.containsValue(mapDecString)) {
+                    logger.info("mapIconToPlayerMap dosent have Player");
 
                     int x = vec4.func_176112_b() / 2 + 64;
                     int y = vec4.func_176113_c() / 2 + 64;
@@ -491,7 +501,10 @@ public class MapProcessor {
                     String potentialPlayer = null;
 
                     for (String player : context.getPlayers()) {
-                        if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, mapPos)) {
+                        logger.info("Player: {} isNear: {} ", player, isPlayerNear(player, mapPos));
+//                        if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, mapPos)) {
+                        if (!mapIconToPlayerMap.containsKey(player)) {
+                            logger.info("Potential profile is: " + player);
                             potentialPlayer = player;
                             break;
                         }
@@ -499,39 +512,60 @@ public class MapProcessor {
 
 
                     if (potentialPlayer != null) {
+                        logger.info("potentialPlayer is not null");
                         boolean shouldSave = true;
 
                         for (Map.Entry<String, Vec4b> vec4bEntry : lastMapData2.mapDecorations.entrySet()) {
                             String aaa = vec4bEntry.getKey();
                             Vec4b bbb = vec4bEntry.getValue();
 
-                            if (mapIconToPlayerMap.containsValue(aaa) || mapDecString.equals(aaa)) {
-                                shouldSave = false;
-                            } else {
+//                            if (mapIconToPlayerMap.containsValue(aaa) || mapDecString.equals(aaa)) {
+//                                shouldSave = false;
+//                                break;
+//                            }
+//                            else {
                                 int x2 = bbb.func_176112_b() / 2 + 64;
                                 int y2 = bbb.func_176113_c() / 2 + 64;
                                 int dx = x2 - x;
                                 int dy = y2 - y;
-                                if (dx * dx + dy * dy < 100) {
+                                if (dx * dx + dy * dy < clossnessDistance) {
                                     shouldSave = false;
                                     break;
                                 }
-                            }
+//                            }
                         }
 
                         if (shouldSave) {
-                            mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
+                            logger.info("added {} to mapIconPlayerMap with {}",potentialPlayer, stringVec4bEntry.getKey());
+                            if(mapIconToPlayerMap.containsKey(potentialPlayer)){
+                                mapIconToPlayerMap.replace(potentialPlayer, stringVec4bEntry.getKey());
+                            } else {
+                                mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
+                            }
+                            logger.info("mapIconToPlayerMap:");
+                            mapIconToPlayerMap.forEach((key, value) -> logger.info("  {}: {}", key, value));
+                        }else {
+                            logger.info("shouldSave is false");
                         }
 
 
+                    } else {
+                        logger.info("potentialPlayer is null");
                     }
 
+                } else {
+                    logger.info("mapIconToPlayerMap has player ");
                 }
             }
 
         }
-
     }
+
+    /**
+     * If the player on the map is closer than value this it won't save it
+     * this should be done with render-distance but whateva
+     */
+    int clossnessDistance = 50;
 
     private boolean isPlayerNear(String player, BlockPos mapPos) {
         EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
@@ -540,7 +574,7 @@ public class MapProcessor {
             BlockPos pos = entityPlayer.getPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
-            return dx * dx + dz * dz < 100;
+            return dx * dx + dz * dz < clossnessDistance;
 
         }
 

@@ -40,8 +40,9 @@ import java.io.File;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap.getString;
 
 public class FeatureTestPepole extends GuiFeature implements ChatListener, DungeonStartListener {
 
@@ -281,15 +282,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
         name = TextUtils.stripColor(name);
 
-        name = name.replace(" ", "*");
-
-        Matcher matcher = tabListRegex.matcher(name);
-        if (!matcher.find()) return null;
-
-        name = matcher.group(0);
-        name = name.substring(0, name.length() - 1);
-        name = name.substring(1);
-        return name;
+        return getString(name, tabListRegex);
     }
 
     boolean isPlayerInDungeon(String username) {

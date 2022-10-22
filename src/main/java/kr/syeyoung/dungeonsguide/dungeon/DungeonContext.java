@@ -21,23 +21,23 @@ package kr.syeyoung.dungeonsguide.dungeon;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
-import kr.syeyoung.dungeonsguide.dungeon.events.*;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEvent;
+import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEventData;
 import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonCryptBrokenEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonPuzzleFailureEvent;
 import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonSecretCountChangeEvent;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap;
-import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;
-import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -46,8 +46,8 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class DungeonContext {
     @Getter
@@ -150,14 +150,17 @@ public class DungeonContext {
                 DungeonsGuide.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
             }
         }
-        List<NetworkPlayerInfo> list = FeatureDungeonMap.field_175252_a.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
+
+        List<NetworkPlayerInfo> list = FeatureDungeonMap.sorter.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
 
         if(list.size() >= 20){
             for (int i = 1; i < 20; i++) {
-                NetworkPlayerInfo networkPlayerInfo = list.get(i);
-                String name = networkPlayerInfo.getDisplayName() != null ? networkPlayerInfo.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfo.getPlayerTeam(), networkPlayerInfo.getGameProfile().getName());
-                if (name.trim().equals("§r") || name.startsWith("§r ")) continue;
-                players.add(TextUtils.stripColor(name).trim().split(" ")[0]);
+
+                String na = FeatureDungeonMap.getPlayerNameWithChecks(list.get(i));
+
+                if(na != null){
+                    players.add(na);
+                }
             }
         }
 
