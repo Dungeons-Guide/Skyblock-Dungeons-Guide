@@ -32,12 +32,11 @@ import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap;
+import kr.syeyoung.dungeonsguide.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -151,18 +150,9 @@ public class DungeonContext {
             }
         }
 
-        List<NetworkPlayerInfo> list = FeatureDungeonMap.sorter.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
+        players.clear();
+        players.addAll(TabListUtil.getPlayersInDungeon());
 
-        if(list.size() >= 20){
-            for (int i = 1; i < 20; i++) {
-
-                String na = FeatureDungeonMap.getPlayerNameWithChecks(list.get(i));
-
-                if(na != null){
-                    players.add(na);
-                }
-            }
-        }
 
         if (latestSecretCnt != FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) {
             int newSecretCnt = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound();

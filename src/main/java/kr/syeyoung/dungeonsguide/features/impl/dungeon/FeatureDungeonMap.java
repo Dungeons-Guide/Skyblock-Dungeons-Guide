@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.features.listener.BossroomEnterListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonEndListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.utils.TabListUtil;
 import net.minecraft.block.material.MapColor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -56,8 +56,6 @@ import org.lwjgl.opengl.GL14;
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.List;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener, DungeonStartListener, BossroomEnterListener {
     private AColor backgroudColor;
@@ -339,7 +337,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         if (networkList.size() < 40) return null;
 
         for (int i = 0; i < 20; i++) {
-            names[i] = getPlayerNameWithChecks(networkList.get(i));
+            names[i] = TabListUtil.getPlayerNameWithChecks(networkList.get(i));
         }
 
         return new Tuple<>(names, networkList);
@@ -443,49 +441,6 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         GL11.glLineWidth(1);
         RenderUtils.drawUnfilledBox(-4, -4, 4, 4, this.playerColor);
         GlStateManager.popMatrix();
-    }
-
-    final static Pattern tabListRegex = Pattern.compile("\\*[a-zA-Z0-9_]{2,16}\\*", Pattern.MULTILINE);
-
-    /**
-     * We make sure that the player is alive and regex their name out
-     * @param networkPlayerInfo the network player info of player
-     * @return the username of player
-     */
-    @Nullable
-    public static String getPlayerNameWithChecks(NetworkPlayerInfo networkPlayerInfo) {
-        String name;
-        if (networkPlayerInfo.getDisplayName() != null) {
-            name = networkPlayerInfo.getDisplayName().getFormattedText();
-        } else {
-            name = ScorePlayerTeam.formatPlayerName(
-                    networkPlayerInfo.getPlayerTeam(),
-                    networkPlayerInfo.getGameProfile().getName()
-            );
-        }
-
-        if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
-
-        name = TextUtils.stripColor(name);
-
-        if(name.contains("(DEAD)")) {
-            return null;
-        }
-
-        return getString(name, tabListRegex);
-    }
-
-    @Nullable
-    public static String getString(String name, Pattern tabListRegex) {
-        name = name.replace(" ", "*");
-
-        Matcher matcher = tabListRegex.matcher(name);
-        if (!matcher.find()) return null;
-
-        name = matcher.group(0);
-        name = name.substring(0, name.length() - 1);
-        name = name.substring(1);
-        return name;
     }
 
 

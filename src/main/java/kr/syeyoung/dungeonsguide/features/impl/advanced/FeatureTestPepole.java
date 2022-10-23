@@ -42,7 +42,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.regex.Pattern;
 
-import static kr.syeyoung.dungeonsguide.features.impl.dungeon.FeatureDungeonMap.getString;
+import static kr.syeyoung.dungeonsguide.utils.TabListUtil.getString;
 
 public class FeatureTestPepole extends GuiFeature implements ChatListener, DungeonStartListener {
 
