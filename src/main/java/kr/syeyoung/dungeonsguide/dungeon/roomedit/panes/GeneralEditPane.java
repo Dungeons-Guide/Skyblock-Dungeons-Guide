@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomedit.panes;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
@@ -236,7 +237,7 @@ public class GeneralEditPane extends MPanel {
                 for (int z = 0; z < compound.getShort("Length"); z++) {
                     int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                     BlockPos pos = dungeonRoom.getRelativeBlockPosAt(x,y - 70,z);
-                    IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
                     boolean acc = dungeonRoom.canAccessRelative(x,z);
                     int id = Block.getIdFromBlock(blockState.getBlock());
                     blocks[index] = acc ? (byte) id : 0;

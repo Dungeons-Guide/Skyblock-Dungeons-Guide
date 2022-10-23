@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
+import kr.syeyoung.dungeonsguide.utils.BlockCache;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.utils.TitleRender;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
@@ -63,6 +64,9 @@ public class DungeonsGuide {
     Logger logger = LogManager.getLogger("DungeonsGuide");
     @Getter
     private DungeonGodObject dungeonGodObject;
+
+    @Getter
+    private BlockCache blockCache;
 
     private DungeonsGuide() {
     }
@@ -103,6 +107,7 @@ public class DungeonsGuide {
 
         progressbar.step("Registering Events & Commands");
 
+        this.blockCache = new BlockCache();
 
         this.dungeonGodObject = new DungeonGodObject();
         dungeonGodObject.init();

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
@@ -61,7 +62,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
         );
 
         for (BlockPos pos : BlockPos.getAllInBox(low, high)) {
-            Block b = w.getBlockState(pos).getBlock();
+            Block b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos).getBlock();
             if (b == Blocks.prismarine || b == Blocks.sea_lantern) {
                 for (EnumFacing face:EnumFacing.VALUES) {
                     if (w.getBlockState(pos.offset(face)).getBlock() == Blocks.air) {

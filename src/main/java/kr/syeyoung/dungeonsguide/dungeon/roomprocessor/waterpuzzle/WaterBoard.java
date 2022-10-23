@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.waterpuzzle;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.waterpuzzle.nodes.*;
@@ -415,7 +416,7 @@ public class WaterBoard {
     private boolean isSwitchActive(SwitchData switchData) {
         BlockPos switch2 = switchData.getSwitchLoc();
         World w=  waterPuzzle.getDungeonRoom().getContext().getWorld();
-        boolean bool = w.getBlockState(switch2).getValue(BlockLever.POWERED);
+        boolean bool = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(switch2).getValue(BlockLever.POWERED);
         return bool;
     }
 

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
@@ -54,7 +55,7 @@ public class DungeonSecret implements DungeonMechanic {
     public void tick(DungeonRoom dungeonRoom) {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
             if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if (chest.numPlayersUsing > 0) {
@@ -65,7 +66,7 @@ public class DungeonSecret implements DungeonMechanic {
             }
         } else if (secretType == SecretType.ESSENCE) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
                 dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
             }
@@ -77,7 +78,7 @@ public class DungeonSecret implements DungeonMechanic {
                 for (int i = 0; i < player.distanceTo(pos); i++) {
                     Vec3 vec = player.addVector(vec3.xCoord * i, vec3.yCoord * i, vec3.zCoord * i);
                     BlockPos bpos = new BlockPos(vec);
-                    IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(bpos);
+                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(bpos);
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return;
                 }
@@ -89,7 +90,7 @@ public class DungeonSecret implements DungeonMechanic {
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
             if (dungeonRoom.getRoomContext().containsKey("c-" + pos.toString()))
                 return ((int) dungeonRoom.getRoomContext().get("c-" + pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
@@ -107,7 +108,7 @@ public class DungeonSecret implements DungeonMechanic {
             }
         } else if (secretType == SecretType.ESSENCE) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
+            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
                 dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
                 return SecretStatus.DEFINITELY_NOT;
@@ -135,7 +136,7 @@ public class DungeonSecret implements DungeonMechanic {
                 for (int i = 0; i < player.distanceTo(pos); i++) {
                     Vec3 vec = player.addVector(vec3.xCoord * i, vec3.yCoord * i, vec3.zCoord * i);
                     BlockPos bpos = new BlockPos(vec);
-                    IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(bpos);
+                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(bpos);
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return SecretStatus.NOT_SURE;
                 }

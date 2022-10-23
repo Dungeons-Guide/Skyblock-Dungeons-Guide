@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.pathfinding;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
@@ -76,10 +77,10 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
             BlockPos add1 = dungeonRoom.getMin().add(newX, newY, newZ);
             World playerWorld = entityIn.getEntityWorld();
 
-            IBlockState curr = playerWorld.getBlockState(add1);
+            IBlockState curr = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(add1);
 
 
-            IBlockState up = playerWorld.getBlockState(dungeonRoom.getMin().add(newX, newY + 1, newZ));
+            IBlockState up = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(dungeonRoom.getMin().add(newX, newY + 1, newZ));
 
             if (isValidBlock(curr) && isValidBlock(up)) {
                 PathPoint pt = openPoint(newX, newY, newZ);
@@ -92,7 +93,7 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
                 if (up.getBlock() == Blocks.stone_slab
                         || up.getBlock() == Blocks.wooden_slab
                         || up.getBlock() == Blocks.stone_slab2) {
-                    IBlockState up2 = playerWorld.getBlockState(dungeonRoom.getMin().add(newX, newY - 1, newZ));
+                    IBlockState up2 = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(dungeonRoom.getMin().add(newX, newY - 1, newZ));
                     if (up2.getBlock() == Blocks.stone_slab
                             || up2.getBlock() == Blocks.wooden_slab
                             || up2.getBlock() == Blocks.stone_slab2) {
@@ -107,18 +108,18 @@ public class NodeProcessorDungeonRoom extends NodeProcessor {
             if (dir.getY() == 0
                     && curr.getBlock() == Blocks.iron_bars
                     && up.getBlock() == Blocks.air
-                    && playerWorld.getBlockState(new BlockPos(currentPoint.xCoord, currentPoint.yCoord, currentPoint.zCoord)).getBlock() != Blocks.iron_bars) {
+                    && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(currentPoint.xCoord, currentPoint.yCoord, currentPoint.zCoord)).getBlock() != Blocks.iron_bars) {
 
                 boolean theFlag = false;
                 if (dir.getZ() == 0) {
-                    if (playerWorld.getBlockState(
+                    if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(
                             add1.add(0, 0, 1)).getBlock() == Blocks.air ||
-                            playerWorld.getBlockState(add1.add(0, 0, -1)).getBlock() == Blocks.air) {
+                            DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(add1.add(0, 0, -1)).getBlock() == Blocks.air) {
                         theFlag = true;
                     }
                 } else if (dir.getX() == 0) {
-                    if (playerWorld.getBlockState(add1.add(-1, 0, 0)).getBlock() == Blocks.air ||
-                            playerWorld.getBlockState(add1.add(1, 0, 0)).getBlock() == Blocks.air) {
+                    if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(add1.add(-1, 0, 0)).getBlock() == Blocks.air ||
+                            DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(add1.add(1, 0, 0)).getBlock() == Blocks.air) {
                         theFlag = true;
                     }
                 }

@@ -73,13 +73,11 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
 
-        World w = dc.getWorld();
-
-        if (wasButton && w.getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.air) {
+        if (wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.air) {
             orderclick.clear();
             orderbuild.clear();
             wasButton = false;
-        } else if (!wasButton && w.getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.stone_button){
+        } else if (!wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.stone_button){
             orderclick.addAll(orderbuild);
             wasButton = true;
         }
@@ -87,7 +85,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
 
         if (!wasButton) {
             for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(310, 123, 291), new BlockPos(310, 120, 294))) {
-                if (w.getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderbuild.contains(allInBox)) {
+                if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderbuild.contains(allInBox)) {
                     orderbuild.add(allInBox);
                 }
             }
@@ -106,7 +104,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
 
         BlockPos pos = event.pos.add(1,0,0);
         if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 310 && 291 <= pos.getZ() && pos.getZ() <= 294) {
-            if (w.getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
+            if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
             if (pos.equals(orderclick.peek())) {
                 orderclick.poll();
             }

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse.chambers.maze;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
@@ -51,8 +52,7 @@ public class MazeLeftProcessor extends GeneralDefuseChamberProcessor {
         MovingObjectPosition pos = Minecraft.getMinecraft().objectMouseOver;
         if (pos.typeOfHit != MovingObjectPosition.MovingObjectType.BLOCK) return;
 
-        BlockPos block = pos.getBlockPos();
-        Block b = getChamber().getRoom().getContext().getWorld().getBlockState(block).getBlock();
+        Block b = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos.getBlockPos()).getBlock();
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse.chambers;
 
 import com.google.common.base.Predicate;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -54,7 +55,7 @@ public class BDChamber {
 
     public IBlockState getBlock(int x, int y, int z) {
         BlockPos pos = getBlockPos(x,y,z);
-        return room.getContext().getWorld().getBlockState(pos);
+        return DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
     }
 
     public boolean isWithinAbsolute(int x, int y, int z) {
