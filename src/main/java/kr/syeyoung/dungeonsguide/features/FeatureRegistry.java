@@ -170,6 +170,8 @@ public class FeatureRegistry {
 
     public static final FeatureCopyMessages ETC_COPY_MSG;
 
+    public static final FeatureEpicCountdown EPIC_COUNTDOWN;
+
     public static final FeaturePenguins ETC_PENGUIN;
 
     public static final FeatureCollectScore ETC_COLLECT_SCORE;
@@ -259,6 +261,8 @@ public class FeatureRegistry {
             SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon.Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {{
                 addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind"));
             }});
+
+            EPIC_COUNTDOWN = register(new FeatureEpicCountdown());
 
             RENDER_BREACONS = register(new SimpleFeature("Dungeon.Secrets.Preferences", "Render beacons", "Should the mod not render beacons on secret", "secret.beacons", false));
             RENDER_DESTENATION_TEXT = register(new SimpleFeature("Dungeon.Secrets.Preferences", "Render Destination text", "Should the mod not render \"destination\" on secrets", "secret.desttext", false));

@@ -122,7 +122,7 @@ public class ChatProcessor {
             if (chatProcessResult.isRemoveChat()) processed++;
             if (chatProcessResult.isRemoveListener()) listenened++;
 
-//            if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
+            if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
             if (chatProcessResult.isRemoveListener()) it.remove();
         }
     }

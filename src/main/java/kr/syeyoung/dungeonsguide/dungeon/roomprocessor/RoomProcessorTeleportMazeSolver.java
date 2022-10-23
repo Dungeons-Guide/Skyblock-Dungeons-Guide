@@ -29,11 +29,13 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
+    @Nullable
     private BlockPos lastPlayerLocation;
 
     public RoomProcessorTeleportMazeSolver(DungeonRoom dungeonRoom) {
@@ -84,7 +86,9 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
         if (b == Blocks.stone_slab || b == Blocks.stone_slab2) {
             boolean teleport = false;
-            if (lastPlayerLocation.distanceSq(pos2) < 3) return;
+            if (lastPlayerLocation != null && lastPlayerLocation.distanceSq(pos2) < 3) {
+                return;
+            }
             for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation, pos2)) {
                 if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.iron_bars) {
                     teleport = true;

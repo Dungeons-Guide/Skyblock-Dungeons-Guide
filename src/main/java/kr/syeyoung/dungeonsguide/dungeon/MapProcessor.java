@@ -486,14 +486,14 @@ public class MapProcessor {
     private void getPlayersFromMap() {
         if ((lastMapData2 != null) && (mapIconToPlayerMap.size() < context.getPlayers().size()) && initialized) {
 
-            logger.info("Getting players from map");
+            if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("Getting players from map");
 
             for (Map.Entry<String, Vec4b> stringVec4bEntry : lastMapData2.mapDecorations.entrySet()) {
                 String mapDecString = stringVec4bEntry.getKey();
                 Vec4b vec4 = stringVec4bEntry.getValue();
 
                 if (!mapIconToPlayerMap.containsValue(mapDecString)) {
-                    logger.info("mapIconToPlayerMap dosent have Player");
+                    if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap dosent have Player");
 
                     int x = vec4.func_176112_b() / 2 + 64;
                     int y = vec4.func_176113_c() / 2 + 64;
@@ -501,10 +501,10 @@ public class MapProcessor {
                     String potentialPlayer = null;
 
                     for (String player : context.getPlayers()) {
-                        logger.info("Player: {} isNear: {} ", player, isPlayerNear(player, mapPos));
+                        if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("Player: {} isNear: {} ", player, isPlayerNear(player, mapPos));
 //                        if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, mapPos)) {
                         if (!mapIconToPlayerMap.containsKey(player)) {
-                            logger.info("Potential profile is: " + player);
+                            if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("Potential profile is: " + player);
                             potentialPlayer = player;
                             break;
                         }
@@ -512,7 +512,7 @@ public class MapProcessor {
 
 
                     if (potentialPlayer != null) {
-                        logger.info("potentialPlayer is not null");
+                        if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("potentialPlayer is not null");
                         boolean shouldSave = true;
 
                         for (Map.Entry<String, Vec4b> vec4bEntry : lastMapData2.mapDecorations.entrySet()) {
@@ -536,25 +536,25 @@ public class MapProcessor {
                         }
 
                         if (shouldSave) {
-                            logger.info("added {} to mapIconPlayerMap with {}",potentialPlayer, stringVec4bEntry.getKey());
+                            if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("added {} to mapIconPlayerMap with {}",potentialPlayer, stringVec4bEntry.getKey());
                             if(mapIconToPlayerMap.containsKey(potentialPlayer)){
                                 mapIconToPlayerMap.replace(potentialPlayer, stringVec4bEntry.getKey());
                             } else {
                                 mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
                             }
-                            logger.info("mapIconToPlayerMap:");
-                            mapIconToPlayerMap.forEach((key, value) -> logger.info("  {}: {}", key, value));
+                            if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap:");
+                            if(DungeonsGuide.getDungeonsGuide().verbose) mapIconToPlayerMap.forEach((key, value) -> logger.info("  {}: {}", key, value));
                         }else {
-                            logger.info("shouldSave is false");
+                            if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("shouldSave is false");
                         }
 
 
                     } else {
-                        logger.info("potentialPlayer is null");
+                        if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("potentialPlayer is null");
                     }
 
                 } else {
-                    logger.info("mapIconToPlayerMap has player ");
+                    if(DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap has player ");
                 }
             }
 

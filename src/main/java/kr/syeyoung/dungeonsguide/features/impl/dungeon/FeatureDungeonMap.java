@@ -386,7 +386,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 // getting location from player entity
                 pt2 = mapProcessor.worldPointToMapPointFLOAT(entityplayer.getPositionEyes(partialTicks));
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
-                System.out.println("Got player location from entity");
+                if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
             }
 //            else {
 //                // getting player location from map

@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.config.Config;
@@ -32,6 +33,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.utils.TimeScoreUtil;
+import kr.syeyoung.dungeonsguide.utils.TitleRender;
 import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import lombok.Getter;
@@ -52,6 +54,7 @@ import java.util.Set;
 
 public class DungeonsGuide {
 
+    public boolean verbose = false;
     private SkyblockStatus skyblockStatus;
 
     @Getter
@@ -106,8 +109,15 @@ public class DungeonsGuide {
 
         skyblockStatus = new SkyblockStatus();
 
+        TitleRender.getInstance();
+
         CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
+        CommandDgDebug command = new CommandDgDebug();
+
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
+        ClientCommandHandler.instance.registerCommand(command);
+
+        MinecraftForge.EVENT_BUS.register(command);
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         commandReparty = new CommandReparty();
