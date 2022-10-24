@@ -85,7 +85,6 @@ public class FeatureEpicCountdown extends SimpleFeature {
     public void onTick(TickEvent.ClientTickEvent e){
         if(e.phase != TickEvent.Phase.START || !isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
-        System.out.println("checking for starting text");
         AtomicBoolean foundtext = new AtomicBoolean(false);
         ScoreBoardUtils.forEachLineClean(line -> {
             if(line.contains("Starting in:")){
@@ -98,7 +97,6 @@ public class FeatureEpicCountdown extends SimpleFeature {
                 }
             }
         });
-        System.out.println(foundtext.get() ? "Found starting text" : "didnt find statring text");
 
 
 //                   www.hypixel.net§r

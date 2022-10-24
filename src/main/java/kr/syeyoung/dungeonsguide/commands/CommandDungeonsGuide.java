@@ -483,7 +483,7 @@ public class CommandDungeonsGuide extends CommandBase {
             MapProcessor mapProcessor = fakeContext.getMapProcessor();
             mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
             mapProcessor.setBugged(false);
-            mapProcessor.setDoorDimension(new Dimension(4, 4));
+            mapProcessor.setDoorDimensions(new Dimension(4, 4));
             mapProcessor.setTopLeftMapPoint(new Point(0, 0));
             fakeContext.setDungeonMin(new BlockPos(0, 70, 0));
 

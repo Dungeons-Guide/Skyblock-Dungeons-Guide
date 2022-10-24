@@ -122,7 +122,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         if (context == null || !context.getMapProcessor().isInitialized()) return;
 
         MapProcessor mapProcessor = context.getMapProcessor();
-        MapData mapData = mapProcessor.getLastMapData2();
+        MapData mapData = mapProcessor.getLastMapData();
         Rectangle featureRect = getFeatureRect().getRectangle();
         Gui.drawRect(0, 0, featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, backgroudColor));
         GlStateManager.color(1, 1, 1, 1);
@@ -280,8 +280,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
                 for (Point pt : dungeonRoom.getUnitPoints()) {
                     for (int y1 = 0; y1 < mapProcessor.getUnitRoomDimension().height; y1++) {
                         for (int x1 = 0; x1 < mapProcessor.getUnitRoomDimension().width; x1++) {
-                            int x = MathHelper.clamp_int(pt.x * (mapProcessor.getUnitRoomDimension().width + mapProcessor.getDoorDimension().height) + x1 + mapProcessor.getTopLeftMapPoint().x, 0, 128);
-                            int y = MathHelper.clamp_int(pt.y * (mapProcessor.getUnitRoomDimension().height + mapProcessor.getDoorDimension().height) + y1 + mapProcessor.getTopLeftMapPoint().y, 0, 128);
+                            int x = MathHelper.clamp_int(pt.x * (mapProcessor.getUnitRoomDimension().width + mapProcessor.getDoorDimensions().height) + x1 + mapProcessor.getTopLeftMapPoint().x, 0, 128);
+                            int y = MathHelper.clamp_int(pt.y * (mapProcessor.getUnitRoomDimension().height + mapProcessor.getDoorDimensions().height) + y1 + mapProcessor.getTopLeftMapPoint().y, 0, 128);
                             int i = y * 128 + x;
                             int j = dungeonRoom.getColor();
 

@@ -55,6 +55,7 @@ import java.util.Set;
 
 public class DungeonsGuide {
 
+    public static String prefix = "§eDungeons Guide §7:: ";
     public boolean verbose = false;
     private SkyblockStatus skyblockStatus;
 
