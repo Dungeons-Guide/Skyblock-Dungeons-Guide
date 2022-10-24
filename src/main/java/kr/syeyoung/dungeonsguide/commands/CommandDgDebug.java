@@ -45,7 +45,7 @@ public class CommandDgDebug extends CommandBase {
             case "title":
                 if(args.length == 2){
                     System.out.println("Displayuing title:" + args[1]);
-                    TitleRender.displayTitle(args[1], "", 10, 1000, 200);
+                    TitleRender.displayTitle(args[1], "", 10, 40, 20);
                 }
                 break;
             case "mockDungeonStart":

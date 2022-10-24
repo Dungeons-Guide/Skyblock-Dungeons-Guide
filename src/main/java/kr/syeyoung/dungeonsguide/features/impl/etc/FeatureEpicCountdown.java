@@ -7,6 +7,7 @@ import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
+import kr.syeyoung.dungeonsguide.utils.TitleRender;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -20,17 +21,22 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import static kr.syeyoung.dungeonsguide.chat.ChatProcessResult.NONE;
 import static kr.syeyoung.dungeonsguide.chat.ChatProcessResult.REMOVE_CHAT;
 
+/**
+ * CREDITS FOR THE COUNTDOWN SOUNDTRACK: https://www.youtube.com/watch?v=acCqrA-JxAw
+ */
 public class FeatureEpicCountdown extends SimpleFeature {
 
     static volatile long updatedAt;
     static volatile int secondsLeft;
     private static boolean cleanChat;
+    private boolean sfxenabled;
 
     int actualSecondsLeft;
 
     public FeatureEpicCountdown() {
         super("Misc", "Epic Dungeon Start Countdown", "Shows a cool dungeon start instead of the chat messages", "etc.dungeoncountdown", true);
-        addParameter("cleanchat", new FeatureParameter<>("cleanchat", "Clean Dungeon Chat", "name", true, "boolean", nval -> cleanChat = nval));
+        addParameter("cleanchat", new FeatureParameter<>("cleanchat", "Clean Dungeon Chat", "^^^", true, "boolean", nval -> cleanChat = nval));
+        addParameter("sounds", new FeatureParameter<>("sounds", "Countdown SFX", "^^^", true, "boolean", nval -> sfxenabled = nval));
 
         ChatProcessor.INSTANCE.subscribe(FeatureEpicCountdown::processChat);
         MinecraftForge.EVENT_BUS.register(this);
@@ -58,18 +64,13 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
         if (txt.startsWith("§r§aDungeon starts in")) {
             String striped = TextUtils.stripColor(txt);
-            System.out.println("DUNGEON START MESSAGE STRIPED: " + striped);
 
             String secondsStr = striped.replace("Dungeon starts in ", "");
             secondsStr = secondsStr.replace(" seconds.", "");
             secondsStr = secondsStr.replace(" second.", "");
 
-            System.out.println("DUNGEON NUMBER ALONE: " + secondsStr);
-
             secondsLeft = Integer.parseInt(secondsStr);
             updatedAt = System.currentTimeMillis();
-
-            System.out.println("Seconds Left to open a dungeon: " + secondsLeft + " Updated at: " + updatedAt);
 
             return REMOVE_CHAT;
         }
@@ -140,15 +141,22 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if (actualSecondsLeft <= 0) {
             if(!Objects.equals(lastSec, "GO!!!")){
                 lastSec = "GO!!!";
-                Minecraft.getMinecraft().ingameGUI.displayTitle(lastSec, "", 5, 750, 50);
+                TitleRender.displayTitle(lastSec, "", 2, 25, 15);
             }
             return;
         }
 
-        String string = String.valueOf(actualSecondsLeft);
+        String string = "§c" + actualSecondsLeft;
 
         if(!Objects.equals(string, lastSec)){
-            Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 5, 950, 50);
+            if(actualSecondsLeft == 3   && sfxenabled){
+                Minecraft.getMinecraft().thePlayer.playSound("skyblock_dungeons_guide:readysetgo", 1F, 1F);
+            }
+            if(actualSecondsLeft > 5){
+                TitleRender.displayTitle(string, "", 1, 10, 8);
+            }else{
+                TitleRender.displayTitle(string, "", 1, 6, 4);
+            }
             lastSec = string;
         }
 

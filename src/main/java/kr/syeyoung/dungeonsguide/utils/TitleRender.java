@@ -9,9 +9,17 @@ import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
+/**
+ * STOLEN FROM VANILLA 1.8.9, DONT @ ME
+ * CREDS TO MOJANG AND THE CREW
+ */
 public class TitleRender {
 
+    Logger logger = LogManager.getLogger("TitleRender");
 
     private static TitleRender instance;
     public static TitleRender getInstance() {
@@ -58,53 +66,37 @@ public class TitleRender {
 
     @SubscribeEvent
     public void onGameOverLay(RenderGameOverlayEvent.Post e){
-
-        if(e.type == RenderGameOverlayEvent.ElementType.BOSSHEALTH){
-            GlStateManager.enableBlend();
-            draw(e.partialTicks);
-        }
+        if (!(e.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || e.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
+        GlStateManager.enableBlend();
+        draw(e.partialTicks);
     }
 
 
     void tick(){
-        if (this.titlesTimer > 0) {
-            --this.titlesTimer;
-            if (this.titlesTimer <= 0) {
-                this.displayedTitle = "";
-                this.displayedSubTitle = "";
+        if (titlesTimer > 0) {
+            --titlesTimer;
+            if (titlesTimer <= 0) {
+                displayedTitle = "";
+                displayedSubTitle = "";
             }
         }
     }
 
 
-    public static void displayTitle(String title, String subTitle, int timeFadeIn, int displayTime, int timeFadeOut) {
-        if (title == null && subTitle == null && timeFadeIn < 0 && displayTime < 0 && timeFadeOut < 0) {
-            displayedTitle = "";
-            displayedSubTitle = "";
-            titlesTimer = 0;
-            return;
-        }
-        if (title != null) {
-            displayedTitle = title;
-            titlesTimer = titleFadeIn + titleDisplayTime + titleFadeOut;
-            return;
-        }
-        if (subTitle != null) {
-            displayedSubTitle = subTitle;
-            return;
-        }
-        if (timeFadeIn >= 0) {
-            titleFadeIn = timeFadeIn;
-        }
-        if (displayTime >= 0) {
-            titleDisplayTime = displayTime;
-        }
-        if (timeFadeOut >= 0) {
-            titleFadeOut = timeFadeOut;
-        }
-        if (titlesTimer > 0) {
-            titlesTimer = titleFadeIn + titleDisplayTime + titleFadeOut;
-        }
+    public static void clearTitle(){
+        displayedTitle = "";
+        displayedSubTitle = "";
+        titlesTimer = 0;
+    }
+
+
+    public static void displayTitle(@NotNull String title, String subTitle, int timeFadeIn, int displayTime, int timeFadeOut) {
+        displayedTitle = title;
+        displayedSubTitle = subTitle;
+        titleFadeIn = timeFadeIn;
+        titleDisplayTime = displayTime;
+        titleFadeOut = timeFadeOut;
+        titlesTimer = titleFadeIn + titleDisplayTime + titleFadeOut;
     }
 
     void draw(float partialTicks){
@@ -130,7 +122,7 @@ public class TitleRender {
                 GlStateManager.enableBlend();
                 GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
                 GlStateManager.pushMatrix();
-                GlStateManager.scale(4.0f, 4.0f, 4.0f);
+                GlStateManager.scale(6.0f, 6.0f, 6.0f);
                 int m = l << 24 & 0xFF000000;
                 fontRenderer.drawString(displayedTitle, -fontRenderer.getStringWidth(displayedTitle) / 2, -10.0f, 0xFFFFFF | m, true);
                 GlStateManager.popMatrix();
