@@ -81,8 +81,7 @@ public class MapProcessor {
     private int undiscoveredRoom = 0;
     private boolean processed = false;
     @Getter
-    private MapData lastMapData;
-    private byte[] lastMapColorData;
+    private MapData latestMapData;
     private int waitDelay = 0;
     private boolean processlock;
 
@@ -117,38 +116,31 @@ public class MapProcessor {
         MapData mapData = ((ItemMap) stack.getItem()).getMapData(stack, mc.theWorld);
 
         if (mapData != null) {
-            byte[] mapColorData = mapData.colors;
-            lastMapData = mapData;
 
             if(processMapThroddle > 5 && !processlock){
-                processMapData(mapColorData);
+                processMapData(mapData.colors);
                 processMapThroddle = 0;
             }
             processMapThroddle++;
 
-            lastMapColorData = mapColorData;
         }
 
+        latestMapData = mapData;
 
-        if (lastMapData != null && mapIconToPlayerMap.size() < context.getPlayers().size() && initialized) {
-            getPlayersFromMap(lastMapData);
+        if (latestMapData != null && mapIconToPlayerMap.size() < context.getPlayers().size() && initialized) {
+            getPlayersFromMap(latestMapData);
         }
 
     }
 
     private void processMapData(byte[] mapColorData) {
 
-
         // i just cant get this to work sad
-//        boolean thereDifference = isThereDifference(lastMapColorData, mapColorData);
-//        logger.info(thereDifference ? "Maps are different processing this map " : "Last and current map do not seem different ");
-//        if (thereDifference) {
-        if(true){
+        if (isThereDifference(latestMapData.colors, mapColorData)) {
             context.createEvent(new DungeonMapUpdateEvent(mapColorData));
 
             es.execute(() -> {
                 processlock = true;
-                logger.info("Processing color Map data async");
                 if (doorDimensions == null || !initialized) {
                     assembleMap(mapColorData);
                 } else {
@@ -158,7 +150,6 @@ public class MapProcessor {
                 if (context.isEnded()) {
                     processFinishedMap(mapColorData);
                 }
-                logger.info("Finished Processing map data");
                 processlock = false;
             });
 
@@ -423,22 +414,22 @@ public class MapProcessor {
     }
 
     public boolean isThereDifference(byte[] colorData, byte[] colorData1) {
-        if (colorData == null || colorData1 == null) return true;
 
-        boolean equals = Arrays.equals(colorData1, colorData);
-
-        boolean foundDIffrentThen0 = false;
-
-
-        for (byte colorDatum : colorData) {
-            if(colorDatum != 0){
-                foundDIffrentThen0 = true;
-                break;
-            }
-        }
-
-
-        return !(equals && foundDIffrentThen0);
+        return true;
+//        boolean equals = Arrays.equals(colorData1, colorData);
+//
+//        boolean foundDIffrentThen0 = false;
+//
+//
+//        for (byte colorDatum : colorData) {
+//            if(colorDatum != 0){
+//                foundDIffrentThen0 = true;
+//                break;
+//            }
+//        }
+//
+//
+//        return !(equals && foundDIffrentThen0);
     }
 
     private void processFinishedMap(byte[] mapData) {

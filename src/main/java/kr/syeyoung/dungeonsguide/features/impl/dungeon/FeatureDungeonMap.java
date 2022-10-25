@@ -122,7 +122,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         if (context == null || !context.getMapProcessor().isInitialized()) return;
 
         MapProcessor mapProcessor = context.getMapProcessor();
-        MapData mapData = mapProcessor.getLastMapData();
+        MapData mapData = mapProcessor.getLatestMapData();
         Rectangle featureRect = getFeatureRect().getRectangle();
         Gui.drawRect(0, 0, featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, backgroudColor));
         GlStateManager.color(1, 1, 1, 1);
