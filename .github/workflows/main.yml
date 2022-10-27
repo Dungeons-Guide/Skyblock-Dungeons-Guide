@@ -31,3 +31,7 @@ jobs:
       with:
         name: Compiled-files
         path: build/libs/*.jar
+    - name: Upload to beta webhook
+      env:
+        BETA_WEBHOOK: ${{ secrets.BETA_WEBHOOK }}
+      run: curl -F "file1=@build/libs/*all.jar" "$BETA_WEBHOOK"
