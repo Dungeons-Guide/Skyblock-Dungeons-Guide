@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.MortDetector2000;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
@@ -34,7 +35,7 @@ public abstract class DungeonSpecificDataProvider {
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
 
     public BlockPos findDoor(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
+        Collection<EntityArmorStand> armorStand = MortDetector2000.getMorts(w);
 
         if (!armorStand.isEmpty()) {
             EntityArmorStand mort = armorStand.iterator().next();

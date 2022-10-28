@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.dungeon.MortDetector2000;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.*;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
@@ -38,7 +39,7 @@ public class CatacombDataProvider extends DungeonSpecificDataProvider {
 
     @Override
     public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
+        Collection<EntityArmorStand> armorStand = MortDetector2000.getMorts(w);
 
         if (!armorStand.isEmpty()) {
             return getVector2d(w, armorStand, directions);
