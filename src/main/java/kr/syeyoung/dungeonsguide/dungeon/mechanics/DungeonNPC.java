@@ -19,7 +19,10 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionInteract;
+import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStand;
@@ -45,24 +48,30 @@ public class DungeonNPC implements DungeonMechanic {
 
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+        return getAbstractActions(state, secretPoint, preRequisite);
+    }
+
+    static Set<AbstractAction> getAbstractActions(String state, OffsetPoint secretPoint, List<String> preRequisite) {
         if (!"navigate".equalsIgnoreCase(state))
             throw new IllegalArgumentException(state + " is not valid state for secret");
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<>();
+
+        Set<AbstractAction> base = new HashSet<>();
         ActionInteract actionClick = new ActionInteract(secretPoint);
         actionClick.setPredicate((Predicate<Entity>) PredicateArmorStand.INSTANCE);
         actionClick.setRadius(3);
-        preRequisites.add(actionClick);
-        preRequisites = actionClick.getPreRequisite();
-        ActionMove actionMove = new ActionMove(secretPoint);
-        preRequisites.add(actionMove);
-        preRequisites = actionMove.getPreRequisite();
-        for (String str : preRequisite) {
-            if (str.isEmpty()) continue;
-            ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-            preRequisites.add(actionChangeState);
-        }
+        base.add(actionClick);
 
+        base = actionClick.getPreRequisite();
+        ActionMove actionMove = new ActionMove(secretPoint);
+        base.add(actionMove);
+        base = actionMove.getPreRequisite();
+
+        for (String str : preRequisite) {
+            if (!str.isEmpty()) {
+                String[] split = str.split(":");
+                base.add(new ActionChangeState(split[0], split[1]));
+            }
+        }
         return base;
     }
 
