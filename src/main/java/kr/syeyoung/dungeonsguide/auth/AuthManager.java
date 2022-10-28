@@ -7,7 +7,7 @@ import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuth;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
-import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.events.impl.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import lombok.Setter;
@@ -128,7 +128,7 @@ public class AuthManager {
             if (currentProvider.getToken() == null) {
                 shouldReAuth = true;
                 currentProvider = null;
-                ChatProcessor.INSTANCE.addToReciveChatQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
+                ChatTransmitter.addToReciveChatQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
                 logger.info("DG auth failed, trying again in a second");
             } else {
                 // RE-AUTHed SUCCESSFULLY HOORAY
@@ -140,7 +140,7 @@ public class AuthManager {
 
             shouldReAuth = true;
             currentProvider = null;
-            ChatProcessor.INSTANCE.addToReciveChatQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
+            ChatTransmitter.addToReciveChatQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
             logger.error("Re-auth failed with message {}, trying again in a ten seconds", String.valueOf(Throwables.getRootCause(e)));
         }
 

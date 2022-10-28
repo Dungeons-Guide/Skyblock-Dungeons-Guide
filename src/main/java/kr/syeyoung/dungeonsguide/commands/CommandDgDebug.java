@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.commands;
 
-import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.utils.TitleRender;
 import net.minecraft.client.Minecraft;
@@ -29,14 +29,14 @@ public class CommandDgDebug extends CommandBase {
         switch (arg){
             case "scoreboard":
                 ScoreBoardUtils.forEachLine(l -> {
-                    ChatProcessor.INSTANCE.addToReciveChatQueue("LINE: " + l, false);
+                    ChatTransmitter.addToReciveChatQueue("LINE: " + l, false);
                 });
 
 
                 break;
             case "scoreboardClean":
                 ScoreBoardUtils.forEachLineClean(l -> {
-                    ChatProcessor.INSTANCE.addToReciveChatQueue("LINE: " + l, false);
+                    ChatTransmitter.addToReciveChatQueue("LINE: " + l, false);
                 });
 
 
@@ -50,32 +50,32 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "mockDungeonStart":
                 if(!Minecraft.getMinecraft().isSingleplayer()){
-                    ChatProcessor.INSTANCE.addToReciveChatQueue("This only works in singlepauer", false);
+                    ChatTransmitter.addToReciveChatQueue("This only works in singlepauer", false);
                     return;
                 }
 
                 if(args.length == 2){
                     int time = Integer.parseInt(args[1]);
-                    ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in "+time+" seconds.§r", false);
+                    ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in "+time+" seconds.§r", false);
                     return;
                 }
 
 
                 (new Thread(() -> {
                     try {
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 15 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 15 seconds.§r", false);
                         Thread.sleep(6000);
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 10 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 10 seconds.§r", false);
                         Thread.sleep(700);
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 5 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 5 seconds.§r", false);
                         Thread.sleep(1000);
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 4 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 4 seconds.§r", false);
                         Thread.sleep(1000);
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 3 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 3 seconds.§r", false);
                         Thread.sleep(1000);
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 2 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 2 seconds.§r", false);
                         Thread.sleep(1000);
-                        ChatProcessor.INSTANCE.addToReciveChatQueue("§r§aDungeon starts in 1 seconds.§r", false);
+                        ChatTransmitter.addToReciveChatQueue("§r§aDungeon starts in 1 seconds.§r", false);
                     } catch (InterruptedException ignored) {}
                 })).start();
 

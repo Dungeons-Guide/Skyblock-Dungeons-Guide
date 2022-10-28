@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.commands.CommandReparty;
@@ -95,6 +96,8 @@ public class DungeonsGuide {
 
 
     public void init() {
+
+        new ChatTransmitter();
 
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 

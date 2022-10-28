@@ -24,7 +24,6 @@ import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -57,20 +56,12 @@ public class ChatProcessor {
     private Queue<Tuple<String, Runnable>> chatQueue = new ConcurrentLinkedQueue<>();
 
 
-    private Queue<String> reciveQueue = new ConcurrentLinkedQueue<>();
-
     public void subscribe(ChatSubscriber chatSubscribed) {
         chatSubscriberQueue.add(chatSubscribed);
     }
     public void addToChatQueue(String chat, Runnable onSend, boolean noDupe) {
         if (noDupe && chatQueue.stream().anyMatch(a -> a.getFirst().trim().equalsIgnoreCase(chat.trim()))) return;
         chatQueue.add(new Tuple<>(chat, onSend));
-    }
-
-
-    public void addToReciveChatQueue(String chat, boolean noDupe) {
-        if (noDupe && reciveQueue.stream().anyMatch(a -> a.trim().equalsIgnoreCase(chat.trim()))) return;
-        reciveQueue.add(chat);
     }
 
 
@@ -87,14 +78,6 @@ public class ChatProcessor {
                         tuple.getSecond().run();
                     minimumNext = System.currentTimeMillis() + 200;
                     DungeonsGuide.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
-                }
-
-                if(!reciveQueue.isEmpty()){
-                    ClientChatReceivedEvent event = new ClientChatReceivedEvent((byte) 1, new ChatComponentText(reciveQueue.poll()));
-                    MinecraftForge.EVENT_BUS.post(event);
-                    if (!event.isCanceled()) {
-                        Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
-                    }
                 }
 
             }
