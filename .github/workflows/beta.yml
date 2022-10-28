@@ -1,12 +1,12 @@
-name: Build
+name: Beta Build
 
 on:
   push:
     branches:
-      - 'master'
+      - 'breaking-changes-just-working-im-not-putting-all-of-these-into-3.0-but-for-the-sake-of-beta-release-this-thing-exists'
   pull_request:
     branches:
-      - 'master'
+      - 'breaking-changes-just-working-im-not-putting-all-of-these-into-3.0-but-for-the-sake-of-beta-release-this-thing-exists'
   workflow_dispatch:
 jobs:
   build:
@@ -32,3 +32,7 @@ jobs:
       with:
         name: Compiled-files
         path: build/libs/*.jar
+    - name: Upload to beta webhook
+      env:
+        BETA_WEBHOOK: ${{ secrets.BETA_WEBHOOK }}
+      run: curl -F "file1=@./build/libs/dungeonsguide-3.0.0-all.jar" "$BETA_WEBHOOK"
