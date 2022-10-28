@@ -18,12 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.secret;
 
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.KeybindPressedListener;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
@@ -38,7 +38,7 @@ public class FeatureBloodRush extends SimpleFeature implements KeybindPressedLis
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());
             try {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));
             } catch (Exception ignored) {}
         }
     }

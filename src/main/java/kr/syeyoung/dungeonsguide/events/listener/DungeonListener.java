@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.events.listener;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
@@ -444,7 +445,7 @@ public class DungeonListener {
             if (ec == null) {
                 DungeonContext context = god.getContext();
                 if (context == null) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Not in dungeons"));
+                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("Not in dungeons"));
                     return;
                 }
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -452,12 +453,12 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
 
                 if (dungeonRoom == null) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("Can't determine the dungeon room you're in"));
+                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("Can't determine the dungeon room you're in"));
                     return;
                 }
 
                 if (EditingContext.getEditingContext() != null) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("There is an editing session currently open."));
+                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("There is an editing session currently open."));
                     return;
                 }
 

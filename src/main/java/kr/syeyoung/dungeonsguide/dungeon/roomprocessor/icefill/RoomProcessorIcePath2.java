@@ -18,29 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.icefill;
 
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.RoomProcessorGenerator;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.ChatComponentText;
 
 import java.awt.*;
-import java.util.Queue;
 import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
-import java.util.concurrent.ConcurrentLinkedQueue;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     private final List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
 
-    private final Queue<String> messageQueue = new ConcurrentLinkedQueue<String>();
 
     public RoomProcessorIcePath2(DungeonRoom dungeonRoom) {
 
@@ -75,7 +71,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                     public void run() {
                         List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
                         if (hamiltonianPath == null) {
-                            messageQueue.add("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
+                            ChatTransmitter.addToReciveChatQueue("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
                             return;
                         }
                         hamiltonianPath.add(0,new Point(startX, startY));
@@ -97,9 +93,6 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     public void tick() {
         super.tick();
         if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
-        while (!messageQueue.isEmpty()){
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(messageQueue.poll()));
-        }
     }
 
     @Override

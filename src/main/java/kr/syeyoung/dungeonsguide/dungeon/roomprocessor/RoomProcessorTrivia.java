@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor;
 
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -25,7 +26,6 @@ import kr.syeyoung.dungeonsguide.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.utils.SkyblockUtils;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -34,7 +34,7 @@ import org.apache.commons.lang3.math.NumberUtils;
 import org.json.JSONObject;
 
 import java.io.IOException;
-import java.util.*;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -105,11 +105,11 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
                 else theRealAnswer = semi_answers;
             }
             if (theRealAnswer == null)
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
             else if (theRealAnswer.length() >1)
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
             else
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
             correctAnswer = theRealAnswer;
         });
     }
@@ -117,7 +117,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private String takeCareOfPlaceHolders(String input) {
         String str = input;
         if (str.contains("$year")) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
+            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
             try {
                 str = str.replace("$year", SkyblockUtils.getSkyblockYear()+"");
             } catch (IOException e) {

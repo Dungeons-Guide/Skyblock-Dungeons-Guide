@@ -30,6 +30,10 @@ public class ChatTransmitter {
         receiveQueue.add(chat);
     }
 
+    public static void addToReciveChatQueue(String s) {
+        addToReciveChatQueue(s, false);
+    }
+
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {

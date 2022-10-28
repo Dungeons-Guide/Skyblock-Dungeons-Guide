@@ -23,6 +23,7 @@ import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonMapUpdateEvent;
@@ -90,7 +91,7 @@ public class MapProcessor {
     }
 
     private static void error(String prefix) {
-        mc.thePlayer.addChatMessage(new ChatComponentText(DungeonsGuide.prefix + prefix));
+        ChatTransmitter.addToReciveChatQueue(new ChatComponentText(DungeonsGuide.prefix + prefix));
     }
 
 

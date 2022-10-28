@@ -25,6 +25,7 @@ import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.config.guiconfig.MParameterEdit;
@@ -105,7 +106,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                 if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
-                            mc.thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
+                            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
                         } else {
                             processPartyMembers(context);
                         }
@@ -140,7 +141,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         ApiFetcher.fetchUUIDAsync(username)
                 .thenAccept(a -> {
                     if (a == null) {
-                        mc.thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
+                        ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
                         return;
                     }
 
@@ -174,7 +175,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                     comp.appendSibling(kickText);
 
 
-                    mc.thePlayer.addChatMessage(comp);
+                    ChatTransmitter.addToReciveChatQueue((ChatComponentText) comp);
 
 
                 });

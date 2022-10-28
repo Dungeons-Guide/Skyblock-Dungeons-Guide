@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.StompConnectedListener;
@@ -34,7 +35,7 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
     @Override
     public void onTick() {
         if (stompPayload != null) {
-            Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText(stompPayload));
+            ChatTransmitter.addToReciveChatQueue(new ChatComponentText(stompPayload));
             stompPayload = null;
             Minecraft.getMinecraft().thePlayer.playSound("random.successful_hit", 1f,1f);
         }

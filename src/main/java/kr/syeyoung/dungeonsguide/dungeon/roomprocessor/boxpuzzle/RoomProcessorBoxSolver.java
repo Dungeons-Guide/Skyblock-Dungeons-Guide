@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.boxpuzzle;
 
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -139,7 +140,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcDone2) {
             BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (semi_solution == null) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
@@ -149,7 +150,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 return;
             } else{
                 solution = semi_solution.boxMoves;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
             }
             step = 0;
             lastState = currboard;
@@ -316,10 +317,10 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (chat.getFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
             } else {
                 calcReq = true;
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
             }
         }
     }

@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth.DgAuthUtil;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.party.PartyContext;
@@ -151,7 +152,7 @@ public class CommandDungeonsGuide extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
         } else if (args[0].equalsIgnoreCase("reparty")) {
             if (!DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(false)) {
-                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
+                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
             }
         } else if (args[0].equalsIgnoreCase("gui")) {
             openConfig = true;
@@ -272,7 +273,7 @@ public class CommandDungeonsGuide extends CommandBase {
         } else if (args[0].equalsIgnoreCase("pvall")) {
             PartyManager.INSTANCE.requestPartyList((context) -> {
                 if (context == null) {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
+                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
                     return;
                 }
                 FeatureViewPlayerStatsOnJoin.processPartyMembers(context);

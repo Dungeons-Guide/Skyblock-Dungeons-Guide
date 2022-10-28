@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.party;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.ChatSubscriber;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.features.impl.advanced.FeatureTestPepole;
@@ -566,7 +567,7 @@ public class PartyManager {
                 FeatureTestPepole.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
+                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

@@ -20,15 +20,15 @@ package kr.syeyoung.dungeonsguide.dungeon.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Main;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoomInfoRegistry;
-import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.gui.MPanel;
 import kr.syeyoung.dungeonsguide.gui.elements.*;
-import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.ProcessorFactory;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
@@ -176,7 +176,7 @@ public class GeneralEditPane extends MPanel {
                         {
                             dataoutputstream.close();
                         }
-                        Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
+                        ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }
