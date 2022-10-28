@@ -3,7 +3,7 @@
   "modid": "skyblock_dungeons_guide",
   "name": "Skyblock Dungeons Guide",
   "description": "A mod to help dungeon players to find and solve secrets and puzzles most efficiently.",
-  "version": "3.8",
+  "version": "${version}",
   "mcversion": "1.8.9",
   "url": "https://discord.gg/dg",
   "updateUrl": "",

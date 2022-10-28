@@ -31,7 +31,7 @@ tasks.wrapper {
     // the full version (with sources and documentation) of Gradle (ALL)
     distributionType = Wrapper.DistributionType.ALL
 }
-version = "3.0.0"
+version = "3.8.0"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
@@ -132,3 +132,16 @@ tasks.named("remapJar") {
 
 
 tasks.assemble.dependsOn tasks.remapJar
+
+processResources {
+    inputs.property 'version', project.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy = 'include'
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': project.version
+    }
+}
