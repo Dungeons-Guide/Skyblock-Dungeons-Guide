@@ -16,13 +16,12 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Map;
 import java.util.Objects;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import static kr.syeyoung.dungeonsguide.chat.ChatProcessResult.NONE;
 import static kr.syeyoung.dungeonsguide.chat.ChatProcessResult.REMOVE_CHAT;
 
 /**
- * CREDITS FOR THE COUNTDOWN SOUNDTRACK: https://www.youtube.com/watch?v=acCqrA-JxAw
+ * CREDITS FOR THE COUNTDOWN SOUNDTRACK: <a href="https://www.youtube.com/watch?v=acCqrA-JxAw">...</a>
  */
 public class FeatureEpicCountdown extends SimpleFeature {
 
@@ -34,9 +33,11 @@ public class FeatureEpicCountdown extends SimpleFeature {
     int actualSecondsLeft;
 
     public FeatureEpicCountdown() {
-        super("Misc", "Epic Dungeon Start Countdown", "Shows a cool dungeon start instead of the chat messages", "etc.dungeoncountdown", true);
+        super("Dungeon.HUDs", "Epic Dungeon Start Countdown", "Shows a cool dungeon start instead of the chat messages", "etc.dungeoncountdown", true);
         addParameter("cleanchat", new FeatureParameter<>("cleanchat", "Clean Dungeon Chat", "^^^", true, "boolean", nval -> cleanChat = nval));
         addParameter("sounds", new FeatureParameter<>("sounds", "Countdown SFX", "^^^", true, "boolean", nval -> sfxenabled = nval));
+
+        lastSec = GO_TEXT;
 
         ChatProcessor.INSTANCE.subscribe(FeatureEpicCountdown::processChat);
         MinecraftForge.EVENT_BUS.register(this);
@@ -79,21 +80,20 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
     }
 
-    String lastSec = "GO!!!";
+    static final String GO_TEXT = "GO!!!";
+    String lastSec;
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e){
         if(e.phase != TickEvent.Phase.START || !isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
-        AtomicBoolean foundtext = new AtomicBoolean(false);
+
         ScoreBoardUtils.forEachLineClean(line -> {
             if(line.contains("Starting in:")){
-                foundtext.set(true);
                 String time = line.replace("Starting in: ", "").replace("§r", "").replace("0:", "");
                 if(!time.isEmpty()){
                     secondsLeft = Integer.parseInt(time);
                     updatedAt = System.currentTimeMillis();
-                    System.out.println("Seconds Left to open a dungeon: " + secondsLeft + " Updated at: " + updatedAt);
                 }
             }
         });
@@ -109,17 +109,6 @@ public class FeatureEpicCountdown extends SimpleFeature {
 //                   Late Winter 3rd§r
 //                   §r
 //                   10/22/22 m65G 28266§r
-
-//                [02:28:15]   www.hypixel.net§r
-//                [02:28:15]   §r
-//                [02:28:15]   Starting in: 0:03§r
-//                [02:28:16]   §r
-//                [02:28:16]   B kokoniara Lv25§r
-//                [02:28:16]   §r
-//                [02:28:16]    The Catacombs F3§r
-//                [02:28:16]   Late Winter 3rd§r
-//                [02:28:16]   §r
-//                [02:28:16]   10/22/22 m65G 28266§r
 
     }
 
@@ -137,8 +126,8 @@ public class FeatureEpicCountdown extends SimpleFeature {
         int actualSecondspassed = (int) secs;
         actualSecondsLeft = secondsLeft - actualSecondspassed;
         if (actualSecondsLeft <= 0) {
-            if(!Objects.equals(lastSec, "GO!!!")){
-                lastSec = "GO!!!";
+            if(!Objects.equals(lastSec, GO_TEXT)){
+                lastSec = GO_TEXT;
                 TitleRender.displayTitle(lastSec, "", 2, 25, 15);
             }
             return;
