@@ -1,8 +1,8 @@
 package kr.syeyoung.dungeonsguide.auth.authprovider.DgAuth;
 
 import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 import kr.syeyoung.dungeonsguide.auth.AuthUtil;
+import kr.syeyoung.dungeonsguide.auth.authprovider.AuthProvider;
 
 import java.io.IOException;
 import java.security.KeyPair;
@@ -31,26 +31,14 @@ public class DgAuth implements AuthProvider {
 
 
     @Override
-    public void init() throws NoSuchAlgorithmException {
-        rsaKey = AuthUtil.getKeyPair();
-    }
-
-    @Override
-    public void authenticate() throws AuthenticationException, IOException, NoSuchAlgorithmException {
+    public AuthProvider createAuthProvider() throws NoSuchAlgorithmException, AuthenticationException, IOException {
+        this.rsaKey = AuthUtil.getKeyPair();
 
         String tempToken = DgAuthUtil.requestAuth(this.authServerUrl);
 
         DgAuthUtil.checkSessionAuthenticity(tempToken);
 
-        token = DgAuthUtil.verifyAuth(tempToken, rsaKey.getPublic(), authServerUrl);
-
-    }
-
-
-    @Override
-    public AuthProvider createAuthProvider() throws NoSuchAlgorithmException, AuthenticationException, IOException {
-        this.init();
-        this.authenticate();
+        this.token = DgAuthUtil.verifyAuth(tempToken, rsaKey.getPublic(), authServerUrl);
 
         return this;
     }

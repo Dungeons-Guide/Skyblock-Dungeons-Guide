@@ -15,16 +15,6 @@ public class NullAuth implements AuthProvider {
     Logger logger = LogManager.getLogger("NullAuth");
 
     @Override
-    public void init() throws NoSuchAlgorithmException {
-        logger.info("Initialising nothing");
-    }
-
-    @Override
-    public void authenticate() throws AuthenticationException, IOException, NoSuchAlgorithmException {
-        logger.info("Authenticating... something");
-    }
-
-    @Override
     public String getToken() {
         return "TOKEN";
     }
