@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.dungeon.events.DungeonEvent;
@@ -149,7 +150,7 @@ public class DungeonContext {
             if (doorFinder != null) {
                 bossfightProcessor = doorFinder.createBossfightProcessor(world, DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
             } else {
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
+                ChatTransmitter.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
             }
         }
 
@@ -191,7 +192,7 @@ public class DungeonContext {
             int z = Integer.parseInt(coords.split("/")[1]);
             int secrets2 = Integer.parseInt(secrets);
             Point roomPt = mapProcessor.worldPointToRoomPoint(new BlockPos(x, 70, z));
-            DungeonsGuide.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2));
+            ChatTransmitter.sendDebugChat(new ChatComponentText("Message from Other dungeons guide :: " + roomPt.x + " / " + roomPt.y + " total secrets " + secrets2));
             DungeonRoom dr = roomMapper.get(roomPt);
             if (dr != null) {
                 dr.setTotalSecrets(secrets2);

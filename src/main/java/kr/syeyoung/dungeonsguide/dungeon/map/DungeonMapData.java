@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.dungeon.map;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
@@ -91,7 +92,7 @@ public class DungeonMapData {
             return;
         }
 
-        DungeonsGuide.sendDebugChat(new ChatComponentText("door Pos:" + door));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("door Pos:" + door));
 
         Point unitPoint = MapProcessor.mapPointToRoomPoint(firstRoom, topLeftMapPoint, unitRoomDimension, doorDimensions);
         unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1);
@@ -105,12 +106,12 @@ public class DungeonMapData {
         BlockPos worldMin = door.add(-worldX, 0, -worldY);
         context.setDungeonMin(worldMin);
 
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Found Green room:" + firstRoom));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Axis match:" + axisMatch));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("World Min:" + context.getDungeonMin()));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Dimension:" + unitRoomDimension));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("top Left:" + topLeftMapPoint));
-        DungeonsGuide.sendDebugChat(new ChatComponentText("door dimension:" + doorDimensions));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("Found Green room:" + firstRoom));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("Axis match:" + axisMatch));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("World Min:" + context.getDungeonMin()));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("Dimension:" + unitRoomDimension));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("top Left:" + topLeftMapPoint));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("door dimension:" + doorDimensions));
         context.createEvent(new DungeonNodataEvent("MAP_PROCESSOR_INIT"));
         initialized = true;
         MinecraftForge.EVENT_BUS.post(new DungeonContextInitializationEvent());

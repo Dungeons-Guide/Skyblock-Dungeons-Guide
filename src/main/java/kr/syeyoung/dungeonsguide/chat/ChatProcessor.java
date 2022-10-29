@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.chat;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
@@ -77,7 +76,7 @@ public class ChatProcessor {
                     if (tuple.getSecond() != null)
                         tuple.getSecond().run();
                     minimumNext = System.currentTimeMillis() + 200;
-                    DungeonsGuide.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
+                    ChatTransmitter.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
                 }
 
             }

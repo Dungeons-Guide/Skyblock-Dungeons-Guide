@@ -18,10 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bombdefuse;
 
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -176,7 +176,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
             }
         } catch (IOException e2) {
             e2.printStackTrace();
-            DungeonsGuide.sendDebugChat(new ChatComponentText("Failed to send Bomb Defuse Chat"));
+            ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to send Bomb Defuse Chat"));
         }
     }
 
@@ -206,7 +206,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                 }
             } catch (Throwable t) {
                 t.printStackTrace();
-                DungeonsGuide.sendDebugChat(new ChatComponentText("Failed to analyze Bomb Defuse Chat"));
+                ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to analyze Bomb Defuse Chat"));
             }
         }
     }

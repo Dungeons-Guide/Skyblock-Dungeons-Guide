@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.MortDetector2000;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorLivid;
@@ -48,7 +48,7 @@ public class CatacombMasterDataProvider extends DungeonSpecificDataProvider {
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        DungeonsGuide.sendDebugChat(new ChatComponentText("Floor: Master mode "+floor+ " Building bossfight processor"));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: Master mode "+floor+ " Building bossfight processor"));
         if (floor.equals("M5")) {
             return new BossfightProcessorLivid(true);
         }

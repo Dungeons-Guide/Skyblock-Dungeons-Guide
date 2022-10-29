@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.roomprocessor;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.actions.ActionComplete;
@@ -246,7 +247,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void actionbarReceived(IChatComponent chat) {
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
         if (dungeonRoom.getTotalSecrets() == -1) {
-            DungeonsGuide.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
+            ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }
         if (!chat.getFormattedText().contains("/")) return;
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
