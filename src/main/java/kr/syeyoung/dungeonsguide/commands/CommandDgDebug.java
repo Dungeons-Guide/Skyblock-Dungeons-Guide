@@ -5,7 +5,6 @@ import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.guiconfig.NestedCategory;
-import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
@@ -24,7 +23,6 @@ import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProces
 import kr.syeyoung.dungeonsguide.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.party.PartyContext;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.*;
@@ -275,26 +273,6 @@ public class CommandDgDebug extends CommandBase {
                     t.printStackTrace();
                 }
                 break;
-            case "partymax":
-            case "pm":
-                if (args.length == 1) {
-                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
-                } else if (args.length == 2) {
-                    try {
-                        int partyMax = Integer.parseInt(args[1]);
-                        if (partyMax < 2) {
-                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
-                            return;
-                        }
-
-                        PartyManager.INSTANCE.setMaxParty(partyMax);
-                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set partymax to §e" + PartyManager.INSTANCE.getMaxParty()));
-                    } catch (Exception e) {
-                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §c" + args[1] + " is not valid number."));
-                        return;
-                    }
-                }
-                break;
             case "partyid":
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
                 break;
@@ -332,19 +310,7 @@ public class CommandDgDebug extends CommandBase {
                 }
 
                 break;
-            case "purge":
-                ApiFetcher.purgeCache();
-                CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
-                cosmeticsManager.requestPerms();
-                cosmeticsManager.requestCosmeticsList();
-                cosmeticsManager.requestActiveCosmetics();
-                StaticResourceCache.INSTANCE.purgeCache();
-                FeatureRegistry.DISCORD_ASKTOJOIN.imageMap.clear();
-                FeatureRegistry.DISCORD_ASKTOJOIN.futureMap.clear();
 
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
-
-                break;
 
             case "requeststaticresource":
                 UUID uid = UUID.fromString(args[1]);

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.commands;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.guiconfig.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
@@ -28,6 +29,7 @@ import kr.syeyoung.dungeonsguide.features.impl.party.playerpreview.api.ApiFetche
 import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.stomp.StompPayload;
+import kr.syeyoung.dungeonsguide.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -38,6 +40,8 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
 public class CommandDungeonsGuide extends CommandBase {
+    private boolean openConfig = false;
+
     @Override
     public String getCommandName() {
         return "dg";
@@ -93,6 +97,17 @@ public class CommandDungeonsGuide extends CommandBase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if (args[0].equals("purge")) {
+            ApiFetcher.purgeCache();
+            CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
+            cosmeticsManager.requestPerms();
+            cosmeticsManager.requestCosmeticsList();
+            cosmeticsManager.requestActiveCosmetics();
+            StaticResourceCache.INSTANCE.purgeCache();
+            FeatureRegistry.DISCORD_ASKTOJOIN.imageMap.clear();
+            FeatureRegistry.DISCORD_ASKTOJOIN.futureMap.clear();
+
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else if (args[0].equals("pbroadcast")) {
             try {
                 String[] payload = new String[args.length - 1];
@@ -104,6 +119,25 @@ public class CommandDungeonsGuide extends CommandBase {
                 ));
             } catch (Exception e) {
                 e.printStackTrace();
+            }
+
+
+        } else if (args[0].equals("partymax") || args[0].equals("pm")) {
+            if (args.length == 1) {
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
+            } else if (args.length == 2) {
+                try {
+                    int partyMax = Integer.parseInt(args[1]);
+                    if (partyMax < 2) {
+                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
+                        return;
+                    }
+
+                    PartyManager.INSTANCE.setMaxParty(partyMax);
+                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set partymax to §e" + PartyManager.INSTANCE.getMaxParty()));
+                } catch (Exception e) {
+                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §c" + args[1] + " is not valid number."));
+                }
             }
         } else {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
@@ -124,12 +158,10 @@ public class CommandDungeonsGuide extends CommandBase {
         }
     }
 
-    private boolean openConfig = false;
-
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         try {
-            if (openConfig && e.phase == TickEvent.Phase.START ) {
+            if (openConfig && e.phase == TickEvent.Phase.START) {
                 openConfig = false;
                 Minecraft.getMinecraft().displayGuiScreen(new GuiConfigV2());
             }
