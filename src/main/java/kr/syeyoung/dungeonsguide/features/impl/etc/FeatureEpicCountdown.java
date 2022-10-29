@@ -57,6 +57,9 @@ public class FeatureEpicCountdown extends SimpleFeature {
             if(txt.startsWith("§e[NPC] §bMort§f: §rYou should find it useful if you get lost.§r")){
                 return REMOVE_CHAT;
             }
+            if(TextUtils.stripColor(txt).contains("[NPC] Mort: Here, I found this map")){
+                return REMOVE_CHAT;
+            }
             if(txt.startsWith("§r§a[Berserk] §r§f")){
                 return REMOVE_CHAT;
             }
