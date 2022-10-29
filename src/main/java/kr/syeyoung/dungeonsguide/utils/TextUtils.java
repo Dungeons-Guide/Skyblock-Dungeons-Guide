@@ -18,7 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.utils;
 
-import java.text.DecimalFormat;
+import net.minecraft.client.Minecraft;
+
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -117,6 +118,10 @@ public class TextUtils {
         sb.insert(23, "-");
 
         return sb.toString();
+    }
+
+    public static int getFontHeight(){
+        return Minecraft.getMinecraft().fontRendererObj != null ? Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT : 9;
     }
 
 }

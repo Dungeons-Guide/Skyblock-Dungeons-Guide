@@ -21,10 +21,12 @@ package kr.syeyoung.dungeonsguide.config;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 
 import java.io.*;
+import java.nio.file.Files;
 
 public class Config {
     public static JsonObject configuration;
@@ -33,7 +35,9 @@ public class Config {
 
     public static void loadConfig(File f) throws IOException {
         try {
-            configuration = (JsonObject) new JsonParser().parse(new InputStreamReader(new FileInputStream(Config.f = f == null ? Config.f : f)));
+            Config.f = f != null ? f : Main.getConfigFile();
+            InputStreamReader json = new InputStreamReader(Files.newInputStream(Config.f.toPath()));
+            configuration = (JsonObject) new JsonParser().parse(json);
         } catch (Exception e) {
             configuration = new JsonObject();
         }

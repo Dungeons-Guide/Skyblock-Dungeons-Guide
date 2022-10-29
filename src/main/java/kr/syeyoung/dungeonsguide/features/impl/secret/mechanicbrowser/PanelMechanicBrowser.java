@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.gui.elements.MList;
 import kr.syeyoung.dungeonsguide.gui.elements.MPanelScaledGUI;
 import kr.syeyoung.dungeonsguide.gui.elements.MScrollablePanel;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -311,7 +312,7 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
     public void setBounds(Rectangle bounds) {
         super.setBounds(bounds);
         Dimension dimension = getEffectiveDimension();
-        int y = Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT + 4;
+        int y = TextUtils.getFontHeight() + 4;
         scrollablePanel.setBounds(new Rectangle(1,y + 1, dimension.width - 2, dimension.height - y - 2));
         scrollablePanel.evalulateContentArea();
         if (mechanicBrowserTooltip != null) {
