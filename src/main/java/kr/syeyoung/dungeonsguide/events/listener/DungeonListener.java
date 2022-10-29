@@ -18,12 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.events.listener;
 
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.gui.GuiDungeonAddSet;
@@ -71,11 +71,6 @@ import java.util.Map;
 
 public class DungeonListener {
 
-    private DungeonFacade god;
-
-    public DungeonListener(DungeonFacade god) {
-        this.god = god;
-    }
 
     @SubscribeEvent
     public void onWorldLoad(WorldEvent.Unload event) {
@@ -92,7 +87,7 @@ public class DungeonListener {
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
 
@@ -123,7 +118,7 @@ public class DungeonListener {
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             if (thePlayer == null) return;
@@ -139,7 +134,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onDungeonLeave(DungeonLeftEvent ev) {
-        god.setContext(null);
+        DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
         if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
             MapUtils.clearMap();
         }
@@ -155,20 +150,20 @@ public class DungeonListener {
 
 
         if (SkyblockStatus.isOnSkyblock()) {
-            DungeonContext context = god.getContext();
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context != null) {
                 context.getMapProcessor().tick();
                 context.tick();
             } else {
                 if (SkyblockStatus.isOnDungeon()) {
-                    god.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
+                    DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
                     MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
                 }
             }
         }
 
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (SkyblockStatus.isOnDungeon() && context != null) {
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -201,7 +196,7 @@ public class DungeonListener {
 
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -233,7 +228,7 @@ public class DungeonListener {
             MinecraftForge.EVENT_BUS.post(new DungeonEndedEvent());
         }
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
 
@@ -279,7 +274,7 @@ public class DungeonListener {
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) {
             return;
         }
@@ -345,9 +340,9 @@ public class DungeonListener {
     public void onKey2(KeyBindPressedEvent keyInputEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        if (god.getContext() != null) {
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
@@ -367,9 +362,9 @@ public class DungeonListener {
     public void onInteract(PlayerInteractEntityEvent interact) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        if (god.getContext() != null) {
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
@@ -389,7 +384,7 @@ public class DungeonListener {
     String getCurrentRoomName(){
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(player.getPosition());
         DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
         String in = "unknown";
@@ -405,9 +400,9 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
 
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        if (god.getContext() != null) {
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null) {
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
@@ -429,7 +424,7 @@ public class DungeonListener {
         if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
-                DungeonContext context = god.getContext();
+                DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 if (context == null) {
                     ChatTransmitter.addToReciveChatQueue(new ChatComponentText("Not in dungeons"));
                     return;
@@ -459,7 +454,7 @@ public class DungeonListener {
         if (!keyInputEvent.world.isRemote) return;
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -494,9 +489,9 @@ public class DungeonListener {
 
         if (!SkyblockStatus.isOnDungeon()) return;
 
-        DungeonContext context = god.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        if (god != null) {
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade() != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 

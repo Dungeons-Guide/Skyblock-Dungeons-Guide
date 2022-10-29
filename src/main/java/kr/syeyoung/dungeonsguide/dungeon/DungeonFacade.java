@@ -25,7 +25,7 @@ public class DungeonFacade {
     public int percentage;
 
     public void init() {
-        DungeonListener dgEventListener = new DungeonListener(this);
+        DungeonListener dgEventListener = new DungeonListener();
         MinecraftForge.EVENT_BUS.register(dgEventListener);
 
         try {
