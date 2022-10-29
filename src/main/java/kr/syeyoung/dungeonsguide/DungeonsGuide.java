@@ -96,12 +96,18 @@ public class DungeonsGuide {
 
 
     public void init() {
+        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+
+        progressbar.step("Registering Events & Commands");
+
+        skyblockStatus = new SkyblockStatus();
+
+        MinecraftForge.EVENT_BUS.register(skyblockStatus);
+
 
         (new FeatureRegistry()).init();
 
         new ChatTransmitter();
-
-        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
         try {
             Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
@@ -111,14 +117,12 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
-        progressbar.step("Registering Events & Commands");
 
         this.blockCache = new BlockCache();
 
         this.dungeonGodObject = new DungeonGodObject();
         dungeonGodObject.init();
 
-        skyblockStatus = new SkyblockStatus();
 
         TitleRender.getInstance();
 

@@ -50,7 +50,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getMapProcessor() != null;
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getMapProcessor() != null;
     }
 
     @Override

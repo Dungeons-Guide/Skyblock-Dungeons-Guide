@@ -206,7 +206,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
 
     public ScoreCalculation calculateScore() {
         if (!skyblockStatus.isOnDungeon()) return null;
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (context == null) return null;
         if (!context.getMapProcessor().isInitialized()) return null;
 

@@ -76,9 +76,13 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
         if(Minecraft.getMinecraft().thePlayer == null) return;
 
 
-        Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext())
+        DungeonsGuide.getDungeonsGuide();
+        Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
-                .map(a -> DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getRoomMapper().get(a));
+                .map(a -> {
+                    DungeonsGuide.getDungeonsGuide();
+                    return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getRoomMapper().get(a);
+                });
 
 
         DungeonRoom dungeonRoom = dungeonRoomOpt.orElse(null);
@@ -240,9 +244,13 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
     @Getter
     private String selectedID = null;
     public void onElementClick(String id, DungeonMechanic dungeonMechanic, Point pt, MechanicBrowserElement mechanicBrowserElement) {
-        Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext())
+        DungeonsGuide.getDungeonsGuide();
+        Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
-                .map(a -> DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getRoomMapper().get(a));
+                .map(a -> {
+                    DungeonsGuide.getDungeonsGuide();
+                    return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getRoomMapper().get(a);
+                });
         selectedID = id;
 
         DungeonRoom dungeonRoom = dungeonRoomOpt.orElse(null);
@@ -275,9 +283,13 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
     }
 
     public void cancel(MechanicBrowserElement mechanicBrowserElement) {
-        Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext())
+        DungeonsGuide.getDungeonsGuide();
+        Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
-                .map(a -> DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext().getRoomMapper().get(a));
+                .map(a -> {
+                    DungeonsGuide.getDungeonsGuide();
+                    return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getRoomMapper().get(a);
+                });
         mechanicBrowserElement.setFocused(false);
         if (!dungeonRoomOpt.isPresent()) return;
         DungeonRoom dungeonRoom = dungeonRoomOpt.get();

@@ -52,7 +52,6 @@ public class FeatureBossHealth extends TextHUDFeature {
     boolean formatHealth;
     boolean ignoreInattackable;
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
 
     @Override
@@ -62,7 +61,7 @@ public class FeatureBossHealth extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getBossfightProcessor() != null;
+        return SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() != null;
     }
 
     @Override
@@ -96,7 +95,7 @@ public class FeatureBossHealth extends TextHUDFeature {
     @Override
     public java.util.List<StyledText> getText() {
         List<StyledText> actualBit = new ArrayList<StyledText>();
-        List<HealthData> healths = skyblockStatus.getContext().getBossfightProcessor().getHealths();
+        List<HealthData> healths = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor().getHealths();
         for (HealthData heal : healths) {
             addLine(heal, actualBit);
         }

@@ -268,7 +268,8 @@ public class CommandDgDebug extends CommandBase {
             case "reloaddungeon":
                 try {
                     MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
-                    DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setContext(null);
+                    DungeonsGuide.getDungeonsGuide();
+                    DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(null);
                     MapUtils.clearMap();
                 } catch (Throwable t) {
                     t.printStackTrace();
@@ -411,7 +412,7 @@ public class CommandDgDebug extends CommandBase {
                 SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                 skyblockStatus.setDungeonName("TEST DG");
                 DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
-                skyblockStatus.setContext(fakeContext);
+                DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(fakeContext);
                 skyblockStatus.setForceIsOnDungeon(true);
                 MapProcessor mapProcessor = fakeContext.getMapProcessor();
                 mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
@@ -433,7 +434,8 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "closecontext":
                 DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
-                DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setContext(null);
+                DungeonsGuide.getDungeonsGuide();
+                DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(null);
                 break;
 
             case "dumpsettings":

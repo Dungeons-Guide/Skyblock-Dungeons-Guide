@@ -75,7 +75,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements 
 
     @Override
     public List<StyledText> getText() {
-        if (skyblockStatus.getContext().getBossfightProcessor() != null) return new ArrayList<StyledText>();
+        if (DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() != null) return new ArrayList<StyledText>();
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("Secrets In Room","title"));
         actualBit.add(new StyledText(": ","separator"));

@@ -18,12 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.events.listener;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.events.impl.*;
-import kr.syeyoung.dungeonsguide.features.*;
 import kr.syeyoung.dungeonsguide.features.AbstractFeature;
+import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.features.listener.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -42,8 +42,8 @@ public class FeatureListener {
             boolean isLocConfig = Minecraft.getMinecraft().currentScreen instanceof GuiGuiLocationConfig;
 
             if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof ScreenRenderListener && (!isLocConfig || !(abstractFeature instanceof GuiFeature))) {
@@ -132,8 +132,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onWindowUpdate(WindowUpdateEvent windowUpdateEvent) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof GuiUpdateListener) {
                     ((GuiUpdateListener) abstractFeature).onGuiUpdate(windowUpdateEvent);
@@ -146,8 +146,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(RenderLivingEvent.Pre preRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof EntityLivingRenderListener) {
@@ -162,8 +162,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onSound(PlaySoundEvent soundEvent) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof SoundListener) {
@@ -178,8 +178,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(RenderLivingEvent.Post preRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof EntityLivingRenderListener) {
@@ -193,8 +193,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(TitleEvent titleEvent) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof TitleListener) {
@@ -208,8 +208,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(RenderPlayerEvent.Pre preRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof PlayerRenderListener) {
@@ -223,8 +223,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRender(RenderPlayerEvent.Post preRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof PlayerRenderListener) {
@@ -240,8 +240,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRenderWorld(RenderWorldLastEvent postRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof WorldRenderListener) {
@@ -255,8 +255,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent postRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof InteractListener) {
@@ -272,8 +272,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onRenderWorld(ClientChatReceivedEvent postRender) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof ChatListener) {
@@ -301,8 +301,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void dungeonTooltip(ItemTooltipEvent event) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof TooltipListener) {
@@ -318,8 +318,8 @@ public class FeatureListener {
     public void onTick(TickEvent.ClientTickEvent tick) {
         if (tick.phase == TickEvent.Phase.END && tick.type == TickEvent.Type.CLIENT ) {
             try {
-                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-                if (!skyblockStatus.isOnSkyblock()) return;
+
+                if (!SkyblockStatus.isOnSkyblock()) return;
 
                 for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                     if (abstractFeature instanceof TickListener) {
@@ -334,8 +334,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onGuiOpen(GuiOpenEvent tick) {
             try {
-                SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-                if (!skyblockStatus.isOnSkyblock()) return;
+
+                if (!SkyblockStatus.isOnSkyblock()) return;
 
                 for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                     if (abstractFeature instanceof GuiOpenListener) {
@@ -349,8 +349,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onGuiRender(GuiScreenEvent.DrawScreenEvent.Post render) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof GuiPostRenderListener) {
@@ -365,8 +365,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onGuiRender(GuiScreenEvent.DrawScreenEvent.Pre render) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof GuiPreRenderListener) {
@@ -381,8 +381,8 @@ public class FeatureListener {
     @SubscribeEvent
     public void onGuiRender(GuiScreenEvent.BackgroundDrawnEvent render) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof GuiBackgroundRenderListener) {
@@ -398,8 +398,8 @@ public class FeatureListener {
     @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGH)
     public void onGuiEvent(GuiScreenEvent.MouseInputEvent.Pre input) {
         try {
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            if (!skyblockStatus.isOnSkyblock()) return;
+
+            if (!SkyblockStatus.isOnSkyblock()) return;
 
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 if (abstractFeature instanceof GuiClickListener) {

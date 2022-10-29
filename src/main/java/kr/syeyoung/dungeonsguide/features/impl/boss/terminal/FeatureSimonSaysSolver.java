@@ -50,7 +50,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
     @Override
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
-        DungeonContext dc = ss.getContext();
+        DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (dc == null) {
             return;
         }
@@ -66,7 +66,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
     private boolean wasButton = false;
     @Override
     public void onTick() {
-        DungeonContext dc = ss.getContext();
+        DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (dc == null) {
             wasButton = false;
             return;
@@ -96,7 +96,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
     public void onInteract(PlayerInteractEvent event) {
         if (!isEnabled()) return;
 
-        DungeonContext dc = ss.getContext();
+        DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (dc == null) return;
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;

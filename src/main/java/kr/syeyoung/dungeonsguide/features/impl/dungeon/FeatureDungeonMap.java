@@ -118,7 +118,8 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         if (!on) return;
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
+        DungeonsGuide.getDungeonsGuide();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (context == null || !context.getMapProcessor().isInitialized()) return;
 
         MapProcessor mapProcessor = context.getMapProcessor();

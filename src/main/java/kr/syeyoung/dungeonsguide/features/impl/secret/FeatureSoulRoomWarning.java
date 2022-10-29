@@ -92,8 +92,8 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
     @Override
     public void onTick() {
         if (!skyblockStatus.isOnDungeon()) return;
-        if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return;
-        DungeonContext context = skyblockStatus.getContext();
+        if (DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() == null || !DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getMapProcessor().isInitialized()) return;
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         if (thePlayer == null) return;

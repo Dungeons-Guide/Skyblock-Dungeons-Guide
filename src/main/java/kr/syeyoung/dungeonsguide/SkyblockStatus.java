@@ -19,7 +19,10 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.events.impl.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.events.impl.HypixelJoinedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.SkyblockJoinedEvent;
+import kr.syeyoung.dungeonsguide.events.impl.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -28,24 +31,63 @@ import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
+import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.Side;
 
 import java.util.Collection;
 import java.util.Set;
 
 public class SkyblockStatus {
+    boolean wasOnHypixel = false;
+
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent ev) {
+        if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
+
+        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+        boolean isOnDungeonPrev = isOnDungeon();
+        boolean isOnSkyblockPrev = isOnSkyblock();
+        skyblockStatus.updateStatus();
+
+        if (!wasOnHypixel && skyblockStatus.isOnHypixel()) {
+            MinecraftForge.EVENT_BUS.post(new HypixelJoinedEvent());
+        }
+        wasOnHypixel = skyblockStatus.isOnHypixel();
+
+        if (isOnSkyblockPrev && !isOnSkyblock()) {
+            MinecraftForge.EVENT_BUS.post(new SkyblockLeftEvent());
+        } else if (!isOnSkyblockPrev && isOnSkyblock()) {
+            MinecraftForge.EVENT_BUS.post(new SkyblockJoinedEvent());
+        }
+
+        if (isOnDungeonPrev && !isOnDungeon()) {
+            MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
+        }
 
 
-    public static boolean isInDungeon(){
-        return DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon();
+
     }
 
-    @Getter
+
+    public static boolean isOnSkyblock(){
+        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+
+        return skyblockStatus != null && skyblockStatus.isOnSkyblock;
+    }
+
+    public static boolean isOnDungeon() {
+        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
+
+
+
+        return skyblockStatus != null && (skyblockStatus.forceIsOnDungeon || skyblockStatus.isOnDungeon);
+    }
+
+
     private boolean isOnSkyblock;
     private boolean isOnDungeon;
-
-    public boolean isOnDungeon() {
-        return forceIsOnDungeon || isOnDungeon;
-    }
 
     @Getter @Setter
     private boolean forceIsOnDungeon;
@@ -108,11 +150,4 @@ public class SkyblockStatus {
         isOnDungeon = foundDungeon;
     }
 
-    public DungeonContext getContext() {
-        return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
-    }
-
-    public void setContext(DungeonContext o) {
-        DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(o);
-    }
 }

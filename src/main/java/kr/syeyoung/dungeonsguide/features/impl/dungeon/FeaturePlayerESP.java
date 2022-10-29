@@ -50,7 +50,7 @@ public class FeaturePlayerESP extends SimpleFeature implements PlayerRenderListe
         if (!isEnabled()) return;
 
 
-        DungeonContext dungeonContext = skyblockStatus.getContext();
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (dungeonContext == null) return;
         if (!dungeonContext.getPlayers().contains(renderPlayerEvent.entityPlayer.getName())) {
             return;

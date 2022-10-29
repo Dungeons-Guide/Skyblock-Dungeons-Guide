@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.etc.ability;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
@@ -40,7 +39,6 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListener, TickListener {
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureAbilityCooldown() {
         super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2", false, 100, getFontRenderer().FONT_HEIGHT * 5);
@@ -55,7 +53,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnSkyblock() && (!this.<Boolean>getParameter("disable").getValue() || (this.<Boolean>getParameter("disable").getValue() && skyblockStatus.isOnDungeon()));
+        return SkyblockStatus.isOnSkyblock() && (!this.<Boolean>getParameter("disable").getValue() || (this.<Boolean>getParameter("disable").getValue() && SkyblockStatus.isOnSkyblock()));
     }
 
     @Override

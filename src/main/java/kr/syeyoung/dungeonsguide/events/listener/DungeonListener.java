@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.events.listener;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.Config;
@@ -91,7 +90,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
 
@@ -122,7 +121,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent e) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
         if (context != null) {
@@ -138,43 +137,30 @@ public class DungeonListener {
         }
     }
 
-    boolean wasOnHypixel = false;
+    @SubscribeEvent
+    public void onDungeonLeave(DungeonLeftEvent ev) {
+        god.setContext(null);
+        if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
+            MapUtils.clearMap();
+        }
+    }
+
+
+
+
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) {
         if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
 
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        boolean isOnDungeon = skyblockStatus.isOnDungeon();
-        boolean isOnSkyblock = skyblockStatus.isOnSkyblock();
-        skyblockStatus.updateStatus();
 
-        if (!wasOnHypixel && skyblockStatus.isOnHypixel()) {
-            MinecraftForge.EVENT_BUS.post(new HypixelJoinedEvent());
-        }
-        wasOnHypixel = skyblockStatus.isOnHypixel();
-
-        if (isOnSkyblock && !skyblockStatus.isOnSkyblock()) {
-            MinecraftForge.EVENT_BUS.post(new SkyblockLeftEvent());
-        } else if (!isOnSkyblock && skyblockStatus.isOnSkyblock()) {
-            MinecraftForge.EVENT_BUS.post(new SkyblockJoinedEvent());
-        }
-
-        if (isOnDungeon && !skyblockStatus.isOnDungeon()) {
-            MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
-            god.setContext(null);
-            if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
-                MapUtils.clearMap();
-            }
-            return;
-        }
-        if (isOnSkyblock) {
+        if (SkyblockStatus.isOnSkyblock()) {
             DungeonContext context = god.getContext();
             if (context != null) {
                 context.getMapProcessor().tick();
                 context.tick();
             } else {
-                if (skyblockStatus.isOnDungeon()) {
+                if (SkyblockStatus.isOnDungeon()) {
                     god.setContext(new DungeonContext(Minecraft.getMinecraft().thePlayer.worldObj));
                     MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
                 }
@@ -183,7 +169,7 @@ public class DungeonListener {
 
 
         DungeonContext context = god.getContext();
-        if (skyblockStatus.isOnDungeon() && context != null) {
+        if (SkyblockStatus.isOnDungeon() && context != null) {
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
             if (thePlayer == null) {
@@ -213,7 +199,7 @@ public class DungeonListener {
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
             return;
 
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
         if (context != null) {
@@ -241,7 +227,7 @@ public class DungeonListener {
 
     @SubscribeEvent(receiveCanceled = true, priority = EventPriority.HIGHEST)
     public void onChatReceived(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         if (clientChatReceivedEvent.type != 2 && clientChatReceivedEvent.message.getFormattedText().contains("§6> §e§lEXTRA STATS §6<")) {
             MinecraftForge.EVENT_BUS.post(new DungeonEndedEvent());
@@ -291,7 +277,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
         if (context == null) {
@@ -357,7 +343,7 @@ public class DungeonListener {
 
     @SubscribeEvent()
     public void onKey2(KeyBindPressedEvent keyInputEvent) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
 
@@ -379,7 +365,7 @@ public class DungeonListener {
 
     @SubscribeEvent()
     public void onInteract(PlayerInteractEntityEvent interact) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
 
@@ -416,7 +402,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onBlockChange(BlockUpdateEvent.Post postInteract) {
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
 
         DungeonContext context = god.getContext();
@@ -471,7 +457,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onInteract(PlayerInteractEvent keyInputEvent) {
         if (!keyInputEvent.world.isRemote) return;
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
 
@@ -506,7 +492,7 @@ public class DungeonListener {
         if (deathEvent.entityLiving instanceof EntityBat)
             DungeonActionContext.getKilleds().add(deathEvent.entity.getEntityId());
 
-        if (!SkyblockStatus.isInDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = god.getContext();
 

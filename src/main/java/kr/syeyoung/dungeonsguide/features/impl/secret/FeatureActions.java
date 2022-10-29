@@ -52,7 +52,6 @@ public class FeatureActions extends TextHUDFeature {
         getStyles().add(new TextStyle("afterline", new AColor(0xAA, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public boolean doesScaleWithHeight() {
@@ -61,9 +60,9 @@ public class FeatureActions extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        if (!skyblockStatus.isOnDungeon()) return false;
-        if (skyblockStatus.getContext() == null || !skyblockStatus.getContext().getMapProcessor().isInitialized()) return false;
-        DungeonContext context = skyblockStatus.getContext();
+        if (!SkyblockStatus.isOnDungeon()) return false;
+        if (DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() == null || !DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getMapProcessor().isInitialized()) return false;
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
@@ -109,7 +108,7 @@ public class FeatureActions extends TextHUDFeature {
     public List<StyledText> getText() {
         List<StyledText> actualBit = new ArrayList<StyledText>();
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());

@@ -54,7 +54,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
     @Override
     public boolean isHUDViewable() {
         if (!skyblockStatus.isOnDungeon()) return false;
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         return context != null;
     }
 
@@ -73,7 +73,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
 
         List<StyledText> text=  new ArrayList<StyledText>();
 
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         Map<String, Integer> deaths = context.getDeaths();
         int i = 0;
         int deathsCnt = 0;
@@ -127,7 +127,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
                 return Integer.parseInt(whatever);
             }
         }
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (context == null) return 0;
         int d = 0;
         for (Integer value : context.getDeaths().values()) {
@@ -143,7 +143,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!skyblockStatus.isOnDungeon()) return;
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (context == null) return;
 
         String txt = clientChatReceivedEvent.message.getFormattedText();

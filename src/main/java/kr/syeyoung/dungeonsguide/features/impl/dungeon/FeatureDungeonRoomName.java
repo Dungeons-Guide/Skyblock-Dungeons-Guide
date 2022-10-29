@@ -44,7 +44,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public int getTotalSecretsInt() {
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         int totalSecrets = 0;
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
             if (dungeonRoom.getTotalSecrets() != -1)
@@ -61,7 +61,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getMapProcessor() != null;
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getMapProcessor() != null;
     }
 
     @Override
@@ -78,8 +78,8 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
     public List<StyledText> getText() {
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
-        Point roomPt = skyblockStatus.getContext().getMapProcessor().worldPointToRoomPoint(player.getPosition());
-        DungeonRoom dungeonRoom = skyblockStatus.getContext().getRoomMapper().get(roomPt);
+        Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getMapProcessor().worldPointToRoomPoint(player.getPosition());
+        DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getRoomMapper().get(roomPt);
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("You're in ","in"));
         if (dungeonRoom == null) {

@@ -95,7 +95,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!skyblockStatus.isOnDungeon()) return;
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         if (context == null) return;
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (milestone_pattern.matcher(txt).matches()) {

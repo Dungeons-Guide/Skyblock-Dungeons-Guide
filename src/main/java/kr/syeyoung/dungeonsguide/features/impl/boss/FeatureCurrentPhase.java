@@ -48,7 +48,7 @@ public class FeatureCurrentPhase extends TextHUDFeature {
     }
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getBossfightProcessor() != null;
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() != null;
     }
 
     @Override
@@ -63,7 +63,7 @@ public class FeatureCurrentPhase extends TextHUDFeature {
 
     @Override
     public List<StyledText> getText() {
-        String currentPhsae =skyblockStatus.getContext().getBossfightProcessor().getCurrentPhase();
+        String currentPhsae = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor().getCurrentPhase();
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("Current Phase","title"));
         actualBit.add(new StyledText(": ","separator"));

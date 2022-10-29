@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.features.listener.SoundListener;
@@ -32,11 +31,9 @@ public class FeatureDecreaseExplosionSound extends SimpleFeature implements Soun
         addParameter("sound", new FeatureParameter<Float>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0f, "float"));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
     @Override
     public void onSound(PlaySoundEvent soundEvent) {
-        if (!skyblockStatus.isOnSkyblock()) return;
+        if (!SkyblockStatus.isOnSkyblock()) return;
 
         if (soundEvent.name.equalsIgnoreCase("random.explode") && soundEvent.result instanceof PositionedSoundRecord) {
             PositionedSoundRecord positionedSoundRecord = (PositionedSoundRecord) soundEvent.result;

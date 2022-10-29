@@ -250,7 +250,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         if (!chat.getFormattedText().contains("/")) return;
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getContext();
+        DungeonsGuide.getDungeonsGuide();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         Point pt1 = context.getMapProcessor().worldPointToRoomPoint(pos.add(2, 0, 2));
         Point pt2 = context.getMapProcessor().worldPointToRoomPoint(pos.add(-2, 0, -2));
         if (!pt1.equals(pt2)) {

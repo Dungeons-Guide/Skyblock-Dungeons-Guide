@@ -103,7 +103,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
     @Override
     public List<StyledText> getText() {
         ArrayList<StyledText> texts = new ArrayList<StyledText>();
-        DungeonContext context = skyblockStatus.getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
         FeatureDungeonScore.ScoreCalculation scoreCalculation = FeatureRegistry.DUNGEON_SCORE.calculateScore();
 
         boolean failed = context.getDungeonRoomList().stream().anyMatch(a -> a.getCurrentState() == DungeonRoom.RoomState.FAILED);

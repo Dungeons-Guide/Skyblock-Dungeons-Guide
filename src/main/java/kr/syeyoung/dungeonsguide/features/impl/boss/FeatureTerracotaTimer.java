@@ -51,8 +51,8 @@ public class FeatureTerracotaTimer extends TextHUDFeature {
     }
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && skyblockStatus.getContext() != null && skyblockStatus.getContext().getBossfightProcessor() instanceof BossfightProcessorSadan &&
-                "fight-1".equalsIgnoreCase(skyblockStatus.getContext().getBossfightProcessor().getCurrentPhase());
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() instanceof BossfightProcessorSadan &&
+                "fight-1".equalsIgnoreCase(DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor().getCurrentPhase());
     }
 
     @Override
