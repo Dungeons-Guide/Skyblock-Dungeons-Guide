@@ -446,7 +446,7 @@ public class MapProcessor {
         MapUtils.record(mapData, 0, 0, Color.GREEN);
 
 
-        FeatureRegistry.ETC_COLLECT_SCORE.collectDungeonRunData(mapData, context);
+        FeatureRegistry.getInstance().ETC_COLLECT_SCORE.collectDungeonRunData(mapData, context);
 
     }
 

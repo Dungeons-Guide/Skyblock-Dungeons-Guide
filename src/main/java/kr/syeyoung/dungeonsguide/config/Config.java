@@ -41,7 +41,7 @@ public class Config {
         } catch (Exception e) {
             configuration = new JsonObject();
         }
-        for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
+        for (AbstractFeature feature : FeatureRegistry.getInstance().getFeatureList()) {
             JsonObject object = configuration.getAsJsonObject(feature.getKey());
             if (object != null) feature.loadConfig(object);
         }
@@ -50,7 +50,7 @@ public class Config {
     }
 
     public static void saveConfig() throws IOException {
-        for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
+        for (AbstractFeature feature : FeatureRegistry.getInstance().getFeatureList()) {
             JsonObject object = feature.saveConfig();
             configuration.add(feature.getKey(), object);
         }

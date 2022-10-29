@@ -53,7 +53,7 @@ public class PacketListener extends ChannelDuplexHandler {
         Packet packet = (Packet) msg;
         if (skyblockStatus.isOnSkyblock()
                 && msg instanceof S04PacketEntityEquipment
-                && FeatureRegistry.FIX_SPIRIT_BOOTS.isEnabled()) { // Inventory packet name
+                && FeatureRegistry.getInstance().FIX_SPIRIT_BOOTS.isEnabled()) { // Inventory packet name
             S04PacketEntityEquipment packet2 = (S04PacketEntityEquipment) msg;
             if (packet2.getEntityID() == Minecraft.getMinecraft().thePlayer.getEntityId()) {
                 packet2 = new S04PacketEntityEquipment(packet2.getEntityID(), packet2.getEquipmentSlot() + 1, packet2.getItemStack());

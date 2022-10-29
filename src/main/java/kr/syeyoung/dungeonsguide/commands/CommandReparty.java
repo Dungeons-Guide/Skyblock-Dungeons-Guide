@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.commands;
 import kr.syeyoung.dungeonsguide.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.party.PartyManager;
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
@@ -31,10 +30,15 @@ import java.util.stream.Collectors;
 
 public class CommandReparty extends CommandBase {
     private String command;
-    public CommandReparty() {
-        command = FeatureRegistry.ETC_REPARTY.<String>getParameter("command").getValue();
-        command = command.replace(" ", "");
+
+
+    public void init(){
+//        command = FeatureRegistry.getInstance().ETC_REPARTY.<String>getParameter("command").getValue();
+//        command = command.replace(" ", "");
+        command = "reparty";
     }
+
+
 
     @Override
     public String getCommandName() {

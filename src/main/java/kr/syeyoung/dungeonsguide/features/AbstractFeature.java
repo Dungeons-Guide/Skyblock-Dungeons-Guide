@@ -48,7 +48,12 @@ public abstract class AbstractFeature {
     protected Map<String, FeatureParameter> parameters = new HashMap<String, FeatureParameter>();
 
     protected void addParameter(String name, FeatureParameter f){
+        f.getName();
         parameters.put(name, f);
+    }
+
+    public void init(){
+
     }
 
 

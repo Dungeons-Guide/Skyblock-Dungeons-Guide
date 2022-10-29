@@ -175,7 +175,7 @@ public class RichPresenceManager implements Runnable {
         });
     }
     public void updatePresence() {
-        if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
+        if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.getInstance().DISCORD_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.getInstance().DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
             activityManager.ClearActivity.clearActivity(activityManager, Pointer.NULL, (callbackData, result) -> {
             });
         } else {

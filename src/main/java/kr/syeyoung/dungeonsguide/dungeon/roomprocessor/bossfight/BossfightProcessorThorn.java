@@ -88,7 +88,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.DEBUG.isEnabled()) return;
+        if (!FeatureRegistry.getInstance().DEBUG.isEnabled()) return;
         try {
             BlockPos pos = new BlockPos(205,77, 205);
             RenderUtils.highlightBlock(pos, new Color(0, 255, 255, 50), partialTicks, false);

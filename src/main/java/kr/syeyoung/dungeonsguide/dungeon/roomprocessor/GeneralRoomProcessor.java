@@ -78,28 +78,28 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void tick() {
-        if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
+        if (!ticked && FeatureRegistry.getInstance().SECRET_AUTO_START.isEnabled()) {
             searchForNextTarget();
-        }else if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
+        }else if (!ticked && FeatureRegistry.getInstance().SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
                     DungeonSecret dungeonSecret = (DungeonSecret) value.getValue();
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isBat() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.BAT)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_BAT.getRouteProperties());
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isChest() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.CHEST)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST.getRouteProperties());
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isEssence() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ESSENCE)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
+                    if (FeatureRegistry.getInstance().SECRET_PATHFIND_ALL.isBat() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.BAT)
+                        pathfind(value.getKey(), "found", FeatureRegistry.getInstance().SECRET_LINE_PROPERTIES_PATHFINDALL_BAT.getRouteProperties());
+                    if (FeatureRegistry.getInstance().SECRET_PATHFIND_ALL.isChest() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.CHEST)
+                        pathfind(value.getKey(), "found", FeatureRegistry.getInstance().SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST.getRouteProperties());
+                    if (FeatureRegistry.getInstance().SECRET_PATHFIND_ALL.isEssence() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ESSENCE)
+                        pathfind(value.getKey(), "found", FeatureRegistry.getInstance().SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
+                    if (FeatureRegistry.getInstance().SECRET_PATHFIND_ALL.isItemdrop() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP)
+                        pathfind(value.getKey(), "found", FeatureRegistry.getInstance().SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
                 }
             }
-        } else if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
+        } else if (!ticked && FeatureRegistry.getInstance().SECRET_BLOOD_RUSH.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonRoomDoor) {
                     DungeonRoomDoor dungeonDoor = (DungeonRoomDoor) value.getValue();
                     if (dungeonDoor.getDoorfinder().getType().isHeadToBlood()) {
-                        pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                        pathfind(value.getKey(), "navigate", FeatureRegistry.getInstance().SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
                     }
                 }
             }
@@ -119,7 +119,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (value instanceof DungeonSecret) ((DungeonSecret) value).tick(dungeonRoom);
         }
 
-        if (toRemove.contains("AUTO-BROWSE") && FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled()) {
+        if (toRemove.contains("AUTO-BROWSE") && FeatureRegistry.getInstance().SECRET_AUTO_BROWSE_NEXT.isEnabled()) {
             searchForNextTarget();
         }
     }
@@ -158,7 +158,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         if (lowestWeightMechanic != null) {
             visited.add(lowestWeightMechanic.getKey());
-            pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+            pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.getInstance().SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
         } else {
             visited.clear();
         }
@@ -170,7 +170,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             a.onRenderScreen(partialTicks);
         });
 
-        if (FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.DEBUG.isEnabled()) {
+        if (FeatureRegistry.getInstance().ADVANCED_ROOMEDIT.isEnabled() && FeatureRegistry.getInstance().DEBUG.isEnabled()) {
             FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
             if (Minecraft.getMinecraft().objectMouseOver == null) return;
@@ -189,7 +189,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (FeatureRegistry.DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
+        if (FeatureRegistry.getInstance().DEBUG.isEnabled() && (EditingContext.getEditingContext() != null && EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit)) {
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
                 if (value.getValue() == null) continue;
                 value.getValue().highlight(new Color(0,255,255,50), value.getKey(), dungeonRoom, partialTicks);
@@ -219,7 +219,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 target = ((ActionMoveNearestAir)value.getActions().get(value.getCurrent()-1)).getTarget().getBlockPos(dungeonRoom);
             } else continue;
 
-            if (value.getActionRouteProperties().getLineRefreshRate() != -1 && value.getActionRouteProperties().isPathfind() && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled()) continue;
+            if (value.getActionRouteProperties().getLineRefreshRate() != -1 && value.getActionRouteProperties().isPathfind() && !FeatureRegistry.getInstance().SECRET_FREEZE_LINES.isEnabled()) continue;
 
             Entity e = Minecraft.getMinecraft().getRenderViewEntity();
 
@@ -285,7 +285,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
         if (stack == 4 && dungeonRoom.getTotalSecrets() != secrets) {
             dungeonRoom.setTotalSecrets(secrets);
-            if (FeatureRegistry.DUNGEON_INTERMODCOMM.isEnabled())
+            if (FeatureRegistry.getInstance().DUNGEON_INTERMODCOMM.isEnabled())
                 Minecraft.getMinecraft().thePlayer.sendChatMessage("/pchat $DG-Comm " + pos2.getX() + "/" + pos2.getZ() + " " + secrets);
         }
     }
@@ -335,9 +335,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
-        if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && FeatureRegistry.SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
+        if (FeatureRegistry.getInstance().SECRET_NEXT_KEY.isEnabled() && FeatureRegistry.getInstance().SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
             searchForNextTarget();
-        } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
+        } else if (FeatureRegistry.getInstance().SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.getInstance().SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             ActionRoute actionRoute = getBestFit(0);
             // actually do force refresh because of force freeze pathfind
             if (actionRoute.getCurrentAction() instanceof ActionMove) {
@@ -352,9 +352,9 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
             }
 
-            if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !actionRoute.getActionRouteProperties().isPathfind()) {
+            if (FeatureRegistry.getInstance().SECRET_CREATE_REFRESH_LINE.isPathfind() && !actionRoute.getActionRouteProperties().isPathfind()) {
                 actionRoute.getActionRouteProperties().setPathfind(true);
-                actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
+                actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.getInstance().SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
         }
     }
@@ -382,8 +382,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
         if (event.entityPlayer.getHeldItem() != null &&
             event.entityPlayer.getHeldItem().getItem() == Items.stick &&
-                FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
-                FeatureRegistry.DEBUG.isEnabled()) {
+                FeatureRegistry.getInstance().ADVANCED_ROOMEDIT.isEnabled() &&
+                FeatureRegistry.getInstance().DEBUG.isEnabled()) {
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) return;
             if (!(ec.getCurrent() instanceof GuiDungeonAddSet)) return;

@@ -44,7 +44,6 @@ import net.minecraft.util.EnumChatFormatting;
 import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 public class PanelPartyListElement extends MPanel {
@@ -141,7 +140,7 @@ public class PanelPartyListElement extends MPanel {
             color = RenderUtils.blendTwoColors(color, 0x44FFAA00);
         }
 
-        if (nodupe && dungeonClasses.contains(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass())) {
+        if (nodupe && dungeonClasses.contains(FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getLastClass())) {
             color = RenderUtils.blendTwoColors(color, 0x44FF0000);
             note = note.replace("nodupe", "§cnodupe§r").replace("no dupe", "§cno dupe§r").replace("nd", "§cnd§r");
         }

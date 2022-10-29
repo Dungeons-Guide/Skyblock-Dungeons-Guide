@@ -38,7 +38,7 @@ public class FeatureFreezePathfind extends SimpleFeature implements KeybindPress
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());
             try {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ? "on":"off")));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Freeze to §e"+(FeatureRegistry.getInstance().SECRET_FREEZE_LINES.isEnabled() ? "on":"off")));
             } catch (Exception ignored) {}
         }
     }

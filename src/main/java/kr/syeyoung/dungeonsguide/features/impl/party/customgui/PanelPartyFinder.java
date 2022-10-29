@@ -111,7 +111,7 @@ public class PanelPartyFinder extends MPanel {
         settings.setText("Settings");
         settings.setOnActionPerformed(() -> {
             GuiConfigV2 guiConfigV2 = new GuiConfigV2();
-            guiConfigV2.getRootConfigPanel().setCurrentPageAndPushHistory("ROOT."+ FeatureRegistry.PARTYKICKER_CUSTOM.getCategory());
+            guiConfigV2.getRootConfigPanel().setCurrentPageAndPushHistory("ROOT."+ FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getCategory());
             Minecraft.getMinecraft().displayGuiScreen(guiConfigV2);
         });
         discordInvite = new MButton();

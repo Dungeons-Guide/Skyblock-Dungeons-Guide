@@ -82,10 +82,10 @@ public class CommandDungeonsGuide extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.getAskToJoinSecret() != null ? "§eon" : "§coff")));
             }
 
-            if (!FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled()) {
+            if (!FeatureRegistry.getInstance().DISCORD_RICHPRESENCE.isEnabled()) {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Discord "));
             }
-            if (!FeatureRegistry.DISCORD_ASKTOJOIN.isEnabled()) {
+            if (!FeatureRegistry.getInstance().DISCORD_ASKTOJOIN.isEnabled()) {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Invite Viewer is disabled! Enable at /dg -> Discord ")); // how
             }
         } else if (args[0].equals("pv")) {
@@ -104,8 +104,8 @@ public class CommandDungeonsGuide extends CommandBase {
             cosmeticsManager.requestCosmeticsList();
             cosmeticsManager.requestActiveCosmetics();
             StaticResourceCache.INSTANCE.purgeCache();
-            FeatureRegistry.DISCORD_ASKTOJOIN.imageMap.clear();
-            FeatureRegistry.DISCORD_ASKTOJOIN.futureMap.clear();
+            FeatureRegistry.getInstance().DISCORD_ASKTOJOIN.imageMap.clear();
+            FeatureRegistry.getInstance().DISCORD_ASKTOJOIN.futureMap.clear();
 
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else if (args[0].equals("pbroadcast")) {

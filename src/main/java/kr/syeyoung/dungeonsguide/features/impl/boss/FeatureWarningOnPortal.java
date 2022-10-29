@@ -104,7 +104,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
     public List<StyledText> getText() {
         ArrayList<StyledText> texts = new ArrayList<StyledText>();
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        FeatureDungeonScore.ScoreCalculation scoreCalculation = FeatureRegistry.DUNGEON_SCORE.calculateScore();
+        FeatureDungeonScore.ScoreCalculation scoreCalculation = FeatureRegistry.getInstance().DUNGEON_SCORE.calculateScore();
 
         boolean failed = context.getDungeonRoomList().stream().anyMatch(a -> a.getCurrentState() == DungeonRoom.RoomState.FAILED);
         if (context.getMapProcessor().getUndiscoveredRoom() > 0) {
@@ -138,7 +138,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         texts.add(new StyledText("Score Estimate","field_name"));
         texts.add(new StyledText(": ","field_separator"));
         texts.add(new StyledText(sum+" ","field_value"));
-        texts.add(new StyledText("("+FeatureRegistry.DUNGEON_SCORE.getLetter(sum)+")\n","field_etc"));
+        texts.add(new StyledText("("+FeatureRegistry.getInstance().DUNGEON_SCORE.getLetter(sum)+")\n","field_etc"));
 
 
         texts.add(new StyledText("Skill","field_name"));
@@ -154,7 +154,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         texts.add(new StyledText("Time","field_name"));
         texts.add(new StyledText(": ","field_separator"));
         texts.add(new StyledText(scoreCalculation.getTime()+" ","field_value"));
-        texts.add(new StyledText("("+ TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())+")\n","field_etc"));
+        texts.add(new StyledText("("+ TextUtils.formatTime(FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed())+")\n","field_etc"));
 
         texts.add(new StyledText("Bonus","field_name"));
         texts.add(new StyledText(": ","field_separator"));

@@ -77,10 +77,10 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL.isEnabled()) return;
+        if (!FeatureRegistry.getInstance().BOSSFIGHT_WARNING_ON_PORTAL.isEnabled()) return;
 
 
-        FeatureWarningOnPortal featureWarningOnPortal = FeatureRegistry.BOSSFIGHT_WARNING_ON_PORTAL;
+        FeatureWarningOnPortal featureWarningOnPortal = FeatureRegistry.getInstance().BOSSFIGHT_WARNING_ON_PORTAL;
         {
             RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 

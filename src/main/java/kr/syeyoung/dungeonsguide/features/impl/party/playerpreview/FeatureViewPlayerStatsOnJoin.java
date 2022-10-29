@@ -146,7 +146,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                     }
 
 
-                    ApiFetcher.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                    ApiFetcher.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.getInstance().PARTYKICKER_APIKEY.getAPIKey());
 
                     IChatComponent comp = new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile ")
                             .appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new HoverEventRenderPlayer(a.orElse(null)))));
@@ -214,7 +214,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         }
 
         if (profileFuture == null) {
-            profileFuture = ApiFetcher.fetchMostRecentProfileAsync(lastuid, FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+            profileFuture = ApiFetcher.fetchMostRecentProfileAsync(lastuid, FeatureRegistry.getInstance().PARTYKICKER_APIKEY.getAPIKey());
         }
 
         if (gameProfileFuture == null) {

@@ -105,7 +105,7 @@ public class DungeonRoom {
     private final Map<BlockPos, ThetaStar> activeThetaStar = new HashMap<>();
 
     public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist, int timeout) {
-        FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
+        FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.getInstance().SECRET_PATHFIND_STRATEGY.getPathfindStrat();
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.JPS_LEGACY) {
             return asyncPathFinder.schedule(() -> {
                 BlockPos min = new BlockPos(getMin().getX(), 0, getMin().getZ());
