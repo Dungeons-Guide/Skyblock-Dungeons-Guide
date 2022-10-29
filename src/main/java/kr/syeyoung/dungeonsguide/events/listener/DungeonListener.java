@@ -426,7 +426,7 @@ public class DungeonListener {
             if (ec == null) {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 if (context == null) {
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("Not in dungeons"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("Not in dungeons"));
                     return;
                 }
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -434,12 +434,12 @@ public class DungeonListener {
                 DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
 
                 if (dungeonRoom == null) {
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("Can't determine the dungeon room you're in"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("Can't determine the dungeon room you're in"));
                     return;
                 }
 
                 if (EditingContext.getEditingContext() != null) {
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("There is an editing session currently open."));
+                    ChatTransmitter.addToQueue(new ChatComponentText("There is an editing session currently open."));
                     return;
                 }
 

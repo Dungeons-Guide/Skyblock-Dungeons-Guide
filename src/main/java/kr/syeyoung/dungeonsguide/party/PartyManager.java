@@ -567,7 +567,7 @@ public class PartyManager {
                 FeatureTestPepole.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }

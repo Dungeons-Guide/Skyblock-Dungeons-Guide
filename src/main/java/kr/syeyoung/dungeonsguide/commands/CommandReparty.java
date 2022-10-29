@@ -49,7 +49,7 @@ public class CommandReparty extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         if (!requestReparty(false)) {
-            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
         }
     }
 
@@ -65,30 +65,30 @@ public class CommandReparty extends CommandBase {
         PartyManager.INSTANCE.requestPartyList(pc -> {
             if (pc == null) {
                 if (!noerror)
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
                 reparting = false;
                 return;
             }
             if (!pc.hasLeader(Minecraft.getMinecraft().getSession().getUsername())) {
                 if (!noerror)
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not leader"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not leader"));
                 reparting = false;
                 return;
             }
             if (pc.isSelfSolo()) {
                 if (!noerror)
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou can not reparty yourself"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou can not reparty yourself"));
                 reparting = false;
                 return;
             }
             String members = pc.getPartyRawMembers().stream().filter(a -> !a.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername())).collect(Collectors.joining(" "));
             String command = "/p invite "+members;
 
-            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eDisbanding Party..."));
             ChatProcessor.INSTANCE.addToChatQueue("/p disband", () -> {
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eRunning invite command §f"+command));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRunning invite command §f"+command));
                 ChatProcessor.INSTANCE.addToChatQueue(command, () -> {
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eSuccessfully repartied!§f"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eSuccessfully repartied!§f"));
 
                     reparting = false;
                 }, false);

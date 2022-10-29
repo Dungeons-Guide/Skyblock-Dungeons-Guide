@@ -84,7 +84,7 @@ public class DungeonsGuide {
     public static void sendDebugChat(IChatComponent iChatComponent) {
         if(FeatureRegistry.DEBUG == null) return;
         if (FeatureRegistry.DEBUG.isEnabled())
-            ChatTransmitter.addToReciveChatQueue((ChatComponentText) iChatComponent);
+            ChatTransmitter.addToQueue((ChatComponentText) iChatComponent);
     }
 
     public static void sendDebugChat(String text) {

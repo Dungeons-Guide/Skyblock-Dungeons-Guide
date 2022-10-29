@@ -58,14 +58,14 @@ public class CommandDungeonsGuide extends CommandBase {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("reparty")) {
             if (!DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(false)) {
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
             }
         } else if (args[0].equalsIgnoreCase("gui")) {
             openConfig = true;
         } else if (args[0].equalsIgnoreCase("pvall")) {
             PartyManager.INSTANCE.requestPartyList((context) -> {
                 if (context == null) {
-                    ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
                     return;
                 }
                 FeatureViewPlayerStatsOnJoin.processPartyMembers(context);

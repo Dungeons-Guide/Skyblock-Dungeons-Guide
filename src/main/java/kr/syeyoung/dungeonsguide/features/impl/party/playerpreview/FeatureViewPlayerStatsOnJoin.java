@@ -106,7 +106,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                 if (username.equalsIgnoreCase(mc.getSession().getUsername())) {
                     PartyManager.INSTANCE.requestPartyList(context -> {
                         if (context == null) {
-                            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
+                            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cBugged Dungeon Party "));
                         } else {
                             processPartyMembers(context);
                         }
@@ -141,7 +141,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         ApiFetcher.fetchUUIDAsync(username)
                 .thenAccept(a -> {
                     if (a == null) {
-                        ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
+                        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile §cCouldn't fetch uuid"));
                         return;
                     }
 
@@ -175,7 +175,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                     comp.appendSibling(kickText);
 
 
-                    ChatTransmitter.addToReciveChatQueue((ChatComponentText) comp);
+                    ChatTransmitter.addToQueue((ChatComponentText) comp);
 
 
                 });

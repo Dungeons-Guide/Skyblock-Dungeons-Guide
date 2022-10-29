@@ -44,7 +44,7 @@ public class APIKey extends SimpleFeature implements ChatListenerGlobal {
         String str = clientChatReceivedEvent.message.getFormattedText();
         if (str.startsWith("§aYour new API key is §r§b")) {
             String apiKeys = TextUtils.stripColor(str.split(" ")[5]);
-            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §fAutomatically Configured Hypixel API Key"));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fAutomatically Configured Hypixel API Key"));
             this.<String>getParameter("apikey").setValue(apiKeys);
         }
     }

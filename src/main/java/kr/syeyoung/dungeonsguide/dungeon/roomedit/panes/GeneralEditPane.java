@@ -176,7 +176,7 @@ public class GeneralEditPane extends MPanel {
                         {
                             dataoutputstream.close();
                         }
-                        ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
+                        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSaved to "+f.getName()));
                     } catch (Throwable e) {
                         e.printStackTrace();
                     }

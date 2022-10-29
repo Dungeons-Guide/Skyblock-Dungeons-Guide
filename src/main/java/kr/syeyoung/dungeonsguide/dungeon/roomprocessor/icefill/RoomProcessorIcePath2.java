@@ -71,7 +71,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                     public void run() {
                         List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
                         if (hamiltonianPath == null) {
-                            ChatTransmitter.addToReciveChatQueue("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
+                            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
                             return;
                         }
                         hamiltonianPath.add(0,new Point(startX, startY));

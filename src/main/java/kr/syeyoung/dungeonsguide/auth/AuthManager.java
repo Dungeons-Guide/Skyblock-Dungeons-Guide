@@ -128,7 +128,7 @@ public class AuthManager {
             if (currentProvider.getToken() == null) {
                 shouldReAuth = true;
                 currentProvider = null;
-                ChatTransmitter.addToReciveChatQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
+                ChatTransmitter.addToQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
                 logger.info("DG auth failed, trying again in a second");
             } else {
                 // RE-AUTHed SUCCESSFULLY HOORAY
@@ -140,7 +140,7 @@ public class AuthManager {
 
             shouldReAuth = true;
             currentProvider = null;
-            ChatTransmitter.addToReciveChatQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
+            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
             logger.error("Re-auth failed with message {}, trying again in a ten seconds", String.valueOf(Throwables.getRootCause(e)));
         }
 

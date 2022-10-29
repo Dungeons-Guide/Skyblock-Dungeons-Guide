@@ -35,7 +35,7 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
     @Override
     public void onTick() {
         if (stompPayload != null) {
-            ChatTransmitter.addToReciveChatQueue(new ChatComponentText(stompPayload));
+            ChatTransmitter.addToQueue(new ChatComponentText(stompPayload));
             stompPayload = null;
             Minecraft.getMinecraft().thePlayer.playSound("random.successful_hit", 1f,1f);
         }

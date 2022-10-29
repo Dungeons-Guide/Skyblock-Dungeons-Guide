@@ -18,20 +18,20 @@ public class ChatTransmitter {
 
     static Queue<ChatComponentText> receiveQueue = new ConcurrentLinkedQueue<>();
 
-    public static void addToReciveChatQueue(String chat, boolean noDupe) {
-        addToReciveChatQueue(new ChatComponentText(chat), noDupe);
+    public static void addToQueue(String chat, boolean noDupe) {
+        addToQueue(new ChatComponentText(chat), noDupe);
     }
 
-    public static void addToReciveChatQueue(ChatComponentText chat) {
-        addToReciveChatQueue(chat, false);
+    public static void addToQueue(ChatComponentText chat) {
+        addToQueue(chat, false);
     }
-    public static void addToReciveChatQueue(ChatComponentText chat, boolean noDupe) {
+    public static void addToQueue(ChatComponentText chat, boolean noDupe) {
         if(noDupe && receiveQueue.stream().anyMatch(a -> a.equals(chat))) return;
         receiveQueue.add(chat);
     }
 
-    public static void addToReciveChatQueue(String s) {
-        addToReciveChatQueue(s, false);
+    public static void addToQueue(String s) {
+        addToQueue(s, false);
     }
 
 

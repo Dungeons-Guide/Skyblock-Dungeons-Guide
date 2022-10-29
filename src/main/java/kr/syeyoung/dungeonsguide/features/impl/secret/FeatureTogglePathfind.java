@@ -38,7 +38,7 @@ public class FeatureTogglePathfind extends SimpleFeature implements KeybindPress
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue() && isEnabled()) {
             togglePathfindStatus = !togglePathfindStatus;
             try {
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Line visibility to §e"+(togglePathfindStatus ? "on":"off")));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Pathfind Line visibility to §e"+(togglePathfindStatus ? "on":"off")));
             } catch (Exception ignored) {}
         }
     }

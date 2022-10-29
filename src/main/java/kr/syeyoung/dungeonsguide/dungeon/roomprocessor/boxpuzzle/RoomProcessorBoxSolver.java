@@ -140,7 +140,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (calcDone2) {
             BoxPuzzleSolvingThread.Route semi_solution = puzzleSolvingThread.solution;
             if (semi_solution == null) {
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: §cCouldn't find solution involving less than 20 box moves within 3m concurrent possibility"));
                 step = 0;
                 calcDone2 = false;
                 pathFindReq = true;
@@ -150,7 +150,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 return;
             } else{
                 solution = semi_solution.boxMoves;
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
             }
             step = 0;
             lastState = currboard;
@@ -317,10 +317,10 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (chat.getFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
             } else {
                 calcReq = true;
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
             }
         }
     }

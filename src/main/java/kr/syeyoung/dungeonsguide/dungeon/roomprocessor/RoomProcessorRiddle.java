@@ -70,7 +70,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
             }
         }
         if (foundMatch) {
-            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eRiddle §7:: "+ch2.split(":")[0].trim()+" §fhas the reward!"));
             final String name = TextUtils.stripColor(ch2.split(":")[0]).replace("[NPC] ","").trim();
             final BlockPos low = getDungeonRoom().getMin();
             final BlockPos high = getDungeonRoom().getMax();

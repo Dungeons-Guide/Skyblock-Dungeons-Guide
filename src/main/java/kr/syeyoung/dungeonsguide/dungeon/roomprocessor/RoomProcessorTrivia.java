@@ -105,11 +105,11 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
                 else theRealAnswer = semi_answers;
             }
             if (theRealAnswer == null)
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! (no question found)"));
             else if (theRealAnswer.length() >1)
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: §cCouldn't determine the answer! ("+theRealAnswer+")"));
             else
-                ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eTrivia §7:: "+theRealAnswer+"§f is the correct answer!"));
             correctAnswer = theRealAnswer;
         });
     }
@@ -117,7 +117,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     private String takeCareOfPlaceHolders(String input) {
         String str = input;
         if (str.contains("$year")) {
-            ChatTransmitter.addToReciveChatQueue(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §fuses §eInventiveTalent§7(https://github.com/InventivetalentDev)§e's Skyblock Api §fto fetch current skyblock year!"));
             try {
                 str = str.replace("$year", SkyblockUtils.getSkyblockYear()+"");
             } catch (IOException e) {
