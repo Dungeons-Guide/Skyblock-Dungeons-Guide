@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
@@ -350,7 +351,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
     public Tuple<String[], List<NetworkPlayerInfo>> getPlayerListCached(){
         if(playerListCached == null || nextRefresh <= System.currentTimeMillis()){
-            DungeonsGuide.sendDebugChat("Refreshing players on map");
+            ChatTransmitter.sendDebugChat("Refreshing players on map");
             playerListCached = loadPlayerList();
             nextRefresh = System.currentTimeMillis() + 10000;
         }

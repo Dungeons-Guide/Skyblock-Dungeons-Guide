@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.features.impl.dungeon;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.events.impl.DungeonDeathEvent;
@@ -153,7 +154,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
             int deaths = context.getDeaths().getOrDefault(nickname, 0);
             context.getDeaths().put(nickname, deaths + 1);
             context.createEvent(new DungeonDeathEvent(nickname, txt, deaths));
-            DungeonsGuide.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
         }
         Matcher m2 = meDeathPattern.matcher(txt);
         if (m2.matches()) {
@@ -161,7 +162,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
             int deaths = context.getDeaths().getOrDefault(nickname, 0);
             context.getDeaths().put(nickname, deaths + 1);
             context.createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
-            DungeonsGuide.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
+            ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
         }
     }
 }
