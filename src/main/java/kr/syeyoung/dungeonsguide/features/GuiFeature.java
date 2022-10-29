@@ -100,7 +100,8 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
     }
 
     public static FontRenderer getFontRenderer() {
-        return Minecraft.getMinecraft().fontRendererObj;
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        return fr;
     }
 
     @Override
