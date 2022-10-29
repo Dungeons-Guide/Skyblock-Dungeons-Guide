@@ -73,142 +73,142 @@ public class FeatureRegistry {
 
 
 
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_GLOBAL;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_GLOBAL;
 
-    public static final FeatureMechanicBrowse SECRET_BROWSE;
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER;
-    public static final FeatureActions SECRET_ACTIONS;
+    public static FeatureMechanicBrowse SECRET_BROWSE;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER;
+    public static FeatureActions SECRET_ACTIONS;
 
-    public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY;
-    public static final FeatureTogglePathfind SECRET_TOGGLE_KEY;
-    public static final FeatureFreezePathfind SECRET_FREEZE_LINES;
-    public static final FeatureCreateRefreshLine SECRET_CREATE_REFRESH_LINE;
+    public static FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY;
+    public static FeatureTogglePathfind SECRET_TOGGLE_KEY;
+    public static FeatureFreezePathfind SECRET_FREEZE_LINES;
+    public static FeatureCreateRefreshLine SECRET_CREATE_REFRESH_LINE;
 
-    public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT;
-    public static final SimpleFeature SECRET_AUTO_START;
-    public static final SimpleFeature SECRET_NEXT_KEY;
+    public static SimpleFeature SECRET_AUTO_BROWSE_NEXT;
+    public static SimpleFeature SECRET_AUTO_START;
+    public static SimpleFeature SECRET_NEXT_KEY;
 
-    public static final SimpleFeature SECRET_BLOOD_RUSH;
-    public static final PathfindLineProperties SECRET_BLOOD_RUSH_LINE_PROPERTIES;
-
-
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_AUTOPATHFIND;
-
-    public static final FeaturePathfindToAll SECRET_PATHFIND_ALL;
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_PARENT;
-
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_BAT;
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST;
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE;
-    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP;
-
-    public static final FeatureSolverRiddle SOLVER_RIDDLE;
-    public static final FeatureSolverTictactoe SOLVER_TICTACTOE;
-    public static final SimpleFeature SOLVER_WATERPUZZLE;
-    public static final SimpleFeature SOLVER_CREEPER;
-    public static final FeatureSolverTeleport SOLVER_TELEPORT;
-    public static final FeatureSolverBlaze SOLVER_BLAZE;
-    public static final FeatureSolverIcefill SOLVER_ICEPATH;
-    public static final FeatureSolverSilverfish SOLVER_SILVERFISH;
-    public static final FeatureSolverBox SOLVER_BOX;
-    public static final FeatureSolverKahoot SOLVER_KAHOOT;
-    public static final FeatureSolverBombdefuse SOLVER_BOMBDEFUSE;
+    public static SimpleFeature SECRET_BLOOD_RUSH;
+    public static PathfindLineProperties SECRET_BLOOD_RUSH_LINE_PROPERTIES;
 
 
-    public static final FeatureDungeonMap DUNGEON_MAP;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_AUTOPATHFIND;
+
+    public static FeaturePathfindToAll SECRET_PATHFIND_ALL;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_PARENT;
+
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_BAT;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE;
+    public static PathfindLineProperties SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP;
+
+    public static FeatureSolverRiddle SOLVER_RIDDLE;
+    public static FeatureSolverTictactoe SOLVER_TICTACTOE;
+    public static SimpleFeature SOLVER_WATERPUZZLE;
+    public static SimpleFeature SOLVER_CREEPER;
+    public static FeatureSolverTeleport SOLVER_TELEPORT;
+    public static FeatureSolverBlaze SOLVER_BLAZE;
+    public static FeatureSolverIcefill SOLVER_ICEPATH;
+    public static FeatureSolverSilverfish SOLVER_SILVERFISH;
+    public static FeatureSolverBox SOLVER_BOX;
+    public static FeatureSolverKahoot SOLVER_KAHOOT;
+    public static FeatureSolverBombdefuse SOLVER_BOMBDEFUSE;
+
+
+    public static FeatureDungeonMap DUNGEON_MAP;
     public static FeatureTestPepole TEST_PEPOLE;
-    public static final FeatureDungeonRoomName DUNGEON_ROOMNAME;
-    public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST;
-    public static final FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER;
-    public static final FeatureBoxBats DUNGEON_BOXBAT;
-    public static final FeatureBoxStarMobs DUNGEON_BOXSTARMOBS;
-    public static final FeatureWatcherWarning DUNGEON_WATCHERWARNING;
-    public static final FeatureDungeonDeaths DUNGEON_DEATHS;
-    public static final FeatureDungeonMilestone DUNGEON_MILESTONE;
-    public static final FeatureDungeonRealTime DUNGEON_REALTIME;
-    public static final FeatureDungeonSBTime DUNGEON_SBTIME;
-    public static final FeatureDungeonSecrets DUNGEON_SECRETS;
-    public static final FeatureDungeonCurrentRoomSecrets DUNGEON_SECRETS_ROOM;
-    public static final FeatureDungeonTombs DUNGEON_TOMBS;
-    public static final FeatureDungeonScore DUNGEON_SCORE;
-    public static final FeatureWarnLowHealth DUNGEON_LOWHEALTH_WARN;
-    public static final SimpleFeature DUNGEON_INTERMODCOMM;
-    public static final FeaturePlayerESP DUNGEON_PLAYERESP;
-    public static final FeatureHideNameTags DUNGEON_HIDENAMETAGS;
-    public static final FeatureSoulRoomWarning DUNGEON_FAIRYSOUL;
+    public static FeatureDungeonRoomName DUNGEON_ROOMNAME;
+    public static FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST;
+    public static FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER;
+    public static FeatureBoxBats DUNGEON_BOXBAT;
+    public static FeatureBoxStarMobs DUNGEON_BOXSTARMOBS;
+    public static FeatureWatcherWarning DUNGEON_WATCHERWARNING;
+    public static FeatureDungeonDeaths DUNGEON_DEATHS;
+    public static FeatureDungeonMilestone DUNGEON_MILESTONE;
+    public static FeatureDungeonRealTime DUNGEON_REALTIME;
+    public static FeatureDungeonSBTime DUNGEON_SBTIME;
+    public static FeatureDungeonSecrets DUNGEON_SECRETS;
+    public static FeatureDungeonCurrentRoomSecrets DUNGEON_SECRETS_ROOM;
+    public static FeatureDungeonTombs DUNGEON_TOMBS;
+    public static FeatureDungeonScore DUNGEON_SCORE;
+    public static FeatureWarnLowHealth DUNGEON_LOWHEALTH_WARN;
+    public static SimpleFeature DUNGEON_INTERMODCOMM;
+    public static FeaturePlayerESP DUNGEON_PLAYERESP;
+    public static FeatureHideNameTags DUNGEON_HIDENAMETAGS;
+    public static FeatureSoulRoomWarning DUNGEON_FAIRYSOUL;
 
-    public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL;
-    public static final SimpleFeature BOSSFIGHT_CHESTPRICE;
-    public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY;
-    public static final FeatureBossHealth BOSSFIGHT_HEALTH;
-    public static final FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS;
-    public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT;
-    public static final FeatureThornSpiritBowTimer BOSSFIGHT_BOW_TIMER;
-    public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID;
-    public static final FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER;
-    public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE;
-    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS;
-    public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER;
+    public static FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL;
+    public static SimpleFeature BOSSFIGHT_CHESTPRICE;
+    public static FeatureAutoReparty BOSSFIGHT_AUTOREPARTY;
+    public static FeatureBossHealth BOSSFIGHT_HEALTH;
+    public static FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS;
+    public static FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT;
+    public static FeatureThornSpiritBowTimer BOSSFIGHT_BOW_TIMER;
+    public static FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID;
+    public static FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER;
+    public static FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE;
+    public static FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS;
+    public static FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER;
 
-    public static final APIKey PARTYKICKER_APIKEY;
-    public static final FeatureViewPlayerStatsOnJoin PARTYKICKER_VIEWPLAYER;
-    public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM;
-    public static final FeaturePartyList PARTY_LIST;
-    public static final FeaturePartyReady PARTY_READY;
+    public static APIKey PARTYKICKER_APIKEY;
+    public static FeatureViewPlayerStatsOnJoin PARTYKICKER_VIEWPLAYER;
+    public static FeatureCustomPartyFinder PARTYKICKER_CUSTOM;
+    public static FeaturePartyList PARTY_LIST;
+    public static FeaturePartyReady PARTY_READY;
 
-    public static final FeatureTooltipDungeonStat ETC_DUNGEONSTAT;
-    public static final FeatureTooltipPrice ETC_PRICE;
-    public static final FeatureAbilityCooldown ETC_ABILITY_COOLDOWN;
-    public static final FeatureCooldownCounter ETC_COOLDOWN;
-    public static final FeatureRepartyCommand ETC_REPARTY;
-    public static final FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND;
-    public static final FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY;
-    public static final FeatureUpdateAlarm ETC_TEST;
+    public static FeatureTooltipDungeonStat ETC_DUNGEONSTAT;
+    public static FeatureTooltipPrice ETC_PRICE;
+    public static FeatureAbilityCooldown ETC_ABILITY_COOLDOWN;
+    public static FeatureCooldownCounter ETC_COOLDOWN;
+    public static FeatureRepartyCommand ETC_REPARTY;
+    public static FeatureDecreaseExplosionSound ETC_EXPLOSION_SOUND;
+    public static FeatureAutoAcceptReparty ETC_AUTO_ACCEPT_REPARTY;
+    public static FeatureUpdateAlarm ETC_TEST;
 
-    public static final SimpleFeature FIX_SPIRIT_BOOTS;
-    public static final FeatureDisableMessage FIX_MESSAGES;
+    public static SimpleFeature FIX_SPIRIT_BOOTS;
+    public static FeatureDisableMessage FIX_MESSAGES;
 
-    public static final FeatureCopyMessages ETC_COPY_MSG;
+    public static FeatureCopyMessages ETC_COPY_MSG;
 
-    public static final FeatureEpicCountdown EPIC_COUNTDOWN;
+    public static FeatureEpicCountdown EPIC_COUNTDOWN;
 
-    public static final FeaturePenguins ETC_PENGUIN;
+    public static FeaturePenguins ETC_PENGUIN;
 
-    public static final FeatureCollectScore ETC_COLLECT_SCORE;
-
-
+    public static FeatureCollectScore ETC_COLLECT_SCORE;
 
 
 
-    public static final FeatureNicknamePrefix COSMETIC_PREFIX;
-    public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR;
+
+
+    public static FeatureNicknamePrefix COSMETIC_PREFIX;
+    public static FeatureNicknameColor COSMETIC_NICKNAMECOLOR;
 
 
 
-    public static final SimpleFeature DISCORD_RICHPRESENCE;
-    public static final PartyInviteViewer DISCORD_ASKTOJOIN;
-    public static final PlayingDGAlarm DISCORD_ONLINEALARM;
-    public static final SimpleFeature DISCORD_DONOTUSE;
+    public static SimpleFeature DISCORD_RICHPRESENCE;
+    public static PartyInviteViewer DISCORD_ASKTOJOIN;
+    public static PlayingDGAlarm DISCORD_ONLINEALARM;
+    public static SimpleFeature DISCORD_DONOTUSE;
 
 
-    public static final SimpleFeature DEBUG;
-    public static final SimpleFeature ADVANCED_ROOMEDIT;
+    public static SimpleFeature DEBUG;
+    public static SimpleFeature ADVANCED_ROOMEDIT;
 
-    public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM;
+    public static FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM;
 
-    public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP;
+    public static FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP;
 
-    public static final FeatureRoomCoordDisplay ADVANCED_COORDS;
+    public static FeatureRoomCoordDisplay ADVANCED_COORDS;
 
-    private static final FeatureDebugTrap ADVANCED_BAT;
+    private static FeatureDebugTrap ADVANCED_BAT;
 
-    public static final SimpleFeature RENDER_BREACONS;
+    public static SimpleFeature RENDER_BREACONS;
 
-    public static final SimpleFeature RENDER_DESTENATION_TEXT;
+    public static SimpleFeature RENDER_DESTENATION_TEXT;
 
-    public static final SimpleFeature DEBUG_BLOCK_CACHING;
+    public static SimpleFeature DEBUG_BLOCK_CACHING;
 
-    static {
+    public void init(){
         try {
             SECRET_LINE_PROPERTIES_GLOBAL = register(new PathfindLineProperties("Dungeon.Secrets.Preferences", "Global Line Settings", "Global Line Settings", "secret.lineproperties.global", true, null));
             SECRET_CREATE_REFRESH_LINE = register(new FeatureCreateRefreshLine());

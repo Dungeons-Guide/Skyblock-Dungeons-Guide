@@ -97,6 +97,8 @@ public class DungeonsGuide {
 
     public void init() {
 
+        (new FeatureRegistry()).init();
+
         new ChatTransmitter();
 
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
