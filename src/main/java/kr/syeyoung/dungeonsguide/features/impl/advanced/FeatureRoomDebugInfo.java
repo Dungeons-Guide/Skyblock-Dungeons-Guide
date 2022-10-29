@@ -48,7 +48,7 @@ public class FeatureRoomDebugInfo extends GuiFeature {
     @Override
     public void drawHUD(float partialTicks) {
         if (!skyblockStatus.isOnDungeon()) return;
-        if (!FeatureRegistry.getInstance().DEBUG.isEnabled()) return;
+        if (!FeatureRegistry.DEBUG.isEnabled()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;

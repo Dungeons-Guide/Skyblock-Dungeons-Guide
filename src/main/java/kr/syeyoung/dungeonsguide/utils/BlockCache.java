@@ -33,7 +33,7 @@ public class BlockCache {
 
     @SuppressWarnings("UnstableApiUsage")
     public IBlockState getBlockState(@NotNull BlockPos pos){
-        if(FeatureRegistry.getInstance().DEBUG_BLOCK_CACHING.isEnabled()){
+        if(FeatureRegistry.DEBUG_BLOCK_CACHING.isEnabled()){
             return cache.getUnchecked(pos);
         } else {
             return Minecraft.getMinecraft().theWorld.getBlockState(pos);

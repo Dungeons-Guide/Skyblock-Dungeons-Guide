@@ -56,7 +56,7 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
-        if (!FeatureRegistry.getInstance().SOLVER_RIDDLE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
         String ch2 = chat.getUnformattedText();
         if (!ch2.startsWith("§e[NPC] ")) {
             return;
@@ -105,9 +105,9 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_RIDDLE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_RIDDLE.isEnabled()) return;
         if (chest != null) {
-            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1),  FeatureRegistry.getInstance().SOLVER_RIDDLE.getTargetColor(), partialTicks, true);
+            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(chest.getX(), chest.getY(), chest.getZ(), chest.getX()+1, chest.getY() + 1, chest.getZ() + 1),  FeatureRegistry.SOLVER_RIDDLE.getTargetColor(), partialTicks, true);
         }
     }
 

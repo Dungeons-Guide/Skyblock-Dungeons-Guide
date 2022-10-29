@@ -101,7 +101,7 @@ public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateLi
         Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
             String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(online.getJDiscordRelation().getDiscordUser().getId())+"/"+online.getJDiscordRelation().getDiscordUser().getAvatar()+"."+(online.getJDiscordRelation().getDiscordUser().getAvatar().startsWith("a_") ? "gif":"png");
-            Future<ImageTexture> loadedImageFuture = FeatureRegistry.getInstance().DISCORD_ASKTOJOIN.loadImage(avatar);
+            Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
                 try {

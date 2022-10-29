@@ -96,7 +96,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
-        if (!FeatureRegistry.getInstance().SOLVER_BOX.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (bugged) return;
         byte[][] currboard = buildCurrentState();
         if (puzzleSolvingThread == null) {
@@ -313,7 +313,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
     @Override
     public void chatReceived(IChatComponent chat) {
-        if (!FeatureRegistry.getInstance().SOLVER_BOX.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (chat.getFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
@@ -328,8 +328,8 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_BOX.isEnabled()) return;
-        if (FeatureRegistry.getInstance().SOLVER_BOX.disableText()) return;
+        if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
+        if (FeatureRegistry.SOLVER_BOX.disableText()) return;
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -340,7 +340,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_BOX.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (bugged) return;
         if (!calcDone) return;
         if (solution == null) return;
@@ -356,23 +356,23 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 dir = new BlockPos(MathHelper.clamp_int(dir.getX(), -1, 1), 0, MathHelper.clamp_double(dir.getZ(), -1, 1));
 
                 BlockPos highlight = pos2.add(dir);
-                AColor color = FeatureRegistry.getInstance().SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight), 100, 255) / 255);
+                AColor color = FeatureRegistry.SOLVER_BOX.getTargetColor().multiplyAlpha(MathHelper.clamp_double(Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(highlight), 100, 255) / 255);
                 RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(highlight.getX(), highlight.getY(), highlight.getZ(), highlight.getX()+1, highlight.getY() + 1, highlight.getZ() + 1), color, partialTicks, false);
             }
 
             if (pathFound != null) {
-                RenderUtils.drawLines(pathFound, FeatureRegistry.getInstance().SOLVER_BOX.getLineColor(),FeatureRegistry.getInstance().SOLVER_BOX.getLineWidth(), partialTicks, true);
+                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(),FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
             }
         } else {
             if (totalPath != null) {
-                RenderUtils.drawLines(totalPath, FeatureRegistry.getInstance().SOLVER_BOX.getLineColor(),FeatureRegistry.getInstance().SOLVER_BOX.getLineWidth(), partialTicks, false);
+                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(),FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {
                     BlockPos pos = totalPushedBlocks.get(i);
-                    RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.getInstance().SOLVER_BOX.getTargetColor(), partialTicks, false);
+                    RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX()+1, pos.getY() + 1, pos.getZ() + 1),  FeatureRegistry.SOLVER_BOX.getTargetColor(), partialTicks, false);
                     RenderUtils.drawTextAtWorld("#"+i, pos.getX()+0.5f, pos.getY() +0.5f, pos.getZ() + 0.5f, i != step ?
-                            RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.getInstance().SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.getInstance().SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
+                            RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor2()) : RenderUtils.getColorAt(pos.getX(), pos.getY(), pos.getZ(), FeatureRegistry.SOLVER_BOX.getTextColor()), 0.1f, false, false, partialTicks);
                 }
             }
         }

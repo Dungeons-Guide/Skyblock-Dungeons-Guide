@@ -120,7 +120,7 @@ public class RoomProcessorCreeperSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_CREEPER.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_CREEPER.isEnabled()) return;
         World w = getDungeonRoom().getContext().getWorld();
         for (int i = 0; i < poses.size(); i++) {
             BlockPos[] poset = poses.get(i);

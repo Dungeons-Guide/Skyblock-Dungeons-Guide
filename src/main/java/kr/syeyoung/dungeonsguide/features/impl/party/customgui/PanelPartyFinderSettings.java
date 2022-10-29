@@ -90,13 +90,13 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
                 @Override
                 public void edit(String str) {
                     panelPartyFinder.onChestUpdate(null);
-                    FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.setWhitelist(str);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setWhitelist(str);
                 }
             };
             filterBlacklist = new MTextField() {
                 @Override
                 public void edit(String str) {
-                    FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.setBlacklist(str);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklist(str);
                     panelPartyFinder.onChestUpdate(null);
                 }
             };
@@ -104,22 +104,22 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
                 @Override
                 public void edit(String str) {
                     super.edit(str);
-                    FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.setHighlight(str);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setHighlight(str);
                 }
             };
             blacklistClassTxt = new MTextField() {
                 @Override
                 public void edit(String str) {
                     super.edit(str);
-                    FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.setBlacklistClass(str);
+                    FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklistClass(str);
                     panelPartyFinder.onChestUpdate(null);
                 }
             };
 
-            filterWhitelist.setText(FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getWhitelist());
-            filterBlacklist.setText(FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getBlacklist());
-            highlightNote.setText(FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getHighlight());
-            blacklistClassTxt.setText(FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getBlacklistClass());
+            filterWhitelist.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getWhitelist());
+            filterBlacklist.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getBlacklist());
+            highlightNote.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getHighlight());
+            blacklistClassTxt.setText(FeatureRegistry.PARTYKICKER_CUSTOM.getBlacklistClass());
 
             filterWhitelistNote = new MPassiveLabelAndElement("Whitelist Note", filterWhitelist);
             filterBlacklistNote = new MPassiveLabelAndElement("Blacklist Note", filterBlacklist);
@@ -136,9 +136,9 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
             add(blacklistClass);
         }
         {
-            integerSelection = new MIntegerSelectionButton(FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.getMinimumCata());
+            integerSelection = new MIntegerSelectionButton(FeatureRegistry.PARTYKICKER_CUSTOM.getMinimumCata());
             integerSelection.setOnUpdate(() -> {
-                FeatureRegistry.getInstance().PARTYKICKER_CUSTOM.setMinimumCata(integerSelection.getData());
+                FeatureRegistry.PARTYKICKER_CUSTOM.setMinimumCata(integerSelection.getData());
                 panelPartyFinder.onChestUpdate(null);
             });
             cataLv = new MPassiveLabelAndElement("Minimum Cata Lv", integerSelection);

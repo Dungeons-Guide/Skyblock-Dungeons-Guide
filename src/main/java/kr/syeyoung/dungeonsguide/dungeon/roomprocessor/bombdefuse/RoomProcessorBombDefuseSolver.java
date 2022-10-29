@@ -85,7 +85,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
     public RoomProcessorBombDefuseSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        if (!FeatureRegistry.getInstance().SOLVER_BOMBDEFUSE.isEnabled()) {
+        if (!FeatureRegistry.SOLVER_BOMBDEFUSE.isEnabled()) {
             bugged = true;
             return;
         }
@@ -239,7 +239,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
         if (bugged) return;
         BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
         OffsetPoint offsetPoint = new OffsetPoint(getDungeonRoom(), new BlockPos(player.getX(), 68, player.getZ()));
-        if (FeatureRegistry.getInstance().DEBUG.isEnabled()) {
+        if (FeatureRegistry.DEBUG.isEnabled()) {
             for (ChamberSet ch : chambers) {
                 if (ch.getChamberGen() == null) continue;
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null) {

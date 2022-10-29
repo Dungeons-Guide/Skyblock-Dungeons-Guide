@@ -70,17 +70,17 @@ public class ActionMove extends AbstractAction {
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
         if (actionRouteProperties.isBeacon()) {
-            if(!FeatureRegistry.getInstance().RENDER_BREACONS.isEnabled()){
+            if(!FeatureRegistry.RENDER_BREACONS.isEnabled()){
                 RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
             }
             RenderUtils.highlightBlock(pos, actionRouteProperties.getBeaconColor(), partialTicks);
         }
-        if(!FeatureRegistry.getInstance().RENDER_DESTENATION_TEXT.isEnabled()){
+        if(!FeatureRegistry.RENDER_DESTENATION_TEXT.isEnabled()){
             RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
         }
         RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, flag ? 2f : 1f, true, false, partialTicks);
 
-        if (!FeatureRegistry.getInstance().SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.getInstance().SECRET_TOGGLE_KEY.togglePathfindStatus) {
+        if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
                 RenderUtils.drawLinesVec3(poses, actionRouteProperties.getLineColor(), actionRouteProperties.getLineWidth(), partialTicks,  true);
             }
@@ -104,7 +104,7 @@ public class ActionMove extends AbstractAction {
         }
 
         if (tick == 0 && actionRouteProperties.isPathfind() && latestFuture == null) {
-            if (!FeatureRegistry.getInstance().SECRET_FREEZE_LINES.isEnabled() || poses == null) {
+            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() || poses == null) {
                 latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, 10000);
             }
         }

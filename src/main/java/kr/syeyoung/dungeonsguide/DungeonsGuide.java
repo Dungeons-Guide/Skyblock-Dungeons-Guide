@@ -103,6 +103,8 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
+        FeatureRegistry.init();
+
 
         this.blockCache = new BlockCache();
 
@@ -113,17 +115,9 @@ public class DungeonsGuide {
         TitleRender.getInstance();
 
 
-        try {
-            FeatureRegistry.getInstance().init();
-        } catch (Exception e) {
-            throw new RuntimeException(e);
-        }
-
 
         commandReparty = new CommandReparty();
         MinecraftForge.EVENT_BUS.register(commandReparty);
-
-        commandReparty.init();
 
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
@@ -145,11 +139,11 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
-        if (FeatureRegistry.getInstance().ETC_REPARTY.isEnabled()) {
+        if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
             ClientCommandHandler.instance.registerCommand(commandReparty);
         }
 
-        if (FeatureRegistry.getInstance().DISCORD_DONOTUSE.isEnabled()) {
+        if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled()) {
             System.setProperty("dg.safe", "true");
         }
 

@@ -126,13 +126,13 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_TELEPORT.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_TELEPORT.isEnabled()) return;
         for (BlockPos bpos:visitedPortals) {
-            RenderUtils.highlightBoxAColor( AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.getInstance().SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
+            RenderUtils.highlightBoxAColor( AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX()+1, bpos.getY() + 1, bpos.getZ() + 1),  FeatureRegistry.SOLVER_TELEPORT.getTargetColor2(), partialTicks, true);
         }
 
         if (intersection != null) {
-            RenderUtils.highlightBoxAColor( AxisAlignedBB.fromBounds(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.getInstance().SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
+            RenderUtils.highlightBoxAColor( AxisAlignedBB.fromBounds(intersection.getX(), intersection.getY(), intersection.getZ(), intersection.getX()+1, intersection.getY() + 1, intersection.getZ() + 1),   FeatureRegistry.SOLVER_TELEPORT.getTargetColor(), partialTicks, false);
         }
     }
     public static class Generator implements RoomProcessorGenerator<RoomProcessorTeleportMazeSolver> {

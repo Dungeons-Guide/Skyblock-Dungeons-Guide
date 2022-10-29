@@ -101,10 +101,10 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (milestone_pattern.matcher(txt).matches()) {
             context.getMilestoneReached().add(new String[] {
-                    TextUtils.formatTime(FeatureRegistry.getInstance().DUNGEON_REALTIME.getTimeElapsed()),
-                    TextUtils.formatTime(FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed())
+                    TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),
+                    TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
             });
-            ChatTransmitter.sendDebugChat(new ChatComponentText("Reached Milestone At " +  TextUtils.formatTime(FeatureRegistry.getInstance().DUNGEON_REALTIME.getTimeElapsed()) + " / "+TextUtils.formatTime(FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed())));
+            ChatTransmitter.sendDebugChat(new ChatComponentText("Reached Milestone At " +  TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()) + " / "+TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())));
         }
     }
 }

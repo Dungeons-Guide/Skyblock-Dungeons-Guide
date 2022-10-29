@@ -135,7 +135,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onDungeonLeave(DungeonLeftEvent ev) {
         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
-        if (!FeatureRegistry.getInstance().ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
+        if (!FeatureRegistry.ADVANCED_DEBUGGABLE_MAP.isEnabled()) {
             MapUtils.clearMap();
         }
     }
@@ -279,7 +279,7 @@ public class DungeonListener {
             return;
         }
 
-        if (FeatureRegistry.getInstance().DEBUG.isEnabled()) {
+        if (FeatureRegistry.DEBUG.isEnabled()) {
             for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
                 for (DungeonDoor door : dungeonRoom.getDoors()) {
                     RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
@@ -302,7 +302,7 @@ public class DungeonListener {
             }
         }
 
-        if (FeatureRegistry.getInstance().DEBUG.isEnabled() && dungeonRoom != null) {
+        if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null) {
 
             Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
             BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
@@ -421,7 +421,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onKeyInput(KeyBindPressedEvent keyInputEvent) {
-        if (FeatureRegistry.getInstance().DEBUG.isEnabled() && FeatureRegistry.getInstance().ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.getInstance().ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
+        if (FeatureRegistry.DEBUG.isEnabled() && FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() && keyInputEvent.getKey() == FeatureRegistry.ADVANCED_ROOMEDIT.<Integer>getParameter("key").getValue()) {
             EditingContext ec = EditingContext.getEditingContext();
             if (ec == null) {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

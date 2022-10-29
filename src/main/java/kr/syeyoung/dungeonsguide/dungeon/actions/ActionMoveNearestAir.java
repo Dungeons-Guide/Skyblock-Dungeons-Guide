@@ -73,7 +73,7 @@ public class ActionMoveNearestAir extends AbstractAction {
         }
 
         if (tick == 0 && actionRouteProperties.isPathfind() && latestFuture == null) {
-            if (!FeatureRegistry.getInstance().SECRET_FREEZE_LINES.isEnabled() || poses == null) {
+            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() || poses == null) {
                 latestFuture = dungeonRoom.createEntityPathTo(dungeonRoom.getContext().getWorld(), Minecraft.getMinecraft().thePlayer, target.getBlockPos(dungeonRoom), Integer.MAX_VALUE, 10000);
             }
         }

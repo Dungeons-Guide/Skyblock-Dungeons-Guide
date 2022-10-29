@@ -103,7 +103,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_BLAZE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_BLAZE.isEnabled()) return;
         if (next == null) return;
         Vec3 pos = next.getPositionEyes(partialTicks);
         RenderUtils.drawTextAtWorld("NEXT", (float)pos.xCoord, (float)pos.yCoord, (float)pos.zCoord, 0xFFFF0000, 0.5f, true, false, partialTicks);
@@ -150,16 +150,16 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
             boolean border = true;
 
-            RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.getInstance().SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
+            RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
             if (entity == theoneafterit) {
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.getInstance().SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
             } else if (entity == nextBlaze)
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.getInstance().SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
 
             GlStateManager.color(1,1,1,1);
 
 
-            if (FeatureRegistry.getInstance().SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
+            if (FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue().getAlpha() > 0x10) {
                 GL11.glStencilFunc(GL11.GL_NOTEQUAL, 3, 0x01);
                 GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_REPLACE, GL11.GL_REPLACE);
                 GlStateManager.pushMatrix();
@@ -179,7 +179,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
                 GL11.glStencilFunc(GL11.GL_EQUAL, 3, 0xFF);
                 GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
 
-                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.getInstance().SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
+                RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-1, 0, -1, 1, 2, 1), FeatureRegistry.SOLVER_BLAZE.<AColor>getParameter("blazeborder").getValue(), partialTicks, false);
 
 
             }

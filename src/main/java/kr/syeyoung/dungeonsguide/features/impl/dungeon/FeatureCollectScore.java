@@ -46,8 +46,8 @@ public class FeatureCollectScore extends SimpleFeature {
         int time = MapUtils.readNumber(mapData, 51, 73, 9);
         int bonus = MapUtils.readNumber(mapData, 51, 92, 9);
         ChatTransmitter.sendDebugChat(new ChatComponentText(("skill: " + skill + " / exp: " + exp + " / time: " + time + " / bonus : " + bonus)));
-        JSONObject payload = new JSONObject().put("timeSB", FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed())
-                .put("timeR", FeatureRegistry.getInstance().DUNGEON_REALTIME.getTimeElapsed())
+        JSONObject payload = new JSONObject().put("timeSB", FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
+                .put("timeR", FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed())
                 .put("timeScore", time)
                 .put("completionStage", context.getBossRoomEnterSeconds() == -1 ? 0 :
                         context.isDefeated() ? 2 : 1)
@@ -68,7 +68,7 @@ public class FeatureCollectScore extends SimpleFeature {
             throw new RuntimeException(e);
         }
 
-        if (FeatureRegistry.getInstance().ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalsefalsefalse")) {
+        if (FeatureRegistry.ETC_COLLECT_SCORE.isEnabled() && !target.contains("falsefalsefalsefalse")) {
             StompManager.getInstance().send(new StompPayload().payload(payload.toString()).destination(target.replace("false", "").trim()));
         }
     }

@@ -142,7 +142,7 @@ public class DungeonContext {
 
 
         if (mapProcessor.isInitialized() && BossRoomEnterSeconds == -1 && !roomBoundary.contains(mapProcessor.worldPointToMapPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))) {
-            BossRoomEnterSeconds = FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed() / 1000;
+            BossRoomEnterSeconds = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000;
             bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
             createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
@@ -158,17 +158,17 @@ public class DungeonContext {
         players.addAll(TabListUtil.getPlayersInDungeon());
 
 
-        if (latestSecretCnt != FeatureRegistry.getInstance().DUNGEON_SECRETS.getSecretsFound()) {
-            int newSecretCnt = FeatureRegistry.getInstance().DUNGEON_SECRETS.getSecretsFound();
-            createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, newSecretCnt, latestTotalSecret, FeatureRegistry.getInstance().DUNGEON_SECRETS.sureOfTotalSecrets()));
+        if (latestSecretCnt != FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) {
+            int newSecretCnt = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound();
+            createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, newSecretCnt, latestTotalSecret, FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets()));
             latestSecretCnt = newSecretCnt;
         }
-        if (latestTotalSecret != FeatureRegistry.getInstance().DUNGEON_SECRETS.getTotalSecretsInt()) {
-            latestTotalSecret = FeatureRegistry.getInstance().DUNGEON_SECRETS.getTotalSecretsInt();
-            createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, latestSecretCnt, latestTotalSecret, FeatureRegistry.getInstance().DUNGEON_SECRETS.sureOfTotalSecrets()));
+        if (latestTotalSecret != FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt()) {
+            latestTotalSecret = FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt();
+            createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, latestSecretCnt, latestTotalSecret, FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets()));
         }
-        if (latestCrypts != FeatureRegistry.getInstance().DUNGEON_TOMBS.getTombsFound()) {
-            int newlatestCrypts = FeatureRegistry.getInstance().DUNGEON_TOMBS.getTombsFound();
+        if (latestCrypts != FeatureRegistry.DUNGEON_TOMBS.getTombsFound()) {
+            int newlatestCrypts = FeatureRegistry.DUNGEON_TOMBS.getTombsFound();
             createEvent(new DungeonCryptBrokenEvent(latestCrypts, newlatestCrypts));
             this.latestCrypts = newlatestCrypts;
         }

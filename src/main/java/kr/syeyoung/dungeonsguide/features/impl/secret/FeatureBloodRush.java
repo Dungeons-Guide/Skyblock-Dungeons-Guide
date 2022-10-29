@@ -38,7 +38,7 @@ public class FeatureBloodRush extends SimpleFeature implements KeybindPressedLis
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());
             try {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.getInstance().SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Blood Rush to §e"+(FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled() ? "on":"off")));
             } catch (Exception ignored) {}
         }
     }

@@ -92,14 +92,14 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
-        if (!FeatureRegistry.getInstance().SOLVER_ICEPATH.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
     }
 
     @Override
     public void drawWorld(float partialTicks) {
-        if (!FeatureRegistry.getInstance().SOLVER_ICEPATH.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_ICEPATH.isEnabled()) return;
         for (List<BlockPos> solution:this.solution)
-            RenderUtils.drawLines(solution, FeatureRegistry.getInstance().SOLVER_ICEPATH.getLineColor(),FeatureRegistry.getInstance().SOLVER_ICEPATH.getLineWidth(), partialTicks, true);
+            RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_ICEPATH.getLineColor(),FeatureRegistry.SOLVER_ICEPATH.getLineWidth(), partialTicks, true);
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorIcePath2> {

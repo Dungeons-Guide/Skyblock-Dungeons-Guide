@@ -65,7 +65,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     @Override
     public void tick() {
         super.tick();
-        if (!FeatureRegistry.getInstance().SOLVER_WATERPUZZLE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         try {
             waterBoard.tick();
@@ -82,7 +82,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_WATERPUZZLE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         if (waterBoard == null) return;
 

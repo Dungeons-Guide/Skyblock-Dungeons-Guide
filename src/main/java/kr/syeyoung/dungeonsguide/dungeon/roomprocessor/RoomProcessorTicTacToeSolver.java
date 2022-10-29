@@ -183,7 +183,7 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_TICTACTOE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_TICTACTOE.isEnabled()) return;
         if (chosePos != -1) {
             BlockPos block = board.getOffsetPointList().get(chosePos).getBlockPos(getDungeonRoom());
             boolean whoseturn = false; // false => hype true => me
@@ -199,8 +199,8 @@ public class RoomProcessorTicTacToeSolver extends GeneralRoomProcessor {
                 whoseturn = ones < negativeones;
             }
             RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(block.getX(), block.getY(), block.getZ(), block.getX()+1, block.getY() + 1, block.getZ() + 1),
-                    whoseturn ? FeatureRegistry.getInstance().SOLVER_TICTACTOE.getTargetColor()
-                            : FeatureRegistry.getInstance().SOLVER_TICTACTOE.getTargetColor2(), partialTicks, true);
+                    whoseturn ? FeatureRegistry.SOLVER_TICTACTOE.getTargetColor()
+                            : FeatureRegistry.SOLVER_TICTACTOE.getTargetColor2(), partialTicks, true);
         }
     }
 

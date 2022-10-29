@@ -71,7 +71,6 @@ public class MCategory extends MPanel {
         fr.drawString((lastAbsClip.contains(absMousex, absMousey) ? "§n" : "") + nestedCategory.categoryName(), 0,0, 0xFFFFFFFF);
         GlStateManager.popMatrix();
 
-        FeatureRegistry.getInstance();
         fr.drawSplitString(FeatureRegistry.getCategoryDescription().getOrDefault(nestedCategory.categoryFull(), ""), 5, 23, getBounds().width -10, 0xFFBFBFBF);
     }
 

@@ -53,7 +53,7 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     @Override
     public void chatReceived(IChatComponent chat) {
         super.chatReceived(chat);
-        if (!FeatureRegistry.getInstance().SOLVER_KAHOOT.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         String ch2 = chat.getUnformattedText();
         if (parseDialog) {
             parseDialog = false;
@@ -140,13 +140,13 @@ public class RoomProcessorTrivia extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_KAHOOT.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_KAHOOT.isEnabled()) return;
         if (correctAnswer == null) return;
 
         OffsetPoint op = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get(correctAnswer);
         if (op != null) {
             BlockPos solution = op.getBlockPos(getDungeonRoom());
-            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.getInstance().SOLVER_KAHOOT.getTargetColor(), partialTicks, false);
+            RenderUtils.highlightBoxAColor(AxisAlignedBB.fromBounds(solution.getX(), solution.getY(), solution.getZ(), solution.getX()+1, solution.getY() + 1, solution.getZ() + 1),  FeatureRegistry.SOLVER_KAHOOT.getTargetColor(), partialTicks, false);
         }
     }
 

@@ -210,8 +210,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int skill = 100;
         int deaths = 0;
         {
-            deaths = FeatureRegistry.getInstance().DUNGEON_DEATHS.getTotalDeaths();
-            skill -= FeatureRegistry.getInstance().DUNGEON_DEATHS.getTotalDeaths() * 2;
+            deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
+            skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
             int totalCompRooms= 0;
             int roomCnt = 0;
             int roomSkillPenalty = 0;
@@ -259,29 +259,29 @@ public class FeatureDungeonScore extends TextHUDFeature {
                 total += dungeonRoom.getUnitPoints().size();
             }
 
-            totalSecrets =  FeatureRegistry.getInstance().DUNGEON_SECRETS.getTotalSecretsInt() ;
-            totalSecretsKnown = FeatureRegistry.getInstance().DUNGEON_SECRETS.sureOfTotalSecrets();
+            totalSecrets =  FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt() ;
+            totalSecretsKnown = FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets();
 
             fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
             explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() : completed / total * 100)), 0, 60);
-            explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.getInstance().DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
+            explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
         }
         int time = 0;
         {
             int maxTime = context.getMaxSpeed();
-//            int timeSec = FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed() / 1000 - maxTime + 480;
+//            int timeSec = FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed() / 1000 - maxTime + 480;
 //
 //            if (timeSec <= 480) time = 100;
 //            else if (timeSec <= 580) time = (int) Math.ceil(148 - 0.1 * timeSec);
 //            else if (timeSec <= 980) time = (int) Math.ceil(119 - 0.05 * timeSec);
 //            else if (timeSec < 3060) time = (int) Math.ceil(3102 - (1/30.0) * timeSec);
 //            time = MathHelper.clamp_int(time, 0, 100); // just in case.
-            time = TimeScoreUtil.estimate(FeatureRegistry.getInstance().DUNGEON_SBTIME.getTimeElapsed(), maxTime);
+            time = TimeScoreUtil.estimate(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed(), maxTime);
         }
         int bonus = 0;
         int tombs;
         {
-            bonus += tombs = MathHelper.clamp_int(FeatureRegistry.getInstance().DUNGEON_TOMBS.getTombsFound(), 0, 5);
+            bonus += tombs = MathHelper.clamp_int(FeatureRegistry.DUNGEON_TOMBS.getTombsFound(), 0, 5);
             if (context.isGotMimic()) bonus += 2;
             CompletableFuture<StaticResource> staticResourceCompletableFuture = StaticResourceCache.INSTANCE.getResource(StaticResourceCache.BONUS_SCORE);
             if (staticResourceCompletableFuture.isDone()) {

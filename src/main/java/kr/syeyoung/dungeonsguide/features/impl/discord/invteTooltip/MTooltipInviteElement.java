@@ -79,7 +79,7 @@ public class MTooltipInviteElement extends MPanel {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         if (!relation.getDiscordUser().getAvatar().isEmpty()){
             String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(relation.getDiscordUser().getId())+"/"+relation.getDiscordUser().getAvatar()+"."+(relation.getDiscordUser().getAvatar().startsWith("a_") ? "gif":"png");
-            Future<ImageTexture> loadedImageFuture = FeatureRegistry.getInstance().DISCORD_ASKTOJOIN.loadImage(avatar);
+            Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
                 try {

@@ -139,9 +139,9 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     @Override
     public void drawWorld(float partialTicks) {
         super.drawWorld(partialTicks);
-        if (!FeatureRegistry.getInstance().SOLVER_SILVERFISH.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_SILVERFISH.isEnabled()) return;
         if (!err)
-        RenderUtils.drawLines(solution, FeatureRegistry.getInstance().SOLVER_SILVERFISH.getLineColor(),FeatureRegistry.getInstance().SOLVER_SILVERFISH.getLineWidth(), partialTicks, true);
+        RenderUtils.drawLines(solution, FeatureRegistry.SOLVER_SILVERFISH.getLineColor(),FeatureRegistry.SOLVER_SILVERFISH.getLineWidth(), partialTicks, true);
     }
 
     public Point getPointOfSilverFishOnMap(BlockPos blockPos) {

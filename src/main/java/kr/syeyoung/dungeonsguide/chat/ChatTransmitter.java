@@ -39,8 +39,8 @@ public class ChatTransmitter {
     }
 
     public static void sendDebugChat(IChatComponent iChatComponent) {
-        if(FeatureRegistry.getInstance().DEBUG == null) return;
-        if (FeatureRegistry.getInstance().DEBUG.isEnabled())
+        if(FeatureRegistry.DEBUG == null) return;
+        if (FeatureRegistry.DEBUG.isEnabled())
             addToQueue((ChatComponentText) iChatComponent);
     }
 
