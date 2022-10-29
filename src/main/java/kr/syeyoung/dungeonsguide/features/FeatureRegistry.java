@@ -325,5 +325,13 @@ public class FeatureRegistry {
             System.out.println(e);
             throw new RuntimeException(e);
         }
+
+
+        for (AbstractFeature abstractFeature : featureList) {
+            if(abstractFeature == null){
+                throw new IllegalStateException("Feature " + abstractFeature.getKey() + " is null, this cannot happen!!!");
+            }
+        }
+
     }
 }
