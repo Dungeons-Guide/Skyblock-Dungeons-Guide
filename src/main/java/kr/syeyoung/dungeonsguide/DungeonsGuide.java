@@ -168,6 +168,8 @@ public class DungeonsGuide {
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         TimeScoreUtil.init();
 
+        Main.finishUpProgressBar(progressbar);
+
         ProgressManager.pop(progressbar);
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());

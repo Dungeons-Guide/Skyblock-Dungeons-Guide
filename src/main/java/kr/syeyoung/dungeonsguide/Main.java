@@ -258,7 +258,7 @@ public class Main {
         e.printStackTrace();
     }
 
-    void finishUpProgressBar(ProgressManager.ProgressBar progressBar) {
+    static void finishUpProgressBar(ProgressManager.ProgressBar progressBar) {
         if(progressBar == null) return;
         while (progressBar.getStep() < progressBar.getSteps())
             progressBar.step("random-" + progressBar.getStep());
