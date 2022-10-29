@@ -91,7 +91,7 @@ public class MapProcessor {
     }
 
     private static void error(String prefix) {
-        ChatTransmitter.addToQueue(new ChatComponentText(DungeonsGuide.prefix + prefix));
+        ChatTransmitter.addToQueue(new ChatComponentText(DungeonsGuide.PREFIX + prefix));
     }
 
 
