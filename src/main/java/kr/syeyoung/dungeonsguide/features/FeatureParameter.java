@@ -29,27 +29,17 @@ import java.util.function.Consumer;
 @AllArgsConstructor
 public class FeatureParameter<T> {
     private String key;
-
     private String name;
     private String description;
-
     private T value;
 
-
-//    void setValue(T newval){
-//        value = newval;
-//    }
 
     private T default_value;
     private String value_type;
     private Consumer<T> changedCallback;
 
     public FeatureParameter(String key, String name, String description, T default_value, String value_type) {
-        this.key = key;
-        this.name = name;
-        this.default_value = default_value;
-        this.description = description;
-        this.value_type = value_type;
+        this(key, name, description,default_value, value_type, null);
     }
 
     public FeatureParameter(String key, String name, String description, T default_value, String value_type, Consumer<T> changedCallback) {
@@ -58,8 +48,10 @@ public class FeatureParameter<T> {
         this.default_value = default_value;
         this.description = description;
         this.value_type = value_type;
-        this.changedCallback = changedCallback;
-        changedCallback.accept(default_value);
+        if(changedCallback != null){
+            this.changedCallback = changedCallback;
+            changedCallback.accept(default_value);
+        }
     }
 
     public void setToDefault() {
@@ -74,7 +66,7 @@ public class FeatureParameter<T> {
     public void setValue(T newValue){
         value = newValue;
         if(changedCallback != null){
-            changedCallback.accept(newValue);
+            changedCallback.accept(value);
         }
     }
 }
