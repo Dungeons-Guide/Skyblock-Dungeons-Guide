@@ -44,6 +44,7 @@ import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.IOException;
@@ -73,25 +74,17 @@ public class DungeonsGuide {
     CommandReparty commandReparty;
 
 
-    public static void registerCommands(){
-        CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
-        CommandDgDebug command = new CommandDgDebug();
-
-        ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
-        ClientCommandHandler.instance.registerCommand(command);
-
-        MinecraftForge.EVENT_BUS.register(command);
-        MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
-    }
-
-
     public DungeonsGuide(){
+        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+
+        progressbar.step("Registering Events & Commands");
 
         skyblockStatus = new SkyblockStatus();
 
         MinecraftForge.EVENT_BUS.register(skyblockStatus);
 
 
+        (new FeatureRegistry()).init();
 
         new ChatTransmitter();
 
@@ -103,8 +96,6 @@ public class DungeonsGuide {
             e.printStackTrace();
         }
 
-        FeatureRegistry.init();
-
 
         this.blockCache = new BlockCache();
 
@@ -114,7 +105,14 @@ public class DungeonsGuide {
 
         TitleRender.getInstance();
 
+        CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
+        CommandDgDebug command = new CommandDgDebug();
 
+        ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
+        ClientCommandHandler.instance.registerCommand(command);
+
+        MinecraftForge.EVENT_BUS.register(command);
+        MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
         commandReparty = new CommandReparty();
         MinecraftForge.EVENT_BUS.register(commandReparty);
@@ -129,10 +127,13 @@ public class DungeonsGuide {
 
         MinecraftForge.EVENT_BUS.register(new AhUtils());
 
+
+        progressbar.step("Opening connection");
         cosmeticsManager = new CosmeticsManager();
         MinecraftForge.EVENT_BUS.register(cosmeticsManager);
 
 
+        progressbar.step("Loading Config");
         try {
             Config.loadConfig(null);
         } catch (IOException e) {
@@ -150,13 +151,12 @@ public class DungeonsGuide {
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         TimeScoreUtil.init();
 
+        Main.finishUpProgressBar(progressbar);
+
+        ProgressManager.pop(progressbar);
+
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
     }
-
-    void postinit(){
-
-    }
-
 
 
 

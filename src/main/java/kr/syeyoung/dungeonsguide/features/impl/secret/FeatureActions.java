@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 
@@ -40,7 +39,7 @@ import java.util.List;
 
 public class FeatureActions extends TextHUDFeature {
     public FeatureActions() {
-        super("Dungeon.Secrets", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview", false, 200, TextUtils.getFontHeight() * 10);
+        super("Dungeon.Secrets", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview", false, 200, getFontRenderer() != null ? getFontRenderer().FONT_HEIGHT * 10 : 9);
 
         getStyles().add(new TextStyle("pathfinding", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("mechanic", new AColor(0x55, 0xFF,0x55,255), new AColor(0, 0,0,0), false));

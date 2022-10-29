@@ -55,8 +55,6 @@ public class Main {
     private static boolean firstTimeUsingDG = false;
     @Getter
     static File configDir;
-    @Getter
-    static File configFile;
 
 
     private boolean isLoaded = false;
@@ -68,13 +66,15 @@ public class Main {
 
     YoMamaOutdated yoMamaOutdated;
 
+    static public File getConfigDir() {
+        return configDir;
+    }
 
     @EventHandler
     public void initEvent(final FMLInitializationEvent initializationEvent) {
 //        if(yoMamaOutdated == null || yoMamaOutdated.isUsingOutdatedDg) return;
         MinecraftForge.EVENT_BUS.register(this);
         try {
-//            progressBar.step("Initializing");
             logger.info("init-ing DungeonsGuide");
             DungeonsGuide.getDungeonsGuide();
         } catch (Exception e) {
@@ -104,7 +104,7 @@ public class Main {
             if(isFirstTimeUsingDG()){
                 GuiScreen originalGUI = guiOpenEvent.gui;
                 guiOpenEvent.gui = new GuiScreen() {
-                    final String welcomeText = "Thank you for installing §eDungeonsGuide§f, the most intelligent skyblock dungeon mod!\nThe gui for relocating GUI Elements and enabling or disabling features can be opened by typing §e/dg\nType §e/dg help §fto view full list of commands offered by dungeons guide!";
+                    String welcomeText = "Thank you for installing §eDungeonsGuide§f, the most intelligent skyblock dungeon mod!\nThe gui for relocating GUI Elements and enabling or disabling features can be opened by typing §e/dg\nType §e/dg help §fto view full list of commands offered by dungeons guide!";
 
                     @Override
                     public void initGui() {
@@ -171,11 +171,14 @@ public class Main {
 
         yoMamaOutdated = new YoMamaOutdated();
         MinecraftForge.EVENT_BUS.register(yoMamaOutdated);
+//        if(yoMamaOutdated.isUsingOutdatedDg) {
+//            return;
+//        }
 
         try {
-//            try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
-//                progressBar = ProgressManager.push("DungeonsGuide", premiumControlClass == null ? 7 : 6);
-//            }
+            try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
+                progressBar = ProgressManager.push("DungeonsGuide", premiumControlClass == null ? 7 : 6);
+            }
 
 
 
@@ -208,7 +211,8 @@ public class Main {
             LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
             classLoader.addURL(new URL("z:///"));
 
-//            progressBar.step("Initializing");
+            progressBar.step("Initializing");
+            DungeonsGuide dungeonsGuide = DungeonsGuide.getDungeonsGuide();
             configDir = new File(preInitializationEvent.getModConfigurationDirectory(), "dungeonsguide");
             File configFile = new File(configDir, "config.json");
             if (!configFile.exists()) {
@@ -218,7 +222,6 @@ public class Main {
             Config.f = configFile;
             Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
-            DungeonsGuide.registerCommands();
             try {
                 List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
                 resourcePackList.add(new DGTexturePack());
@@ -226,7 +229,7 @@ public class Main {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-//            finishUpProgressBar(progressBar);
+            finishUpProgressBar(progressBar);
             isLoaded = true;
 
         } catch (IOException e) {
