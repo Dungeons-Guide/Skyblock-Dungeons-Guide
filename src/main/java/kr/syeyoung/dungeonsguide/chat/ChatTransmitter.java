@@ -1,9 +1,7 @@
 package kr.syeyoung.dungeonsguide.chat;
 
-import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -13,8 +11,6 @@ import java.util.Queue;
 import java.util.concurrent.ConcurrentLinkedQueue;
 
 public class ChatTransmitter {
-
-    public static final String PREFIX = "§eDungeons Guide §7:: ";
 
     public ChatTransmitter() {
         MinecraftForge.EVENT_BUS.register(this);
@@ -36,16 +32,6 @@ public class ChatTransmitter {
 
     public static void addToQueue(String s) {
         addToQueue(s, false);
-    }
-
-    public static void sendDebugChat(IChatComponent iChatComponent) {
-        if(FeatureRegistry.DEBUG == null) return;
-        if (FeatureRegistry.DEBUG.isEnabled())
-            addToQueue((ChatComponentText) iChatComponent);
-    }
-
-    public static void sendDebugChat(String text) {
-        sendDebugChat(new ChatComponentText(text));
     }
 
 

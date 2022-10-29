@@ -91,7 +91,7 @@ public class MapProcessor {
     }
 
     private static void error(String prefix) {
-        ChatTransmitter.addToQueue(new ChatComponentText(ChatTransmitter.PREFIX + prefix));
+        ChatTransmitter.addToQueue(new ChatComponentText(DungeonsGuide.PREFIX + prefix));
     }
 
 
@@ -262,8 +262,8 @@ public class MapProcessor {
 
                     // USELESS DEBUG CODE
                     context.createEvent(new DungeonRoomDiscoverEvent(room.getUnitPoints().get(0), room.getRoomMatcher().getRotation(), new SerializableBlockPos(room.getMin()), new SerializableBlockPos(room.getMax()), room.getShape(), room.getColor(), room.getDungeonRoomInfo().getUuid(), room.getDungeonRoomInfo().getName(), room.getDungeonRoomInfo().getProcessorId()));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + room.getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + room.getMin() + " mapMx: " + room.getMax()));
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! shape: " + room.getShape() + " color: " + room.getColor() + " unitPos: " + x + "," + y));
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("New Map discovered! mapMin: " + room.getMin() + " mapMx: " + room.getMax()));
                     StringBuilder builder = new StringBuilder();
                     for (int dy = 0; dy < 4; dy++) {
                         builder.append("\n");
@@ -272,7 +272,7 @@ public class MapProcessor {
                             builder.append(isSet ? "O" : "X");
                         }
                     }
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Shape visual: " + builder));
+                    DungeonsGuide.sendDebugChat(new ChatComponentText("Shape visual: " + builder));
                     // END
 
 

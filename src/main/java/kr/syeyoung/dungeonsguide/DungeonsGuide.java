@@ -42,6 +42,8 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
@@ -58,6 +60,7 @@ public class DungeonsGuide {
         return instance;
     }
 
+    public static final String PREFIX = "§eDungeons Guide §7:: ";
     public boolean verbose = false;
 
     @Getter
@@ -69,6 +72,16 @@ public class DungeonsGuide {
     @Getter
     private final BlockCache blockCache;
 
+
+    public static void sendDebugChat(IChatComponent iChatComponent) {
+        if(FeatureRegistry.DEBUG == null) return;
+        if (FeatureRegistry.DEBUG.isEnabled())
+            ChatTransmitter.addToQueue((ChatComponentText) iChatComponent);
+    }
+
+    public static void sendDebugChat(String text) {
+        sendDebugChat(new ChatComponentText(text));
+    }
 
     @Getter
     CommandReparty commandReparty;

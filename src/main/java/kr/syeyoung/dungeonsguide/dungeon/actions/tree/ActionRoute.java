@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.actions.tree;
 
-import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.events.impl.PlayerInteractEntityEvent;
@@ -55,12 +55,12 @@ public class ActionRoute {
         ActionTree tree= ActionTree.buildActionTree(actionChangeState, dungeonRoom);
         actions = ActionTreeUtil.linearifyActionTree(tree);
         actions.add(new ActionComplete());
-        ChatTransmitter.sendDebugChat("Created ActionRoute with " + actions.size() + " steps");
-        ChatTransmitter.sendDebugChat("========== STEPS ==========");
+        DungeonsGuide.sendDebugChat("Created ActionRoute with " + actions.size() + " steps");
+        DungeonsGuide.sendDebugChat("========== STEPS ==========");
         for (AbstractAction action : actions) {
-            ChatTransmitter.sendDebugChat(action.toString());
+            DungeonsGuide.sendDebugChat(action.toString());
         }
-        ChatTransmitter.sendDebugChat("=========== END ===========");
+        DungeonsGuide.sendDebugChat("=========== END ===========");
 
 
         current = 0;

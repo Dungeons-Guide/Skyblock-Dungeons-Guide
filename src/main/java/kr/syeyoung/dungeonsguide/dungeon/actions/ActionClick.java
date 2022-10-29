@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.actions;
 
 import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
-import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
@@ -64,7 +64,7 @@ public class ActionClick extends AbstractAction {
         if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
                 (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
             clicked = true;
-            ChatTransmitter.sendDebugChat("ACTION FINISHED: CLICK");
+            DungeonsGuide.sendDebugChat("ACTION FINISHED: CLICK");
         }
     }
     @Override

@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.MortDetector2000;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.*;
 import net.minecraft.entity.item.EntityArmorStand;
@@ -66,7 +66,7 @@ public class CatacombDataProvider extends DungeonSpecificDataProvider {
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: "+floor+ " Building bossfight processor"));
+        DungeonsGuide.sendDebugChat(new ChatComponentText("Floor: "+floor+ " Building bossfight processor"));
         switch (floor) {
             case "F1":
                 return new BossfightProcessorBonzo();
