@@ -149,7 +149,7 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         texts.add(new StyledText("Explorer","field_name"));
         texts.add(new StyledText(": ","field_separator"));
         texts.add(new StyledText(scoreCalculation.getExplorer()+" ","field_value"));
-        texts.add(new StyledText("("+FeatureRegistry.DUNGEON_SCORE.getPercentage()+"% + secrets)\n","field_etc"));
+        texts.add(new StyledText("("+ DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() +"% + secrets)\n","field_etc"));
 
         texts.add(new StyledText("Time","field_name"));
         texts.add(new StyledText(": ","field_separator"));

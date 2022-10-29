@@ -50,6 +50,9 @@ import java.util.*;
 
 public class DungeonContext {
     @Getter
+    @Setter
+    public int percentage;
+    @Getter
     private final World world;
     @Getter
     private final MapProcessor mapProcessor;

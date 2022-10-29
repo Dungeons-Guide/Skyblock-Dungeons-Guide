@@ -20,9 +20,6 @@ public class DungeonFacade {
     @Getter
     @Setter
     private DungeonContext context;
-    @Getter
-    @Setter
-    public int percentage;
 
     public void init() {
         DungeonListener dgEventListener = new DungeonListener();

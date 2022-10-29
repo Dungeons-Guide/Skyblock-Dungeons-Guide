@@ -175,9 +175,6 @@ public class FeatureDungeonScore extends TextHUDFeature {
         private int deaths;
     }
 
-    public int getPercentage() {
-        return DungeonsGuide.getDungeonsGuide().getDungeonFacade().percentage;
-    }
     public int getCompleteRooms() {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
             String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
@@ -191,7 +188,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     public int getTotalRooms() {
         int compRooms = getCompleteRooms();
         if (compRooms == 0) return 100;
-        return (int) (100 * (compRooms / (double)getPercentage()));
+        return (int) (100 * (compRooms / (double) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage()));
     }
     public int getUndiscoveredPuzzles() {
         int cnt = 0;
@@ -266,7 +263,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
             totalSecretsKnown = FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets();
 
             fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
-            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? getPercentage() : completed / total * 100)), 0, 60);
+            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() : completed / total * 100)), 0, 60);
             explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
         }
         int time = 0;
