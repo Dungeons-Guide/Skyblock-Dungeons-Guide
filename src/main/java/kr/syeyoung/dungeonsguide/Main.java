@@ -76,7 +76,7 @@ public class Main {
         MinecraftForge.EVENT_BUS.register(this);
         try {
             logger.info("init-ing DungeonsGuide");
-            DungeonsGuide.getDungeonsGuide();
+            DungeonsGuide.getDungeonsGuide().init();
         } catch (Exception e) {
             cause = e;
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

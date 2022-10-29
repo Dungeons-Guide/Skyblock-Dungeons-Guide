@@ -48,30 +48,38 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Set;
 
 public class DungeonsGuide {
+
+    public static String prefix = "§eDungeons Guide §7:: ";
+    public boolean verbose = false;
+    private SkyblockStatus skyblockStatus;
+
+    @Getter
+    private CosmeticsManager cosmeticsManager;
+
+    Logger logger = LogManager.getLogger("DungeonsGuide");
+    @Getter
+    private DungeonFacade dungeonFacade;
+
+    @Getter
+    private BlockCache blockCache;
+
+    private DungeonsGuide() {
+    }
+
+
     private static DungeonsGuide instance;
 
     public static DungeonsGuide getDungeonsGuide() {
         if (instance == null) instance = new DungeonsGuide();
         return instance;
     }
-
-    public static final String PREFIX = "§eDungeons Guide §7:: ";
-    public boolean verbose = false;
-
-    @Getter
-    private final SkyblockStatus skyblockStatus;
-    @Getter
-    private final CosmeticsManager cosmeticsManager;
-    @Getter
-    private final DungeonFacade dungeonFacade;
-    @Getter
-    private final BlockCache blockCache;
-
 
     public static void sendDebugChat(IChatComponent iChatComponent) {
         if(FeatureRegistry.DEBUG == null) return;
@@ -87,7 +95,7 @@ public class DungeonsGuide {
     CommandReparty commandReparty;
 
 
-    public DungeonsGuide(){
+    public void init() {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
         progressbar.step("Registering Events & Commands");
@@ -170,6 +178,12 @@ public class DungeonsGuide {
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
     }
+
+
+    public SkyblockStatus getSkyblockStatus() {
+        return skyblockStatus;
+    }
+
 
 
 
