@@ -129,8 +129,8 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         if (!isEnabled()) return;
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) return;
-        if (DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() == null || !DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getMapProcessor().isInitialized()) return;
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || !DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getMapProcessor().isInitialized()) return;
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());

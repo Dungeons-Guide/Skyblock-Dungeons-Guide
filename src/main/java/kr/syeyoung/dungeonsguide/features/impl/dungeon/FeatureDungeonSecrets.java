@@ -71,7 +71,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
 
     public int getTotalSecretsInt() {
         if (getSecretsFound() != 0) return (int) Math.ceil (getSecretsFound() / getSecretPercentage() * 100);
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         int totalSecrets = 0;
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
             if (dungeonRoom.getTotalSecrets() != -1)
@@ -81,7 +81,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     }
     public boolean sureOfTotalSecrets() {
         if (getSecretsFound() != 0) return true;
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context.getMapProcessor().getUndiscoveredRoom() > 0) return false;
         boolean allknown = true;
         for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
@@ -91,7 +91,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     }
 
     public String getTotalSecrets() {
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return "?";
         int totalSecrets = 0;
         boolean allknown = true;
@@ -137,7 +137,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         actualBit.add(new StyledText(getSecretsFound() +"","currentSecrets"));
         actualBit.add(new StyledText("/","separator2"));
         DungeonsGuide.getDungeonsGuide();
-        actualBit.add(new StyledText((int)Math.ceil(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
+        actualBit.add(new StyledText((int)Math.ceil(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
         actualBit.add(new StyledText(getTotalSecrets().contains("+") ? "+" : "","unknown"));
         return actualBit;
     }

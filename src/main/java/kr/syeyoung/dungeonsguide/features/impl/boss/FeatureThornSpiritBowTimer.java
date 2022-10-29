@@ -53,7 +53,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
     }
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn && time > System.currentTimeMillis();
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn && time > System.currentTimeMillis();
     }
 
     @Override
@@ -78,7 +78,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
 
     @Override
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (!(skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
+        if (!(skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
         String text = clientChatReceivedEvent.message.getFormattedText();
         if (text.equals("§r§a§lThe §r§5§lSpirit Bow §r§a§lhas dropped!§r")) {
             time = System.currentTimeMillis() + 16000;
@@ -102,7 +102,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
 
     @Override
     public void onTitle(S45PacketTitle renderPlayerEvent) {
-        if (!(skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
+        if (!(skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
         if (renderPlayerEvent.getMessage().getFormattedText().contains("picked up")) {
             time = System.currentTimeMillis() + 21000;
         }

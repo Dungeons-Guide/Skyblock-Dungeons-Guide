@@ -140,7 +140,7 @@ public class SkyblockStatus {
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
             if (strippedLine.contains("Cleared: ")) {
                 foundDungeon = true;
-                DungeonsGuide.getDungeonsGuide().getDungeonGodObject().percentage = Integer.parseInt(strippedLine.substring(9).split(" ")[0]);
+                DungeonsGuide.getDungeonsGuide().getDungeonFacade().percentage = Integer.parseInt(strippedLine.substring(9).split(" ")[0]);
             }
             if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
                 dungeonName = strippedLine.trim();

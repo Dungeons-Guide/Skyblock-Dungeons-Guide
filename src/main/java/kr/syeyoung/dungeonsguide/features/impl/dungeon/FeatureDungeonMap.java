@@ -119,7 +119,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
         DungeonsGuide.getDungeonsGuide();
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null || !context.getMapProcessor().isInitialized()) return;
 
         MapProcessor mapProcessor = context.getMapProcessor();
@@ -140,7 +140,7 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
     @Override
     public void drawDemo(float partialTicks) {
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon() && context != null && context.getMapProcessor().isInitialized() && on) {
             drawHUD(partialTicks);
             return;

@@ -51,7 +51,7 @@ public class FeatureThornBearPercentage extends TextHUDFeature {
     }
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn;
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn;
     }
 
     @Override
@@ -66,7 +66,7 @@ public class FeatureThornBearPercentage extends TextHUDFeature {
 
     @Override
     public java.util.List<StyledText> getText() {
-        int percentage = (int) (((BossfightProcessorThorn) DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor()).calculatePercentage() * 100);
+        int percentage = (int) (((BossfightProcessorThorn) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor()).calculatePercentage() * 100);
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("Spirit Bear","title"));
         actualBit.add(new StyledText(": ","separator"));

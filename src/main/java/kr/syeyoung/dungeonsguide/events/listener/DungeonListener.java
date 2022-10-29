@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonGodObject;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.dungeon.roomedit.gui.GuiDungeonAddSet;
@@ -71,9 +71,9 @@ import java.util.Map;
 
 public class DungeonListener {
 
-    private DungeonGodObject god;
+    private DungeonFacade god;
 
-    public DungeonListener(DungeonGodObject god) {
+    public DungeonListener(DungeonFacade god) {
         this.god = god;
     }
 

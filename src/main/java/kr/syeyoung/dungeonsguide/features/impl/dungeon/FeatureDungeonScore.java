@@ -176,7 +176,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
 
     public int getPercentage() {
-        return DungeonsGuide.getDungeonsGuide().getDungeonGodObject().percentage;
+        return DungeonsGuide.getDungeonsGuide().getDungeonFacade().percentage;
     }
     public int getCompleteRooms() {
         for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
@@ -206,7 +206,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
 
     public ScoreCalculation calculateScore() {
         if (!skyblockStatus.isOnDungeon()) return null;
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return null;
         if (!context.getMapProcessor().isInitialized()) return null;
 

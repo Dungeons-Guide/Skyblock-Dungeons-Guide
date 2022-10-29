@@ -43,10 +43,10 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
     public void drawWorld(float partialTicks) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
-        if (DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext() == null) return;
-        if (DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() == null) return;
-        if (!(DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
-        EntityOtherPlayerMP playerMP = ((BossfightProcessorLivid) DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getBossfightProcessor()).getRealLivid();
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;
+        if (!(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorLivid)) return;
+        EntityOtherPlayerMP playerMP = ((BossfightProcessorLivid) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor()).getRealLivid();
 
         if (playerMP != null)
             RenderUtils.highlightBox(playerMP, AxisAlignedBB.fromBounds(-0.4,0,-0.4,0.4,1.8,0.4), color, partialTicks, true);

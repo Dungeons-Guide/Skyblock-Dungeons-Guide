@@ -197,7 +197,7 @@ public class RichPresenceManager implements Runnable {
                 latestDiscordActivity.party.discordActivityParty.current_size = new Int32(Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyRawMembers).map(Set::size).orElse(1));
                 latestDiscordActivity.party.discordActivityParty.max_size = new Int32(PartyManager.INSTANCE.getMaxParty());
 
-            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context != null) {
                 long init = context.getInit();
                 latestDiscordActivity.timestamps.start = new DiscordTimestamp(init);

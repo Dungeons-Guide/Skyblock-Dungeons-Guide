@@ -164,7 +164,7 @@ public class CommandDgDebug extends CommandBase {
 
             case "pathfind":
                 try {
-                    DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+                    DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                     EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                     if (thePlayer == null) return;
                     if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
@@ -269,7 +269,7 @@ public class CommandDgDebug extends CommandBase {
                 try {
                     MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
                     DungeonsGuide.getDungeonsGuide();
-                    DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(null);
+                    DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
                     MapUtils.clearMap();
                 } catch (Throwable t) {
                     t.printStackTrace();
@@ -310,7 +310,7 @@ public class CommandDgDebug extends CommandBase {
 
                     File runFile = new File(runDir, UUID.randomUUID() + ".dgrun");
 
-                    DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+                    DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                     if (dungeonContext == null) {
                         sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cCouldn't find dungeon to save!"));
                         return;
@@ -412,7 +412,7 @@ public class CommandDgDebug extends CommandBase {
                 SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
                 skyblockStatus.setDungeonName("TEST DG");
                 DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
-                DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(fakeContext);
+                DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
                 skyblockStatus.setForceIsOnDungeon(true);
                 MapProcessor mapProcessor = fakeContext.getMapProcessor();
                 mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
@@ -435,7 +435,7 @@ public class CommandDgDebug extends CommandBase {
             case "closecontext":
                 DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
                 DungeonsGuide.getDungeonsGuide();
-                DungeonsGuide.getDungeonsGuide().getDungeonGodObject().setContext(null);
+                DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
                 break;
 
             case "dumpsettings":

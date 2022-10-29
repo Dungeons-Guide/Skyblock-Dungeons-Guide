@@ -50,7 +50,7 @@ public class FeaturePlayerESP extends SimpleFeature implements PlayerRenderListe
         if (!isEnabled()) return;
 
 
-        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext();
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null) return;
         if (!dungeonContext.getPlayers().contains(renderPlayerEvent.entityPlayer.getName())) {
             return;

@@ -15,7 +15,7 @@ import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 
-public class DungeonGodObject {
+public class DungeonFacade {
 
     @Getter
     @Setter

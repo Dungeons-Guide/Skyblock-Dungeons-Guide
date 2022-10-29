@@ -40,7 +40,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight").build()
         );
-        w= DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getContext().getWorld();
+        w= DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getWorld();
     }
     private final Set<BlockPos> progressBar = new HashSet<BlockPos>();
     private final World w;

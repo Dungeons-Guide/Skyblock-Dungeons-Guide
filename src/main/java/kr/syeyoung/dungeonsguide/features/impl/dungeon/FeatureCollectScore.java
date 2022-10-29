@@ -50,7 +50,7 @@ public class FeatureCollectScore extends SimpleFeature {
                 .put("timeScore", time)
                 .put("completionStage", context.getBossRoomEnterSeconds() == -1 ? 0 :
                         context.isDefeated() ? 2 : 1)
-                .put("percentage", DungeonsGuide.getDungeonsGuide().getDungeonGodObject().getPercentage() / 100.0)
+                .put("percentage", DungeonsGuide.getDungeonsGuide().getDungeonFacade().getPercentage() / 100.0)
                 .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
         DungeonsGuide.sendDebugChat(new ChatComponentText(payload.toString()));
 

@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.config.Config;
 import kr.syeyoung.dungeonsguide.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.discord.rpc.RichPresenceManager;
-import kr.syeyoung.dungeonsguide.dungeon.DungeonGodObject;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.events.listener.FeatureListener;
 import kr.syeyoung.dungeonsguide.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.features.FeatureRegistry;
@@ -65,7 +65,7 @@ public class DungeonsGuide {
 
     Logger logger = LogManager.getLogger("DungeonsGuide");
     @Getter
-    private DungeonGodObject dungeonGodObject;
+    private DungeonFacade dungeonFacade;
 
     @Getter
     private BlockCache blockCache;
@@ -120,8 +120,8 @@ public class DungeonsGuide {
 
         this.blockCache = new BlockCache();
 
-        this.dungeonGodObject = new DungeonGodObject();
-        dungeonGodObject.init();
+        this.dungeonFacade = new DungeonFacade();
+        dungeonFacade.init();
 
 
         TitleRender.getInstance();
