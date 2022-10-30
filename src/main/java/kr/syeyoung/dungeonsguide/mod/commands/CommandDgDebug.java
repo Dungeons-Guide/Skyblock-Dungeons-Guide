@@ -433,7 +433,12 @@ public class CommandDgDebug extends CommandBase {
                 e.printStackTrace();
             }
         } else {
-            sender.addChatMessage(new ChatComponentText("ain't gonna find anything here"));
+            sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
         }
     }
 
