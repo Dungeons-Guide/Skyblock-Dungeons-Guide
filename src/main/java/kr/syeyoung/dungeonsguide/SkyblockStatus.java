@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.collect.Sets;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.events.impl.SkyblockJoinedEvent;
@@ -140,7 +141,11 @@ public class SkyblockStatus {
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
             if (strippedLine.contains("Cleared: ")) {
                 foundDungeon = true;
-                DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().setPercentage(Integer.parseInt(strippedLine.substring(9).split(" ")[0]));
+
+                DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+                if(context != null){
+                    context.setPercentage(Integer.parseInt(strippedLine.substring(9).split(" ")[0]));
+                }
             }
             if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
                 dungeonName = strippedLine.trim();
