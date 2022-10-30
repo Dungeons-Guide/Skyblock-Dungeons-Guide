@@ -46,8 +46,6 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
-import org.apache.logging.log4j.LogManager;
-import org.apache.logging.log4j.Logger;
 
 import java.io.IOException;
 import java.util.Set;
@@ -59,16 +57,11 @@ public class DungeonsGuide {
 
     @Getter
     private CosmeticsManager cosmeticsManager;
-
-    Logger logger = LogManager.getLogger("DungeonsGuide");
     @Getter
     private DungeonFacade dungeonFacade;
 
     @Getter
     private BlockCache blockCache;
-
-    private DungeonsGuide() {
-    }
 
 
     private static DungeonsGuide instance;
