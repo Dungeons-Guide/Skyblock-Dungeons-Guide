@@ -16,10 +16,28 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import com.google.common.base.Predicate;
+import net.minecraft.item.ItemStack;
+import org.jetbrains.annotations.Nullable;
 
-public interface RouteBlocker {
-    boolean isBlocking(DungeonRoom dungeonRoom);
+public class PredicateSuperBoom implements Predicate<ItemStack> {
+
+    public static final PredicateSuperBoom INSTANCE = new PredicateSuperBoom();
+
+    @Override
+    public boolean apply(@Nullable ItemStack input) {
+        return false;
+    }
+
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o != null && (o.getClass() == this.getClass());
+    }
 }

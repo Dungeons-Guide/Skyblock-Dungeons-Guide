@@ -16,16 +16,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionInteract;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.predicates.PredicateArmorStand;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStand;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -40,9 +40,9 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 @Data
-public class DungeonFairySoul implements DungeonMechanic {
-    private static final long serialVersionUID = 156412742320519783L;
-    private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
+public class DungeonNPC implements DungeonMechanic {
+    private static final long serialVersionUID = -89487601113028763L;
+    private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
     private List<String> preRequisite = new ArrayList<String>();
 
 
@@ -74,14 +74,14 @@ public class DungeonFairySoul implements DungeonMechanic {
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, color,partialTicks);
-        RenderUtils.drawTextAtWorld("F-"+name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.highlightBlock(pos, color, partialTicks);
+        RenderUtils.drawTextAtWorld("F-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
 
-    public DungeonFairySoul clone() throws CloneNotSupportedException {
-        DungeonFairySoul dungeonSecret = new DungeonFairySoul();
+    public DungeonNPC clone() throws CloneNotSupportedException {
+        DungeonNPC dungeonSecret = new DungeonNPC();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
@@ -97,10 +97,12 @@ public class DungeonFairySoul implements DungeonMechanic {
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("navigate");
     }
+
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state","navigate");
+        return Sets.newHashSet("no-state", "navigate");
     }
+
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;

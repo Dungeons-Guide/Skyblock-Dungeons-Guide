@@ -16,28 +16,24 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.predicates;
+package kr.syeyoung.dungeonsguide.dungeon.data;
 
-import com.google.common.base.Predicate;
-import net.minecraft.item.ItemStack;
-import org.jetbrains.annotations.Nullable;
+import lombok.Data;
 
-public class PredicateSuperBoom implements Predicate<ItemStack> {
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public static final PredicateSuperBoom INSTANCE = new PredicateSuperBoom();
-
-    @Override
-    public boolean apply(@Nullable ItemStack input) {
-        return false;
-    }
+@Data
+public class OffsetPointSet implements Cloneable, Serializable {
+    private List<OffsetPoint> offsetPointList = new ArrayList<>();
 
     @Override
-    public int hashCode() {
-        return 0;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        return o == this || o != null && (o.getClass() == this.getClass());
+    public Object clone() throws CloneNotSupportedException {
+        OffsetPointSet ops = new OffsetPointSet();
+        for (OffsetPoint offsetPoint : offsetPointList) {
+            ops.offsetPointList.add((OffsetPoint) offsetPoint.clone());
+        }
+        return ops;
     }
 }

@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 import com.google.common.io.Files;
 import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.Main;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;

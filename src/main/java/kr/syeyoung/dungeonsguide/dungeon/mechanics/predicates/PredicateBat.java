@@ -16,21 +16,21 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.predicates;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates;
 
 import com.google.common.base.Predicate;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.passive.EntityBat;
 import org.jetbrains.annotations.Nullable;
 
 
-public class PredicateArmorStand implements Predicate<Entity> {
+public class PredicateBat implements Predicate<Entity> {
 
-    public static final PredicateArmorStand INSTANCE = new PredicateArmorStand();
+    public static final PredicateBat INSTANCE = new PredicateBat();
 
     @Override
     public boolean apply(@Nullable Entity input) {
-        return input instanceof EntityArmorStand;
+        return input instanceof EntityBat;
     }
 
     @Override

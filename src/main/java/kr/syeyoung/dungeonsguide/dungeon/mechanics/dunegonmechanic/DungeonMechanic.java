@@ -16,29 +16,25 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.predicates;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic;
 
-import com.google.common.base.Predicate;
-import net.minecraft.entity.Entity;
-import net.minecraft.entity.passive.EntityBat;
-import org.jetbrains.annotations.Nullable;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
+import java.awt.*;
+import java.io.Serializable;
+import java.util.Set;
 
-public class PredicateBat implements Predicate<Entity> {
+public interface DungeonMechanic extends Serializable {
+    Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom);
 
-    public static final PredicateBat INSTANCE = new PredicateBat();
+    void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
 
-    @Override
-    public boolean apply(@Nullable Entity input) {
-        return input instanceof EntityBat;
-    }
+    String getCurrentState(DungeonRoom dungeonRoom);
 
-    @Override
-    public int hashCode() {
-        return 0;
-    }
-    @Override
-    public boolean equals(Object o) {
-        return o == this || o != null && (o.getClass() == this.getClass());
-    }
+    Set<String> getPossibleStates(DungeonRoom dungeonRoom);
+    Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
+
+    OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom);
 }

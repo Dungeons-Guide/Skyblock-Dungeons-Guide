@@ -16,14 +16,12 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -36,21 +34,30 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DungeonJournal implements DungeonMechanic {
-    private static final long serialVersionUID = 4117372070037496743L;
+public class DungeonDummy implements DungeonMechanic {
+    private static final long serialVersionUID = -8449664812034435765L;
     private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
 
 
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+//        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
         Set<AbstractAction> base;
         Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-        {
+        if (state.equalsIgnoreCase("navigate")){
             ActionMove actionMove = new ActionMove(secretPoint);
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
+        } else if (state.equalsIgnoreCase("click")) {
+            ActionClick actionClick = new ActionClick(secretPoint);
+            preRequisites.add(actionClick);
+            preRequisites = actionClick.getPreRequisite();
+
+            ActionMove actionMove = new ActionMove(secretPoint);
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+
         }
         {
             for (String str : preRequisite) {
@@ -66,13 +73,13 @@ public class DungeonJournal implements DungeonMechanic {
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, color,partialTicks);
-        RenderUtils.drawTextAtWorld("J-"+name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld("D-"+name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
 
-    public DungeonJournal clone() throws CloneNotSupportedException {
-        DungeonJournal dungeonSecret = new DungeonJournal();
+    public DungeonDummy clone() throws CloneNotSupportedException {
+        DungeonDummy dungeonSecret = new DungeonDummy();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
@@ -86,11 +93,11 @@ public class DungeonJournal implements DungeonMechanic {
 
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("navigate");
+        return Sets.newHashSet("navigate", "click");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state","navigate");
+        return Sets.newHashSet("no-state","navigate,click");
     }
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {

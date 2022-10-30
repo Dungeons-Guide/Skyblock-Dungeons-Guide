@@ -16,25 +16,29 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import com.google.common.base.Predicate;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.item.EntityArmorStand;
+import org.jetbrains.annotations.Nullable;
 
-import java.awt.*;
-import java.io.Serializable;
-import java.util.Set;
 
-public interface DungeonMechanic extends Serializable {
-    Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom);
+public class PredicateArmorStand implements Predicate<Entity> {
 
-    void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
+    public static final PredicateArmorStand INSTANCE = new PredicateArmorStand();
 
-    String getCurrentState(DungeonRoom dungeonRoom);
+    @Override
+    public boolean apply(@Nullable Entity input) {
+        return input instanceof EntityArmorStand;
+    }
 
-    Set<String> getPossibleStates(DungeonRoom dungeonRoom);
-    Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom);
-
-    OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom);
+    @Override
+    public int hashCode() {
+        return 0;
+    }
+    @Override
+    public boolean equals(Object o) {
+        return o == this || o != null && (o.getClass() == this.getClass());
+    }
 }

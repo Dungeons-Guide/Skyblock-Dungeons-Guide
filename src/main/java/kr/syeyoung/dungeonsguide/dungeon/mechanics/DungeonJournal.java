@@ -16,20 +16,17 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionInteract;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.predicates.PredicateArmorStand;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -37,35 +34,29 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 @Data
-public class DungeonNPC implements DungeonMechanic {
-    private static final long serialVersionUID = -89487601113028763L;
-    private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
+public class DungeonJournal implements DungeonMechanic {
+    private static final long serialVersionUID = 4117372070037496743L;
+    private OffsetPoint secretPoint = new OffsetPoint(0,0,0);
     private List<String> preRequisite = new ArrayList<String>();
 
 
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"navigate".equalsIgnoreCase(state))
-            throw new IllegalArgumentException(state + " is not valid state for secret");
-
-        Set<AbstractAction> base = new HashSet<>();
-        ActionInteract actionClick = new ActionInteract(secretPoint);
-        actionClick.setPredicate((Predicate<Entity>) PredicateArmorStand.INSTANCE);
-        actionClick.setRadius(3);
-        base.add(actionClick);
-
-        base = actionClick.getPreRequisite();
-        ActionMove actionMove = new ActionMove(secretPoint);
-        base.add(actionMove);
-        base = actionMove.getPreRequisite();
-
-        for (String str : preRequisite) {
-            if (!str.isEmpty()) {
-                String[] split = str.split(":");
-                base.add(new ActionChangeState(split[0], split[1]));
+        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+        {
+            ActionMove actionMove = new ActionMove(secretPoint);
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+        }
+        {
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                preRequisites.add(actionChangeState);
             }
         }
         return base;
@@ -74,14 +65,14 @@ public class DungeonNPC implements DungeonMechanic {
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, color, partialTicks);
-        RenderUtils.drawTextAtWorld("F-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.highlightBlock(pos, color,partialTicks);
+        RenderUtils.drawTextAtWorld("J-"+name, pos.getX() +0.5f, pos.getY()+0.375f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
 
-    public DungeonNPC clone() throws CloneNotSupportedException {
-        DungeonNPC dungeonSecret = new DungeonNPC();
+    public DungeonJournal clone() throws CloneNotSupportedException {
+        DungeonJournal dungeonSecret = new DungeonJournal();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
@@ -97,12 +88,10 @@ public class DungeonNPC implements DungeonMechanic {
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("navigate");
     }
-
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state", "navigate");
+        return Sets.newHashSet("no-state","navigate");
     }
-
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
         return secretPoint;

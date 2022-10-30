@@ -16,15 +16,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.mechanics;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -36,32 +37,38 @@ import java.util.List;
 import java.util.*;
 
 @Data
-public class DungeonDoor implements DungeonMechanic, RouteBlocker {
-    private static final long serialVersionUID = -1011605722415475761L;
+public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
+    private static final long serialVersionUID = -1810891721127873330L;
     private OffsetPointSet secretPoint = new OffsetPointSet();
-    private List<String> openPreRequisite = new ArrayList<String>();
-    private List<String> closePreRequisite = new ArrayList<String>();
+    private List<String> preRequisite = new ArrayList<String>();
 
 
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
-        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
+        if (state.equalsIgnoreCase("navigate")) {
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
+            preRequisites.add(actionMove);
+            preRequisites = actionMove.getPreRequisite();
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                preRequisites.add(actionChangeState);
+            }
+            return base;
+        }
+        if (!("open".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
+        if (!isBlocking(dungeonRoom)) {
+            return Collections.emptySet();
+        }
         Set<AbstractAction> base;
         Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
-            if (state.equalsIgnoreCase("open")) {
-                for (String str : openPreRequisite) {
-                    if (str.isEmpty()) continue;
-                    ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    preRequisites.add(actionChangeState);
-                }
-            } else {
-                for (String str : closePreRequisite) {
-                    if (str.isEmpty()) continue;
-                    ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    preRequisites.add(actionChangeState);
-                }
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
+                preRequisites.add(actionChangeState);
             }
         }
         return base;
@@ -88,11 +95,10 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
         return false;
     }
 
-    public DungeonDoor clone() throws CloneNotSupportedException {
-        DungeonDoor dungeonSecret = new DungeonDoor();
+    public DungeonOnewayDoor clone() throws CloneNotSupportedException {
+        DungeonOnewayDoor dungeonSecret = new DungeonOnewayDoor();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();
-        dungeonSecret.openPreRequisite = new ArrayList<String>(openPreRequisite);
-        dungeonSecret.closePreRequisite = new ArrayList<String>(closePreRequisite);
+        dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }
 
@@ -106,15 +112,14 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         String currentStatus = getCurrentState(dungeonRoom);
         if (currentStatus.equalsIgnoreCase("closed"))
-            return Collections.singleton("open");
-        else if (currentStatus.equalsIgnoreCase("open"))
-            return Collections.singleton("closed");
-        return Collections.emptySet();
+            return Sets.newHashSet("navigate", "open");
+        return Sets.newHashSet("navigate");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
         return Sets.newHashSet("open", "closed");
     }
+
 
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {

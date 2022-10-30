@@ -16,24 +16,10 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.data;
+package kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic;
 
-import lombok.Data;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
-import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.List;
-
-@Data
-public class OffsetPointSet implements Cloneable, Serializable {
-    private List<OffsetPoint> offsetPointList = new ArrayList<>();
-
-    @Override
-    public Object clone() throws CloneNotSupportedException {
-        OffsetPointSet ops = new OffsetPointSet();
-        for (OffsetPoint offsetPoint : offsetPointList) {
-            ops.offsetPointList.add((OffsetPoint) offsetPoint.clone());
-        }
-        return ops;
-    }
+public interface RouteBlocker {
+    boolean isBlocking(DungeonRoom dungeonRoom);
 }
