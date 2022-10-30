@@ -18,15 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.features.impl.party;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.party.PartyContext;
-import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.config.types.AColor;
+import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.party.PartyContext;
+import kr.syeyoung.dungeonsguide.party.PartyManager;
 import kr.syeyoung.dungeonsguide.utils.TextUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
@@ -45,7 +45,7 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
 
     @Override
     public boolean isHUDViewable() {
-        return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(DungeonContext.getDungeonName());
     }
 
     @Override

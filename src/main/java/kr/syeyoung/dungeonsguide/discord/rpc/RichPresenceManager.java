@@ -179,7 +179,7 @@ public class RichPresenceManager implements Runnable {
             activityManager.ClearActivity.clearActivity(activityManager, Pointer.NULL, (callbackData, result) -> {
             });
         } else {
-            String name = skyblockStatus.getDungeonName() == null ? "" : skyblockStatus.getDungeonName();
+            String name = DungeonContext.getDungeonName() == null ? "" : DungeonContext.getDungeonName();
             if (!skyblockStatus.isOnSkyblock()) name ="Somewhere on Hypixel";
             if (name.trim().equals("Your Island")) name = "Private Island";
 

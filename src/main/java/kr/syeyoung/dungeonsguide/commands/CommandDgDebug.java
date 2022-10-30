@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.commands;
 
 import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Main;
-import kr.syeyoung.dungeonsguide.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.config.guiconfig.NestedCategory;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
@@ -252,7 +251,7 @@ public class CommandDgDebug extends CommandBase {
         } else if ("partyid".equals(arg)) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
         } else if ("loc".equals(arg)) {
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName()));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + DungeonContext.getDungeonName()));
         } else if ("saverun".equals(arg)) {
             try {
                 File f = Main.getConfigDir();
@@ -341,11 +340,10 @@ public class CommandDgDebug extends CommandBase {
                     return 0;
                 }
             });
-            SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-            skyblockStatus.setDungeonName("TEST DG");
+            DungeonContext.setDungeonName("TEST DG");
             DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
-            skyblockStatus.setForceIsOnDungeon(true);
+            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
             MapProcessor mapProcessor = fakeContext.getMapProcessor();
             mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
             mapProcessor.setBugged(false);

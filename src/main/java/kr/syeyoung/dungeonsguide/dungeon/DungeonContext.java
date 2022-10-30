@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.dungeon;
 
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProvider;
 import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
@@ -50,6 +49,14 @@ import java.util.List;
 import java.util.*;
 
 public class DungeonContext {
+    /**
+     * This is static because its used in the constructor,
+     * it means we cannot set the name without having an object,
+     * and we cannot create an object without the name
+     * so its static :)
+     */
+    @Getter @Setter
+    private static String dungeonName;
     @Getter
     @Setter
     public int percentage;
@@ -119,12 +126,12 @@ public class DungeonContext {
         this.world = world;
         createEvent(new DungeonNodataEvent("DUNGEON_CONTEXT_CREATION"));
         mapProcessor = new MapProcessor(this);
-        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
         if (doorFinder != null) {
-            trapRoomGen = doorFinder.isTrapSpawn(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            trapRoomGen = doorFinder.isTrapSpawn(getDungeonName());
 
-            secretPercentage = doorFinder.secretPercentage(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
-            maxSpeed = doorFinder.speedSecond(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            secretPercentage = doorFinder.secretPercentage(getDungeonName());
+            maxSpeed = doorFinder.speedSecond(getDungeonName());
         } else {
             mapProcessor.setBugged(true);
         }
@@ -146,9 +153,9 @@ public class DungeonContext {
             bossroomSpawnPos = Minecraft.getMinecraft().thePlayer.getPosition();
             MinecraftForge.EVENT_BUS.post(new BossroomEnterEvent());
             createEvent(new DungeonNodataEvent("BOSSROOM_ENTER"));
-            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+            DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(getDungeonName());
             if (doorFinder != null) {
-                bossfightProcessor = doorFinder.createBossfightProcessor(world, DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+                bossfightProcessor = doorFinder.createBossfightProcessor(world, getDungeonName());
             } else {
                 ChatTransmitter.sendDebugChat(new ChatComponentText("Error:: Null Data Providier"));
             }

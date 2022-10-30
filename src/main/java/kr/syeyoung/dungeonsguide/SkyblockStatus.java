@@ -93,9 +93,6 @@ public class SkyblockStatus {
     @Getter @Setter
     private boolean forceIsOnDungeon;
 
-    @Getter @Setter
-    private String dungeonName;
-
     public boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.thePlayer == null) return false;
@@ -136,7 +133,7 @@ public class SkyblockStatus {
 
         Collection<Score> scores = scoreboard.getSortedScores(scoreObjective);
         boolean foundDungeon = false;
-        for (Score sc:scores) {
+        for (Score sc : scores) {
             ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
             String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
             if (strippedLine.contains("Cleared: ")) {
@@ -148,7 +145,7 @@ public class SkyblockStatus {
                 }
             }
             if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
-                dungeonName = strippedLine.trim();
+                DungeonContext.setDungeonName(strippedLine.trim());
             }
         }
 

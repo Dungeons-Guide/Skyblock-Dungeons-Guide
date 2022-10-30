@@ -52,7 +52,7 @@ public class FeatureCollectScore extends SimpleFeature {
                 .put("completionStage", context.getBossRoomEnterSeconds() == -1 ? 0 :
                         context.isDefeated() ? 2 : 1)
                 .put("percentage", DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() / 100.0)
-                .put("floor", DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+                .put("floor", DungeonContext.getDungeonName());
         ChatTransmitter.sendDebugChat(new ChatComponentText(payload.toString()));
 
         if(!StompManager.getInstance().isStompConnected()){

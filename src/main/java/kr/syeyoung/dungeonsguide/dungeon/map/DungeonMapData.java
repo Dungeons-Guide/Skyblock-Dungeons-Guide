@@ -1,7 +1,6 @@
 package kr.syeyoung.dungeonsguide.dungeon.map;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.dungeon.MapProcessor;
@@ -81,12 +80,12 @@ public class DungeonMapData {
             topLeftY -= unitRoomDimension.height + doorDimensions.height;
         topLeftMapPoint = new Point(topLeftX, topLeftY);
         // determine door location based on npc, and determine map min from there
-        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        DungeonSpecificDataProvider doorFinder = DungeonSpecificDataProviderRegistry.getDoorFinder(DungeonContext.getDungeonName());
         if (doorFinder == null) {
             bugged = true;
             return;
         }
-        BlockPos door = doorFinder.findDoor(mc.theWorld, DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        BlockPos door = doorFinder.findDoor(mc.theWorld, DungeonContext.getDungeonName());
         if (door == null) {
             bugged = true;
             return;
@@ -98,7 +97,7 @@ public class DungeonMapData {
         unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1);
         unitPoint.translate((int) doorDir.x, (int) doorDir.y);
 
-        Vector2d offset = doorFinder.findDoorOffset(mc.theWorld, DungeonsGuide.getDungeonsGuide().getSkyblockStatus().getDungeonName());
+        Vector2d offset = doorFinder.findDoorOffset(mc.theWorld, DungeonContext.getDungeonName());
         boolean axisMatch = doorDir.equals(offset);
 
         int worldX = unitPoint.x * 16;
