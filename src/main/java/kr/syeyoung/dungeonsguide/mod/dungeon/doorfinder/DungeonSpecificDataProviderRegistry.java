@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.NormalModeDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.MasterModeDataProvider;
+
 import java.util.HashMap;
 import java.util.Map;
 import java.util.regex.Pattern;
@@ -26,8 +29,8 @@ public class DungeonSpecificDataProviderRegistry {
     public static final Map<Pattern, DungeonSpecificDataProvider> doorFinders = new HashMap<>();
 
     static {
-        doorFinders.put(Pattern.compile("The Catacombs (?:F[0-9]|E)"), new CatacombDataProvider());
-        doorFinders.put(Pattern.compile("The Catacombs (?:M[0-9])"), new CatacombMasterDataProvider());
+        doorFinders.put(Pattern.compile("The Catacombs (?:F[0-9]|E)"), new NormalModeDataProvider());
+        doorFinders.put(Pattern.compile("The Catacombs (?:M[0-9])"), new MasterModeDataProvider());
     }
 
     public static DungeonSpecificDataProvider getDoorFinder(String dungeonName) {

@@ -18,92 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
 
 import javax.vecmath.Vector2d;
-import java.util.Collection;
-import java.util.Set;
 
-public abstract class DungeonSpecificDataProvider {
+public interface DungeonSpecificDataProvider {
 
-    private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
+    BlockPos findDoor(World w, String dungeonName);
 
-    @Nullable
-    static Vector2d getVector2d(World w, Collection<EntityArmorStand> armorStand, Set<Vector2d> directions) {
-        EntityArmorStand mort = armorStand.iterator().next();
-        BlockPos pos = mort.getPosition();
-        pos = pos.add(0, 3, 0);
-        for (int i = 0; i < 5; i++) {
-            for (Vector2d vector2d: directions) {
-                BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                    return vector2d;
-                }
-            }
-        }
-        return null;
-    }
+    Vector2d findDoorOffset(World w, String dungeonName);
+    BossfightProcessor createBossfightProcessor(World w, String dungeonName);
 
-    public static Collection<EntityArmorStand> getMorts(World w){
-        return w.getEntities(EntityArmorStand.class, input -> input.getName().equals("§bMort"));
-    }
+    boolean isTrapSpawn(String dungeonName);
 
-    /**
-     * This gets all morts checks for iron bars near him
-     * and based on iron bars determine the door location
-     *
-     * @param w World that we are going to look for the door in
-     *          world is explicitly specified instead of mc.theWorld bc we can use cached worlds
-     * @param dungeonName dungeon type eg master mode, currently unused
-     * @return Block pos of the dungeon entrance
-     */
-    public BlockPos findDoor(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
+    double secretPercentage(String dungeonName);
 
-        if (!armorStand.isEmpty()) {
-            EntityArmorStand mort = armorStand.iterator().next();
-            BlockPos pos = mort.getPosition();
-            pos = pos.add(0, 3, 0);
-            for (int i = 0; i < 5; i++) {
-                for (Vector2d vector2d:directions) {
-                    BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                    if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                        return pos.add(vector2d.x * (i + 2), -2, vector2d.y * (i+2));
-                    }
-                }
-            }
-        }
-        return null;
-    }
-
-    public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = getMorts(w);
-
-        if (!armorStand.isEmpty()) {
-            return getVector2d(w, armorStand, directions);
-        }
-        return null;
-    }
-
-    public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
-        return null;
-    }
-
-    public boolean isTrapSpawn(String dungeonName) {
-        return false;
-    }
-
-    public double secretPercentage(String dungeonName) {
-        return 0;
-    }
-
-    public int speedSecond(String dungeonName) {
-        return 0;
-    }
+    int speedSecond(String dungeonName);
 }

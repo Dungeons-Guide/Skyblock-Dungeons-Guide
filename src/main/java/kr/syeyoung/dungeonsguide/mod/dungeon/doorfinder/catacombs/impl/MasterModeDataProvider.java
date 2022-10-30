@@ -16,15 +16,16 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
+package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.CatacombsDataProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorLivid;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-public class CatacombMasterDataProvider extends DungeonSpecificDataProvider {
+public class MasterModeDataProvider extends CatacombsDataProvider {
 
 
     @Override
