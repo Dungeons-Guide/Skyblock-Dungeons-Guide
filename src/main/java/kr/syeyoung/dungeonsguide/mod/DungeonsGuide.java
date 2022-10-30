@@ -86,11 +86,12 @@ public class DungeonsGuide implements IDungeonGuide {
     @Getter
     private BlockCache blockCache;
 
-
+    public DungeonsGuide(){
+        instance = this;
+    }
     private static DungeonsGuide instance;
 
     public static DungeonsGuide getDungeonsGuide() {
-        if (instance == null) instance = new DungeonsGuide();
         return instance;
     }
 

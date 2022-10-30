@@ -105,7 +105,7 @@ public class Main {
 
             AuthManager.getInstance().init();
 
-            dgInstance = DungeonsGuide.getDungeonsGuide();
+            dgInstance = new DungeonsGuide();
 
             configDir = new File(preInitializationEvent.getModConfigurationDirectory(), "dungeonsguide");
 
