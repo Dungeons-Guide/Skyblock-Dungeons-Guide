@@ -19,12 +19,13 @@
 package kr.syeyoung.dungeonsguide;
 
 import com.google.common.base.Throwables;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
 import kr.syeyoung.dungeonsguide.auth.ResourceManager;
-import kr.syeyoung.dungeonsguide.config.Config;
-import kr.syeyoung.dungeonsguide.resources.DGTexturePack;
-import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
+import kr.syeyoung.dungeonsguide.mod.config.Config;
+import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
+import kr.syeyoung.dungeonsguide.mod.url.DGStreamHandlerFactory;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -244,7 +245,7 @@ public class Main {
         e.printStackTrace();
     }
 
-    static void finishUpProgressBar(ProgressManager.ProgressBar progressBar) {
+    static public void  finishUpProgressBar(ProgressManager.ProgressBar progressBar) {
         if(progressBar == null) return;
         while (progressBar.getStep() < progressBar.getSteps())
             progressBar.step("random-" + progressBar.getStep());

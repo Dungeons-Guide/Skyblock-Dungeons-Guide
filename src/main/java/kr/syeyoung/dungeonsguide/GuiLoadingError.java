@@ -18,11 +18,8 @@
 
 package kr.syeyoung.dungeonsguide;
 
-import kr.syeyoung.dungeonsguide.gui.MPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.GL11;
 

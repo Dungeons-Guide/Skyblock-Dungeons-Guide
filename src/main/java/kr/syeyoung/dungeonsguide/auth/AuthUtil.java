@@ -2,7 +2,6 @@ package kr.syeyoung.dungeonsguide.auth;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonParser;
-import kr.syeyoung.dungeonsguide.auth.AuthManager;
 
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
