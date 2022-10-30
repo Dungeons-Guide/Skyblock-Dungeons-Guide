@@ -76,11 +76,10 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
         if(Minecraft.getMinecraft().thePlayer == null) return;
 
 
-        DungeonsGuide.getDungeonsGuide();
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
                 .map(a -> {
-                    DungeonsGuide.getDungeonsGuide();
+
                     return DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getRoomMapper().get(a);
                 });
 
@@ -244,11 +243,11 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
     @Getter
     private String selectedID = null;
     public void onElementClick(String id, DungeonMechanic dungeonMechanic, Point pt, MechanicBrowserElement mechanicBrowserElement) {
-        DungeonsGuide.getDungeonsGuide();
+
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
                 .map(a -> {
-                    DungeonsGuide.getDungeonsGuide();
+
                     return DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getRoomMapper().get(a);
                 });
         selectedID = id;
@@ -283,11 +282,11 @@ public class PanelMechanicBrowser extends MPanelScaledGUI {
     }
 
     public void cancel(MechanicBrowserElement mechanicBrowserElement) {
-        DungeonsGuide.getDungeonsGuide();
+
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getMapProcessor).map(a->a.worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
                 .map(a -> {
-                    DungeonsGuide.getDungeonsGuide();
+
                     return DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getRoomMapper().get(a);
                 });
         mechanicBrowserElement.setFocused(false);

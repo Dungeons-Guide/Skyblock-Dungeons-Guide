@@ -136,7 +136,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         actualBit.add(new StyledText(": ","separator"));
         actualBit.add(new StyledText(getSecretsFound() +"","currentSecrets"));
         actualBit.add(new StyledText("/","separator2"));
-        DungeonsGuide.getDungeonsGuide();
+
         actualBit.add(new StyledText((int)Math.ceil(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
         actualBit.add(new StyledText(getTotalSecrets().contains("+") ? "+" : "","unknown"));
         return actualBit;

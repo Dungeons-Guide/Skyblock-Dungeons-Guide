@@ -242,7 +242,7 @@ public class CommandDgDebug extends CommandBase {
         } else if ("reloaddungeon".equals(arg)) {
             try {
                 MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
-                DungeonsGuide.getDungeonsGuide();
+
                 DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
                 MapUtils.clearMap();
             } catch (Throwable t) {
@@ -362,7 +362,7 @@ public class CommandDgDebug extends CommandBase {
             EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
         } else if ("closecontext".equals(arg)) {
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
-            DungeonsGuide.getDungeonsGuide();
+
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
         } else if ("dumpsettings".equals(arg)) {
             NestedCategory nestedCategory = new NestedCategory("ROOT");
