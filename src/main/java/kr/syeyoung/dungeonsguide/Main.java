@@ -18,19 +18,10 @@
 
 package kr.syeyoung.dungeonsguide;
 
-import com.google.common.base.Throwables;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
-import kr.syeyoung.dungeonsguide.auth.ResourceManager;
-import kr.syeyoung.dungeonsguide.mod.config.Config;
-import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
-import kr.syeyoung.dungeonsguide.mod.url.DGStreamHandlerFactory;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.*;
-import net.minecraft.client.resources.IResourcePack;
-import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -40,34 +31,26 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
 import java.io.*;
-import java.net.URL;
-import java.util.List;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main {
+
     public static final String MOD_ID = "skyblock_dungeons_guide";
-    public static final String VERSION = "3.8";
-    @Getter
-    private static boolean firstTimeUsingDG = false;
-
-    private boolean isLoaded = false;
-    private Throwable cause;
-    private String stacktrace;
-    private boolean showedError = false;
-
+    public static final String VERSION = "3.8.0";
     Logger logger = LogManager.getLogger("DG-main");
 
-    YoMamaOutdated yoMamaOutdated;
 
-    ProgressManager.ProgressBar progressBar;
+    IDungeonGuide dgInstance;
+
+    private boolean isLoaded = false;
+
 
     public static final String SERVER_URL = "https://dungeons.guide";
-
     public static final String SOME_FUNNY_KEY_THING = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxO89qtwG67jNucQ9Y44c" +
             "IUs/B+5BeJPs7G+RG2gfs4/2+tzF/c1FLDc33M7yKw8aKk99vsBUY9Oo8gxxiEPB" +
             "JitP/qfon2THp94oM77ZTpHlmFoqbZMcKGZVI8yfvEL4laTM8Hw+qh5poQwtpEbK" +
@@ -80,92 +63,38 @@ public class Main {
             "p2Qy2k+xEdenpKdL+WMRimCQoO9gWe2Tp4NmP5dppDXZgPjXqjZpnGs0Uxs+fXqW" +
             "cwlg3MbX3rFl9so/fhVf4p9oXZK3ve7z5D6XSSDRYECvsKIa08WAxJ/U6n204E/4" +
             "xUF+3ZgFPdzZGn2PU7SsnOsCAwEAAQ==";
-    @Getter
-    static File configDir;
-
     @EventHandler
     public void initEvent(final FMLInitializationEvent initializationEvent) {
         MinecraftForge.EVENT_BUS.register(this);
         try {
             logger.info("init-ing DungeonsGuide");
-            DungeonsGuide.getDungeonsGuide().init();
+            dgInstance.init();
         } catch (Exception e) {
-            cause = e;
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(byteArrayOutputStream);
-            e.printStackTrace(printStream);
-            stacktrace = byteArrayOutputStream.toString();
-
-            e.printStackTrace();
+            handleException(e, null);
         }
     }
-    private boolean showedStartUpGuide;
 
 
+
+    private boolean showedError = false;
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
-        if(!(guiOpenEvent.gui instanceof GuiMainMenu)) return;
-        if (!showedError && !isLoaded) {
-            guiOpenEvent.gui = new GuiLoadingError(cause, stacktrace, guiOpenEvent.gui);
+        if (!showedError && !isLoaded && guiOpenEvent.gui instanceof GuiMainMenu) {
+            guiOpenEvent.gui = new GuiLoadingError(guiOpenEvent.gui);
             showedError = true;
-            return;
         }
-        if(!showedStartUpGuide){
-            showedStartUpGuide = true;
 
-            if(isFirstTimeUsingDG()){
-                GuiScreen originalGUI = guiOpenEvent.gui;
-                guiOpenEvent.gui = new GuiScreen() {
-                    String welcomeText = "Thank you for installing §eDungeonsGuide§f, the most intelligent skyblock dungeon mod!\nThe gui for relocating GUI Elements and enabling or disabling features can be opened by typing §e/dg\nType §e/dg help §fto view full list of commands offered by dungeons guide!";
-
-                    @Override
-                    public void initGui() {
-                        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-                        this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2-100,sr.getScaledHeight()-70 ,"Continue"));
-                    }
-
-                    @Override
-                    protected void actionPerformed(GuiButton button) throws IOException {
-                        super.actionPerformed(button);
-                        if (button.id == 0) {
-                            Minecraft.getMinecraft().displayGuiScreen(originalGUI);
-                        }
-                    }
-
-                    @Override
-                    public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-                        super.drawBackground(1);
-
-                        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-                        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-                        fontRenderer.drawString("§eWelcome To DungeonsGuide", (sr.getScaledWidth()-fontRenderer.getStringWidth("Welcome To DungeonsGuide"))/2,40,0xFFFF0000);
-                        int tenth = sr.getScaledWidth() / 10;
-                        Gui.drawRect(tenth, 70,sr.getScaledWidth()-tenth, sr.getScaledHeight()-80, 0xFF5B5B5B);
-
-                        String[] split = welcomeText.split("\n");
-                        for (int i = 0; i < split.length; i++) {
-                            fontRenderer.drawString(split[i].replace("\t", "    "), tenth + 2,i*fontRenderer.FONT_HEIGHT + 72, 0xFFFFFFFF);
-                        }
-
-                        super.drawScreen(mouseX, mouseY, partialTicks);
-                    }
-
-                };
-            }
-
-        }
     }
 
 
-
-
-
+    @Getter
+    static File configDir;
 
     @EventHandler
     public void preInit(final FMLPreInitializationEvent preInitializationEvent) {
+        MinecraftForge.EVENT_BUS.register(new YoMamaOutdated());
 
-        yoMamaOutdated = new YoMamaOutdated();
-        MinecraftForge.EVENT_BUS.register(yoMamaOutdated);
+        ProgressManager.ProgressBar progressBar = null;
 
         try {
             try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
@@ -174,78 +103,36 @@ public class Main {
 
             AuthManager.getInstance().setBaseserverurl(SERVER_URL);
 
-            String version = null;
-            try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class")) {
-                if (resourceAsStream == null) {
-                    if (System.getProperty("dg.version") == null) {
-                        version = "nlatest";
-                    } else {
-                        version = System.getProperty("dg.version");
-                    }
-                }
-            }
-
-
             AuthManager.getInstance().init();
 
-            ResourceManager.getInstance().setBaseUrl(SERVER_URL);
-            ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(SOME_FUNNY_KEY_THING);
+            dgInstance = DungeonsGuide.getDungeonsGuide();
 
-            if(!AuthManager.getInstance().isPlebUser()){
-                downloadAssets(version);
-            }
+            configDir = new File(preInitializationEvent.getModConfigurationDirectory(), "dungeonsguide");
 
-            URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
-            LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
-            classLoader.addURL(new URL("z:///"));
+
+            dgInstance.preinit();
 
             progressBar.step("Initializing");
-            configDir = new File(preInitializationEvent.getModConfigurationDirectory(), "dungeonsguide");
-            File configFile = new File(configDir, "config.json");
-            if (!configFile.exists()) {
-                configDir.mkdirs();
-                firstTimeUsingDG = true;
-            }
-            Config.f = configFile;
-            Minecraft.getMinecraft().getFramebuffer().enableStencil();
 
-            try {
-                List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-                resourcePackList.add(new DGTexturePack());
-                Minecraft.getMinecraft().refreshResources();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
             finishUpProgressBar(progressBar);
             isLoaded = true;
 
         } catch (IOException e) {
-            handleException(e);
+            handleException(e, progressBar);
         }
     }
 
-    private void downloadAssets(String version) {
-        try {
-            ResourceManager.getInstance().downloadAssets(version);
-        } catch (InvalidDungeonsGuideCredentialsException e) {
-            logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
-        }
-    }
 
-    public void handleException(Throwable e) {
-        cause = e;
-        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-        PrintStream printStream = new PrintStream(byteArrayOutputStream);
-        e.printStackTrace(printStream);
-        stacktrace = byteArrayOutputStream.toString();
+
+    public void handleException(@NotNull final Throwable e, ProgressManager.ProgressBar progressBar) {
+        GuiLoadingError.cause = e;
 
         finishUpProgressBar(progressBar);
-
 
         e.printStackTrace();
     }
 
-    static public void  finishUpProgressBar(ProgressManager.ProgressBar progressBar) {
+    public static void finishUpProgressBar(final ProgressManager.ProgressBar progressBar) {
         if(progressBar == null) return;
         while (progressBar.getStep() < progressBar.getSteps())
             progressBar.step("random-" + progressBar.getStep());

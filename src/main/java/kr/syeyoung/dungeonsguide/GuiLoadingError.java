@@ -23,15 +23,21 @@ import net.minecraft.client.gui.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.GL11;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class GuiLoadingError extends GuiScreen {
+    static Throwable cause;
     private String stacktrace;
-    private Throwable throwable;
     private GuiScreen originalGUI;
-    public GuiLoadingError(Throwable t, String stacktrace, GuiScreen originalGUI) {
-        this.throwable = t;
-        this.stacktrace = stacktrace;
+    public GuiLoadingError(GuiScreen originalGUI) {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        cause.printStackTrace(printStream);
+        this.stacktrace = byteArrayOutputStream.toString();
+
         this.originalGUI = originalGUI;
     }
 
