@@ -18,32 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.dungeon.MortDetector2000;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.BossfightProcessorLivid;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
-import javax.vecmath.Vector2d;
-import java.util.Collection;
-import java.util.Set;
-
 public class CatacombMasterDataProvider extends DungeonSpecificDataProvider {
 
-    private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
-
-    @Override
-    public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = MortDetector2000.getMorts(w);
-
-        if (!armorStand.isEmpty()) {
-            return CatacombDataProvider.getVector2d(w, armorStand, directions);
-        }
-        return null;
-    }
 
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {

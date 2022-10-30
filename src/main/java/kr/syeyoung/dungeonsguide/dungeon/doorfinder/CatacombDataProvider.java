@@ -18,50 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.doorfinder;
 
-import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.dungeon.MortDetector2000;
 import kr.syeyoung.dungeonsguide.dungeon.roomprocessor.bossfight.*;
-import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.init.Blocks;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
-import org.jetbrains.annotations.Nullable;
-
-import javax.vecmath.Vector2d;
-import java.util.Collection;
-import java.util.Set;
 
 public class CatacombDataProvider extends DungeonSpecificDataProvider {
 
-    private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,1), new Vector2d(0, -1), new Vector2d(1, 0), new Vector2d(-1 , 0));
-
-    @Override
-    public Vector2d findDoorOffset(World w, String dungeonName) {
-        Collection<EntityArmorStand> armorStand = MortDetector2000.getMorts(w);
-
-        if (!armorStand.isEmpty()) {
-            return getVector2d(w, armorStand, directions);
-        }
-        return null;
-    }
-
-    @Nullable
-    static Vector2d getVector2d(World w, Collection<EntityArmorStand> armorStand, Set<Vector2d> directions) {
-        EntityArmorStand mort = armorStand.iterator().next();
-        BlockPos pos = mort.getPosition();
-        pos = pos.add(0, 3, 0);
-        for (int i = 0; i < 5; i++) {
-            for (Vector2d vector2d: directions) {
-                BlockPos test = pos.add(vector2d.x * i, 0, vector2d.y * i);
-                if (w.getChunkFromBlockCoords(test).getBlock(test) == Blocks.iron_bars) {
-                    return vector2d;
-                }
-            }
-        }
-        return null;
-    }
 
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
