@@ -234,16 +234,12 @@ public class MapProcessor {
                     } else if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FINISHED) {
                         byte centerColor = MapUtils.getMapColorAt(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2);
                         MapUtils.record(mapData, mapPoint.x + unitRoomDimension.width / 2, mapPoint.y + unitRoomDimension.height / 2, new Color(0, 255, 0, 80));
-                        switch (centerColor) {
-                            case 34:
-                                dungeonRoom.setCurrentState(DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS);
-                                break;
-                            case 30:
-                                dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
-                                break;
-                            case 18:  // red
-                                dungeonRoom.setCurrentState(DungeonRoom.RoomState.FAILED);
-                                break;
+                        if (centerColor == 34) {
+                            dungeonRoom.setCurrentState(DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS);
+                        } else if (centerColor == 30) {
+                            dungeonRoom.setCurrentState(DungeonRoom.RoomState.FINISHED);
+                        } else if (centerColor == 18) {  // red
+                            dungeonRoom.setCurrentState(DungeonRoom.RoomState.FAILED);
                         }
                     }
                     if (dungeonRoom.getTotalSecrets() == -1) {
@@ -353,23 +349,16 @@ public class MapProcessor {
 
             Vector2d vector2d = new Vector2d(door.x - minX, door.y - minY);
 
-            switch (color) {
-                case 0:
-                    doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.NONE));
-                    break;
-                case 85:
-                    doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.UNOPEN));
-                    break;
-                case 119:
-                    doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.WITHER));
-                    break;
-                case 18:
-                    if (unit1 != 18) {
-                        doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.BLOOD));
-                    }
-                    break;
-                default:
-                    doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.ENTRANCE));
+            if (color == 0) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.NONE));
+            } else if (color == 85) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.UNOPEN));
+            } else if (color == 119) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.WITHER));
+            } else if (color == 18 && unit1 != 18) {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.BLOOD));
+            } else {
+                doorsAndStates.add(new Tuple<>(vector2d, EDungeonDoorType.ENTRANCE));
             }
 
         }
