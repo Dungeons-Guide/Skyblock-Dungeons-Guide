@@ -6,19 +6,11 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import org.apache.commons.io.IOUtils;
-import org.apache.http.Header;
-import org.apache.http.HttpResponse;
-import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClients;
-import org.apache.http.message.BasicHeader;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.nio.charset.StandardCharsets;
 
 public class YoMamaOutdated {
 
@@ -34,20 +26,22 @@ public class YoMamaOutdated {
 
     void check() {
 
-        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
-            HttpGet httpget = new HttpGet( "https://dungeonsguide.kingstefan26.workers.dev/outdated");
-            Header[] haeders = {new BasicHeader("User-Agent", "DungeonsGuide/" + Main.VERSION)};
-            httpget.setHeaders(haeders);
-            HttpResponse httpresponse = httpclient.execute(httpget);
+        isUsingOutdatedDg = false;
 
-            if (httpresponse.getStatusLine().getStatusCode() != 200) {
-                outdatedMessage = IOUtils.toString(httpresponse.getEntity().getContent(), StandardCharsets.UTF_8);
-            }else {
-                isUsingOutdatedDg = false;
-            }
-
-        } catch (Exception ignored) {
-        }
+//        try (CloseableHttpClient httpclient = HttpClients.createDefault()) {
+//            HttpGet httpget = new HttpGet( "https://dungeonsguide.kingstefan26.workers.dev/outdated");
+//            Header[] haeders = {new BasicHeader("User-Agent", "DungeonsGuide/" + Main.VERSION)};
+//            httpget.setHeaders(haeders);
+//            HttpResponse httpresponse = httpclient.execute(httpget);
+//
+//            if (httpresponse.getStatusLine().getStatusCode() != 200) {
+//                outdatedMessage = IOUtils.toString(httpresponse.getEntity().getContent(), StandardCharsets.UTF_8);
+//            }else {
+//                isUsingOutdatedDg = false;
+//            }
+//
+//        } catch (Exception ignored) {
+//        }
 
     }
 
