@@ -29,8 +29,8 @@ import java.io.PrintStream;
 
 public class GuiLoadingError extends GuiScreen {
     static Throwable cause;
-    private String stacktrace;
-    private GuiScreen originalGUI;
+    private final String stacktrace;
+    private final GuiScreen originalGUI;
     public GuiLoadingError(GuiScreen originalGUI) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();

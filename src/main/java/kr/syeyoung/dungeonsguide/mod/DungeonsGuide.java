@@ -18,13 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod;
 
-import com.google.common.base.Throwables;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.IDungeonGuide;
 import kr.syeyoung.dungeonsguide.Main;
-import kr.syeyoung.dungeonsguide.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
-import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
@@ -39,7 +35,6 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
-import kr.syeyoung.dungeonsguide.mod.url.DGStreamHandlerFactory;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
@@ -63,9 +58,6 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.io.InputStream;
-import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.List;
 import java.util.Set;
 
@@ -98,13 +90,7 @@ public class DungeonsGuide implements IDungeonGuide {
     @Getter
     CommandReparty commandReparty;
 
-    private void downloadAssets(String version) {
-        try {
-            ResourceManager.getInstance().downloadAssets(version);
-        } catch (InvalidDungeonsGuideCredentialsException e) {
-            logger.error("Downloading assets failed with {}", String.valueOf(Throwables.getRootCause(e)));
-        }
-    }
+
 
 
     public void init() {
@@ -244,35 +230,6 @@ public class DungeonsGuide implements IDungeonGuide {
 
 
     public void preinit(){
-
-        String version = null;
-        try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class")) {
-            if (resourceAsStream == null) {
-                if (System.getProperty("dg.version") == null) {
-                    version = "nlatest";
-                } else {
-                    version = System.getProperty("dg.version");
-                }
-            }
-        }catch (Exception e){
-            e.printStackTrace();
-        }
-        ResourceManager.getInstance().setBaseUrl(Main.SERVER_URL);
-        ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(Main.SOME_FUNNY_KEY_THING);
-
-        if(!AuthManager.getInstance().isPlebUser() && version != null){
-            downloadAssets(version);
-        }
-
-        URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
-        LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
-        try {
-            classLoader.addURL(new URL("z:///"));
-        } catch (MalformedURLException e) {
-            throw new RuntimeException(e);
-        }
-
-
 
         File configFile = new File(Main.getConfigDir(), "config.json");
         if (!configFile.exists()) {

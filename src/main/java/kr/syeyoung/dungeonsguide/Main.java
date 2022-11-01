@@ -19,9 +19,13 @@
 package kr.syeyoung.dungeonsguide;
 
 import kr.syeyoung.dungeonsguide.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
+import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
 import lombok.Getter;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.Mod;
@@ -35,7 +39,10 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.net.URL;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main {
@@ -102,26 +109,47 @@ public class Main {
             }
 
             AuthManager.getInstance().setBaseserverurl(SERVER_URL);
-
             AuthManager.getInstance().init();
 
-            dgInstance = new DungeonsGuide();
 
             configDir = new File(preInitializationEvent.getModConfigurationDirectory(), "dungeonsguide");
 
 
-            dgInstance.preinit();
+            String version = null;
+            try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class")) {
+                if (resourceAsStream == null) {
+                    if (System.getProperty("dg.version") == null) {
+                        version = "nlatest";
+                    } else {
+                        version = System.getProperty("dg.version");
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            ResourceManager.getInstance().setBaseUrl(Main.SERVER_URL);
+            ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(Main.SOME_FUNNY_KEY_THING);
+
+            if(!AuthManager.getInstance().isPlebUser() && version != null){
+                ResourceManager.getInstance().downloadAssets(version);
+            }
+
+            URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
+            LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
+            classLoader.addURL(new URL("z:///"));
 
             progressBar.step("Initializing");
+
+            dgInstance = new DungeonsGuide();
+            dgInstance.preinit();
 
             finishUpProgressBar(progressBar);
             isLoaded = true;
 
-        } catch (IOException e) {
+        } catch (IOException | InvalidDungeonsGuideCredentialsException e) {
             handleException(e, progressBar);
         }
     }
-
 
 
     public void handleException(@NotNull final Throwable e, ProgressManager.ProgressBar progressBar) {

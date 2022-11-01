@@ -16,19 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.url;
+package kr.syeyoung.dungeonsguide.url;
 
 import lombok.AllArgsConstructor;
 
-import java.io.IOException;
-import java.net.URL;
-import java.net.URLConnection;
 import java.net.URLStreamHandler;
+import java.net.URLStreamHandlerFactory;
 
 @AllArgsConstructor
-public class DGStreamHandler extends URLStreamHandler {
+public class DGStreamHandlerFactory implements URLStreamHandlerFactory {
     @Override
-    protected URLConnection openConnection(URL url) throws IOException {
-        return new DGConnection(url);
+    public URLStreamHandler createURLStreamHandler(String protocol) {
+        if ("z".equals(protocol)) {
+            return new DGStreamHandler();
+        }
+        return null;
     }
 }

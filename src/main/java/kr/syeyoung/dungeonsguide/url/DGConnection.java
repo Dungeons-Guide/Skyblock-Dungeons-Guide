@@ -16,7 +16,7 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.url;
+package kr.syeyoung.dungeonsguide.url;
 
 import kr.syeyoung.dungeonsguide.auth.ResourceManager;
 
