@@ -30,4 +30,4 @@ jobs:
     - name: Upload to beta webhook
       env:
         BETA_WEBHOOK: ${{ secrets.BETA_WEBHOOK }}
-      run: curl -F "file1=@./build/libs/dungeonsguide-3.8.0-all.jar" "$BETA_WEBHOOK"
+      run: path=$(find ./build/ -type d -name "libs" -exec find "{}" -type f -name "dungeonsguide-*-all.jar" \;)  curl -F "file1=@$path" "$BETA_WEBHOOK"
