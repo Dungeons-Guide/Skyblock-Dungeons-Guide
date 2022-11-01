@@ -4,15 +4,10 @@ on:
   push:
     branches:
       - 'breaking-changes-just-working-im-not-putting-all-of-these-into-3.0-but-for-the-sake-of-beta-release-this-thing-exists'
-  pull_request:
-    branches:
-      - 'breaking-changes-just-working-im-not-putting-all-of-these-into-3.0-but-for-the-sake-of-beta-release-this-thing-exists'
   workflow_dispatch:
 jobs:
   build:
-
     runs-on: ubuntu-latest
-
     steps:
     - uses: actions/checkout@v3
     - name: Set up JDK 16
@@ -35,4 +30,4 @@ jobs:
     - name: Upload to beta webhook
       env:
         BETA_WEBHOOK: ${{ secrets.BETA_WEBHOOK }}
-      run: curl -F "file1=@./build/libs/dungeonsguide-3.0.0-all.jar" "$BETA_WEBHOOK"
+      run: curl -F "file1=@./build/libs/dungeonsguide-3.8.0-all.jar" "$BETA_WEBHOOK"
