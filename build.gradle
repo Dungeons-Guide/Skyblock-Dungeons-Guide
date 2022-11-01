@@ -31,7 +31,7 @@ tasks.wrapper {
     // the full version (with sources and documentation) of Gradle (ALL)
     distributionType = Wrapper.DistributionType.ALL
 }
-version = "3.0.0"
+version = "3.8.0"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
@@ -78,17 +78,18 @@ dependencies {
     forge("net.minecraftforge:forge:1.8.9-11.15.1.2318-1.8.9")
 
 
-    implementation "org.jetbrains:annotations-java5:19.0.0"
-    implementation "org.java-websocket:Java-WebSocket:1.5.1"
-    implementation "org.json:json:20171018"
-    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
+    implementation 'org.jetbrains:annotations-java5:23.0.0'
+    implementation 'org.java-websocket:Java-WebSocket:1.5.3'
+    implementation "org.json:json:20220924"
+    implementation 'com.twelvemonkeys.imageio:imageio-bmp:3.8.3'
 
-    compileOnly "org.projectlombok:lombok:1.18.20"
+    compileOnly 'org.projectlombok:lombok:1.18.24'
+    annotationProcessor 'org.projectlombok:lombok:1.18.24'
+
     compileOnly files("jars/Hychat-1.12.1-BETA.jar")
-    annotationProcessor "org.projectlombok:lombok:1.18.16"
 
-    testCompileOnly "org.projectlombok:lombok:1.18.20"
-    testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+    testCompileOnly "org.projectlombok:lombok:1.18.24"
+    testAnnotationProcessor "org.projectlombok:lombok:1.18.24"
     modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
@@ -116,9 +117,9 @@ tasks.shadowJar {
     relocate "org.java_websocket", "kr.syeyoung.org.java_websocket"
 
     dependencies {
-        include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
+        include(dependency("org.java-websocket:Java-WebSocket:1.5.3"))
         include(dependency("org.slf4j:slf4j-api:1.7.25"))
-        include(dependency("org.json:json:20171018"))
+        include(dependency("org.json:json:20220924"))
         include(dependency("com.twelvemonkeys..*:.*"))
     }
 }
@@ -131,3 +132,16 @@ tasks.named("remapJar") {
 
 
 tasks.assemble.dependsOn tasks.remapJar
+
+processResources {
+    inputs.property 'version', project.version
+
+    // replace stuff in mcmod.info, nothing else
+    from(sourceSets.main.resources.srcDirs) {
+        duplicatesStrategy = 'include'
+        include 'mcmod.info'
+
+        // replace version and mcversion
+        expand 'version': project.version
+    }
+}

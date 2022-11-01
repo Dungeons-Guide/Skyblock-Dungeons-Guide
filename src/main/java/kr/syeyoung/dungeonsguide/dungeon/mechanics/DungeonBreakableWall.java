@@ -19,11 +19,13 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -41,10 +43,10 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
 
             int leastY = Integer.MAX_VALUE;
             OffsetPoint thatPt = null;
@@ -69,8 +71,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
             ActionBreakWithSuperBoom actionClick;
             preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint(dungeonRoom)));

@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates;
 import com.google.common.base.Predicate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
-import net.minecraft.entity.passive.EntityBat;
 import org.jetbrains.annotations.Nullable;
 
 

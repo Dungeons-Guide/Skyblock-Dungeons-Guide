@@ -3,10 +3,10 @@ name: Build
 on:
   push:
     branches:
-      - '*'
+      - 'master'
   pull_request:
     branches:
-      - '*'
+      - 'master'
   workflow_dispatch:
 jobs:
   build:
@@ -20,6 +20,7 @@ jobs:
       with:
         java-version: '16'
         distribution: 'adopt'
+        cache: 'gradle'
     - name: Grant execute permission for gradlew
       run: chmod +x gradlew
     - name: Download hychat as a dependency

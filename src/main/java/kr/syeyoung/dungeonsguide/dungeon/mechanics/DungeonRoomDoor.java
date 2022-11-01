@@ -19,14 +19,14 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.doorfinder.DungeonDoor;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
-import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
@@ -41,15 +41,15 @@ public class DungeonRoomDoor implements DungeonMechanic {
     public DungeonRoomDoor(DungeonRoom dungeonRoom, DungeonDoor doorfinder) {
         this.doorfinder = doorfinder;
         if (doorfinder.isZDir()) {
-            if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(0,0,2)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0,0,2));
-            else if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(0,0,-2)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0,0,-2));
+            if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(0, 0, 2)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0, 0, 2));
+            else if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(0, 0, -2)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(0, 0, -2));
         } else {
-            if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(2,0,0)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(2,0,0));
-            else if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(-2,0,0)))
-                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(-2,0,0));
+            if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(2, 0, 0)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(2, 0, 0));
+            else if (dungeonRoom.canAccessAbsolute(doorfinder.getPosition().add(-2, 0, 0)))
+                offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition().add(-2, 0, 0));
         }
         if (offsetPoint == null) {
             offsetPoint = new OffsetPoint(dungeonRoom, doorfinder.getPosition());
@@ -57,24 +57,20 @@ public class DungeonRoomDoor implements DungeonMechanic {
     }
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
-        {
-            ActionMove actionMove = new ActionMove(offsetPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
-        return base;
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+        if (!"navigate".equalsIgnoreCase(state))
+            throw new IllegalArgumentException(state + " is not valid state for secret");
+        Set<AbstractAction> preRequisites = new HashSet<>();
+        preRequisites.add(new ActionMove(offsetPoint));
+        return preRequisites;
     }
 
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, color,partialTicks);
-        RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
-        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.highlightBlock(pos, color, partialTicks);
+        RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.75f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() + 0.5f, pos.getY() + 0.25f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
     @Override

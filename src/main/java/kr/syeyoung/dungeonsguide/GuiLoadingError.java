@@ -18,23 +18,26 @@
 
 package kr.syeyoung.dungeonsguide;
 
-import kr.syeyoung.dungeonsguide.gui.MPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.fml.client.FMLClientHandler;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.GL11;
 
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
+import java.io.PrintStream;
 
 public class GuiLoadingError extends GuiScreen {
-    private String stacktrace;
-    private Throwable throwable;
-    private GuiScreen originalGUI;
-    public GuiLoadingError(Throwable t, String stacktrace, GuiScreen originalGUI) {
-        this.throwable = t;
-        this.stacktrace = stacktrace;
+    static Throwable cause;
+    private final String stacktrace;
+    private final GuiScreen originalGUI;
+    public GuiLoadingError(GuiScreen originalGUI) {
+
+        ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
+        PrintStream printStream = new PrintStream(byteArrayOutputStream);
+        cause.printStackTrace(printStream);
+        this.stacktrace = byteArrayOutputStream.toString();
+
         this.originalGUI = originalGUI;
     }
 

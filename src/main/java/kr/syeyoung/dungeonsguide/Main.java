@@ -18,11 +18,13 @@
 
 package kr.syeyoung.dungeonsguide;
 
-import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonsguide.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.auth.InvalidDungeonsGuideCredentialsException;
+import kr.syeyoung.dungeonsguide.auth.ResourceManager;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.url.DGStreamHandlerFactory;
-import kr.syeyoung.dungeonsguide.utils.cursor.EnumCursor;
-import kr.syeyoung.dungeonsguide.utils.cursor.GLCursors;
-import net.minecraft.client.gui.*;
+import lombok.Getter;
+import net.minecraft.client.gui.GuiMainMenu;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -33,110 +35,135 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+import org.jetbrains.annotations.NotNull;
 
-import java.io.*;
-import java.lang.reflect.InvocationTargetException;
+import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
-import java.security.*;
-import java.security.cert.CertificateException;
-import java.security.spec.InvalidKeySpecException;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
-public class Main
-{
+public class Main {
+
     public static final String MOD_ID = "skyblock_dungeons_guide";
-    public static final String VERSION = "1.0";
+    public static final String VERSION = "3.8.0";
+    Logger logger = LogManager.getLogger("DG-main");
 
-    private static Main main;
 
-    private DGInterface dgInterface;
+    IDungeonGuide dgInstance;
 
     private boolean isLoaded = false;
-    private Throwable cause;
-    private String stacktrace;
-    private boolean showedError = false;
 
 
-
+    public static final String SERVER_URL = "https://dungeons.guide";
+    public static final String SOME_FUNNY_KEY_THING = "MIICIjANBgkqhkiG9w0BAQEFAAOCAg8AMIICCgKCAgEAxO89qtwG67jNucQ9Y44c" +
+            "IUs/B+5BeJPs7G+RG2gfs4/2+tzF/c1FLDc33M7yKw8aKk99vsBUY9Oo8gxxiEPB" +
+            "JitP/qfon2THp94oM77ZTpHlmFoqbZMcKGZVI8yfvEL4laTM8Hw+qh5poQwtpEbK" +
+            "Xo47AkxygxJasUnykER2+aSTZ6kWU2D4xiNtFA6lzqN+/oA+NaYfPS0amAvyVlHR" +
+            "n/8IuGkxb5RrlqVssQstFnxsJuv88qdGSEqlcKq2tLeg9hb8eCnl2OFzvXmgbVER" +
+            "0JaV+4Z02fVG1IlR3Xo1mSit7yIU6++3usRCjx2yfXpnGGJUW5pe6YETjNew3ax+" +
+            "FAZ4GePWCdmS7FvBnbbABKo5pE06ZTfDUTCjQlAJQiUgoF6ntMJvQAXPu48Vr8q/" +
+            "mTcuZWVnI6CDgyE7nNq3WNoq3397sBzxRohMxuqzl3T19zkfPKF05iV2Ju1HQMW5" +
+            "I119bYrmVD240aGESZc20Sx/9g1BFpNzQbM5PGUlWJ0dhLjl2ge4ip2hHciY3OEY" +
+            "p2Qy2k+xEdenpKdL+WMRimCQoO9gWe2Tp4NmP5dppDXZgPjXqjZpnGs0Uxs+fXqW" +
+            "cwlg3MbX3rFl9so/fhVf4p9oXZK3ve7z5D6XSSDRYECvsKIa08WAxJ/U6n204E/4" +
+            "xUF+3ZgFPdzZGn2PU7SsnOsCAwEAAQ==";
     @EventHandler
-    public void initEvent(FMLInitializationEvent initializationEvent)
-    {
+    public void initEvent(final FMLInitializationEvent initializationEvent) {
         MinecraftForge.EVENT_BUS.register(this);
-        if (dgInterface != null) {
-            main = this;
-            try {
-                dgInterface.init(initializationEvent);
-            } catch (Exception e) {
-                cause = e;
-                ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                PrintStream printStream = new PrintStream(byteArrayOutputStream);
-                e.printStackTrace(printStream);
-                stacktrace = new String(byteArrayOutputStream.toByteArray());
-
-                e.printStackTrace();
-            }
+        try {
+            logger.info("init-ing DungeonsGuide");
+            dgInstance.init();
+        } catch (Exception e) {
+            handleException(e, null);
         }
     }
 
+
+
+    private boolean showedError = false;
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
         if (!showedError && !isLoaded && guiOpenEvent.gui instanceof GuiMainMenu) {
-            guiOpenEvent.gui = new GuiLoadingError(cause, stacktrace, guiOpenEvent.gui);
+            guiOpenEvent.gui = new GuiLoadingError(guiOpenEvent.gui);
             showedError = true;
         }
+
     }
 
+
+    @Getter
+    static File configDir;
+
     @EventHandler
-    public void preInit(FMLPreInitializationEvent preInitializationEvent) {
-        ProgressManager.ProgressBar progressBar = ProgressManager.push("DungeonsGuide", this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class") == null ? 7 : 6);
-        Authenticator authenticator = new Authenticator(progressBar);
-        String token = null;
+    public void preInit(final FMLPreInitializationEvent preInitializationEvent) {
+        MinecraftForge.EVENT_BUS.register(new YoMamaOutdated());
+
+        ProgressManager.ProgressBar progressBar = null;
+
         try {
-            token = authenticator.authenticateAndDownload(this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") == null ? System.getProperty("dg.version") == null ? "nlatest" : System.getProperty("dg.version") : null);
-            if (token != null) {
-                main = this;
-                URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory(authenticator));
-                LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
-                classLoader.addURL(new URL("z:///"));
-
-                try {
-                    progressBar.step("Initializing");
-                    this.dgInterface = new DungeonsGuide(authenticator);
-                    this.dgInterface.pre(preInitializationEvent);
-                    while (progressBar.getStep() < progressBar.getSteps())
-                        progressBar.step("random-"+progressBar.getStep());
-                    ProgressManager.pop(progressBar);
-                    isLoaded = true;
-                } catch (Throwable e) {
-                    cause = e;
-                    ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-                    PrintStream printStream = new PrintStream(byteArrayOutputStream);
-                    e.printStackTrace(printStream);
-                    stacktrace = new String(byteArrayOutputStream.toByteArray());
-
-                    while (progressBar.getStep() < progressBar.getSteps())
-                        progressBar.step("random-"+progressBar.getStep());
-                    ProgressManager.pop(progressBar);
-
-                    e.printStackTrace();
-                }
+            try (InputStream premiumControlClass = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/e.class")) {
+                progressBar = ProgressManager.push("DungeonsGuide", premiumControlClass == null ? 7 : 6);
             }
-        } catch (IOException  | AuthenticationException | NoSuchAlgorithmException | CertificateException | KeyStoreException | KeyManagementException | InvalidKeySpecException | SignatureException e) {
-            cause = e;
-            ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
-            PrintStream printStream = new PrintStream(byteArrayOutputStream);
-            e.printStackTrace(printStream);
-            stacktrace = new String(byteArrayOutputStream.toByteArray());
 
-            while (progressBar.getStep() < progressBar.getSteps())
-                progressBar.step("random-"+progressBar.getStep());
-            ProgressManager.pop(progressBar);
+            AuthManager.getInstance().setBaseserverurl(SERVER_URL);
+            AuthManager.getInstance().init();
 
-            e.printStackTrace();
+
+            configDir = new File(preInitializationEvent.getModConfigurationDirectory(), "dungeonsguide");
+
+
+            String version = null;
+            try (InputStream resourceAsStream = this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class")) {
+                if (resourceAsStream == null) {
+                    if (System.getProperty("dg.version") == null) {
+                        version = "nlatest";
+                    } else {
+                        version = System.getProperty("dg.version");
+                    }
+                }
+            }catch (Exception e){
+                e.printStackTrace();
+            }
+            ResourceManager.getInstance().setBaseUrl(Main.SERVER_URL);
+            ResourceManager.getInstance().setBASE64_X509ENCODEDKEYSPEC(Main.SOME_FUNNY_KEY_THING);
+
+            if(!AuthManager.getInstance().isPlebUser() && version != null){
+                ResourceManager.getInstance().downloadAssets(version);
+            }
+
+            URL.setURLStreamHandlerFactory(new DGStreamHandlerFactory());
+            LaunchClassLoader classLoader = (LaunchClassLoader) Main.class.getClassLoader();
+            classLoader.addURL(new URL("z:///"));
+
+            progressBar.step("Initializing");
+
+            dgInstance = new DungeonsGuide();
+            dgInstance.preinit();
+
+            finishUpProgressBar(progressBar);
+            isLoaded = true;
+
+        } catch (IOException | InvalidDungeonsGuideCredentialsException e) {
+            handleException(e, progressBar);
         }
     }
 
-    public static Main a() {
-        return main;
+
+    public void handleException(@NotNull final Throwable e, ProgressManager.ProgressBar progressBar) {
+        GuiLoadingError.cause = e;
+
+        finishUpProgressBar(progressBar);
+
+        e.printStackTrace();
+    }
+
+    public static void finishUpProgressBar(final ProgressManager.ProgressBar progressBar) {
+        if(progressBar == null) return;
+        while (progressBar.getStep() < progressBar.getSteps())
+            progressBar.step("random-" + progressBar.getStep());
+        ProgressManager.pop(progressBar);
     }
 }

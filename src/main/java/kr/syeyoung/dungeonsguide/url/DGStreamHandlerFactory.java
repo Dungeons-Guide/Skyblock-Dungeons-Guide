@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.url;
 
-import kr.syeyoung.dungeonsguide.Authenticator;
 import lombok.AllArgsConstructor;
 
 import java.net.URLStreamHandler;
@@ -26,11 +25,10 @@ import java.net.URLStreamHandlerFactory;
 
 @AllArgsConstructor
 public class DGStreamHandlerFactory implements URLStreamHandlerFactory {
-    private final Authenticator auth;
     @Override
     public URLStreamHandler createURLStreamHandler(String protocol) {
         if ("z".equals(protocol)) {
-            return new DGStreamHandler(this.auth);
+            return new DGStreamHandler();
         }
         return null;
     }
