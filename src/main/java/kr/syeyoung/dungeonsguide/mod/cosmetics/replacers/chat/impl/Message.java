@@ -18,16 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.impl;
 
+import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.ArrayList;
@@ -46,31 +45,34 @@ public class Message implements IChatReplacer {
 
     @Override
     public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
-        List<IChatComponent> iChatComponents = new ArrayList<>( event.message.getSiblings() );
+        List<IChatComponent> iChatComponents = new ArrayList<>(event.message.getSiblings());
         List<IChatComponent> hasMsg = new ArrayList<>();
         for (IChatComponent sibling : iChatComponents) {
-            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/msg")) {
+            if (ReplacerUtil.isNotNullAndDoesStartWith(sibling, "/msg")) {
                 hasMsg.add(sibling);
             }
         }
         iChatComponents.removeAll(hasMsg);
 
         ChatComponentText chatComponents = new ChatComponentText("");
+
         chatComponents.getSiblings().addAll(hasMsg);
+
         ChatStyle origStyle = hasMsg.get(0).getChatStyle();
         String name = chatComponents.getFormattedText();
 
 
         String[] splited = name.split(" ");
-        String actualName = splited[splited.length-1];
+        String actualName = splited[splited.length - 1];
 
         List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(actualName).toLowerCase());
         if (cDatas == null || splited.length > 2) return;
-        CosmeticData color=null, prefix=null;
+
+        CosmeticData color = null;
+        CosmeticData prefix = null;
         for (ActiveCosmetic activeCosmetic : cDatas) {
             CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-            if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
+            if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
                 color = cosmeticData;
             } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
                 prefix = cosmeticData;
@@ -78,17 +80,23 @@ public class Message implements IChatReplacer {
         }
 
         String building = "";
-        if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
-        if (splited.length == 2) building += splited[0] +" ";
+        if (prefix != null) {
+            building += prefix.getData().replace("&", "§") + " ";
+        }
+
+        if (splited.length == 2) {
+            building += splited[0] + " ";
+        }
 
         if (color != null) {
             String nick = splited[1];
-            building += color.getData().replace("&","§");
+            building += color.getData().replace("&", "§");
             boolean foundLegitChar = false;
             boolean foundColor = false;
             for (char c : nick.toCharArray()) {
                 if (foundColor) {
-                    foundColor = false; continue;
+                    foundColor = false;
+                    continue;
                 }
                 if (c == '§' && !foundLegitChar) foundColor = true;
                 else {
@@ -97,7 +105,7 @@ public class Message implements IChatReplacer {
                 }
             }
         } else {
-            building += splited[1] ;
+            building += splited[1];
         }
 
         ChatComponentText chatComponents1 = new ChatComponentText(building);

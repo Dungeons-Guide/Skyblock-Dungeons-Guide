@@ -17,11 +17,23 @@ public class ChatReplacer extends Replacer {
         super(m);
 
         this.iChatReplacers = new ArrayList<>();
+
+        // dg's "click to view profile"
         iChatReplacers.add(new ViewProfile());
+
+        // dg's pv
         iChatReplacers.add(new PV());
+
+        // global chat
         iChatReplacers.add(new SocialOptions());
+
+        // coop
         iChatReplacers.add(new Coop());
+
+        // private message
         iChatReplacers.add(new Message());
+
+        // chat that you typed
         iChatReplacers.add(new SelfChat());
     }
 

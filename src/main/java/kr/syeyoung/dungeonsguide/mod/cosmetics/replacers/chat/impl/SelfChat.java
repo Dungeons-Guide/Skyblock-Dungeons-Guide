@@ -28,22 +28,28 @@ import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.util.ArrayList;
 import java.util.List;
 
 public class SelfChat implements IChatReplacer {
+    Logger logger = LogManager.getLogger("SelfChat");
     @Override
     public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
-            if (sibling.getUnformattedTextForChat().startsWith(": ")) return true;
+            logger.info("sibling.getUnformattedTextForChat() {}", sibling.getUnformattedTextForChat());
+            if (sibling.getUnformattedTextForChat().startsWith(": ")) {
+                logger.info("isApplyable() {}", sibling.getUnformattedTextForChat());
+                return true;
+            }
         }
         return false;
     }
 
     @Override
     public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
         List<IChatComponent> iChatComponents = new ArrayList<>( event.message.getSiblings() );
         List<IChatComponent> hasMsg = new ArrayList<>();
         for (IChatComponent sibling : iChatComponents) {

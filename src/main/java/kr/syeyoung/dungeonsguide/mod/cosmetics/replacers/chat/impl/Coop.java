@@ -42,7 +42,7 @@ public class Coop implements IChatReplacer {
 
     @Override
     public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
+
         List<IChatComponent> iChatComponents = new ArrayList<>(event.message.getSiblings());
         IChatComponent sibling = iChatComponents.get(0);
         iChatComponents.remove(sibling);

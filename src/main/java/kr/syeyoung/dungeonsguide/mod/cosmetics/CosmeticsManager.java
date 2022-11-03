@@ -68,7 +68,7 @@ public class CosmeticsManager {
         this.chatReplacer = new ChatReplacer(this);
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         chatReplacer.consumeEvent(clientChatReceivedEvent);
     }
