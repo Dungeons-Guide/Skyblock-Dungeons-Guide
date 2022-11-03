@@ -58,10 +58,14 @@ public class DungeonSecret implements DungeonMechanic {
             IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
             if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
-                if (chest.numPlayersUsing > 0) {
-                    dungeonRoom.getRoomContext().put("c-" + pos.toString(), 2);
+                if(chest != null){
+                    if (chest.numPlayersUsing > 0) {
+                        dungeonRoom.getRoomContext().put("c-" + pos.toString(), 2);
+                    } else {
+                        dungeonRoom.getRoomContext().put("c-" + pos.toString(), 1);
+                    }
                 } else {
-                    dungeonRoom.getRoomContext().put("c-" + pos.toString(), 1);
+                    System.out.println("Expected TileEntityChest at " + pos + " to not be null");
                 }
             }
         } else if (secretType == SecretType.ESSENCE) {
