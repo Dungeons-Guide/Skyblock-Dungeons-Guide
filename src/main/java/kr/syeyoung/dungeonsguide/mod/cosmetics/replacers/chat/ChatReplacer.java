@@ -19,19 +19,19 @@ public class ChatReplacer extends Replacer {
         this.iChatReplacers = new ArrayList<>();
 
         // dg's "click to view profile"
-        iChatReplacers.add(new ViewProfile());
+        iChatReplacers.add(new LobbyJoinMessages());
 
         // global chat
-        iChatReplacers.add(new SocialOptions());
+        iChatReplacers.add(new PublicChat());
 
         // coop
-        iChatReplacers.add(new Coop());
+        iChatReplacers.add(new CoopChat());
 
         // private message
-        iChatReplacers.add(new Message());
+        iChatReplacers.add(new PrivateMessage());
 
         // chat that you typed
-        iChatReplacers.add(new SelfChat());
+        iChatReplacers.add(new Chat());
     }
 
     @Override

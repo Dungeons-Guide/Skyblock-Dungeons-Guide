@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class SocialOptions implements IChatReplacer {
+public class PublicChat implements IChatReplacer {
     @Nullable
     static CosmeticData getPrefix(@Nullable List<ActiveCosmetic> activeCosmeticsList, @NotNull CosmeticsManager cosmeticsManager) {
         if (activeCosmeticsList == null) return null;

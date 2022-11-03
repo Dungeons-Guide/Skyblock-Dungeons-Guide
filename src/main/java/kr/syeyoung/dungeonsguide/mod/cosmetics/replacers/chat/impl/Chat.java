@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -34,7 +33,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelfChat implements IChatReplacer {
+public class Chat implements IChatReplacer {
     Logger logger = LogManager.getLogger("SelfChat");
     @Override
     public boolean isApplyable(ClientChatReceivedEvent event) {

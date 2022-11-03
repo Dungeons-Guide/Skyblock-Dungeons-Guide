@@ -25,13 +25,12 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class Coop implements IChatReplacer {
+public class CoopChat implements IChatReplacer {
     @Override
     public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {

@@ -32,7 +32,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class Message implements IChatReplacer {
+public class PrivateMessage implements IChatReplacer {
     @Override
     public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
