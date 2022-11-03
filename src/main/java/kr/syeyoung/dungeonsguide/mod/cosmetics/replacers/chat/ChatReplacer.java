@@ -21,9 +21,6 @@ public class ChatReplacer extends Replacer {
         // dg's "click to view profile"
         iChatReplacers.add(new ViewProfile());
 
-        // dg's pv
-        iChatReplacers.add(new PV());
-
         // global chat
         iChatReplacers.add(new SocialOptions());
 

@@ -145,7 +145,12 @@ public class SocialOptions implements IChatReplacer {
 
     @Override
     public boolean isApplyable(ClientChatReceivedEvent event) {
-        return ReplacerUtil.isNotNullAndDoesStartWith(event.message, "/socialoptions");
+        if (ReplacerUtil.isNotNullAndDoesStartWith(event.message, "/socialoptions")) return true;
+
+        // Bug 289 - mod conflict with NEU (Replaces /socialoptions with /pv)
+        if (ReplacerUtil.isNotNullAndDoesStartWith(event.message, "/pv")) return true;
+
+        return false;
     }
 
     @Override
