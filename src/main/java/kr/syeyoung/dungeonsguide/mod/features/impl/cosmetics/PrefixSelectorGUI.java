@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import net.minecraft.client.Minecraft;

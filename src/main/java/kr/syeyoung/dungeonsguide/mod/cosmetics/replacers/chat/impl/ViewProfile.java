@@ -16,12 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.cosmetics.chatreplacers;
+package kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.impl;
 
-import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -31,20 +32,20 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatReplacerViewProfile implements IChatReplacer {
+public class ViewProfile implements IChatReplacer {
     @Override
-    public boolean isAcceptable(ClientChatReceivedEvent event) {
+    public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
-            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile ")) return true;
+            if (ReplacerUtil.isNotNullAndDoesStartWith(sibling,"/viewprofile ")) return true;
         }
         return false;
     }
 
     @Override
-    public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
+    public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
         List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
         for (IChatComponent sibling : event.message.getSiblings()) {
-            if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile ")) {
+            if (ReplacerUtil.isNotNullAndDoesStartWith(sibling,"/viewprofile ")) {
                 String uid = sibling.getChatStyle().getChatClickEvent().getValue().split(" ")[1];
                 // TODO: make cosmeticsManager handle usernames instead of uuids
                 // apperantly now hypixels /viewprofile command gives the nickname
@@ -81,17 +82,17 @@ public class ChatReplacerViewProfile implements IChatReplacer {
                     if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastprefix = lastValidNickname -1;
                     else lastprefix = lastValidNickname;
 
-                    String building = "";
+                    StringBuilder building = new StringBuilder();
                     for (int i = 0; i < lastprefix; i++) {
-                        building += splitInto[i] +" ";
+                        building.append(splitInto[i]).append(" ");
                     }
-                    if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
+                    if (prefix != null) building.append(prefix.getData().replace("&", "§")).append(" ");
                     for (int i = lastprefix; i < lastValidNickname; i++) {
-                        building += splitInto[i] +" ";
+                        building.append(splitInto[i]).append(" ");
                     }
                     if (color != null) {
                         String nick = splitInto[lastValidNickname];
-                        building += color.getData().replace("&","§");
+                        building.append(color.getData().replace("&", "§"));
                         boolean foundLegitChar = false;
                         boolean foundColor = false;
                         for (char c : nick.toCharArray()) {
@@ -101,20 +102,20 @@ public class ChatReplacerViewProfile implements IChatReplacer {
                             if (c == '§' && !foundLegitChar) foundColor = true;
                             else {
                                 foundLegitChar = true;
-                                building += c;
+                                building.append(c);
                             }
                         }
-                        building += " ";
+                        building.append(" ");
                     } else {
-                        building += splitInto[lastValidNickname] + " ";
+                        building.append(splitInto[lastValidNickname]).append(" ");
                     }
                     for (int i = lastValidNickname+1; i<splitInto.length; i++) {
-                        building += splitInto[i] + " ";
+                        building.append(splitInto[i]).append(" ");
                     }
                     if (sibling.getUnformattedTextForChat().charAt(sibling.getUnformattedText().length()-1) != ' ')
-                        building = building.substring(0, building.length() - 1);
+                        building = new StringBuilder(building.substring(0, building.length() - 1));
 
-                    ChatComponentText newChatCompText = new ChatComponentText(building);
+                    ChatComponentText newChatCompText = new ChatComponentText(building.toString());
                     newChatCompText.setChatStyle(sibling.getChatStyle());
                     replaceMents.add(new Tuple<>(sibling, newChatCompText));
                     break;

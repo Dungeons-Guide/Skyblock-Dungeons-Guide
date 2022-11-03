@@ -16,10 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.cosmetics;
+package kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.tab;
 
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
@@ -30,45 +32,19 @@ import net.minecraft.util.IChatComponent;
 import java.util.List;
 
 public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
+    private IChatComponent displayName;
+    private String unformattedDisplayText;
+    private String playerNameWithoutColor;
     public CustomNetworkPlayerInfo(GameProfile gameProfile) {
         super(gameProfile);
     }
-
     public CustomNetworkPlayerInfo(S38PacketPlayerListItem.AddPlayerData playerData) {
         super(playerData);
         setDisplayName(super.getDisplayName());
     }
 
-
-    private IChatComponent displayName;
-    private String unformattedDisplayText;
-    private String playerNameWithoutColor;
-
     @Override
-    public void setDisplayName(IChatComponent displayNameIn) {
-        displayName = displayNameIn;
-        if (displayName == null) {
-            unformattedDisplayText = null;
-            return;
-        }
-
-        unformattedDisplayText = displayName.getUnformattedTextForChat();
-
-
-        playerNameWithoutColor = "";
-        for (String s : unformattedDisplayText.split(" ")) {
-            String strippped = TextUtils.stripColor(s);
-            if (strippped.startsWith("[")) {
-                continue;
-            }
-            playerNameWithoutColor = strippped;
-            break;
-        }
-    }
-
-    public IChatComponent getDisplayName()
-    {
-
+    public IChatComponent getDisplayName() {
         String rawPlayerString;
         String actualName;
         List<ActiveCosmetic> activeCosmetics;
@@ -92,7 +68,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
 
         if (activeCosmetics == null) return displayName;
-        CosmeticData color=null;
+        CosmeticData color = null;
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
             CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
@@ -103,6 +79,28 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
             return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
         } else {
             return new ChatComponentText(rawPlayerString);
+        }
+    }
+
+    @Override
+    public void setDisplayName(IChatComponent displayNameIn) {
+        displayName = displayNameIn;
+        if (displayName == null) {
+            unformattedDisplayText = null;
+            return;
+        }
+
+        unformattedDisplayText = displayName.getUnformattedTextForChat();
+
+
+        playerNameWithoutColor = "";
+        for (String s : unformattedDisplayText.split(" ")) {
+            String strippped = TextUtils.stripColor(s);
+            if (strippped.startsWith("[")) {
+                continue;
+            }
+            playerNameWithoutColor = strippped;
+            break;
         }
     }
 }

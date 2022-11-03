@@ -16,11 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.cosmetics;
+package kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.impl;
 
+import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-public interface IChatReplacer {
-    boolean isAcceptable(ClientChatReceivedEvent event);
-    void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager);
+public class SocialOptions implements IChatReplacer {
+    @Override
+    public boolean isApplyable(ClientChatReceivedEvent event) {
+        if (ReplacerUtil.isNotNullAndDoesStartWith(event.message,"/socialoptions"))
+            return true;
+        return false;
+    }
+
+    @Override
+    public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
+        if (ReplacerUtil.isNotNullAndDoesStartWith(event.message,"/socialoptions")) {
+            ReplacerUtil.chatsomethig(event, cosmeticsManager);
+        }
+
+    }
 }

@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.cosmetics.chatreplacers;
+package kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.impl;
 
-import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
@@ -32,9 +32,9 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatReplacerChatByMe implements IChatReplacer {
+public class SelfChat implements IChatReplacer {
     @Override
-    public boolean isAcceptable(ClientChatReceivedEvent event) {
+    public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
             if (sibling.getUnformattedTextForChat().startsWith(": ")) return true;
         }
@@ -42,7 +42,7 @@ public class ChatReplacerChatByMe implements IChatReplacer {
     }
 
     @Override
-    public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
+    public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
         List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
         List<IChatComponent> iChatComponents = new ArrayList<>( event.message.getSiblings() );
         List<IChatComponent> hasMsg = new ArrayList<>();

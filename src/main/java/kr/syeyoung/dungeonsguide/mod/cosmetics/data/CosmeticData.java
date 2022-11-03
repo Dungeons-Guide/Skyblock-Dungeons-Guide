@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.mod.cosmetics;
+package kr.syeyoung.dungeonsguide.mod.cosmetics.data;
 
 
 import lombok.Data;
