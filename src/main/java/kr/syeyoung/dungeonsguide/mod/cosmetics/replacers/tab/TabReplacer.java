@@ -23,14 +23,16 @@ public class TabReplacer extends Replacer {
         PlayerListItemPacketEvent packetPlayerListItem = (PlayerListItemPacketEvent) e;
 
         S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
-        if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-            if (Minecraft.getMinecraft().getNetHandler() == null) return;
 
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                playerInfoMap.remove(entry.getProfile().getId());
-                playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
-            }
+        if (asd.getAction() != S38PacketPlayerListItem.Action.ADD_PLAYER) return;
+        if (Minecraft.getMinecraft().getNetHandler() == null) return;
+
+        Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i", "i");
+
+        for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
+            playerInfoMap.remove(entry.getProfile().getId());
+            playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
         }
+
     }
 }
