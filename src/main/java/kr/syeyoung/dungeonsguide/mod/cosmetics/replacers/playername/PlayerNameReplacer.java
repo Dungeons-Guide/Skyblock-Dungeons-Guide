@@ -25,10 +25,13 @@ public class PlayerNameReplacer extends Replacer {
         CosmeticData prefix = null;
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
             CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-            if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
-                color = cosmeticData;
-            } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                prefix = cosmeticData;
+            if (cosmeticData != null){
+                if (cosmeticData.getCosmeticType().equals("color")) {
+                    color = cosmeticData;
+                }
+                if (cosmeticData.getCosmeticType().equals("prefix")) {
+                    prefix = cosmeticData;
+                }
             }
         }
 
