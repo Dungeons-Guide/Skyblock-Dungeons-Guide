@@ -1,9 +1,12 @@
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.google.common.base.Throwables;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.Main;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.NestedCategory;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
@@ -27,8 +30,13 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.*;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockHalfStoneSlab;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.gui.GuiButton;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.GuiTextField;
+import net.minecraft.client.resources.I18n;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -37,9 +45,13 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Session;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -47,11 +59,14 @@ import javax.crypto.NoSuchPaddingException;
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
 import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.*;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class CommandDgDebug extends CommandBase {
@@ -432,6 +447,158 @@ public class CommandDgDebug extends CommandBase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if ("listcosmetics".equals(arg)){
+            DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticMap().forEach((uuid, activeCosmetic) ->{
+                System.out.println("OWNER UUID: " + uuid);
+                System.out.println("   " + activeCosmetic);
+            });
+        } else if ("mockcosmetics".equals(arg)){
+            toOpen = new GuiScreen() {
+
+
+                private GuiTextField activityUID;
+                private GuiTextField playerUID;
+                private GuiTextField cosmeticUID;
+                private GuiTextField username;
+
+                @Override
+                public void initGui() {
+                    System.out.println("Init");
+                    this.buttonList.add(
+                            new GuiButton(
+                                    106,
+                                    this.width / 2 - 155,
+                                    this.height / 6 + 72 - 6,
+                                    this.fontRendererObj.getStringWidth("add") + 5,
+                                    this.fontRendererObj.FONT_HEIGHT + 2,
+                                    "add"));
+
+                    this.buttonList.add(
+                            new GuiButton(
+                                    105,
+                                    this.width / 2 - 155,
+                                    this.height / 6 + 80 - 6,
+                                    this.fontRendererObj.getStringWidth("an p") + 5,
+                                    this.fontRendererObj.FONT_HEIGHT + 2,
+                                    "an p"));
+
+                    this.activityUID = new GuiTextField(2, this.fontRendererObj, this.width / 2 - 68, this.height / 2 - 10, 137, 20);
+                    activityUID.setMaxStringLength(500);
+                    activityUID.setCanLoseFocus(true);
+                    activityUID.setText("activityUID");
+                    activityUID.setEnabled(false);
+
+                    this.playerUID = new GuiTextField(2, this.fontRendererObj, this.width / 2 - 68, this.height / 2 - 30, 137, 20);
+                    playerUID.setMaxStringLength(500);
+                    playerUID.setCanLoseFocus(true);
+                    playerUID.setText("playerUID");
+                    playerUID.setEnabled(false);
+
+
+                    this.cosmeticUID = new GuiTextField(2, this.fontRendererObj, this.width / 2 - 68, this.height / 2 - 50, 137, 20);
+                    cosmeticUID.setMaxStringLength(500);
+                    cosmeticUID.setCanLoseFocus(true);
+                    cosmeticUID.setText("cosmeticUID");
+                    cosmeticUID.setEnabled(false);
+
+                    this.username = new GuiTextField(2, this.fontRendererObj, this.width / 2 - 68, this.height / 2 - 70, 137, 20);
+                    username.setMaxStringLength(500);
+                    username.setCanLoseFocus(true);
+                    username.setText("username");
+                    username.setEnabled(false);
+
+
+
+                    super.initGui();
+                }
+
+                @Override
+                protected void actionPerformed(GuiButton button) throws IOException {
+                    if(button.id == 105){
+                        activityUID.setText("98e445dc-650f-49e1-ba6f-b12086533cf7");
+
+                        cosmeticUID.setText("dd99fea2-1f18-49ee-92ae-6e00a7a5b75f");
+                    }
+                    if (button.id == 106) {
+                        DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticMap().entrySet()
+                                .removeIf(uuid -> uuid.getKey().equals(UUID.fromString(playerUID.getText())));
+
+
+                        ActiveCosmetic cosmeticData = new ActiveCosmetic();
+                        cosmeticData.setActivityUID(UUID.fromString(activityUID.getText()));
+                        cosmeticData.setPlayerUID(UUID.fromString(playerUID.getText()));
+                        cosmeticData.setCosmeticData(UUID.fromString(cosmeticUID.getText()));
+                        cosmeticData.setUsername(username.getText());
+
+                        DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticMap().put(cosmeticData.getActivityUID(), cosmeticData);
+
+                        try {
+                            Method method = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getClass().getDeclaredMethod("rebuildCaches");
+                            method.setAccessible(true);
+                            method.invoke(DungeonsGuide.getDungeonsGuide().getCosmeticsManager());
+                        } catch (NoSuchMethodException | InvocationTargetException | IllegalAccessException e) {
+                            e.printStackTrace();
+                        }
+                    }
+                    super.actionPerformed(button);
+                }
+
+
+                @Override
+                protected void mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+
+                    this.cosmeticUID.mouseClicked(mouseX, mouseY, mouseButton);
+                    this.playerUID.mouseClicked(mouseX, mouseY, mouseButton);
+                    this.activityUID.mouseClicked(mouseX, mouseY, mouseButton);
+                    this.username.mouseClicked(mouseX, mouseY, mouseButton);
+
+                    this.cosmeticUID.setEnabled(cosmeticUID.isFocused());
+                    this.playerUID.setEnabled(playerUID.isFocused());
+                    this.activityUID.setEnabled(activityUID.isFocused());
+                    this.username.setEnabled(username.isFocused());
+
+
+                    super.mouseClicked(mouseX, mouseY, mouseButton);
+                }
+
+                @Override
+                protected void keyTyped(char typedChar, int keyCode) throws IOException {
+
+                    this.cosmeticUID.textboxKeyTyped(typedChar, keyCode);
+                    this.playerUID.textboxKeyTyped(typedChar, keyCode);
+                    this.activityUID.textboxKeyTyped(typedChar, keyCode);
+                    this.username.textboxKeyTyped(typedChar, keyCode);
+
+                    this.cosmeticUID.setEnabled(cosmeticUID.isFocused());
+                    this.playerUID.setEnabled(playerUID.isFocused());
+                    this.activityUID.setEnabled(activityUID.isFocused());
+                    this.username.setEnabled(username.isFocused());
+
+
+                    super.keyTyped(typedChar, keyCode);
+                }
+
+                @Override
+                public void drawScreen(int mouseX, int mouseY, float partialTicks) {
+                    this.drawDefaultBackground();
+
+                    this.cosmeticUID.drawTextBox();
+                    this.playerUID.drawTextBox();
+                    this.activityUID.drawTextBox();
+                    this.username.drawTextBox();
+
+
+
+
+                    super.drawScreen(mouseX, mouseY, partialTicks);
+                }
+
+            };
+
+
+
+
+
         } else {
             sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
@@ -439,6 +606,20 @@ public class CommandDgDebug extends CommandBase {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+        }
+    }
+
+    GuiScreen toOpen;
+
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent e) {
+        try {
+            if (toOpen != null && e.phase == TickEvent.Phase.START) {
+                Minecraft.getMinecraft().displayGuiScreen(toOpen);
+                toOpen = null;
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
     }
 
