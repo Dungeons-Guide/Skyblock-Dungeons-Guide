@@ -23,93 +23,74 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.List;
 
 public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
+    private IChatComponent name;
+
     public CustomNetworkPlayerInfo(GameProfile gameProfile) {
         super(gameProfile);
     }
+
     public CustomNetworkPlayerInfo(S38PacketPlayerListItem.AddPlayerData playerData) {
         super(playerData);
         setDisplayName(super.getDisplayName());
     }
 
-    private IChatComponent displayName;
-    private String unformattedDisplayText;
-    private String playerNameWithoutColor;
-
-    @Override
-    public void setDisplayName(IChatComponent displayNameIn) {
-        displayName = displayNameIn;
-        if (displayName == null) {
-            unformattedDisplayText = null;
-            return;
-        }
-//        System.out.println("CustomNetworkPlayerInfo display name " + displayName);
-
-        unformattedDisplayText = displayName.getUnformattedTextForChat();
-
-//        System.out.println("CustomNetworkPlayerInfo unformated name " + unformattedDisplayText);
-
-        playerNameWithoutColor = "";
-        for (String s : unformattedDisplayText.split(" ")) {
-            String strippped = TextUtils.stripColor(s);
-            if (strippped.startsWith("[")) {
-                continue;
-            }
-            if(!strippped.equals("")){
-                System.out.println("CustomNetworkPlayerInfo playerNameWithoutColor " + strippped);
-            }
-            playerNameWithoutColor = strippped;
-            break;
-        }
-    }
-
     @Override
     public IChatComponent getDisplayName() {
-        String rawPlayerString;
-        String actualName;
-        List<ActiveCosmetic> activeCosmetics;
+        return name;
+    }
 
-        CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
+    /**
+     *  playerNetworkInfo chatComponent when logged:
+     *   TextComponent
+     *   {
+     *       text='',
+     *       siblings=[
+     *               TextComponent{text='[', siblings=[], style=Style{hasParent=true, color=§8, blah=null}},
+     *               TextComponent{text='88', siblings=[], style=Style{hasParent=true, color=§a, blah=null}},
+     *               TextComponent{text='] ', siblings=[], style=Style{hasParent=true, color=§8, blah=null}},
+     *               TextComponent{text='Kokoniara', siblings=[], style=Style{hasParent=true, color=§7, blah=null}}
+     *       ],
+     *       style=Style{
+     *               hasParent=false, blah=null
+     *       }
+     *   }
+     */
+    @Override
+    public void setDisplayName(IChatComponent displayNameIn) {
+        name = displayNameIn;
+        if (name == null) return;
+        if (name.getSiblings().isEmpty()) return;
 
-        // in case that the set player name is not called we do this
-        if (playerNameWithoutColor != null) {
-            activeCosmetics = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(playerNameWithoutColor.toLowerCase());
-            rawPlayerString = unformattedDisplayText;
-            actualName = this.playerNameWithoutColor;
-        } else {
-            rawPlayerString = ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
-            actualName = "";
-            for (String s : rawPlayerString.split(" ")) {
-                String strippped = TextUtils.stripColor(s);
-                if (strippped.startsWith("[")) continue;
-                actualName = strippped;
-                break;
-            }
-            activeCosmetics = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
-        }
+        IChatComponent iChatComponent = name.getSiblings().get(0);
+        if (iChatComponent == null) return;
 
+        String firstComponentText = iChatComponent.getUnformattedTextForChat();
+        if (firstComponentText.contains("Ends")) return;
+        if (firstComponentText.contains("Starts")) return;
+        if (firstComponentText.contains("         ")) return;
 
-        if (activeCosmetics == null) return displayName;
-        CosmeticData color = null;
-        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
-            CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-            if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
-        }
+        if (name.getSiblings().size() <= 3) return;
+
+        String cleanName = TextUtils.stripColor(name.getSiblings().get(3).getUnformattedText());
+
+        CosmeticsManager cm = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
+        List<ActiveCosmetic> activeCosmts = ReplacerUtil.getActiveCosmeticsFromUsername(cleanName.trim(), cm);
+
+        CosmeticData color = ReplacerUtil.getColorCosmeticData(activeCosmts, cm);
 
         if (color != null) {
-            String coloredName = color.getData() + actualName;
-            return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
-        } else {
-            return new ChatComponentText(rawPlayerString);
+            String colorCode = color.getData().replace("&", "§");
+            name.getSiblings().set(3, new ChatComponentText(colorCode + cleanName));
         }
     }
 }
