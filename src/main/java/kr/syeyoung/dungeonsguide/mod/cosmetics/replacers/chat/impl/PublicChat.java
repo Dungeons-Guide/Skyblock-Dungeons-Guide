@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;
@@ -34,43 +33,13 @@ import java.util.Arrays;
 import java.util.List;
 
 public class PublicChat implements IChatReplacer {
-    @Nullable
-    static CosmeticData getPrefix(@Nullable List<ActiveCosmetic> activeCosmeticsList, @NotNull CosmeticsManager cosmeticsManager) {
-        if (activeCosmeticsList == null) return null;
-
-        for (ActiveCosmetic activeCosmetic : activeCosmeticsList) {
-            CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-            if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                return cosmeticData;
-            }
-        }
-        return null;
-    }
-
-    @Nullable
-    static CosmeticData getColor(@Nullable List<ActiveCosmetic> activeCosmeticsList, @NotNull CosmeticsManager cosmeticsManager) {
-        if (activeCosmeticsList == null) return null;
-
-        for (ActiveCosmetic activeCosmetic : activeCosmeticsList) {
-            CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-            if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
-                return cosmeticData;
-            }
-        }
-        return null;
-    }
-
-    static List<ActiveCosmetic> getActiveCosmeticsFromUsername(String username, CosmeticsManager cosmeticsManager) {
-        username = username.toLowerCase();
-        return cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(username);
-    }
 
     static void yes(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
 
-        List<ActiveCosmetic> activeCosmeticList = getActiveCosmeticsFromUsername(event.message.getChatStyle().getChatClickEvent().getValue().split(" ")[1], cosmeticsManager);
+        List<ActiveCosmetic> activeCosmeticList = ReplacerUtil.getActiveCosmeticsFromUsername(event.message.getChatStyle().getChatClickEvent().getValue().split(" ")[1], cosmeticsManager);
 
-        CosmeticData color = getColor(activeCosmeticList, cosmeticsManager);
-        CosmeticData prefix = getPrefix(activeCosmeticList, cosmeticsManager);
+        CosmeticData color = ReplacerUtil.getColorCosmeticData(activeCosmeticList, cosmeticsManager);
+        CosmeticData prefix = ReplacerUtil.getPrefixCosmeticData(activeCosmeticList, cosmeticsManager);
 
         String building = transformWithCosmetics(event.message.getUnformattedTextForChat(), color, prefix);
 

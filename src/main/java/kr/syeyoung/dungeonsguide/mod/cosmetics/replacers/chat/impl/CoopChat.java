@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -63,26 +64,22 @@ public class CoopChat implements IChatReplacer {
             lastprefix = lastValidNickname - 1;
         else lastprefix = lastValidNickname;
 
+        List<ActiveCosmetic> cDatas = ReplacerUtil.getActiveCosmeticsFromUsername(TextUtils.stripColor(splitInto[lastValidNickname].substring(0, splitInto[lastValidNickname].length() - 1)).toLowerCase(), cosmeticsManager);
 
-        List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(splitInto[lastValidNickname].substring(0, splitInto[lastValidNickname].length() - 1)).toLowerCase());
+        if(cDatas == null) return;
 
-        if (cDatas == null) return;
+        CosmeticData color = ReplacerUtil.getColorCosmeticData(cDatas, cosmeticsManager);
+        CosmeticData prefix = ReplacerUtil.getPrefixCosmeticData(cDatas, cosmeticsManager);
 
-        CosmeticData color = null, prefix = null;
-        for (ActiveCosmetic activeCosmetic : cDatas) {
-            CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-            if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
-                color = cosmeticData;
-            } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                prefix = cosmeticData;
-            }
-        }
+
 
         StringBuilder building = new StringBuilder();
         for (int i = 0; i < lastprefix; i++) {
             building.append(splitInto[i]).append(" ");
         }
-        if (prefix != null) building.append(prefix.getData().replace("&", "§")).append(" ");
+        if (prefix != null) {
+            building.append(prefix.getData().replace("&", "§")).append(" ");
+        }
         for (int i = lastprefix; i < lastValidNickname; i++) {
             building.append(splitInto[i]).append(" ");
         }
@@ -109,8 +106,9 @@ public class CoopChat implements IChatReplacer {
         for (int i = lastValidNickname + 1; i < splitInto.length; i++) {
             building.append(splitInto[i]).append(" ");
         }
-        if (sibling.getUnformattedTextForChat().charAt(sibling.getUnformattedText().length() - 1) != ' ')
+        if (sibling.getUnformattedTextForChat().charAt(sibling.getUnformattedText().length() - 1) != ' ') {
             building = new StringBuilder(building.substring(0, building.length() - 1));
+        }
 
         ChatComponentText chatComponents1 = new ChatComponentText(building.toString());
         chatComponents1.setChatStyle(sibling.getChatStyle());

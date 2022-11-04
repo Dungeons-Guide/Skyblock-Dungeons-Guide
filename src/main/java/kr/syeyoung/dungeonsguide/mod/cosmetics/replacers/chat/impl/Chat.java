@@ -38,9 +38,7 @@ public class Chat implements IChatReplacer {
     @Override
     public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
-            logger.info("sibling.getUnformattedTextForChat() {}", sibling.getUnformattedTextForChat());
             if (sibling.getUnformattedTextForChat().startsWith(": ")) {
-                logger.info("isApplyable() {}", sibling.getUnformattedTextForChat());
                 return true;
             }
         }
