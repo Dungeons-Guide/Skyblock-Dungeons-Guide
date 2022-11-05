@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
@@ -59,6 +60,8 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -333,29 +336,49 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
     }
 
+    Logger logger = LogManager.getLogger("GeneralRoomProcessor");
+
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
-        if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && FeatureRegistry.SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
+
+        if (FeatureRegistry.SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
+            if(!FeatureRegistry.SECRET_NEXT_KEY.isEnabled()) return;
             searchForNextTarget();
-        } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
+            return;
+        }
+
+        if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey()) {
+            if(!FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) return;
+
             ActionRoute actionRoute = getBestFit(0);
-            // actually do force refresh because of force freeze pathfind
-            if (actionRoute.getCurrentAction() instanceof ActionMove) {
-                ActionMove ac = (ActionMove) actionRoute.getCurrentAction();
-                ac.forceRefresh(getDungeonRoom());
-            } else if (actionRoute.getCurrentAction() instanceof ActionMoveNearestAir) {
-                ActionMoveNearestAir ac = (ActionMoveNearestAir) actionRoute.getCurrentAction();
-                ac.forceRefresh(getDungeonRoom());
-            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMove) {
-                ((ActionMove)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
-            } else if (actionRoute.getCurrent() >= 1 && actionRoute.getActions().get(actionRoute.getCurrent()-1) instanceof ActionMoveNearestAir) {
-                ((ActionMoveNearestAir)actionRoute.getActions().get(actionRoute.getCurrent()-1)).forceRefresh(dungeonRoom);
+            AbstractAction currentAction = actionRoute.getCurrentAction();
+            if (currentAction == null) {
+                logger.error("currentAction was null after SECRET_CREATE_REFRESH_LINE keypress");
+                return;
             }
 
+            if (currentAction instanceof ActionMove) {
+                ActionMove ac = (ActionMove) currentAction;
+                ac.forceRefresh(getDungeonRoom());
+            } else if (currentAction instanceof ActionMoveNearestAir) {
+                ActionMoveNearestAir ac = (ActionMoveNearestAir) currentAction;
+                ac.forceRefresh(getDungeonRoom());
+            } else if (actionRoute.getCurrent() >= 1) {
+                AbstractAction abstractAction = actionRoute.getActions().get(actionRoute.getCurrent() - 1);
+
+                if (abstractAction instanceof ActionMove) {
+                    ((ActionMove) abstractAction).forceRefresh(dungeonRoom);
+                }
+
+                if ( abstractAction instanceof ActionMoveNearestAir) {
+                    ((ActionMoveNearestAir) abstractAction).forceRefresh(dungeonRoom);
+                }
+            }
             if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isPathfind() && !actionRoute.getActionRouteProperties().isPathfind()) {
                 actionRoute.getActionRouteProperties().setPathfind(true);
                 actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
+
         }
     }
 
