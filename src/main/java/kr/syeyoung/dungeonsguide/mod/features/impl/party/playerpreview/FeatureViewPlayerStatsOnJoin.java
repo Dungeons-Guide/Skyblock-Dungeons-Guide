@@ -151,30 +151,6 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                     IChatComponent comp = new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile ")
                             .appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new HoverEventRenderPlayer(a.orElse(null)))));
 
-
-                    IChatComponent kickText = new ChatComponentText("  §cKICK").setChatStyle(
-                            new ChatStyle()
-                                    .setChatClickEvent(
-                                            new ClickEvent(ClickEvent.Action.RUN_COMMAND, "") {
-
-                                                boolean fuse = false;
-                                                @Override
-                                                public Action getAction() {
-                                                    if(!fuse) {
-                                                        ChatProcessor.INSTANCE.addToChatQueue("/p kick " + username, null, false);
-                                                        fuse = true;
-                                                    }
-
-                                                    return Action.RUN_COMMAND;
-                                                }
-                                            }
-                                    )
-                    );
-
-
-                    comp.appendSibling(kickText);
-
-
                     ChatTransmitter.addToQueue((ChatComponentText) comp);
 
 
