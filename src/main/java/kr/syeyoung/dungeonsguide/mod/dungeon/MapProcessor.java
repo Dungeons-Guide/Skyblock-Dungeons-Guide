@@ -119,7 +119,7 @@ public class MapProcessor {
         if (mapData != null) {
 
             if(processMapThroddle > 5 && !processlock){
-                processMapData(mapData.colors);
+                processMapData(mapData);
                 processMapThroddle = 0;
             }
             processMapThroddle++;
@@ -134,10 +134,11 @@ public class MapProcessor {
 
     }
 
-    private void processMapData(byte[] mapColorData) {
+    private void processMapData(MapData mapData) {
+        byte[] mapColorData = mapData.colors;
 
         // i just cant get this to work sad
-        if (isThereDifference(latestMapData.colors, mapColorData)) {
+        if (isThereDifference(latestMapData, mapColorData)) {
             context.createEvent(new DungeonMapUpdateEvent(mapColorData));
 
             es.execute(() -> {
@@ -403,7 +404,12 @@ public class MapProcessor {
         return unit1 == unit2 && unit2 == unit3 && unit1 != 0;
     }
 
-    public boolean isThereDifference(byte[] colorData, byte[] colorData1) {
+    public boolean isThereDifference(MapData latestMapData, byte[] colorData1) {
+        byte[] colorData = null;
+
+        if(latestMapData != null){
+            colorData = latestMapData.colors;
+        }
 
         return true;
 //        boolean equals = Arrays.equals(colorData1, colorData);
