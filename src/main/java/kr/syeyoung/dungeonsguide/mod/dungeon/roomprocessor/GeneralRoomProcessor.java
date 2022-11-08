@@ -339,6 +339,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
             searchForNextTarget();
         } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             ActionRoute actionRoute = getBestFit(0);
+            // Because no route found!
+            if (actionRoute == null) return;
             // actually do force refresh because of force freeze pathfind
             if (actionRoute.getCurrentAction() instanceof ActionMove) {
                 ActionMove ac = (ActionMove) actionRoute.getCurrentAction();
