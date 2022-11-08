@@ -16,24 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.cosmetics.chatreplacers;
+package kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.impl;
 
-import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.IChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ReplacerUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatReplacerCoop implements IChatReplacer {
+public class CoopChat implements IChatReplacer {
     @Override
-    public boolean isAcceptable(ClientChatReceivedEvent event) {
+    public boolean isApplyable(ClientChatReceivedEvent event) {
         for (IChatComponent sibling : event.message.getSiblings()) {
             if (sibling.getUnformattedTextForChat().startsWith("§bCo-op > ")) return true;
         }
@@ -41,10 +41,11 @@ public class ChatReplacerCoop implements IChatReplacer {
     }
 
     @Override
-    public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
-        List<IChatComponent> iChatComponents = new ArrayList<>( event.message.getSiblings() );
-        IChatComponent sibling = iChatComponents.get(0); iChatComponents.remove(sibling);
+    public void transformIntoCosmeticsForm(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
+
+        List<IChatComponent> iChatComponents = new ArrayList<>(event.message.getSiblings());
+        IChatComponent sibling = iChatComponents.get(0);
+        iChatComponents.remove(sibling);
 
 
         String[] splitInto = sibling.getUnformattedTextForChat().split(" ");
@@ -59,58 +60,57 @@ public class ChatReplacerCoop implements IChatReplacer {
         }
         if (lastValidNickname == -1) return;
 
-        if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastprefix = lastValidNickname -1;
+        if (lastValidNickname - 1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[')
+            lastprefix = lastValidNickname - 1;
         else lastprefix = lastValidNickname;
 
+        List<ActiveCosmetic> cDatas = ReplacerUtil.getActiveCosmeticsFromUsername(TextUtils.stripColor(splitInto[lastValidNickname].substring(0, splitInto[lastValidNickname].length() - 1)).toLowerCase(), cosmeticsManager);
 
-        List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(splitInto[lastValidNickname].substring(0, splitInto[lastValidNickname].length()-1)).toLowerCase());
+        if(cDatas == null) return;
 
-        if (cDatas == null) return;
+        CosmeticData color = ReplacerUtil.getColorCosmeticData(cDatas, cosmeticsManager);
+        CosmeticData prefix = ReplacerUtil.getPrefixCosmeticData(cDatas, cosmeticsManager);
 
-            CosmeticData color = null, prefix = null;
-            for (ActiveCosmetic activeCosmetic : cDatas) {
-                CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-                if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
-                    color = cosmeticData;
-                } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                    prefix = cosmeticData;
-                }
-            }
 
-        String building = "";
+
+        StringBuilder building = new StringBuilder();
         for (int i = 0; i < lastprefix; i++) {
-            building += splitInto[i] +" ";
+            building.append(splitInto[i]).append(" ");
         }
-        if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
+        if (prefix != null) {
+            building.append(prefix.getData().replace("&", "§")).append(" ");
+        }
         for (int i = lastprefix; i < lastValidNickname; i++) {
-            building += splitInto[i] +" ";
+            building.append(splitInto[i]).append(" ");
         }
         if (color != null) {
             String nick = splitInto[lastValidNickname];
-            building += color.getData().replace("&","§");
+            building.append(color.getData().replace("&", "§"));
             boolean foundLegitChar = false;
             boolean foundColor = false;
             for (char c : nick.toCharArray()) {
                 if (foundColor) {
-                    foundColor = false; continue;
+                    foundColor = false;
+                    continue;
                 }
                 if (c == '§' && !foundLegitChar) foundColor = true;
                 else {
                     foundLegitChar = true;
-                    building += c;
+                    building.append(c);
                 }
             }
-            building += " ";
+            building.append(" ");
         } else {
-            building += splitInto[lastValidNickname] + " ";
+            building.append(splitInto[lastValidNickname]).append(" ");
         }
-        for (int i = lastValidNickname+1; i<splitInto.length; i++) {
-            building += splitInto[i] + " ";
+        for (int i = lastValidNickname + 1; i < splitInto.length; i++) {
+            building.append(splitInto[i]).append(" ");
         }
-        if (sibling.getUnformattedTextForChat().charAt(sibling.getUnformattedText().length()-1) != ' ')
-            building = building.substring(0, building.length() - 1);
+        if (sibling.getUnformattedTextForChat().charAt(sibling.getUnformattedText().length() - 1) != ' ') {
+            building = new StringBuilder(building.substring(0, building.length() - 1));
+        }
 
-        ChatComponentText chatComponents1 = new ChatComponentText(building);
+        ChatComponentText chatComponents1 = new ChatComponentText(building.toString());
         chatComponents1.setChatStyle(sibling.getChatStyle());
         event.message.getSiblings().clear();
         event.message.getSiblings().add(chatComponents1);

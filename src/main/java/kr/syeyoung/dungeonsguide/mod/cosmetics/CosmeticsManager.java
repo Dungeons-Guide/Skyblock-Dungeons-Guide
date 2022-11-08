@@ -18,22 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
-import kr.syeyoung.dungeonsguide.mod.cosmetics.chatreplacers.*;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.chat.ChatReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.data.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.playername.PlayerNameReplacer;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.replacers.tab.TabReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.stomp.*;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetHandlerPlayClient;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -55,6 +54,34 @@ public class CosmeticsManager {
     private Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerNameLowerCase = new ConcurrentHashMap<>();
     @Getter
     private Set<String> perms = new CopyOnWriteArraySet<>();
+
+
+    private final ChatReplacer chatReplacer;
+    private final TabReplacer tabReplacer;
+    private final PlayerNameReplacer playerNameReplacer;
+
+    public CosmeticsManager() {
+        this.playerNameReplacer = new PlayerNameReplacer(this);
+
+        this.tabReplacer = new TabReplacer(this);
+
+        this.chatReplacer = new ChatReplacer(this);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
+    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
+        chatReplacer.consumeEvent(clientChatReceivedEvent);
+    }
+
+    @SubscribeEvent
+    public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
+        tabReplacer.consumeEvent(packetPlayerListItem);
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST)
+    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
+        playerNameReplacer.consumeEvent(nameFormat);
+    }
 
     public void requestActiveCosmetics() {
         StompManager.getInstance().send(new StompPayload()
@@ -82,6 +109,7 @@ public class CosmeticsManager {
                 .payload(cosmetic.getId().toString())
         );
     }
+
     public void removeCosmetic(ActiveCosmetic activeCosmetic) {
         StompManager.getInstance().send(new StompPayload()
                 .method(StompHeader.SEND)
@@ -220,69 +248,5 @@ public class CosmeticsManager {
         requestActiveCosmetics();
         requestPerms();
     }
-    @Getter @Setter
-    private static List<IChatReplacer> iChatReplacers = new ArrayList<>();
-    static {
-        iChatReplacers.add(new ChatReplacerViewProfile());
-        iChatReplacers.add(new ChatReplacerPV());
-        iChatReplacers.add(new ChatReplacerSocialOptions());
-        iChatReplacers.add(new ChatReplacerCoop());
-        iChatReplacers.add(new ChatReplacerMessage());
-        iChatReplacers.add(new ChatReplacerChatByMe());
-    }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        try {
-            if (clientChatReceivedEvent.type == 2) return;
-            for (IChatReplacer iChatReplacer : iChatReplacers) {
-                if (iChatReplacer.isAcceptable(clientChatReceivedEvent)) {
-                    iChatReplacer.translate(clientChatReceivedEvent, this);
-                    return;
-                }
-            }
-        } catch (Throwable t) {
-            System.out.println(clientChatReceivedEvent.message);
-            t.printStackTrace();
-        }
-    }
-
-
-    @SubscribeEvent
-    public void onTabList(PlayerListItemPacketEvent packetPlayerListItem) {
-        S38PacketPlayerListItem asd = packetPlayerListItem.getPacketPlayerListItem();
-        if (asd.getAction() == S38PacketPlayerListItem.Action.ADD_PLAYER) {
-            if (Minecraft.getMinecraft().getNetHandler() == null) return;
-
-            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
-            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
-                playerInfoMap.remove(entry.getProfile().getId());
-                playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
-            }
-        }
-    }
-
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void nameFormat(PlayerEvent.NameFormat nameFormat) {
-        List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
-        if (activeCosmetics == null) return;
-        CosmeticData color=null;
-        CosmeticData prefix=null;
-        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
-            CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
-            if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
-                color = cosmeticData;
-            } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                prefix = cosmeticData;
-            }
-        }
-
-
-        if (color != null)
-            nameFormat.displayname = color.getData().replace("&","§")+nameFormat.username;
-
-        if (prefix != null)
-            nameFormat.displayname = prefix.getData().replace("&","§")+" "+nameFormat.displayname;
-
-    }
 }
