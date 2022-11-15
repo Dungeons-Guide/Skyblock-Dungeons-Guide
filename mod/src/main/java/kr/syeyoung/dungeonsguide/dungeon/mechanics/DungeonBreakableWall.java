@@ -1,32 +1,31 @@
 /*
- * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ *     Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ *     Copyright (C) 2021  cyoung06
  *
- * This program is free software: you can redistribute it and/or modify
- * it under the terms of the GNU Affero General Public License as published
- * by the Free Software Foundation, either version 3 of the License, or
- * (at your option) any later version.
+ *     This program is free software: you can redistribute it and/or modify
+ *     it under the terms of the GNU Affero General Public License as published
+ *     by the Free Software Foundation, either version 3 of the License, or
+ *     (at your option) any later version.
  *
- * This program is distributed in the hope that it will be useful,
- * but WITHOUT ANY WARRANTY; without even the implied warranty of
- * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
- * GNU Affero General Public License for more details.
+ *     This program is distributed in the hope that it will be useful,
+ *     but WITHOUT ANY WARRANTY; without even the implied warranty of
+ *     MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ *     GNU Affero General Public License for more details.
  *
- * You should have received a copy of the GNU Affero General Public License
- * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ *     You should have received a copy of the GNU Affero General Public License
+ *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.Action;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionBreakWithSuperBoom;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
@@ -44,10 +43,10 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
 
             int leastY = Integer.MAX_VALUE;
             OffsetPoint thatPt = null;
@@ -72,8 +71,8 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
             ActionBreakWithSuperBoom actionClick;
             preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint(dungeonRoom)));
