@@ -16,7 +16,6 @@ import java.util.concurrent.TimeUnit;
 public class StompManager {
     Logger logger = LogManager.getLogger("StompManager");
     public static final String STOMP_URL = "wss://dungeons.guide/ws";
-    //    private String stompURL = "ws://localhost/ws";
     static StompManager instance;
 
     public static StompManager getInstance() {
@@ -62,12 +61,11 @@ public class StompManager {
                 if (stompConnection != null) {
                     stompConnection.disconnect();
                 }
-                stompConnection = new StompClient(new URI(StompManager.STOMP_URL), AuthManager.getInstance().getToken());
+                stompConnection = new StompClient(new URI(StompManager.STOMP_URL), AuthManager.getInstance().getWorkingTokenOrNull());
                 MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
             } catch (Exception e) {
                 logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
             }
-
         }, 5L, TimeUnit.SECONDS);
     }
 }

@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.launcher.auth;
+package kr.syeyoung.dungeonsguide.launcher.auth.token;
 
 import java.security.KeyPair;
 import java.time.Instant;
@@ -22,11 +22,6 @@ public class NullToken implements AuthToken {
     @Override
     public Instant getExpiryInstant() {
         return Instant.MIN;
-    }
-
-    @Override
-    public KeyPair getRSAKeyForAuth() {
-        return null;
     }
 
     @Override

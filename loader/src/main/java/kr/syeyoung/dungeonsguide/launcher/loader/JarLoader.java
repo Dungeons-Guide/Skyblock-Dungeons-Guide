@@ -123,7 +123,7 @@ public class JarLoader implements IDGLoader {
     }
 
     @Override
-    public String branchName() {
+    public String loaderName() {
         return "jar";
     }
 

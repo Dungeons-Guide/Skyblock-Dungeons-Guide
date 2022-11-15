@@ -22,6 +22,10 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.chatreplacers.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
+import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
+import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;

@@ -30,6 +30,6 @@ public interface IDGLoader {
 
     boolean isLoaded();
 
-    String branchName();
+    String loaderName();
     String version();
 }

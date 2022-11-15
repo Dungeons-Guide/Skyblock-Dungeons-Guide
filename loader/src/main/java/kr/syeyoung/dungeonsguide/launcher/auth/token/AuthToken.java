@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.launcher.auth;
+package kr.syeyoung.dungeonsguide.launcher.auth.token;
 
 import java.security.KeyPair;
 import java.security.interfaces.RSAKey;
@@ -11,7 +11,9 @@ public interface AuthToken {
 
     Instant getExpiryInstant();
 
-    KeyPair getRSAKeyForAuth();
+    default String getUID() {return null;}
+    default String getUUID() {return null;}
+    default String getUsername() {return null;}
 
     String getToken();
 }

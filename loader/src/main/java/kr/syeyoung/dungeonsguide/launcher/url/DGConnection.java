@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.launcher.url;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.ResourceManager;
-
 import java.io.ByteArrayInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;

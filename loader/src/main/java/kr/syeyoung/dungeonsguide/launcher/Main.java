@@ -20,9 +20,8 @@ package kr.syeyoung.dungeonsguide.launcher;
 
 import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
 import com.mojang.authlib.exceptions.InvalidCredentialsException;
+import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthServerException;
-import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
-import kr.syeyoung.dungeonsguide.launcher.branch.ModDownloader;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
@@ -64,10 +63,8 @@ public class Main
     private static File configDir;
 
     private DGInterface dgInterface;
-    private Authenticator authenticator = new Authenticator();
-    private ModDownloader modDownloader = new ModDownloader(authenticator);
 
-    private List<DungeonsGuideReloadListener> listeners = new ArrayList<>();
+    private final List<DungeonsGuideReloadListener> listeners = new ArrayList<>();
 
     public static File getConfigDir() {
         return configDir;
@@ -221,20 +218,17 @@ public class Main
         configDir = preInitializationEvent.getModConfigurationDirectory();
 
         // setup preinit progress bar for well, progress bar!
-        ProgressManager.ProgressBar bar = ProgressManager.push("DungeonsGuide", 2);
+        ProgressManager.ProgressBar bar = ProgressManager.push("DungeonsGuide", 1);
         try {
             // Try authenticate
             bar.step("Authenticating...");
-            authenticator.repeatAuthenticate(5);
+            AuthManager.getInstance().init();
 
 
             // If authentication succeeds, obtain loader and partially load dungeons guide
+
             File f = new File(preInitializationEvent.getModConfigurationDirectory(), "loader.cfg");
             Configuration configuration = new Configuration(f);
-
-            bar.step("Instantiating...");
-            partialLoad(obtainLoader(configuration));
-
             // Save config because... well to generate it
             configuration.save();
         } catch (Throwable t) {

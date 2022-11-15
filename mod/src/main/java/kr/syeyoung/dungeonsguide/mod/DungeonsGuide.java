@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.Main;
+import kr.syeyoung.dungeonsguide.launcher.DGInterface;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
@@ -43,6 +44,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.resources.IReloadableResourceManager;
+import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.ClientCommandHandler;
@@ -59,7 +61,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Set;
 
-public class DungeonsGuide implements IDungeonGuide {
+public class DungeonsGuide implements DGInterface {
 
     @Getter
     private static boolean firstTimeUsingDG = false;
@@ -91,8 +93,28 @@ public class DungeonsGuide implements IDungeonGuide {
 
 
 
-    public void init() {
+    public void init(File f) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+
+        progressbar.step("Creating Configuration");
+
+        File configFile = new File(Main.getConfigDir(), "config.json");
+        if (!configFile.exists()) {
+            Main.getConfigDir().mkdirs();
+            firstTimeUsingDG = true;
+        }
+
+        Config.f = configFile;
+        Minecraft.getMinecraft().getFramebuffer().enableStencil();
+
+        try {
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
+            resourcePackList.add(new DGTexturePack());
+            Minecraft.getMinecraft().refreshResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         MinecraftForge.EVENT_BUS.register(this);
 
         progressbar.step("Registering Events & Commands");
@@ -133,8 +155,7 @@ public class DungeonsGuide implements IDungeonGuide {
         MinecraftForge.EVENT_BUS.register(command);
         MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
 
-        commandReparty = new CommandReparty();
-        MinecraftForge.EVENT_BUS.register(commandReparty);
+        MinecraftForge.EVENT_BUS.register(commandReparty = new CommandReparty());
 
         MinecraftForge.EVENT_BUS.register(new FeatureListener());
         MinecraftForge.EVENT_BUS.register(new PacketListener());
@@ -148,8 +169,7 @@ public class DungeonsGuide implements IDungeonGuide {
 
 
         progressbar.step("Opening connection");
-        cosmeticsManager = new CosmeticsManager();
-        MinecraftForge.EVENT_BUS.register(cosmeticsManager);
+        MinecraftForge.EVENT_BUS.register(cosmeticsManager = new CosmeticsManager());
 
 
         progressbar.step("Loading Config");
@@ -170,11 +190,22 @@ public class DungeonsGuide implements IDungeonGuide {
         MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
         TimeScoreUtil.init();
 
-        Main.finishUpProgressBar(progressbar);
-
         ProgressManager.pop(progressbar);
 
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(resourceManager -> GLCursors.setupCursors());
+    }
+
+    @Override
+    public void unload() {
+        // have FUN!
+
+//        bar.step("Instantiating...");
+//        partialLoad(obtainLoader(configuration));
+        throw new UnsupportedOperationException("Who the heck registered events in features?? This will stay unsupported for now");
+    }
+
+    @Override
+    public void onResourceReload(IResourceManager a) {
+        GLCursors.setupCursors();
     }
 
     private boolean showedStartUpGuide;
@@ -227,26 +258,6 @@ public class DungeonsGuide implements IDungeonGuide {
     }
 
 
-    public void preinit(){
-
-        File configFile = new File(Main.getConfigDir(), "config.json");
-        if (!configFile.exists()) {
-            Main.getConfigDir().mkdirs();
-            firstTimeUsingDG = true;
-        }
-
-        Config.f = configFile;
-        Minecraft.getMinecraft().getFramebuffer().enableStencil();
-
-        try {
-            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
-            resourcePackList.add(new DGTexturePack());
-            Minecraft.getMinecraft().refreshResources();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-
-    }
 
     public SkyblockStatus getSkyblockStatus() {
         return skyblockStatus;

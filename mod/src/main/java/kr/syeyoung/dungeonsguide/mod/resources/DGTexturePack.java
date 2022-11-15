@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.resources;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.ResourceManager;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.IMetadataSection;

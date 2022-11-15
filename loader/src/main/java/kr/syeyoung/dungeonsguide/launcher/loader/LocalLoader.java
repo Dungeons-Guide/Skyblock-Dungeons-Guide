@@ -52,7 +52,7 @@ public class LocalLoader implements IDGLoader {
     }
 
     @Override
-    public String branchName() {
+    public String loaderName() {
         return "local";
     }
 

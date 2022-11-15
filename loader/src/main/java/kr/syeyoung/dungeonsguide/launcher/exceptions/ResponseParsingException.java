@@ -18,21 +18,16 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.DGResponse;
-import kr.syeyoung.dungeonsguide.launcher.util.QRCodeGenerator;
+import lombok.Getter;
 import org.json.JSONObject;
 
-import java.util.Objects;
+public class ResponseParsingException extends RuntimeException {
+    @Getter
+    private String payload;
 
-public class AuthServerException extends RuntimeException {
-    private DGResponse response;
-
-    public AuthServerException(DGResponse response) {
-        super(response.getErrorMessage() == null ? "Invalid Server Response" : response.getErrorMessage());
-        this.response = response;
+    public ResponseParsingException(String payload, String message) {
+        super(message);
+        this.payload = payload;
     }
 
-    public String getQRCode() {
-        return response.getQrCode() == null ? null : response.getQrCode();
-    }
 }
