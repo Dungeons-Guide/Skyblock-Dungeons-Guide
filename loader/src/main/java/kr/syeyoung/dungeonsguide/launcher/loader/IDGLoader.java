@@ -19,21 +19,17 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
-import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
-import net.minecraftforge.common.config.Configuration;
-
-import java.io.InputStream;
 
 public interface IDGLoader {
-    void loadJar(Authenticator authenticator) throws InstantiationException, IllegalAccessException, ClassNotFoundException;
+    DGInterface loadDungeonsGuide() throws InstantiationException, IllegalAccessException, ClassNotFoundException;
     DGInterface getInstance();
-    void unloadJar() throws ReferenceLeakedException;
+    void unloadDungeonsGuide() throws ReferenceLeakedException;
 
     boolean isUnloadable();
 
     boolean isLoaded();
 
-    String strategyName();
+    String branchName();
     String version();
 }

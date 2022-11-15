@@ -61,13 +61,17 @@ public class Main
 
     private static Main main;
 
-    private File configDir;
+    private static File configDir;
 
     private DGInterface dgInterface;
     private Authenticator authenticator = new Authenticator();
     private ModDownloader modDownloader = new ModDownloader(authenticator);
 
     private List<DungeonsGuideReloadListener> listeners = new ArrayList<>();
+
+    public static File getConfigDir() {
+        return configDir;
+    }
 
     public void addDGReloadListener(DungeonsGuideReloadListener dungeonsGuideReloadListener) {
         listeners.add(Objects.requireNonNull(dungeonsGuideReloadListener));
@@ -111,7 +115,7 @@ public class Main
             listener.unloadReference();
         }
         if (currentLoader != null) {
-            currentLoader.unloadJar();
+            currentLoader.unloadDungeonsGuide();
         }
         currentLoader = null;
     }
@@ -126,8 +130,7 @@ public class Main
     }
     private void partialLoad(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
-        newLoader.loadJar(authenticator);
-        dgInterface = newLoader.getInstance();
+        dgInterface = newLoader.loadDungeonsGuide();
         currentLoader = newLoader;
     }
 

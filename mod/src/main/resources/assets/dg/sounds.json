@@ -1,0 +1,10 @@
+{
+  "readysetgo": {
+    "category" : "player",
+    "sounds": [{
+      "name": "skyblock_dungeons_guide:readysetgo",
+      "stream": true
+    }
+    ]
+  }
+}

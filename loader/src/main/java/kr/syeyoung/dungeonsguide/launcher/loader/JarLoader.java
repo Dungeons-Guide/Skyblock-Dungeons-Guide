@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
-import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 
 import java.io.InputStream;
@@ -84,7 +83,7 @@ public class JarLoader implements IDGLoader {
     private JarClassLoader classLoader;
 
     @Override
-    public void loadJar(Authenticator authenticator) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public DGInterface loadDungeonsGuide() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
 
         classLoader = new JarClassLoader(new URL[] {
@@ -93,6 +92,7 @@ public class JarLoader implements IDGLoader {
 
         dgInterface = (DGInterface) classLoader.loadClassResolve("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
         phantomReference = new PhantomReference<>(classLoader, refQueue);
+        return dgInterface;
     }
 
     @Override
@@ -101,7 +101,7 @@ public class JarLoader implements IDGLoader {
     }
 
     @Override
-    public void unloadJar() throws ReferenceLeakedException {
+    public void unloadDungeonsGuide() throws ReferenceLeakedException {
         classLoader = null;
         dgInterface.unload();
         dgInterface = null;
@@ -123,7 +123,7 @@ public class JarLoader implements IDGLoader {
     }
 
     @Override
-    public String strategyName() {
+    public String branchName() {
         return "jar";
     }
 

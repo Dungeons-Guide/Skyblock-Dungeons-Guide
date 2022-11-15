@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
-import kr.syeyoung.dungeonsguide.launcher.authentication.Authenticator;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 
 import java.io.InputStream;
@@ -28,9 +27,9 @@ public class LocalLoader implements IDGLoader {
     private DGInterface dgInterface;
 
     @Override
-    public void loadJar(Authenticator authenticator) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    public DGInterface loadDungeonsGuide() throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
-        dgInterface =  (DGInterface) Class.forName("kr.syeyoung.dungeonsguide.DungeonsGuide").newInstance();
+        return dgInterface =  (DGInterface) Class.forName("kr.syeyoung.dungeonsguide.DungeonsGuide").newInstance();
     }
 
     @Override
@@ -39,7 +38,7 @@ public class LocalLoader implements IDGLoader {
     }
 
     @Override
-    public void unloadJar() throws ReferenceLeakedException {
+    public void unloadDungeonsGuide() throws ReferenceLeakedException {
         throw new UnsupportedOperationException();
     }
     @Override
@@ -53,7 +52,7 @@ public class LocalLoader implements IDGLoader {
     }
 
     @Override
-    public String strategyName() {
+    public String branchName() {
         return "local";
     }
 

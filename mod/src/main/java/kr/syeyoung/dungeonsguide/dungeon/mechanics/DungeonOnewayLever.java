@@ -19,10 +19,11 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
-import kr.syeyoung.dungeonsguide.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.util.BlockPos;
 
@@ -38,11 +39,11 @@ public class DungeonOnewayLever implements DungeonMechanic {
     private String triggering = "";
 
     @Override
-    public Set<Action> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
         if (state.equalsIgnoreCase("navigate")) {
-            Set<Action> base;
-            Set<Action> preRequisites = base = new HashSet<Action>();
+            Set<AbstractAction> base;
+            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
             ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
             preRequisites.add(actionMove);
             preRequisites = actionMove.getPreRequisite();
@@ -54,8 +55,8 @@ public class DungeonOnewayLever implements DungeonMechanic {
             return base;
         }
         if (!("triggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
-        Set<Action> base;
-        Set<Action> preRequisites = base = new HashSet<Action>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         {
             ActionClick actionClick;
             preRequisites.add(actionClick = new ActionClick(leverPoint));
