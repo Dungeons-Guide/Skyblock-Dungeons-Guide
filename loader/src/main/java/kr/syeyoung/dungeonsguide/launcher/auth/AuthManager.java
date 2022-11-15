@@ -2,12 +2,13 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.google.gson.JsonObject;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.*;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthFailedExeption;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredException;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiPrivacyPolicy;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
@@ -19,10 +20,8 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.io.IOException;
 import java.security.InvalidKeyException;
-import java.security.KeyPair;
 import java.security.NoSuchAlgorithmException;
 import java.security.spec.InvalidKeySpecException;
-import java.util.Objects;
 import java.util.concurrent.*;
 
 
@@ -49,15 +48,22 @@ public class AuthManager {
         else return null;
     }
 
+    public String getWorkingTokenOrThrow() {
+        if (currentToken instanceof DGAuthToken) return currentToken.getToken();
+        else if (currentToken instanceof FailedAuthToken) throw new AuthFailedExeption(((FailedAuthToken) currentToken).getException());
+        else if (currentToken instanceof NullToken) throw new IllegalStateException("No Token");
+        else if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
+        throw new IllegalStateException("weird token: "+currentToken);
+    }
+
 
     private volatile boolean initlock = false;
 
     public void init() {
         if (initlock) {
             logger.info("Cannot init AuthManger twice");
-            return;
+            throw new IllegalStateException("Can not init AuthManager twice");
         }
-
 
         initlock = true;
 
@@ -85,7 +91,7 @@ public class AuthManager {
 
     AuthToken reAuth() {
         if (reauthLock) {
-            while(reauthLock);
+            while (reauthLock) ;
             return currentToken;
         }
 
@@ -97,7 +103,10 @@ public class AuthManager {
             currentToken = DgAuthUtil.verifyAuth(token, encSecret, baseserverurl);
             MinecraftForge.EVENT_BUS.post(new AuthChangedEvent(currentToken));
 
-            if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
+            if (currentToken instanceof PrivacyPolicyRequiredToken) {
+                GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
+                throw new PrivacyPolicyRequiredException();
+            }
         } catch (NoSuchAlgorithmException | AuthenticationException | IOException | NoSuchPaddingException |
                  InvalidKeyException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException e) {
             currentToken = new FailedAuthToken(e);

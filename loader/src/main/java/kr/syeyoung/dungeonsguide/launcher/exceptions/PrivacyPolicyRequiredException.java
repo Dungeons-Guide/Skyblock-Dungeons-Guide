@@ -18,5 +18,5 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-public class PrivacyPolicyRequiredException extends RuntimeException{
+public class PrivacyPolicyRequiredException extends AuthenticationUnavailableException {
 }

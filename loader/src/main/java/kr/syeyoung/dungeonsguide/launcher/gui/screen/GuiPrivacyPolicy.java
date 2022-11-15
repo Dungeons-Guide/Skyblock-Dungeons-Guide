@@ -1,17 +1,12 @@
-package kr.syeyoung.dungeonsguide.launcher.gui;
+package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.Tessellator;
-import net.minecraft.client.renderer.WorldRenderer;
-import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
 
-public class GuiPrivacyPolicy extends GuiScreen {
+public class GuiPrivacyPolicy extends SpecialGuiScreen {
     @Override
     public void initGui() {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
@@ -25,8 +20,9 @@ public class GuiPrivacyPolicy extends GuiScreen {
         super.actionPerformed(button);
         if (button.id == 0) {
             // accept
+            dismiss();
         } else if (button.id == 1) {
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            dismiss();
         }
     }
 
@@ -38,7 +34,7 @@ public class GuiPrivacyPolicy extends GuiScreen {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
-        fontRenderer.drawString("", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please accept or deny Dungeons Guide Privacy Policy to continue"))/2,40,0xFFFF0000);
+        fontRenderer.drawString("Please accept or deny Dungeons Guide Privacy Policy to continue", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please accept or deny Dungeons Guide Privacy Policy to continue"))/2,40,0xFFFF0000);
 
 
         super.drawScreen(mouseX, mouseY, partialTicks);

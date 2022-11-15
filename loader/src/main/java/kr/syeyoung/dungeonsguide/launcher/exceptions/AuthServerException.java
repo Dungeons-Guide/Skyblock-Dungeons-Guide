@@ -24,7 +24,7 @@ import org.json.JSONObject;
 
 import java.util.Objects;
 
-public class AuthServerException extends RuntimeException {
+public class AuthServerException extends AuthenticationUnavailableException {
     private DGResponse response;
 
     public AuthServerException(DGResponse response) {

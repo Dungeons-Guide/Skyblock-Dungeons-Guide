@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-public class TokenExpiredException extends RuntimeException{
+public class TokenExpiredException extends AuthenticationUnavailableException {
 
     public TokenExpiredException(Throwable parent) {
         super(parent);

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.gui;
+package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
@@ -27,18 +27,14 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class GuiLoadingError extends GuiScreen {
-    static Throwable cause;
+public class GuiLoadingError extends SpecialGuiScreen {
     private final String stacktrace;
-    private final GuiScreen originalGUI;
-    public GuiLoadingError(GuiScreen originalGUI) {
+    public GuiLoadingError(Throwable cause) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayOutputStream);
         cause.printStackTrace(printStream);
         this.stacktrace = byteArrayOutputStream.toString();
-
-        this.originalGUI = originalGUI;
     }
 
     @Override
@@ -54,7 +50,7 @@ public class GuiLoadingError extends GuiScreen {
         if (button.id == 0) {
             FMLCommonHandler.instance().exitJava(-1,true);
         } else if (button.id == 1) {
-            Minecraft.getMinecraft().displayGuiScreen(originalGUI);
+            dismiss();
         }
     }
 

@@ -18,24 +18,18 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
-import com.mojang.authlib.exceptions.AuthenticationUnavailableException;
-import com.mojang.authlib.exceptions.InvalidCredentialsException;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthServerException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.TokenExpiredException;
-import kr.syeyoung.dungeonsguide.launcher.gui.GuiLoadingError;
-import kr.syeyoung.dungeonsguide.launcher.gui.GuiPrivacyPolicy;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiReferenceLeak;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.SpecialGuiScreen;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.resources.IReloadableResourceManager;
-import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.common.Mod;
@@ -43,13 +37,9 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
-import net.minecraftforge.fml.common.eventhandler.EventPriority;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 import java.io.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
+import java.util.*;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main
@@ -78,28 +68,18 @@ public class Main
     }
 
     private IDGLoader currentLoader;
-
-    private Throwable lastError;
-    private boolean isMcLoaded;
-
-
-
-
     @EventHandler
-    public void initEvent(FMLInitializationEvent initializationEvent)
-    {
+    public void initEvent(FMLInitializationEvent initializationEvent) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         MinecraftForge.EVENT_BUS.register(this);
-        if (dgInterface != null) {
-            try {
-                dgInterface.init(configDir);
+        MinecraftForge.EVENT_BUS.register(GuiDisplayer.INSTANCE);
 
-                for (DungeonsGuideReloadListener listener : listeners) {
-                    listener.onLoad(dgInterface);
-                }
-            } catch (Exception e) {
-                e.printStackTrace();
-                setLastFatalError(e);
-            }
+        try {
+            File f = new File(configDir, "loader.cfg");
+            Configuration configuration = new Configuration(f);
+            IDGLoader idgLoader = obtainLoader(configuration);
+            load(idgLoader);
+        } catch (Throwable e) {
+            GuiDisplayer.INSTANCE.displayGui(obtainErrorGUI(e));
         }
     }
 
@@ -117,7 +97,9 @@ public class Main
         currentLoader = null;
     }
     private void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        partialLoad(newLoader);
+        if (dgInterface != null) throw new IllegalStateException("DG is loaded");
+        dgInterface = newLoader.loadDungeonsGuide();
+        currentLoader = newLoader;
 
         dgInterface.init(configDir);
 
@@ -125,12 +107,6 @@ public class Main
             listener.onLoad(dgInterface);
         }
     }
-    private void partialLoad(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
-        if (dgInterface != null) throw new IllegalStateException("DG is loaded");
-        dgInterface = newLoader.loadDungeonsGuide();
-        currentLoader = newLoader;
-    }
-
     public void reload(IDGLoader newLoader) {
         try {
             unload();
@@ -140,49 +116,25 @@ public class Main
             currentLoader = null;
 
             e.printStackTrace();
-            setLastFatalError(e);
+
+            GuiDisplayer.INSTANCE.displayGui(obtainErrorGUI(e));
         }
     }
 
-    public void tryOpenError() {
-        if (isMcLoaded) Minecraft.getMinecraft().displayGuiScreen(obtainErrorGUI());
-    }
-
-    public GuiScreen obtainErrorGUI() {
-        if (lastError instanceof PrivacyPolicyRequiredException) {
-            return new GuiPrivacyPolicy();
-        } else if (lastError instanceof TokenExpiredException) {
-
+    public SpecialGuiScreen obtainErrorGUI(Throwable lastError) {
+        if (lastError instanceof kr.syeyoung.dungeonsguide.launcher.exceptions.AuthenticationUnavailableException) {
+            return null;
         } else if (lastError instanceof NoSuitableLoaderFoundException) {
-
+            return new GuiLoadingError(lastError);
         } else if (lastError instanceof ReferenceLeakedException) {
-
-        } else if (lastError instanceof AuthServerException) {
-
-        } else if (lastError instanceof InvalidCredentialsException) {
-
-        } else if (lastError instanceof AuthenticationUnavailableException) {
-
+            return new GuiReferenceLeak(lastError);
         } else if (lastError != null){
-            return new GuiLoadingError(lastError, () -> {lastError = null;});
+            return new GuiLoadingError(lastError);
         }
-        if (lastError != null)
-            lastError.printStackTrace();
         // when gets called init and stuff remove thing
         return null;
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
-    public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
-        if (guiOpenEvent.gui instanceof GuiMainMenu) {
-            isMcLoaded = true;
-        }
-        if (lastError != null && guiOpenEvent.gui instanceof GuiMainMenu) {
-            GuiScreen gui = obtainErrorGUI();
-            if (gui != null)
-                guiOpenEvent.gui = gui;
-        }
-    }
 
     public String getLoaderName(Configuration configuration) {
         String loader = System.getProperty("dg.loader");
@@ -236,7 +188,6 @@ public class Main
             currentLoader = null;
 
             t.printStackTrace();
-            setLastFatalError(t);
         } finally {
             while(bar.getStep() < bar.getSteps()) bar.step("");
             ProgressManager.pop(bar);
@@ -245,11 +196,6 @@ public class Main
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
             if (dgInterface != null) dgInterface.onResourceReload(a);
         });
-    }
-
-    public void setLastFatalError(Throwable t) {
-        lastError = t;
-        tryOpenError();
     }
 
     public static Main getMain() {
