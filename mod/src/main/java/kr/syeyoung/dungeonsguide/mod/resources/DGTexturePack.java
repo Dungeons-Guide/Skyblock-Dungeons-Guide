@@ -19,48 +19,39 @@
 package kr.syeyoung.dungeonsguide.mod.resources;
 
 import lombok.AllArgsConstructor;
+import net.minecraft.client.resources.AbstractResourcePack;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.client.resources.data.IMetadataSection;
 import net.minecraft.client.resources.data.IMetadataSerializer;
 import net.minecraft.util.ResourceLocation;
 
+import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayInputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Set;
 
-@AllArgsConstructor
-public class DGTexturePack implements IResourcePack {
-
-
-    @Override
-    public InputStream getInputStream(ResourceLocation location) throws IOException {
-        InputStream inputStream = this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath());
-        if (inputStream != null) return inputStream;
-        return new ByteArrayInputStream(ResourceManager.getInstance().getResources().get("assets/dg/"+location.getResourcePath()));
+public class DGTexturePack extends AbstractResourcePack {
+    public DGTexturePack() {
+        super(null);
     }
 
     @Override
-    public boolean resourceExists(ResourceLocation location) {
-        return ResourceManager.getInstance().getResources().containsKey("assets/dg/"+location.getResourcePath())
-        || this.getClass().getResourceAsStream("/assets/dg/"+location.getResourcePath()) != null;
+    protected InputStream getInputStreamByName(String name) {
+        return this.getClass().getResourceAsStream("/"+name);
+    }
+
+    @Override
+    protected boolean hasResourceName(String name) {
+        return getInputStreamByName(name) != null;
     }
 
     @Override
     public Set<String> getResourceDomains() {
         return Collections.singleton("dungeonsguide");
-    }
-
-    @Override
-    public <T extends IMetadataSection> T getPackMetadata(IMetadataSerializer p_135058_1_, String p_135058_2_) throws IOException {
-        return null;
-    }
-
-    @Override
-    public BufferedImage getPackImage() throws IOException {
-        return new BufferedImage(512,512, BufferedImage.TYPE_INT_RGB);
     }
 
     @Override
