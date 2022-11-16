@@ -19,14 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 
-import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip.MTooltipInvite;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
-
+import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

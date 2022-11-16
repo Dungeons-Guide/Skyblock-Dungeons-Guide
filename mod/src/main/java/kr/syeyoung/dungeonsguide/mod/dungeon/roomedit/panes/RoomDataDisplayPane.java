@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;

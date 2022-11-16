@@ -1,6 +1,7 @@
 package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
 import lombok.Data;
+
 import java.util.UUID;
 
 @Data

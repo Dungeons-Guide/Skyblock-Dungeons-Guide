@@ -19,12 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
 
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
-
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

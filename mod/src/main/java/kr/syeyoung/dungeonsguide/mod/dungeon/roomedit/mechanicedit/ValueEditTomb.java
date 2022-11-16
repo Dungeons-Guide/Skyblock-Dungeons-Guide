@@ -20,11 +20,16 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
-
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
-
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabelAndElement;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MTextField;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MValue;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 import java.awt.*;
 import java.util.Arrays;

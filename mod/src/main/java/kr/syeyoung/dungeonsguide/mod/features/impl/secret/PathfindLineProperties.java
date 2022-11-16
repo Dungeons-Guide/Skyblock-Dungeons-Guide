@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import com.google.common.base.Supplier;
-
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
@@ -29,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-
 
 import java.util.LinkedHashMap;
 

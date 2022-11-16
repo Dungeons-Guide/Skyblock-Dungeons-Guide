@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-
+import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.AllArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;

@@ -33,8 +33,8 @@ import net.minecraft.util.BlockPos;
 import org.jetbrains.annotations.Nullable;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class RoomProcessorIcePath extends GeneralRoomProcessor {
 

@@ -20,17 +20,17 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordActivity;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.features.listener.DiscordUserUpdateListener;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordActivity;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
-
 import kr.syeyoung.dungeonsguide.mod.features.listener.ScreenRenderListener;
 import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;

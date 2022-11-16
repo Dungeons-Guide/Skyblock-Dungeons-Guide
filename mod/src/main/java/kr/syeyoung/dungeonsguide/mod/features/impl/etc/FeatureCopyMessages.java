@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;

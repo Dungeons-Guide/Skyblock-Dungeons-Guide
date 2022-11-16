@@ -31,7 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public abstract class AbstractFeature {
     @Getter

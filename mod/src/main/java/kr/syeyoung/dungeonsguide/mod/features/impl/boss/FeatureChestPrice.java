@@ -20,9 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.GuiBackgroundRenderListener;
+import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

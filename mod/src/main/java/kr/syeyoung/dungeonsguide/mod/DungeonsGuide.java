@@ -44,7 +44,6 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
-import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.launchwrapper.LaunchClassLoader;

@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListenerGlobal;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;

@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
-
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;

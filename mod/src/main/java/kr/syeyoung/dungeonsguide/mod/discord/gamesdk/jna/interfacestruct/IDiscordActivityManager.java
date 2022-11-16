@@ -18,16 +18,16 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
-import com.sun.jna.Pointer;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityActionType;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordResult;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt32;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordActivity;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityActionType;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordResult;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt32;
 
 import java.util.Arrays;
 import java.util.List;

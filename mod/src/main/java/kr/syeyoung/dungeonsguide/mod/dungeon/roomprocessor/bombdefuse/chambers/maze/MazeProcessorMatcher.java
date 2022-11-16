@@ -21,7 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.RoomProcessorBombDefuseSolver;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BDChamber;
-
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.BombDefuseChamberGenerator;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.ChamberProcessor;
 import net.minecraft.init.Blocks;
 
 public class MazeProcessorMatcher implements BombDefuseChamberGenerator {

@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.TooltipListener;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;

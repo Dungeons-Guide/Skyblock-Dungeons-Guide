@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
-import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordUserAchievement;
 
 import java.util.Arrays;

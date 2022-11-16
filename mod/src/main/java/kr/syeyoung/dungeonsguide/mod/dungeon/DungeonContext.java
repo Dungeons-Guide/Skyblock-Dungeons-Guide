@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
-
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;

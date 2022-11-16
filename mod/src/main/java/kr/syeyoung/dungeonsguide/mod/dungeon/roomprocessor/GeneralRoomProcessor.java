@@ -19,23 +19,29 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
-
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.state.IBlockState;

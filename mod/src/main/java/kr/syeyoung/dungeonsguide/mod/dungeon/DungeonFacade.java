@@ -1,6 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
-import kr.syeyoung.dungeonsguide.Main;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import lombok.Getter;

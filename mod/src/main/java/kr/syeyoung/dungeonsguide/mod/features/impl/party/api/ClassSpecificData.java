@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.api;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.dataclasses.DungeonClass;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 

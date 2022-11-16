@@ -19,7 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import com.google.common.base.Supplier;
-
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
@@ -30,15 +32,16 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.mod.features.text.*;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MStringSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
-
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -48,8 +51,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.function.Predicate;
 
 public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListener {
@@ -211,7 +214,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
 
         @Override
         public void render(int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks, Rectangle scissor) {
-            Gui.drawRect(0,0,getBounds().width, getBounds().height,RenderUtils.blendAlpha(0x141414, 0.12f));
+            Gui.drawRect(0,0,getBounds().width, getBounds().height, RenderUtils.blendAlpha(0x141414, 0.12f));
             Gui.drawRect(1,18,getBounds().width -1, getBounds().height-1, RenderUtils.blendAlpha(0x141414, 0.15f));
             Gui.drawRect(1,1,getBounds().width-1, 18, RenderUtils.blendAlpha(0x141414, 0.12f));
 

@@ -22,8 +22,9 @@ import lombok.Getter;
 import lombok.Setter;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.Queue;
+import java.util.*;
 
 @Getter
 @Setter

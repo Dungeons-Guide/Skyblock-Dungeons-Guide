@@ -18,11 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
-import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityActionType;
 
 import java.util.Arrays;

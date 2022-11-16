@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.GuiOpenListener;
 import kr.syeyoung.dungeonsguide.mod.features.listener.GuiUpdateListener;

@@ -18,17 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.ptr.ByteByReference;
 import com.sun.jna.ptr.IntByReference;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
-import com.sun.jna.Pointer;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordSku;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordEntitlement;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordSku;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordResult;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.Int32;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.Int32;
 
 import java.util.Arrays;
 import java.util.List;

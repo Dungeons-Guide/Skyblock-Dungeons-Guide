@@ -30,7 +30,7 @@ import net.minecraft.util.IChatComponent;
 import net.minecraft.world.World;
 
 import java.awt.*;
-import java.util.*;
+import java.util.LinkedList;
 
 public class GoldenPathRightProcessor extends GeneralDefuseChamberProcessor {
     public GoldenPathRightProcessor(RoomProcessorBombDefuseSolver solver, BDChamber chamber) {

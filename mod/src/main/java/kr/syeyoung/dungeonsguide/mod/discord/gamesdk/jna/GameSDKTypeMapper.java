@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna;
 
 import com.sun.jna.DefaultTypeMapper;
-
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.*;
 
 

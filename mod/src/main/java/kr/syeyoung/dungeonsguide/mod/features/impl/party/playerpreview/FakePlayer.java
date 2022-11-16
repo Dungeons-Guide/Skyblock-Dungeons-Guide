@@ -2,8 +2,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview;
 
 import com.google.common.base.Objects;
 import com.mojang.authlib.GameProfile;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;

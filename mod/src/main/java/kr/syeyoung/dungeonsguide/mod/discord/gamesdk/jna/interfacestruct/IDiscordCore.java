@@ -18,11 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct;
 
+import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import com.sun.jna.TypeMapper;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.GameSDKTypeMapper;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordStruct;
-import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordLogLevel;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordResult;
 

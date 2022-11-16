@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureChestPrice;
-
 import kr.syeyoung.dungeonsguide.mod.features.listener.GuiClickListener;
 import kr.syeyoung.dungeonsguide.mod.features.listener.KeyInputListener;
 import net.minecraft.client.Minecraft;

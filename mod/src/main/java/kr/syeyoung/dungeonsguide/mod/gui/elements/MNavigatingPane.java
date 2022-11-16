@@ -19,9 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.gui.elements;
 
 import com.google.common.base.Function;
-
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
@@ -32,8 +30,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class MNavigatingPane extends MPanel {
 

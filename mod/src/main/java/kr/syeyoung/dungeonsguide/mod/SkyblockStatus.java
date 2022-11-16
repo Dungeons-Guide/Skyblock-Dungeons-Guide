@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod;
 
 import com.google.common.collect.Sets;
-
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;

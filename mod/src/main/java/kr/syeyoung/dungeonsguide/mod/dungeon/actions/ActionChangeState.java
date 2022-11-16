@@ -19,8 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
-
-
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;

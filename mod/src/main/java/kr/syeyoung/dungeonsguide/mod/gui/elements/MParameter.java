@@ -20,9 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonParameterEdit;
-
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes.DynamicEditor;
+import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;

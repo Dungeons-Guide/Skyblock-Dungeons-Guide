@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.gui.Gui;

@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
-
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;

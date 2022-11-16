@@ -20,8 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.config.types;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
-
-
+import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 
 import java.util.ArrayList;
 import java.util.List;

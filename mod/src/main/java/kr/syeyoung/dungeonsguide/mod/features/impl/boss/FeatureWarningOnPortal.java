@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 import com.google.common.base.Supplier;
-
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
@@ -33,12 +32,17 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.FeatureDungeonScore;
-import kr.syeyoung.dungeonsguide.mod.features.text.*;
+import kr.syeyoung.dungeonsguide.mod.features.text.PanelTextParameterConfig;
+import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.text.StyledTextProvider;
+import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
-
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextProvider {
     public FeatureWarningOnPortal() {

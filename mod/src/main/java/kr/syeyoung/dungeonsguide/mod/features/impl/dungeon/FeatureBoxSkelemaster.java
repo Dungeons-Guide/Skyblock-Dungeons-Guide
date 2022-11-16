@@ -19,12 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
 import com.google.common.base.Predicate;
-
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;

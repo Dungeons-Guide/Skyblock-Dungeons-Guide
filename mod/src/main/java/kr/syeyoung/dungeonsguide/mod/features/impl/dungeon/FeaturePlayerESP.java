@@ -22,7 +22,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.PlayerRenderListener;
 import net.minecraft.client.entity.AbstractClientPlayer;

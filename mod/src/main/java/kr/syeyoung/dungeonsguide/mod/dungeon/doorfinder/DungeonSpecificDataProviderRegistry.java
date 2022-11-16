@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.NormalModeDataProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.MasterModeDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.NormalModeDataProvider;
 
 import java.util.HashMap;
 import java.util.Map;

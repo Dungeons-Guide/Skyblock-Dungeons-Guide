@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.text;
 
 import com.google.common.base.Supplier;
 import com.google.gson.JsonObject;
-
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
@@ -33,12 +32,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MStringSelectionButton;
-
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.*;
-import java.util.List;
 
 public abstract class TextHUDFeature extends GuiFeature implements StyledTextProvider {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {

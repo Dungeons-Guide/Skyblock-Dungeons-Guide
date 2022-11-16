@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.gui.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;

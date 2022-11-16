@@ -25,7 +25,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.KeybindPressedListener;
-
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 

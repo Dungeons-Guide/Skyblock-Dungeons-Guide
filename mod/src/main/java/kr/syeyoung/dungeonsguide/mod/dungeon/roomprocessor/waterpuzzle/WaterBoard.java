@@ -18,12 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.nodes.*;
-
 import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
@@ -34,7 +32,6 @@ import net.minecraft.util.Tuple;
 import net.minecraft.world.World;
 
 import java.util.*;
-import java.util.List;
 
 public class WaterBoard {
     @Getter

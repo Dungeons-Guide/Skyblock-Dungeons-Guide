@@ -37,8 +37,8 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 
 public class PanelDelegate extends MPanel {
     private final GuiFeature guiFeature;

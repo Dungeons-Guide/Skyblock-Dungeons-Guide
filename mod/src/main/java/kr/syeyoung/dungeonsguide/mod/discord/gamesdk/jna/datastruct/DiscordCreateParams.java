@@ -20,13 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.*;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordClientID;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordVersion;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt64;
-
 
 import java.util.Arrays;
 import java.util.List;

@@ -21,22 +21,23 @@ package kr.syeyoung.dungeonsguide.mod.discord.rpc;
 import com.sun.jna.Pointer;
 import com.sun.jna.ptr.IntByReference;
 import com.sun.jna.ptr.PointerByReference;
-
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
-import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.GameSDK;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.*;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordCreateFlags;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordLogLevel;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordResult;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.*;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.GameSDK;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.*;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.*;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.*;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.*;
-
+import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
+import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
 

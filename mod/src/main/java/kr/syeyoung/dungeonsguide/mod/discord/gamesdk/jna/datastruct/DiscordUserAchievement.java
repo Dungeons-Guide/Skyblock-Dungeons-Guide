@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct;
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
-
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt32;
 
 import java.util.Arrays;

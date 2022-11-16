@@ -19,17 +19,16 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
 import com.sun.jna.Pointer;
-
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityActionType;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.IDiscordActivityManager;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.IDiscordCore;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
-
+import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;

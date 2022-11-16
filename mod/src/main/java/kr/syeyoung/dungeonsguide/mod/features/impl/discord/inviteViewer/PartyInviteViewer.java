@@ -20,12 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.listener.*;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
-
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -36,8 +36,10 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.*;
 
 public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderListener, ScreenRenderListener, TickListener, GuiClickListener, DiscordUserJoinRequestListener {

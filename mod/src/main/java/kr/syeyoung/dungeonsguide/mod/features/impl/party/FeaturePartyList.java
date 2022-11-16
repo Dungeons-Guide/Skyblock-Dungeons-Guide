@@ -19,11 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-
 
 import java.util.ArrayList;
 import java.util.Arrays;
