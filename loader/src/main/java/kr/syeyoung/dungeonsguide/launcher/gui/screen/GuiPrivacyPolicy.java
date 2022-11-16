@@ -29,6 +29,7 @@ public class GuiPrivacyPolicy extends SpecialGuiScreen {
             try {
                 AuthManager.getInstance().acceptPrivacyPolicy();
             } catch (PrivacyPolicyRequiredException e) {
+                e.printStackTrace();
 //                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
                 // display tooltip.
             }

@@ -110,7 +110,6 @@ public class AuthManager {
             NotificationManager.INSTANCE.removeNotification(authenticationFailure);
             NotificationManager.INSTANCE.removeNotification(privacyPolicyRequired);
         } catch (Exception e) {
-            currentToken = new FailedAuthToken(e);
             if (e instanceof PrivacyPolicyRequiredException) {
                 NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
                         .title("Privacy Policy")
@@ -122,6 +121,7 @@ public class AuthManager {
                         })
                         .build());
             } else {
+                currentToken = new FailedAuthToken(e);
                 NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
                         .title("Auth Error")
                         .description("Authentication Error Occured\n"+e.getMessage())
@@ -153,7 +153,6 @@ public class AuthManager {
                 currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken());
                 if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
             } catch (Exception e) {
-                currentToken = new FailedAuthToken(e);
                 if (e instanceof PrivacyPolicyRequiredException) {
                     NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
                             .title("Privacy Policy")
@@ -165,6 +164,7 @@ public class AuthManager {
                             })
                             .build());
                 } else {
+                    currentToken = new FailedAuthToken(e);
                     NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
                             .title("Auth Error")
                             .description("Authentication Error Occured\n"+e.getMessage())
