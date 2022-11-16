@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import org.apache.commons.io.IOUtils;
 
@@ -60,14 +61,18 @@ public class LocalLoader implements IDGLoader {
     private LocalClassLoader classLoader;
 
     @Override
-    public DGInterface loadDungeonsGuide() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+    public DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
 
-        classLoader = new LocalClassLoader(this.getClass().getClassLoader());
+        try {
+            classLoader = new LocalClassLoader(this.getClass().getClassLoader());
 
-        dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
-        phantomReference = new PhantomReference<>(classLoader, refQueue);
-        return dgInterface;
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
+            phantomReference = new PhantomReference<>(classLoader, refQueue);
+            return dgInterface;
+        } catch (Exception e) {
+            throw new DungeonsGuideLoadingException(e);
+        }
     }
 
     @Override

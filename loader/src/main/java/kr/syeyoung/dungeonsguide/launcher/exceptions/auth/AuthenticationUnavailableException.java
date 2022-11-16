@@ -1,4 +1,4 @@
-package kr.syeyoung.dungeonsguide.launcher.exceptions;
+package kr.syeyoung.dungeonsguide.launcher.exceptions.auth;
 
 public class AuthenticationUnavailableException extends RuntimeException {
     public AuthenticationUnavailableException(Throwable cause){

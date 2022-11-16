@@ -16,23 +16,32 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions;
+package kr.syeyoung.dungeonsguide.launcher.exceptions.http;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.DGResponse;
-import kr.syeyoung.dungeonsguide.launcher.util.QRCodeGenerator;
+import lombok.Getter;
 import org.json.JSONObject;
 
-import java.util.Objects;
+public class ResponseParsingException extends RuntimeException {
+    @Getter
+    private final String payload;
 
-public class AuthServerException extends AuthenticationUnavailableException {
-    private DGResponse response;
-
-    public AuthServerException(DGResponse response) {
-        super(response.getErrorMessage() == null ? "Invalid Server Response" : response.getErrorMessage());
-        this.response = response;
+    public ResponseParsingException(String payload, Exception e) {
+        super(e);
+        this.payload = payload;
     }
 
-    public String getQRCode() {
-        return response.getQrCode() == null ? null : response.getQrCode();
+    public ResponseParsingException(String payload, String message, Exception e) {
+        super(message, e);
+        this.payload = payload;
+    }
+
+    public ResponseParsingException(String payload, String message) {
+        super(message);
+        this.payload = payload;
+    }
+
+    @Override
+    public String toString() {
+        return super.toString()+"\n Problematic Message: "+payload;
     }
 }

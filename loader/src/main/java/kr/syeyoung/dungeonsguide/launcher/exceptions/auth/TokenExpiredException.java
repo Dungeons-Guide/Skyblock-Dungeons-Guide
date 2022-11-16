@@ -16,18 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions;
+package kr.syeyoung.dungeonsguide.launcher.exceptions.auth;
 
-import lombok.Getter;
-import org.json.JSONObject;
+public class TokenExpiredException extends AuthenticationUnavailableException {
 
-public class ResponseParsingException extends RuntimeException {
-    @Getter
-    private String payload;
-
-    public ResponseParsingException(String payload, String message) {
-        super(message);
-        this.payload = payload;
+    public TokenExpiredException(Throwable parent) {
+        super(parent);
     }
-
 }

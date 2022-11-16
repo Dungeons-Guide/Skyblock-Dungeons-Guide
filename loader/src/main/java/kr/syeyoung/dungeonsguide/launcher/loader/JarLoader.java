@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import org.apache.commons.io.IOUtils;
 import sun.misc.Resource;
@@ -73,14 +74,18 @@ public class JarLoader implements IDGLoader {
     private JarClassLoader classLoader;
 
     @Override
-    public DGInterface loadDungeonsGuide() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+    public DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
 
-        classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(JarLoader.class.getResourceAsStream("/mod.jar")));
+        try {
+            classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(JarLoader.class.getResourceAsStream("/mod.jar")));
 
-        dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
-        phantomReference = new PhantomReference<>(classLoader, refQueue);
-        return dgInterface;
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
+            phantomReference = new PhantomReference<>(classLoader, refQueue);
+            return dgInterface;
+        } catch (Exception e) {
+            throw new DungeonsGuideLoadingException(e);
+        }
     }
 
     @Override

@@ -6,7 +6,6 @@ import com.google.gson.JsonParser;
 import javax.crypto.*;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
@@ -19,9 +18,6 @@ public class AuthUtil {
     private AuthUtil() {}
 
     public static PublicKey getPublicKey(byte[] bytes) throws NoSuchAlgorithmException, InvalidKeySpecException {
-        PublicKey publicKey =
-                KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(bytes));
-        publicKey.getEncoded();
-        return publicKey;
+        return KeyFactory.getInstance("RSA").generatePublic(new X509EncodedKeySpec(bytes));
     }
 }

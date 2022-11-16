@@ -7,6 +7,7 @@ import org.json.JSONObject;
 @Data
 @AllArgsConstructor
 public class DGResponse<T> {
+    private final int responseCode;
     private final String status;
     private final T data;
     private final String errorMessage;

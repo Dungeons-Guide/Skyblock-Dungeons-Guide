@@ -19,12 +19,13 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 
 import java.io.IOException;
 
 public interface IDGLoader {
-    DGInterface loadDungeonsGuide() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException;
+    DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException;
     DGInterface getInstance();
     void unloadDungeonsGuide() throws ReferenceLeakedException;
 

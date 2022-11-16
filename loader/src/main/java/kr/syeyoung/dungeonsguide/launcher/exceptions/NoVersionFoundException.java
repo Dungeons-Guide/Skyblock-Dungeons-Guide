@@ -21,17 +21,17 @@ package kr.syeyoung.dungeonsguide.launcher.exceptions;
 import lombok.Getter;
 
 @Getter
-public class NoVersionFoundException extends RuntimeException {
+public class NoVersionFoundException extends Exception {
     private String branch;
     private String version;
 
-    public NoVersionFoundException(String branch, String version) {
-        super("No version found: "+branch+" - "+version);
+    public NoVersionFoundException(String branch, String version, String payload) {
+        super("No version found: "+branch+" - "+version+"\n Additional Data: "+payload);
         this.branch = branch;
         this.version = version;
     }
-    public NoVersionFoundException(String branch, String version, Throwable e) {
-        super("No version found: "+branch+" - "+version, e);
+    public NoVersionFoundException(String branch, String version, String payload, Throwable e) {
+        super("No version found: "+branch+" - "+version+"\n Additional Data: "+payload+"\n "+e.toString(), e);
         this.branch = branch;
         this.version = version;
     }

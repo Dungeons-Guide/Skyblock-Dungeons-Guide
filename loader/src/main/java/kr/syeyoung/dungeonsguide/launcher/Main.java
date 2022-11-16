@@ -20,9 +20,11 @@ package kr.syeyoung.dungeonsguide.launcher;
 
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiReferenceLeak;
@@ -49,7 +51,7 @@ public class Main
 {
     public static final String MOD_ID = "dungeons_guide_wrapper";
     public static final String VERSION = "1.0";
-    public static final String DOMAIN = "http://testmachine:8080/api";
+    public static final String DOMAIN = "http://testmachine2/api";
 
     private static Main main;
 
@@ -81,8 +83,15 @@ public class Main
             Configuration configuration = new Configuration(f);
             IDGLoader idgLoader = obtainLoader(configuration);
             load(idgLoader);
-        } catch (Throwable e) {
-            GuiDisplayer.INSTANCE.displayGui(obtainErrorGUI(e));
+        } catch (NoSuitableLoaderFoundException e) {
+            e.printStackTrace();
+            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+        } catch (NoVersionFoundException e) {
+            e.printStackTrace();
+            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+        } catch (DungeonsGuideLoadingException e) {
+            e.printStackTrace();
+            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
         }
     }
 
@@ -99,7 +108,7 @@ public class Main
         }
         currentLoader = null;
     }
-    private void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+    private void load(IDGLoader newLoader) throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
         dgInterface = newLoader.loadDungeonsGuide();
         currentLoader = newLoader;
@@ -114,28 +123,18 @@ public class Main
         try {
             unload();
             load(newLoader);
-        } catch (Exception e) {
+        } catch (DungeonsGuideLoadingException | ReferenceLeakedException e) {
             dgInterface = null;
             currentLoader = null;
 
             e.printStackTrace();
 
-            GuiDisplayer.INSTANCE.displayGui(obtainErrorGUI(e));
+            if (e instanceof DungeonsGuideLoadingException) {
+                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+            } else {
+                GuiDisplayer.INSTANCE.displayGui(new GuiReferenceLeak(e));
+            }
         }
-    }
-
-    public SpecialGuiScreen obtainErrorGUI(Throwable lastError) {
-        if (lastError instanceof kr.syeyoung.dungeonsguide.launcher.exceptions.AuthenticationUnavailableException) {
-            return null;
-        } else if (lastError instanceof NoSuitableLoaderFoundException) {
-            return new GuiLoadingError(lastError);
-        } else if (lastError instanceof ReferenceLeakedException) {
-            return new GuiReferenceLeak(lastError);
-        } else if (lastError != null){
-            return new GuiLoadingError(lastError);
-        }
-        // when gets called init and stuff remove thing
-        return null;
     }
 
 
@@ -149,7 +148,7 @@ public class Main
     }
 
 
-    public IDGLoader obtainLoader(Configuration configuration) {
+    public IDGLoader obtainLoader(Configuration configuration) throws NoVersionFoundException, NoSuitableLoaderFoundException {
         String loader = getLoaderName(configuration);
 
         if ("local".equals(loader) ||
@@ -158,7 +157,7 @@ public class Main
         } else if ("jar".equals(loader) ||
                 (loader.equals("auto") && this.getClass().getResourceAsStream("/mod.jar") == null)) {
             return new JarLoader();
-        } else if (loader.equals("auto") ){
+        } else if (loader.equals("remote") || loader.equals("auto") ){
                 // remote load
             String branch =  System.getProperty("branch") == null ? configuration.get("loader", "remoteBranch", "$default").getString() : System.getProperty("branch");
             String version = System.getProperty("version") == null ? configuration.get("loader", "remoteVersion", "latest").getString() : System.getProperty("version");
@@ -167,11 +166,9 @@ public class Main
                        branch,
                         version
                 );
-                if (versionInfo == null) throw new NoVersionFoundException(branch, version);
-
                 return new RemoteLoader(versionInfo.getFriendlyBranchName(), versionInfo.getBranchId(), versionInfo.getUpdateId());
             } catch (IOException e) {
-                throw new NoVersionFoundException(branch, version, e);
+                throw new NoVersionFoundException(branch, version, "IO err", e);
             }
         } else {
             throw new NoSuitableLoaderFoundException(System.getProperty("dg.loader"), configuration.get("loader", "modsource", "auto").getString());
@@ -182,31 +179,28 @@ public class Main
     public void preInit(FMLPreInitializationEvent preInitializationEvent) {
         // setup static variables
         main = this;
+        dgInterface = null;
+        currentLoader = null;
         configDir = preInitializationEvent.getModConfigurationDirectory();
 
         // setup preinit progress bar for well, progress bar!
         ProgressManager.ProgressBar bar = ProgressManager.push("DungeonsGuide", 1);
+        // Try authenticate
+        bar.step("Authenticating...");
+
         try {
-            // Try authenticate
-            bar.step("Authenticating...");
             AuthManager.getInstance().init();
-
-
-            // If authentication succeeds, obtain loader and partially load dungeons guide
-
-            File f = new File(preInitializationEvent.getModConfigurationDirectory(), "loader.cfg");
-            Configuration configuration = new Configuration(f);
-            // Save config because... well to generate it
-            configuration.save();
-        } catch (Throwable t) {
-            dgInterface = null;
-            currentLoader = null;
-
-            t.printStackTrace();
-        } finally {
-            while(bar.getStep() < bar.getSteps()) bar.step("");
-            ProgressManager.pop(bar);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+
+        File f = new File(preInitializationEvent.getModConfigurationDirectory(), "loader.cfg");
+        Configuration configuration = new Configuration(f);
+        // Save config because... well to generate it
+        configuration.save();
+
+        while(bar.getStep() < bar.getSteps()) bar.step("");
+        ProgressManager.pop(bar);
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
             if (dgInterface != null) dgInterface.onResourceReload(a);

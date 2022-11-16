@@ -1,7 +1,5 @@
 package kr.syeyoung.dungeonsguide.launcher.auth;
 
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
@@ -9,9 +7,8 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.AuthToken;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.DGAuthToken;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.PrivacyPolicyRequiredToken;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthServerException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.ResponseParsingException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.http.AuthServerException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.http.ResponseParsingException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Session;
 import org.apache.commons.codec.binary.Base64;
@@ -22,10 +19,10 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
+import java.net.HttpURLConnection;
 import java.net.URL;
 import java.security.*;
 import java.security.spec.InvalidKeySpecException;
@@ -35,8 +32,17 @@ public class DgAuthUtil {
     private static final SecureRandom random = new SecureRandom();
     private DgAuthUtil(){}
 
-
-    private static <T> DGResponse<T> getResponse(HttpsURLConnection connection, Class<T> data) throws IOException {
+    /**
+     *
+     * @param connection
+     * @param data
+     * @return
+     * @param <T>
+     * @throws IOException when stuff wrong
+     * @throws ResponseParsingException failed to parse generic response
+     * @throws AuthServerException auth server returned FAILURE
+     */
+    private static <T> T getResponse(HttpURLConnection connection, Class<T> data) throws IOException {
         connection.getResponseCode();
         InputStream toRead = connection.getErrorStream();
         if (toRead == null)
@@ -45,24 +51,30 @@ public class DgAuthUtil {
 
         try {
             JSONObject json = new JSONObject(payload);
-            return new DGResponse(
+            DGResponse<T> response = new DGResponse<>(
+                    connection.getResponseCode(),
                     json.getString("status"),
-                    (T) json.get("data"),
-                    json.getString("errorMessage"),
-                    json.getString("qrCode")
+                    json.isNull("data") ? null:(T) json.get("data"),
+                    json.isNull("errorMessage") ?null: json.getString("errorMessage"),
+                    json.isNull("qrCode") ? null:  json.getString("qrCode")
             );
-        }   catch (Exception e) {
-            throw new ResponseParsingException(payload, e.getMessage());
+
+            if (!"SUCCESS".equals(response.getStatus())) {
+                throw new AuthServerException(response);
+            }
+
+            return (T) response.getData();
+        } catch (Exception e) {
+            throw new ResponseParsingException(payload, e);
         } finally {
             toRead.close();
         }
-
     }
 
     public static String requestAuth() throws IOException {
         GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
 
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/requestAuth").openConnection();
+        HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/requestAuth").openConnection();
         connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestMethod("POST");
@@ -71,24 +83,25 @@ public class DgAuthUtil {
 
         connection.getOutputStream().write(("{\"uuid\":\""+profile.getId().toString()+"\",\"nickname\":\""+profile.getName()+"\"}").getBytes());
 
-        DGResponse<String> preToken = getResponse(connection, String.class);
-        if (!"SUCCESS".equals(preToken.getStatus())) {
-            throw new AuthServerException(preToken);
-        }
-
-        return preToken.getData();
+        return getResponse(connection, String.class);
     }
 
     public static byte[] checkSessionAuthenticityAndReturnEncryptedSecret(String tempToken) throws NoSuchAlgorithmException, AuthenticationException, NoSuchPaddingException, InvalidKeySpecException, InvalidKeyException, IllegalBlockSizeException, BadPaddingException {
-        JSONObject d = getJwtPayload(tempToken);
+
         byte[] sharedSecret = new byte[16];
-        random.nextBytes(sharedSecret);
-        byte[] publicKey =Base64.decodeBase64(d.getString("publicKey"));
+        byte[] result;
+        byte[] publicKey;
+        try {
+            JSONObject d = getJwtPayload(tempToken);
+            random.nextBytes(sharedSecret);
+            publicKey = Base64.decodeBase64(d.getString("publicKey"));
 
-        Cipher cipher = Cipher.getInstance("RSA");
-        cipher.init(Cipher.ENCRYPT_MODE, AuthUtil.getPublicKey(publicKey));
-        byte[] result = cipher.doFinal(sharedSecret);
-
+            Cipher cipher = Cipher.getInstance("RSA");
+            cipher.init(Cipher.ENCRYPT_MODE, AuthUtil.getPublicKey(publicKey));
+            result = cipher.doFinal(sharedSecret);
+        } catch (Exception e) {
+            throw new RuntimeException("Failed to parse publicKey, generate shared secret, then encrypt it.", e);
+        }
 
         String hash = calculateServerHash(sharedSecret, publicKey);
 
@@ -99,8 +112,17 @@ public class DgAuthUtil {
         return result;
     }
 
+    /**
+     *
+     * @param tempToken
+     * @param encSecret
+     * @return
+     * @throws IOException when io error happens
+     * @throws ResponseParsingException when fails to parse exception
+     * @throws AuthServerException when auth server throws error
+     */
     public static AuthToken verifyAuth(String tempToken, byte[] encSecret) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/authenticate").openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/authenticate").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -109,22 +131,22 @@ public class DgAuthUtil {
 
         urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"sharedSecret\":\""+Base64.encodeBase64URLSafeString(encSecret)+"\"}").getBytes());
 
-        DGResponse<JSONObject> postToken = getResponse(urlConnection, JSONObject.class);
-        if (!"SUCCESS".equals(postToken.getStatus())) {
-            throw new AuthServerException(postToken);
-        }
-        JSONObject data = postToken.getData();
-        if (data.getString("result").equals("TOS_PRIVACY_POLICY_ACCEPT_REQUIRED")) {
-            return new PrivacyPolicyRequiredToken(data.getString("jwt"));
-        } else if (data.getString("result").equals("SUCCESSFUL")) {
-            return new DGAuthToken(data.getString("jwt"));
-        } else {
-            throw new AuthServerException(postToken);
+        JSONObject data = getResponse(urlConnection, JSONObject.class);
+        try {
+            if (data.getString("result").equals("TOS_PRIVACY_POLICY_ACCEPT_REQUIRED")) {
+                return new PrivacyPolicyRequiredToken(data.getString("jwt"));
+            } else if (data.getString("result").equals("SUCCESSFUL")) {
+                return new DGAuthToken(data.getString("jwt"));
+            } else {
+                throw new UnsupportedOperationException("Unknown auth result");
+            }
+        } catch (Exception e) {
+            throw new ResponseParsingException(data.toString(), e);
         }
     }
 
     public static AuthToken acceptNewPrivacyPolicy(String tempToken) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/acceptPrivacyPolicy").openConnection();
+        HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/acceptPrivacyPolicy").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -133,17 +155,17 @@ public class DgAuthUtil {
 
         urlConnection.getOutputStream().write(tempToken.getBytes());
 
-        DGResponse<JSONObject> postToken = getResponse(urlConnection, JSONObject.class);
-        if (!"SUCCESS".equals(postToken.getStatus())) {
-            throw new AuthServerException(postToken);
-        }
-        JSONObject data = postToken.getData();
-        if (data.getString("result").equals("TOS_PRIVACY_POLICY_ACCEPT_REQUIRED")) {
-            return new PrivacyPolicyRequiredToken(data.getString("jwt"));
-        } else if (data.getString("result").equals("SUCCESSFUL")) {
-            return new DGAuthToken(data.getString("jwt"));
-        } else {
-            throw new AuthServerException(postToken);
+        JSONObject data = getResponse(urlConnection, JSONObject.class);
+        try {
+            if (data.getString("result").equals("TOS_PRIVACY_POLICY_ACCEPT_REQUIRED")) {
+                return new PrivacyPolicyRequiredToken(data.getString("jwt"));
+            } else if (data.getString("result").equals("SUCCESSFUL")) {
+                return new DGAuthToken(data.getString("jwt"));
+            } else {
+                throw new UnsupportedOperationException("Unknown auth result");
+            }
+        } catch (Exception e) {
+            throw new ResponseParsingException(data.toString(), e);
         }
     }
     public static JSONObject getJwtPayload(String jwt) {

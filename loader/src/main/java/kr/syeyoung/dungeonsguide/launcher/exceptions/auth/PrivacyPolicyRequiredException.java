@@ -16,11 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions;
+package kr.syeyoung.dungeonsguide.launcher.exceptions.auth;
 
-public class TokenExpiredException extends AuthenticationUnavailableException {
-
-    public TokenExpiredException(Throwable parent) {
-        super(parent);
-    }
+public class PrivacyPolicyRequiredException extends AuthenticationUnavailableException {
 }

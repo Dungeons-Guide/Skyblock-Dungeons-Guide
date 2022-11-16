@@ -2,27 +2,18 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
-import com.mojang.authlib.exceptions.AuthenticationException;
-import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.*;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthFailedExeption;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.PrivacyPolicyRequiredException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedExeption;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiPrivacyPolicy;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
-import javax.crypto.BadPaddingException;
-import javax.crypto.IllegalBlockSizeException;
-import javax.crypto.NoSuchPaddingException;
-import java.io.IOException;
-import java.security.InvalidKeyException;
-import java.security.NoSuchAlgorithmException;
-import java.security.spec.InvalidKeySpecException;
 import java.util.concurrent.*;
 
 
@@ -45,10 +36,14 @@ public class AuthManager {
         else return null;
     }
 
+    /**
+     * @throws AuthenticationUnavailableException variations of it.
+     * @return actual dg token
+     */
     public String getWorkingTokenOrThrow() {
         if (currentToken instanceof DGAuthToken) return currentToken.getToken();
         else if (currentToken instanceof FailedAuthToken) throw new AuthFailedExeption(((FailedAuthToken) currentToken).getException());
-        else if (currentToken instanceof NullToken) throw new IllegalStateException("No Token");
+        else if (currentToken instanceof NullToken) throw new AuthenticationUnavailableException("Null Token");
         else if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
         throw new IllegalStateException("weird token: "+currentToken);
     }
@@ -104,8 +99,7 @@ public class AuthManager {
                 GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
                 throw new PrivacyPolicyRequiredException();
             }
-        } catch (NoSuchAlgorithmException | AuthenticationException | IOException | NoSuchPaddingException |
-                 InvalidKeyException | InvalidKeySpecException | IllegalBlockSizeException | BadPaddingException e) {
+        } catch (Exception e) {
             currentToken = new FailedAuthToken(e);
             // TODO: loader notifications on bottom right?
 //            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
@@ -118,7 +112,7 @@ public class AuthManager {
     }
 
 
-    AuthToken acceptPrivacyPolicy() throws IOException {
+    AuthToken acceptPrivacyPolicy() {
         if (reauthLock) {
             while(reauthLock);
             return currentToken;
@@ -129,11 +123,11 @@ public class AuthManager {
             try {
                 currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken());
                 if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
-            } catch (IOException e) {
+            } catch (Exception e) {
                 currentToken = new FailedAuthToken(e);
                 // TODO: loader notifications on bottom right?
                 logger.error("Accepting Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
-                throw e;
+                throw new AuthFailedExeption(e);
             } finally {
                 reauthLock = false;
             }

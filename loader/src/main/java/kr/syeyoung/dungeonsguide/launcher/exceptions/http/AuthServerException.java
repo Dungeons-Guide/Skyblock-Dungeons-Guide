@@ -16,7 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions;
+package kr.syeyoung.dungeonsguide.launcher.exceptions.http;
 
-public class PrivacyPolicyRequiredException extends AuthenticationUnavailableException {
+import kr.syeyoung.dungeonsguide.launcher.auth.DGResponse;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
+
+public class AuthServerException extends AuthenticationUnavailableException {
+    private DGResponse response;
+
+    public AuthServerException(DGResponse response) {
+        super(response.getErrorMessage());
+        this.response = response;
+    }
+
+    public String getQRCode() {
+        return response.getQrCode() == null ? null : response.getQrCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return super.toString()+"\n Server ResponseCode: "+response.getResponseCode();
+    }
 }

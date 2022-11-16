@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.InvalidSignatureException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
@@ -82,30 +83,38 @@ public class RemoteLoader implements IDGLoader {
 
 
     @Override
-    public DGInterface loadDungeonsGuide() throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
+    public DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
+        try {
+            Update target;
+            try {
+                target = UpdateRetrieverUtil.getUpdate(branchId, updateId);
+                friendlyVersionName = target.getName();
+            } catch (Exception e) {
+                throw new NoVersionFoundException(friendlyBranchName, friendlyVersionName, branchId+"@"+updateId, e);
+            }
 
-        Update target = UpdateRetrieverUtil.getUpdate(branchId, updateId);
-        friendlyVersionName = target.getName();
+            InputStream in;
+            byte[] mod = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar"));
+            in.close();
+            byte[] signature = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "signature.asc"));
+            in.close();
+            int version = target.getMetadata().getInt("signatureVersion");
 
-        InputStream in;
-        byte[] mod = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar"));
-        in.close();
-        byte[] signature =IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "signature.asc"));
-        in.close();
-        int version = target.getMetadata().getInt("signatureVersion");
+            if (version == 0) {
+                SignatureValidator.validateVersion1Signature(target, mod, signature);
+            } else {
+                throw new InvalidSignatureException(target, "Invalid Signature Version: " + version);
+            }
 
-        if (version == 0) {
-            SignatureValidator.validateVersion1Signature(target, mod, signature);
-        } else {
-            throw new InvalidSignatureException(target, "Invalid Signature Version: "+version);
+            classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
+
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
+            phantomReference = new PhantomReference<>(classLoader, refQueue);
+            return dgInterface;
+        } catch (Exception e) {
+            throw new DungeonsGuideLoadingException(e);
         }
-
-        classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
-
-        dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
-        phantomReference = new PhantomReference<>(classLoader, refQueue);
-        return dgInterface;
     }
 
     @Override
