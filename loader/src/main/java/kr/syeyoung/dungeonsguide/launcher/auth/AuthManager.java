@@ -8,12 +8,16 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedExeption;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiPrivacyPolicy;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.util.UUID;
 import java.util.concurrent.*;
 
 
@@ -80,6 +84,8 @@ public class AuthManager {
 
     private volatile boolean reauthLock = false;
 
+    private static final UUID authenticationFailure = UUID.randomUUID();
+    private static final UUID privacyPolicyRequired = UUID.randomUUID();
 
     AuthToken reAuth() {
         if (reauthLock) {
@@ -99,10 +105,32 @@ public class AuthManager {
                 GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
                 throw new PrivacyPolicyRequiredException();
             }
+
+
+            NotificationManager.INSTANCE.removeNotification(authenticationFailure);
+            NotificationManager.INSTANCE.removeNotification(privacyPolicyRequired);
         } catch (Exception e) {
             currentToken = new FailedAuthToken(e);
-            // TODO: loader notifications on bottom right?
-//            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §r§cDG auth failed, trying again in ten seconds", true);
+            if (e instanceof PrivacyPolicyRequiredException) {
+                NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
+                        .title("Privacy Policy")
+                        .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
+                        .titleColor(0xFFFF0000)
+                        .unremovable(true)
+                        .onClick(() -> {
+                            GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
+                        })
+                        .build());
+            } else {
+                NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
+                        .title("Auth Error")
+                        .description("Authentication Error Occured\n"+e.getMessage())
+                        .titleColor(0xFFFF0000)
+                        .onClick(() -> {
+                            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                        })
+                        .build());
+            }
             logger.error("Re-auth failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
             throw new AuthFailedExeption(e);
         } finally {
@@ -120,12 +148,32 @@ public class AuthManager {
 
         if (currentToken instanceof PrivacyPolicyRequiredToken) {
             reauthLock = true;
+            NotificationManager.INSTANCE.removeNotification(privacyPolicyRequired);
             try {
                 currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken());
                 if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
             } catch (Exception e) {
                 currentToken = new FailedAuthToken(e);
-                // TODO: loader notifications on bottom right?
+                if (e instanceof PrivacyPolicyRequiredException) {
+                    NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
+                            .title("Privacy Policy")
+                            .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
+                            .titleColor(0xFFFF0000)
+                            .unremovable(true)
+                            .onClick(() -> {
+                                GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
+                            })
+                            .build());
+                } else {
+                    NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
+                            .title("Auth Error")
+                            .description("Authentication Error Occured\n"+e.getMessage())
+                            .titleColor(0xFFFF0000)
+                            .onClick(() -> {
+                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                            })
+                            .build());
+                }
                 logger.error("Accepting Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
                 throw new AuthFailedExeption(e);
             } finally {

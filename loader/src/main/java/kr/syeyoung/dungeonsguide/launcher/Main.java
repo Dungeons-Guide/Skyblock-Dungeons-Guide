@@ -24,11 +24,13 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingExcepti
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiReferenceLeak;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.SpecialGuiScreen;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
@@ -77,6 +79,8 @@ public class Main
     public void initEvent(FMLInitializationEvent initializationEvent) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(GuiDisplayer.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(NotificationManager.INSTANCE);
+
 
         try {
             File f = new File(configDir, "loader.cfg");
@@ -118,6 +122,13 @@ public class Main
         for (DungeonsGuideReloadListener listener : listeners) {
             listener.onLoad(dgInterface);
         }
+
+
+        NotificationManager.INSTANCE.updateNotification(UUID.randomUUID(), Notification.builder()
+                    .title("Dungeons Guide Loaded!")
+                    .description("Successfully Loaded DugneonsGuide!\nLoader: "+currentLoader.loaderName()+"\nVersion: "+currentLoader.version())
+                    .titleColor(0xFF00FF00)
+                    .build());
     }
     public void reload(IDGLoader newLoader) {
         try {
