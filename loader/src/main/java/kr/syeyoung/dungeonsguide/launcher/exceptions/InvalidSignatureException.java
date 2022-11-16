@@ -16,22 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.loader;
+package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-import kr.syeyoung.dungeonsguide.launcher.DGInterface;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
+import kr.syeyoung.dungeonsguide.launcher.branch.Update;
+import lombok.Getter;
 
-import java.io.IOException;
+@Getter
+public class InvalidSignatureException extends RuntimeException {
+    private Update update;
 
-public interface IDGLoader {
-    DGInterface loadDungeonsGuide() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException;
-    DGInterface getInstance();
-    void unloadDungeonsGuide() throws ReferenceLeakedException;
+    public InvalidSignatureException(Update update, String message) {
+        super(message);
+        this.update = update;
+    }
 
-    boolean isUnloadable();
-
-    boolean isLoaded();
-
-    String loaderName();
-    String version();
+    public InvalidSignatureException(Update update, Throwable t) {
+        super(t);
+        this.update = update;
+    }
 }

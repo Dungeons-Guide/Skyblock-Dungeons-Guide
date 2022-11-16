@@ -5,6 +5,7 @@ import com.google.gson.JsonParser;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.AuthToken;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.DGAuthToken;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.PrivacyPolicyRequiredToken;
@@ -52,14 +53,16 @@ public class DgAuthUtil {
             );
         }   catch (Exception e) {
             throw new ResponseParsingException(payload, e.getMessage());
+        } finally {
+            toRead.close();
         }
 
     }
 
-    public static String requestAuth(String baseurl) throws IOException {
+    public static String requestAuth() throws IOException {
         GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
 
-        HttpsURLConnection connection = (HttpsURLConnection) new URL(baseurl + "/auth/requestAuth").openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/requestAuth").openConnection();
         connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setRequestMethod("POST");
@@ -96,8 +99,8 @@ public class DgAuthUtil {
         return result;
     }
 
-    public static AuthToken verifyAuth(String tempToken, byte[] encSecret, String baseurl) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(baseurl + "/auth/authenticate").openConnection();
+    public static AuthToken verifyAuth(String tempToken, byte[] encSecret) throws IOException {
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/authenticate").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -120,8 +123,8 @@ public class DgAuthUtil {
         }
     }
 
-    public static AuthToken acceptNewPrivacyPolicy(String tempToken, String baseurl) throws IOException {
-        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(baseurl + "/auth/acceptPrivacyPolicy").openConnection();
+    public static AuthToken acceptNewPrivacyPolicy(String tempToken) throws IOException {
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/acceptPrivacyPolicy").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");

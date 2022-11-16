@@ -19,7 +19,9 @@
 package kr.syeyoung.dungeonsguide.launcher;
 
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
@@ -28,6 +30,7 @@ import kr.syeyoung.dungeonsguide.launcher.gui.screen.SpecialGuiScreen;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
+import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -96,7 +99,7 @@ public class Main
         }
         currentLoader = null;
     }
-    private void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
+    private void load(IDGLoader newLoader) throws ClassNotFoundException, InstantiationException, IllegalAccessException, IOException {
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
         dgInterface = newLoader.loadDungeonsGuide();
         currentLoader = newLoader;
@@ -157,7 +160,19 @@ public class Main
             return new JarLoader();
         } else if (loader.equals("auto") ){
                 // remote load
-            throw new UnsupportedOperationException(""); // yet
+            String branch =  System.getProperty("branch") == null ? configuration.get("loader", "remoteBranch", "$default").getString() : System.getProperty("branch");
+            String version = System.getProperty("version") == null ? configuration.get("loader", "remoteVersion", "latest").getString() : System.getProperty("version");
+            try {
+                UpdateRetrieverUtil.VersionInfo versionInfo = UpdateRetrieverUtil.getIds(
+                       branch,
+                        version
+                );
+                if (versionInfo == null) throw new NoVersionFoundException(branch, version);
+
+                return new RemoteLoader(versionInfo.getFriendlyBranchName(), versionInfo.getBranchId(), versionInfo.getUpdateId());
+            } catch (IOException e) {
+                throw new NoVersionFoundException(branch, version, e);
+            }
         } else {
             throw new NoSuitableLoaderFoundException(System.getProperty("dg.loader"), configuration.get("loader", "modsource", "auto").getString());
         }

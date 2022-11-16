@@ -19,6 +19,9 @@
 package kr.syeyoung.dungeonsguide.launcher;
 
 public interface DungeonsGuideReloadListener {
+    /**
+     * @implNote  This is very important that you GET RID OF referene to DGInterface when this is called, or else dg is gonna crash with ReferenceLeakedException.
+    */
     public void unloadReference();
     public void onLoad(DGInterface dgInterface);
 }

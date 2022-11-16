@@ -16,22 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.loader;
+package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-import kr.syeyoung.dungeonsguide.launcher.DGInterface;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
+import lombok.Getter;
 
-import java.io.IOException;
+@Getter
+public class NoVersionFoundException extends RuntimeException {
+    private String branch;
+    private String version;
 
-public interface IDGLoader {
-    DGInterface loadDungeonsGuide() throws InstantiationException, IllegalAccessException, ClassNotFoundException, IOException;
-    DGInterface getInstance();
-    void unloadDungeonsGuide() throws ReferenceLeakedException;
-
-    boolean isUnloadable();
-
-    boolean isLoaded();
-
-    String loaderName();
-    String version();
+    public NoVersionFoundException(String branch, String version) {
+        super("No version found: "+branch+" - "+version);
+        this.branch = branch;
+        this.version = version;
+    }
+    public NoVersionFoundException(String branch, String version, Throwable e) {
+        super("No version found: "+branch+" - "+version, e);
+        this.branch = branch;
+        this.version = version;
+    }
 }

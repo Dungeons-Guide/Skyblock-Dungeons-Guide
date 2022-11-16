@@ -3,6 +3,7 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.authlib.exceptions.AuthenticationException;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.*;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.AuthFailedExeption;
@@ -34,10 +35,6 @@ public class AuthManager {
         if(INSTANCE == null) INSTANCE = new AuthManager();
         return INSTANCE;
     }
-
-    @Setter
-    private String baseserverurl = "https://dungeons.guide";
-
     private AuthToken currentToken = new NullToken();
 
     public AuthToken getToken() {
@@ -98,9 +95,9 @@ public class AuthManager {
         reauthLock = true;
 
         try {
-            String token = DgAuthUtil.requestAuth(baseserverurl);
+            String token = DgAuthUtil.requestAuth();
             byte[] encSecret = DgAuthUtil.checkSessionAuthenticityAndReturnEncryptedSecret(token);
-            currentToken = DgAuthUtil.verifyAuth(token, encSecret, baseserverurl);
+            currentToken = DgAuthUtil.verifyAuth(token, encSecret);
             MinecraftForge.EVENT_BUS.post(new AuthChangedEvent(currentToken));
 
             if (currentToken instanceof PrivacyPolicyRequiredToken) {
@@ -130,7 +127,7 @@ public class AuthManager {
         if (currentToken instanceof PrivacyPolicyRequiredToken) {
             reauthLock = true;
             try {
-                currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken(), baseserverurl);
+                currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken());
                 if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
             } catch (IOException e) {
                 currentToken = new FailedAuthToken(e);
