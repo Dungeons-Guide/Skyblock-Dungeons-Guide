@@ -112,7 +112,7 @@ public class AuthManager {
     }
 
 
-    AuthToken acceptPrivacyPolicy() {
+    public AuthToken acceptPrivacyPolicy() {
         if (reauthLock) {
             while(reauthLock);
             return currentToken;

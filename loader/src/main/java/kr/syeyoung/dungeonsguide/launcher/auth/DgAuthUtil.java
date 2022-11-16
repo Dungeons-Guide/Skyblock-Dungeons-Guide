@@ -59,7 +59,7 @@ public class DgAuthUtil {
                     json.isNull("qrCode") ? null:  json.getString("qrCode")
             );
 
-            if (!"SUCCESS".equals(response.getStatus())) {
+            if (!"Success".equals(response.getStatus())) {
                 throw new AuthServerException(response);
             }
 
@@ -129,7 +129,7 @@ public class DgAuthUtil {
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
 
-        urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"sharedSecret\":\""+Base64.encodeBase64URLSafeString(encSecret)+"\"}").getBytes());
+        urlConnection.getOutputStream().write(("{\"jwt\":\""+tempToken+"\",\"sharedSecret\":\""+Base64.encodeBase64String(encSecret)+"\"}").getBytes());
 
         JSONObject data = getResponse(urlConnection, JSONObject.class);
         try {

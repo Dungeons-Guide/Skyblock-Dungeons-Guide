@@ -1,5 +1,8 @@
 package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
+import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedExeption;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import org.lwjgl.opengl.GL11;
@@ -10,8 +13,11 @@ public class GuiPrivacyPolicy extends SpecialGuiScreen {
     @Override
     public void initGui() {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2+50,sr.getScaledHeight()-40, 300, 20,"Accept Privacy Policy"));
-        this.buttonList.add(new GuiButton(1, sr.getScaledWidth()/2-50-300,sr.getScaledHeight()-40, 300, 20,"Deny and Play Without DG"));
+
+        int width = Math.min(300, sr.getScaledWidth() / 2 - 20);
+
+        this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2 + 10,sr.getScaledHeight()-40, width, 20,"Accept Privacy Policy"));
+        this.buttonList.add(new GuiButton(1, sr.getScaledWidth() / 2 - 10 - width,sr.getScaledHeight()-40, width, 20,"Deny and Play Without DG"));
     }
 
 
@@ -20,6 +26,12 @@ public class GuiPrivacyPolicy extends SpecialGuiScreen {
         super.actionPerformed(button);
         if (button.id == 0) {
             // accept
+            try {
+                AuthManager.getInstance().acceptPrivacyPolicy();
+            } catch (PrivacyPolicyRequiredException e) {
+//                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                // display tooltip.
+            }
             dismiss();
         } else if (button.id == 1) {
             dismiss();
@@ -35,7 +47,7 @@ public class GuiPrivacyPolicy extends SpecialGuiScreen {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
         fontRenderer.drawString("Please accept or deny Dungeons Guide Privacy Policy to continue", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please accept or deny Dungeons Guide Privacy Policy to continue"))/2,40,0xFFFF0000);
-
+        fontRenderer.drawString("Blah blah legal stuff", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please accept or deny Dungeons Guide Privacy Policy to continue"))/2,sr.getScaledHeight() / 2, 0xFFFFFFFF);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }
