@@ -67,15 +67,19 @@ public class AuthManager {
         final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, namedThreadFactory);
         scheduler.scheduleAtFixedRate(() -> {
             boolean shouldReAuth = false;
-            if (!getToken().getUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
+            if (getToken().isUserVerified() && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                 shouldReAuth = true;
             }
             if (!getToken().isAuthenticated()) {
                 shouldReAuth = true;
             }
             if (shouldReAuth)
-                reAuth();
-        }, 10,2000, TimeUnit.MILLISECONDS);
+                try {
+                    reAuth();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
+        }, 10,10000, TimeUnit.MILLISECONDS);
 
 
         reAuth();
@@ -140,7 +144,7 @@ public class AuthManager {
     }
 
 
-    public AuthToken acceptPrivacyPolicy() {
+    public AuthToken acceptPrivacyPolicy(long version) {
         if (reauthLock) {
             while(reauthLock);
             return currentToken;
@@ -150,7 +154,7 @@ public class AuthManager {
             reauthLock = true;
             NotificationManager.INSTANCE.removeNotification(privacyPolicyRequired);
             try {
-                currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken());
+                currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken(), version);
                 if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
             } catch (Exception e) {
                 if (e instanceof PrivacyPolicyRequiredException) {

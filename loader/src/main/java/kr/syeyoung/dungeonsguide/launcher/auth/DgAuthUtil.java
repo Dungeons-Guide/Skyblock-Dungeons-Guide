@@ -145,7 +145,7 @@ public class DgAuthUtil {
         }
     }
 
-    public static AuthToken acceptNewPrivacyPolicy(String tempToken) throws IOException {
+    public static AuthToken acceptNewPrivacyPolicy(String tempToken, long version) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/acceptPrivacyPolicy").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
@@ -153,7 +153,7 @@ public class DgAuthUtil {
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
 
-        urlConnection.getOutputStream().write(tempToken.getBytes());
+        urlConnection.getOutputStream().write(("{\"jwt\": \""+tempToken+"\", \"version\": "+version+"}").getBytes());
 
         JSONObject data = getResponse(urlConnection, JSONObject.class);
         try {
