@@ -47,6 +47,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.command.ICommand;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
@@ -130,6 +131,12 @@ public class DungeonsGuide implements DGInterface {
         registeredListeners.add(object);
         MinecraftForge.EVENT_BUS.register(object);
     }
+    private List<ICommand> registeredCommands = new ArrayList<>();
+
+    public void registerCommands(ICommand command) {
+        registeredCommands.add(command);
+        ClientCommandHandler.instance.registerCommand(command);
+    }
 
 
     public void init(File f) {
@@ -194,8 +201,8 @@ public class DungeonsGuide implements DGInterface {
         CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
         CommandDgDebug command = new CommandDgDebug();
 
-        ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
-        ClientCommandHandler.instance.registerCommand(command);
+        registerCommands(commandDungeonsGuide);
+        registerCommands(command);
 
         registerEventsForge(command);
         registerEventsForge(commandDungeonsGuide);
@@ -247,6 +254,15 @@ public class DungeonsGuide implements DGInterface {
 
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
+        }
+        Set<ICommand> commands = ReflectionHelper.getPrivateValue(ClientCommandHandler.class, ClientCommandHandler.instance, "commandSet");
+
+        for (ICommand registeredCommand : registeredCommands) {
+            ClientCommandHandler.instance.getCommands().remove(registeredCommand.getCommandName());
+            for (String commandAlias : registeredCommand.getCommandAliases()) {
+                ClientCommandHandler.instance.getCommands().remove(commandAlias);
+            }
+            commands.remove(registeredCommand);
         }
         THREAD_GROUP.interrupt();
         THREAD_GROUP.stop();
