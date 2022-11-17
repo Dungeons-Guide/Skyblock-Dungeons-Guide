@@ -21,7 +21,6 @@ public class StompManager {
     public static StompManager getInstance() {
         if (instance == null) {
             instance = new StompManager();
-            MinecraftForge.EVENT_BUS.register(instance);
         }
         return instance;
     }
@@ -48,7 +47,6 @@ public class StompManager {
 
     ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();
 
-    @SubscribeEvent
     public void onStompDied(StompDiedEvent event) {
         logger.info("Stomp Connection closed, trying to reconnect - {} - {}", event.reason, event.code);
         connectStomp();

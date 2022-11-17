@@ -1,12 +1,14 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
-import sun.misc.Resource;
+import kr.syeyoung.dungeonsguide.launcher.events.DGAwareEventSubscriptionTransformer;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 
 public abstract class DGClassLoader extends ClassLoader implements ByteStreamURLHandler.InputStreamGenerator{
+
+    DGAwareEventSubscriptionTransformer eventSubscriptionTransformer = new DGAwareEventSubscriptionTransformer(this);
     public DGClassLoader(ClassLoader parent) {
         super(parent);
     }
@@ -53,6 +55,7 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
             throw new ClassNotFoundException(name, e);
         }
         if (res != null) {
+            res = eventSubscriptionTransformer.transform(name, name, res);
             return defineClass(name, res, 0, res.length);
         } else {
             throw new ClassNotFoundException(name);

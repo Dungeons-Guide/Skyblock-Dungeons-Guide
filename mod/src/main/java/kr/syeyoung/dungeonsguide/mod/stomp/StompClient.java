@@ -131,7 +131,7 @@ public class StompClient extends WebSocketClient {
         if (heartbeat != null) heartbeat.cancel(true);
 
         MinecraftForge.EVENT_BUS.post(new StompDiedEvent(code, reason, remote));
-
+        StompManager.getInstance().onStompDied(new StompDiedEvent(code, reason, remote));
     }
 
     @Override

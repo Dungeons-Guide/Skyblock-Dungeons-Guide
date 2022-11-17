@@ -30,9 +30,9 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
 
-public class GuiReferenceLeak extends SpecialGuiScreen {
+public class GuiUnloadingError extends SpecialGuiScreen {
     private final String stacktrace;
-    public GuiReferenceLeak(Throwable cause) {
+    public GuiUnloadingError(Throwable cause) {
 
         ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
         PrintStream printStream = new PrintStream(byteArrayOutputStream);

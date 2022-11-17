@@ -17,9 +17,8 @@ public class ChatTransmitter {
     public static final String PREFIX = "§eDungeons Guide §7:: ";
     public static String prefix = "§eDungeons Guide §7:: ";
 
-    public ChatTransmitter() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
+
+    public static ChatTransmitter INSTANCE = new ChatTransmitter();
 
     static Queue<ChatComponentText> receiveQueue = new ConcurrentLinkedQueue<>();
 

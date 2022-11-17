@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.ThreadContext;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -22,9 +23,6 @@ public class DungeonFacade {
     private DungeonContext context;
 
     public void init() {
-        DungeonListener dgEventListener = new DungeonListener();
-        MinecraftForge.EVENT_BUS.register(dgEventListener);
-
         try {
             DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
         } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |

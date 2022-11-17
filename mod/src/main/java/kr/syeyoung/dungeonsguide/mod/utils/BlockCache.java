@@ -15,9 +15,6 @@ import org.jetbrains.annotations.NotNull;
 import java.util.concurrent.TimeUnit;
 
 public class BlockCache {
-    public BlockCache() {
-        MinecraftForge.EVENT_BUS.register(this);
-    }
 
     @SuppressWarnings("UnstableApiUsage")
     private final LoadingCache<BlockPos, IBlockState> cache = CacheBuilder.newBuilder()

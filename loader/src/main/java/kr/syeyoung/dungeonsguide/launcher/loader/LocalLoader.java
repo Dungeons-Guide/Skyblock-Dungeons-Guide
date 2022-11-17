@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingExcepti
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import org.apache.commons.io.IOUtils;
 
+import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -47,14 +48,16 @@ public class LocalLoader implements IDGLoader {
         }
         @Override
         public byte[] getClassBytes(String name) throws IOException { // . separated.
-            InputStream in = convert("/"+name.replace(".", "/")+".class");
+            if (name.startsWith("kr.syeyoung.dungeonsguide.launcher")) return null;
+            InputStream in = convert(name.replace(".", "/")+".class");
+            if (!(in instanceof BufferedInputStream)) return null;
             if (in == null) return null;
             return IOUtils.toByteArray(in);
         }
 
         @Override
         public InputStream convert(String name) { // / separated
-            return LocalLoader.class.getResourceAsStream(name);
+            return LocalLoader.class.getResourceAsStream("/"+name);
         }
     }
 

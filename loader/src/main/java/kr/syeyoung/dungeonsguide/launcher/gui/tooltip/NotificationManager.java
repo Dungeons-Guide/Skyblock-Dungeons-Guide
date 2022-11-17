@@ -6,6 +6,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
@@ -28,6 +29,64 @@ public class NotificationManager {
         tooltipList.remove(uid);
     }
 
+
+    @SubscribeEvent
+    public void onRender(RenderGameOverlayEvent.Post postRender) {
+        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
+        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        int widthX = fr.getStringWidth("X");
+
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(sr.getScaledWidth() - 5, sr.getScaledHeight() -5, 0);
+
+        int currY = sr.getScaledHeight() - 5;
+
+        for (Notification tooltip : tooltipList.values()) {
+            int width, height;
+            String[] description = tooltip.getDescription().split("\n");
+            width =
+                    Math.max(
+                            fr.getStringWidth(tooltip.getTitle()),
+                            Arrays.stream(description).map(fr::getStringWidth).max(Integer::compareTo).orElse(300)
+                    ) + 10;
+            height = description.length * fr.FONT_HEIGHT + 15 + fr.FONT_HEIGHT;
+
+            GlStateManager.translate(0, -height, 0);
+            currY -= height;
+
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(-width, 0, 0);
+            Gui.drawRect(0, 0,width,height, 0xFF23272a);
+            Gui.drawRect(1, 1, width-1, height-1, 0XFF2c2f33);
+
+            if (!tooltip.isUnremovable()) {
+                fr.drawString("X", width - widthX - 2, 2, 0xFFFF0000);
+            }
+
+            GlStateManager.translate(5,5,0);
+            fr.drawString(tooltip.getTitle(), 0,0, tooltip.getTitleColor());
+            GlStateManager.translate(0, fr.FONT_HEIGHT + 5, 0);
+            int y = 0;
+            for (String line : description) {
+                fr.drawString(line, 0, y, 0xFFAAAAAA);
+                y += fr.FONT_HEIGHT;
+            }
+            GlStateManager.popMatrix();
+
+            tooltip.setBoundRect(new Rectangle(
+                    sr.getScaledWidth() - width - 5,
+                    currY,
+                    width,
+                    height
+            ));
+
+            currY -= 5;
+            GlStateManager.translate(0, -5, 0);
+        }
+
+        GlStateManager.popMatrix();
+
+    }
     @SubscribeEvent
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());

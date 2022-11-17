@@ -66,7 +66,7 @@ public class JarLoader implements IDGLoader {
         @Override
         public InputStream convert(String name) { // / separated
             if (this.loadedResources.containsKey(name.substring(1)))
-                return new ByteArrayInputStream(this.loadedResources.get(name.substring(1)));
+                return new ByteArrayInputStream(this.loadedResources.get(name));
             return null;
         }
     }

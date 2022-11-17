@@ -24,17 +24,16 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingExcepti
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiPrivacyPolicy;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiReferenceLeak;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
@@ -44,8 +43,9 @@ import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
+import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
-import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -75,9 +75,11 @@ public class Main
         listeners.remove(dungeonsGuideReloadListener);
     }
 
+
+    @Getter
     private IDGLoader currentLoader;
 
-    private UUID dgUnloaded = UUID.randomUUID();
+    private static final UUID dgUnloaded = UUID.randomUUID();
 
     @EventHandler
     public void initEvent(FMLInitializationEvent initializationEvent) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
@@ -121,7 +123,14 @@ public class Main
             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
         } catch (DungeonsGuideLoadingException e) {
             e.printStackTrace();
+
+            try {
+                unload();
+            } catch (Exception e2) {
+                GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
+            }
             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+
         }
     }
 
@@ -147,7 +156,7 @@ public class Main
                         File f = new File(configDir, "loader.cfg");
                         Configuration configuration = new Configuration(f);
                         IDGLoader idgLoader = obtainLoader(configuration);
-                        load(idgLoader);
+                        reload(idgLoader);
                     } catch (NoSuitableLoaderFoundException e) {
                         e.printStackTrace();
                         GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
@@ -156,7 +165,14 @@ public class Main
                         GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
                     } catch (DungeonsGuideLoadingException e) {
                         e.printStackTrace();
+                        try {
+                            unload();
+                        } catch (Exception e2) {
+                            GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
+                        }
                         GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                    } catch (ReferenceLeakedException e) {
+                        GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
                     }
                 })
                 .unremovable(true)
@@ -166,9 +182,11 @@ public class Main
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
         dgInterface = newLoader.loadDungeonsGuide();
         currentLoader = newLoader;
-
-        dgInterface.init(configDir);
-
+        try {
+            dgInterface.init(configDir);
+        } catch (Exception e) {
+            throw new DungeonsGuideLoadingException("Exception occured while calling init", e);
+        }
         for (DungeonsGuideReloadListener listener : listeners) {
             listener.onLoad(dgInterface);
         }
@@ -183,21 +201,42 @@ public class Main
 
         NotificationManager.INSTANCE.removeNotification(dgUnloaded);
     }
-    public void reload(IDGLoader newLoader) {
+
+    private volatile IDGLoader reqLoader = null;
+    public void reloadWithoutStacktraceReference(IDGLoader newLoader) {
+        reqLoader = newLoader;
+    }
+    @SubscribeEvent
+    public void onTick(TickEvent.ClientTickEvent tickEvent) {
+        if (reqLoader != null) {
+            IDGLoader loader = reqLoader;
+            reqLoader = null;
+
+            try {
+                reload(loader);
+            } catch (DungeonsGuideLoadingException e) {
+                try {
+                    unload();
+                } catch (Exception e2) {
+                    GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
+                }
+                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+            } catch (ReferenceLeakedException e) {
+                GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
+            }
+        }
+    }
+
+    public void reload(IDGLoader newLoader) throws DungeonsGuideLoadingException, ReferenceLeakedException {
         try {
             unload();
             load(newLoader);
-        } catch (DungeonsGuideLoadingException | ReferenceLeakedException e) {
+        } catch (DungeonsGuideLoadingException | ReferenceLeakedException | UnsupportedOperationException e) {
             dgInterface = null;
             currentLoader = null;
 
             e.printStackTrace();
-
-            if (e instanceof DungeonsGuideLoadingException) {
-                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-            } else {
-                GuiDisplayer.INSTANCE.displayGui(new GuiReferenceLeak(e));
-            }
+            throw e;
         }
     }
 

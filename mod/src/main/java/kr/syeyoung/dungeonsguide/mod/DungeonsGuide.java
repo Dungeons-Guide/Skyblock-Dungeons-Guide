@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
+import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.FeatureListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -58,6 +59,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -91,9 +93,17 @@ public class DungeonsGuide implements DGInterface {
     CommandReparty commandReparty;
 
 
+    private List<Object> registeredListeners = new ArrayList<>();
+    public void registerEventsForge(Object object) {
+        registeredListeners.add(object);
+        MinecraftForge.EVENT_BUS.register(object);
+    }
 
 
     public void init(File f) {
+        ClassLoader orignalLoader = Thread.currentThread().getContextClassLoader();
+
+        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
         progressbar.step("Creating Configuration");
@@ -115,18 +125,19 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
 
-        MinecraftForge.EVENT_BUS.register(this);
+        registerEventsForge(this);
 
         progressbar.step("Registering Events & Commands");
 
         skyblockStatus = new SkyblockStatus();
 
-        MinecraftForge.EVENT_BUS.register(skyblockStatus);
-
+        registerEventsForge(skyblockStatus);
+        registerEventsForge(ChatTransmitter.INSTANCE);
+        registerEventsForge(new BlockCache());
+        registerEventsForge(TitleRender.getInstance());
 
         (new FeatureRegistry()).init();
 
-        new ChatTransmitter();
 
         try {
             Set<String> invalid = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, (LaunchClassLoader) Main.class.getClassLoader(), "invalidClasses");
@@ -139,7 +150,9 @@ public class DungeonsGuide implements DGInterface {
 
         this.blockCache = new BlockCache();
 
+        registerEventsForge(new DungeonListener());
         this.dungeonFacade = new DungeonFacade();
+
         dungeonFacade.init();
 
 
@@ -152,24 +165,24 @@ public class DungeonsGuide implements DGInterface {
         ClientCommandHandler.instance.registerCommand(commandDungeonsGuide);
         ClientCommandHandler.instance.registerCommand(command);
 
-        MinecraftForge.EVENT_BUS.register(command);
-        MinecraftForge.EVENT_BUS.register(commandDungeonsGuide);
+        registerEventsForge(command);
+        registerEventsForge(commandDungeonsGuide);
 
-        MinecraftForge.EVENT_BUS.register(commandReparty = new CommandReparty());
+        registerEventsForge(commandReparty = new CommandReparty());
 
-        MinecraftForge.EVENT_BUS.register(new FeatureListener());
-        MinecraftForge.EVENT_BUS.register(new PacketListener());
-        MinecraftForge.EVENT_BUS.register(new Keybinds());
+        registerEventsForge(new FeatureListener());
+        registerEventsForge(new PacketListener());
+        registerEventsForge(new Keybinds());
 
-        MinecraftForge.EVENT_BUS.register(PartyManager.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(ChatProcessor.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(StaticResourceCache.INSTANCE);
+        registerEventsForge(PartyManager.INSTANCE);
+        registerEventsForge(ChatProcessor.INSTANCE);
+        registerEventsForge(StaticResourceCache.INSTANCE);
 
-        MinecraftForge.EVENT_BUS.register(new AhUtils());
+        registerEventsForge(new AhUtils());
 
 
         progressbar.step("Opening connection");
-        MinecraftForge.EVENT_BUS.register(cosmeticsManager = new CosmeticsManager());
+        registerEventsForge(cosmeticsManager = new CosmeticsManager());
 
 
         progressbar.step("Loading Config");
@@ -187,20 +200,20 @@ public class DungeonsGuide implements DGInterface {
             System.setProperty("dg.safe", "true");
         }
 
-        MinecraftForge.EVENT_BUS.register(RichPresenceManager.INSTANCE);
+        registerEventsForge(RichPresenceManager.INSTANCE);
         TimeScoreUtil.init();
 
         ProgressManager.pop(progressbar);
 
+        Thread.currentThread().setContextClassLoader(orignalLoader);
     }
 
     @Override
     public void unload() {
         // have FUN!
-
-//        bar.step("Instantiating...");
-//        partialLoad(obtainLoader(configuration));
-        throw new UnsupportedOperationException("Who the heck registered events in features?? This will stay unsupported for now");
+        for (Object registeredListener : registeredListeners) {
+            MinecraftForge.EVENT_BUS.unregister(registeredListener);
+        }
     }
 
     @Override

@@ -56,7 +56,6 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
 
         addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
-        MinecraftForge.EVENT_BUS.register(this);
 
 //        (new Thread(() -> {
 //            while (true){

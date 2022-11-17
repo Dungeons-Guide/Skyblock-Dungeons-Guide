@@ -27,7 +27,6 @@ public class TitleRender {
     }
 
     private TitleRender() {
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     protected static int titlesTimer;

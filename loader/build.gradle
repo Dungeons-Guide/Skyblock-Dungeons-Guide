@@ -21,7 +21,7 @@ loom {
             // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
 //            property("mixin.debug", "true")
 //            property("asmhelper.verbose", "true")
-//            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            arg("--tweakClass", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
 //            arg("--mixin", "mixins.examplemod.json")
 
         }
@@ -87,6 +87,7 @@ tasks.withType(Jar) {
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
         attributes["ForceLoadAsMod"] = "true"
+        attributes["TweakClass"] = "kr.syeyoung.dugneonsguide.launcher.coremod.DGTweaker"
 
         // If you don't want mixins, remove these lines
 //        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"

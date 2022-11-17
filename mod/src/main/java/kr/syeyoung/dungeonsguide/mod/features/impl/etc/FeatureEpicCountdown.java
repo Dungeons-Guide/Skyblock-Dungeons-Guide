@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.mod.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TitleRender;
@@ -23,7 +24,7 @@ import static kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult.REMOVE_CHAT;
 /**
  * CREDITS FOR THE COUNTDOWN SOUNDTRACK: <a href="https://www.youtube.com/watch?v=acCqrA-JxAw">...</a>
  */
-public class FeatureEpicCountdown extends SimpleFeature {
+public class FeatureEpicCountdown extends SimpleFeature implements TickListener {
 
     static volatile long updatedAt;
     static volatile int secondsLeft;
@@ -40,7 +41,6 @@ public class FeatureEpicCountdown extends SimpleFeature {
         lastSec = GO_TEXT;
 
         ChatProcessor.INSTANCE.subscribe(FeatureEpicCountdown::processChat);
-        MinecraftForge.EVENT_BUS.register(this);
     }
 
     public static ChatProcessResult processChat(String txt, Map<String, Object> context) {
@@ -87,8 +87,8 @@ public class FeatureEpicCountdown extends SimpleFeature {
     String lastSec;
 
     @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent e){
-        if(e.phase != TickEvent.Phase.START || !isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+    public void onTick(){
+        if(!isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
 
         ScoreBoardUtils.forEachLineClean(line -> {
