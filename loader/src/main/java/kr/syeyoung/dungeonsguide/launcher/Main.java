@@ -45,6 +45,7 @@ import net.minecraftforge.fml.common.ProgressManager;
 import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
+import javax.swing.*;
 import java.io.*;
 import java.util.*;
 
@@ -75,12 +76,37 @@ public class Main
     }
 
     private IDGLoader currentLoader;
+
+    private UUID dgUnloaded = UUID.randomUUID();
+
     @EventHandler
     public void initEvent(FMLInitializationEvent initializationEvent) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(GuiDisplayer.INSTANCE);
         MinecraftForge.EVENT_BUS.register(NotificationManager.INSTANCE);
 
+        NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
+                        .title("Dungeons Guide Not Loaded")
+                        .description("Click to try reloading....")
+                        .onClick(() -> {
+                            try {
+                                File f = new File(configDir, "loader.cfg");
+                                Configuration configuration = new Configuration(f);
+                                IDGLoader idgLoader = obtainLoader(configuration);
+                                load(idgLoader);
+                            } catch (NoSuitableLoaderFoundException e) {
+                                e.printStackTrace();
+                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                            } catch (NoVersionFoundException e) {
+                                e.printStackTrace();
+                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                            } catch (DungeonsGuideLoadingException e) {
+                                e.printStackTrace();
+                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                            }
+                        })
+                        .unremovable(true)
+                .build());
 
         try {
             File f = new File(configDir, "loader.cfg");
@@ -111,6 +137,30 @@ public class Main
             currentLoader.unloadDungeonsGuide();
         }
         currentLoader = null;
+
+
+        NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
+                .title("Dungeons Guide Not Loaded")
+                .description("Click to try reloading....")
+                .onClick(() -> {
+                    try {
+                        File f = new File(configDir, "loader.cfg");
+                        Configuration configuration = new Configuration(f);
+                        IDGLoader idgLoader = obtainLoader(configuration);
+                        load(idgLoader);
+                    } catch (NoSuitableLoaderFoundException e) {
+                        e.printStackTrace();
+                        GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                    } catch (NoVersionFoundException e) {
+                        e.printStackTrace();
+                        GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                    } catch (DungeonsGuideLoadingException e) {
+                        e.printStackTrace();
+                        GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                    }
+                })
+                .unremovable(true)
+                .build());
     }
     private void load(IDGLoader newLoader) throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
@@ -129,6 +179,9 @@ public class Main
                     .description("Successfully Loaded DugneonsGuide!\nLoader: "+currentLoader.loaderName()+"\nVersion: "+currentLoader.version())
                     .titleColor(0xFF00FF00)
                     .build());
+
+
+        NotificationManager.INSTANCE.removeNotification(dgUnloaded);
     }
     public void reload(IDGLoader newLoader) {
         try {

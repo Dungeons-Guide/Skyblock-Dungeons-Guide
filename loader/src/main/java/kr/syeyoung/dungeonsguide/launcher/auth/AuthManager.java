@@ -115,7 +115,7 @@ public class AuthManager {
             NotificationManager.INSTANCE.removeNotification(privacyPolicyRequired);
         } catch (Exception e) {
             if (e instanceof PrivacyPolicyRequiredException) {
-                NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
+                NotificationManager.INSTANCE.updateNotification(privacyPolicyRequired, Notification.builder()
                         .title("Privacy Policy")
                         .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                         .titleColor(0xFFFF0000)
@@ -158,7 +158,7 @@ public class AuthManager {
                 if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
             } catch (Exception e) {
                 if (e instanceof PrivacyPolicyRequiredException) {
-                    NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
+                    NotificationManager.INSTANCE.updateNotification(privacyPolicyRequired, Notification.builder()
                             .title("Privacy Policy")
                             .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                             .titleColor(0xFFFF0000)
