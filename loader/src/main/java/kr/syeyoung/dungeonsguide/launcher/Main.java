@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
@@ -134,7 +134,7 @@ public class Main
         }
     }
 
-    public void unload() throws ReferenceLeakedException {
+    public void unload() throws DungeonsGuideUnloadingException {
         if (currentLoader != null && !currentLoader.isUnloadable()) {
             throw new UnsupportedOperationException("Current version is not unloadable");
         }
@@ -171,7 +171,7 @@ public class Main
                             GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
                         }
                         GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                    } catch (ReferenceLeakedException e) {
+                    } catch (DungeonsGuideUnloadingException e) {
                         GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
                     }
                 })
@@ -221,17 +221,17 @@ public class Main
                     GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
                 }
                 GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-            } catch (ReferenceLeakedException e) {
+            } catch (DungeonsGuideUnloadingException e) {
                 GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
             }
         }
     }
 
-    public void reload(IDGLoader newLoader) throws DungeonsGuideLoadingException, ReferenceLeakedException {
+    public void reload(IDGLoader newLoader) throws DungeonsGuideLoadingException, DungeonsGuideUnloadingException {
         try {
             unload();
             load(newLoader);
-        } catch (DungeonsGuideLoadingException | ReferenceLeakedException | UnsupportedOperationException e) {
+        } catch (DungeonsGuideLoadingException | DungeonsGuideUnloadingException | UnsupportedOperationException e) {
             dgInterface = null;
             currentLoader = null;
 

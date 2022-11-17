@@ -65,7 +65,6 @@ dependencies {
     implementation "org.json:json:20171018"
     implementation 'io.nayuki:qrcodegen:1.4.0'
 
-    runtimeOnly project(':mod')
 
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.16"
@@ -99,13 +98,9 @@ tasks.withType(Jar) {
 tasks.shadowJar {
     archiveFileName = jar.archiveFileName
 
-    relocate "org.java_websocket", "kr.syeyoung.org.java_websocket"
-
     dependencies {
-        include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
         include(dependency("org.slf4j:slf4j-api:1.7.25"))
         include(dependency("org.json:json:20171018"))
-        include(dependency("com.twelvemonkeys..*:.*"))
     }
 }
 

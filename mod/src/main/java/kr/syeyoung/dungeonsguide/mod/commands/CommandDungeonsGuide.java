@@ -32,8 +32,12 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiMultiplayer;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -141,7 +145,21 @@ public class CommandDungeonsGuide extends CommandBase {
                 }
             }
         } else if (args[0].equals("reload")) {
-            Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
+                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
+                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
+                Minecraft.getMinecraft().loadWorld((WorldClient)null);
+                if (flag) {
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiMainMenu());
+                } else if (flag1) {
+                    RealmsBridge realmsbridge = new RealmsBridge();
+                    realmsbridge.switchToRealms(new GuiMainMenu());
+                } else {
+                    Minecraft.getMinecraft().displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
+                }
+                Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
+            });
         } else {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));

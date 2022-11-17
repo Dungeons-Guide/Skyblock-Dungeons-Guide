@@ -4,6 +4,7 @@ import static org.objectweb.asm.Opcodes.*;
 
 import java.lang.reflect.Method;
 import java.util.HashMap;
+import java.util.WeakHashMap;
 
 import net.minecraftforge.fml.common.ModContainer;
 
@@ -24,7 +25,6 @@ public class OwnerAwareASMEventHandler implements IEventListener
     private static int IDs = 0;
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
-    private static final HashMap<Method, Class<?>> cache = Maps.newHashMap();
     private static final boolean GETCONTEXT = Boolean.parseBoolean(System.getProperty("fml.LogContext", "false"));
 
     private final IEventListener handler;
@@ -63,11 +63,6 @@ public class OwnerAwareASMEventHandler implements IEventListener
 
     public Class<?> createWrapper(Method callback)
     {
-        if (cache.containsKey(callback))
-        {
-            return cache.get(callback);
-        }
-
         ClassWriter cw = new ClassWriter(0);
         MethodVisitor mv;
 
@@ -116,9 +111,7 @@ public class OwnerAwareASMEventHandler implements IEventListener
             mv.visitEnd();
         }
         cw.visitEnd();
-        Class<?> ret = new ASMClassLoader(callback.getDeclaringClass().getClassLoader()).define(name, cw.toByteArray());
-        cache.put(callback, ret);
-        return ret;
+        return new ASMClassLoader(callback.getDeclaringClass().getClassLoader()).define(name, cw.toByteArray());
     }
 
     private String getUniqueName(Method callback)

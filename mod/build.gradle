@@ -16,12 +16,20 @@ java {
 
 loom {
     launchConfigs {
-        "client" {
+        client {
             // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
 //            property("mixin.debug", "true")
 //            property("asmhelper.verbose", "true")
-//            arg("--tweakClass", "org.spongepowered.asm.launch.MixinTweaker")
+            arg("--tweakClass", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
 //            arg("--mixin", "mixins.examplemod.json")
+
+        }
+    }
+    runs {
+        client {
+            runDir = 'runtime'
+            property('devauth.enabled','true')
+            client()
         }
     }
     forge {
@@ -38,6 +46,7 @@ sourceSets.main {
 repositories {
     mavenCentral()
     maven { url "https://jitpack.io" }
+    maven {url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"}
 }
 
 configurations {
@@ -56,15 +65,16 @@ dependencies {
     implementation "org.json:json:20171018"
     implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
-    compileOnly project(':loader')
-
-
     compileOnly "org.projectlombok:lombok:1.18.20"
     compileOnly files("../jars/Hychat-1.12.1-BETA.jar")
     annotationProcessor "org.projectlombok:lombok:1.18.16"
 
     testCompileOnly "org.projectlombok:lombok:1.18.20"
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
+
+
+    compileOnly project(path: ":loader")
+    runtimeOnly project(path: ":loader")
 }
 
 tasks.withType(JavaCompile) {
@@ -74,9 +84,6 @@ tasks.withType(JavaCompile) {
 tasks.withType(Jar) {
     archivesBaseName = "dungeonsguide"
     manifest {
-        attributes["FMLCorePluginContainsFMLMod"] = "true"
-        attributes["ForceLoadAsMod"] = "true"
-
         // If you don't want mixins, remove these lines
 //        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
 //        this["MixinConfigs"] = "mixins.examplemod.json"

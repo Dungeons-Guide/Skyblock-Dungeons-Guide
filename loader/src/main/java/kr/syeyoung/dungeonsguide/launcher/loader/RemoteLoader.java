@@ -20,12 +20,11 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.InvalidSignatureException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -35,7 +34,6 @@ import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
 import java.util.HashMap;
-import java.util.List;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -123,13 +121,18 @@ public class RemoteLoader implements IDGLoader {
     }
 
     @Override
-    public void unloadDungeonsGuide() throws ReferenceLeakedException {
+    public void unloadDungeonsGuide() throws DungeonsGuideUnloadingException {
         classLoader = null;
-        dgInterface.unload();
+
+        try {
+            dgInterface.unload();
+        } catch (Exception e) {
+            throw new DungeonsGuideUnloadingException(e);
+        }
         dgInterface = null;
         System.gc();// pls do
         Reference<? extends ClassLoader> t = refQueue.poll();
-        if (t == null) throw new ReferenceLeakedException(); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
+        if (t == null) throw new DungeonsGuideUnloadingException("Reference Leaked"); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
         t.clear();
         phantomReference = null;
     }

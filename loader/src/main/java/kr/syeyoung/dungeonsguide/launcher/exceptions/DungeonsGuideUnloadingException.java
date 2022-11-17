@@ -18,5 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-public class ReferenceLeakedException extends Exception {
+public class DungeonsGuideUnloadingException extends Exception {
+    public  DungeonsGuideUnloadingException(String message) {super(message);}
+    public  DungeonsGuideUnloadingException(Exception cause) {super(cause);}
 }

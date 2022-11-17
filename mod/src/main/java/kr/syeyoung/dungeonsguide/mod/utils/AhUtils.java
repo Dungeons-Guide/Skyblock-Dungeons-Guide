@@ -43,7 +43,7 @@ public class AhUtils {
 
     static Logger logger = LogManager.getLogger("AhUtils");
 
-    public static Timer timer = new Timer();
+//    public static Timer timer = new Timer();
 
     public static int totalAuctions = 0;
 

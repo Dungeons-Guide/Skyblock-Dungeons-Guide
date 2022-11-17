@@ -188,6 +188,11 @@ public class PacketListener extends ChannelDuplexHandler {
     }
 
     public void cleanup() {
-        thePipeline.remove("dg_packet_handler");
+        try {
+            if (thePipeline != null)
+                thePipeline.remove("dg_packet_handler");
+        } catch (Exception e) {
+
+        }
     }
 }

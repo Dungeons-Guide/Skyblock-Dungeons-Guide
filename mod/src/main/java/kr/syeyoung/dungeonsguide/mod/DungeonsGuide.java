@@ -28,6 +28,8 @@ import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.GameSDK;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
@@ -44,11 +46,21 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.entity.AbstractClientPlayer;
+import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.network.NetHandlerPlayClient;
+import net.minecraft.client.network.NetworkPlayerInfo;
+import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
+import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.world.World;
 import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -60,9 +72,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -139,10 +149,8 @@ public class DungeonsGuide implements DGInterface {
     }
 
 
+    private PacketListener packetListener;
     public void init(File f) {
-        ClassLoader orignalLoader = Thread.currentThread().getContextClassLoader();
-
-        Thread.currentThread().setContextClassLoader(getClass().getClassLoader());
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
         progressbar.step("Creating Configuration");
@@ -210,7 +218,7 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(commandReparty = new CommandReparty());
 
         registerEventsForge(new FeatureListener());
-        registerEventsForge(new PacketListener());
+        registerEventsForge(packetListener = new PacketListener());
         registerEventsForge(new Keybinds());
 
         registerEventsForge(PartyManager.INSTANCE);
@@ -232,7 +240,7 @@ public class DungeonsGuide implements DGInterface {
         }
 
         if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
-            ClientCommandHandler.instance.registerCommand(commandReparty);
+            registerCommands(commandReparty);
         }
 
         if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled()) {
@@ -244,7 +252,29 @@ public class DungeonsGuide implements DGInterface {
 
         ProgressManager.pop(progressbar);
 
-        Thread.currentThread().setContextClassLoader(orignalLoader);
+    }
+
+    // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
+
+    private void transform(AbstractClientPlayer abstractClientPlayer) {
+        NetworkPlayerInfo uuidNetworkPlayerInfoEntry = ReflectionHelper.getPrivateValue(AbstractClientPlayer.class,
+                abstractClientPlayer,
+                "playerInfo", "field_175157_a", "a"
+        );
+        if (uuidNetworkPlayerInfoEntry instanceof CustomNetworkPlayerInfo) {
+            S38PacketPlayerListItem s38PacketPlayerListItem = new S38PacketPlayerListItem();
+            NetworkPlayerInfo newInfo = new NetworkPlayerInfo(s38PacketPlayerListItem.new AddPlayerData(
+                    uuidNetworkPlayerInfoEntry.getGameProfile(),
+                    uuidNetworkPlayerInfoEntry.getResponseTime(),
+                    uuidNetworkPlayerInfoEntry.getGameType(),
+                    ((CustomNetworkPlayerInfo)uuidNetworkPlayerInfoEntry).getOriginalDisplayName()
+            ));
+            ReflectionHelper.setPrivateValue(AbstractClientPlayer.class,
+                    abstractClientPlayer,
+                    newInfo,
+                    "playerInfo", "field_175157_a", "a"
+            );
+        }
     }
 
     @Override
@@ -255,7 +285,7 @@ public class DungeonsGuide implements DGInterface {
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
-        Set<ICommand> commands = ReflectionHelper.getPrivateValue(ClientCommandHandler.class, ClientCommandHandler.instance, "commandSet");
+        Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet");
 
         for (ICommand registeredCommand : registeredCommands) {
             ClientCommandHandler.instance.getCommands().remove(registeredCommand.getCommandName());
@@ -264,13 +294,72 @@ public class DungeonsGuide implements DGInterface {
             }
             commands.remove(registeredCommand);
         }
+
+        if (packetListener != null) packetListener.cleanup();
+
+        try {
+            EntityPlayerSP ep = (EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer;
+            transform(ep);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        try {
+            if (Minecraft.getMinecraft().pointedEntity instanceof AbstractClientPlayer) {
+                AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().pointedEntity;
+                transform(ep);
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getNetHandler();
+        if (netHandlerPlayClient == null)
+            netHandlerPlayClient = ((EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer).sendQueue;
+
+        if (netHandlerPlayClient != null) {
+            Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class,
+                    netHandlerPlayClient, "playerInfoMap", "field_147310_i", "i");
+            for (Map.Entry<UUID, NetworkPlayerInfo> uuidNetworkPlayerInfoEntry : playerInfoMap.entrySet()) {
+                if (uuidNetworkPlayerInfoEntry.getValue() instanceof CustomNetworkPlayerInfo) {
+                    S38PacketPlayerListItem s38PacketPlayerListItem = new S38PacketPlayerListItem();
+                    NetworkPlayerInfo newInfo =  new NetworkPlayerInfo(s38PacketPlayerListItem.new AddPlayerData(
+                            uuidNetworkPlayerInfoEntry.getValue().getGameProfile(),
+                            uuidNetworkPlayerInfoEntry.getValue().getResponseTime(),
+                            uuidNetworkPlayerInfoEntry.getValue().getGameType(),
+                            ((CustomNetworkPlayerInfo) uuidNetworkPlayerInfoEntry.getValue()).getOriginalDisplayName()
+                    ));
+                    playerInfoMap.put(uuidNetworkPlayerInfoEntry.getKey(), newInfo);
+                }
+            }
+        }
+
+        World world = Minecraft.getMinecraft().getRenderManager().worldObj;
+        if (world != null) {
+            for (AbstractClientPlayer entity : world.getEntities(AbstractClientPlayer.class, input -> true)) {
+                transform(entity);
+            }
+            for (AbstractClientPlayer player : world.getPlayers(AbstractClientPlayer.class, input -> true)) {
+                transform(player);
+            }
+        }
+
+        try {
+            List<IResourcePack> resourcePackList = ReflectionHelper.getPrivateValue(Minecraft.class, Minecraft.getMinecraft(), "defaultResourcePacks", "aA", "field_110449_ao");
+            resourcePackList.removeIf(a -> a instanceof DGTexturePack);
+            Minecraft.getMinecraft().refreshResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
         THREAD_GROUP.interrupt();
         THREAD_GROUP.stop();
         try {
-            Thread.sleep(1000); // This is requirement for all the threads to finish within 1 second. or reference leak.
+            Thread.sleep(2000); // This is requirement for all the threads to finish within 1 second. or reference leak.
         } catch (InterruptedException e) {
         }
         THREAD_GROUP.destroy();
+        GameSDK.cleanup();
     }
 
     @Override

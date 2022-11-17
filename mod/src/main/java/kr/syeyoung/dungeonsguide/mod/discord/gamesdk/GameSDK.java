@@ -18,12 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.gamesdk;
 
-import com.sun.jna.Library;
-import com.sun.jna.Native;
-import com.sun.jna.Platform;
+import com.sun.jna.*;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.GameSDKTypeMapper;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
 import lombok.Getter;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.File;
 import java.io.IOException;
@@ -31,6 +30,7 @@ import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.StandardCopyOption;
 import java.util.Collections;
+import java.util.Map;
 
 public class GameSDK {
     @Getter
@@ -71,6 +71,20 @@ public class GameSDK {
 
         nativeGameSDK = (NativeGameSDK) Native.loadLibrary(targetExtractionPath.getAbsolutePath(), NativeGameSDK.class,
                 Collections.singletonMap(Library.OPTION_TYPE_MAPPER, GameSDKTypeMapper.INSTANCE));
+    }
+
+    public static void cleanup() {
+//        com.sun.jna.CallbackReference has reference of DiscordCallback. idk how i should approach fixing this -> I would better write native lib myself later.
+        if (System.getProperty("dg.safe") == null) return;
+
+        Map infos = ReflectionHelper.getPrivateValue(Structure.class, null, "layoutInfo");
+        infos.clear();
+        Map options = ReflectionHelper.getPrivateValue(Native.class, null, "options");
+        options.clear();
+        Map alignments = ReflectionHelper.getPrivateValue(Native.class, null, "alignments");
+        alignments.clear();
+        Map<Class, TypeMapper> typeMapperMap = ReflectionHelper.getPrivateValue(Native.class, null, "typeMappers");
+        typeMapperMap.clear();
     }
 
     public static void writeString(byte[] bts, String str) {
