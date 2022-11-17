@@ -116,7 +116,7 @@ public class CommandDgDebug extends CommandBase {
             }
 
 
-            (new Thread(() -> {
+            (new Thread(DungeonsGuide.THREAD_GROUP, () -> {
                 try {
                     ChatTransmitter.addToQueue("§r§aDungeon starts in 15 seconds.§r", false);
                     Thread.sleep(6000);

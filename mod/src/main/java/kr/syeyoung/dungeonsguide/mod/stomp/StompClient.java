@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.stomp;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -61,7 +62,7 @@ public class StompClient extends WebSocketClient {
 
     private ScheduledFuture heartbeat = null;
 
-    private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1);
+    private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1, DungeonsGuide.THREAD_FACTORY);
     @Override
     public void onOpen(ServerHandshake handshakedata) {
         send(new StompPayload().method(StompHeader.CONNECT)

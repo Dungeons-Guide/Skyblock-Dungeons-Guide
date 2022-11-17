@@ -160,7 +160,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
 
 
-    ExecutorService executor = Executors.newFixedThreadPool(5);
+    ExecutorService executor = Executors.newFixedThreadPool(5, DungeonsGuide.THREAD_FACTORY);
 
 
     public ItemStack getSkullByUserName(String username) {
@@ -323,7 +323,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
         if(toDraw == null && !cachedProfiles.containsKey(stack.getName())){
             cachedProfiles.put(stack.getName(), false);
-            new Thread(() -> {
+            new Thread(DungeonsGuide.THREAD_GROUP, () -> {
                 Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(stack);
 
                 if (map.containsKey(MinecraftProfileTexture.Type.SKIN)) {

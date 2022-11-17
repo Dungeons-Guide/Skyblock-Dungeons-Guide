@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.icefill;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -68,22 +69,20 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                     }
                 }
 
-                new Thread() {
-                    public void run() {
-                        List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
-                        if (hamiltonianPath == null) {
-                            ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
-                            return;
-                        }
-                        hamiltonianPath.add(0,new Point(startX, startY));
-                        List<BlockPos> poses = new LinkedList<BlockPos>();
-                        for (int i = 0; i < hamiltonianPath.size(); i++) {
-                            Point p = hamiltonianPath.get(i);
-                            poses.add(map2[p.y][p.x]);
-                        }
-                        solution.add(poses);
+                new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+                    List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
+                    if (hamiltonianPath == null) {
+                        ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
+                        return;
                     }
-                }.start();
+                    hamiltonianPath.add(0,new Point(startX, startY));
+                    List<BlockPos> poses = new LinkedList<BlockPos>();
+                    for (int i = 0; i < hamiltonianPath.size(); i++) {
+                        Point p = hamiltonianPath.get(i);
+                        poses.add(map2[p.y][p.x]);
+                    }
+                    solution.add(poses);
+                }).start();
             } catch (Exception e) {
                 e.printStackTrace();
             }

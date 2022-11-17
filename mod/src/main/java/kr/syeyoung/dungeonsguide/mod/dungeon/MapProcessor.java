@@ -95,7 +95,9 @@ public class MapProcessor {
     }
 
 
-    ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setNameFormat("Dg-MapProcessor-%d").build());
+    ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
+                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+            .setNameFormat("Dg-MapProcessor-%d").build());
 
 
     int processMapThroddle;

@@ -62,6 +62,8 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.atomic.AtomicInteger;
 
 public class DungeonsGuide implements DGInterface {
 
@@ -71,6 +73,36 @@ public class DungeonsGuide implements DGInterface {
 
     public boolean verbose = false;
     private SkyblockStatus skyblockStatus;
+
+    @Getter
+    public static final ThreadGroup THREAD_GROUP = new ThreadGroup("Dungeons Guide");
+
+    public static final DefaultThreadFactory THREAD_FACTORY = new DefaultThreadFactory();
+
+    static class DefaultThreadFactory implements ThreadFactory {
+        private static final AtomicInteger poolNumber = new AtomicInteger(1);
+        private final ThreadGroup group;
+        private final AtomicInteger threadNumber = new AtomicInteger(1);
+        private final String namePrefix;
+
+        DefaultThreadFactory() {
+            group = THREAD_GROUP;
+            namePrefix = "pool-" +
+                    poolNumber.getAndIncrement() +
+                    "-thread-";
+        }
+
+        public Thread newThread(Runnable r) {
+            Thread t = new Thread(group, r,
+                    namePrefix + threadNumber.getAndIncrement(),
+                    0);
+            if (t.isDaemon())
+                t.setDaemon(false);
+            if (t.getPriority() != Thread.NORM_PRIORITY)
+                t.setPriority(Thread.NORM_PRIORITY);
+            return t;
+        }
+    }
 
     @Getter
     private CosmeticsManager cosmeticsManager;
@@ -211,9 +243,18 @@ public class DungeonsGuide implements DGInterface {
     @Override
     public void unload() {
         // have FUN!
+
+
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
+        THREAD_GROUP.interrupt();
+        THREAD_GROUP.stop();
+        try {
+            Thread.sleep(1000); // This is requirement for all the threads to finish within 1 second. or reference leak.
+        } catch (InterruptedException e) {
+        }
+        THREAD_GROUP.destroy();
     }
 
     @Override

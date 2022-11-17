@@ -150,7 +150,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
 
     public CopyOnWriteArrayList<PartyJoinRequest> joinRequests = new CopyOnWriteArrayList<>();
 
-    ExecutorService executorService = Executors.newFixedThreadPool(3);
+    ExecutorService executorService = Executors.newFixedThreadPool(3, DungeonsGuide.THREAD_FACTORY);
     public Map<String, Future<ImageTexture>> futureMap = new HashMap<>();
     public Map<String, ImageTexture> imageMap = new HashMap<>();
 

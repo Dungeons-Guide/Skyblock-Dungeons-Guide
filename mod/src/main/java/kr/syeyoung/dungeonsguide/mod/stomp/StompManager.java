@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.stomp;
 
 import com.google.common.base.Throwables;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -45,7 +46,7 @@ public class StompManager {
         }
     }
 
-    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor();
+    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor(DungeonsGuide.THREAD_FACTORY);
 
     public void onStompDied(StompDiedEvent event) {
         logger.info("Stomp Connection closed, trying to reconnect - {} - {}", event.reason, event.code);

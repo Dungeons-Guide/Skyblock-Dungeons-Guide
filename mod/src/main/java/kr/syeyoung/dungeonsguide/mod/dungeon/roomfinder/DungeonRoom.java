@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
@@ -152,7 +153,7 @@ public class DungeonRoom {
         }
     }
 
-    private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(4);
+    private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(4, DungeonsGuide.THREAD_FACTORY);
     @Getter
     private final NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 

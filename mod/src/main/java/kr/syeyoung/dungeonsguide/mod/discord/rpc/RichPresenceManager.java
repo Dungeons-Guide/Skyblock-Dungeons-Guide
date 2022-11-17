@@ -48,7 +48,7 @@ import java.util.Set;
 
 public class RichPresenceManager implements Runnable {
     public static RichPresenceManager INSTANCE = new RichPresenceManager();
-    private Thread t = new Thread(this);
+    private Thread t = new Thread(DungeonsGuide.THREAD_GROUP, this);
 
     public RichPresenceManager() {
         t.start();

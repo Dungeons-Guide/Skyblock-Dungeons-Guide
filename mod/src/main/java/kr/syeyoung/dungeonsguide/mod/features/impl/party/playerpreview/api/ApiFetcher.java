@@ -23,6 +23,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfileParser;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -50,7 +51,7 @@ public class ApiFetcher {
     private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
 
-    private static final ExecutorService ex = Executors.newFixedThreadPool(4);
+    private static final ExecutorService ex = Executors.newFixedThreadPool(4, DungeonsGuide.THREAD_FACTORY);
 
     private static final Set<String> invalidKeys = new HashSet<>();
 
