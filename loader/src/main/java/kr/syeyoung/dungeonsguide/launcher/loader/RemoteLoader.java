@@ -122,13 +122,13 @@ public class RemoteLoader implements IDGLoader {
 
     @Override
     public void unloadDungeonsGuide() throws DungeonsGuideUnloadingException {
-        classLoader = null;
-
         try {
             dgInterface.unload();
         } catch (Exception e) {
             throw new DungeonsGuideUnloadingException(e);
         }
+        classLoader = null;
+
         dgInterface = null;
         System.gc();// pls do
         Reference<? extends ClassLoader> t = refQueue.poll();

@@ -231,7 +231,7 @@ public class Main
         try {
             unload();
             load(newLoader);
-        } catch (DungeonsGuideLoadingException | DungeonsGuideUnloadingException | UnsupportedOperationException e) {
+        } catch (DungeonsGuideLoadingException | DungeonsGuideUnloadingException e) {
             dgInterface = null;
             currentLoader = null;
 
@@ -255,10 +255,10 @@ public class Main
         String loader = getLoaderName(configuration);
 
         if ("local".equals(loader) ||
-                (loader.equals("auto") && this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") == null)) {
+                (loader.equals("auto") && this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") != null)) {
             return new LocalLoader();
         } else if ("jar".equals(loader) ||
-                (loader.equals("auto") && this.getClass().getResourceAsStream("/mod.jar") == null)) {
+                (loader.equals("auto") && this.getClass().getResourceAsStream("/mod.jar") != null)) {
             return new JarLoader();
         } else if (loader.equals("remote") || loader.equals("auto") ){
                 // remote load
