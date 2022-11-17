@@ -18,10 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
-import io.netty.channel.ChannelDuplexHandler;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelPromise;
+import io.netty.channel.*;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomPacketPlayerListItem;
@@ -184,8 +181,13 @@ public class PacketListener extends ChannelDuplexHandler {
         super.write(ctx, msg, promise);
     }
 
+    private ChannelPipeline thePipeline;
     @SubscribeEvent
     public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-        event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
+        (thePipeline =event.manager.channel().pipeline()).addBefore("packet_handler", "dg_packet_handler", this);
+    }
+
+    public void cleanup() {
+        thePipeline.remove("dg_packet_handler");
     }
 }
