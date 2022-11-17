@@ -47,7 +47,7 @@ public class LocalLoader implements IDGLoader {
         }
         @Override
         public byte[] getClassBytes(String name) throws IOException { // . separated.
-            InputStream in = convert("/"+name.replace(".", "/"));
+            InputStream in = convert("/"+name.replace(".", "/")+".class");
             if (in == null) return null;
             return IOUtils.toByteArray(in);
         }
@@ -67,7 +67,7 @@ public class LocalLoader implements IDGLoader {
         try {
             classLoader = new LocalClassLoader(this.getClass().getClassLoader());
 
-            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
             return dgInterface;
         } catch (Exception e) {

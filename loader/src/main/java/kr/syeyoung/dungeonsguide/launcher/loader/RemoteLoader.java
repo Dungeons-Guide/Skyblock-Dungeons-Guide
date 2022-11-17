@@ -67,7 +67,7 @@ public class RemoteLoader implements IDGLoader {
         private final HashMap<String, byte[]> loadedResources = new HashMap<String, byte[]>();
         @Override
         public byte[] getClassBytes(String name) throws IOException { // . separated.
-            return this.loadedResources.get(name.replace(".", "/"));
+            return this.loadedResources.get(name.replace(".", "/")+".class");
         }
 
         @Override
@@ -109,7 +109,7 @@ public class RemoteLoader implements IDGLoader {
 
             classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
 
-            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.DungeonsGuide", true).newInstance();
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
             return dgInterface;
         } catch (Exception e) {

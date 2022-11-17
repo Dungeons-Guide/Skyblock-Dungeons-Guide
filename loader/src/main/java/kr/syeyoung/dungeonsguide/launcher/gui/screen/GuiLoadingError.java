@@ -18,14 +18,19 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
+import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.util.UUID;
 
 public class GuiLoadingError extends SpecialGuiScreen {
     private final String stacktrace;
@@ -42,6 +47,7 @@ public class GuiLoadingError extends SpecialGuiScreen {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2-100,sr.getScaledHeight()-70 ,"Close Minecraft"));
         this.buttonList.add(new GuiButton(1, sr.getScaledWidth()/2-100,sr.getScaledHeight()-40 ,"Play Without DG"));
+        this.buttonList.add(new GuiButton(2, 0,sr.getScaledHeight()-20 ,"Copy Error into Clipboard"));
     }
 
     @Override
@@ -51,6 +57,19 @@ public class GuiLoadingError extends SpecialGuiScreen {
             FMLCommonHandler.instance().exitJava(-1,true);
         } else if (button.id == 1) {
             dismiss();
+        } else if (button.id == 2) {
+            Toolkit.getDefaultToolkit()
+                    .getSystemClipboard()
+                    .setContents(
+                            new StringSelection(stacktrace),
+                            null
+                    );
+
+            NotificationManager.INSTANCE.updateNotification(UUID.randomUUID(), Notification.builder()
+                            .title("Successfully Copied!")
+                            .description("")
+                            .titleColor(0xFF00FF00)
+                    .build());
         }
     }
 

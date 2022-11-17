@@ -64,6 +64,8 @@ public class DgAuthUtil {
             }
 
             return (T) response.getData();
+        } catch (AuthServerException e) {
+            throw e;
         } catch (Exception e) {
             throw new ResponseParsingException(payload, e);
         } finally {
