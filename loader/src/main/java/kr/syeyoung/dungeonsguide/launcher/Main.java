@@ -130,6 +130,7 @@ public class Main
             try {
                 unload();
             } catch (Exception e2) {
+                e2.printStackTrace();
                 GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
             }
             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
@@ -145,11 +146,6 @@ public class Main
         for (DungeonsGuideReloadListener listener : listeners) {
             listener.unloadReference();
         }
-        if (currentLoader != null) {
-            currentLoader.unloadDungeonsGuide();
-        }
-        currentLoader = null;
-
 
         NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
                 .title("Dungeons Guide Not Loaded")
@@ -172,6 +168,7 @@ public class Main
                         try {
                             unload();
                         } catch (Exception e2) {
+                            e2.printStackTrace();
                             GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
                         }
                         GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
@@ -181,6 +178,12 @@ public class Main
                 })
                 .unremovable(true)
                 .build());
+        if (currentLoader != null) {
+            currentLoader.unloadDungeonsGuide();
+        }
+        currentLoader = null;
+
+
     }
     private void load(IDGLoader newLoader) throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("DG is loaded");
@@ -237,7 +240,7 @@ public class Main
             load(newLoader);
         } catch (DungeonsGuideLoadingException | DungeonsGuideUnloadingException e) {
             dgInterface = null;
-            currentLoader = null;
+//            currentLoader = null;
 
             e.printStackTrace();
             throw e;

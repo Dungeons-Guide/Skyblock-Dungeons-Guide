@@ -20,5 +20,5 @@ package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
 public class DungeonsGuideUnloadingException extends Exception {
     public  DungeonsGuideUnloadingException(String message) {super(message);}
-    public  DungeonsGuideUnloadingException(Exception cause) {super(cause);}
+    public  DungeonsGuideUnloadingException(Throwable cause) {super(cause);}
 }

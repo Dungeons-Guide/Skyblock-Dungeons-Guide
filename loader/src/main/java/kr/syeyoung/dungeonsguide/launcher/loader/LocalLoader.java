@@ -66,11 +66,11 @@ public class LocalLoader implements IDGLoader {
 
         try {
             classLoader = new LocalClassLoader((LaunchClassLoader) this.getClass().getClassLoader());
-
-            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
+
             return dgInterface;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new DungeonsGuideLoadingException(e);
         }
     }
@@ -82,11 +82,15 @@ public class LocalLoader implements IDGLoader {
 
     @Override
     public void unloadDungeonsGuide() throws DungeonsGuideUnloadingException {
+        if (dgInterface == null && classLoader == null) return;
         try {
+            if (dgInterface != null)
             dgInterface.unload();
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            dgInterface = null;
             throw new DungeonsGuideUnloadingException(e);
         }
+        if (classLoader != null)
         classLoader.cleanup();
         classLoader = null;
         dgInterface = null;

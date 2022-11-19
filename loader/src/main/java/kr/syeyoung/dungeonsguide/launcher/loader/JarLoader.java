@@ -60,7 +60,7 @@ public class JarLoader implements IDGLoader {
 
         @Override
         public InputStream convert(String name) { // / separated
-            if (this.loadedResources.containsKey(name.substring(1)))
+            if (this.loadedResources.containsKey(name))
                 return new ByteArrayInputStream(this.loadedResources.get(name));
             return null;
         }
@@ -74,11 +74,11 @@ public class JarLoader implements IDGLoader {
 
         try {
             classLoader = new JarClassLoader((LaunchClassLoader) this.getClass().getClassLoader(), new ZipInputStream(JarLoader.class.getResourceAsStream("/mod.jar")));
-
-            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
+            dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
+
             return dgInterface;
-        } catch (Exception e) {
+        } catch (Throwable e) {
             throw new DungeonsGuideLoadingException(e);
         }
     }
@@ -90,12 +90,17 @@ public class JarLoader implements IDGLoader {
 
     @Override
     public void unloadDungeonsGuide() throws DungeonsGuideUnloadingException {
+        if (dgInterface == null && classLoader == null) return;
+
         try {
+            if (dgInterface != null)
             dgInterface.unload();
-        } catch (Exception e) {
+        } catch (Throwable e) {
+            dgInterface = null;
             throw new DungeonsGuideUnloadingException(e);
         }
-        classLoader.cleanup();
+        if (classLoader != null)
+            classLoader.cleanup();
         classLoader = null;
         dgInterface = null;
         System.gc();// pls do

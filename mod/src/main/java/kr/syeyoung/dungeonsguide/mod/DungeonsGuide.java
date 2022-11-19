@@ -338,7 +338,7 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
         NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getNetHandler();
-        if (netHandlerPlayClient == null)
+        if (netHandlerPlayClient == null && (Minecraft.getMinecraft().getRenderManager().livingPlayer) != null)
             netHandlerPlayClient = ((EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer).sendQueue;
 
         if (netHandlerPlayClient != null) {
@@ -401,7 +401,11 @@ public class DungeonsGuide implements DGInterface {
         } catch (InterruptedException e) {
         }
         THREAD_GROUP.destroy();
-        GameSDK.cleanup();
+        try {
+            GameSDK.cleanup();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
