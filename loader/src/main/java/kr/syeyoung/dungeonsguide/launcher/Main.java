@@ -45,8 +45,10 @@ import net.minecraftforge.fml.common.event.FMLInitializationEvent;
 import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
+import org.bouncycastle.jce.provider.BouncyCastleProvider;
 
 import java.io.*;
+import java.security.Security;
 import java.util.*;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
@@ -89,6 +91,7 @@ public class Main
 
         NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
                         .title("Dungeons Guide Not Loaded")
+                        .titleColor(0xFFFF0000)
                         .description("Click to try reloading....")
                         .onClick(() -> {
                             try {
@@ -150,6 +153,7 @@ public class Main
 
         NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
                 .title("Dungeons Guide Not Loaded")
+                .titleColor(0xFFFF0000)
                 .description("Click to try reloading....")
                 .onClick(() -> {
                     try {
@@ -280,6 +284,7 @@ public class Main
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent preInitializationEvent) {
+        Security.addProvider(new BouncyCastleProvider());
         // setup static variables
         main = this;
         dgInterface = null;

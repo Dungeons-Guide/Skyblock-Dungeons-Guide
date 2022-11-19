@@ -16,9 +16,7 @@ import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Instant;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class UpdateRetrieverUtil {
@@ -41,16 +39,16 @@ public class UpdateRetrieverUtil {
         String payload = getResponse(connection);
         try {
             JSONArray jsonArray = new JSONArray(payload);
-            return jsonArray.toList()
-                    .stream()
-                    .map(a -> (JSONObject) a)
-                    .map(a -> {
-                        UpdateBranch updateBranch = new UpdateBranch();
-                        updateBranch.setId(a.getLong("id"));
-                        updateBranch.setName(a.getString("name"));
-                        updateBranch.setMetadata(a.getJSONObject("metadata"));
-                        return updateBranch;
-                    }).collect(Collectors.toList());
+            List<UpdateBranch> branches = new ArrayList<>();
+            for (Object a_ : jsonArray) {
+                JSONObject a = (JSONObject) a_;
+                UpdateBranch updateBranch = new UpdateBranch();
+                updateBranch.setId(a.getLong("id"));
+                updateBranch.setName(a.getString("name"));
+                updateBranch.setMetadata(a.getJSONObject("metadata"));
+                branches.add(updateBranch);
+            }
+            return branches;
         } catch (Exception e) {
             throw new ResponseParsingException(payload, e);
         }
@@ -67,28 +65,30 @@ public class UpdateRetrieverUtil {
         String payload = getResponse(connection);
         try {
             JSONArray jsonArray = new JSONArray(payload);
-            return jsonArray.toList()
-                    .stream()
-                    .map(a -> (JSONObject) a)
-                    .map(a -> {
-                        Update update = new Update();
-                        update.setId(a.getLong("id"));
-                        update.setBranchId(a.getLong("branchId"));
-                        update.setName(a.getString("name"));
-                        update.setUpdateLog(a.getString("updateLog"));
-                        update.setMetadata(a.getJSONObject("metadata"));
-                        update.setAssets(a.getJSONObject("assets").getJSONArray("assets").toList().stream().map(b -> (JSONObject) b)
-                                .map(b -> {
-                                    Update.Asset asset = new Update.Asset();
-                                    asset.setName(b.getString("name"));
-                                    asset.setAssetId(UUID.fromString(b.getString("assetId")));
-                                    asset.setSize(b.getLong("size"));
-                                    asset.setObjectId(b.getString("objectId"));
-                                    return asset;
-                                }).collect(Collectors.toList()));
-                        update.setReleaseDate(Instant.parse(a.getString("releaseDate")));
-                        return update;
-                    }).collect(Collectors.toList());
+            List<Update> updates = new ArrayList<>();
+            for (Object o_ : jsonArray) {
+                JSONObject a = (JSONObject) o_;
+
+                Update update = new Update();
+                update.setId(a.getLong("id"));
+                update.setBranchId(a.getLong("branchId"));
+                update.setName(a.getString("versionName"));
+                update.setUpdateLog(a.getString("updateLog"));
+                update.setMetadata(a.getJSONObject("metadata"));
+                update.setAssets(a.getJSONObject("assets").getJSONArray("assets")
+                        .toList().stream().map(b -> (HashMap) b)
+                        .map(b -> {
+                            Update.Asset asset = new Update.Asset();
+                            asset.setName((String) b.get("name"));
+                            asset.setAssetId(UUID.fromString((String) b.get("assetId")));
+                            asset.setSize((Integer) b.get("size"));
+                            asset.setObjectId((String) b.get("objectId"));
+                            return asset;
+                        }).collect(Collectors.toList()));
+                update.setReleaseDate(Instant.parse(a.getString("releaseDate")));
+                updates.add(update);
+            }
+            return updates;
         } catch (Exception e) {
             throw new ResponseParsingException(payload, e);
         }
@@ -104,21 +104,22 @@ public class UpdateRetrieverUtil {
 
         String payload = getResponse(connection);
         try {
-            JSONObject a = new JSONObject();
+            JSONObject a = new JSONObject(payload);
 
             Update update = new Update();
             update.setId(a.getLong("id"));
             update.setBranchId(a.getLong("branchId"));
-            update.setName(a.getString("name"));
+            update.setName(a.getString("versionName"));
             update.setUpdateLog(a.getString("updateLog"));
             update.setMetadata(a.getJSONObject("metadata"));
-            update.setAssets(a.getJSONObject("assets").getJSONArray("assets").toList().stream().map(b -> (JSONObject) b)
+            update.setAssets(a.getJSONObject("assets").getJSONArray("assets")
+                    .toList().stream().map(b -> (HashMap) b)
                     .map(b -> {
                         Update.Asset asset = new Update.Asset();
-                        asset.setName(b.getString("name"));
-                        asset.setAssetId(UUID.fromString(b.getString("assetId")));
-                        asset.setSize(b.getLong("size"));
-                        asset.setObjectId(b.getString("objectId"));
+                        asset.setName((String) b.get("name"));
+                        asset.setAssetId(UUID.fromString((String) b.get("assetId")));
+                        asset.setSize((Integer) b.get("size"));
+                        asset.setObjectId((String) b.get("objectId"));
                         return asset;
                     }).collect(Collectors.toList()));
             update.setReleaseDate(Instant.parse(a.getString("releaseDate")));
@@ -136,6 +137,7 @@ public class UpdateRetrieverUtil {
         HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/"+update.getBranchId()+"/"+update.getId()+"/"+asset.getAssetId()).openConnection();
         connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
         connection.setRequestMethod("GET");
+        connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setDoInput(true);
         connection.setDoOutput(true);
 
