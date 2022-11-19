@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingExcepti
 import kr.syeyoung.dungeonsguide.launcher.exceptions.InvalidSignatureException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -52,7 +53,7 @@ public class RemoteLoader implements IDGLoader {
 
 
     public static class JarClassLoader extends DGClassLoader {
-        public JarClassLoader(ClassLoader parent, ZipInputStream zipInputStream) throws IOException {
+        public JarClassLoader(LaunchClassLoader parent, ZipInputStream zipInputStream) throws IOException {
             super(parent);
 
             ZipEntry zipEntry;
@@ -105,7 +106,7 @@ public class RemoteLoader implements IDGLoader {
                 throw new InvalidSignatureException(target, "Invalid Signature Version: " + version);
             }
 
-            classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
+            classLoader = new JarClassLoader((LaunchClassLoader) this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
 
             dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
@@ -127,6 +128,7 @@ public class RemoteLoader implements IDGLoader {
         } catch (Exception e) {
             throw new DungeonsGuideUnloadingException(e);
         }
+        classLoader.cleanup();
         classLoader = null;
 
         dgInterface = null;

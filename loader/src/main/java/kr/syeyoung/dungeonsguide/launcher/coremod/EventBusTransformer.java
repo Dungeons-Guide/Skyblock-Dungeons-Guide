@@ -7,8 +7,8 @@ import org.objectweb.asm.tree.*;
 
 import java.util.Iterator;
 
+// I still need this with classloader injection, because of the cache in ASMEventHandler.
 public class EventBusTransformer implements IClassTransformer {
-
     @Override
     public byte[] transform(String name, String transformedName, byte[] basicClass) {
         if (name.equals("net.minecraftforge.fml.common.eventhandler.EventBus")) {

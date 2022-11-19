@@ -1,16 +1,26 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.events.DGAwareEventSubscriptionTransformer;
+import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
 
 public abstract class DGClassLoader extends ClassLoader implements ByteStreamURLHandler.InputStreamGenerator{
 
     DGAwareEventSubscriptionTransformer eventSubscriptionTransformer = new DGAwareEventSubscriptionTransformer(this);
-    public DGClassLoader(ClassLoader parent) {
+
+    private Map<String, Class<?>> launchClassLoaderCacheMap;
+    private Set<String> classesILoaded=  new HashSet<>();
+    public DGClassLoader(LaunchClassLoader parent) {
         super(parent);
+
+        this.launchClassLoaderCacheMap = ReflectionHelper.getPrivateValue(LaunchClassLoader.class, parent, "cachedClasses");
     }
 
     public Class<?> loadClass(String name, boolean resolve)
@@ -24,6 +34,11 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
                     if (c == null) {
                         long t0 = System.nanoTime();
                         c = findClass(name);
+
+                        if (c != null) {
+                            launchClassLoaderCacheMap.put(name, c);
+                            classesILoaded.add(name);
+                        }
 
                         sun.misc.PerfCounter.getFindClassTime().addElapsedTimeFrom(t0);
                         sun.misc.PerfCounter.getFindClasses().increment();
@@ -43,6 +58,12 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
                 resolveClass(c);
             }
             return c;
+        }
+    }
+
+    public void cleanup() {
+        for (String s : classesILoaded) {
+            launchClassLoaderCacheMap.remove(s);
         }
     }
 

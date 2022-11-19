@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -41,7 +42,7 @@ public class JarLoader implements IDGLoader {
     private boolean loaded;
 
     public static class JarClassLoader extends DGClassLoader {
-        public JarClassLoader(ClassLoader parent, ZipInputStream zipInputStream) throws IOException {
+        public JarClassLoader(LaunchClassLoader parent, ZipInputStream zipInputStream) throws IOException {
             super(parent);
 
             ZipEntry zipEntry;
@@ -72,7 +73,7 @@ public class JarLoader implements IDGLoader {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
 
         try {
-            classLoader = new JarClassLoader(this.getClass().getClassLoader(), new ZipInputStream(JarLoader.class.getResourceAsStream("/mod.jar")));
+            classLoader = new JarClassLoader((LaunchClassLoader) this.getClass().getClassLoader(), new ZipInputStream(JarLoader.class.getResourceAsStream("/mod.jar")));
 
             dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
@@ -94,6 +95,7 @@ public class JarLoader implements IDGLoader {
         } catch (Exception e) {
             throw new DungeonsGuideUnloadingException(e);
         }
+        classLoader.cleanup();
         classLoader = null;
         dgInterface = null;
         System.gc();// pls do

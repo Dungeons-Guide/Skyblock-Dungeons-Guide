@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
 
 import java.io.BufferedInputStream;
@@ -39,7 +40,7 @@ public class LocalLoader implements IDGLoader {
     private boolean loaded;
 
     public static class LocalClassLoader extends DGClassLoader {
-        public LocalClassLoader(ClassLoader parent) throws IOException {
+        public LocalClassLoader(LaunchClassLoader parent) throws IOException {
             super(parent);
         }
         @Override
@@ -64,7 +65,7 @@ public class LocalLoader implements IDGLoader {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
 
         try {
-            classLoader = new LocalClassLoader(this.getClass().getClassLoader());
+            classLoader = new LocalClassLoader((LaunchClassLoader) this.getClass().getClassLoader());
 
             dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
             phantomReference = new PhantomReference<>(classLoader, refQueue);
@@ -86,6 +87,7 @@ public class LocalLoader implements IDGLoader {
         } catch (Exception e) {
             throw new DungeonsGuideUnloadingException(e);
         }
+        classLoader.cleanup();
         classLoader = null;
         dgInterface = null;
         System.gc();// pls do
