@@ -255,7 +255,7 @@ public class Main
         String loader = getLoaderName(configuration);
 
         if ("local".equals(loader) ||
-                (loader.equals("auto") && this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/DungeonsGuide.class") != null)) {
+                (loader.equals("auto") && this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/mod/DungeonsGuide.class") != null)) {
             return new LocalLoader();
         } else if ("jar".equals(loader) ||
                 (loader.equals("auto") && this.getClass().getResourceAsStream("/mod.jar") != null)) {
