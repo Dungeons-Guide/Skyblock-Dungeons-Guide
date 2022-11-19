@@ -69,6 +69,8 @@ import net.minecraftforge.client.ClientCommandHandler;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.ProgressManager;
+import net.minecraftforge.fml.common.eventhandler.EventBus;
+import net.minecraftforge.fml.common.eventhandler.ListenerList;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
@@ -289,6 +291,13 @@ public class DungeonsGuide implements DGInterface {
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
+        List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
+        int busId = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
+        for (ListenerList listenerList : all) {
+            listenerList.getListeners(busId); // refresh cache.
+        }
+
+
         Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet");
 
         for (ICommand registeredCommand : registeredCommands) {

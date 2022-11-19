@@ -223,7 +223,6 @@ public class RichPresenceManager implements Runnable {
             });
         }
     }
-
     @Override
     public void run() {
         boolean setup = true;
@@ -250,5 +249,7 @@ public class RichPresenceManager implements Runnable {
                 Thread.sleep(16L);
             } catch (Exception e) {e.printStackTrace();}
         }
+        if (iDiscordCore != null)
+            iDiscordCore.Destroy.destroy(iDiscordCore);
     }
 }
