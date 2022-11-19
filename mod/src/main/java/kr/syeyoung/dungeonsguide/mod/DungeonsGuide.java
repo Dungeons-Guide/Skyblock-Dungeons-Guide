@@ -49,6 +49,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.*;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
@@ -59,6 +60,7 @@ import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.launchwrapper.LaunchClassLoader;
@@ -78,6 +80,7 @@ import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -294,7 +297,15 @@ public class DungeonsGuide implements DGInterface {
         List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
         int busId = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
         for (ListenerList listenerList : all) {
-            listenerList.getListeners(busId); // refresh cache.
+            Object[] list = ReflectionHelper.getPrivateValue(ListenerList.class, listenerList, "lists");
+            Object inst = list[busId];
+            try {
+                Method m = inst.getClass().getDeclaredMethod("buildCache"); // refresh cache
+                m.setAccessible(true);
+                m.invoke(inst);
+            } catch (Exception e) {
+                throw new RuntimeException(e);
+            }
         }
 
 
@@ -362,6 +373,14 @@ public class DungeonsGuide implements DGInterface {
             }
             for (AbstractClientPlayer player : world.getPlayers(AbstractClientPlayer.class, input -> true)) {
                 transform(player);
+            }
+            if (world instanceof WorldClient) {
+                Set<Entity> list = ReflectionHelper.getPrivateValue(WorldClient.class, (WorldClient) world, "entityList", "field_73032_d", "c");
+                for (Entity e : list) {
+                    if (e instanceof AbstractClientPlayer) {
+                        transform((AbstractClientPlayer) e);
+                    }
+                }
             }
         }
 

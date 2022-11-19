@@ -90,7 +90,7 @@ public class LocalLoader implements IDGLoader {
         classLoader.cleanup();
         classLoader = null;
         dgInterface = null;
-        System.gc();// pls do
+        System.gc(); // pls do
         Reference<? extends ClassLoader> t = refQueue.poll();
         if (t == null) throw new DungeonsGuideUnloadingException("Reference Leaked"); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
         t.clear();

@@ -145,21 +145,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 }
             }
         } else if (args[0].equals("reload")) {
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
-                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
-                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-                Minecraft.getMinecraft().loadWorld((WorldClient)null);
-                if (flag) {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiMainMenu());
-                } else if (flag1) {
-                    RealmsBridge realmsbridge = new RealmsBridge();
-                    realmsbridge.switchToRealms(new GuiMainMenu());
-                } else {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiMultiplayer(new GuiMainMenu()));
-                }
-                Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
-            });
+            Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
         } else {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
