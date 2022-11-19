@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.events.DGAwareEventSubscriptionTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
@@ -77,7 +78,7 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
         }
         if (res != null) {
             res = eventSubscriptionTransformer.transform(name, name, res);
-            return defineClass(name, res, 0, res.length);
+            return defineClass(name, res, 0, res.length, Main.class.getProtectionDomain());
         } else {
             throw new ClassNotFoundException(name);
         }

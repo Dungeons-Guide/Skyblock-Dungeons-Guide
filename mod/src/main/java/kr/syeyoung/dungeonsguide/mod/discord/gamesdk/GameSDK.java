@@ -76,7 +76,6 @@ public class GameSDK {
     public static void cleanup() {
 //        com.sun.jna.CallbackReference has reference of DiscordCallback. idk how i should approach fixing this -> I would better write native lib myself later.
         if (System.getProperty("dg.safe") == null) return;
-
         Map infos = ReflectionHelper.getPrivateValue(Structure.class, null, "layoutInfo");
         infos.clear();
         Map options = ReflectionHelper.getPrivateValue(Native.class, null, "options");
