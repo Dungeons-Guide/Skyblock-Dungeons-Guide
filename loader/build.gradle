@@ -64,6 +64,7 @@ dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
     implementation "org.json:json:20171018"
     implementation 'io.nayuki:qrcodegen:1.4.0'
+    implementation 'org.bouncycastle:bcpg-jdk15on:1.70'
 
 
     compileOnly "org.projectlombok:lombok:1.18.20"

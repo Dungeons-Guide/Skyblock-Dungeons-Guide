@@ -96,15 +96,10 @@ public class RemoteLoader implements IDGLoader {
             InputStream in;
             byte[] mod = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar"));
             in.close();
-            byte[] signature = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "signature.asc"));
+            byte[] signature = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar.asc"));
             in.close();
-            int version = target.getMetadata().getInt("signatureVersion");
 
-            if (version == 0) {
-                SignatureValidator.validateVersion1Signature(target, mod, signature);
-            } else {
-                throw new InvalidSignatureException(target, "Invalid Signature Version: " + version);
-            }
+            SignatureValidator.validateVersion1Signature(target, mod, signature);
 
             classLoader = new JarClassLoader((LaunchClassLoader) this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
 
