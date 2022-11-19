@@ -37,7 +37,6 @@ public class LocalLoader implements IDGLoader {
     private ReferenceQueue<ClassLoader> refQueue = new ReferenceQueue<>();
     private PhantomReference<ClassLoader> phantomReference;
 
-    private boolean loaded;
 
     public static class LocalClassLoader extends DGClassLoader {
         public LocalClassLoader(LaunchClassLoader parent) throws IOException {

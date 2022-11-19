@@ -7,6 +7,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Mouse;
 
@@ -37,6 +38,7 @@ public class NotificationManager {
         int widthX = fr.getStringWidth("X");
 
         GlStateManager.pushMatrix();
+        GlStateManager.disableDepth();
         GlStateManager.translate(sr.getScaledWidth() - 5, sr.getScaledHeight() -5, 0);
 
         int currY = sr.getScaledHeight() - 5;
@@ -84,6 +86,7 @@ public class NotificationManager {
             GlStateManager.translate(0, -5, 0);
         }
 
+        GlStateManager.enableDepth();
         GlStateManager.popMatrix();
 
     }
@@ -94,6 +97,7 @@ public class NotificationManager {
         int widthX = fr.getStringWidth("X");
 
         GlStateManager.pushMatrix();
+        GlStateManager.disableDepth();
         GlStateManager.translate(sr.getScaledWidth() - 5, sr.getScaledHeight() -5, 0);
 
         int currY = sr.getScaledHeight() - 5;
@@ -146,13 +150,14 @@ public class NotificationManager {
             GlStateManager.translate(0, -5, 0);
         }
 
+        GlStateManager.enableDepth();
         GlStateManager.popMatrix();
 
 
     }
 
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;

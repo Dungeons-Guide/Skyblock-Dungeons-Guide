@@ -43,8 +43,6 @@ public class RemoteLoader implements IDGLoader {
     private ReferenceQueue<ClassLoader> refQueue = new ReferenceQueue<>();
     private PhantomReference<ClassLoader> phantomReference;
 
-    private boolean loaded;
-
     public RemoteLoader(String friendlyBranchName, long branchId, long updateId) {
         this.friendlyBranchName = friendlyBranchName;
         this.branchId = branchId;

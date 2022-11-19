@@ -29,10 +29,7 @@ import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
-import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
-import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
-import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
-import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
+import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -201,7 +198,7 @@ public class Main
 
         NotificationManager.INSTANCE.updateNotification(UUID.randomUUID(), Notification.builder()
                     .title("Dungeons Guide Loaded!")
-                    .description("Successfully Loaded DugneonsGuide!\nLoader: "+currentLoader.loaderName()+"\nVersion: "+currentLoader.version())
+                    .description("Successfully Loaded Dungeons Guide!\nLoader: "+currentLoader.loaderName()+"\nVersion: "+currentLoader.version())
                     .titleColor(0xFF00FF00)
                     .build());
 
@@ -261,7 +258,9 @@ public class Main
     public IDGLoader obtainLoader(Configuration configuration) throws NoVersionFoundException, NoSuitableLoaderFoundException {
         String loader = getLoaderName(configuration);
 
-        if ("local".equals(loader) ||
+        if ("devenv".equals(loader)) {
+            return new DevEnvLoader();
+        } else if ("local".equals(loader) ||
                 (loader.equals("auto") && this.getClass().getResourceAsStream("/kr/syeyoung/dungeonsguide/mod/DungeonsGuide.class") != null)) {
             return new LocalLoader();
         } else if ("jar".equals(loader) ||

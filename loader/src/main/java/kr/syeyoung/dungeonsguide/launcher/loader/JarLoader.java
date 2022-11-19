@@ -39,7 +39,6 @@ public class JarLoader implements IDGLoader {
     private ReferenceQueue<ClassLoader> refQueue = new ReferenceQueue<>();
     private PhantomReference<ClassLoader> phantomReference;
 
-    private boolean loaded;
 
     public static class JarClassLoader extends DGClassLoader {
         public JarClassLoader(LaunchClassLoader parent, ZipInputStream zipInputStream) throws IOException {
