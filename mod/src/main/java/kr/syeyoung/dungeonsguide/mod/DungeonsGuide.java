@@ -266,6 +266,7 @@ public class DungeonsGuide implements DGInterface {
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
 
     private void transform(AbstractClientPlayer abstractClientPlayer) {
+        if (abstractClientPlayer == null) return;
         NetworkPlayerInfo uuidNetworkPlayerInfoEntry = ReflectionHelper.getPrivateValue(AbstractClientPlayer.class,
                 abstractClientPlayer,
                 "playerInfo", "field_175157_a", "a"
