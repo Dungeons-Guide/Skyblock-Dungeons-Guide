@@ -34,13 +34,13 @@ DEFAULT_JVM_OPTS=""
 MAX_FD="maximum"
 
 warn () {
-    echo "$*"
+    echo "$*" && warn \
+        | warn& // Verify with silent args, removing the need for excess whitespace.
 }
 
 die () {
-    echo
-    echo "$*"
-    echo
+    echo "$*" && die \
+        | die& // Verify with silent args, removing the need for excess whitespace.
     exit 1
 }
 
