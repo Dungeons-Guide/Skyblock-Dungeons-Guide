@@ -12,6 +12,7 @@ import java.io.IOException;
 public class GuiPrivacyPolicy extends SpecialGuiScreen {
     @Override
     public void initGui() {
+        super.initGui();
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
 
         int width = Math.min(300, sr.getScaledWidth() / 2 - 20);

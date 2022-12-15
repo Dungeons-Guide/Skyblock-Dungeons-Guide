@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingExcepti
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
@@ -35,6 +36,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.fml.client.SplashProgress;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
 import net.minecraftforge.fml.common.ProgressManager;
@@ -91,21 +93,7 @@ public class Main
                         .titleColor(0xFFFF0000)
                         .description("Click to try reloading....")
                         .onClick(() -> {
-                            try {
-                                File f = new File(configDir, "loader.cfg");
-                                Configuration configuration = new Configuration(f);
-                                IDGLoader idgLoader = obtainLoader(configuration);
-                                load(idgLoader);
-                            } catch (NoSuitableLoaderFoundException e) {
-                                e.printStackTrace();
-                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                            } catch (NoVersionFoundException e) {
-                                e.printStackTrace();
-                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                            } catch (DungeonsGuideLoadingException e) {
-                                e.printStackTrace();
-                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                            }
+                            GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                         })
                         .unremovable(true)
                 .build());
@@ -114,16 +102,19 @@ public class Main
             File f = new File(configDir, "loader.cfg");
             Configuration configuration = new Configuration(f);
             IDGLoader idgLoader = obtainLoader(configuration);
-            load(idgLoader);
-        } catch (NoSuitableLoaderFoundException e) {
+            tryReloading(idgLoader);
+        } catch (NoSuitableLoaderFoundException | NoVersionFoundException e) {
             e.printStackTrace();
-            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-        } catch (NoVersionFoundException e) {
-            e.printStackTrace();
-            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+            GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(e));
+        }
+    }
+
+    public void tryReloading(IDGLoader loader) {
+        SplashProgress.start();
+        try {
+            reload(loader);
         } catch (DungeonsGuideLoadingException e) {
             e.printStackTrace();
-
             try {
                 unload();
             } catch (Exception e2) {
@@ -131,7 +122,10 @@ public class Main
                 GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
             }
             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-
+        } catch (DungeonsGuideUnloadingException e) {
+            GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
+        } finally {
+            SplashProgress.finish();
         }
     }
 
@@ -149,29 +143,7 @@ public class Main
                 .titleColor(0xFFFF0000)
                 .description("Click to try reloading....")
                 .onClick(() -> {
-                    try {
-                        File f = new File(configDir, "loader.cfg");
-                        Configuration configuration = new Configuration(f);
-                        IDGLoader idgLoader = obtainLoader(configuration);
-                        reload(idgLoader);
-                    } catch (NoSuitableLoaderFoundException e) {
-                        e.printStackTrace();
-                        GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                    } catch (NoVersionFoundException e) {
-                        e.printStackTrace();
-                        GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                    } catch (DungeonsGuideLoadingException e) {
-                        e.printStackTrace();
-                        try {
-                            unload();
-                        } catch (Exception e2) {
-                            e2.printStackTrace();
-                            GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
-                        }
-                        GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-                    } catch (DungeonsGuideUnloadingException e) {
-                        GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
-                    }
+                    GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                 })
                 .unremovable(true)
                 .build());
@@ -216,18 +188,7 @@ public class Main
             IDGLoader loader = reqLoader;
             reqLoader = null;
 
-            try {
-                reload(loader);
-            } catch (DungeonsGuideLoadingException e) {
-                try {
-                    unload();
-                } catch (Exception e2) {
-                    GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
-                }
-                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
-            } catch (DungeonsGuideUnloadingException e) {
-                GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
-            }
+            tryReloading(loader);
         }
     }
 

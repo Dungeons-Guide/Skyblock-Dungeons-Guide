@@ -22,6 +22,7 @@ import com.google.common.io.Files;
 import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
@@ -128,7 +129,7 @@ public class DungeonRoomInfoRegistry {
         shapeMap.clear();
         uuidMap.clear();
         try {
-            List<String> lines = IOUtils.readLines(Main.class.getResourceAsStream("/roomdata/datas.txt"));
+            List<String> lines = IOUtils.readLines(DungeonsGuide.class.getResourceAsStream("/roomdata/datas.txt"));
             for (String name : lines) {
                 if (!name.endsWith(".roomdata")) continue;
                 try {

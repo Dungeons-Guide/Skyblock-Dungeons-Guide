@@ -42,6 +42,7 @@ public class GuiUnloadingError extends SpecialGuiScreen {
 
     @Override
     public void initGui() {
+        super.initGui();
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         this.buttonList.add(new GuiButton(0, sr.getScaledWidth()/2-100,sr.getScaledHeight()-70 ,"Close Minecraft"));
         this.buttonList.add(new GuiButton(1, sr.getScaledWidth()/2-100,sr.getScaledHeight()-40 ,"Play With DG in Inconsistent State"));
