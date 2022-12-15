@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingExcepti
 import kr.syeyoung.dungeonsguide.launcher.exceptions.InvalidSignatureException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
 
@@ -82,18 +83,23 @@ public class RemoteLoader implements IDGLoader {
     @Override
     public DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
+        ProgressStateHolder.pushProgress("Loading - Remote Loader", 4);
         try {
             Update target;
             try {
                 target = UpdateRetrieverUtil.getUpdate(branchId, updateId);
+                ProgressStateHolder.step("Getting Update Meta");
                 friendlyVersionName = target.getName();
             } catch (Exception e) {
                 throw new NoVersionFoundException(friendlyBranchName, friendlyVersionName, branchId+"@"+updateId, e);
             }
 
             InputStream in;
+
+            ProgressStateHolder.step("Downloading Mod");
             byte[] mod = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar"));
             in.close();
+            ProgressStateHolder.step("Downloading Signature");
             byte[] signature = IOUtils.toByteArray(in = UpdateRetrieverUtil.downloadFile(target, "mod.jar.asc"));
             in.close();
 
@@ -101,11 +107,14 @@ public class RemoteLoader implements IDGLoader {
 
             classLoader = new JarClassLoader((LaunchClassLoader) this.getClass().getClassLoader(), new ZipInputStream(new ByteArrayInputStream(mod)));
             phantomReference = new PhantomReference<>(classLoader, refQueue);
+            ProgressStateHolder.step("Instantiating");
             dgInterface = (DGInterface) classLoader.loadClass("kr.syeyoung.dungeonsguide.mod.DungeonsGuide", true).newInstance();
 
             return dgInterface;
         } catch (Throwable e) { // the reason why I am catching throwable here: in case NoClassDefFoundError.
             throw new DungeonsGuideLoadingException(e);
+        } finally {
+            ProgressStateHolder.pop();
         }
     }
 

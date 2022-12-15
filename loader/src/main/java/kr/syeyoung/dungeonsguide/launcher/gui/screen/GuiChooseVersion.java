@@ -106,7 +106,7 @@ public class GuiChooseVersion extends SpecialGuiScreen {
         button.enabled = this.getClass().getResourceAsStream("/mod.jar") != null;
         this.buttonList.add(button = new GuiButton(4, tenth,sr.getScaledHeight()-100 ,"Refresh Options"));
 
-        this.buttonList.add(new GuiCheckBox(5, sr.getScaledWidth() - tenth,sr.getScaledHeight()-100 ,"Save This Loader", false));
+        this.buttonList.add(new GuiCheckBox(5, sr.getScaledWidth() - tenth-200,sr.getScaledHeight()-100 ,"Save This Loader", false));
 
         int k = 0;
         for (UpdateBranch updateBranch : branchList) {
@@ -137,10 +137,10 @@ public class GuiChooseVersion extends SpecialGuiScreen {
                         .build());
         } else if (button.id == 0) {
             dismiss();
-            Main.getMain().tryReloading(new LocalLoader());
+            Main.getMain().tryReloadingWithSplash(new LocalLoader());
         } else if (button.id == 1) {
             dismiss();
-            Main.getMain().tryReloading(new JarLoader());
+            Main.getMain().tryReloadingWithSplash(new JarLoader());
         } else if (button.id == 3) {
             dismiss();
         } else if (button.id == 4) {
@@ -155,12 +155,12 @@ public class GuiChooseVersion extends SpecialGuiScreen {
             int idx = button.id - 10;
             current = branchList.get(idx);
             fetchUpdates(branchList.get(idx));
-        } else {
+        } else if (button.id < branchList.size() + 10 + updates.size()){
             int idx = button.id - branchList.size() - 10;
             Update update = updates.get(idx);
 
             dismiss();
-            Main.getMain().tryReloading(new RemoteLoader(current.getName(),current.getId(),update.getId()));
+            Main.getMain().tryReloadingWithSplash(new RemoteLoader(current.getName(),current.getId(),update.getId()));
         }
     }
 

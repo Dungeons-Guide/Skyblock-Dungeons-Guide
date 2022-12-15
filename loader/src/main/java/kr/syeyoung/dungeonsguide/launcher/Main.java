@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
+import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -45,6 +46,7 @@ import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
+import org.lwjgl.LWJGLException;
 
 import java.io.*;
 import java.security.Security;
@@ -109,8 +111,24 @@ public class Main
         }
     }
 
-    public void tryReloading(IDGLoader loader) {
+    public void tryReloadingWithSplash(IDGLoader loader) {
         SplashProgress.start();
+        try {
+            SplashProgress.drawVanillaScreen(Minecraft.getMinecraft().renderEngine);
+        } catch (LWJGLException e) {
+            e.printStackTrace();
+        }
+        try {
+            tryReloading(loader);
+        } finally {
+            try {
+                SplashProgress.finish();
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
+        }
+    }
+    public void tryReloading(IDGLoader loader) {
         try {
             reload(loader);
         } catch (DungeonsGuideLoadingException e) {
@@ -124,8 +142,6 @@ public class Main
             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
         } catch (DungeonsGuideUnloadingException e) {
             GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
-        } finally {
-            SplashProgress.finish();
         }
     }
 
@@ -188,13 +204,16 @@ public class Main
             IDGLoader loader = reqLoader;
             reqLoader = null;
 
-            tryReloading(loader);
+            tryReloadingWithSplash(loader);
         }
     }
 
     public void reload(IDGLoader newLoader) throws DungeonsGuideLoadingException, DungeonsGuideUnloadingException {
         try {
+            ProgressStateHolder.pushProgress("Loading Dungeons Guide...", 2);
+            ProgressStateHolder.step("Unloading Currently Loaded Version...");
             unload();
+            ProgressStateHolder.step("Loading New Version...");
             load(newLoader);
         } catch (DungeonsGuideLoadingException | DungeonsGuideUnloadingException e) {
             dgInterface = null;
@@ -202,6 +221,8 @@ public class Main
 
             e.printStackTrace();
             throw e;
+        } finally {
+            ProgressStateHolder.pop();
         }
     }
 

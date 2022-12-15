@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
 
@@ -70,7 +71,8 @@ public class JarLoader implements IDGLoader {
     @Override
     public DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
-
+        ProgressStateHolder.pushProgress("Loading - Jar Loader", 1);
+        ProgressStateHolder.step("Loading");
         try {
             classLoader = new JarClassLoader((LaunchClassLoader) this.getClass().getClassLoader(), new ZipInputStream(JarLoader.class.getResourceAsStream("/mod.jar")));
             phantomReference = new PhantomReference<>(classLoader, refQueue);
@@ -79,6 +81,8 @@ public class JarLoader implements IDGLoader {
             return dgInterface;
         } catch (Throwable e) {
             throw new DungeonsGuideLoadingException(e);
+        } finally {
+            ProgressStateHolder.pop();
         }
     }
 
@@ -96,6 +100,7 @@ public class JarLoader implements IDGLoader {
             dgInterface.unload();
         } catch (Throwable e) {
             dgInterface = null;
+            ProgressStateHolder.pop();
             throw new DungeonsGuideUnloadingException(e);
         }
         if (classLoader != null)

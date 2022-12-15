@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
 
@@ -62,6 +63,8 @@ public class LocalLoader implements IDGLoader {
     @Override
     public DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException {
         if (dgInterface != null) throw new IllegalStateException("Already loaded");
+        ProgressStateHolder.pushProgress("Loading - Local Loader", 1);
+        ProgressStateHolder.step("Loading");
 
         try {
             classLoader = new LocalClassLoader((LaunchClassLoader) this.getClass().getClassLoader());
@@ -71,6 +74,8 @@ public class LocalLoader implements IDGLoader {
             return dgInterface;
         } catch (Throwable e) {
             throw new DungeonsGuideLoadingException(e);
+        } finally {
+            ProgressStateHolder.pop();
         }
     }
 
