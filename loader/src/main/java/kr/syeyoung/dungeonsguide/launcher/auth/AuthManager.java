@@ -130,6 +130,7 @@ public class AuthManager {
                         .title("Auth Error")
                         .description("Authentication Error Occured\n"+e.getMessage())
                         .titleColor(0xFFFF0000)
+                        .unremovable(true)
                         .onClick(() -> {
                             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
                         })
@@ -152,6 +153,7 @@ public class AuthManager {
 
         if (currentToken instanceof PrivacyPolicyRequiredToken) {
             reauthLock = true;
+            NotificationManager.INSTANCE.removeNotification(authenticationFailure);
             NotificationManager.INSTANCE.removeNotification(privacyPolicyRequired);
             try {
                 currentToken = DgAuthUtil.acceptNewPrivacyPolicy(currentToken.getToken(), version);
@@ -173,6 +175,7 @@ public class AuthManager {
                             .title("Auth Error")
                             .description("Authentication Error Occured\n"+e.getMessage())
                             .titleColor(0xFFFF0000)
+                            .unremovable(true)
                             .onClick(() -> {
                                 GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
                             })

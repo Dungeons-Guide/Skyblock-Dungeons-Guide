@@ -77,8 +77,10 @@ public class DgAuthUtil {
         GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
 
         HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/requestAuth").openConnection();
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestProperty("Content-Type", "application/json");
+        connection.setConnectTimeout(1000);
+        connection.setReadTimeout(3000);
         connection.setRequestMethod("POST");
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -126,8 +128,10 @@ public class DgAuthUtil {
     public static AuthToken verifyAuth(String tempToken, byte[] encSecret) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/authenticate").openConnection();
         urlConnection.setRequestMethod("POST");
-        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");
+        urlConnection.setConnectTimeout(1000);
+        urlConnection.setReadTimeout(3000);
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
 
@@ -150,8 +154,10 @@ public class DgAuthUtil {
     public static AuthToken acceptNewPrivacyPolicy(String tempToken, long version) throws IOException {
         HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/acceptPrivacyPolicy").openConnection();
         urlConnection.setRequestMethod("POST");
-        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");
+        urlConnection.setConnectTimeout(1000);
+        urlConnection.setReadTimeout(3000);
         urlConnection.setDoInput(true);
         urlConnection.setDoOutput(true);
 

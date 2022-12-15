@@ -31,7 +31,7 @@ public class SkyblockUtils {
         URL url = new URL("https://hypixel-api.inventivetalent.org/api/skyblock/calendar");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
         JsonObject object = (JsonObject) new JsonParser().parse(inputStreamReader);
         if (!object.get("success").getAsBoolean()) {

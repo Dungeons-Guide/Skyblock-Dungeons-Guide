@@ -30,9 +30,11 @@ public class UpdateRetrieverUtil {
 
     public static List<UpdateBranch> getUpdateBranches() throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/").openConnection();
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setRequestMethod("GET");
+        connection.setConnectTimeout(1000);
+        connection.setReadTimeout(3000);
         connection.setDoInput(true);
         connection.setDoOutput(true);
 
@@ -56,8 +58,10 @@ public class UpdateRetrieverUtil {
 
     public static List<Update> getLatestUpdates(long branchId, int page) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/?page="+page).openConnection();
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestMethod("GET");
+        connection.setConnectTimeout(1000);
+        connection.setReadTimeout(3000);
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setDoInput(true);
         connection.setDoOutput(true);
@@ -96,9 +100,11 @@ public class UpdateRetrieverUtil {
 
     public static Update getUpdate(long branchId, long updateId) throws IOException {
         HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/"+updateId).openConnection();
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setRequestMethod("GET");
+        connection.setConnectTimeout(1000);
+        connection.setReadTimeout(3000);
         connection.setDoInput(true);
         connection.setDoOutput(true);
 
@@ -134,26 +140,38 @@ public class UpdateRetrieverUtil {
                 .findFirst().orElseThrow(() -> new AssetNotFoundException(update.getBranchId()+"", update.getId()+"("+update.getName()+")", assetName));
 
 
-        HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/"+update.getBranchId()+"/"+update.getId()+"/"+asset.getAssetId()).openConnection();
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
-        connection.setRequestMethod("GET");
-        connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
-        connection.setDoInput(true);
-        connection.setDoOutput(true);
-
-        String payload = getResponse(connection);
-        String url, method;
         try {
-            JSONObject result = new JSONObject(payload);
-            url = result.getString("url");
-            method = result.getString("method");
-        } catch (Exception e) {
-            throw new ResponseParsingException(payload, e);
+            HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/" + update.getBranchId() + "/" + update.getId() + "/" + asset.getAssetId()).openConnection();
+            connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+            connection.setRequestMethod("GET");
+            connection.setRequestProperty("Authorization", "Bearer " + AuthManager.getInstance().getWorkingTokenOrThrow());
+            connection.setDoInput(true);
+            connection.setConnectTimeout(1000);
+            connection.setReadTimeout(3000);
+            connection.setDoOutput(true);
+
+            String payload = getResponse(connection);
+            String url, method;
+            try {
+                JSONObject result = new JSONObject(payload);
+                url = result.getString("url");
+                method = result.getString("method");
+            } catch (Exception e) {
+                throw new ResponseParsingException(payload, e);
+            }
+            try {
+                connection = (HttpURLConnection) new URL(url).openConnection();
+                connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+                connection.setConnectTimeout(1000);
+                connection.setReadTimeout(5000);
+                connection.setRequestMethod(method);
+                return connection.getInputStream();
+            } catch (IOException e) {
+                throw new RuntimeException("Error occured while downloading update asset from "+method+" "+url, e);
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Error occured while downloading update asset "+update+"/"+assetName, e);
         }
-        connection = (HttpURLConnection) new URL(url).openConnection();
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/1.0");
-        connection.setRequestMethod(method);
-        return connection.getInputStream();
     }
 
     @Data @Builder
