@@ -149,12 +149,7 @@ public class RichPresenceManager implements Runnable {
         if (pointerByReference.getValue() == Pointer.NULL) return -9998;
         iDiscordCore = new IDiscordCore(pointerByReference.getValue());
 
-        iDiscordCore.SetLogHook.setLogHook(iDiscordCore, EDiscordLogLevel.DiscordLogLevel_Debug, Pointer.NULL, new IDiscordCore.LogHook() {
-            @Override
-            public void hook(Pointer hookData, EDiscordLogLevel level, String message) {
-                System.out.println(message+" - "+level+" - "+hookData);
-            }
-        });
+        iDiscordCore.SetLogHook.setLogHook(iDiscordCore, EDiscordLogLevel.DiscordLogLevel_Debug, Pointer.NULL, (hookData, level, message) -> System.out.println(message+" - "+level+" - "+hookData));
 
         activityManager = iDiscordCore.GetActivityManager.getActivityManager(iDiscordCore);
         relationshipManager = iDiscordCore.GetRelationshipManager.getRelationshipManager(iDiscordCore);

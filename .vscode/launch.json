@@ -26,6 +26,32 @@
       "args": "\"nogui\"",
       "env": {},
       "projectName": ""
+    },
+    {
+      "type": "java",
+      "name": "Minecraft Client (:loader)",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/loader/runtime",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "net.fabricmc.devlaunchinjector.Main",
+      "vmArgs": "\"-Dfabric.dli.config\u003d/Users/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/loader/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-XstartOnFirstThread\" \"-Ddevauth.enabled\u003dtrue\" \"-XstartOnFirstThread\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
+      "args": "",
+      "env": {},
+      "projectName": "loader"
+    },
+    {
+      "type": "java",
+      "name": "Minecraft Client (:mod)",
+      "request": "launch",
+      "cwd": "${workspaceFolder}/mod/runtime",
+      "console": "internalConsole",
+      "stopOnEntry": false,
+      "mainClass": "net.fabricmc.devlaunchinjector.Main",
+      "vmArgs": "\"-Dfabric.dli.config\u003d/Users/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/mod/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-XstartOnFirstThread\" \"-Ddevauth.enabled\u003dtrue\" \"-XstartOnFirstThread\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
+      "args": "",
+      "env": {},
+      "projectName": "mod"
     }
   ]
 }

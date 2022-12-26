@@ -26,7 +26,13 @@ loom {
 
         }
     }
+    runConfigs {
+        named("client") {
+            ideConfigGenerated(true)
+        }
+    }
     runs {
+
         client {
             runDir = 'runtime'
             property('devauth.enabled','true')
