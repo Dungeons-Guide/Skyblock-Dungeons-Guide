@@ -29,6 +29,7 @@ loom {
     runConfigs {
         named("client") {
             ideConfigGenerated(true)
+            vmArgs.remove("-XstartOnFirstThread")
         }
     }
     runs {
@@ -37,6 +38,7 @@ loom {
             runDir = 'runtime'
             property('devauth.enabled','true')
             client()
+            vmArgs.remove("-XstartOnFirstThread")
         }
     }
     forge {
