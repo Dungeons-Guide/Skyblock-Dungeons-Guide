@@ -167,7 +167,9 @@ public class RemoteLoader implements IDGLoader {
     }
 
     private long branchId = -1; // pre-retrieved
+    public long getBranchId() {return branchId;}
     private long updateId = -1; // pre-retrieved
+    public long getUpdateId() {return updateId;}
 
     private String friendlyBranchName = "";
     private String friendlyVersionName = "";

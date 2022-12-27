@@ -261,6 +261,7 @@ public class DungeonsGuide implements DGInterface {
 
         ProgressManager.pop(progressbar);
 
+        VersionInfo.checkAndOpen();
     }
 
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
