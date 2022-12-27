@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
@@ -115,7 +116,10 @@ public class GuiChooseVersion extends SpecialGuiScreen {
 
         k = 0;
         for (Update update : updates) {
-            this.buttonList.add(new GuiButton(branchList.size() + 10 + k++, tenth+210, 70+ 20 * k, update.getName()));
+            this.buttonList.add(button = new GuiButton(branchList.size() + 10 + k++, tenth+210, 70+ 20 * k, update.getName()));
+            if (update.getMetadata().has("loaderVersion") && update.getMetadata().getInt("loaderVersion") > LoaderMeta.LOADER_VERSION) {
+                button.enabled = false;
+            }
         }
     }
 

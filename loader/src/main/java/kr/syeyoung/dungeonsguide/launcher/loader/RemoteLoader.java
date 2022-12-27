@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
@@ -90,6 +91,11 @@ public class RemoteLoader implements IDGLoader {
                 target = UpdateRetrieverUtil.getUpdate(branchId, updateId);
                 ProgressStateHolder.step("Getting Update Meta");
                 friendlyVersionName = target.getName();
+
+                if (target.getMetadata().has("loaderVersion") && target.getMetadata().getInt("loaderVersion") > LoaderMeta.LOADER_VERSION) {
+                    throw new DungeonsGuideLoadingException("This version of Dungeons Guide requires loader version: " + target.getMetadata().getInt("loaderVersion") +" But current loader version: "+ LoaderMeta.LOADER_VERSION);
+                }
+
             } catch (Exception e) {
                 throw new NoVersionFoundException(friendlyBranchName, friendlyVersionName, branchId+"@"+updateId, e);
             }
@@ -112,7 +118,7 @@ public class RemoteLoader implements IDGLoader {
 
             return dgInterface;
         } catch (Throwable e) { // the reason why I am catching throwable here: in case NoClassDefFoundError.
-            throw new DungeonsGuideLoadingException(e);
+            throw new DungeonsGuideLoadingException("Version: "+branchId+" / "+updateId,e);
         } finally {
             ProgressStateHolder.pop();
         }
