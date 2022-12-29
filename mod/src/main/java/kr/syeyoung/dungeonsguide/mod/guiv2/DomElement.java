@@ -1,18 +1,15 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import net.minecraft.client.renderer.GlStateManager;
 import org.w3c.dom.Element;
-import org.w3c.dom.css.Rect;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 public class DomElement {
     @Getter
@@ -73,8 +70,13 @@ public class DomElement {
         else controller.onUnmount();;
     }
 
-    @Getter @Setter
+    @Getter
     private Rectangle relativeBound; // relative bound from parent, unapplied transformation
+
+    public void setRelativeBound(Rectangle relativeBound) {
+        this.relativeBound = relativeBound;
+    }
+
     @Getter @Setter
     private Rectangle absBounds; // absolute bound from screen top left
 
@@ -85,20 +87,24 @@ public class DomElement {
     private boolean isFocused;
     // event propagation
 
+    public void requestRelayout() {
+        if (parent != null)
+        parent.requestRelayout();
+    }
 
     public void addElement(DomElement element) {
         element.setParent(this);
         element.setComponentParent(componentParent);
         children.add(element);
         element.setMounted(isMounted);
-        layouter.relayout();
+        requestRelayout();
     }
     public void removeElement(DomElement element) {
         element.setParent(null);
         element.setComponentParent(null);
         children.remove(element);
         element.setMounted(isMounted);
-        layouter.relayout();
+        requestRelayout();
     }
 
     public void keyPressed0(char typedChar, int keyCode) {

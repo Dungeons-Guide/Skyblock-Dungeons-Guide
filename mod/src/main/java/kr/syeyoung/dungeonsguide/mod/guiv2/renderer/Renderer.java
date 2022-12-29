@@ -1,5 +1,6 @@
-package kr.syeyoung.dungeonsguide.mod.guiv2;
+package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 

@@ -1,13 +1,10 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 public class DomElementRegistry {
@@ -28,8 +25,8 @@ public class DomElementRegistry {
 
         DomElement domElement = new DomElement();
         domElement.setRepresenting(element);
-        domElement.setLayouter(creator.createLayout(domElement));
         domElement.setController(creator.createController(domElement));
+        domElement.setLayouter(creator.createLayout(domElement));
         domElement.setRenderer(creator.createRenderer(domElement));
 
         return domElement;

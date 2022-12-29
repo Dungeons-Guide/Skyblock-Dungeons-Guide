@@ -12,8 +12,13 @@ public abstract class Layouter {
         this.domElement = element;
     }
 
-    public abstract Dimension getPreferredSize(ConstraintBox constraints);
+
+    public abstract Dimension layout(ConstraintBox constraintBox);
 
 
-    public abstract void relayout();
+    public static int clamp(int val, int min, int max) {
+        if (val < min) return min;
+        if (val > max) return max;
+        return val;
+    }
 }
