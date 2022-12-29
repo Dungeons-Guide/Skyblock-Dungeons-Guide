@@ -1,7 +1,5 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
-import com.sun.org.apache.xpath.internal.operations.Bool;
-import kr.syeyoung.dungeonsguide.mod.guiv2.stylesheet.LengthUnit;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -21,8 +19,12 @@ public abstract class Controller {
     private final Map<String, BindableAttribute> attributeMap = new HashMap<>();
     private final Map<String, BindableAttribute> attributeMap2 = new HashMap<>();
     private final Map<BindableAttribute, String> binds = new HashMap<>();
+
+    private BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
+
     public Controller(DomElement element) {
         this.element = element;
+        ref.setValue(element);
 
         NodeList list = element.getRepresenting().getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
@@ -64,6 +66,7 @@ public abstract class Controller {
             Attr attr = (Attr) attributes.item(i);
             if (attr.getName().startsWith("bind:")) {
                 String bindingAttribute = attr.getName().substring(5);
+
                 if (attributeMap.containsKey(bindingAttribute)) {
                     throw new IllegalStateException("Can not bind "+bindingAttribute+" because it is not exported");
                 }
@@ -91,8 +94,6 @@ public abstract class Controller {
             }
         } else if (clazz== boolean.class) {
             return (T) Boolean.valueOf(val);
-        } else if (clazz== LengthUnit.class) {
-            return (T) LengthUnit.parseLength(val);
         }
         throw new UnsupportedOperationException("cant convert to "+clazz.getName());
     }
