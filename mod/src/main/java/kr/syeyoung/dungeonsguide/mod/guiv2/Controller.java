@@ -102,6 +102,8 @@ public abstract class Controller {
         } else if (clazz== double.class) {
             return (T) Double.valueOf(val);
         } else if (clazz== int.class) {
+            if (val.startsWith("#"))
+                return (T) Integer.valueOf(val.substring(1), 16);
             return (T) Integer.valueOf(val);
         } else if (clazz== String.class) {
             return (T) val;

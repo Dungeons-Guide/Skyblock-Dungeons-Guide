@@ -142,7 +142,9 @@ public class Text {
 
 
 
-            return new Dimension(hadToWrap ? constraintBox.getMaxWidth() : maxWidth2, (int) (fr.FONT_HEIGHT * tController.lineSpacing.getValue()) * tController.wrappedTexts.size());
+            return new Dimension(hadToWrap ? constraintBox.getMaxWidth() :
+                    clamp(maxWidth2, constraintBox.getMinWidth(), constraintBox.getMaxWidth()),
+                    clamp((int) (fr.FONT_HEIGHT * tController.lineSpacing.getValue()) * tController.wrappedTexts.size(), constraintBox.getMinHeight(), constraintBox.getMaxHeight());
         }
     }
 

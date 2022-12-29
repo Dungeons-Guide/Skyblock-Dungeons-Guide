@@ -162,8 +162,8 @@ public class DomElement {
         for (DomElement childComponent  : children) {
             Rectangle original = childComponent.getRelativeBound();
             Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = transformed.getWidth() / original.width;
-            double YscaleFactor = transformed.getHeight() / original.height;
+            double XscaleFactor = original.width / transformed.getWidth();
+            double YscaleFactor = original.height / transformed.getHeight();
 
             if (childComponent.mouseClicked0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y) * YscaleFactor), mouseButton)) {
@@ -182,8 +182,8 @@ public class DomElement {
         for (DomElement childComponent : children) {
             Rectangle original = childComponent.getRelativeBound();
             Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = transformed.getWidth() / original.width;
-            double YscaleFactor = transformed.getHeight() / original.height;
+            double XscaleFactor = original.width / transformed.getWidth();
+            double YscaleFactor = original.height / transformed.getHeight();
 
             childComponent.mouseReleased0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor), state);
@@ -197,8 +197,8 @@ public class DomElement {
         for (DomElement childComponent  : children) {
             Rectangle original = childComponent.getRelativeBound();
             Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = transformed.getWidth() / original.width;
-            double YscaleFactor = transformed.getHeight() / original.height;
+            double XscaleFactor = original.width / transformed.getWidth();
+            double YscaleFactor = original.height / transformed.getHeight();
             childComponent.mouseClickMove0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor), clickedMouseButton, timeSinceLastClick);
         }
@@ -210,8 +210,8 @@ public class DomElement {
         for (DomElement childComponent  : children) {
             Rectangle original = childComponent.getRelativeBound();
             Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = transformed.getWidth() / original.width;
-            double YscaleFactor = transformed.getHeight() / original.height;
+            double XscaleFactor = original.width / transformed.getWidth();
+            double YscaleFactor = original.height / transformed.getHeight();
             childComponent.mouseScrolled0(absMouseX, absMouseY,  (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor), scrollAmount);
         }
@@ -233,8 +233,8 @@ public class DomElement {
         for (DomElement childComponent  : children) {
             Rectangle original = childComponent.getRelativeBound();
             Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = transformed.getWidth() / original.width;
-            double YscaleFactor = transformed.getHeight() / original.height;
+            double XscaleFactor = original.width / transformed.getWidth();
+            double YscaleFactor = original.height / transformed.getHeight();
             childComponent.mouseMoved0(absMouseX, absMouseY,  (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor));
         }
