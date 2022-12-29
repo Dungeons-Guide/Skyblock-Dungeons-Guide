@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Controller;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 
 import java.awt.*;
 

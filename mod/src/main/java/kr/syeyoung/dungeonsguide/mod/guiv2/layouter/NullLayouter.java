@@ -16,27 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2;
+package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
-import lombok.Getter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 
 import java.awt.*;
 
-public abstract class Layouter {
-    @Getter
-
-    private DomElement domElement;
-    public Layouter(DomElement element) {
-        this.domElement = element;
+public class NullLayouter extends Layouter {
+    public NullLayouter(DomElement element) {
+        super(element);
     }
 
+    @Override
+    public boolean shouldRelayout() {
+        return false;
+    }
 
-    public abstract Dimension layout(ConstraintBox constraintBox);
-
-
-    public static int clamp(int val, int min, int max) {
-        if (val < min) return min;
-        if (val > max) return max;
-        return val;
+    @Override
+    public Dimension layout(ConstraintBox constraintBox) {
+        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
     }
 }

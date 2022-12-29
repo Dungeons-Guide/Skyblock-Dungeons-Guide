@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.AccessLevel;

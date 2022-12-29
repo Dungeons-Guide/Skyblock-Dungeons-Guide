@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import net.minecraft.client.gui.Gui;
 
