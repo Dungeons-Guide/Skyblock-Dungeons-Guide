@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -130,4 +131,8 @@ public class Column {
             vAlign.addOnUpdate(a -> element.requestRelayout());
         }
     }
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            CLayout::new, OnlyChildrenRenderer::new, CController::new
+    );
 }

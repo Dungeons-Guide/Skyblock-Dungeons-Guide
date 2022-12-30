@@ -21,7 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Controller;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 
 import java.awt.*;
 
@@ -52,4 +54,10 @@ public class Stack {
             loadDom();
         }
     }
+
+
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            SLayouter::new, OnlyChildrenRenderer::new, SController::new
+    );
 }

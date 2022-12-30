@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 
 import java.awt.*;
@@ -80,4 +81,10 @@ public class Scaler {
             super(element);
         }
     }
+
+
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            SLayouter::new, SRenderer::new, SController::new
+    );
 }

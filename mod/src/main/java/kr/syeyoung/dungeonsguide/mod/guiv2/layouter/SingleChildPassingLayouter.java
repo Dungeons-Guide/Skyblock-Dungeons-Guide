@@ -16,33 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
+package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 
 import java.awt.*;
 
-// this element is very important, because it has no parent, and it fills to screen.
-public class View {
-
-    public static class VLayout extends Layouter {
-        public VLayout(DomElement element) {
-            super(element);
-        }
-
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-            if (getDomElement().getChildren().isEmpty()) {
-                return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
-            }
-
-            Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(constraintBox);
-            getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
-            return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
-        }
+public class SingleChildPassingLayouter extends Layouter {
+    public SingleChildPassingLayouter(DomElement element) {
+        super(element);
     }
 
+    @Override
+    public Dimension layout(ConstraintBox constraintBox) {
+        if (getDomElement().getChildren().isEmpty()) {
+            return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        }
+
+        Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(constraintBox);
+        getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
+        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+    }
 }

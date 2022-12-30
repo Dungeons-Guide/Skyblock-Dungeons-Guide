@@ -18,12 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import net.minecraft.client.Minecraft;
+import net.minecraft.util.ResourceLocation;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
 import javax.management.AttributeChangeNotification;
 import javax.xml.parsers.ParserConfigurationException;
 import java.io.IOException;
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.*;
@@ -134,13 +137,15 @@ public abstract class Controller {
         }
     }
 
-    public final void loadFile(String location) throws ParserConfigurationException, IOException, SAXException {
-        Document document = DomElementRegistry.factory.newDocumentBuilder().parse(location);
-        NodeList nodeList = document.getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            DomElement domElement = DomElementRegistry.createTree((Element)nodeList.item(i));
-            domElement.setComponentParent(element);
-            element.addElement(domElement);
+    public final void loadFile(ResourceLocation location) throws ParserConfigurationException, IOException, SAXException {
+        try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream()) {
+            Document document = DomElementRegistry.factory.newDocumentBuilder().parse(is);
+            NodeList nodeList = document.getChildNodes();
+            for (int i = 0; i < nodeList.getLength(); i++) {
+                DomElement domElement = DomElementRegistry.createTree((Element) nodeList.item(i));
+                domElement.setComponentParent(element);
+                element.addElement(domElement);
+            }
         }
     }
 

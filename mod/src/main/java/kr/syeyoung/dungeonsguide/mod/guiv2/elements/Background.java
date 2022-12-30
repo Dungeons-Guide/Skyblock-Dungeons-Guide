@@ -74,4 +74,8 @@ public class Background {
             loadDom();
         }
     }
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            BLayout::new, BRender::new, BController::new
+    );
 }

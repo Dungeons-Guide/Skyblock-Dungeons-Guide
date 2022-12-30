@@ -28,6 +28,7 @@ import org.w3c.dom.Element;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 
 public class DomElement {
@@ -45,8 +46,7 @@ public class DomElement {
     @Setter(AccessLevel.PRIVATE)
     private DomElement parent;
     @Getter
-    @Setter(AccessLevel.PACKAGE)
-    private List<DomElement> children = new ArrayList<>();
+    private List<DomElement> children = new LinkedList<>();
 
     @Getter @Setter
     private Element representing;
@@ -168,6 +168,7 @@ public class DomElement {
             if (childComponent.mouseClicked0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y) * YscaleFactor), mouseButton)) {
                 isFocused = false;
+                break;
             }
         }
 

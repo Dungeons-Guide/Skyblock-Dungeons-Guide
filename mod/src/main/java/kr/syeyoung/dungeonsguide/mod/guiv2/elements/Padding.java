@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 
 import java.awt.*;
 
@@ -77,4 +79,8 @@ public class Padding {
             bottom.addOnUpdate(a -> element.requestRelayout());
         }
     }
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            PLayouter::new, SingleChildRenderer::new, PController::new
+    );
 }

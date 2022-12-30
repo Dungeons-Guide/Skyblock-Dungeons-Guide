@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
@@ -32,10 +33,10 @@ import java.util.List;
 
 public class Text {
 
-    public static class Renderer extends DrawNothingRenderer {
+    public static class TRenderer extends DrawNothingRenderer {
         FontRenderer fr;
         private TController tController;
-        public Renderer(DomElement domElement) {
+        public TRenderer(DomElement domElement) {
             super(domElement);
             fr = Minecraft.getMinecraft().fontRendererObj;
             tController = (TController) domElement.getController();
@@ -144,7 +145,7 @@ public class Text {
 
             return new Dimension(hadToWrap ? constraintBox.getMaxWidth() :
                     clamp(maxWidth2, constraintBox.getMinWidth(), constraintBox.getMaxWidth()),
-                    clamp((int) (fr.FONT_HEIGHT * tController.lineSpacing.getValue()) * tController.wrappedTexts.size(), constraintBox.getMinHeight(), constraintBox.getMaxHeight());
+                    clamp((int) (fr.FONT_HEIGHT * tController.lineSpacing.getValue()) * tController.wrappedTexts.size(), constraintBox.getMinHeight(), constraintBox.getMaxHeight()));
         }
     }
 
@@ -187,4 +188,10 @@ public class Text {
             text.addOnUpdate(a -> element.requestRelayout());
         }
     }
+
+
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            TLayouter::new, TRenderer::new, TController::new
+    );
 }

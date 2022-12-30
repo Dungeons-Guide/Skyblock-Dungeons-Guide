@@ -18,13 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import com.sun.org.apache.xerces.internal.impl.xs.opti.AttrImpl;
+import com.sun.org.apache.xerces.internal.impl.xs.opti.NamedNodeMapImpl;
+import com.sun.org.apache.xml.internal.utils.UnImplNode;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
+import org.w3c.dom.NamedNodeMap;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.function.Function;
 
 public class DomElementRegistry {
     public interface DomElementCreator {
@@ -33,12 +40,88 @@ public class DomElementRegistry {
         public Controller createController(DomElement domElement);
     }
 
+    public static class GeneralDomElementCreator implements DomElementCreator {
+        private final Function<DomElement, Layouter> layouterFunction;
+        private final Function<DomElement, Renderer> rendererFunction;
+        private final Function<DomElement, Controller> controllerFunction;
+
+        public GeneralDomElementCreator(Function<DomElement, Layouter> layouterFunction, Function<DomElement, Renderer> rendererFunction, Function<DomElement, Controller> controllerFunction) {
+            this.layouterFunction = layouterFunction;
+            this.rendererFunction = rendererFunction;
+            this.controllerFunction = controllerFunction;
+        }
+
+        @Override
+        public Layouter createLayout(DomElement domElement) {
+            return layouterFunction.apply(domElement);
+        }
+
+        @Override
+        public Renderer createRenderer(DomElement domElement) {
+            return rendererFunction.apply(domElement);
+        }
+
+        @Override
+        public Controller createController(DomElement domElement) {
+            return controllerFunction.apply(domElement);
+        }
+    }
     private static Map<String, DomElementCreator> creatorMap = new HashMap<>();
 
     static {
-
+        creatorMap.put("text", Text.CREATOR);
+        creatorMap.put("stack", Stack.CREATOR);
+        creatorMap.put("size", SizedBox.CREATOR);
+        creatorMap.put("scaler", Scaler.CREATOR);
+        creatorMap.put("row", Row.CREATOR);
+        creatorMap.put("Placeholder", Placeholder.CREATOR);
+        creatorMap.put("padding", Padding.CREATOR);
+        creatorMap.put("col", Column.CREATOR);
+        creatorMap.put("bgcolor", Background.CREATOR);
     }
 
+    private static final class AttributePassingElement extends UnImplNode {
+        private Map<String, String> attributes;
+
+        public AttributePassingElement(Map<String, String> attributes) {
+            this.attributes = attributes;
+        }
+
+        @Override
+        public String getAttribute(String name) {
+            return attributes.get(name);
+        }
+
+        @Override
+        public Attr getAttributeNode(String name) {
+            if (!attributes.containsKey(name)) return null;
+            return new AttrImpl(null, null, null, name, null, attributes.get(name));
+        }
+
+        @Override
+        public NamedNodeMap getAttributes() {
+            return new NamedNodeMapImpl(
+                    (Attr[]) attributes.keySet().stream()
+                            .map(this::getAttributeNode)
+                            .toArray()
+            );
+        }
+
+        @Override
+        public String getTagName() {
+            return "";
+        }
+    }
+
+    public static DomElement createView(DomElementCreator creator, Map<String, String> attributes) {
+        RootDom domElement = new RootDom();
+        domElement.setRepresenting(new AttributePassingElement(attributes));
+        domElement.setController(creator.createController(domElement));
+        domElement.setLayouter(creator.createLayout(domElement));
+        domElement.setRenderer(creator.createRenderer(domElement));
+
+        return domElement;
+    }
     public static DomElement createTree(Element element) {
         DomElementCreator creator = creatorMap.get(element.getTagName());
 

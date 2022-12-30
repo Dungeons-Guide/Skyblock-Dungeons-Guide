@@ -20,7 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.Controller;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
@@ -59,4 +62,9 @@ public class Placeholder {
             loadDom();
         }
     }
+
+
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
+            NullLayouter::new, PRenderer::new, PController::new
+    );
 }
