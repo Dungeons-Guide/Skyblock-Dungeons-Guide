@@ -23,7 +23,10 @@ import com.sun.org.apache.xerces.internal.impl.xs.opti.NamedNodeMapImpl;
 import com.sun.org.apache.xml.internal.utils.UnImplNode;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
@@ -66,6 +69,29 @@ public class DomElementRegistry {
             return controllerFunction.apply(domElement);
         }
     }
+
+    public static class ComponentCreator implements DomElementCreator {
+        private final Function<DomElement, Controller> controllerFunction;
+
+        public ComponentCreator(Function<DomElement, Controller> controllerFunction) {
+            this.controllerFunction = controllerFunction;
+        }
+
+        @Override
+        public Layouter createLayout(DomElement domElement) {
+            return new SingleChildPassingLayouter(domElement);
+        }
+
+        @Override
+        public Renderer createRenderer(DomElement domElement) {
+            return new SingleChildRenderer(domElement);
+        }
+
+        @Override
+        public Controller createController(DomElement domElement) {
+            return controllerFunction.apply(domElement);
+        }
+    }
     private static Map<String, DomElementCreator> creatorMap = new HashMap<>();
 
     static {
@@ -78,6 +104,9 @@ public class DomElementRegistry {
         creatorMap.put("padding", Padding.CREATOR);
         creatorMap.put("col", Column.CREATOR);
         creatorMap.put("bgcolor", Background.CREATOR);
+
+        creatorMap.put("PopupManager", PopupMgr.CREATOR);
+        creatorMap.put("TestView", TestView.CREATOR); // not needed but ... idk
     }
 
     private static final class AttributePassingElement extends UnImplNode {

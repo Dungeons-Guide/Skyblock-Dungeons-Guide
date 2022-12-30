@@ -26,7 +26,7 @@ import net.minecraft.util.ResourceLocation;
 public class PopupMgr extends Controller {
     public PopupMgr(DomElement element) {
         super(element);
-        loadFile(new ResourceLocation("dungeonsguide:gui/popupmgr"));
+        loadFile(new ResourceLocation("dungeonsguide:gui/popupmgr.gui"));
     }
     // just stack
 
@@ -57,7 +57,7 @@ public class PopupMgr extends Controller {
         );
     }
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SingleChildPassingLayouter::new, OnlyChildrenRenderer::new, PopupMgr::new
+    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.ComponentCreator(
+            PopupMgr::new
     );
 }
