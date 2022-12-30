@@ -18,12 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.view;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.Controller;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
 public class TestView extends Controller {
@@ -35,4 +34,13 @@ public class TestView extends Controller {
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.ComponentCreator(
             TestView::new
     );
+
+    @Bind(attributeName = "variable")
+    public BindableAttribute<String> bindableAttribute = new BindableAttribute<>(String.class, "");
+
+
+    @Override
+    public void onMount() {
+        bindableAttribute.setValue(Minecraft.getMinecraft().thePlayer.getName());
+    }
 }

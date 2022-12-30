@@ -51,7 +51,7 @@ public class Row {
                 width += requiredSize.width;
             }
 
-            height = constraints.getMaxHeight();
+            height = constraints.getMaxHeight() == Integer.MAX_VALUE ? height : constraints.getMaxHeight();
             int effwidth = constraints.getMaxWidth(); // max does not count for row.
 
 

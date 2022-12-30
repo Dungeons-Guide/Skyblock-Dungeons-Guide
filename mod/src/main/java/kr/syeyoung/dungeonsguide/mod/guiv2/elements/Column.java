@@ -51,7 +51,7 @@ public class Column {
                 height += requiredSize.height;
             }
 
-            width = constraints.getMaxWidth();
+            width = constraints.getMaxWidth() == Integer.MAX_VALUE ? width : constraints.getMaxWidth();
             int effheight = constraints.getMaxHeight(); // max does not count for column.
 
 

@@ -1,0 +1,1 @@
+<stack bind:ref="stackRef"></stack>

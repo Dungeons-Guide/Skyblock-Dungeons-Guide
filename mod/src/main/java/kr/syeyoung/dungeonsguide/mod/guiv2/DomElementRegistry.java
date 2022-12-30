@@ -95,15 +95,16 @@ public class DomElementRegistry {
     private static Map<String, DomElementCreator> creatorMap = new HashMap<>();
 
     static {
-        creatorMap.put("text", Text.CREATOR);
         creatorMap.put("stack", Stack.CREATOR);
         creatorMap.put("size", SizedBox.CREATOR);
         creatorMap.put("scaler", Scaler.CREATOR);
         creatorMap.put("row", Row.CREATOR);
-        creatorMap.put("Placeholder", Placeholder.CREATOR);
         creatorMap.put("padding", Padding.CREATOR);
         creatorMap.put("col", Column.CREATOR);
         creatorMap.put("bgcolor", Background.CREATOR);
+
+        creatorMap.put("Text", Text.CREATOR);
+        creatorMap.put("Placeholder", Placeholder.CREATOR);
 
         creatorMap.put("PopupManager", PopupMgr.CREATOR);
         creatorMap.put("TestView", TestView.CREATOR); // not needed but ... idk
