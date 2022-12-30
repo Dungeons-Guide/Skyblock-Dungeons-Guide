@@ -52,6 +52,9 @@ public class DomElement {
     private Element representing;
 
     @Getter
+    Context context;
+
+    @Getter
     private DomElement componentParent;
 
     private List<String> classNames = new ArrayList<>();
@@ -111,11 +114,20 @@ public class DomElement {
         parent.requestRelayout();
     }
 
+    public void addElementFirst(DomElement element) {
+        element.setParent(this);
+        element.setComponentParent(componentParent);
+        children.add(0, element);
+        element.setMounted(isMounted);
+        element.context = context;
+        requestRelayout();
+    }
     public void addElement(DomElement element) {
         element.setParent(this);
         element.setComponentParent(componentParent);
         children.add(element);
         element.setMounted(isMounted);
+        element.context = context;
         requestRelayout();
     }
     public void removeElement(DomElement element) {
@@ -157,7 +169,6 @@ public class DomElement {
             isFocused = false;
             return false;
         }
-        isFocused = true;
 
         for (DomElement childComponent  : children) {
             Rectangle original = childComponent.getRelativeBound();
@@ -168,12 +179,11 @@ public class DomElement {
             if (childComponent.mouseClicked0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y) * YscaleFactor), mouseButton)) {
                 isFocused = false;
-                break;
+                return true;
             }
         }
 
-        controller.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
-        return true;
+        return isFocused = controller.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
     }
 
 

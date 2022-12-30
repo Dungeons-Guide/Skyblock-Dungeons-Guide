@@ -18,27 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import lombok.Getter;
+import java.util.HashMap;
+import java.util.Map;
 
-public class RootDom extends DomElement {
-    public RootDom() {
-        context = new Context();
-    }
+public class Context {
+    public Map<String, Object> CONTEXT = new HashMap<>();
 
-    @Getter
-    private EnumCursor currentCursor;
-
-    @Override
-    public void setCursor(EnumCursor enumCursor) {
-        this.setCursor(currentCursor);
-    }
-
-    @Getter
-    private boolean relayoutRequested;
-
-    @Override
-    public void requestRelayout() {
-        relayoutRequested = true;
+    public <T> T getValue(Class<T> clazz, String key) {
+        return (T) CONTEXT.get(key);
     }
 }

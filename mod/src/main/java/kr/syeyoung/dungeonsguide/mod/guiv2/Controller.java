@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 import org.w3c.dom.*;
@@ -32,9 +33,10 @@ import java.lang.reflect.Modifier;
 import java.util.*;
 
 public abstract class Controller {
-
+    @Getter
     private DomElement element;
 
+    @Getter
     private Map<String, Element> slots = new HashMap<>();
 
     private final Map<String, BindableAttribute> attributeMap = new HashMap<>();
@@ -49,7 +51,10 @@ public abstract class Controller {
 
         NodeList list = element.getRepresenting().getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
-            String value = list.item(i).getAttributes().getNamedItem("slot").getNodeValue();
+            NamedNodeMap attrs = list.item(i).getAttributes();
+            String value = "";
+            if (attrs.getNamedItem("slot") != null)
+                value = attrs.getNamedItem("slot").getNodeValue();
             slots.put(value, (Element) list.item(i));
         }
 
@@ -137,7 +142,7 @@ public abstract class Controller {
         }
     }
 
-    public final void loadFile(ResourceLocation location) throws ParserConfigurationException, IOException, SAXException {
+    public final void loadFile(ResourceLocation location) {
         try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream()) {
             Document document = DomElementRegistry.factory.newDocumentBuilder().parse(is);
             NodeList nodeList = document.getChildNodes();
@@ -146,6 +151,8 @@ public abstract class Controller {
                 domElement.setComponentParent(element);
                 element.addElement(domElement);
             }
+        } catch (IOException | ParserConfigurationException | SAXException e) {
+            throw new RuntimeException(e);
         }
     }
 
@@ -153,7 +160,9 @@ public abstract class Controller {
     public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {}
     public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {}
-    public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {}
+    public boolean mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+        return false;
+    }
     public void keyReleased(char typedChar, int keyCode) {}
     public void keyHeld(char typedChar, int keyCode) {}
     public void keyPressed(char typedChar, int keyCode) {}
