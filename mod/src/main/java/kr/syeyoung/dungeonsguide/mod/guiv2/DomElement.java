@@ -94,7 +94,11 @@ public class DomElement {
         }
 
         if (mounted) controller.onMount();
-        else controller.onUnmount();;
+        else {
+            if (isFocused())
+                context.CONTEXT.put("focus", null);
+            controller.onUnmount();
+        };
     }
 
     @Getter
@@ -109,9 +113,6 @@ public class DomElement {
 
 
 
-
-    @Getter
-    private boolean isFocused;
     // event propagation
 
     public void requestRelayout() {
@@ -122,21 +123,21 @@ public class DomElement {
     public void addElementFirst(DomElement element) {
         element.setParent(this);
         children.add(0, element);
-        element.setMounted(isMounted);
         element.context = context;
+        element.setMounted(isMounted);
         requestRelayout();
     }
     public void addElement(DomElement element) {
         element.setParent(this);
         children.add(element);
-        element.setMounted(isMounted);
         element.context = context;
+        element.setMounted(isMounted);
         requestRelayout();
     }
     public void removeElement(DomElement element) {
         element.setParent(null);
         children.remove(element);
-        element.setMounted(isMounted);
+        element.setMounted(false);
         requestRelayout();
     }
 
@@ -145,7 +146,7 @@ public class DomElement {
             childComponent.keyPressed0(typedChar, keyCode);
         }
 
-        if (isFocused)
+        if (isFocused())
             controller.keyPressed(typedChar, keyCode);
     }
     public void keyHeld0(char typedChar, int keyCode) {
@@ -153,7 +154,7 @@ public class DomElement {
             childComponent.keyHeld0(typedChar, keyCode);
         }
 
-        if (isFocused)
+        if (isFocused())
             controller.keyHeld(typedChar, keyCode);
     }
     public void keyReleased0(char typedChar, int keyCode) {
@@ -161,14 +162,20 @@ public class DomElement {
             childComponent.keyReleased0(typedChar, keyCode);
         }
 
-        if (isFocused)
+        if (isFocused())
             controller.keyReleased(typedChar, keyCode);
     }
 
+    public void obtainFocus() {
+        context.CONTEXT.put("focus", this);
+    }
+
+    public boolean isFocused() {
+        return context.getValue(DomElement.class, "focus") == this;
+    }
 
     public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
         if (!absBounds.contains(absMouseX, absMouseY)) {
-            isFocused = false;
             return false;
         }
 
@@ -180,12 +187,11 @@ public class DomElement {
 
             if (childComponent.mouseClicked0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y) * YscaleFactor), mouseButton)) {
-                isFocused = false;
                 return true;
             }
         }
 
-        return isFocused = controller.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
+        return controller.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
     }
 
 

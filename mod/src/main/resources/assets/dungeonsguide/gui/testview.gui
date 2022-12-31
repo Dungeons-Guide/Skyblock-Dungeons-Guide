@@ -36,12 +36,15 @@
                                 <line slot="right" dir="VERTICAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA"/>
                                 <scaler scale="2.0" slot="content">
                                     <col mainAlign="END">
+                                        <TextField placeholder="input text" bind:value="variable"/>
                                         <row mainAlign="CENTER">
                                             <Text text="Hello, "/>
                                             <size width="10" height="0"/>
-                                            <bgcolor backgroundColor="#FF00FFFF">
-                                                <Text bind:text="variable" color="#FF777777"/>
-                                            </bgcolor>
+                                            <flexible>
+                                                <bgcolor backgroundColor="#FF00FFFF">
+                                                    <Text bind:text="variable" color="#FF777777"/>
+                                                </bgcolor>
+                                            </flexible>
                                         </row>
                                         <flexible>
                                             <Placeholder/>

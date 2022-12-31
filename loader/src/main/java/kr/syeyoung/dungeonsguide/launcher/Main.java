@@ -103,6 +103,7 @@ public class Main
         try {
             File f = new File(configDir, "loader.cfg");
             Configuration configuration = new Configuration(f);
+            configuration.save();
             IDGLoader idgLoader = obtainLoader(configuration);
             tryReloading(idgLoader);
         } catch (NoSuitableLoaderFoundException | NoVersionFoundException e) {

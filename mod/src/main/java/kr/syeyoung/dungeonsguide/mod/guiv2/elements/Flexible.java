@@ -36,10 +36,13 @@ public class Flexible {
         @Override
         public Dimension layout(ConstraintBox constraintBox) {
             FController.FlexFit fit = controller.fit.getValue();
-            Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(
-                    fit == FController.FlexFit.TIGHT ? ConstraintBox.tight(constraintBox.getMaxWidth(), constraintBox.getMaxHeight())
-                            : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight())
-            );
+            ConstraintBox box =
+                    fit == FController.FlexFit.TIGHT ?
+                            new ConstraintBox(constraintBox.getMaxWidth() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
+                                    , constraintBox.getMaxHeight() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
+                            : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+            Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(box);
+
             getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
             return dim;
         }

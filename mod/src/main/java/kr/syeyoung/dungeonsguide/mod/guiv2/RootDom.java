@@ -44,4 +44,12 @@ public class RootDom extends DomElement {
     public void requestRelayout() {
         relayoutRequested = true;
     }
+
+    @Override
+    public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
+        boolean res = super.mouseClicked0(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
+        if (!res)
+            requestRelayout();
+        return res;
+    }
 }

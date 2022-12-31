@@ -109,9 +109,41 @@ public class Text {
                         hadToWrap = true;
                         // need to break word.
                         if (wordBreak == TController.WordBreak.WORD) {
-                            tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
-                            currentLine = new StringBuilder(s);
-                            currentWidth = strWidth;
+                            String current = s;
+                            if (fr.getStringWidth(s) > maxWidth) {
+                                // there is no hope. just continue.
+                                current = currentLine.toString()+ " "+s;
+                            } else {
+                                tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
+                                current = s;
+                            }
+
+                            // binary search unsplittable.
+                            while (fr.getStringWidth(current) > maxWidth) {
+                                currentLine = new StringBuilder("");
+                                String remaining = "";
+                                currentWidth = 0;
+                                int remainingWidth = maxWidth - currentWidth;
+                                while(current.length() > 1 && remainingWidth > 4) {
+                                    String query = current.substring(0, current.length()/2);
+                                    int len = fr.getStringWidth(query);
+                                    if (len <= remainingWidth) {
+                                        currentLine.append(query);
+                                        remainingWidth -= len;
+                                        current = current.substring(current.length() / 2);
+                                    } else {
+                                        remaining = current.substring(current.length() / 2) + remaining;
+                                        current = query;
+                                    }
+                                }
+                                remaining = current + remaining;
+
+                                tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
+
+                                current = remaining;
+                            }
+                            currentLine = new StringBuilder(current);
+                            currentWidth = fr.getStringWidth(current);
                         } else if (wordBreak == TController.WordBreak.NEVER) {
                             currentLine.append(" ").append(s);
                             currentWidth += strWidth;
@@ -129,8 +161,8 @@ public class Text {
                                     remainingWidth -= len;
                                     current = current.substring(current.length() / 2);
                                 } else {
-                                    current = query;
                                     remaining = current.substring(current.length() / 2) + remaining;
+                                    current = query;
                                 }
                             }
                             remaining = current + remaining;

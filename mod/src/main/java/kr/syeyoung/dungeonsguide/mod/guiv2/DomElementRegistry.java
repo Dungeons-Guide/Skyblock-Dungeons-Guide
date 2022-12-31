@@ -111,6 +111,7 @@ public class DomElementRegistry {
 
         creatorMap.put("Text", Text.CREATOR);
         creatorMap.put("Placeholder", Placeholder.CREATOR);
+        creatorMap.put("TextField", TextField.CREATOR);
 
         creatorMap.put("PopupManager", PopupMgr.CREATOR);
 

@@ -20,7 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 
@@ -57,6 +59,24 @@ public abstract class Renderer {
             GlStateManager.popMatrix();
         }
     }
+    public void clip(int x, int y, int width, int height) {
+        if (width < 0 || height < 0) return;
+
+        // transform the values to well... the thing
+        Rectangle valueinsystem = domElement.getRelativeBound();
+        Rectangle valueoutofsystem = domElement.getAbsBounds();
+
+        double xScale = valueoutofsystem.width / valueinsystem.getWidth();
+        double yScale = valueoutofsystem.height / valueinsystem.getHeight();
+
+        int resWidth = (int) Math.ceil(width * xScale);
+        int resHeight = (int) Math.ceil(height * yScale);
+        int resX = (int) (valueoutofsystem.x + x * xScale);
+        int resY = (int) (valueoutofsystem.y + y * yScale);
+
+        GL11.glScissor(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
+    }
+
 
     public abstract Rectangle applyTransformation(DomElement target);
 }
