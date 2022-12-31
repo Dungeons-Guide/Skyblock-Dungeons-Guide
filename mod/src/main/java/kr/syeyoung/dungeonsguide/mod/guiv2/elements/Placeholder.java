@@ -41,7 +41,7 @@ public class Placeholder {
             Gui.drawRect(0,0,w,h, 0xFFFFFFFF);
             GlStateManager.color(0,0,0,1);
             GlStateManager.disableTexture2D();
-            GL11.glLineWidth(2.0f);
+            GL11.glLineWidth(1.0f);
             GL11.glBegin(GL11.GL_LINE_LOOP);
             GL11.glVertex2f(0,0);
             GL11.glVertex2f(w, 0);

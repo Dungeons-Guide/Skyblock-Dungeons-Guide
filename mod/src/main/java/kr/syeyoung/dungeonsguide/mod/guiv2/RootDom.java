@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2;
 
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
+import lombok.Setter;
 
 public class RootDom extends DomElement {
     public RootDom() {
@@ -36,6 +37,7 @@ public class RootDom extends DomElement {
     }
 
     @Getter
+    @Setter
     private boolean relayoutRequested;
 
     @Override

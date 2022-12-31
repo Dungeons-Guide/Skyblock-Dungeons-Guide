@@ -29,20 +29,26 @@
                     </flexible>
                     <flexible fit="TIGHT">
                         <padding left="20.0" right="20.0" top="10.0" bottom="10.0">
-                            <scaler scale="2.0">
-                                <col mainAlign="END">
-                                    <row mainAlign="CENTER">
-                                        <Text text="Hello, "/>
-                                        <size width="10" height="0"/>
-                                        <bgcolor backgroundColor="#FF00FFFF">
-                                            <Text bind:text="variable" color="#FF777777"/>
-                                        </bgcolor>
-                                    </row>
-                                    <flexible>
-                                        <Placeholder/>
-                                    </flexible>
-                                </col>
-                            </scaler>
+                            <border>
+                                <line slot="left" dir="VERTICAL" thickness="5.0" color="#FF00FF00"/>
+                                <line slot="top" dir="HORIZONTAL" thickness="5.0" color="#FF00FF00"/>
+                                <line slot="bottom" dir="HORIZONTAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA" factor="10"/>
+                                <line slot="right" dir="VERTICAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA"/>
+                                <scaler scale="2.0" slot="content">
+                                    <col mainAlign="END">
+                                        <row mainAlign="CENTER">
+                                            <Text text="Hello, "/>
+                                            <size width="10" height="0"/>
+                                            <bgcolor backgroundColor="#FF00FFFF">
+                                                <Text bind:text="variable" color="#FF777777"/>
+                                            </bgcolor>
+                                        </row>
+                                        <flexible>
+                                            <Placeholder/>
+                                        </flexible>
+                                    </col>
+                                </scaler>
+                            </border>
                         </padding>
                     </flexible>
                     <flexible fit="TIGHT" flex="2">

@@ -74,6 +74,7 @@ public class GuiScreenAdapter extends GuiScreen {
         int j = this.mc.displayHeight - Mouse.getEventY();
 
         if (view.isRelayoutRequested()) {
+            view.setRelayoutRequested(false);
             view.getLayouter().layout(new ConstraintBox(
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayWidth,

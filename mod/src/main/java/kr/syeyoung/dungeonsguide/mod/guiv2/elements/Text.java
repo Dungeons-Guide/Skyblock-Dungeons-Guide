@@ -26,6 +26,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -49,7 +50,7 @@ public class Text {
             int yInc = (int) (fr.FONT_HEIGHT * tController.lineSpacing.getValue());
             int width = getDomElement().getRelativeBound().width;
 
-
+            GlStateManager.enableTexture2D();
             if (tController.textAlign.getValue() == TController.TextAlign.LEFT) {
                 for (TController.WrappedTextData wrappedText : tController.wrappedTexts) {
                     fr.drawString(wrappedText.text, 0, y, color);

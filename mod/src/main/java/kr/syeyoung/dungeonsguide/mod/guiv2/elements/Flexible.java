@@ -61,6 +61,9 @@ public class Flexible {
             super(element);
             loadAttributes();
             loadDom();
+
+            flex.addOnUpdate(a -> element.requestRelayout());
+            fit.addOnUpdate(a -> element.requestRelayout());
         }
     }
 

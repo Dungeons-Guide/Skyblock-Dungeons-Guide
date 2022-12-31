@@ -106,6 +106,8 @@ public class DomElementRegistry {
         creatorMap.put("col", Column.CREATOR);
         creatorMap.put("bgcolor", Background.CREATOR);
         creatorMap.put("flexible", Flexible.CREATOR);
+        creatorMap.put("line", Line.CREATOR);
+        creatorMap.put("border", Border.CREATOR);
 
         creatorMap.put("Text", Text.CREATOR);
         creatorMap.put("Placeholder", Placeholder.CREATOR);

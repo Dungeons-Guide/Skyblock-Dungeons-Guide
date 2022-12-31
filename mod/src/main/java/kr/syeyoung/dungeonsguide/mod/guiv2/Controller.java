@@ -117,8 +117,14 @@ public abstract class Controller {
         } else if (clazz== Integer.class) {
             if (val.startsWith("#"))
                 return (T) Integer.valueOf(Integer.parseUnsignedInt(val.substring(1), 16));
+            if (val.startsWith("0x"))
+                return (T) Integer.valueOf(Integer.parseUnsignedInt(val.substring(2), 16));
             return (T) Integer.valueOf(val);
-        } else if (clazz== String.class) {
+        } else if (clazz== Short.class) {
+            if (val.startsWith("0x"))
+                return (T) Short.valueOf((short) Integer.parseUnsignedInt(val.substring(2), 16));
+            return (T) Short.valueOf(val);
+        }  else if (clazz== String.class) {
             return (T) val;
         } else if (clazz.isEnum()) {
             for (Object enumConstant : clazz.getEnumConstants()) {
