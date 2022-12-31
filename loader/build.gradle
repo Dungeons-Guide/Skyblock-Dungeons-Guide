@@ -95,7 +95,7 @@ tasks.withType(Jar) {
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
         attributes["ForceLoadAsMod"] = "true"
-        attributes["TweakClass"] = "kr.syeyoung.dugneonsguide.launcher.coremod.DGTweaker"
+        attributes["TweakClass"] = "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker"
 
         // If you don't want mixins, remove these lines
 //        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
