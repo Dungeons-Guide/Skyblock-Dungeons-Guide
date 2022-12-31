@@ -117,13 +117,14 @@ public class Row {
         }
 
         @Export(attributeName = "crossAlign")
-        public BindableAttribute<CrossAxisAlignment> vAlign = new BindableAttribute<>(CrossAxisAlignment.class, CrossAxisAlignment.CENTER);
+        public final BindableAttribute<CrossAxisAlignment> vAlign = new BindableAttribute<>(CrossAxisAlignment.class, CrossAxisAlignment.CENTER);
 
         @Export(attributeName = "mainAlign")
-        public BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
+        public final BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
         public RController(DomElement element) {
             super(element);
+            loadAttributes();
             loadDom();
 
             hAlign.addOnUpdate(a -> element.requestRelayout());

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2;
 import com.sun.org.apache.xerces.internal.impl.xs.opti.AttrImpl;
 import com.sun.org.apache.xerces.internal.impl.xs.opti.NamedNodeMapImpl;
 import com.sun.org.apache.xml.internal.utils.UnImplNode;
+import com.sun.org.apache.xpath.internal.NodeSet;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
@@ -30,11 +31,13 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import org.w3c.dom.Attr;
 import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
+import org.w3c.dom.NodeList;
 
 import javax.xml.parsers.DocumentBuilderFactory;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.function.Function;
+import java.util.stream.Collectors;
 
 public class DomElementRegistry {
     public interface DomElementCreator {
@@ -131,10 +134,16 @@ public class DomElementRegistry {
         @Override
         public NamedNodeMap getAttributes() {
             return new NamedNodeMapImpl(
-                    (Attr[]) attributes.keySet().stream()
+                    attributes.keySet().stream()
                             .map(this::getAttributeNode)
-                            .toArray()
+                            .collect(Collectors.toList())
+                            .toArray(new Attr[]{})
             );
+        }
+
+        @Override
+        public NodeList getChildNodes() {
+            return new NodeSet();
         }
 
         @Override
@@ -143,7 +152,7 @@ public class DomElementRegistry {
         }
     }
 
-    public static DomElement createView(DomElementCreator creator, Map<String, String> attributes) {
+    public static RootDom createView(DomElementCreator creator, Map<String, String> attributes) {
         RootDom domElement = new RootDom();
         domElement.setRepresenting(new AttributePassingElement(attributes));
         domElement.setController(creator.createController(domElement));
@@ -166,5 +175,11 @@ public class DomElementRegistry {
 
 
     public static DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
-
+    static {
+        factory.setIgnoringComments(true);
+        factory.setValidating(false);
+        factory.setNamespaceAware(false);
+        factory.setExpandEntityReferences(false);
+        factory.setCoalescing(false);
+    }
 }

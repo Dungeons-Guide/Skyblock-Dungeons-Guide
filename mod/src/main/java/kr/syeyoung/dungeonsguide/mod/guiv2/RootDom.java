@@ -31,7 +31,7 @@ public class RootDom extends DomElement {
 
     @Override
     public void setCursor(EnumCursor enumCursor) {
-        this.setCursor(currentCursor);
+        currentCursor = enumCursor;
     }
 
     @Getter

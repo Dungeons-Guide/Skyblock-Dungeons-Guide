@@ -59,6 +59,7 @@ public class Placeholder {
 
         public PController(DomElement element) {
             super(element);
+            loadAttributes();
             loadDom();
         }
     }

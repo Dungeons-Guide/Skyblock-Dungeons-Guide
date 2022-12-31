@@ -26,12 +26,13 @@ import net.minecraft.util.ResourceLocation;
 public class PopupMgr extends Controller {
     public PopupMgr(DomElement element) {
         super(element);
+        loadAttributes();
         loadFile(new ResourceLocation("dungeonsguide:gui/popupmgr.gui"));
     }
     // just stack
 
     @Bind(attributeName = "stackRef")
-    BindableAttribute<DomElement> domElementBindableAttribute = new BindableAttribute<>(DomElement.class);
+    public final BindableAttribute<DomElement> domElementBindableAttribute = new BindableAttribute<>(DomElement.class);
 
     @Override
     public void onMount() {

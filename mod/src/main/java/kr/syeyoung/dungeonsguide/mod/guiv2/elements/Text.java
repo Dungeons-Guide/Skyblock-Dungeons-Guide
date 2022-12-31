@@ -152,7 +152,7 @@ public class Text {
     public static class TController extends Controller {
 
         @Export(attributeName = "text")
-        public BindableAttribute<String> text = new BindableAttribute<>(String.class, "");
+        public final BindableAttribute<String> text = new BindableAttribute<>(String.class, "");
 
         @Data @AllArgsConstructor
         public static class WrappedTextData {
@@ -161,29 +161,30 @@ public class Text {
         }
         public List<WrappedTextData> wrappedTexts = new ArrayList();
         @Export(attributeName = "font")
-        public BindableAttribute<FontRenderer> fontRenderer =new BindableAttribute<>(FontRenderer.class, Minecraft.getMinecraft().fontRendererObj);
+        public final BindableAttribute<FontRenderer> fontRenderer =new BindableAttribute<>(FontRenderer.class, Minecraft.getMinecraft().fontRendererObj);
 
         public static enum WordBreak {
             NEVER, WORD, LETTER
         }
         @Export(attributeName = "break")
-        public BindableAttribute<WordBreak> wordBreak = new BindableAttribute<>(WordBreak.class, WordBreak.WORD);
+        public final BindableAttribute<WordBreak> wordBreak = new BindableAttribute<>(WordBreak.class, WordBreak.WORD);
 
         @Export(attributeName = "lineSpacing")
-        public BindableAttribute<Double> lineSpacing = new BindableAttribute<>(Double.class, 1.0);
+        public final BindableAttribute<Double> lineSpacing = new BindableAttribute<>(Double.class, 1.0);
 
 
         public static enum TextAlign {
             LEFT, CENTER, RIGHT
         }
         @Export(attributeName = "align")
-        public BindableAttribute<TextAlign> textAlign = new BindableAttribute<>(TextAlign.class, TextAlign.LEFT);
+        public final BindableAttribute<TextAlign> textAlign = new BindableAttribute<>(TextAlign.class, TextAlign.LEFT);
 
         @Export(attributeName = "color")
-        public BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFF000000);
+        public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFF000000);
 
         public TController(DomElement element) {
             super(element);
+            loadAttributes();
             loadDom();
             text.addOnUpdate(a -> element.requestRelayout());
         }

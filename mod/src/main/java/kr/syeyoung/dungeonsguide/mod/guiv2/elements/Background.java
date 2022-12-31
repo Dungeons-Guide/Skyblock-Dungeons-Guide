@@ -67,10 +67,11 @@ public class Background {
 
     public static class BController extends Controller {
         @Export(attributeName = "backgroundColor")
-        public BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
+        public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
 
         public BController(DomElement element) {
             super(element);
+            loadAttributes();
             loadDom();
         }
     }

@@ -28,6 +28,7 @@ import net.minecraft.util.ResourceLocation;
 public class TestView extends Controller {
     public TestView(DomElement element) {
         super(element);
+        loadAttributes();
         loadFile(new ResourceLocation("dungeonsguide:gui/testview.gui"));
     }
 
@@ -36,7 +37,7 @@ public class TestView extends Controller {
     );
 
     @Bind(attributeName = "variable")
-    public BindableAttribute<String> bindableAttribute = new BindableAttribute<>(String.class, "");
+    public final BindableAttribute<String> bindableAttribute = new BindableAttribute<>(String.class, "");
 
 
     @Override

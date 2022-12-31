@@ -60,17 +60,17 @@ public class Padding {
 
     public static class PController extends Controller {
         @Export(attributeName = "left")
-        public BindableAttribute<Double> left = new BindableAttribute<>(Double.class, 0.0);
+        public final BindableAttribute<Double> left = new BindableAttribute<>(Double.class, 0.0);
         @Export(attributeName = "right")
-        public BindableAttribute<Double> right = new BindableAttribute<>(Double.class, 0.0);
+        public final BindableAttribute<Double> right = new BindableAttribute<>(Double.class, 0.0);
         @Export(attributeName = "top")
-        public BindableAttribute<Double> top = new BindableAttribute<>(Double.class, 0.0);
+        public final BindableAttribute<Double> top = new BindableAttribute<>(Double.class, 0.0);
         @Export(attributeName = "bottom")
-        public BindableAttribute<Double> bottom = new BindableAttribute<>(Double.class, 0.0);
+        public final BindableAttribute<Double> bottom = new BindableAttribute<>(Double.class, 0.0);
 
         public PController(DomElement element) {
             super(element);
-
+            loadAttributes();
             loadDom();
 
             left.addOnUpdate(a -> element.requestRelayout());

@@ -61,13 +61,13 @@ public class SizedBox {
     public static class BController extends Controller {
 
         @Export(attributeName = "width")
-        public BindableAttribute<Double> width = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
+        public final BindableAttribute<Double> width = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
         @Export(attributeName = "height")
-        public BindableAttribute<Double> height = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
+        public final BindableAttribute<Double> height = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
 
         public BController(DomElement element) {
             super(element);
-
+            loadAttributes();
             loadDom();
             width.addOnUpdate(a -> element.requestRelayout());
             height.addOnUpdate(a -> element.requestRelayout());

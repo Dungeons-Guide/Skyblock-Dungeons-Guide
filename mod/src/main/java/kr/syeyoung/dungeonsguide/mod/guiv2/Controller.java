@@ -52,13 +52,15 @@ public abstract class Controller {
         NodeList list = element.getRepresenting().getChildNodes();
         for (int i = 0; i < list.getLength(); i++) {
             NamedNodeMap attrs = list.item(i).getAttributes();
+            if (attrs == null) continue;
             String value = "";
             if (attrs.getNamedItem("slot") != null)
                 value = attrs.getNamedItem("slot").getNodeValue();
             slots.put(value, (Element) list.item(i));
         }
+    }
 
-
+    protected void loadAttributes() {
         for (Field declaredField : getClass().getDeclaredFields()) {
             if (declaredField.getAnnotation(Export.class) != null) {
                 Export export = declaredField.getAnnotation(Export.class);
@@ -105,13 +107,13 @@ public abstract class Controller {
     }
     
     private static <T> T somehow(Class<T> clazz, String val) {
-        if (clazz== float.class) {
+        if (clazz== Float.class) {
             return (T) Float.valueOf(val);
-        } else if (clazz== double.class) {
+        } else if (clazz== Double.class) {
             return (T) Double.valueOf(val);
-        } else if (clazz== int.class) {
+        } else if (clazz== Integer.class) {
             if (val.startsWith("#"))
-                return (T) Integer.valueOf(val.substring(1), 16);
+                return (T) Integer.valueOf(Integer.parseUnsignedInt(val.substring(1), 16));
             return (T) Integer.valueOf(val);
         } else if (clazz== String.class) {
             return (T) val;
@@ -120,7 +122,7 @@ public abstract class Controller {
                 if (val.equalsIgnoreCase(enumConstant.toString()))
                     return (T) enumConstant;
             }
-        } else if (clazz== boolean.class) {
+        } else if (clazz== Boolean.class) {
             return (T) Boolean.valueOf(val);
         }
         throw new UnsupportedOperationException("cant convert to "+clazz.getName());
@@ -137,6 +139,10 @@ public abstract class Controller {
     public final void loadDom() {
         NodeList nodeList = element.getRepresenting().getChildNodes();
         for (int i = 0; i < nodeList.getLength(); i++) {
+            if (nodeList.item(i).getNodeType() != Node.ELEMENT_NODE) {
+                System.out.println("??: "+nodeList.item(i));
+                continue;
+            }
             DomElement domElement = DomElementRegistry.createTree((Element)nodeList.item(i));
             element.addElement(domElement);
         }

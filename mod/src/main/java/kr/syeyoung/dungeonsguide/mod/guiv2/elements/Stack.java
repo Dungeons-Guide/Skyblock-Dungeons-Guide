@@ -51,6 +51,7 @@ public class Stack {
 
         public SController(DomElement element) {
             super(element);
+            loadAttributes();
             loadDom();
         }
     }

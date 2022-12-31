@@ -40,6 +40,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
+import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.*;
@@ -452,6 +456,12 @@ public class CommandDgDebug extends CommandBase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
+        } else if ("testgui".equals(arg)) {
+            RootDom rootDom = DomElementRegistry.createView(TestView.CREATOR, Collections.emptyMap());
+            GuiScreenAdapter adapter = new GuiScreenAdapter(rootDom);
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                Minecraft.getMinecraft().displayGuiScreen(adapter);
+            });
         } else {
             sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));

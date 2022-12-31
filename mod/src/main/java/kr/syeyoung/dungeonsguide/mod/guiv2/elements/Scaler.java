@@ -74,11 +74,13 @@ public class Scaler {
 
     public static class SController extends Controller {
         @Export(attributeName = "scale")
-        public BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
+        public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
 
 
         public SController(DomElement element) {
             super(element);
+            loadAttributes();
+            loadDom();
         }
     }
 

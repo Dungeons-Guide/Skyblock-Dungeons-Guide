@@ -118,13 +118,14 @@ public class Column {
         }
 
         @Export(attributeName = "crossAlign")
-        public BindableAttribute<CrossAxisAlignment> hAlign = new BindableAttribute<>(CrossAxisAlignment.class, CrossAxisAlignment.CENTER);
+        public final BindableAttribute<CrossAxisAlignment> hAlign = new BindableAttribute<>(CrossAxisAlignment.class, CrossAxisAlignment.CENTER);
 
         @Export(attributeName = "mainAlign")
-        public BindableAttribute<MainAxisAlignment> vAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
+        public final BindableAttribute<MainAxisAlignment> vAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
         public CController(DomElement element) {
             super(element);
+            loadAttributes();
             loadDom();
 
             hAlign.addOnUpdate(a -> element.requestRelayout());
