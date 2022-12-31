@@ -95,11 +95,14 @@ public class Text {
                 String[] splitByWord = line.split(" ");
                 int maxWidth = constraintBox.getMaxWidth();
                 int currentWidth = 0;
+                boolean added = false;
                 StringBuilder currentLine = new StringBuilder();
                 for (String s : splitByWord) {
-                    int strWidth = fr.getStringWidth(" " +s);
+                    int strWidth = fr.getStringWidth((added ? " " : "") +s);
                     if (strWidth + currentWidth <= maxWidth) {
-                        currentLine.append(" ").append(s);
+                        if (added) currentLine.append(" ");
+                        currentLine.append(s);
+                        added = true;
                         currentWidth += strWidth;
                     } else {
                         hadToWrap = true;

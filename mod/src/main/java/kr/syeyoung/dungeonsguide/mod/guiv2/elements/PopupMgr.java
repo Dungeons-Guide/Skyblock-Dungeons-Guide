@@ -39,7 +39,7 @@ public class PopupMgr extends Controller {
         super.onMount();
         getElement().getContext().CONTEXT.put("popup", this);
         domElementBindableAttribute.getValue().addElement(
-                DomElementRegistry.createTree(getSlots().get("")));
+                getSlots().get("$0"));
     }
 
     @Override

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.reflect.FieldUtils;
 import org.w3c.dom.*;
 import org.xml.sax.SAXException;
 
@@ -37,31 +38,33 @@ public abstract class Controller {
     private DomElement element;
 
     @Getter
-    private Map<String, Element> slots = new HashMap<>();
+    private Map<String, DomElement> slots = new HashMap<>();
 
     private final Map<String, BindableAttribute> attributeMap = new HashMap<>();
     private final Map<String, BindableAttribute> attributeMap2 = new HashMap<>();
     private final Map<BindableAttribute, String> binds = new HashMap<>();
 
-    private BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
+    @Export(attributeName = "ref")
+    private final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
 
     public Controller(DomElement element) {
         this.element = element;
         ref.setValue(element);
 
         NodeList list = element.getRepresenting().getChildNodes();
+        int idx = 0;
         for (int i = 0; i < list.getLength(); i++) {
             NamedNodeMap attrs = list.item(i).getAttributes();
             if (attrs == null) continue;
-            String value = "";
+            String value = "$"+idx++;
             if (attrs.getNamedItem("slot") != null)
                 value = attrs.getNamedItem("slot").getNodeValue();
-            slots.put(value, (Element) list.item(i));
+            slots.put(value, DomElementRegistry.createTree((Element) list.item(i), element.getComponentParent()));
         }
     }
 
     protected void loadAttributes() {
-        for (Field declaredField : getClass().getDeclaredFields()) {
+        for (Field declaredField : FieldUtils.getAllFields(getClass())) {
             if (declaredField.getAnnotation(Export.class) != null) {
                 Export export = declaredField.getAnnotation(Export.class);
 
@@ -95,7 +98,7 @@ public abstract class Controller {
             if (attr.getName().startsWith("bind:")) {
                 String bindingAttribute = attr.getName().substring(5);
 
-                if (attributeMap.containsKey(bindingAttribute)) {
+                if (!attributeMap.containsKey(bindingAttribute)) {
                     throw new IllegalStateException("Can not bind "+bindingAttribute+" because it is not exported");
                 }
 
@@ -137,14 +140,8 @@ public abstract class Controller {
     }
 
     public final void loadDom() {
-        NodeList nodeList = element.getRepresenting().getChildNodes();
-        for (int i = 0; i < nodeList.getLength(); i++) {
-            if (nodeList.item(i).getNodeType() != Node.ELEMENT_NODE) {
-                System.out.println("??: "+nodeList.item(i));
-                continue;
-            }
-            DomElement domElement = DomElementRegistry.createTree((Element)nodeList.item(i));
-            element.addElement(domElement);
+        for (DomElement value : slots.values()) {
+            element.addElement(value);
         }
     }
 
@@ -153,8 +150,7 @@ public abstract class Controller {
             Document document = DomElementRegistry.factory.newDocumentBuilder().parse(is);
             NodeList nodeList = document.getChildNodes();
             for (int i = 0; i < nodeList.getLength(); i++) {
-                DomElement domElement = DomElementRegistry.createTree((Element) nodeList.item(i));
-                domElement.setComponentParent(element);
+                DomElement domElement = DomElementRegistry.createTree((Element) nodeList.item(i), element);
                 element.addElement(domElement);
             }
         } catch (IOException | ParserConfigurationException | SAXException e) {

@@ -66,6 +66,10 @@ public class DomElement {
     // search tag:status
     // search *
 
+    public DomElement(DomElement componentParent) {
+        this.componentParent = componentParent;
+    }
+
     public void setComponentParent(DomElement componentParent) {
         if (this.componentParent != null) return;
         this.componentParent = componentParent;
@@ -85,6 +89,7 @@ public class DomElement {
         isMounted = mounted;
 
         for (DomElement child : children) {
+            child.context = context;
             child.setMounted(mounted);
         }
 
@@ -111,12 +116,11 @@ public class DomElement {
 
     public void requestRelayout() {
         if (parent != null)
-        parent.requestRelayout();
+            parent.requestRelayout();
     }
 
     public void addElementFirst(DomElement element) {
         element.setParent(this);
-        element.setComponentParent(componentParent);
         children.add(0, element);
         element.setMounted(isMounted);
         element.context = context;
@@ -124,7 +128,6 @@ public class DomElement {
     }
     public void addElement(DomElement element) {
         element.setParent(this);
-        element.setComponentParent(componentParent);
         children.add(element);
         element.setMounted(isMounted);
         element.context = context;
@@ -132,7 +135,6 @@ public class DomElement {
     }
     public void removeElement(DomElement element) {
         element.setParent(null);
-        element.setComponentParent(null);
         children.remove(element);
         element.setMounted(isMounted);
         requestRelayout();

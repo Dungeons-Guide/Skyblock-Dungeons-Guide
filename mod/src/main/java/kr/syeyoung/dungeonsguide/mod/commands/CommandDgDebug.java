@@ -459,9 +459,11 @@ public class CommandDgDebug extends CommandBase {
         } else if ("testgui".equals(arg)) {
             RootDom rootDom = DomElementRegistry.createView(TestView.CREATOR, Collections.emptyMap());
             GuiScreenAdapter adapter = new GuiScreenAdapter(rootDom);
-            Minecraft.getMinecraft().addScheduledTask(() -> {
-                Minecraft.getMinecraft().displayGuiScreen(adapter);
-            });
+            new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+                            Minecraft.getMinecraft().addScheduledTask(() -> {
+                                Minecraft.getMinecraft().displayGuiScreen(adapter);
+                            });
+                        }).start();
         } else {
             sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));

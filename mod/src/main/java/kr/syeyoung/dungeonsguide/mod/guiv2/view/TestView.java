@@ -42,6 +42,7 @@ public class TestView extends Controller {
 
     @Override
     public void onMount() {
+        super.onMount();
         bindableAttribute.setValue(Minecraft.getMinecraft().thePlayer.getName());
     }
 }

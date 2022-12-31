@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
@@ -37,8 +38,10 @@ public class Placeholder {
         @Override
         public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
             int w = getDomElement().getRelativeBound().width, h = getDomElement().getRelativeBound().height;
-
-            GlStateManager.color(1,0,0,1);
+            Gui.drawRect(0,0,w,h, 0xFFFFFFFF);
+            GlStateManager.color(0,0,0,1);
+            GL11.glLineWidth(2.0f);
+            GL11.glEnable(GL11.GL_LINE_SMOOTH);
             GL11.glBegin(GL11.GL_LINE_LOOP);
             GL11.glVertex2f(0,0);
             GL11.glVertex2f(w, 0);
@@ -50,6 +53,7 @@ public class Placeholder {
             GL11.glVertex2f(w,h);
             GL11.glVertex2f(w,0);
             GL11.glVertex2f(0, h);
+            GL11.glDisable(GL11.GL_LINE_SMOOTH);
             GL11.glEnd();
 
             super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks);

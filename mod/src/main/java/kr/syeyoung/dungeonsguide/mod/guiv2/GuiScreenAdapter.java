@@ -34,6 +34,9 @@ import java.awt.*;
 import java.io.IOException;
 import java.util.Objects;
 
+import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.glAlphaFunc;
+
 public class GuiScreenAdapter extends GuiScreen {
 
     @Getter
@@ -62,6 +65,7 @@ public class GuiScreenAdapter extends GuiScreen {
                 Minecraft.getMinecraft().displayHeight,
                 Minecraft.getMinecraft().displayHeight
         ));
+        view.setMounted(true);
     }
 
     @Override
@@ -82,13 +86,15 @@ public class GuiScreenAdapter extends GuiScreen {
         GlStateManager.pushMatrix();
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
+        GlStateManager.disableCull();
         GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(GL_GREATER, 0);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
         view.getRenderer().doRender(i, j, i, j, partialTicks);
+        GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
-        GlStateManager.enableBlend();
         GlStateManager.enableDepth();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }

@@ -19,13 +19,14 @@
 <bgcolor backgroundColor="#FFFF0000">
     <PopupManager>
         <col mainAlign="CENTER">
-            <row>
-                <Text text="Hello,"/>
-                <bgcolor color="#FF00FF00">
-                    <Text bind:text="variable"/>
+            <row mainAlign="CENTER">
+                <Text text="Hello, "/>
+                <size width="30" height="0"/>
+                <bgcolor backgroundColor="#FF0000FF">
+                    <Text bind:text="variable" color="#FFFFFFFF"/>
                 </bgcolor>
             </row>
-            <size width="500" height="300">
+            <size width="500" height="400">
                 <Placeholder/>
             </size>
         </col>

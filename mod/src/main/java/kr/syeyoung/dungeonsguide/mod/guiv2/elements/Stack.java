@@ -43,7 +43,7 @@ public class Stack {
                 if (max.height < dim.height) max.height = dim.height;
                 child.setRelativeBound(new Rectangle(0,0,dim.width, dim.height));
             }
-            return null;
+            return max;
         }
     }
 

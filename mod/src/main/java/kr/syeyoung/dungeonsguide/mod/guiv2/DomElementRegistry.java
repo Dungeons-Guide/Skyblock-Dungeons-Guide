@@ -162,9 +162,12 @@ public class DomElementRegistry {
         return domElement;
     }
     public static DomElement createTree(Element element) {
+        return createTree(element, null);
+    }
+    public static DomElement createTree(Element element, DomElement parent) {
         DomElementCreator creator = creatorMap.get(element.getTagName());
 
-        DomElement domElement = new DomElement();
+        DomElement domElement = new DomElement(parent);
         domElement.setRepresenting(element);
         domElement.setController(creator.createController(domElement));
         domElement.setLayouter(creator.createLayout(domElement));

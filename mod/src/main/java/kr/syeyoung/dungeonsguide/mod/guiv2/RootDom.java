@@ -23,6 +23,7 @@ import lombok.Getter;
 
 public class RootDom extends DomElement {
     public RootDom() {
+        super(null);
         context = new Context();
     }
 

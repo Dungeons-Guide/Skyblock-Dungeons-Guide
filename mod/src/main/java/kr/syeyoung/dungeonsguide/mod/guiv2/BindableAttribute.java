@@ -26,11 +26,15 @@ import java.util.function.Consumer;
 public class BindableAttribute<T> {
     public BindableAttribute(Class<T> type) {
         this.type = type;
+        initialized = false;
     }
     public BindableAttribute(Class<T> type, T defaultValue) {
         this.type = type;
         value = defaultValue;
+        initialized = true;
     }
+
+    private boolean initialized = false;
     @Getter
     private final Class<T> type;
     private T value;
@@ -45,6 +49,7 @@ public class BindableAttribute<T> {
         }
         updating = false;
         this.value = t;
+        initialized = true;
     }
     public T getValue() {
         return value;
@@ -66,7 +71,10 @@ public class BindableAttribute<T> {
         bindableAttribute.addOnUpdate(this::setValue);
         linkedWith.add(bindableAttribute);
 
-        setValue(bindableAttribute.getValue());
+        if (bindableAttribute.initialized)
+            setValue(bindableAttribute.getValue());
+        else
+            bindableAttribute.setValue(getValue());
     }
 
     public void unlink(BindableAttribute<T> bindableAttribute) {

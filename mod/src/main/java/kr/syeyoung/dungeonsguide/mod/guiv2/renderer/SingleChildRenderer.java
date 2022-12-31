@@ -29,7 +29,8 @@ public class SingleChildRenderer extends Renderer {
     }
 
     public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
-         DomElement value = getDomElement().getChildren().get(0);
+        if (getDomElement().getChildren().size() == 0) return;
+        DomElement value = getDomElement().getChildren().get(0);
             Rectangle original = value.getRelativeBound();
             GlStateManager.pushMatrix();
             GlStateManager.translate(original.x, original.y, 0);
