@@ -20,28 +20,35 @@ package kr.syeyoung.dungeonsguide.launcher.coremod;
 
 import net.minecraft.launchwrapper.ITweaker;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
 import java.io.File;
 import java.util.List;
+import java.util.Map;
 
-public class DGTweaker implements ITweaker {
+public class DGTweaker implements IFMLLoadingPlugin {
     @Override
-    public void acceptOptions(List<String> args, File gameDir, File assetsDir, String profile) {
-
+    public String[] getASMTransformerClass() {
+        return new String[] {EventBusTransformer.class.getName()};
     }
 
     @Override
-    public void injectIntoClassLoader(LaunchClassLoader classLoader) {
-        classLoader.registerTransformer(EventBusTransformer.class.getName());
-    }
-
-    @Override
-    public String getLaunchTarget() {
+    public String getModContainerClass() {
         return null;
     }
 
     @Override
-    public String[] getLaunchArguments() {
-        return new String[0];
+    public String getSetupClass() {
+        return null;
+    }
+
+    @Override
+    public void injectData(Map<String, Object> map) {
+
+    }
+
+    @Override
+    public String getAccessTransformerClass() {
+        return null;
     }
 }

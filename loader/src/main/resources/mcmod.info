@@ -1,14 +1,14 @@
 [
 {
-  "modid": "skyblock_dungeons_guide",
-  "name": "Skyblock Dungeons Guide",
-  "description": "A mod to help dungeon players to find and solve secrets and puzzles most efficiently.",
+  "modid": "dungeons_guide_loader",
+  "name": "Dungeons Guide Loader",
+  "description": "A loader to a mod to help dungeon players to find and solve secrets and puzzles most efficiently.",
   "version": "4.0.0",
   "mcversion": "1.8.9",
   "url": "https://discord.gg/dg",
   "updateUrl": "",
   "authorList": ["syeyoung", "kokoniara"],
-  "credits": "The guild Jerry's Crew, for nothing.",
+  "credits": ":)",
   "logoFile": "",
   "screenshots": [],
   "dependencies": []

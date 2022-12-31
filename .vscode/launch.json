@@ -3,39 +3,13 @@
   "configurations": [
     {
       "type": "java",
-      "name": "Minecraft Client",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/runtime",
-      "console": "internalConsole",
-      "stopOnEntry": false,
-      "mainClass": "net.fabricmc.devlaunchinjector.Main",
-      "vmArgs": "\"-Dfabric.dli.config\u003d/home/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
-      "args": "",
-      "env": {},
-      "projectName": ""
-    },
-    {
-      "type": "java",
-      "name": "Minecraft Server",
-      "request": "launch",
-      "cwd": "${workspaceFolder}/run",
-      "console": "internalConsole",
-      "stopOnEntry": false,
-      "mainClass": "net.fabricmc.devlaunchinjector.Main",
-      "vmArgs": "\"-Dfabric.dli.config\u003d/home/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dserver\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
-      "args": "\"nogui\"",
-      "env": {},
-      "projectName": ""
-    },
-    {
-      "type": "java",
       "name": "Minecraft Client (:loader)",
       "request": "launch",
       "cwd": "${workspaceFolder}/loader/runtime",
       "console": "internalConsole",
       "stopOnEntry": false,
       "mainClass": "net.fabricmc.devlaunchinjector.Main",
-      "vmArgs": "\"-Dfabric.dli.config\u003d/Users/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/loader/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-XstartOnFirstThread\" \"-Ddevauth.enabled\u003dtrue\" \"-XstartOnFirstThread\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
+      "vmArgs": "\"-Dfabric.dli.config\u003d/Users/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/loader/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-Ddevauth.enabled\u003dtrue\" \"-Dfml.coreMods.load\u003dkr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
       "args": "",
       "env": {},
       "projectName": "loader"
@@ -48,7 +22,7 @@
       "console": "internalConsole",
       "stopOnEntry": false,
       "mainClass": "net.fabricmc.devlaunchinjector.Main",
-      "vmArgs": "\"-Dfabric.dli.config\u003d/Users/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/mod/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-XstartOnFirstThread\" \"-Ddevauth.enabled\u003dtrue\" \"-XstartOnFirstThread\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
+      "vmArgs": "\"-Dfabric.dli.config\u003d/Users/syeyoung/Documents/dungeonsguide/Dungeons@@0020Guide/mod/.gradle/loom-cache/launch.cfg\" \"-Dfabric.dli.env\u003dclient\" \"-Ddevauth.enabled\u003dtrue\" \"-Ddg.loader\u003ddevenv\" \"-Dfabric.dli.main\u003dnet.minecraft.launchwrapper.Launch\"",
       "args": "",
       "env": {},
       "projectName": "mod"
