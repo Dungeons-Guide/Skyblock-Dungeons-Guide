@@ -38,21 +38,50 @@ public class Column {
         public Dimension layout(ConstraintBox constraints) {
             int width = 0;
             int height = 0;
+            int effheight = constraints.getMaxHeight(); // max does not count for column.
             CController.CrossAxisAlignment crossAxisAlignment = controller.hAlign.getValue();
             CController.MainAxisAlignment mainAxisAlignment = controller.vAlign.getValue();
             Map<DomElement, Dimension> saved = new HashMap<>();
             for (DomElement child : getDomElement().getChildren()) {
-                Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
-                        crossAxisAlignment == CController.CrossAxisAlignment.STRETCH 
-                                ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, Integer.MAX_VALUE
-                ));
-                saved.put(child, requiredSize);
-                width = Math.max(width, requiredSize.width);
-                height += requiredSize.height;
+                if (!(child.getController() instanceof Flexible.FController)) {
+                    Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
+                            crossAxisAlignment == CController.CrossAxisAlignment.STRETCH
+                                    ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, Integer.MAX_VALUE
+                    ));
+                    saved.put(child, requiredSize);
+                    width = Math.max(width, requiredSize.width);
+                    height += requiredSize.height;
+                }
             }
 
+
+
+            boolean flexFound = false;
+            int sumFlex = 0;
+            for (DomElement child : getDomElement().getChildren()) {
+                if (child.getController() instanceof Flexible.FController) {
+                    sumFlex += Math.min(1, ((Flexible.FController) child.getController()).flex.getValue());
+                    flexFound = true;
+                }
+            }
+
+            if (flexFound) {
+                int remainingHeight = effheight - height;
+                int heightPer = remainingHeight / sumFlex;
+
+                for (DomElement child : getDomElement().getChildren()) {
+                    if (child.getController() instanceof Flexible.FController) {
+                        Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
+                                crossAxisAlignment == CController.CrossAxisAlignment.STRETCH
+                                        ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, heightPer * ((Flexible.FController) child.getController()).flex.getValue()
+                        ));
+                        saved.put(child, requiredSize);
+                        width = Math.max(width, requiredSize.width);
+                        height += requiredSize.height;
+                    }
+                }
+            }
             width = constraints.getMaxWidth() == Integer.MAX_VALUE ? width : constraints.getMaxWidth();
-            int effheight = constraints.getMaxHeight(); // max does not count for column.
 
 
 
@@ -97,7 +126,7 @@ public class Column {
                         crossAxisAlignment == CController.CrossAxisAlignment.CENTER ? (width-size.width)/2 : 
                         crossAxisAlignment == CController.CrossAxisAlignment.STRETCH ? (width - size.width) /2 :
                                         width - size.width, starty
-                            ,size.height, size.width
+                            ,size.width, size.height
                 ));
                 starty += size.height;
                 starty += heightDelta;

@@ -18,17 +18,41 @@
 
 <bgcolor backgroundColor="#FFFF0000">
     <PopupManager>
-        <col mainAlign="CENTER">
-            <row mainAlign="CENTER">
-                <Text text="Hello, "/>
-                <size width="30" height="0"/>
-                <bgcolor backgroundColor="#FF0000FF">
-                    <Text bind:text="variable" color="#FFFFFFFF"/>
-                </bgcolor>
-            </row>
-            <size width="500" height="400">
-                <Placeholder/>
-            </size>
-        </col>
+        <row mainAlign="CENTER">
+            <flexible fit="TIGHT">
+                <bgcolor backgroundColor="#FF003300"/>
+            </flexible>
+            <flexible fit="TIGHT">
+                <col mainAlign="CENTER">
+                    <flexible fit="TIGHT">
+                        <bgcolor backgroundColor="#FF0000FF"/>
+                    </flexible>
+                    <flexible fit="TIGHT">
+                        <padding left="20.0" right="20.0" top="10.0" bottom="10.0">
+                            <scaler scale="2.0">
+                                <col mainAlign="END">
+                                    <row mainAlign="CENTER">
+                                        <Text text="Hello, "/>
+                                        <size width="10" height="0"/>
+                                        <bgcolor backgroundColor="#FF00FFFF">
+                                            <Text bind:text="variable" color="#FF777777"/>
+                                        </bgcolor>
+                                    </row>
+                                    <flexible>
+                                        <Placeholder/>
+                                    </flexible>
+                                </col>
+                            </scaler>
+                        </padding>
+                    </flexible>
+                    <flexible fit="TIGHT" flex="2">
+                        <bgcolor backgroundColor="#FF0000FF"/>
+                    </flexible>
+                </col>
+            </flexible>
+            <flexible fit="TIGHT">
+                <bgcolor backgroundColor="#FF003300"/>
+            </flexible>
+        </row>
     </PopupManager>
 </bgcolor>

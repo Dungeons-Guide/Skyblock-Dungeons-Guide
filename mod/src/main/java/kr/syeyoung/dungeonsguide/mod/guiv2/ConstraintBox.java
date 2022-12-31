@@ -29,4 +29,12 @@ public class ConstraintBox {
     private int maxWidth;
     private int minHeight;
     private int maxHeight;
+
+    public static ConstraintBox loose(int width, int height) {
+        return new ConstraintBox(0,width,0,height);
+    }
+
+    public static ConstraintBox tight(int width, int height) {
+        return new ConstraintBox(width, width, height, height);
+    }
 }

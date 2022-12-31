@@ -105,11 +105,14 @@ public class DomElementRegistry {
         creatorMap.put("padding", Padding.CREATOR);
         creatorMap.put("col", Column.CREATOR);
         creatorMap.put("bgcolor", Background.CREATOR);
+        creatorMap.put("flexible", Flexible.CREATOR);
 
         creatorMap.put("Text", Text.CREATOR);
         creatorMap.put("Placeholder", Placeholder.CREATOR);
 
         creatorMap.put("PopupManager", PopupMgr.CREATOR);
+
+
         creatorMap.put("TestView", TestView.CREATOR); // not needed but ... idk
     }
 

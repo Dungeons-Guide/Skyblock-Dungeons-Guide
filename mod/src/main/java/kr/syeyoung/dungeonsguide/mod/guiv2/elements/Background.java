@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import net.minecraft.client.gui.Gui;
 
@@ -29,23 +30,6 @@ import java.awt.*;
 // passes down constraints
 // but sets background!! cool!!!
 public class Background {
-    public static class BLayout extends Layouter {
-
-        public BLayout(DomElement element) {
-            super(element);
-        }
-
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-
-            if (getDomElement().getChildren().isEmpty()) {
-                return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
-            }
-            Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(constraintBox);
-            getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
-            return dim;
-        }
-    }
 
     public static class BRender extends SingleChildRenderer {
 
@@ -77,6 +61,6 @@ public class Background {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            BLayout::new, BRender::new, BController::new
+            SingleChildPassingLayouter::new, BRender::new, BController::new
     );
 }

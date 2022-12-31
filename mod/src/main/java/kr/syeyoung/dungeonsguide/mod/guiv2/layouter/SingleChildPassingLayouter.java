@@ -36,6 +36,6 @@ public class SingleChildPassingLayouter extends Layouter {
 
         Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(constraintBox);
         getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
-        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        return new Dimension(dim.width, dim.height);
     }
 }
