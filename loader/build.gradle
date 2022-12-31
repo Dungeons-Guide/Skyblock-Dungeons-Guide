@@ -35,7 +35,7 @@ loom {
     runs {
 
         client {
-            runDir = 'runtime'
+            runDir = '../runtime'
             property('devauth.enabled','true')
             client()
             vmArgs.remove("-XstartOnFirstThread")

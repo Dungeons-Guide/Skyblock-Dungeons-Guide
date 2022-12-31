@@ -33,7 +33,7 @@ loom {
     }
     runs {
         client {
-            runDir = 'runtime'
+            runDir = '../runtime'
             property('devauth.enabled','true')
             property('dg.loader', 'devenv')
             client()
