@@ -65,7 +65,10 @@ public class UpdateRetrieverUtil {
                 UpdateBranch updateBranch = new UpdateBranch();
                 updateBranch.setId(a.getLong("id"));
                 updateBranch.setName(a.getString("name"));
-                updateBranch.setMetadata(a.getJSONObject("metadata"));
+                updateBranch.setMetadata(JSONObject.NULL.equals(a.get("metadata")) ? new JSONObject() : a.getJSONObject("metadata"));
+                if (JSONObject.NULL.equals(a.get("metadata") )) {
+                    System.out.println("Update Branch has null metadta: "+a_);
+                }
                 branches.add(updateBranch);
             }
             return branches;
