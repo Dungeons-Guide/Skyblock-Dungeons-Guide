@@ -40,8 +40,8 @@ public class Placeholder {
             int w = getDomElement().getRelativeBound().width, h = getDomElement().getRelativeBound().height;
             Gui.drawRect(0,0,w,h, 0xFFFFFFFF);
             GlStateManager.color(0,0,0,1);
+            GlStateManager.disableTexture2D();
             GL11.glLineWidth(2.0f);
-            GL11.glEnable(GL11.GL_LINE_SMOOTH);
             GL11.glBegin(GL11.GL_LINE_LOOP);
             GL11.glVertex2f(0,0);
             GL11.glVertex2f(w, 0);
@@ -53,7 +53,6 @@ public class Placeholder {
             GL11.glVertex2f(w,h);
             GL11.glVertex2f(w,0);
             GL11.glVertex2f(0, h);
-            GL11.glDisable(GL11.GL_LINE_SMOOTH);
             GL11.glEnd();
 
             super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks);
