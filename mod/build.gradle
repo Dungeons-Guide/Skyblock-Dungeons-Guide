@@ -20,7 +20,6 @@ loom {
             // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
 //            property("mixin.debug", "true")
 //            property("asmhelper.verbose", "true")
-            arg("--tweakClass", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
 //            arg("--mixin", "mixins.examplemod.json")
 
         }
@@ -35,6 +34,7 @@ loom {
         client {
             runDir = '../runtime'
             property('devauth.enabled','true')
+            property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
             property('dg.loader', 'devenv')
             client()
             vmArgs.remove("-XstartOnFirstThread")

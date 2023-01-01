@@ -55,8 +55,8 @@ import java.util.*;
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main
 {
-    public static final String MOD_ID = "dungeons_guide_wrapper";
-    public static final String VERSION = "1.0";
+    public static final String MOD_ID = "dungeons_guide_loader";
+    public static final String VERSION = "4.0.0";
     public static final String DOMAIN = "https://v2.dungeons.guide/api";
 
     private static Main main;

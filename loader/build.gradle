@@ -21,7 +21,6 @@ loom {
             // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
 //            property("mixin.debug", "true")
 //            property("asmhelper.verbose", "true")
-            arg("--tweakClass", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
 //            arg("--mixin", "mixins.examplemod.json")
 
         }
@@ -37,6 +36,7 @@ loom {
         client {
             runDir = '../runtime'
             property('devauth.enabled','true')
+            property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
             client()
             vmArgs.remove("-XstartOnFirstThread")
         }
@@ -94,8 +94,9 @@ tasks.withType(Jar) {
     archivesBaseName = "dungeonsguide-loader"
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
-        attributes["ForceLoadAsMod"] = "true"
-        attributes["TweakClass"] = "kr.syeyoung.dugneonsguide.launcher.coremod.DGTweaker"
+        attributes["FMLCorePlugin"] = 'kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker'
+//        attributes["ForceLoadAsMod"] = "true" not applicable, not using mixins
+//        attributes["TweakClass"] = "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker"
 
         // If you don't want mixins, remove these lines
 //        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
@@ -106,10 +107,12 @@ tasks.withType(Jar) {
 
 tasks.shadowJar {
     archiveFileName = jar.archiveFileName
-
+    exclude "META-INF/versions/**"
     dependencies {
         include(dependency("org.slf4j:slf4j-api:1.7.25"))
         include(dependency("org.json:json:20171018"))
+        include(dependency("org.bouncycastle:bcpg-jdk15on:1.70"))
+        include(dependency("org.bouncycastle:bcprov-jdk15on:1.70"))
     }
 }
 

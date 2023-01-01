@@ -23,19 +23,24 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
+import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.*;
+import net.minecraftforge.common.config.Configuration;
 import net.minecraftforge.fml.client.config.GuiCheckBox;
 import net.minecraftforge.fml.common.FMLCommonHandler;
 
 import java.awt.*;
 import java.awt.datatransfer.StringSelection;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Collections;
@@ -44,6 +49,7 @@ import java.util.Optional;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 
 public class GuiChooseVersion extends SpecialGuiScreen {
@@ -66,7 +72,7 @@ public class GuiChooseVersion extends SpecialGuiScreen {
     }
 
     private void fetchList () throws IOException {
-        loading++;
+        loading.incrementAndGet();
         executor.submit(() -> {
             try {
                 branchList = UpdateRetrieverUtil.getUpdateBranches().stream()
@@ -79,22 +85,24 @@ public class GuiChooseVersion extends SpecialGuiScreen {
                         .collect(Collectors.toList());
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                smthUpdated = true;
+                loading.decrementAndGet();
             }
-            smthUpdated = true;
-            loading--;
         });
     }
 
     private void fetchUpdates(UpdateBranch branch) throws IOException {
-        loading++;
+        loading.incrementAndGet();
         executor.submit(() -> {
             try {
                 updates = UpdateRetrieverUtil.getLatestUpdates(branch.getId(), 0);
             } catch (IOException e) {
                 e.printStackTrace();
+            } finally {
+                smthUpdated = true;
+                loading.decrementAndGet();
             }
-            smthUpdated = true;
-            loading--;
         });
     }
     private final String stacktrace;
@@ -102,9 +110,10 @@ public class GuiChooseVersion extends SpecialGuiScreen {
     private List<UpdateBranch> branchList = Collections.emptyList();
     private List<Update> updates = Collections.emptyList();
     private UpdateBranch current;
-    private boolean smthUpdated = false;
-    private int loading = 0;
+    private volatile boolean smthUpdated = false;
+    private volatile AtomicInteger loading = new AtomicInteger(0);
 
+    private GuiCheckBox checkBox;
     @Override
     public void initGui() {
         super.initGui();
@@ -125,7 +134,7 @@ public class GuiChooseVersion extends SpecialGuiScreen {
         button.enabled = this.getClass().getResourceAsStream("/mod.jar") != null;
         this.buttonList.add(button = new GuiButton(4, tenth,sr.getScaledHeight()-100 ,"Refresh Options"));
 
-        this.buttonList.add(new GuiCheckBox(5, sr.getScaledWidth() - tenth-200,sr.getScaledHeight()-100 ,"Save This Loader", false));
+//        this.buttonList.add(checkBox = new GuiCheckBox(5, sr.getScaledWidth() - tenth-200,sr.getScaledHeight()-100 ,"Save This Loader", false));
 
         int k = 0;
         for (UpdateBranch updateBranch : branchList) {
@@ -171,8 +180,8 @@ public class GuiChooseVersion extends SpecialGuiScreen {
             current = null;
             smthUpdated = true;
             fetchList();
-        } else if (button.id == 5) {
-            // do smt
+//        } else if (button.id == 5) {
+//            // do smt
         } else if (button.id < branchList.size() + 10) {
             int idx = button.id - 10;
             current = branchList.get(idx);
@@ -208,7 +217,7 @@ public class GuiChooseVersion extends SpecialGuiScreen {
         int tenth = sr.getScaledWidth() / 10;
         Gui.drawRect(tenth, 90,sr.getScaledWidth()-tenth, sr.getScaledHeight()-80, 0xFF5B5B5B);
 
-        if (loading > 0) {
+        if (loading.get() > 0) {
             fontRenderer.drawString("Loading", sr.getScaledWidth()/2, sr.getScaledHeight()/2, 0xFF000000);
         }
 
