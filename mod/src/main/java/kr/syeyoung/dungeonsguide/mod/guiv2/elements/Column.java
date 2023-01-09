@@ -65,6 +65,9 @@ public class Column {
                 }
             }
 
+            if (flexFound && effheight == Integer.MAX_VALUE) throw new IllegalStateException("Max height can not be infinite with flex elements");
+            else if (effheight == Integer.MAX_VALUE) effheight = height;
+
             if (flexFound) {
                 int remainingHeight = effheight - height;
                 int heightPer = remainingHeight / sumFlex;

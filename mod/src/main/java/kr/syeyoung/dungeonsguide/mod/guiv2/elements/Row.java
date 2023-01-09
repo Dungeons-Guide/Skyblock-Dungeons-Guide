@@ -66,6 +66,9 @@ public class Row {
                 }
             }
 
+            if (flexFound && effwidth == Integer.MAX_VALUE) throw new IllegalStateException("Max width can not be infinite with flex elements");
+            else if (effwidth == Integer.MAX_VALUE) effwidth = width;
+
             if (flexFound) {
                 int remainingWidth = effwidth - width;
                 int widthPer = remainingWidth / sumFlex;
