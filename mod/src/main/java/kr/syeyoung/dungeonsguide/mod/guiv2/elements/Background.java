@@ -20,12 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.client.gui.Gui;
-
-import java.awt.*;
 
 // passes down constraints
 // but sets background!! cool!!!
@@ -33,10 +32,10 @@ public class Background {
 
     public static class BRender extends SingleChildRenderer {
 
-        BController bController;
+        BWidget bController;
         public BRender(DomElement domElement) {
             super(domElement);
-            this.bController = (BController) domElement.getController();
+            this.bController = (BWidget) domElement.getWidget();
         }
 
         @Override
@@ -49,11 +48,11 @@ public class Background {
         }
     }
 
-    public static class BController extends Controller {
+    public static class BWidget extends Widget {
         @Export(attributeName = "backgroundColor")
         public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
 
-        public BController(DomElement element) {
+        public BWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -61,6 +60,6 @@ public class Background {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SingleChildPassingLayouter::new, BRender::new, BController::new
+            SingleChildPassingLayouter::new, BRender::new, BWidget::new
     );
 }

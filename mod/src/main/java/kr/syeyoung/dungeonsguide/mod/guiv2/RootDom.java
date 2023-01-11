@@ -24,7 +24,6 @@ import lombok.Setter;
 
 public class RootDom extends DomElement {
     public RootDom() {
-        super(null);
         context = new Context();
     }
 

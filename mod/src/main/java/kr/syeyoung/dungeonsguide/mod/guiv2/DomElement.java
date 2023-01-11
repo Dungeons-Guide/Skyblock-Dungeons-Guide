@@ -19,25 +19,24 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderBuilder;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
-import org.w3c.dom.Element;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
 public class DomElement {
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private Controller controller;
+    private Widget widget;
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private Renderer renderer; // renders element itself.
+    private RenderBuilder renderer; // renders element itself.
     @Getter
     @Setter(AccessLevel.PACKAGE)
     private Layouter layouter; // layouts subelements
@@ -48,34 +47,10 @@ public class DomElement {
     @Getter
     private List<DomElement> children = new LinkedList<>();
 
-    @Getter @Setter
-    private Element representing;
-
     @Getter
     Context context;
 
-    @Getter
-    private DomElement componentParent;
-
-    private List<String> classNames = new ArrayList<>();
-    private String status;
-
-    // search classNames
-    // search classNames:status
-    // search tag
-    // search tag:status
-    // search *
-
-    public DomElement(DomElement componentParent) {
-        this.componentParent = componentParent;
-    }
-
-    public void setComponentParent(DomElement componentParent) {
-        if (this.componentParent != null) return;
-        this.componentParent = componentParent;
-        for (DomElement child: children) {
-            child.setComponentParent(componentParent);
-        }
+    public DomElement() {
     }
 
     @Getter
@@ -93,11 +68,11 @@ public class DomElement {
             child.setMounted(mounted);
         }
 
-        if (mounted) controller.onMount();
+        if (mounted) widget.onMount();
         else {
             if (isFocused())
                 context.CONTEXT.put("focus", null);
-            controller.onUnmount();
+            widget.onUnmount();
         };
     }
 
@@ -147,7 +122,7 @@ public class DomElement {
         }
 
         if (isFocused())
-            controller.keyPressed(typedChar, keyCode);
+            widget.keyPressed(typedChar, keyCode);
     }
     public void keyHeld0(char typedChar, int keyCode) {
         for (DomElement childComponent  : children) {
@@ -155,7 +130,7 @@ public class DomElement {
         }
 
         if (isFocused())
-            controller.keyHeld(typedChar, keyCode);
+            widget.keyHeld(typedChar, keyCode);
     }
     public void keyReleased0(char typedChar, int keyCode) {
         for (DomElement childComponent  : children) {
@@ -163,7 +138,7 @@ public class DomElement {
         }
 
         if (isFocused())
-            controller.keyReleased(typedChar, keyCode);
+            widget.keyReleased(typedChar, keyCode);
     }
 
     public void obtainFocus() {
@@ -191,7 +166,7 @@ public class DomElement {
             }
         }
 
-        return controller.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
+        return widget.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
     }
 
 
@@ -207,7 +182,7 @@ public class DomElement {
             childComponent.mouseReleased0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor), state);
         }
-        controller.mouseReleased(absMouseX, absMouseY, relMouseX0, relMouseY0, state);
+        widget.mouseReleased(absMouseX, absMouseY, relMouseX0, relMouseY0, state);
     }
 
     public void mouseClickMove0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
@@ -221,7 +196,7 @@ public class DomElement {
             childComponent.mouseClickMove0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor), clickedMouseButton, timeSinceLastClick);
         }
-        controller.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
+        widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
     }
     public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
         if (!absBounds.contains(absMouseX, absMouseY)) return;
@@ -234,21 +209,21 @@ public class DomElement {
             childComponent.mouseScrolled0(absMouseX, absMouseY,  (int) ((relMouseX0 - transformed.x) * XscaleFactor),
                     (int) ((relMouseY0 - transformed.y)*YscaleFactor), scrollAmount);
         }
-        controller.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
+        widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
     }
 
 
     private boolean wasMouseIn = false;
     public void mouseMoved0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
         if (!absBounds.contains(absMouseX, absMouseY)) {
-            if (wasMouseIn) controller.mouseExited(absMouseX, absMouseY, relMouseX0, relMouseY0);
+            if (wasMouseIn) widget.mouseExited(absMouseX, absMouseY, relMouseX0, relMouseY0);
             wasMouseIn = false;
             return;
         }
-        if (!wasMouseIn) controller.mouseEntered(absMouseX, absMouseY, relMouseX0, relMouseY0);
+        if (!wasMouseIn) widget.mouseEntered(absMouseX, absMouseY, relMouseX0, relMouseY0);
         wasMouseIn = true;
 
-        controller.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
+        widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
         for (DomElement childComponent  : children) {
             Rectangle original = childComponent.getRelativeBound();
             Rectangle transformed = renderer.applyTransformation(childComponent);

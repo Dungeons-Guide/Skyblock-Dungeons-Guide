@@ -64,7 +64,7 @@ public class BindableAttribute<T> {
 
     private Set<BindableAttribute<T>> linkedWith = new HashSet<>();
 
-    public void linkTo(BindableAttribute<T> bindableAttribute) { // This method has to be called by exporting bindable attribute
+    public void exportTo(BindableAttribute<T> bindableAttribute) { // This method has to be called by exporting bindable attribute
         if (bindableAttribute.type != type) throw new IllegalArgumentException("Different type!!");
 
         this.addOnUpdate(bindableAttribute::setValue);
@@ -77,16 +77,16 @@ public class BindableAttribute<T> {
             bindableAttribute.setValue(getValue());
     }
 
-    public void unlink(BindableAttribute<T> bindableAttribute) {
+    public void unexport(BindableAttribute<T> bindableAttribute) {
         bindableAttribute.removeOnUpdate(this::setValue);
         removeOnUpdate(bindableAttribute::setValue);
         linkedWith.remove(bindableAttribute);
     }
 
-    public void unlinkAll() {
+    public void unexportAll() {
         Set<BindableAttribute<T>> copy = new HashSet<>(linkedWith);
         for (BindableAttribute<T> tBindableAttribute : copy) {
-            unlink(tBindableAttribute);
+            unexport(tBindableAttribute);
         }
     }
 }

@@ -20,18 +20,20 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
 
 public class SizedBox {
     public static class BLayout extends Layouter {
-        BController bController;
+        BWidget bController;
 
         public BLayout(DomElement element) {
             super(element);
-            this.bController = (BController) element.getController();
+            this.bController = (BWidget) element.getWidget();
         }
 
         @Override
@@ -58,14 +60,14 @@ public class SizedBox {
         }
     }
 
-    public static class BController extends Controller {
+    public static class BWidget extends Widget {
 
         @Export(attributeName = "width")
         public final BindableAttribute<Double> width = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
         @Export(attributeName = "height")
         public final BindableAttribute<Double> height = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
 
-        public BController(DomElement element) {
+        public BWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -77,6 +79,6 @@ public class SizedBox {
 
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            BLayout::new, SingleChildRenderer::new, BController::new
+            BLayout::new, SingleChildRenderer::new, BWidget::new
     );
 }

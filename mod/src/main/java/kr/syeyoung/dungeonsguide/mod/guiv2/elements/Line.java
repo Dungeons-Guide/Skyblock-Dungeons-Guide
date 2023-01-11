@@ -20,9 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import net.minecraft.client.gui.Gui;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
@@ -31,17 +32,17 @@ import java.awt.*;
 public class Line {
 
     public static class LLayouter extends Layouter {
-        private LController controller;
+        private LWidget controller;
         public LLayouter(DomElement element) {
             super(element);
-            this.controller = (LController) element.getController();
+            this.controller = (LWidget) element.getWidget();
         }
 
         @Override
         public Dimension layout(ConstraintBox constraintBox) {
             float thickness = controller.thickness.getValue();
-            LController.Orientation orientation = controller.direction.getValue();
-            if (orientation == LController.Orientation.HORIZONTAL) {
+            LWidget.Orientation orientation = controller.direction.getValue();
+            if (orientation == LWidget.Orientation.HORIZONTAL) {
                 return new Dimension(
                         constraintBox.getMaxWidth(),
                         clamp((int) thickness, constraintBox.getMinHeight(), constraintBox.getMaxHeight())
@@ -56,10 +57,10 @@ public class Line {
     }
 
     public static class LRenderer extends DrawNothingRenderer {
-        private LController controller;
+        private LWidget controller;
         public LRenderer(DomElement domElement) {
             super(domElement);
-            this.controller = (LController) domElement.getController();
+            this.controller = (LWidget) domElement.getWidget();
         }
 
         @Override
@@ -76,7 +77,7 @@ public class Line {
             }
 
             GL11.glBegin(GL11.GL_LINES);
-            if (controller.direction.getValue() == LController.Orientation.HORIZONTAL) {
+            if (controller.direction.getValue() == LWidget.Orientation.HORIZONTAL) {
                 GL11.glVertex2f(0,h/2.0f);
                 GL11.glVertex2f(w, h/2.0f);
             } else {
@@ -96,7 +97,7 @@ public class Line {
             return target.getRelativeBound();
         }
     }
-    public static class LController extends Controller {
+    public static class LWidget extends Widget {
 
         @Export(attributeName = "thickness")
         public final BindableAttribute<Float> thickness =new BindableAttribute<>(Float.class, 1.0f);
@@ -122,7 +123,7 @@ public class Line {
             VERTICAL, HORIZONTAL
         }
 
-        public LController(DomElement element) {
+        public LWidget(DomElement element) {
             super(element);
             thickness.addOnUpdate(a -> element.requestRelayout());
             color.addOnUpdate(color -> {
@@ -138,6 +139,6 @@ public class Line {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            LLayouter::new, LRenderer::new, LController::new
+            LLayouter::new, LRenderer::new, LWidget::new
     );
 }

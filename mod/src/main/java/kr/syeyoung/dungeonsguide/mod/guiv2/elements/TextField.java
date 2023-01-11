@@ -20,8 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -50,10 +52,10 @@ public class TextField {
     }
 
     public static class TRenderer extends DrawNothingRenderer {
-        private TController controller;
+        private TWidget controller;
         public TRenderer(DomElement domElement) {
             super(domElement);
-            this.controller = (TController) domElement.getController();
+            this.controller = (TWidget) domElement.getWidget();
         }
 
         @Override
@@ -97,7 +99,7 @@ public class TextField {
         }
     }
 
-    public static class TController extends Controller {
+    public static class TWidget extends Widget {
 
         @Export(
                 attributeName = "value"
@@ -130,7 +132,7 @@ public class TextField {
         
         
         
-        public TController(DomElement element) {
+        public TWidget(DomElement element) {
             super(element);
             loadAttributes();
         }
@@ -439,6 +441,6 @@ public class TextField {
         }
     }
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            TLayouter::new, TRenderer::new, TController::new
+            TLayouter::new, TRenderer::new, TWidget::new
     );
 }

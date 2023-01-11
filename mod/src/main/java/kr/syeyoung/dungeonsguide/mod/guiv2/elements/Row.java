@@ -20,7 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -30,9 +33,9 @@ public class Row {
     public static class RLayout extends Layouter {
         public RLayout(DomElement element) {
             super(element);
-            controller = (RController) element.getController();
+            controller = (RWidget) element.getWidget();
         }
-        RController controller;
+        RWidget controller;
 
         @Override
         public Dimension layout(ConstraintBox constraints) {
@@ -40,15 +43,15 @@ public class Row {
             int width = 0;
             int effwidth = constraints.getMaxWidth(); // max does not count for row.
 
-            RController.CrossAxisAlignment crossAxisAlignment = controller.vAlign.getValue();
-            RController.MainAxisAlignment mainAxisAlignment = controller.hAlign.getValue();
+            RWidget.CrossAxisAlignment crossAxisAlignment = controller.vAlign.getValue();
+            RWidget.MainAxisAlignment mainAxisAlignment = controller.hAlign.getValue();
             Map<DomElement, Dimension> saved = new HashMap<>();
 
             for (DomElement child : getDomElement().getChildren()) {
-                if (!(child.getController() instanceof  Flexible.FController)) {
+                if (!(child.getWidget() instanceof Flexible.FWidget)) {
                     Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
                             0, Integer.MAX_VALUE,
-                            crossAxisAlignment == RController.CrossAxisAlignment.STRETCH ? constraints.getMaxHeight() : 0, constraints.getMaxHeight()
+                            crossAxisAlignment == RWidget.CrossAxisAlignment.STRETCH ? constraints.getMaxHeight() : 0, constraints.getMaxHeight()
                     ));
                     saved.put(child, requiredSize);
                     height = Math.max(height, requiredSize.height);
@@ -60,8 +63,8 @@ public class Row {
             boolean flexFound = false;
             int sumFlex = 0;
             for (DomElement child : getDomElement().getChildren()) {
-                if (child.getController() instanceof Flexible.FController) {
-                    sumFlex += Math.min(1, ((Flexible.FController) child.getController()).flex.getValue());
+                if (child.getWidget() instanceof Flexible.FWidget) {
+                    sumFlex += Math.min(1, ((Flexible.FWidget) child.getWidget()).flex.getValue());
                     flexFound =true;
                 }
             }
@@ -74,10 +77,10 @@ public class Row {
                 int widthPer = remainingWidth / sumFlex;
 
                 for (DomElement child : getDomElement().getChildren()) {
-                    if (child.getController() instanceof Flexible.FController) {
+                    if (child.getWidget() instanceof Flexible.FWidget) {
                         Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
-                                0, widthPer * ((Flexible.FController) child.getController()).flex.getValue(),
-                                crossAxisAlignment == RController.CrossAxisAlignment.STRETCH ? constraints.getMaxHeight() : 0, constraints.getMaxHeight()
+                                0, widthPer * ((Flexible.FWidget) child.getWidget()).flex.getValue(),
+                                crossAxisAlignment == RWidget.CrossAxisAlignment.STRETCH ? constraints.getMaxHeight() : 0, constraints.getMaxHeight()
                         ));
                         saved.put(child, requiredSize);
                         height = Math.max(height, requiredSize.height);
@@ -94,11 +97,11 @@ public class Row {
             int startx = 0;
             int widthDelta = 0;
 
-            if (mainAxisAlignment == RController.MainAxisAlignment.CENTER)
+            if (mainAxisAlignment == RWidget.MainAxisAlignment.CENTER)
                 startx = (effwidth - width) / 2;
-            else if (mainAxisAlignment == RController.MainAxisAlignment.END)
+            else if (mainAxisAlignment == RWidget.MainAxisAlignment.END)
                 startx = effwidth - width;
-            else if (mainAxisAlignment == RController.MainAxisAlignment.SPACE_BETWEEN) {
+            else if (mainAxisAlignment == RWidget.MainAxisAlignment.SPACE_BETWEEN) {
                 int remaining = effwidth - width;
                 if (remaining > 0) {
                     startx = 0;
@@ -106,7 +109,7 @@ public class Row {
                 } else {
                     startx = (effwidth - width) / 2;
                 }
-            } else if (mainAxisAlignment == RController.MainAxisAlignment.SPACE_EVENLY) {
+            } else if (mainAxisAlignment == RWidget.MainAxisAlignment.SPACE_EVENLY) {
                 int remaining = effwidth - width;
                 if (remaining > 0) {
                     widthDelta = remaining / (getDomElement().getChildren().size()+1);
@@ -114,7 +117,7 @@ public class Row {
                 } else {
                     startx = (effwidth - width) / 2;
                 }
-            } else if (mainAxisAlignment == RController.MainAxisAlignment.SPACE_AROUND) {
+            } else if (mainAxisAlignment == RWidget.MainAxisAlignment.SPACE_AROUND) {
                 int remaining = effwidth - width;
                 if (remaining > 0) {
                     widthDelta = 2 * remaining / getDomElement().getChildren().size();
@@ -129,9 +132,9 @@ public class Row {
 
                 child.setRelativeBound(new Rectangle(
                         startx,
-                            crossAxisAlignment == RController.CrossAxisAlignment.START ? 0 :
-                            crossAxisAlignment == RController.CrossAxisAlignment.CENTER ? (height-size.height)/2 :
-                            crossAxisAlignment == RController.CrossAxisAlignment.STRETCH ? (height-size.height)/2 :
+                            crossAxisAlignment == RWidget.CrossAxisAlignment.START ? 0 :
+                            crossAxisAlignment == RWidget.CrossAxisAlignment.CENTER ? (height-size.height)/2 :
+                            crossAxisAlignment == RWidget.CrossAxisAlignment.STRETCH ? (height-size.height)/2 :
                                             height - size.height,size.width, size.height
                 ));
                 startx += size.width;
@@ -143,7 +146,7 @@ public class Row {
             );
         }
     }
-    public static class RController extends Controller {
+    public static class RWidget extends Widget {
         public static enum CrossAxisAlignment {
             START, CENTER, END, STRETCH
         }
@@ -157,7 +160,7 @@ public class Row {
         @Export(attributeName = "mainAlign")
         public final BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
-        public RController(DomElement element) {
+        public RWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -170,6 +173,6 @@ public class Row {
 
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            RLayout::new, OnlyChildrenRenderer::new, RController::new
+            RLayout::new, OnlyChildrenRenderer::new, RWidget::new
     );
 }

@@ -18,10 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Controller;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 
@@ -47,9 +47,9 @@ public class Stack {
         }
     }
 
-    public static class SController extends Controller {
+    public static class SWidget extends Widget {
 
-        public SController(DomElement element) {
+        public SWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -59,6 +59,6 @@ public class Stack {
 
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SLayouter::new, OnlyChildrenRenderer::new, SController::new
+            SLayouter::new, OnlyChildrenRenderer::new, SWidget::new
     );
 }

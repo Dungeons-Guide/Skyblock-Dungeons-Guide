@@ -18,24 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import lombok.Getter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 
 import java.awt.*;
 
-public abstract class Layouter {
-    @Getter
-
-    private DomElement domElement;
-    public Layouter(DomElement element) {
-        this.domElement = element;
-    }
-
-
+public interface Layouter {
     public abstract Dimension layout(ConstraintBox constraintBox);
 
-    public boolean shouldRelayout() {
+    default boolean shouldRelayout() {
         return true;
     }
     public static int clamp(int val, int min, int max) {

@@ -20,24 +20,27 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
 
 // yes it's that flexible from flutter
 public class Flexible {
     public static class FLayout extends Layouter {
-        private FController controller;
+        private FWidget controller;
         public FLayout(DomElement element) {
             super(element);
-            this.controller = (FController) element.getController();
+            this.controller = (FWidget) element.getWidget();
         }
 
         @Override
         public Dimension layout(ConstraintBox constraintBox) {
-            FController.FlexFit fit = controller.fit.getValue();
+            FWidget.FlexFit fit = controller.fit.getValue();
             ConstraintBox box =
-                    fit == FController.FlexFit.TIGHT ?
+                    fit == FWidget.FlexFit.TIGHT ?
                             new ConstraintBox(constraintBox.getMaxWidth() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
                                     , constraintBox.getMaxHeight() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
                             : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
@@ -48,7 +51,7 @@ public class Flexible {
         }
     }
 
-    public static class FController extends Controller {
+    public static class FWidget extends Widget {
 
         @Export(attributeName = "flex")
         public final BindableAttribute<Integer> flex = new BindableAttribute<>(Integer.class, 1);
@@ -60,7 +63,7 @@ public class Flexible {
             TIGHT, LOOSE
         }
 
-        public FController(DomElement element) {
+        public FWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -71,6 +74,6 @@ public class Flexible {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            FLayout::new, SingleChildRenderer::new, FController::new
+            FLayout::new, SingleChildRenderer::new, FWidget::new
     );
 }

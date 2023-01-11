@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,25 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2;
+package kr.syeyoung.dungeonsguide.mod.guiv2.xml.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Getter;
+import java.io.Closeable;
 
-
-// Idea heavily taken from flutter.
-@AllArgsConstructor @Getter
-public class ConstraintBox {
-    private int minWidth;
-    private int maxWidth;
-    private int minHeight;
-    private int maxHeight;
-
-    public static ConstraintBox loose(int width, int height) {
-        return new ConstraintBox(0,width,0,height);
-    }
-
-    public static ConstraintBox tight(int width, int height) {
-        return new ConstraintBox(width, width, height, height);
-    }
+public interface Parser extends AutoCloseable, Closeable {
+    ParserElement getRootNode();
 }

@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,25 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
+package kr.syeyoung.dungeonsguide.mod.guiv2.xml.data;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+public class ParserException extends RuntimeException {
+    public ParserException(Throwable cause) {super(cause);}
 
-import java.awt.*;
-
-public class NullLayouter extends Layouter {
-    public NullLayouter(DomElement element) {
-        super(element);
+    public ParserException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+        super(message, cause, enableSuppression, writableStackTrace);
     }
 
-    @Override
-    public boolean shouldRelayout() {
-        return false;
+    public ParserException() {
     }
 
-    @Override
-    public Dimension layout(ConstraintBox constraintBox) {
-        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+    public ParserException(String message) {
+        super(message);
+    }
+
+    public ParserException(String message, Throwable cause) {
+        super(message, cause);
     }
 }

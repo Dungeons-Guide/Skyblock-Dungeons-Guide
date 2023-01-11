@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,25 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
+package kr.syeyoung.dungeonsguide.mod.guiv2;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import java.util.Iterator;
 
-import java.awt.*;
-
-public class NullLayouter extends Layouter {
-    public NullLayouter(DomElement element) {
-        super(element);
+public class ElementTreeWalkIterator implements Iterator<DomElement> {
+    private DomElement current;
+    public ElementTreeWalkIterator(DomElement child) {
+        this.current = child;
     }
 
     @Override
-    public boolean shouldRelayout() {
-        return false;
+    public boolean hasNext() {
+        return current != null;
     }
 
     @Override
-    public Dimension layout(ConstraintBox constraintBox) {
-        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+    public DomElement next() {
+        DomElement c1 = current;
+        current = current.getParent();
+        return c1;
     }
 }

@@ -20,7 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
 import java.util.HashMap;
@@ -30,22 +33,22 @@ public class Column {
     public static class CLayout extends Layouter {
         public CLayout(DomElement element) {
             super(element);
-            controller = (CController) element.getController();
+            controller = (CWidget) element.getWidget();
         }
-        CController controller;
+        CWidget controller;
 
         @Override
         public Dimension layout(ConstraintBox constraints) {
             int width = 0;
             int height = 0;
             int effheight = constraints.getMaxHeight(); // max does not count for column.
-            CController.CrossAxisAlignment crossAxisAlignment = controller.hAlign.getValue();
-            CController.MainAxisAlignment mainAxisAlignment = controller.vAlign.getValue();
+            CWidget.CrossAxisAlignment crossAxisAlignment = controller.hAlign.getValue();
+            CWidget.MainAxisAlignment mainAxisAlignment = controller.vAlign.getValue();
             Map<DomElement, Dimension> saved = new HashMap<>();
             for (DomElement child : getDomElement().getChildren()) {
-                if (!(child.getController() instanceof Flexible.FController)) {
+                if (!(child.getWidget() instanceof Flexible.FWidget)) {
                     Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
-                            crossAxisAlignment == CController.CrossAxisAlignment.STRETCH
+                            crossAxisAlignment == CWidget.CrossAxisAlignment.STRETCH
                                     ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, Integer.MAX_VALUE
                     ));
                     saved.put(child, requiredSize);
@@ -59,8 +62,8 @@ public class Column {
             boolean flexFound = false;
             int sumFlex = 0;
             for (DomElement child : getDomElement().getChildren()) {
-                if (child.getController() instanceof Flexible.FController) {
-                    sumFlex += Math.min(1, ((Flexible.FController) child.getController()).flex.getValue());
+                if (child.getWidget() instanceof Flexible.FWidget) {
+                    sumFlex += Math.min(1, ((Flexible.FWidget) child.getWidget()).flex.getValue());
                     flexFound = true;
                 }
             }
@@ -73,10 +76,10 @@ public class Column {
                 int heightPer = remainingHeight / sumFlex;
 
                 for (DomElement child : getDomElement().getChildren()) {
-                    if (child.getController() instanceof Flexible.FController) {
+                    if (child.getWidget() instanceof Flexible.FWidget) {
                         Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
-                                crossAxisAlignment == CController.CrossAxisAlignment.STRETCH
-                                        ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, heightPer * ((Flexible.FController) child.getController()).flex.getValue()
+                                crossAxisAlignment == CWidget.CrossAxisAlignment.STRETCH
+                                        ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, heightPer * ((Flexible.FWidget) child.getWidget()).flex.getValue()
                         ));
                         saved.put(child, requiredSize);
                         width = Math.max(width, requiredSize.width);
@@ -91,11 +94,11 @@ public class Column {
             int starty = 0;
             int heightDelta = 0;
 
-            if (mainAxisAlignment == CController.MainAxisAlignment.CENTER)
+            if (mainAxisAlignment == CWidget.MainAxisAlignment.CENTER)
                 starty = (effheight - height) / 2;
-            else if (mainAxisAlignment == CController.MainAxisAlignment.END)
+            else if (mainAxisAlignment == CWidget.MainAxisAlignment.END)
                 starty = effheight - height;
-            else if (mainAxisAlignment == CController.MainAxisAlignment.SPACE_BETWEEN) {
+            else if (mainAxisAlignment == CWidget.MainAxisAlignment.SPACE_BETWEEN) {
                 int remaining = effheight - height;
                 if (remaining > 0) {
                     starty = 0;
@@ -103,7 +106,7 @@ public class Column {
                 } else {
                     starty = (effheight - height) / 2;
                 }
-            } else if (mainAxisAlignment == CController.MainAxisAlignment.SPACE_EVENLY) {
+            } else if (mainAxisAlignment == CWidget.MainAxisAlignment.SPACE_EVENLY) {
                 int remaining = effheight - height;
                 if (remaining > 0) {
                     heightDelta = remaining / (getDomElement().getChildren().size()+1);
@@ -111,7 +114,7 @@ public class Column {
                 } else {
                     starty= (effheight - height) / 2;
                 }
-            } else if (mainAxisAlignment == CController.MainAxisAlignment.SPACE_AROUND) {
+            } else if (mainAxisAlignment == CWidget.MainAxisAlignment.SPACE_AROUND) {
                 int remaining = effheight - height;
                 if (remaining > 0) {
                     heightDelta = 2 * remaining / getDomElement().getChildren().size();
@@ -125,9 +128,9 @@ public class Column {
                 Dimension size = saved.get(child);
 
                 child.setRelativeBound(new Rectangle(
-                        crossAxisAlignment == CController.CrossAxisAlignment.START ? 0 : 
-                        crossAxisAlignment == CController.CrossAxisAlignment.CENTER ? (width-size.width)/2 : 
-                        crossAxisAlignment == CController.CrossAxisAlignment.STRETCH ? (width - size.width) /2 :
+                        crossAxisAlignment == CWidget.CrossAxisAlignment.START ? 0 :
+                        crossAxisAlignment == CWidget.CrossAxisAlignment.CENTER ? (width-size.width)/2 :
+                        crossAxisAlignment == CWidget.CrossAxisAlignment.STRETCH ? (width - size.width) /2 :
                                         width - size.width, starty
                             ,size.width, size.height
                 ));
@@ -141,7 +144,7 @@ public class Column {
         }
     }
 
-    public static class CController extends Controller {
+    public static class CWidget extends Widget {
         public static enum CrossAxisAlignment {
             START, CENTER, END, STRETCH
         }
@@ -155,7 +158,7 @@ public class Column {
         @Export(attributeName = "mainAlign")
         public final BindableAttribute<MainAxisAlignment> vAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
-        public CController(DomElement element) {
+        public CWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -166,6 +169,6 @@ public class Column {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            CLayout::new, OnlyChildrenRenderer::new, CController::new
+            CLayout::new, OnlyChildrenRenderer::new, CWidget::new
     );
 }

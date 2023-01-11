@@ -20,8 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
@@ -36,11 +38,11 @@ public class Text {
 
     public static class TRenderer extends DrawNothingRenderer {
         FontRenderer fr;
-        private TController tController;
+        private TWidget tController;
         public TRenderer(DomElement domElement) {
             super(domElement);
             fr = Minecraft.getMinecraft().fontRendererObj;
-            tController = (TController) domElement.getController();
+            tController = (TWidget) domElement.getWidget();
         }
 
         @Override
@@ -51,18 +53,18 @@ public class Text {
             int width = getDomElement().getRelativeBound().width;
 
             GlStateManager.enableTexture2D();
-            if (tController.textAlign.getValue() == TController.TextAlign.LEFT) {
-                for (TController.WrappedTextData wrappedText : tController.wrappedTexts) {
+            if (tController.textAlign.getValue() == TWidget.TextAlign.LEFT) {
+                for (TWidget.WrappedTextData wrappedText : tController.wrappedTexts) {
                     fr.drawString(wrappedText.text, 0, y, color);
                     y += yInc;
                 }
-            } else if (tController.textAlign.getValue() == TController.TextAlign.CENTER) {
-                for (TController.WrappedTextData wrappedText : tController.wrappedTexts) {
+            } else if (tController.textAlign.getValue() == TWidget.TextAlign.CENTER) {
+                for (TWidget.WrappedTextData wrappedText : tController.wrappedTexts) {
                     fr.drawString(wrappedText.text, (width-wrappedText.width)/2, y, color);
                     y += yInc;
                 }
             } else {
-                for (TController.WrappedTextData wrappedText : tController.wrappedTexts) {
+                for (TWidget.WrappedTextData wrappedText : tController.wrappedTexts) {
                     fr.drawString(wrappedText.text, width - wrappedText.width, y, color);
                     y += yInc;
                 }
@@ -71,11 +73,11 @@ public class Text {
         }
     }
 
-    public static class TLayouter extends Layouter {
-        private TController tController;
+    public static class TLayouter implements Layouter {
+        private TWidget tController;
         public TLayouter(DomElement element) {
             super(element);
-            tController = (TController) element.getController();
+            tController = (TWidget) element.getWidget();
         }
 
         @Override
@@ -89,7 +91,7 @@ public class Text {
             int maxWidth2 = 0;
 
 
-            TController.WordBreak wordBreak = tController.wordBreak.getValue();
+            TWidget.WordBreak wordBreak = tController.wordBreak.getValue();
 
             String[] splitByLine = text.split("\n");
             for (String line : splitByLine) {
@@ -108,13 +110,13 @@ public class Text {
                     } else {
                         hadToWrap = true;
                         // need to break word.
-                        if (wordBreak == TController.WordBreak.WORD) {
+                        if (wordBreak == TWidget.WordBreak.WORD) {
                             String current = s;
                             if (fr.getStringWidth(s) > maxWidth) {
                                 // there is no hope. just continue.
                                 current = currentLine.toString()+ " "+s;
                             } else {
-                                tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
+                                tController.wrappedTexts.add(new TWidget.WrappedTextData(currentWidth, currentLine.toString()));
                                 current = s;
                             }
 
@@ -138,13 +140,13 @@ public class Text {
                                 }
                                 remaining = current + remaining;
 
-                                tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
+                                tController.wrappedTexts.add(new TWidget.WrappedTextData(currentWidth, currentLine.toString()));
 
                                 current = remaining;
                             }
                             currentLine = new StringBuilder(current);
                             currentWidth = fr.getStringWidth(current);
-                        } else if (wordBreak == TController.WordBreak.NEVER) {
+                        } else if (wordBreak == TWidget.WordBreak.NEVER) {
                             currentLine.append(" ").append(s);
                             currentWidth += strWidth;
                             break;
@@ -167,14 +169,14 @@ public class Text {
                             }
                             remaining = current + remaining;
 
-                            tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
+                            tController.wrappedTexts.add(new TWidget.WrappedTextData(currentWidth, currentLine.toString()));
                             currentLine = new StringBuilder(remaining);
                             currentWidth = fr.getStringWidth(remaining);
                         }
                     }
                 }
                 if (currentWidth > maxWidth2) maxWidth2 = currentWidth;
-                tController.wrappedTexts.add(new TController.WrappedTextData(currentWidth, currentLine.toString()));
+                tController.wrappedTexts.add(new TWidget.WrappedTextData(currentWidth, currentLine.toString()));
             }
 
 
@@ -185,7 +187,7 @@ public class Text {
         }
     }
 
-    public static class TController extends Controller {
+    public static class TWidget extends Widget {
 
         @Export(attributeName = "text")
         public final BindableAttribute<String> text = new BindableAttribute<>(String.class, "");
@@ -218,7 +220,7 @@ public class Text {
         @Export(attributeName = "color")
         public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFF000000);
 
-        public TController(DomElement element) {
+        public TWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -229,6 +231,6 @@ public class Text {
 
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            TLayouter::new, TRenderer::new, TController::new
+            TLayouter::new, TRenderer::new, TWidget::new
     );
 }

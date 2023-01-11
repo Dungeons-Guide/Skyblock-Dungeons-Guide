@@ -19,13 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.view;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
-public class TestView extends Controller {
+public class TestView extends Widget {
     public TestView(DomElement element) {
         super(element);
         loadAttributes();
@@ -36,7 +35,7 @@ public class TestView extends Controller {
             TestView::new
     );
 
-    @Bind(attributeName = "variable")
+    @Bind(variableName = "variable")
     public final BindableAttribute<String> bindableAttribute = new BindableAttribute<>(String.class, "");
 
 

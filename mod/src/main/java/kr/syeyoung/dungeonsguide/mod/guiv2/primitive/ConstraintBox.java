@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,25 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
+package kr.syeyoung.dungeonsguide.mod.guiv2.primitive;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import lombok.AllArgsConstructor;
+import lombok.Getter;
 
-import java.awt.*;
 
-public class NullLayouter extends Layouter {
-    public NullLayouter(DomElement element) {
-        super(element);
+// Idea heavily taken from flutter.
+@AllArgsConstructor @Getter
+public class ConstraintBox {
+    private float minWidth;
+    private float maxWidth;
+    private float minHeight;
+    private float maxHeight;
+
+    public static ConstraintBox loose(float width, float height) {
+        return new ConstraintBox(0,width,0,height);
     }
 
-    @Override
-    public boolean shouldRelayout() {
-        return false;
-    }
-
-    @Override
-    public Dimension layout(ConstraintBox constraintBox) {
-        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+    public static ConstraintBox tight(float width, float height) {
+        return new ConstraintBox(width, width, height, height);
     }
 }

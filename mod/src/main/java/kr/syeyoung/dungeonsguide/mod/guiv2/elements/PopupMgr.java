@@ -19,11 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import net.minecraft.util.ResourceLocation;
 
-public class PopupMgr extends Controller {
+public class PopupMgr extends Widget {
     public PopupMgr(DomElement element) {
         super(element);
         loadAttributes();
@@ -31,7 +31,7 @@ public class PopupMgr extends Controller {
     }
     // just stack
 
-    @Bind(attributeName = "stackRef")
+    @Bind(variableName = "stackRef")
     public final BindableAttribute<DomElement> domElementBindableAttribute = new BindableAttribute<>(DomElement.class);
 
     @Override

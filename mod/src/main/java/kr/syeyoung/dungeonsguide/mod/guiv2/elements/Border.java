@@ -18,10 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Controller;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 
@@ -29,10 +29,10 @@ import java.awt.*;
 
 public class Border {
     public static class BLayouter extends Layouter {
-        private BController controller;
+        private BWidget controller;
         public BLayouter(DomElement element) {
             super(element);
-            this.controller = (BController) element.getController();
+            this.controller = (BWidget) element.getWidget();
         }
 
         @Override
@@ -94,9 +94,9 @@ public class Border {
         }
     }
 
-    public static class BController extends Controller {
+    public static class BWidget extends Widget {
         DomElement left, right, top, bottom, content;
-        public BController(DomElement element) {
+        public BWidget(DomElement element) {
             super(element);
             loadAttributes();
 
@@ -115,6 +115,6 @@ public class Border {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            BLayouter::new, OnlyChildrenRenderer::new, BController::new
+            BLayouter::new, OnlyChildrenRenderer::new, BWidget::new
     );
 }

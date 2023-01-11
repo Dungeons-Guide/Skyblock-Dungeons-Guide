@@ -20,18 +20,20 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
 
 public class Scaler {
     public static class SLayouter extends Layouter {
-        private SController controller;
+        private SWidget controller;
 
         public SLayouter(DomElement element) {
             super(element);
-            this.controller = (SController) element.getController();
+            this.controller = (SWidget) element.getWidget();
         }
 
         @Override
@@ -52,11 +54,11 @@ public class Scaler {
     }
 
     public static class SRenderer extends Renderer {
-        private SController controller;
+        private SWidget controller;
 
         public SRenderer(DomElement element) {
             super(element);
-            this.controller = (SController) element.getController();
+            this.controller = (SWidget) element.getWidget();
         }
 
         @Override
@@ -72,12 +74,12 @@ public class Scaler {
         }
     }
 
-    public static class SController extends Controller {
+    public static class SWidget extends Widget {
         @Export(attributeName = "scale")
         public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
 
 
-        public SController(DomElement element) {
+        public SWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -87,6 +89,6 @@ public class Scaler {
 
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SLayouter::new, SRenderer::new, SController::new
+            SLayouter::new, SRenderer::new, SWidget::new
     );
 }

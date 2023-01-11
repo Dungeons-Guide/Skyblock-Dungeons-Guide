@@ -20,17 +20,19 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
 
 public class Padding {
     public static class PLayouter extends Layouter {
-        PController controller;
+        PWidget controller;
         public PLayouter(DomElement element) {
             super(element);
-            this.controller = (PController) element.getController();
+            this.controller = (PWidget) element.getWidget();
         }
 
         @Override
@@ -58,7 +60,7 @@ public class Padding {
         }
     }
 
-    public static class PController extends Controller {
+    public static class PWidget extends Widget {
         @Export(attributeName = "left")
         public final BindableAttribute<Double> left = new BindableAttribute<>(Double.class, 0.0);
         @Export(attributeName = "right")
@@ -68,7 +70,7 @@ public class Padding {
         @Export(attributeName = "bottom")
         public final BindableAttribute<Double> bottom = new BindableAttribute<>(Double.class, 0.0);
 
-        public PController(DomElement element) {
+        public PWidget(DomElement element) {
             super(element);
             loadAttributes();
             loadDom();
@@ -81,6 +83,6 @@ public class Padding {
     }
 
     public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            PLayouter::new, SingleChildRenderer::new, PController::new
+            PLayouter::new, SingleChildRenderer::new, PWidget::new
     );
 }
