@@ -20,21 +20,14 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 
-import java.awt.*;
-
-public class NullLayouter extends Layouter {
-    public NullLayouter(DomElement element) {
-        super(element);
-    }
+public class NullLayouter implements Layouter {
+    public static final NullLayouter INSTANCE = new NullLayouter();
+    private NullLayouter() {}
 
     @Override
-    public boolean shouldRelayout() {
-        return false;
-    }
-
-    @Override
-    public Dimension layout(ConstraintBox constraintBox) {
-        return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
     }
 }

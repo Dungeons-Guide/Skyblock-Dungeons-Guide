@@ -18,47 +18,53 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 
 import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
-public class Stack {
-    public static class SLayouter extends Layouter {
-
-        public SLayouter(DomElement element) {
-            super(element);
-        }
-
+public class Stack extends AnnotatedExportOnlyWidget {
+    public static class StackingLayouter implements Layouter {
+        public static final StackingLayouter INSTANCE = new StackingLayouter();
         @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-            Dimension max = new Dimension();
-            for (DomElement child : getDomElement().getChildren()) {
-                Dimension dim = child.getLayouter().layout(constraintBox);
-                if (max.width < dim.width) max.width = dim.width;
-                if (max.height < dim.height) max.height = dim.height;
-                child.setRelativeBound(new Rectangle(0,0,dim.width, dim.height));
+        public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+            double maxW = 0, maxH = 0;
+            for (DomElement child : buildContext.getChildren()) {
+                Size dim = child.getLayouter().layout(child, constraintBox);
+                if (maxW< dim.getWidth()) maxW = dim.getWidth();
+                if (maxH< dim.getHeight()) maxH = dim.getHeight();
+                child.setRelativeBound(new Rect(0,0,dim.getWidth(), dim.getHeight()));
             }
-            return max;
-        }
-    }
-
-    public static class SWidget extends Widget {
-
-        public SWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
+            return new Size(maxW, maxH);
         }
     }
 
 
+    public final BindableAttribute<WidgetList> widgets = new BindableAttribute<>(WidgetList.class);
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return widgets.getValue();
+    }
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SLayouter::new, OnlyChildrenRenderer::new, SWidget::new
-    );
+    @Override
+    protected Layouter createLayouter() {
+        return StackingLayouter.INSTANCE;
+    }
+
+    @Override
+    protected Renderer createRenderer() {
+        return OnlyChildrenRenderer.INSTANCE;
+    }
 }

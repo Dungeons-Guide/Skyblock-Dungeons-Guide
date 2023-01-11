@@ -16,13 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.primitive;
+package kr.syeyoung.dungeonsguide.mod.guiv2.xml.data;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 
-@Data @AllArgsConstructor
-public class Position implements IPosition {
-    public final double x;
-    public final double y;
+import java.util.List;
+
+public interface WidgetList extends List<Widget> {
 }

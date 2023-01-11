@@ -21,68 +21,60 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
-import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
-public class Padding {
-    public static class PLayouter extends Layouter {
-        PWidget controller;
-        public PLayouter(DomElement element) {
-            super(element);
-            this.controller = (PWidget) element.getWidget();
-        }
+public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
 
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-            DomElement domElement = getDomElement().getChildren().get(0);
+    @Export(attributeName = "left")
+    public final BindableAttribute<Double> left = new BindableAttribute<>(Double.class, 0.0);
+    @Export(attributeName = "right")
+    public final BindableAttribute<Double> right = new BindableAttribute<>(Double.class, 0.0);
+    @Export(attributeName = "top")
+    public final BindableAttribute<Double> top = new BindableAttribute<>(Double.class, 0.0);
+    @Export(attributeName = "bottom")
+    public final BindableAttribute<Double> bottom = new BindableAttribute<>(Double.class, 0.0);
+    @Export(attributeName = "$")
+    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
-            int width = (int) (controller.left.getValue() + controller.right.getValue());
-            int height = (int) (controller.top.getValue() + controller.bottom.getValue());
-            Dimension dim = domElement.getLayouter().layout(new ConstraintBox(
-                    constraintBox.getMinWidth() - width,
-                    constraintBox.getMaxWidth() - width,
-                    constraintBox.getMinHeight() - height,
-                    constraintBox.getMaxHeight() - height
-            ));
-
-            domElement.setRelativeBound(new Rectangle(
-                    controller.left.getValue().intValue(),
-                    controller.top.getValue().intValue(),
-                    dim.width,
-                    dim.height
-            ));
-
-
-            return new Dimension(dim.width + width, dim.height + height);
-        }
+    public Padding() {
+        left.addOnUpdate(a -> getDomElement().requestRelayout());
+        right.addOnUpdate(a -> getDomElement().requestRelayout());
+        top.addOnUpdate(a -> getDomElement().requestRelayout());
+        bottom.addOnUpdate(a -> getDomElement().requestRelayout());
     }
 
-    public static class PWidget extends Widget {
-        @Export(attributeName = "left")
-        public final BindableAttribute<Double> left = new BindableAttribute<>(Double.class, 0.0);
-        @Export(attributeName = "right")
-        public final BindableAttribute<Double> right = new BindableAttribute<>(Double.class, 0.0);
-        @Export(attributeName = "top")
-        public final BindableAttribute<Double> top = new BindableAttribute<>(Double.class, 0.0);
-        @Export(attributeName = "bottom")
-        public final BindableAttribute<Double> bottom = new BindableAttribute<>(Double.class, 0.0);
-
-        public PWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-
-            left.addOnUpdate(a -> element.requestRelayout());
-            right.addOnUpdate(a -> element.requestRelayout());
-            top.addOnUpdate(a -> element.requestRelayout());
-            bottom.addOnUpdate(a -> element.requestRelayout());
-        }
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return Collections.singletonList(child.getValue());
     }
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            PLayouter::new, SingleChildRenderer::new, PWidget::new
-    );
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        DomElement domElement = getDomElement().getChildren().get(0);
+
+        int width = (int) (left.getValue() + right.getValue());
+        int height = (int) (top.getValue() + bottom.getValue());
+        Size dim = domElement.getLayouter().layout(domElement, new ConstraintBox(
+                constraintBox.getMinWidth() - width,
+                constraintBox.getMaxWidth() - width,
+                constraintBox.getMinHeight() - height,
+                constraintBox.getMaxHeight() - height
+        ));
+
+        domElement.setRelativeBound(new Rect(
+                left.getValue().intValue(),
+                top.getValue().intValue(),
+                dim.getWidth(),
+                dim.getHeight()
+        ));
+
+
+        return new Size(dim.getWidth() + width, dim.getHeight() + height);
+    }
 }

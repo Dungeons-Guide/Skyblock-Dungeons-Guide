@@ -19,21 +19,16 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.view;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
-public class TestView extends Widget {
-    public TestView(DomElement element) {
-        super(element);
-        loadAttributes();
-        loadFile(new ResourceLocation("dungeonsguide:gui/testview.gui"));
+public class TestView extends AnnotatedImportOnlyWidget {
+    public TestView() {
+        super(new ResourceLocation("dungeonsguide:gui/testview.gui"));
     }
-
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.ComponentCreator(
-            TestView::new
-    );
 
     @Bind(variableName = "variable")
     public final BindableAttribute<String> bindableAttribute = new BindableAttribute<>(String.class, "");

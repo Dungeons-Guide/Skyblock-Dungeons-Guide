@@ -20,19 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 
-import java.awt.*;
-
-public class DrawNothingRenderer extends Renderer{
-    public DrawNothingRenderer(DomElement domElement) {
-        super(domElement);
-    }
-
+public class DrawNothingRenderer implements Renderer{
+    public static DrawNothingRenderer INSTANCE = new DrawNothingRenderer();
+    private DrawNothingRenderer() {}
     @Override
-    public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
-    }
-
-    @Override
-    public Rectangle applyTransformation(DomElement target) {
-        return target.getRelativeBound();
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
     }
 }

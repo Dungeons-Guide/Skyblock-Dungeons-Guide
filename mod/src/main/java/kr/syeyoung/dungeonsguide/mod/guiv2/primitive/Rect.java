@@ -22,8 +22,11 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data @AllArgsConstructor
-public class Rect {
-    private final float x, y, width, height;
+public class Rect implements IRect {
+    private final double x;
+    private final double y;
+    private final double width;
+    private final double height;
 
     public static Rect fromPositionSize(Position pos, Size size) { return new Rect(pos.getX(), pos.getY(), size.getWidth(), size.getHeight()); }
 }

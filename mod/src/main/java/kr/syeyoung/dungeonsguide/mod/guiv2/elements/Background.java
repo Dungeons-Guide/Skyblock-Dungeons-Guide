@@ -20,46 +20,42 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
-import net.minecraft.client.gui.Gui;
+
+import java.util.Collections;
+import java.util.List;
 
 // passes down constraints
 // but sets background!! cool!!!
-public class Background {
+public class Background extends AnnotatedExportOnlyWidget {
 
-    public static class BRender extends SingleChildRenderer {
+    @Export(attributeName = "backgroundColor")
+    public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
 
-        BWidget bController;
-        public BRender(DomElement domElement) {
-            super(domElement);
-            this.bController = (BWidget) domElement.getWidget();
-        }
+    @Export(attributeName = "$")
+    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return child.getValue() == null ? Collections.EMPTY_LIST : Collections.singletonList(child.getValue());
+    }
+
+    @Override
+    protected Renderer createRenderer() {
+        return new BRender();
+    }
+
+    public class BRender extends SingleChildRenderer {
         @Override
-        public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
-            Gui.drawRect(0,0,getDomElement().getRelativeBound().width, getDomElement().getRelativeBound().height,
-                    bController.color.getValue()
-                    );
-
-            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks);
+        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+            renderingContext.drawRect(0,0,buildContext.getSize().getWidth(),buildContext.getSize().getHeight(),
+                    color.getValue()
+            );
+            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
         }
     }
-
-    public static class BWidget extends Widget {
-        @Export(attributeName = "backgroundColor")
-        public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
-
-        public BWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-        }
-    }
-
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SingleChildPassingLayouter::new, BRender::new, BWidget::new
-    );
 }

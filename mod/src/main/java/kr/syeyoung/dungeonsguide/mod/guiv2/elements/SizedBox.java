@@ -21,64 +21,52 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
-public class SizedBox {
-    public static class BLayout extends Layouter {
-        BWidget bController;
+public class SizedBox extends AnnotatedExportOnlyWidget implements Layouter {
 
-        public BLayout(DomElement element) {
-            super(element);
-            this.bController = (BWidget) element.getWidget();
-        }
+    @Export(attributeName = "width")
+    public final BindableAttribute<Double> width = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
+    @Export(attributeName = "height")
+    public final BindableAttribute<Double> height = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
+    @Export(attributeName = "$")
+    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
 
-            int width = (int) Math.min(bController.width.getValue(), constraintBox.getMaxWidth());
-            int height = (int) Math.min(bController.height.getValue(), constraintBox.getMaxHeight());
-
-            if (getDomElement().getChildren().isEmpty()) {
-                return new Dimension(width, height);
-            }
-
-            DomElement child = getDomElement().getChildren().get(0);
-            Dimension dim = child.getLayouter().layout(new ConstraintBox(
-                    width, width, height, height
-            )); // force size heh.
-            child.setRelativeBound(new Rectangle(0,0,dim.width,dim.height));
-            return dim;
-        }
-
-        @Override
-        public boolean shouldRelayout() {
-            return false;
-        }
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return child.getValue() == null ? Collections.EMPTY_LIST : Collections.singletonList(child.getValue());
     }
 
-    public static class BWidget extends Widget {
-
-        @Export(attributeName = "width")
-        public final BindableAttribute<Double> width = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
-        @Export(attributeName = "height")
-        public final BindableAttribute<Double> height = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
-
-        public BWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-            width.addOnUpdate(a -> element.requestRelayout());
-            height.addOnUpdate(a -> element.requestRelayout());
-        }
+    public SizedBox() {
+        width.addOnUpdate(a -> getDomElement().requestRelayout());
+        height.addOnUpdate(a -> getDomElement().requestRelayout());
     }
 
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
 
+        double width =  Math.min(this.width.getValue(), constraintBox.getMaxWidth());
+        double height =  Math.min(this.height.getValue(), constraintBox.getMaxHeight());
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            BLayout::new, SingleChildRenderer::new, BWidget::new
-    );
+        if (getDomElement().getChildren().isEmpty()) {
+            return new Size(width, height);
+        }
+
+        DomElement child = getDomElement().getChildren().get(0);
+        Size dim = child.getLayouter().layout(child, new ConstraintBox(
+                width, width, height, height
+        )); // force size heh.
+        child.setRelativeBound(new Rect(0,0,dim.getWidth(),dim.getHeight()));
+        return dim;
+    }
 }

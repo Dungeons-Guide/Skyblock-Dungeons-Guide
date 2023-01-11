@@ -19,27 +19,31 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.util.ResourceLocation;
 
-public class PopupMgr extends Widget {
+public class PopupMgr extends AnnotatedWidget {
     public PopupMgr(DomElement element) {
-        super(element);
-        loadAttributes();
-        loadFile(new ResourceLocation("dungeonsguide:gui/popupmgr.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/popupmgr.gui"));
     }
     // just stack
 
     @Bind(variableName = "stackRef")
     public final BindableAttribute<DomElement> domElementBindableAttribute = new BindableAttribute<>(DomElement.class);
 
+
+    @Export(attributeName = "$")
+    @Bind(variableName = "$")
+    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
+
+
     @Override
     public void onMount() {
         super.onMount();
-        getElement().getContext().CONTEXT.put("popup", this);
-        domElementBindableAttribute.getValue().addElement(
-                getSlots().get("$0"));
+        getDomElement().getContext().CONTEXT.put("popup", this);
     }
 
     @Override
@@ -57,8 +61,4 @@ public class PopupMgr extends Widget {
                 domElementBindableAttribute.getValue().getChildren().get(0)
         );
     }
-
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.ComponentCreator(
-            PopupMgr::new
-    );
 }

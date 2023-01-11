@@ -21,158 +21,159 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 
 import java.awt.*;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
-public class Row {
-    public static class RLayout extends Layouter {
-        public RLayout(DomElement element) {
-            super(element);
-            controller = (RWidget) element.getWidget();
+public class Row extends AnnotatedExportOnlyWidget implements Layouter {
+    public static enum CrossAxisAlignment {
+        START, CENTER, END, STRETCH
+    }
+    public static enum MainAxisAlignment {
+        START, CENTER, END, SPACE_EVENLY, SPACE_AROUND, SPACE_BETWEEN
+    }
+
+    @Export(attributeName = "crossAlign")
+    public final BindableAttribute<CrossAxisAlignment> vAlign = new BindableAttribute<>(CrossAxisAlignment.class, CrossAxisAlignment.CENTER);
+
+    @Export(attributeName = "mainAlign")
+    public final BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
+
+    @Export(attributeName = "$")
+    public final BindableAttribute<WidgetList> children = new BindableAttribute<>(WidgetList.class);
+    
+    public Row() {
+        hAlign.addOnUpdate(a -> getDomElement().requestRelayout());
+        vAlign.addOnUpdate(a -> getDomElement().requestRelayout());
+    }
+
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return children.getValue();
+    }
+
+    @Override
+    protected Renderer createRenderer() {
+        return OnlyChildrenRenderer.INSTANCE;
+    }
+
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        double height = 0;
+        double width = 0;
+        double effwidth = constraintBox.getMaxWidth(); // max does not count for row.
+
+        CrossAxisAlignment crossAxisAlignment = vAlign.getValue();
+        MainAxisAlignment mainAxisAlignment = hAlign.getValue();
+        Map<DomElement, Size> saved = new HashMap<>();
+
+        for (DomElement child : getDomElement().getChildren()) {
+            if (!(child.getWidget() instanceof Flexible)) {
+                Size requiredSize = child.getLayouter().layout(child, new ConstraintBox(
+                        0, Integer.MAX_VALUE,
+                        crossAxisAlignment == CrossAxisAlignment.STRETCH ? constraintBox.getMaxHeight() : 0, constraintBox.getMaxHeight()
+                ));
+                saved.put(child, requiredSize);
+                height = Math.max(height, requiredSize.getHeight());
+                width += requiredSize.getWidth();
+            }
         }
-        RWidget controller;
 
-        @Override
-        public Dimension layout(ConstraintBox constraints) {
-            int height = 0;
-            int width = 0;
-            int effwidth = constraints.getMaxWidth(); // max does not count for row.
 
-            RWidget.CrossAxisAlignment crossAxisAlignment = controller.vAlign.getValue();
-            RWidget.MainAxisAlignment mainAxisAlignment = controller.hAlign.getValue();
-            Map<DomElement, Dimension> saved = new HashMap<>();
+        boolean flexFound = false;
+        int sumFlex = 0;
+        for (DomElement child : getDomElement().getChildren()) {
+            if (child.getWidget() instanceof Flexible) {
+                sumFlex += Math.min(1, ((Flexible) child.getWidget()).flex.getValue());
+                flexFound =true;
+            }
+        }
+
+        if (flexFound && effwidth == Integer.MAX_VALUE) throw new IllegalStateException("Max width can not be infinite with flex elements");
+        else if (effwidth == Integer.MAX_VALUE) effwidth = width;
+
+        if (flexFound) {
+            double remainingWidth = effwidth - width;
+            double widthPer = remainingWidth / sumFlex;
 
             for (DomElement child : getDomElement().getChildren()) {
-                if (!(child.getWidget() instanceof Flexible.FWidget)) {
-                    Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
-                            0, Integer.MAX_VALUE,
-                            crossAxisAlignment == RWidget.CrossAxisAlignment.STRETCH ? constraints.getMaxHeight() : 0, constraints.getMaxHeight()
+                if (child.getWidget() instanceof Flexible) {
+                    Size requiredSize = child.getLayouter().layout(child, new ConstraintBox(
+                            0, widthPer * ((Flexible) child.getWidget()).flex.getValue(),
+                            crossAxisAlignment == CrossAxisAlignment.STRETCH ? constraintBox.getMaxHeight() : 0, constraintBox.getMaxHeight()
                     ));
                     saved.put(child, requiredSize);
-                    height = Math.max(height, requiredSize.height);
-                    width += requiredSize.width;
+                    height = Math.max(height, requiredSize.getHeight());
+                    width += requiredSize.getWidth();
                 }
             }
+        }
 
 
-            boolean flexFound = false;
-            int sumFlex = 0;
-            for (DomElement child : getDomElement().getChildren()) {
-                if (child.getWidget() instanceof Flexible.FWidget) {
-                    sumFlex += Math.min(1, ((Flexible.FWidget) child.getWidget()).flex.getValue());
-                    flexFound =true;
-                }
-            }
-
-            if (flexFound && effwidth == Integer.MAX_VALUE) throw new IllegalStateException("Max width can not be infinite with flex elements");
-            else if (effwidth == Integer.MAX_VALUE) effwidth = width;
-
-            if (flexFound) {
-                int remainingWidth = effwidth - width;
-                int widthPer = remainingWidth / sumFlex;
-
-                for (DomElement child : getDomElement().getChildren()) {
-                    if (child.getWidget() instanceof Flexible.FWidget) {
-                        Dimension requiredSize = child.getLayouter().layout(new ConstraintBox(
-                                0, widthPer * ((Flexible.FWidget) child.getWidget()).flex.getValue(),
-                                crossAxisAlignment == RWidget.CrossAxisAlignment.STRETCH ? constraints.getMaxHeight() : 0, constraints.getMaxHeight()
-                        ));
-                        saved.put(child, requiredSize);
-                        height = Math.max(height, requiredSize.height);
-                        width += requiredSize.width;
-                    }
-                }
-            }
-
-
-            height = constraints.getMaxHeight() == Integer.MAX_VALUE ? height : constraints.getMaxHeight();
+        height = constraintBox.getMaxHeight() == Integer.MAX_VALUE ? height : constraintBox.getMaxHeight();
 
 
 
-            int startx = 0;
-            int widthDelta = 0;
+        double startx = 0;
+        double widthDelta = 0;
 
-            if (mainAxisAlignment == RWidget.MainAxisAlignment.CENTER)
+        if (mainAxisAlignment == MainAxisAlignment.CENTER)
+            startx = (effwidth - width) / 2;
+        else if (mainAxisAlignment == MainAxisAlignment.END)
+            startx = effwidth - width;
+        else if (mainAxisAlignment == MainAxisAlignment.SPACE_BETWEEN) {
+            double remaining = effwidth - width;
+            if (remaining > 0) {
+                startx = 0;
+                widthDelta = remaining / (getDomElement().getChildren().size()-1);
+            } else {
                 startx = (effwidth - width) / 2;
-            else if (mainAxisAlignment == RWidget.MainAxisAlignment.END)
-                startx = effwidth - width;
-            else if (mainAxisAlignment == RWidget.MainAxisAlignment.SPACE_BETWEEN) {
-                int remaining = effwidth - width;
-                if (remaining > 0) {
-                    startx = 0;
-                    widthDelta = remaining / (getDomElement().getChildren().size()-1);
-                } else {
-                    startx = (effwidth - width) / 2;
-                }
-            } else if (mainAxisAlignment == RWidget.MainAxisAlignment.SPACE_EVENLY) {
-                int remaining = effwidth - width;
-                if (remaining > 0) {
-                    widthDelta = remaining / (getDomElement().getChildren().size()+1);
-                    startx = widthDelta;
-                } else {
-                    startx = (effwidth - width) / 2;
-                }
-            } else if (mainAxisAlignment == RWidget.MainAxisAlignment.SPACE_AROUND) {
-                int remaining = effwidth - width;
-                if (remaining > 0) {
-                    widthDelta = 2 * remaining / getDomElement().getChildren().size();
-                    startx = widthDelta / 2;
-                } else {
-                    startx = (effwidth - width / 2);
-                }
             }
-
-            for (DomElement child : getDomElement().getChildren()) {
-                Dimension size = saved.get(child);
-
-                child.setRelativeBound(new Rectangle(
-                        startx,
-                            crossAxisAlignment == RWidget.CrossAxisAlignment.START ? 0 :
-                            crossAxisAlignment == RWidget.CrossAxisAlignment.CENTER ? (height-size.height)/2 :
-                            crossAxisAlignment == RWidget.CrossAxisAlignment.STRETCH ? (height-size.height)/2 :
-                                            height - size.height,size.width, size.height
-                ));
-                startx += size.width;
-                startx += widthDelta;
+        } else if (mainAxisAlignment == MainAxisAlignment.SPACE_EVENLY) {
+            double remaining = effwidth - width;
+            if (remaining > 0) {
+                widthDelta = remaining / (getDomElement().getChildren().size()+1);
+                startx = widthDelta;
+            } else {
+                startx = (effwidth - width) / 2;
             }
-            return new Dimension(
-                    effwidth,
-                    height
-            );
+        } else if (mainAxisAlignment == MainAxisAlignment.SPACE_AROUND) {
+            double remaining = effwidth - width;
+            if (remaining > 0) {
+                widthDelta = 2 * remaining / getDomElement().getChildren().size();
+                startx = widthDelta / 2;
+            } else {
+                startx = (effwidth - width / 2);
+            }
         }
+
+        for (DomElement child : getDomElement().getChildren()) {
+            Size size = saved.get(child);
+
+            child.setRelativeBound(new Rect(
+                    startx,
+                    crossAxisAlignment == CrossAxisAlignment.START ? 0 :
+                            crossAxisAlignment == CrossAxisAlignment.CENTER ? (height-size.getHeight())/2 :
+                                    crossAxisAlignment == CrossAxisAlignment.STRETCH ? (height-size.getHeight())/2 :
+                                            height - size.getHeight(),size.getWidth(), size.getHeight()
+            ));
+            startx += size.getWidth();
+            startx += widthDelta;
+        }
+        return new Size(
+                effwidth,
+                height
+        );
     }
-    public static class RWidget extends Widget {
-        public static enum CrossAxisAlignment {
-            START, CENTER, END, STRETCH
-        }
-        public static enum MainAxisAlignment {
-            START, CENTER, END, SPACE_EVENLY, SPACE_AROUND, SPACE_BETWEEN
-        }
-
-        @Export(attributeName = "crossAlign")
-        public final BindableAttribute<CrossAxisAlignment> vAlign = new BindableAttribute<>(CrossAxisAlignment.class, CrossAxisAlignment.CENTER);
-
-        @Export(attributeName = "mainAlign")
-        public final BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
-
-        public RWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-
-            hAlign.addOnUpdate(a -> element.requestRelayout());
-            vAlign.addOnUpdate(a -> element.requestRelayout());
-        }
-    }
-
-
-
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            RLayout::new, OnlyChildrenRenderer::new, RWidget::new
-    );
 }

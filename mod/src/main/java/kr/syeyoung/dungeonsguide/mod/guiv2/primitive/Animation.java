@@ -18,11 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.primitive;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public class Animation<T> {
+    private long startMillies;
+    private double lengthMillies;
 
-@Data @AllArgsConstructor
-public class Position implements IPosition {
-    public final double x;
-    public final double y;
+    private T start;
+    private T end;
+
+    public Animation(long startMillies, double lengthMillies, T start, T end) {
+        this.startMillies = startMillies;
+        this.lengthMillies = lengthMillies;
+        this.start = start;
+        this.end = end;
+    }
+
+    public double getPhase() {
+        return (System.currentTimeMillis() - startMillies) / lengthMillies;
+    }
 }

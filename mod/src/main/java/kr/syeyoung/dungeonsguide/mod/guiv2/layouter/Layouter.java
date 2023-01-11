@@ -18,17 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-
-import java.awt.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 
 public interface Layouter {
-    public abstract Dimension layout(ConstraintBox constraintBox);
-
-    default boolean shouldRelayout() {
-        return true;
-    }
-    public static int clamp(int val, int min, int max) {
+    public abstract Size layout(DomElement buildContext, ConstraintBox constraintBox);
+    public static double clamp(double val, double min, double max) {
         if (val < min) return min;
         if (val > max) return max;
         return val;

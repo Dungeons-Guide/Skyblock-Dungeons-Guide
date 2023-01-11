@@ -19,14 +19,17 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderBuilder;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.awt.*;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -36,10 +39,10 @@ public class DomElement {
     private Widget widget;
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private RenderBuilder renderer; // renders element itself.
+    private Renderer renderer = DrawNothingRenderer.INSTANCE; // renders element itself.
     @Getter
     @Setter(AccessLevel.PACKAGE)
-    private Layouter layouter; // layouts subelements
+    private Layouter layouter = NullLayouter.INSTANCE; // layouts subelements
 
     @Getter
     @Setter(AccessLevel.PRIVATE)
@@ -77,14 +80,18 @@ public class DomElement {
     }
 
     @Getter
-    private Rectangle relativeBound; // relative bound from parent, unapplied transformation
+    private Rect relativeBound; // relative bound from parent, unapplied transformation
 
-    public void setRelativeBound(Rectangle relativeBound) {
+    public void setRelativeBound(Rect relativeBound) {
         this.relativeBound = relativeBound;
+        this.size = new Size(relativeBound.getWidth(), relativeBound.getHeight());
     }
 
     @Getter @Setter
-    private Rectangle absBounds; // absolute bound from screen top left
+    private Size size;
+
+    @Getter @Setter
+    private Rect absBounds; // absolute bound from screen top left
 
 
 
@@ -149,19 +156,15 @@ public class DomElement {
         return context.getValue(DomElement.class, "focus") == this;
     }
 
-    public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
+    public boolean mouseClicked0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int mouseButton) {
         if (!absBounds.contains(absMouseX, absMouseY)) {
             return false;
         }
 
         for (DomElement childComponent  : children) {
-            Rectangle original = childComponent.getRelativeBound();
-            Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = original.width / transformed.getWidth();
-            double YscaleFactor = original.height / transformed.getHeight();
+            Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            if (childComponent.mouseClicked0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
-                    (int) ((relMouseY0 - transformed.y) * YscaleFactor), mouseButton)) {
+            if (childComponent.mouseClicked0(absMouseX, absMouseY, transformed.x, transformed.y, mouseButton)) {
                 return true;
             }
         }
@@ -170,51 +173,41 @@ public class DomElement {
     }
 
 
-    public void mouseReleased0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int state) {
+    public void mouseReleased0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int state) {
         if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent : children) {
-            Rectangle original = childComponent.getRelativeBound();
-            Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = original.width / transformed.getWidth();
-            double YscaleFactor = original.height / transformed.getHeight();
+            Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            childComponent.mouseReleased0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
-                    (int) ((relMouseY0 - transformed.y)*YscaleFactor), state);
+            childComponent.mouseReleased0(absMouseX, absMouseY, transformed.x, transformed.y, state);
         }
         widget.mouseReleased(absMouseX, absMouseY, relMouseX0, relMouseY0, state);
     }
 
-    public void mouseClickMove0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
+    public void mouseClickMove0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
         if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent  : children) {
-            Rectangle original = childComponent.getRelativeBound();
-            Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = original.width / transformed.getWidth();
-            double YscaleFactor = original.height / transformed.getHeight();
-            childComponent.mouseClickMove0(absMouseX, absMouseY, (int) ((relMouseX0 - transformed.x) * XscaleFactor),
-                    (int) ((relMouseY0 - transformed.y)*YscaleFactor), clickedMouseButton, timeSinceLastClick);
+            Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
+
+            childComponent.mouseClickMove0(absMouseX, absMouseY, transformed.x, transformed.y, clickedMouseButton, timeSinceLastClick);
         }
         widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
     }
-    public void mouseScrolled0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {
+    public void mouseScrolled0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
         if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent  : children) {
-            Rectangle original = childComponent.getRelativeBound();
-            Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = original.width / transformed.getWidth();
-            double YscaleFactor = original.height / transformed.getHeight();
-            childComponent.mouseScrolled0(absMouseX, absMouseY,  (int) ((relMouseX0 - transformed.x) * XscaleFactor),
-                    (int) ((relMouseY0 - transformed.y)*YscaleFactor), scrollAmount);
+            Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
+
+            childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount);
         }
         widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
     }
 
 
     private boolean wasMouseIn = false;
-    public void mouseMoved0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {
+    public void mouseMoved0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
         if (!absBounds.contains(absMouseX, absMouseY)) {
             if (wasMouseIn) widget.mouseExited(absMouseX, absMouseY, relMouseX0, relMouseY0);
             wasMouseIn = false;
@@ -223,15 +216,12 @@ public class DomElement {
         if (!wasMouseIn) widget.mouseEntered(absMouseX, absMouseY, relMouseX0, relMouseY0);
         wasMouseIn = true;
 
-        widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
         for (DomElement childComponent  : children) {
-            Rectangle original = childComponent.getRelativeBound();
-            Rectangle transformed = renderer.applyTransformation(childComponent);
-            double XscaleFactor = original.width / transformed.getWidth();
-            double YscaleFactor = original.height / transformed.getHeight();
-            childComponent.mouseMoved0(absMouseX, absMouseY,  (int) ((relMouseX0 - transformed.x) * XscaleFactor),
-                    (int) ((relMouseY0 - transformed.y)*YscaleFactor));
+            Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
+
+            childComponent.mouseMoved0(absMouseX, absMouseY,  transformed.x, transformed.getY());
         }
+        widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
     }
 
     public void setCursor(EnumCursor enumCursor) {

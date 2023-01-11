@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data @AllArgsConstructor
-public class Size {
-    private final float width, height;
+public class Size implements ISize {
+    private final double width;
+    private final double height;
 }

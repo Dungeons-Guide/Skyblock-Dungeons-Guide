@@ -18,103 +18,123 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import scala.tools.nsc.doc.base.comment.Link;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.LinkedList;
+import java.util.List;
 
-public class Border {
-    public static class BLayouter extends Layouter {
-        private BWidget controller;
-        public BLayouter(DomElement element) {
-            super(element);
-            this.controller = (BWidget) element.getWidget();
+public class Border extends AnnotatedExportOnlyWidget implements Layouter {
+    @Export(attributeName = "$left")
+    public BindableAttribute<Widget> left = new BindableAttribute<>(Widget.class);
+    @Export(attributeName = "$right")
+    public BindableAttribute<Widget> right = new BindableAttribute<>(Widget.class);
+    @Export(attributeName = "$top")
+    public BindableAttribute<Widget> top = new BindableAttribute<>(Widget.class);
+    @Export(attributeName = "$bottom")
+    public BindableAttribute<Widget> bottom = new BindableAttribute<>(Widget.class);
+    @Export(attributeName = "$content")
+    public BindableAttribute<Widget> content = new BindableAttribute<>(Widget.class);
+
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        // layout borders, ask them about their constraints
+        // then layout content with space less than blahblah
+        // then relayout borders.
+        DomElement top = null, bottom = null, left = null, right = null, content = null;
+        for (DomElement child : buildContext.getChildren()) {
+            if (child.getWidget() == this.top.getValue()) top = child;
+            if (child.getWidget() == this.bottom.getValue()) bottom = child;
+            if (child.getWidget() == this.left.getValue()) left = child;
+            if (child.getWidget() == this.right.getValue()) right = child;
+            if (child.getWidget() == this.content.getValue()) content = child;
         }
 
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-            // layout borders, ask them about their constraints
-            // then layout content with space less than blahblah
-            // then relayout borders.
-            int th = 0, bh = 0;
-            {
-                if (controller.top != null)
-                    th= controller.top.getLayouter().layout(new ConstraintBox(constraintBox.getMaxWidth(), constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight())).height;
-                if (controller.bottom != null)
-                    bh = controller.bottom.getLayouter().layout(new ConstraintBox(constraintBox.getMaxWidth(), constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight())).height;
-            }
-
-            int lw = 0, rw = 0;
-            {
-                if (controller.left != null)
-                    lw= controller.left.getLayouter().layout(new ConstraintBox(0, constraintBox.getMaxWidth(), constraintBox.getMaxHeight(), constraintBox.getMaxHeight())).width;
-                if (controller.right != null)
-                    rw= controller.right.getLayouter().layout(new ConstraintBox(0, constraintBox.getMaxWidth(), constraintBox.getMaxHeight(), constraintBox.getMaxHeight())).width;
-            }
-
-            Dimension dimension = controller.content.getLayouter().layout(new ConstraintBox(
-                    0, constraintBox.getMaxWidth() - lw - rw,
-                    0, constraintBox.getMaxHeight() - th - bh
-            ));
 
 
-            {
-                if (controller.left != null)
-                    lw= controller.left.getLayouter().layout(new ConstraintBox(lw, lw, dimension.height, dimension.height)).width;
-                if (controller.right != null)
-                    rw= controller.right.getLayouter().layout(new ConstraintBox(rw, rw, dimension.height, dimension.height)).width;
-            }
-            {
-                if (controller.top != null)
-                    th= controller.top.getLayouter().layout(new ConstraintBox(dimension.width + lw + rw, dimension.width + lw + rw,  th, th)).height;
-                if (controller.bottom != null)
-                    bh = controller.bottom.getLayouter().layout(new ConstraintBox(dimension.width + lw + rw, dimension.width + lw + rw,  bh,bh)).height;
-            }
-
-            if (controller.top != null)
-                controller.top.setRelativeBound(new Rectangle(0,0, dimension.width + lw + rw, th));
-            if (controller.bottom != null)
-                controller.bottom.setRelativeBound(new Rectangle(0, dimension.height + th, dimension.width + lw + rw, bh));
-            if (controller.left != null)
-                controller.left.setRelativeBound(new Rectangle(0, th, lw, dimension.height));
-            if (controller.right != null)
-                controller.right.setRelativeBound(new Rectangle(lw + dimension.width, th, rw, dimension.height));
-
-            controller.content.setRelativeBound(new Rectangle(
-                    th, lw, dimension.width, dimension.height
-            ));
-
-
-
-            return new Dimension(dimension.width + lw + rw, dimension.height + th + bh);
+        double th = 0, bh = 0;
+        {
+            if (top != null)
+                th= top.getLayouter().layout(top, new ConstraintBox(constraintBox.getMaxWidth(), constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight())).getHeight();
+            if (bottom != null)
+                bh = bottom.getLayouter().layout(bottom, new ConstraintBox(constraintBox.getMaxWidth(), constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight())).getHeight();
         }
+
+        double lw = 0, rw = 0;
+        {
+            if (left != null)
+                lw= left.getLayouter().layout(left, new ConstraintBox(0, constraintBox.getMaxWidth(), constraintBox.getMaxHeight(), constraintBox.getMaxHeight())).getWidth();
+            if (right != null)
+                rw= right.getLayouter().layout(right, new ConstraintBox(0, constraintBox.getMaxWidth(), constraintBox.getMaxHeight(), constraintBox.getMaxHeight())).getWidth();
+        }
+
+        Size dimension = content.getLayouter().layout(content, new ConstraintBox(
+                0, constraintBox.getMaxWidth() - lw - rw,
+                0, constraintBox.getMaxHeight() - th - bh
+        ));
+
+
+        {
+            if (left != null)
+                lw= left.getLayouter().layout(left, new ConstraintBox(lw, lw, dimension.getHeight(), dimension.getHeight())).getWidth();
+            if (right != null)
+                rw= right.getLayouter().layout(right, new ConstraintBox(rw, rw, dimension.getHeight(), dimension.getHeight())).getWidth();
+        }
+        {
+            if (top != null)
+                th= top.getLayouter().layout(top, new ConstraintBox(dimension.getWidth() + lw + rw, dimension.getWidth() + lw + rw,  th, th)).getHeight();
+            if (bottom != null)
+                bh = bottom.getLayouter().layout(buildContext, new ConstraintBox(dimension.getWidth() + lw + rw, dimension.getWidth() + lw + rw,  bh,bh)).getHeight();
+        }
+
+        if (top != null)
+            top.setRelativeBound(new Rect(0,0, dimension.getWidth() + lw + rw, th));
+        if (bottom != null)
+            bottom.setRelativeBound(new Rect(0, dimension.getHeight() + th, dimension.getWidth() + lw + rw, bh));
+        if (left != null)
+            left.setRelativeBound(new Rect(0, th, lw, dimension.getHeight()));
+        if (right != null)
+            right.setRelativeBound(new Rect(lw + dimension.getWidth(), th, rw, dimension.getHeight()));
+
+        content.setRelativeBound(new Rect(
+                th, lw, dimension.getWidth(), dimension.getHeight()
+        ));
+
+
+
+        return new Size(dimension.getWidth() + lw + rw, dimension.getHeight() + th + bh);
     }
 
-    public static class BWidget extends Widget {
-        DomElement left, right, top, bottom, content;
-        public BWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-
-            if (!getSlots().containsKey("content")) throw new IllegalArgumentException("No content for border?");
-
-            if (getSlots().containsKey("left"))
-                element.addElement(left =getSlots().get("left"));
-            if (getSlots().containsKey("right"))
-                element.addElement(right = getSlots().get("right"));
-            if (getSlots().containsKey("top"))
-                element.addElement(top = getSlots().get("top"));
-            if (getSlots().containsKey("bottom"))
-                element.addElement(bottom = getSlots().get("bottom"));
-            element.addElement(content = getSlots().get("content"));
-        }
+    @Override
+    protected Renderer createRenderer() {
+        return OnlyChildrenRenderer.INSTANCE;
     }
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            BLayouter::new, OnlyChildrenRenderer::new, BWidget::new
-    );
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        List<Widget> widgets = new LinkedList<>();
+        widgets.add(content.getValue());
+        if (top.getValue() != null)
+            widgets.add(top.getValue());
+        if (bottom.getValue() != null)
+            widgets.add(bottom.getValue());
+        if (left.getValue() != null)
+            widgets.add(left.getValue());
+        if (right.getValue() != null)
+            widgets.add(right.getValue());
+        return widgets;
+    }
 }

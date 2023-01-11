@@ -19,41 +19,33 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import net.minecraft.client.renderer.GlStateManager;
 
-import java.awt.*;
-
-public class OnlyChildrenRenderer extends Renderer {
-    public OnlyChildrenRenderer(DomElement domElement) {
-        super(domElement);
-    }
-
-    public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
-        for (DomElement value : getDomElement().getChildren()) {
-            Rectangle original = value.getRelativeBound();
+public class OnlyChildrenRenderer implements Renderer {
+    public static OnlyChildrenRenderer INSTANCE = new OnlyChildrenRenderer();
+    protected OnlyChildrenRenderer() {}
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+        for (DomElement value : buildContext.getChildren()) {
+            Rect original = value.getRelativeBound();
             GlStateManager.pushMatrix();
-            GlStateManager.translate(original.x, original.y, 0);
+            GlStateManager.translate(original.getX(), original.getY(), 0);
 
-            double absXScale = getDomElement().getAbsBounds().getWidth() / getDomElement().getRelativeBound().width;
-            double absYScale = getDomElement().getAbsBounds().getHeight() / getDomElement().getRelativeBound().height;
+            double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
+            double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
 
-            Rectangle elementABSBound = new Rectangle(
-                    (int) (getDomElement().getAbsBounds().x + original.x * absXScale),
-                    (int) (getDomElement().getAbsBounds().y + original.y * absYScale),
-                    (int) (original.width * absXScale),
-                    (int) (original.height * absYScale)
+            Rect elementABSBound = new Rect(
+                     (buildContext.getAbsBounds().getX() + original.getX() * absXScale),
+                     (buildContext.getAbsBounds().getY() + original.getY() * absYScale),
+                     (original.getWidth() * absXScale),
+                     (original.getHeight() * absYScale)
             );
             value.setAbsBounds(elementABSBound);
 
             value.getRenderer().doRender(absMouseX, absMouseY,
-                    relMouseX - original.x,
-                    relMouseY - original.y, partialTicks);
+                    relMouseX - original.getX(),
+                    relMouseY - original.getY(), partialTicks,renderingContext, value);
             GlStateManager.popMatrix();
         }
-    }
-
-    @Override
-    public final Rectangle applyTransformation(DomElement target) {
-        return target.getRelativeBound();
     }
 }

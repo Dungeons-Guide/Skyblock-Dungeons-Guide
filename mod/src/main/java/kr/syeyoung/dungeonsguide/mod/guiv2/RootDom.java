@@ -18,13 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 
 public class RootDom extends DomElement {
-    public RootDom() {
+    public RootDom(Widget widget) {
         context = new Context();
+        setLayouter(SingleChildPassingLayouter.INSTANCE);
+        setRenderer(SingleChildRenderer.INSTANCE);
+
+
+        DomElement domElement = widget.createDomElement(this);
+        this.addElement(domElement); // and it's mounted!
     }
 
     @Getter
@@ -45,7 +53,7 @@ public class RootDom extends DomElement {
     }
 
     @Override
-    public boolean mouseClicked0(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int mouseButton) {
+    public boolean mouseClicked0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int mouseButton) {
         boolean res = super.mouseClicked0(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
         if (!res)
             requestRelayout();

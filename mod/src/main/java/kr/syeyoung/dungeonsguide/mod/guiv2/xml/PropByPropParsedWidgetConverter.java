@@ -19,14 +19,22 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElementList;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 
 import java.lang.invoke.LambdaMetafactory;
 import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
+import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extends Widget & ImportingWidget> implements ParsedWidgetConverter<W, R> {
 
@@ -77,6 +85,43 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                 bindableAttribute.setValue(element.getConvertedAttributeValue(bindableAttribute.getType(), attribute));
             }
         }
+
+
+        Map<String, List<ParserElement>> children = new HashMap<>();
+        children.put("", new LinkedList<>());
+        for (ParserElement child : element.getChildren()) {
+            String slotName = child.getAttributeValue("slot");
+            if (slotName == null) slotName = "";
+
+            if (!children.containsKey(slotName))
+                children.put(slotName, new LinkedList<>());
+            children.get(slotName).add(child);
+        }
+
+        for (Map.Entry<String, List<ParserElement>> stringListEntry : children.entrySet()) {
+            BindableAttribute attribute = getExportedAttribute(partial, "$"+stringListEntry.getKey());
+            if (attribute == null) {
+                // ???
+            } else {
+                List<ParserElement> elements = stringListEntry.getValue();
+                if (attribute.getType() == ParserElement.class) {
+                    if (elements.size() != 1) throw new IllegalArgumentException("More than 1 for single parser element: "+stringListEntry.getKey());
+                    attribute.setValue(elements.get(0));
+                } else if (attribute.getType() == Widget.class) {
+                    if (elements.size() != 1) throw new IllegalArgumentException("More than 1 for single widget: "+stringListEntry.getKey());
+                    attribute.setValue(DomElementRegistry.obtainConverter(elements.get(0).getNodename())
+                            .convert(rootWidget, elements.get(0)));
+                } else if (attribute.getType() == ParserElementList.class) {
+                    attribute.setValue(elements);
+                } else if (attribute.getType() == WidgetList.class) {
+                    attribute.setValue(
+                            elements.stream()
+                                    .map(a -> DomElementRegistry.obtainConverter(a.getNodename()).convert(rootWidget, a))
+                                    .collect(Collectors.toList()));
+                }
+            }
+        }
+
         return partial;
     }
 }

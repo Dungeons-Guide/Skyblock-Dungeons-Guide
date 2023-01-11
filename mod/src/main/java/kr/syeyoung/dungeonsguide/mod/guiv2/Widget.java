@@ -19,20 +19,14 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderBuilder;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.ResourceLocation;
-import org.apache.commons.lang3.reflect.FieldUtils;
-import org.w3c.dom.*;
-import org.xml.sax.SAXException;
 
-import javax.xml.parsers.ParserConfigurationException;
-import java.io.IOException;
-import java.io.InputStream;
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
 import java.util.*;
 
 public abstract class Widget {
@@ -46,8 +40,8 @@ public abstract class Widget {
         domElement.setWidget(this);
         parent.addElement(domElement);
 
-        if (this instanceof Layouter) domElement.setLayouter((Layouter) this);
-        if (this instanceof RenderBuilder) domElement.setRenderer((RenderBuilder) this);
+        domElement.setLayouter(createLayouter());
+        domElement.setRenderer(createRenderer());
 
         // build
         List<Widget> widgets = build(domElement);
@@ -55,6 +49,15 @@ public abstract class Widget {
             widget.build(domElement);
         }
         return domElement;
+    }
+
+    protected Layouter createLayouter() {
+        if (this instanceof Layouter) return (Layouter) this;
+        return SingleChildPassingLayouter.INSTANCE;
+    }
+    protected Renderer createRenderer() {
+        if (this instanceof Renderer) return (Renderer) this;
+        return SingleChildRenderer.INSTANCE;
     }
 
     public abstract List<Widget> build(DomElement buildContext);
@@ -67,18 +70,18 @@ public abstract class Widget {
     }
 
 
-    public void mouseScrolled(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0, int scrollAmount) {}
-    public void mouseMoved(int absMouseX, int absMouseY, int relMouseX0, int relMouseY0) {}
-    public void mouseClickMove(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
-    public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {}
-    public boolean mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
+    public void mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {}
+    public void mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {}
+    public void mouseClickMove(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
+    public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {}
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
         return false;
     }
     public void keyReleased(char typedChar, int keyCode) {}
     public void keyHeld(char typedChar, int keyCode) {}
     public void keyPressed(char typedChar, int keyCode) {}
-    public void mouseExited(int absMouseX, int absMouseY, int relMouseX, int relMouseY) {}
-    public void mouseEntered(int absMouseX, int absMouseY, int relMouseX, int relMouseY) {}
+    public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
+    public void mouseEntered(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {}
 
     public void onMount() {
     }

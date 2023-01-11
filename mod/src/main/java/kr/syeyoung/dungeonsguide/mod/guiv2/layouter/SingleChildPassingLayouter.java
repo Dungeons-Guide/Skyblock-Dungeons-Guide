@@ -20,22 +20,23 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 
-import java.awt.*;
-
-public class SingleChildPassingLayouter extends Layouter {
-    public SingleChildPassingLayouter(DomElement element) {
-        super(element);
-    }
+public class SingleChildPassingLayouter implements Layouter {
+    public static final SingleChildPassingLayouter INSTANCE = new SingleChildPassingLayouter();
+    private SingleChildPassingLayouter() {}
 
     @Override
-    public Dimension layout(ConstraintBox constraintBox) {
-        if (getDomElement().getChildren().isEmpty()) {
-            return new Dimension(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        if (buildContext.getChildren().isEmpty()) {
+            return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
         }
 
-        Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(constraintBox);
-        getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
-        return new Dimension(dim.width, dim.height);
+        DomElement childCtx = buildContext.getChildren().get(0);
+
+        Size dim = childCtx.getLayouter().layout(childCtx, constraintBox);
+        childCtx.setRelativeBound(new Rect(0,0, dim.getWidth(), dim.getHeight()));
+        return new Size(dim.getWidth(), dim.getHeight());
     }
 }

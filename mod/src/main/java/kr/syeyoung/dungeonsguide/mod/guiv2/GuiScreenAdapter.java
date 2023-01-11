@@ -19,6 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;
@@ -31,7 +34,6 @@ import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
 import java.io.IOException;
 import java.util.Objects;
 
@@ -43,8 +45,9 @@ public class GuiScreenAdapter extends GuiScreen {
     private final RootDom view;
     private boolean isOpen = false;
 
-    public GuiScreenAdapter(RootDom rootDom) {
-        this.view = Objects.requireNonNull(rootDom);
+    public GuiScreenAdapter(Widget widget) {
+        view = new RootDom(widget);
+
         try {
             Mouse.setNativeCursor(GLCursors.getCursor(EnumCursor.DEFAULT));
         } catch (Throwable e) {
@@ -57,9 +60,10 @@ public class GuiScreenAdapter extends GuiScreen {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
         isOpen = true;
-        view.setRelativeBound(new Rectangle(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.setAbsBounds(new Rectangle(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.getLayouter().layout(new ConstraintBox(
+        view.setRelativeBound(new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+        view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+        view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+        view.getLayouter().layout(view, new ConstraintBox(
                 Minecraft.getMinecraft().displayWidth,
                 Minecraft.getMinecraft().displayWidth,
                 Minecraft.getMinecraft().displayHeight,
@@ -75,7 +79,7 @@ public class GuiScreenAdapter extends GuiScreen {
 
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
-            view.getLayouter().layout(new ConstraintBox(
+            view.getLayouter().layout(view, new ConstraintBox(
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayHeight,
@@ -93,7 +97,7 @@ public class GuiScreenAdapter extends GuiScreen {
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-        view.getRenderer().doRender(i, j, i, j, partialTicks);
+        view.getRenderer().doRender(i, j, i, j, partialTicks, new RenderingContext(), view);
         GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
         GlStateManager.enableDepth();

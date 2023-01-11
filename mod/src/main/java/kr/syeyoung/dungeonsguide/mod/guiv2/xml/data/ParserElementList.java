@@ -16,7 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
+package kr.syeyoung.dungeonsguide.mod.guiv2.xml.data;
 
-public interface RenderBuilder {
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+
+import java.util.List;
+
+public interface ParserElementList extends List<ParserElement> {
 }

@@ -21,74 +21,81 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import net.minecraft.client.renderer.GlStateManager;
 
-import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
-public class Scaler {
-    public static class SLayouter extends Layouter {
-        private SWidget controller;
+public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Renderer {
 
-        public SLayouter(DomElement element) {
-            super(element);
-            this.controller = (SWidget) element.getWidget();
-        }
+    @Export(attributeName = "scale")
+    public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
 
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-            Dimension dims = getDomElement().getChildren().get(0).getLayouter().layout(new ConstraintBox(
-                    (int) (constraintBox.getMinWidth() / controller.scale.getValue()),
-                    (int) (constraintBox.getMaxWidth() / controller.scale.getValue()),
-                    (int) (constraintBox.getMinHeight() / controller.scale.getValue()),
-                    (int) (constraintBox.getMaxHeight() / controller.scale.getValue())
-            ));
 
-            getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0,
-                    (int) (dims.width),
-                    (int) (dims.height)));
+    @Export(attributeName = "$")
+    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
-            return new Dimension((int) (dims.width * controller.scale.getValue()), (int) (dims.height * controller.scale.getValue()));
-        }
+
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return Collections.singletonList(child.getValue());
+    }
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        DomElement child = getDomElement().getChildren().get(0);
+        Size dims = child.getLayouter().layout(child, new ConstraintBox(
+                (constraintBox.getMinWidth() / scale.getValue()),
+                (constraintBox.getMaxWidth() / scale.getValue()),
+                (constraintBox.getMinHeight() / scale.getValue()),
+                (constraintBox.getMaxHeight() / scale.getValue())
+        ));
+        child.setRelativeBound(new Rect(0,0,
+                (dims.getWidth() * scale.getValue()),
+                (dims.getHeight() * scale.getValue())));
+        child.setSize(new Size(dims.getWidth(), dims.getHeight()));
+
+        return new Size(dims.getWidth() * scale.getValue(), dims.getHeight() * scale.getValue());
     }
 
-    public static class SRenderer extends Renderer {
-        private SWidget controller;
-
-        public SRenderer(DomElement element) {
-            super(element);
-            this.controller = (SWidget) element.getWidget();
-        }
-
-        @Override
-        public Rectangle applyTransformation(DomElement target) {
-            Rectangle bound =
-                    target.getRelativeBound();
-            return new Rectangle(
-                    bound.x,
-                    bound.y,
-                    (int) (bound.width * controller.scale.getValue()),
-                    (int) (bound.height * controller.scale.getValue())
-            );
-        }
-    }
-
-    public static class SWidget extends Widget {
-        @Export(attributeName = "scale")
-        public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
-
-
-        public SWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-        }
+    @Override
+    public Position transformPoint(DomElement element, Position pos) {
+        Rect elementRect = element.getRelativeBound();
+        double relX = pos.getX() - elementRect.getX();
+        double relY = pos.getY() - elementRect.getY();
+        return new Position(relX / scale.getValue(), relY / scale.getValue());
     }
 
 
+    @Override
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        DomElement value = buildContext.getChildren().get(0);
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            SLayouter::new, SRenderer::new, SWidget::new
-    );
+        Rect original = value.getRelativeBound();
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(original.getX(), original.getY(), 0);
+        GlStateManager.scale(scale.getValue(), scale.getValue(), 1);
+
+        double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
+        double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
+
+        Rect elementABSBound = new Rect(
+                (buildContext.getAbsBounds().getX() + original.getX() * absXScale),
+                (buildContext.getAbsBounds().getY() + original.getY() * absYScale),
+                (original.getWidth() * absXScale),
+                (original.getHeight() * absYScale)
+        );
+        value.setAbsBounds(elementABSBound);
+
+        value.getRenderer().doRender(absMouseX, absMouseY,
+                (relMouseX - original.getX())  / scale.getValue(),
+                (relMouseY - original.getY()) / scale.getValue(), partialTicks, context, value);
+        GlStateManager.popMatrix();
+    }
 }

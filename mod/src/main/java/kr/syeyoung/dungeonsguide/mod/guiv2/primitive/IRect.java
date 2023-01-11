@@ -18,11 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.primitive;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public interface IRect {
+    default boolean contains(double x, double y) {
+        return getX() <= x && x < getX() + getWidth() &&
+                getY() <= y && y < getY()+ getHeight();
+    }
 
-@Data @AllArgsConstructor
-public class Position implements IPosition {
-    public final double x;
-    public final double y;
+    double getX();
+
+    double getY();
+
+    double getWidth();
+
+    double getHeight();
 }

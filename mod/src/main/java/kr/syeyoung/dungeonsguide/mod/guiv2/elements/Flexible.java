@@ -21,59 +21,57 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 
 import java.awt.*;
+import java.util.Collections;
+import java.util.List;
 
 // yes it's that flexible from flutter
-public class Flexible {
-    public static class FLayout extends Layouter {
-        private FWidget controller;
-        public FLayout(DomElement element) {
-            super(element);
-            this.controller = (FWidget) element.getWidget();
-        }
+public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
 
-        @Override
-        public Dimension layout(ConstraintBox constraintBox) {
-            FWidget.FlexFit fit = controller.fit.getValue();
-            ConstraintBox box =
-                    fit == FWidget.FlexFit.TIGHT ?
-                            new ConstraintBox(constraintBox.getMaxWidth() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
-                                    , constraintBox.getMaxHeight() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
-                            : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
-            Dimension dim = getDomElement().getChildren().get(0).getLayouter().layout(box);
+    @Export(attributeName = "$")
+    public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
 
-            getDomElement().getChildren().get(0).setRelativeBound(new Rectangle(0,0, dim.width, dim.height));
-            return dim;
-        }
+    @Export(attributeName = "flex")
+    public final BindableAttribute<Integer> flex = new BindableAttribute<>(Integer.class, 1);
+
+    @Export(attributeName = "fit")
+    public final BindableAttribute<FlexFit> fit = new BindableAttribute<>(FlexFit.class, FlexFit.TIGHT);
+
+    public static enum FlexFit {
+        TIGHT, LOOSE
     }
 
-    public static class FWidget extends Widget {
-
-        @Export(attributeName = "flex")
-        public final BindableAttribute<Integer> flex = new BindableAttribute<>(Integer.class, 1);
-
-        @Export(attributeName = "fit")
-        public final BindableAttribute<FlexFit> fit = new BindableAttribute<>(FlexFit.class, FlexFit.TIGHT);
-
-        public static enum FlexFit {
-            TIGHT, LOOSE
-        }
-
-        public FWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-
-            flex.addOnUpdate(a -> element.requestRelayout());
-            fit.addOnUpdate(a -> element.requestRelayout());
-        }
+    public Flexible() {
+        flex.addOnUpdate(a -> getDomElement().requestRelayout());
+        fit.addOnUpdate(a -> getDomElement().requestRelayout());
     }
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            FLayout::new, SingleChildRenderer::new, FWidget::new
-    );
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return Collections.singletonList(widget.getValue());
+    }
+
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        FlexFit fit = this.fit.getValue();
+        ConstraintBox box =
+                fit == FlexFit.TIGHT ?
+                        new ConstraintBox(constraintBox.getMaxWidth() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
+                                , constraintBox.getMaxHeight() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
+                        : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        DomElement child = getDomElement().getChildren().get(0);
+
+        Size dim = child.getLayouter().layout(child, box);
+
+        getDomElement().getChildren().get(0).setRelativeBound(new Rect(0,0, dim.getWidth(),dim.getHeight()));
+        return dim;
+    }
 }

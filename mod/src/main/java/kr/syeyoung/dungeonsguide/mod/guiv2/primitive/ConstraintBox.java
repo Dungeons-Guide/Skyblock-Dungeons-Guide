@@ -25,16 +25,16 @@ import lombok.Getter;
 // Idea heavily taken from flutter.
 @AllArgsConstructor @Getter
 public class ConstraintBox {
-    private float minWidth;
-    private float maxWidth;
-    private float minHeight;
-    private float maxHeight;
+    private double minWidth;
+    private double maxWidth;
+    private double minHeight;
+    private double maxHeight;
 
-    public static ConstraintBox loose(float width, float height) {
+    public static ConstraintBox loose(double width, double height) {
         return new ConstraintBox(0,width,0,height);
     }
 
-    public static ConstraintBox tight(float width, float height) {
+    public static ConstraintBox tight(double width, double height) {
         return new ConstraintBox(width, width, height, height);
     }
 }

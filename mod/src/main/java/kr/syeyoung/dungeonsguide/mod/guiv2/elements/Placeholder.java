@@ -20,54 +20,47 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
-import net.minecraft.client.gui.Gui;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL11;
 
-public class Placeholder {
-    public static class PRenderer extends DrawNothingRenderer {
+import java.util.Collections;
+import java.util.List;
 
-        public PRenderer(DomElement domElement) {
-            super(domElement);
-        }
+public class Placeholder extends AnnotatedExportOnlyWidget implements Renderer {
 
-        @Override
-        public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
-            int w = getDomElement().getRelativeBound().width, h = getDomElement().getRelativeBound().height;
-            Gui.drawRect(0,0,w,h, 0xFFFFFFFF);
-            GlStateManager.color(0,0,0,1);
-            GlStateManager.disableTexture2D();
-            GL11.glLineWidth(1.0f);
-            GL11.glBegin(GL11.GL_LINE_LOOP);
-            GL11.glVertex2f(0,0);
-            GL11.glVertex2f(w, 0);
-            GL11.glVertex2f(w, h);
-            GL11.glVertex2f(0, h);
-            GL11.glEnd();
-            GL11.glBegin(GL11.GL_LINES);
-            GL11.glVertex2f(0,0);
-            GL11.glVertex2f(w,h);
-            GL11.glVertex2f(w,0);
-            GL11.glVertex2f(0, h);
-            GL11.glEnd();
-
-            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks);
-        }
-    }
-    public static class PWidget extends Widget {
-
-        public PWidget(DomElement element) {
-            super(element);
-            loadAttributes();
-            loadDom();
-        }
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return Collections.EMPTY_LIST;
     }
 
+    @Override
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
+        context.drawRect(0,0,w,h, 0xFFFFFFFF);
+        GlStateManager.color(0,0,0,1);
+        GlStateManager.disableTexture2D();
+        GL11.glLineWidth(1.0f);
+        GL11.glBegin(GL11.GL_LINE_LOOP);
+        GL11.glVertex2d(0,0);
+        GL11.glVertex2d(w, 0);
+        GL11.glVertex2d(w, h);
+        GL11.glVertex2d(0, h);
+        GL11.glEnd();
+        GL11.glBegin(GL11.GL_LINES);
+        GL11.glVertex2d(0,0);
+        GL11.glVertex2d(w,h);
+        GL11.glVertex2d(w,0);
+        GL11.glVertex2d(0, h);
+        GL11.glEnd();
+    }
 
-    public static final DomElementRegistry.DomElementCreator CREATOR = new DomElementRegistry.GeneralDomElementCreator(
-            NullLayouter::new, PRenderer::new, PWidget::new
-    );
+    @Override
+    protected Layouter createLayouter() {
+        return NullLayouter.INSTANCE;
+    }
 }

@@ -19,64 +19,16 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import lombok.Getter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.GlStateManager;
-import org.lwjgl.opengl.GL11;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 
-import java.awt.*;
+public interface Renderer {
+    void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext);
 
-public abstract class Renderer {
-    @Getter
-    private DomElement domElement;
-    public Renderer(DomElement domElement) {
-        this.domElement = domElement;
-    }
-
-    public void doRender(int absMouseX, int absMouseY, int relMouseX, int relMouseY, float partialTicks) {
-        for (DomElement value : domElement.getChildren()) {
-            Rectangle original = value.getRelativeBound();
-            Rectangle boundaryBox = applyTransformation(value);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(boundaryBox.x, boundaryBox.y, 0);
-            GlStateManager.scale(boundaryBox.getWidth() / original.width, boundaryBox.getHeight() / original.height, 1.0);
-
-
-            double absXScale = domElement.getAbsBounds().getWidth() / domElement.getRelativeBound().width;
-            double absYScale = domElement.getAbsBounds().getHeight() / domElement.getRelativeBound().height;
-
-            Rectangle elementABSBound = new Rectangle(
-                    (int) (domElement.getAbsBounds().x + boundaryBox.x * absXScale),
-                    (int) (domElement.getAbsBounds().y + boundaryBox.y * absYScale),
-                    (int) (boundaryBox.width * absXScale),
-                    (int) (boundaryBox.height * absYScale)
-            );
-            value.setAbsBounds(elementABSBound);
-
-            value.getRenderer().doRender(absMouseX, absMouseY,
-                        (relMouseX - boundaryBox.x) * original.width / boundaryBox.height,
-                        (relMouseY - boundaryBox.y) * original.height / boundaryBox.height, partialTicks);
-            GlStateManager.popMatrix();
-        }
-    }
-    public void clip(int x, int y, int width, int height) {
-        if (width < 0 || height < 0) return;
-
-        // transform the values to well... the thing
-        Rectangle valueinsystem = domElement.getRelativeBound();
-        Rectangle valueoutofsystem = domElement.getAbsBounds();
-
-        double xScale = valueoutofsystem.width / valueinsystem.getWidth();
-        double yScale = valueoutofsystem.height / valueinsystem.getHeight();
-
-        int resWidth = (int) Math.ceil(width * xScale);
-        int resHeight = (int) Math.ceil(height * yScale);
-        int resX = (int) (valueoutofsystem.x + x * xScale);
-        int resY = (int) (valueoutofsystem.y + y * yScale);
-
-        GL11.glScissor(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
-    }
-
-
-    public abstract Rectangle applyTransformation(DomElement target);
+    /**
+     * Transform point so that it's in child's coordinate system.
+     * @param element
+     * @param pos
+     * @return
+     */
+    default Position transformPoint(DomElement element, Position pos) {return new Position(pos.getX() - element.getRelativeBound().getX(), pos.getY() - element.getRelativeBound().getY());}
 }

@@ -18,11 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.primitive;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+public interface ISize {
+    double getWidth();
 
-@Data @AllArgsConstructor
-public class Position implements IPosition {
-    public final double x;
-    public final double y;
+    double getHeight();
 }
