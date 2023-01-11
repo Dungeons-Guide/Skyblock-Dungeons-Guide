@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -35,7 +37,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.Objects;
 
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 

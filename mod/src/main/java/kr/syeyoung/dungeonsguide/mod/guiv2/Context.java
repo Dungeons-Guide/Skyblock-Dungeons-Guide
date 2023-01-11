@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2;
 import java.util.HashMap;
 import java.util.Map;
 
+// TODO: get rid of this and change it with tree walking.
 public class Context {
     public Map<String, Object> CONTEXT = new HashMap<>();
 
