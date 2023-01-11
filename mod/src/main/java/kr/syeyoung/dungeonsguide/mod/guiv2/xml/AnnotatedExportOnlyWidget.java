@@ -36,7 +36,7 @@ public abstract class AnnotatedExportOnlyWidget extends Widget implements Export
     private Map<String, BindableAttribute> exportedAttributes = null;
 
     @Export(attributeName = "ref")
-    private final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
+    public final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
 
     public DomElement createDomElement(DomElement parent) {
         DomElement domElement = super.createDomElement(parent);
@@ -52,8 +52,8 @@ public abstract class AnnotatedExportOnlyWidget extends Widget implements Export
             if (declaredField.getAnnotation(Export.class) != null) {
                 Export export = declaredField.getAnnotation(Export.class);
 
-                if (declaredField.getType() != BindableAttribute.class) throw new IllegalStateException("Export Annotation must be applied on BindableAttribute field.");
-                if (!Modifier.isFinal(declaredField.getModifiers())) throw new IllegalStateException("Exported Bindable Attribute must be final ");
+                if (declaredField.getType() != BindableAttribute.class) throw new IllegalStateException("Export Annotation must be applied on BindableAttribute field. : "+declaredField.getName());
+                if (!Modifier.isFinal(declaredField.getModifiers())) throw new IllegalStateException("Exported Bindable Attribute must be final : "+declaredField.getName());
 
                 try {
                     attributeMap.put(export.attributeName(), (BindableAttribute) declaredField.get(inst));

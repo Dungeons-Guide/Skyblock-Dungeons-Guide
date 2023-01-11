@@ -95,7 +95,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
         Minecraft mc = Minecraft.getMinecraft();
         context.clip(1, 1, bounds.getWidth() -2, bounds.getHeight()-2);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+//        GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         String text = value.getValue();
         FontRenderer fr = mc.fontRendererObj;
@@ -123,7 +123,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                     Gui.drawRect(3 + x, y, 4 + x, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
             }
         }
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+//        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     private void setCursor0(int cursor) {
@@ -134,9 +134,9 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
         int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue().substring(0, cursor));
         double cursorX = width + 3- xOffset;
-        cursorX = MathHelper.clamp_double(cursorX,10, getDomElement().getAbsBounds().getWidth() - 10);
+        cursorX = MathHelper.clamp_double(cursorX,10, getDomElement().getSize().getWidth() - 10);
         xOffset = width+ 3 - cursorX;
-        xOffset = MathHelper.clamp_double(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue()) - getDomElement().getRelativeBound().getWidth()+10));
+        xOffset = MathHelper.clamp_double(xOffset, 0,Math.max(0, Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue()) - getDomElement().getSize().getWidth()+10));
     }
 
     @Override
@@ -210,11 +210,11 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
             xOffset = 0;
         }
         int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
-        double overflow = getDomElement().getRelativeBound().getWidth() - 3 - width;
+        double overflow = getDomElement().getSize().getWidth() - 3 - width;
         if (overflow >= 0) {
             xOffset = 0;
-        } else if (width - xOffset + 10 < getDomElement().getRelativeBound().getWidth()) {
-            xOffset = width - getDomElement().getRelativeBound().getWidth()+10;
+        } else if (width - xOffset + 10 < getDomElement().getSize().getWidth()) {
+            xOffset = width - getDomElement().getSize().getWidth()+10;
         }
     }
 
@@ -236,7 +236,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 setCursor0(value.getValue().length());
 
                 int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
-                xOffset = Math.max(0, width - getDomElement().getRelativeBound().getWidth()+10);
+                xOffset = Math.max(0, width - getDomElement().getSize().getWidth()+10);
                 return;
             }
 
@@ -319,7 +319,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                 selectionStart = -1;
                 setCursor0(value.getValue().length());
                 int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
-                xOffset = Math.max(0, width - getDomElement().getRelativeBound().getWidth()+10);
+                xOffset = Math.max(0, width - getDomElement().getSize().getWidth()+10);
                 return;
             }
 

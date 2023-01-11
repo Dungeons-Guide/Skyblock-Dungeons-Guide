@@ -39,15 +39,15 @@ import java.util.List;
 
 public class Border extends AnnotatedExportOnlyWidget implements Layouter {
     @Export(attributeName = "$left")
-    public BindableAttribute<Widget> left = new BindableAttribute<>(Widget.class);
+    public final BindableAttribute<Widget> left = new BindableAttribute<>(Widget.class);
     @Export(attributeName = "$right")
-    public BindableAttribute<Widget> right = new BindableAttribute<>(Widget.class);
+    public final BindableAttribute<Widget> right = new BindableAttribute<>(Widget.class);
     @Export(attributeName = "$top")
-    public BindableAttribute<Widget> top = new BindableAttribute<>(Widget.class);
+    public final BindableAttribute<Widget> top = new BindableAttribute<>(Widget.class);
     @Export(attributeName = "$bottom")
-    public BindableAttribute<Widget> bottom = new BindableAttribute<>(Widget.class);
+    public final BindableAttribute<Widget> bottom = new BindableAttribute<>(Widget.class);
     @Export(attributeName = "$content")
-    public BindableAttribute<Widget> content = new BindableAttribute<>(Widget.class);
+    public final BindableAttribute<Widget> content = new BindableAttribute<>(Widget.class);
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {

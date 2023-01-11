@@ -55,7 +55,7 @@ public class W3CBackedParserElement implements ParserElement {
 
     @Override
     public <T> T getConvertedAttributeValue(Class<T> clazz, String attribute) {
-        return StringConversions.convert(clazz, attribute);
+        return StringConversions.convert(clazz, getAttributeValue(attribute));
     }
 
     @Override

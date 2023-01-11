@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 
 import java.awt.*;
@@ -52,6 +53,7 @@ public class Stack extends AnnotatedExportOnlyWidget {
     }
 
 
+    @Export(attributeName = "$")
     public final BindableAttribute<WidgetList> widgets = new BindableAttribute<>(WidgetList.class);
     @Override
     public List<Widget> build(DomElement buildContext) {

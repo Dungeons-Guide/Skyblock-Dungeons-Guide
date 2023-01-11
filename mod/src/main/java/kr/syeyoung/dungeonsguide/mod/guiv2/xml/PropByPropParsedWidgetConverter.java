@@ -52,15 +52,18 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                 String variable = element.getAttributeValue(attribute);
 
                 BindableAttribute exported = getExportedAttribute(partial, name);
+                if (exported == null) throw new IllegalStateException("No exported variable found named "+name+"!");
                 BindableAttribute bound = rootWidget.getBindTarget(variable);
-
+                if (bound == null) throw new IllegalStateException("No bind target found for "+attribute+" for "+variable+"!");
                 exported.exportTo(bound);
             } else if (attribute.startsWith("on:")) {
                 String name = attribute.substring(3);
                 String variable = element.getAttributeValue(attribute);
 
                 BindableAttribute exported = getExportedAttribute(partial, name);
+                if (exported == null) throw new IllegalStateException("No exported invocation target found named "+name+"!");
                 MethodHandle invocationTarget = rootWidget.getInvocationTarget(variable);
+                if (invocationTarget == null) throw new IllegalStateException("No invocationTarget target found for "+attribute+" for "+variable+"!");
 
                 // convert methodhandle to functional interface.
                 Class functionalInterface = exported.getType();
@@ -80,8 +83,10 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
 
 
                 // this should bind to methodhandle
+            } else if (attribute.equals("slot")) {
             } else {
                 BindableAttribute bindableAttribute = getExportedAttribute(partial, attribute);
+                if (bindableAttribute == null) throw new IllegalStateException("No exported variable found named "+attribute+"!");
                 bindableAttribute.setValue(element.getConvertedAttributeValue(bindableAttribute.getType(), attribute));
             }
         }
@@ -105,12 +110,17 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
             } else {
                 List<ParserElement> elements = stringListEntry.getValue();
                 if (attribute.getType() == ParserElement.class) {
-                    if (elements.size() != 1) throw new IllegalArgumentException("More than 1 for single parser element: "+stringListEntry.getKey());
-                    attribute.setValue(elements.get(0));
+                    if (elements.size() > 1) throw new IllegalArgumentException("More than 1 for single parser element: "+stringListEntry.getKey());
+                    if (elements.size() == 1)
+                        attribute.setValue(elements.get(0));
+                    else
+                        attribute.setValue(null);
                 } else if (attribute.getType() == Widget.class) {
-                    if (elements.size() != 1) throw new IllegalArgumentException("More than 1 for single widget: "+stringListEntry.getKey());
+                    if (elements.size() > 1) throw new IllegalArgumentException("More than 1 for single widget: "+stringListEntry.getKey());
+                    if (elements.size() == 1)
                     attribute.setValue(DomElementRegistry.obtainConverter(elements.get(0).getNodename())
                             .convert(rootWidget, elements.get(0)));
+                    else attribute.setValue(null);
                 } else if (attribute.getType() == ParserElementList.class) {
                     attribute.setValue(elements);
                 } else if (attribute.getType() == WidgetList.class) {

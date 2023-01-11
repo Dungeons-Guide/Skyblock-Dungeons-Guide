@@ -23,14 +23,15 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 
 import java.util.Collections;
 import java.util.List;
 
 public class Slot extends AnnotatedExportOnlyWidget {
-    @Bind(variableName = "child")
+    @Export(attributeName = "child")
     public final BindableAttribute<Widget> replacement = new BindableAttribute<>(Widget.class);
-    @Bind(variableName = "$")
+    @Export(attributeName = "$")
     public final BindableAttribute<Widget> original = new BindableAttribute<>(Widget.class);
 
     @Override

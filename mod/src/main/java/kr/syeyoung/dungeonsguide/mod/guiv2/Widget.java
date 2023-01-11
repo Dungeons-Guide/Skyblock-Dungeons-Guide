@@ -32,10 +32,11 @@ import java.util.*;
 public abstract class Widget {
 
     @Getter
-    private DomElement domElement;
+    private DomElement domElement = new DomElement();
+
 
     public DomElement createDomElement(DomElement parent) {
-        if (domElement != null) throw new IllegalStateException("Controller already has corresponding DomElement!");
+        if (domElement.getWidget() != null) throw new IllegalStateException("Controller already has corresponding DomElement!");
         domElement = new DomElement();
         domElement.setWidget(this);
         parent.addElement(domElement);
@@ -46,7 +47,7 @@ public abstract class Widget {
         // build
         List<Widget> widgets = build(domElement);
         for (Widget widget : widgets) {
-            widget.build(domElement);
+            widget.createDomElement(domElement);
         }
         return domElement;
     }

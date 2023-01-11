@@ -42,7 +42,7 @@ public class ExportedWidgetConverter<W extends Widget & ExportedWidget, R extend
         return constructor.get();
     }
 
-    public BindableAttribute getExportedAttribute(W widget, String attributeName) {
+    public final BindableAttribute getExportedAttribute(W widget, String attributeName) {
         return widget.getExportedAttribute(attributeName);
     }
 }

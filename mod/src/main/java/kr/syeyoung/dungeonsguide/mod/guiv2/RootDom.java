@@ -24,15 +24,23 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 public class RootDom extends DomElement {
+
+    private static class DummyWidget extends Widget {
+        @Override
+        public List<Widget> build(DomElement buildContext) {
+            return null;
+        }
+    }
     public RootDom(Widget widget) {
         context = new Context();
         setLayouter(SingleChildPassingLayouter.INSTANCE);
         setRenderer(SingleChildRenderer.INSTANCE);
+        setWidget(new DummyWidget());
 
-
-        DomElement domElement = widget.createDomElement(this);
-        this.addElement(domElement); // and it's mounted!
+        widget.createDomElement(this);// and it's mounted!
     }
 
     @Getter
@@ -52,11 +60,11 @@ public class RootDom extends DomElement {
         relayoutRequested = true;
     }
 
+
+
     @Override
     public boolean mouseClicked0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int mouseButton) {
-        boolean res = super.mouseClicked0(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
-        if (!res)
-            requestRelayout();
-        return res;
+        getContext().CONTEXT.put("focus", null);
+        return super.mouseClicked0(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
     }
 }

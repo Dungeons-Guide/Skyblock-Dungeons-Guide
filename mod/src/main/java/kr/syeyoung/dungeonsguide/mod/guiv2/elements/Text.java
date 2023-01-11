@@ -84,7 +84,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
         int y = 0;
         int color = this.color.getValue();
         int yInc = (int) (fr.FONT_HEIGHT * lineSpacing.getValue());
-        double width = getDomElement().getRelativeBound().getWidth();
+        double width =buildContext.getSize().getWidth();
 
         GlStateManager.enableTexture2D();
         if (textAlign.getValue() == TextAlign.LEFT) {

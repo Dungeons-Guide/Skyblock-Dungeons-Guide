@@ -35,11 +35,11 @@ import java.util.Map;
  * This class is for widgets using xml to describe their layout
  */
 public abstract class AnnotatedWidget extends Widget implements ImportingWidget, ExportedWidget {
-    private Map<String, BindableAttribute> importedAttributes = new HashMap<>();
-    private Map<String, BindableAttribute> exportedAttributes = new HashMap<>();
+    private Map<String, BindableAttribute> importedAttributes = null;
+    private Map<String, BindableAttribute> exportedAttributes = null;
     private Map<String, MethodHandle> invocationTargets = null;
     @Export(attributeName = "ref")
-    private final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
+    public final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
 
 
     private final ResourceLocation target;
