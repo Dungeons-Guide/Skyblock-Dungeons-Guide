@@ -457,8 +457,7 @@ public class CommandDgDebug extends CommandBase {
                 e.printStackTrace();
             }
         } else if ("testgui".equals(arg)) {
-            RootDom rootDom = DomElementRegistry.createView(TestView.CREATOR, Collections.emptyMap());
-            GuiScreenAdapter adapter = new GuiScreenAdapter(rootDom);
+            GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
             new Thread(DungeonsGuide.THREAD_GROUP, () -> {
                             Minecraft.getMinecraft().addScheduledTask(() -> {
                                 Minecraft.getMinecraft().displayGuiScreen(adapter);

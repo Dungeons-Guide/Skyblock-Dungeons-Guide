@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.util.ResourceLocation;
 
 public class PopupMgr extends AnnotatedWidget {
-    public PopupMgr(DomElement element) {
+    public PopupMgr() {
         super(new ResourceLocation("dungeonsguide:gui/popupmgr.gui"));
     }
     // just stack

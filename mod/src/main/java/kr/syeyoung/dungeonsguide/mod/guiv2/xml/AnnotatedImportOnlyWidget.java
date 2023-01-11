@@ -90,7 +90,7 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
 
                 try {
                     MethodHandle handle = MethodHandles.publicLookup().unreflect(declaredMethod);
-                    invocationTargets.put(on.variableName(), handle.bindTo(inst));
+                    invocationTargets.put(on.functionName(), handle.bindTo(inst));
                 } catch (IllegalAccessException e) {
                     throw new RuntimeException(e);
                 }

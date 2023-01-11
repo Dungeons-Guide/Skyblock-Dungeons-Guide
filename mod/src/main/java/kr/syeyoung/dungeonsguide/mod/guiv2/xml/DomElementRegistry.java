@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserException;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.W3CBackedParser;
@@ -34,6 +36,25 @@ public class DomElementRegistry {
 
     public static <T extends Widget, R extends Widget & ImportingWidget> ParsedWidgetConverter<T, R> obtainConverter(String name) {
         return converters.get(name);
+    }
+
+    static {
+        converters.put("stack", new ExportedWidgetConverter(Stack::new));
+        converters.put("size", new ExportedWidgetConverter(SizedBox::new));
+        converters.put("scaler", new ExportedWidgetConverter(Scaler::new));
+        converters.put("row", new ExportedWidgetConverter(Row::new));
+        converters.put("padding", new ExportedWidgetConverter(Padding::new));
+        converters.put("col", new ExportedWidgetConverter(Column::new));
+        converters.put("bgcolor", new ExportedWidgetConverter(Background::new));
+        converters.put("flexible", new ExportedWidgetConverter(Flexible::new));
+        converters.put("line", new ExportedWidgetConverter(Line::new));
+        converters.put("border", new ExportedWidgetConverter(Border::new));
+        converters.put("Text", new ExportedWidgetConverter(Text::new));
+        converters.put("Placeholder", new ExportedWidgetConverter(Placeholder::new));
+        converters.put("TextField", new ExportedWidgetConverter(TextField::new));
+        converters.put("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
+
+        converters.put("TestView", new ExportedWidgetConverter(TestView::new));
     }
 
     public static Parser obtainParser(ResourceLocation resourceLocation) {
