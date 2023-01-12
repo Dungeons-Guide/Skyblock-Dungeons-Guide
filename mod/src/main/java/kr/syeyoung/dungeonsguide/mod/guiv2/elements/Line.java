@@ -59,8 +59,8 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     }
 
     public Line() {
-        thickness.addOnUpdate(a -> getDomElement().requestRelayout());
-        color.addOnUpdate(color -> {
+        thickness.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        color.addOnUpdate((old, color) -> {
             a = ((color >> 24) & 0xFF) / 255.0f;
             r = ((color >> 16) &0xFF) /255.0f;
             g = ((color >> 8) & 0xFF) / 255.0f;

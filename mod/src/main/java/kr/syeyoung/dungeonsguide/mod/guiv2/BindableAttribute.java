@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2;
 import lombok.Getter;
 
 import java.util.*;
+import java.util.function.BiConsumer;
 import java.util.function.Consumer;
 
 public class BindableAttribute<T> {
@@ -38,37 +39,43 @@ public class BindableAttribute<T> {
     @Getter
     private final Class<T> type;
     private T value;
-    private List<Consumer<T>> onUpdates = new ArrayList<>();
+    private List<BiConsumer<T,T>> onUpdates = new ArrayList<>();
 
     private boolean updating = false;
     public void setValue(T t) {
         if (updating) return;
         updating = true;
-        for (Consumer<T> onUpdate : onUpdates) {
-            onUpdate.accept(t);
-        }
-        updating = false;
+        T old = this.value;
         this.value = t;
+        if (!Objects.equals(t, old))
+            for (BiConsumer<T, T> onUpdate : onUpdates) {
+                onUpdate.accept(old, value);
+            }
+        updating = false;
         initialized = true;
     }
     public T getValue() {
         return value;
     }
 
-    public void addOnUpdate(Consumer<T> onUpdate) {
+    public void addOnUpdate(BiConsumer<T,T> onUpdate) {
         onUpdates.add(onUpdate);
     }
-    public void removeOnUpdate(Consumer<T> onUpdate) {
+    public void removeOnUpdate(BiConsumer<T,T> onUpdate) {
         onUpdates.remove(onUpdate);
     }
 
     private Set<BindableAttribute<T>> linkedWith = new HashSet<>();
 
+    private void boundSet(T old, T neu) {
+        setValue(neu);
+    }
+
     public void exportTo(BindableAttribute<T> bindableAttribute) { // This method has to be called by exporting bindable attribute
         if (bindableAttribute.type != type) throw new IllegalArgumentException("Different type!!");
 
-        this.addOnUpdate(bindableAttribute::setValue);
-        bindableAttribute.addOnUpdate(this::setValue);
+        this.addOnUpdate(bindableAttribute::boundSet);
+        bindableAttribute.addOnUpdate(this::boundSet);
         linkedWith.add(bindableAttribute);
 
         if (bindableAttribute.initialized)
@@ -78,8 +85,8 @@ public class BindableAttribute<T> {
     }
 
     public void unexport(BindableAttribute<T> bindableAttribute) {
-        bindableAttribute.removeOnUpdate(this::setValue);
-        removeOnUpdate(bindableAttribute::setValue);
+        bindableAttribute.removeOnUpdate(this::boundSet);
+        removeOnUpdate(bindableAttribute::boundSet);
         linkedWith.remove(bindableAttribute);
     }
 

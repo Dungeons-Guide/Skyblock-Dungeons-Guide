@@ -102,13 +102,16 @@ public class Button extends AnnotatedWidget implements Renderer {
     private boolean isPressed;
     @Override
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+        getDomElement().obtainFocus();
         isPressed = true;
-        return true;
+        return onClick.getValue() != null;
     }
 
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {
+        if (!isPressed) return;
         isPressed = false;
+
 
         if (isDisabled.getValue()) return;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) {

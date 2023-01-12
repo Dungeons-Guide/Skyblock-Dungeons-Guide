@@ -64,12 +64,12 @@ public class GuiScreenAdapter extends GuiScreen {
         view.setRelativeBound(new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
         view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
         view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.getLayouter().layout(view, new ConstraintBox(
-                Minecraft.getMinecraft().displayWidth,
-                Minecraft.getMinecraft().displayWidth,
-                Minecraft.getMinecraft().displayHeight,
-                Minecraft.getMinecraft().displayHeight
-        ));
+            view.getLayouter().layout(view, new ConstraintBox(
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayHeight,
+                    Minecraft.getMinecraft().displayHeight
+            ));
         view.setMounted(true);
     }
 
@@ -80,12 +80,13 @@ public class GuiScreenAdapter extends GuiScreen {
 
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
-            view.getLayouter().layout(view, new ConstraintBox(
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayWidth,
-                    Minecraft.getMinecraft().displayHeight,
-                    Minecraft.getMinecraft().displayHeight
-            ));
+            System.out.println("relayout!");
+                view.getLayouter().layout(view, new ConstraintBox(
+                        Minecraft.getMinecraft().displayWidth,
+                        Minecraft.getMinecraft().displayWidth,
+                        Minecraft.getMinecraft().displayHeight,
+                        Minecraft.getMinecraft().displayHeight
+                ));
         }
 
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());

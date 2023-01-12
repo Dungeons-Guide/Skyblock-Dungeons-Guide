@@ -175,6 +175,7 @@ public class DomElement {
 
 
     public void mouseReleased0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int state) {
+        if (absBounds == null) return;
 
         for (DomElement childComponent : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
@@ -186,14 +187,14 @@ public class DomElement {
 
     public void mouseClickMove0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
         if (absBounds == null) return;
-        if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
             childComponent.mouseClickMove0(absMouseX, absMouseY, transformed.x, transformed.y, clickedMouseButton, timeSinceLastClick);
         }
-        widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
+        if (isFocused())
+            widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
     }
     public void mouseScrolled0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
         if (absBounds == null) return;

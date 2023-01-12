@@ -74,7 +74,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFF000000);
 
     public Text() {
-        text.addOnUpdate(a -> getDomElement().requestRelayout());
+        text.addOnUpdate((a,b) -> getDomElement().requestRelayout());
         fr = Minecraft.getMinecraft().fontRendererObj;
     }
     private FontRenderer fr;

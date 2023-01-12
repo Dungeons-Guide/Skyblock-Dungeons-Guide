@@ -54,8 +54,8 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
     public final BindableAttribute<WidgetList> children = new BindableAttribute<>(WidgetList.class);
     
     public Row() {
-        hAlign.addOnUpdate(a -> getDomElement().requestRelayout());
-        vAlign.addOnUpdate(a -> getDomElement().requestRelayout());
+        hAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        vAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
     }
 
     @Override

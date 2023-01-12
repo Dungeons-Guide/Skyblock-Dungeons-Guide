@@ -51,11 +51,17 @@ public class DomElementRegistry {
         converters.put("border", new ExportedWidgetConverter(Border::new));
         converters.put("Text", new ExportedWidgetConverter(Text::new));
         converters.put("slot", new ExportedWidgetConverter(Slot::new));
+        converters.put("absXY", new ExportedWidgetConverter(AbsXY::new));
         converters.put("Placeholder", new ExportedWidgetConverter(Placeholder::new));
         converters.put("TextField", new ExportedWidgetConverter(TextField::new));
         converters.put("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
         converters.put("AbstractButton", new ExportedWidgetConverter(Button::new));
-        converters.put("ColorButton", new ExportedWidgetConverter(SimpleButton::new));
+        converters.put("AbstractScrollBar", new ExportedWidgetConverter(Scrollbar::new));
+        converters.put("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleButton.gui")));
+        converters.put("SimpleScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleScrollBar.gui")));
+        converters.put("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleHorizontalScrollBar.gui")));
+        converters.put("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleVerticalScrollBar.gui")));
+
 
         converters.put("TestView", new ExportedWidgetConverter(TestView::new));
     }

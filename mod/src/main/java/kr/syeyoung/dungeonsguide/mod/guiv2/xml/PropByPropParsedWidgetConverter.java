@@ -53,7 +53,7 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
 
                 BindableAttribute exported = getExportedAttribute(partial, name);
                 if (exported == null) throw new IllegalStateException("No exported variable found named "+name+"!");
-                BindableAttribute bound = rootWidget.getBindTarget(variable);
+                BindableAttribute bound = rootWidget.getBindTarget(variable, exported);
                 if (bound == null) throw new IllegalStateException("No bind target found for "+attribute+" for "+variable+"!");
                 exported.exportTo(bound);
             } else if (attribute.startsWith("on:")) {

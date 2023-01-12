@@ -48,15 +48,15 @@ public class SizedBox extends AnnotatedExportOnlyWidget implements Layouter {
     }
 
     public SizedBox() {
-        width.addOnUpdate(a -> getDomElement().requestRelayout());
-        height.addOnUpdate(a -> getDomElement().requestRelayout());
+        width.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        height.addOnUpdate((a,b) -> getDomElement().requestRelayout());
     }
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
 
-        double width =  Math.min(this.width.getValue(), constraintBox.getMaxWidth());
-        double height =  Math.min(this.height.getValue(), constraintBox.getMaxHeight());
+        double width = Layouter.clamp(this.width.getValue(), constraintBox.getMinWidth(), constraintBox.getMaxWidth());
+        double height =  Layouter.clamp(this.height.getValue(), constraintBox.getMinHeight(), constraintBox.getMaxHeight());
 
         if (getDomElement().getChildren().isEmpty()) {
             return new Size(width, height);

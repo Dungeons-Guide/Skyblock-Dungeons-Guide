@@ -50,8 +50,8 @@ public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
     }
 
     public Flexible() {
-        flex.addOnUpdate(a -> getDomElement().requestRelayout());
-        fit.addOnUpdate(a -> getDomElement().requestRelayout());
+        flex.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        fit.addOnUpdate((a,b) -> getDomElement().requestRelayout());
     }
 
     @Override

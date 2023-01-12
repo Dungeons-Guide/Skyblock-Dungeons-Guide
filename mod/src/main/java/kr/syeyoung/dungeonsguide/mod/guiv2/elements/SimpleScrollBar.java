@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
+import net.minecraft.util.ResourceLocation;
 
-import java.lang.invoke.MethodHandle;
+public class SimpleScrollBar extends AnnotatedWidget {
 
-public interface ImportingWidget {
-    <T> BindableAttribute<T> getBindTarget(String variableName, BindableAttribute<T> from);
-
-    MethodHandle getInvocationTarget(String functionName);
+    public SimpleScrollBar() {
+        super(new ResourceLocation("dungeonsguide:gui/simpleScrollBar.gui"));
+    }
 }

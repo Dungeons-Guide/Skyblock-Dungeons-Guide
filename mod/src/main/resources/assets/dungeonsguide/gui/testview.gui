@@ -35,30 +35,36 @@
                                 <line slot="bottom" dir="HORIZONTAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA" factor="10"/>
                                 <line slot="right" dir="VERTICAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA"/>
                                 <scaler scale="2.0" slot="content">
-                                    <col mainAlign="END">
-                                        <TextField placeholder="input text" bind:value="variable"/>
-                                        <row mainAlign="CENTER">
-                                            <Text text="Hello, "/>
-                                            <size width="10" height="0"/>
-                                            <flexible>
-                                                <bgcolor backgroundColor="#FF00FFFF">
-                                                    <Text bind:text="variable" color="#FF777777"/>
-                                                </bgcolor>
-                                            </flexible>
-                                            <size width="60" height="20">
-                                                <ColorButton on:click="buttonClick" bind:disabled="bDisable"
-                                                               backgroundColor="#FF005500"          textColor="#FF777777"
-                                                               hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
-                                                               disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
-                                                               pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
-                                                               bind:text="variable"
-                                                />
-                                            </size>
-                                        </row>
+                                    <row crossAlign="START">
                                         <flexible>
-                                            <Placeholder/>
+                                            <col mainAlign="END">
+                                                <TextField placeholder="input text" bind:value="variable"/>
+                                                <row mainAlign="CENTER">
+                                                    <Text text="Hello, "/>
+                                                    <size width="10" height="0"/>
+                                                    <flexible>
+                                                        <bgcolor backgroundColor="#FF00FFFF">
+                                                            <Text bind:text="variable" color="#FF777777"/>
+                                                        </bgcolor>
+                                                    </flexible>
+                                                    <size width="60" height="20">
+                                                        <ColorButton on:click="buttonClick" bind:disabled="bDisable"
+                                                                     backgroundColor="#FF005500"          textColor="#FF777777"
+                                                                     hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
+                                                                     disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
+                                                                     pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
+                                                                     bind:text="variable"
+                                                        />
+                                                    </size>
+                                                </row>
+                                                <SimpleHorizontalScrollBar thickness="30"/>
+                                                <flexible>
+                                                    <Placeholder/>
+                                                </flexible>
+                                            </col>
                                         </flexible>
-                                    </col>
+                                        <SimpleVerticalScrollBar thickness="30"/>
+                                    </row>
                                 </scaler>
                             </border>
                         </padding>

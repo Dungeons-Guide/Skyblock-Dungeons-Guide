@@ -55,8 +55,8 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
     public final BindableAttribute<WidgetList> widgets = new BindableAttribute<>(WidgetList.class);
     
     public Column() {
-        hAlign.addOnUpdate(a -> getDomElement().requestRelayout());
-        vAlign.addOnUpdate(a -> getDomElement().requestRelayout());
+        hAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        vAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
     }
 
     @Override

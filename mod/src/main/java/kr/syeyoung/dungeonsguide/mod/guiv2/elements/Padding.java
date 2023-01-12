@@ -43,10 +43,10 @@ public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
     public Padding() {
-        left.addOnUpdate(a -> getDomElement().requestRelayout());
-        right.addOnUpdate(a -> getDomElement().requestRelayout());
-        top.addOnUpdate(a -> getDomElement().requestRelayout());
-        bottom.addOnUpdate(a -> getDomElement().requestRelayout());
+        left.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        right.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        top.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        bottom.addOnUpdate((a,b) -> getDomElement().requestRelayout());
     }
 
     @Override

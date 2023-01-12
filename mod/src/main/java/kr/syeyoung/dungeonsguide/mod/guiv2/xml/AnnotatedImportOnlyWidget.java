@@ -106,7 +106,7 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
     }
 
     @Override
-    public <T> BindableAttribute<T> getBindTarget(String variableName) {
+    public <T> BindableAttribute<T> getBindTarget(String variableName, BindableAttribute<T> _) {
         return getImportedAttributes().get(variableName);
     }
 

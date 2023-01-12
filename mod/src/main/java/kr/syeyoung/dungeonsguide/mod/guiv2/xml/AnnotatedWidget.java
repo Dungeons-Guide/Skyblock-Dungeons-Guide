@@ -119,7 +119,7 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     }
 
     @Override
-    public <T> BindableAttribute<T> getBindTarget(String variableName) {
+    public <T> BindableAttribute<T> getBindTarget(String variableName, BindableAttribute<T> _) {
         return getImportedAttributes().get(variableName);
     }
     private Map<String, MethodHandle> getInvocationTargets() {
