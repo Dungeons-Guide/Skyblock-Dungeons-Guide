@@ -19,11 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
@@ -35,7 +32,7 @@ import net.minecraft.util.ResourceLocation;
 
 @Passthrough(exportName = "$track", bindName = "track", type = Widget.class)
 @Passthrough(exportName = "$thumb", bindName = "thumb", type = Widget.class)
-public class Scrollbar extends AnnotatedWidget implements Layouter {
+public class Scrollbar extends AnnotatedWidget {
     // to set location and stuff
     @Bind(variableName = "x")
     public final BindableAttribute<Double> thumbX = new BindableAttribute<>(Double.class, 0.0);
@@ -45,6 +42,8 @@ public class Scrollbar extends AnnotatedWidget implements Layouter {
     public final BindableAttribute<Double> width = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
     @Bind(variableName = "height")
     public final BindableAttribute<Double> height = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
+    @Bind(variableName = "size")
+    public final BindableAttribute<Size> size = new BindableAttribute<>(Size.class);
 
     @Export(attributeName = "thumbValue")
     public final BindableAttribute<Double> thumbValue = new BindableAttribute<>(Double.class, 10.0);
@@ -64,21 +63,6 @@ public class Scrollbar extends AnnotatedWidget implements Layouter {
     public final BindableAttribute<Line.Orientation> orientation = new BindableAttribute<>(Line.Orientation.class);
 
     @Override
-    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        double maxW = 0, maxH = 0;
-        for (DomElement child : buildContext.getChildren()) {
-            Size dim = child.getLayouter().layout(child, constraintBox);
-            if (maxW< dim.getWidth()) maxW = dim.getWidth();
-            if (maxH< dim.getHeight()) maxH = dim.getHeight();
-            child.setRelativeBound(new Rect(0,0,dim.getWidth(), dim.getHeight()));
-        }
-        Size res = new Size(maxW, maxH);
-        updatePers(res);
-        updateThumbLocation(0, 0);
-        return res;
-    }
-
-    @Override
     protected Renderer createRenderer() {
         return OnlyChildrenRenderer.INSTANCE;
     }
@@ -90,6 +74,7 @@ public class Scrollbar extends AnnotatedWidget implements Layouter {
         min.addOnUpdate(this::updateStuff);
         max.addOnUpdate(this::updateStuff);
         current.addOnUpdate(this::updateThumbLocation);
+        size.addOnUpdate((a,b) -> this.updateStuff(0,0));
         updateStuff(0, 0);
     }
 
@@ -135,6 +120,7 @@ public class Scrollbar extends AnnotatedWidget implements Layouter {
 
     private double movingDir;
     private double startCurr;
+    private boolean moving = false;
     @Override
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
         getDomElement().obtainFocus();
@@ -142,6 +128,7 @@ public class Scrollbar extends AnnotatedWidget implements Layouter {
         else movingDir = relMouseX;
 
         startCurr = current.getValue();
+        moving = true;
         return true;
     }
 
@@ -156,5 +143,24 @@ public class Scrollbar extends AnnotatedWidget implements Layouter {
         double newVal = dThing * per2 + startCurr;
         newVal = Layouter.clamp(newVal, min.getValue(), max.getValue());
         this.current.setValue(newVal);
+    }
+
+    @Override
+    public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {
+        moving = false;
+        System.out.println(getDomElement().isFocused());
+    }
+
+    @Override
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        if (moving) return false;
+
+//        double old = this.current.getValue();
+//        double neu;
+//        this.current.setValue(
+//                neu = Layouter.clamp(this.current.getValue() + scrollAmount, min.getValue(), max.getValue())
+//        );
+//        return old != neu;
+        return false;
     }
 }

@@ -78,7 +78,6 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
-        GlStateManager.pushMatrix();
         GlStateManager.translate(original.getX(), original.getY(), 0);
         GlStateManager.scale(scale.getValue(), scale.getValue(), 1);
 
@@ -96,6 +95,5 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
         value.getRenderer().doRender(absMouseX, absMouseY,
                 (relMouseX - original.getX())  / scale.getValue(),
                 (relMouseY - original.getY()) / scale.getValue(), partialTicks, context, value);
-        GlStateManager.popMatrix();
     }
 }

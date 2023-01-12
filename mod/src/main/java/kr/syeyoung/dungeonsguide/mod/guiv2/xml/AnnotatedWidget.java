@@ -76,11 +76,19 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
 
 
     protected static Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> createPassthroughs(Class clazz) {
-        if (clazz.getAnnotation(Passthroughs.class) == null) return Pair.of(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
+        if (clazz.getAnnotation(Passthroughs.class) == null && clazz.getAnnotation(Passthrough.class) == null) return Pair.of(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
         Map<String, BindableAttribute> attributeMap1 = new HashMap<>();
         Map<String, BindableAttribute> attributeMap2 = new HashMap<>();
-        Passthrough[] throughs = ((Passthroughs) clazz.getAnnotation(Passthroughs.class)).value();
-        for (Passthrough through : throughs) {
+        if (clazz.getAnnotation(Passthroughs.class) != null) {
+            Passthrough[] throughs = ((Passthroughs) clazz.getAnnotation(Passthroughs.class)).value();
+            for (Passthrough through : throughs) {
+                BindableAttribute attribute = new BindableAttribute(through.type());
+                attributeMap1.put(through.exportName(), attribute);
+                attributeMap2.put(through.bindName(), attribute);
+            }
+        }
+        if (clazz.getAnnotation(Passthrough.class) != null) {
+            Passthrough through = (Passthrough) clazz.getAnnotation(Passthrough.class);
             BindableAttribute attribute = new BindableAttribute(through.type());
             attributeMap1.put(through.exportName(), attribute);
             attributeMap2.put(through.bindName(), attribute);

@@ -196,16 +196,18 @@ public class DomElement {
         if (isFocused())
             widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
     }
-    public void mouseScrolled0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
-        if (absBounds == null) return;
-        if (!absBounds.contains(absMouseX, absMouseY)) return;
+    public boolean mouseScrolled0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        if (absBounds == null) return false;
 
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount);
+            if (childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount)) {
+                return true;
+            }
         }
-        widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
+        if (!absBounds.contains(absMouseX, absMouseY) && !isFocused()) return false;
+        return widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
     }
 
 

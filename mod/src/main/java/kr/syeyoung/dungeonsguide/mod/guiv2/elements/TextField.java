@@ -34,7 +34,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import org.lwjgl.input.Keyboard;
-import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
 import java.awt.datatransfer.*;
@@ -198,8 +197,9 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public void mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
-        if (!getDomElement().isFocused()) return;
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        if (!getDomElement().isFocused()) return false;
+        double lastOffset = xOffset;
         if (scrollAmount > 0) {
             xOffset += 5;
         } else if (scrollAmount < 0){
@@ -210,11 +210,14 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         }
         int width = Minecraft.getMinecraft().fontRendererObj.getStringWidth(value.getValue());
         double overflow = getDomElement().getSize().getWidth() - 3 - width;
+
+
         if (overflow >= 0) {
             xOffset = 0;
         } else if (width - xOffset + 10 < getDomElement().getSize().getWidth()) {
             xOffset = width - getDomElement().getSize().getWidth()+10;
         }
+        return lastOffset != xOffset;
     }
 
     @Override

@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,18 +16,28 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.client.renderer.GlStateManager;
 
-public class SingleChildRenderer implements Renderer {
-    public static final SingleChildRenderer INSTANCE = new SingleChildRenderer();
-    protected SingleChildRenderer() {}
+import java.util.Collections;
+import java.util.List;
 
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+public class Clip extends AnnotatedExportOnlyWidget implements Renderer {
+
+    @Override
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
         if (buildContext.getChildren().isEmpty()) return;
+        context.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
+
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
@@ -46,6 +56,15 @@ public class SingleChildRenderer implements Renderer {
 
         value.getRenderer().doRender(absMouseX, absMouseY,
                 relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks,renderingContext, value);
+                relMouseY - original.getY(), partialTicks, context, value);
+        context.popClip();
+    }
+
+    @Export(attributeName = "$")
+    public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
+
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return Collections.singletonList(widget.getValue());
     }
 }

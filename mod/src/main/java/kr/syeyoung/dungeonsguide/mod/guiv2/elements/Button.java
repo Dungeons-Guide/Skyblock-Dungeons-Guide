@@ -79,7 +79,6 @@ public class Button extends AnnotatedWidget implements Renderer {
             value = normal.getValue();
         }
         Rect original = value.getRelativeBound();
-        GlStateManager.pushMatrix();
         GlStateManager.translate(original.getX(), original.getY(), 0);
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
@@ -96,7 +95,6 @@ public class Button extends AnnotatedWidget implements Renderer {
         value.getRenderer().doRender(absMouseX, absMouseY,
                 relMouseX - original.getX(),
                 relMouseY - original.getY(), partialTicks, context, value);
-        GlStateManager.popMatrix();
     }
 
     private boolean isPressed;

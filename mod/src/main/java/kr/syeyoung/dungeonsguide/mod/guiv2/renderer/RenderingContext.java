@@ -27,6 +27,8 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
+import org.lwjgl.opengl.GL33;
+import org.lwjgl.opengl.GL42;
 
 import java.awt.*;
 import java.util.Stack;
@@ -73,7 +75,7 @@ public class RenderingContext {
     public Stack<Rectangle> clips = new Stack<>();
 
     public void pushClip(Rect absBounds, Size size, double x, double y, double width, double height) {
-        if (width < 0 || height < 0) return;
+        if (width < 0 || height < 0) throw new IllegalArgumentException("Clip width height less than 0");
 
         Rectangle previousClip;
         if (clips.size() == 0)
@@ -89,6 +91,7 @@ public class RenderingContext {
         int resX = (int) (absBounds.getX()+ x * xScale);
         int resY = (int) (absBounds.getY() + y * yScale);
 
+
         Rectangle newClip = new Rectangle(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
         newClip = previousClip.intersection(newClip);
 
@@ -97,18 +100,24 @@ public class RenderingContext {
 
         clips.push(newClip);
 
-        GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
+        if (newClip.width <= 0 || newClip.height <= 0)
+            GL11.glColorMask(false, false ,false ,false);
+        else
+            GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
     }
 
     public void popClip() {
         Rectangle currentClip = clips.pop();
 
-
+        GL11.glColorMask(true, true ,true ,true);
         if (clips.size() == 0)
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         else {
             Rectangle newClip = clips.peek();
-            GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
+            if (newClip.width <= 0 || newClip.height <= 0)
+                GL11.glColorMask(false, false ,false ,false);
+            else
+                GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
         }
     }
 }

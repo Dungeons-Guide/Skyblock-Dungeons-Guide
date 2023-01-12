@@ -16,11 +16,13 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<multi>
-    <slot bind:child="track"/>
-    <absXY bind:x="x" bind:y="y">
-        <size bind:width="width" bind:height="height">
-            <slot bind:child="thumb"/>
-        </size>
-    </absXY>
-</multi>
+<measure bind:size="size">
+    <stack>
+        <slot bind:child="track"/>
+        <absXY bind:x="x" bind:y="y">
+            <size bind:width="width" bind:height="height">
+                <slot bind:child="thumb"/>
+            </size>
+        </absXY>
+    </stack>
+</measure>

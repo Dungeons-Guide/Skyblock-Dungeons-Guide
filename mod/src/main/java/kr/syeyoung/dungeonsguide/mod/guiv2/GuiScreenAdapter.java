@@ -31,6 +31,9 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.client.renderer.Tessellator;
+import net.minecraft.client.renderer.WorldRenderer;
+import net.minecraft.client.renderer.vertex.VertexBuffer;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -89,11 +92,11 @@ public class GuiScreenAdapter extends GuiScreen {
                 ));
         }
 
+
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GlStateManager.pushMatrix();
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
-        GlStateManager.disableCull();
         GlStateManager.enableAlpha();
         GlStateManager.alphaFunc(GL_GREATER, 0);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
@@ -103,6 +106,7 @@ public class GuiScreenAdapter extends GuiScreen {
         GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
         GlStateManager.enableDepth();
+        GlStateManager.disableTexture2D();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 

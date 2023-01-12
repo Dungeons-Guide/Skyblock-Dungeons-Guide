@@ -19,10 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.SingleChildPassingLayouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.DrawNothingRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import lombok.Getter;
@@ -72,7 +69,9 @@ public abstract class Widget {
     }
 
 
-    public void mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {}
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        return false;
+    }
     public void mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {}
     public void mouseClickMove(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
     public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {}
