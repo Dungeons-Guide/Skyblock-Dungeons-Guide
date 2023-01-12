@@ -53,7 +53,10 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
 
     @Export(attributeName = "$")
     public final BindableAttribute<WidgetList> widgets = new BindableAttribute<>(WidgetList.class);
-    
+
+    @Export(attributeName = "api")
+    public final BindableAttribute<Column> api = new BindableAttribute<>(Column.class, this);
+
     public Column() {
         hAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
         vAlign.addOnUpdate((a,b) -> getDomElement().requestRelayout());
@@ -67,6 +70,19 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
     @Override
     protected Renderer createRenderer() {
         return OnlyChildrenRenderer.INSTANCE;
+    }
+
+    public void addWidget(Widget widget) {
+        if (getDomElement().getWidget() == null) {
+            widgets.getValue().add(widget);
+        } else {
+            DomElement domElement = widget.createDomElement(getDomElement());
+            getDomElement().addElement(domElement);
+        }
+    }
+
+    public void removeWidget(Widget widget) {
+        getDomElement().removeElement(widget.getDomElement());
     }
 
     @Override

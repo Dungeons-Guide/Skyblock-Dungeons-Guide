@@ -65,7 +65,7 @@ public class DomElementRegistry {
         converters.put("SimpleScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleScrollBar.gui")));
         converters.put("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleHorizontalScrollBar.gui")));
         converters.put("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleVerticalScrollBar.gui")));
-
+        converters.put("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/slowlist.gui")));
 
         converters.put("TestView", new ExportedWidgetConverter(TestView::new));
     }
