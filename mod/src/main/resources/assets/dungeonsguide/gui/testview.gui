@@ -51,7 +51,7 @@
                                                                hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
                                                                disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
                                                                pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
-                                                               text="coooool"
+                                                               bind:text="variable"
                                                 />
                                             </size>
                                         </row>

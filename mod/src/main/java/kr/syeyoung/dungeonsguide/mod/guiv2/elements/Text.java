@@ -166,7 +166,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
                             }
                             remaining = current + remaining;
 
-                            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
+                            wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
 
                             current = remaining;
                         }
@@ -195,7 +195,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
                         }
                         remaining = current + remaining;
 
-                        wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
+                        wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
                         currentLine = new StringBuilder(remaining);
                         currentWidth = fr.getStringWidth(remaining);
                     }
