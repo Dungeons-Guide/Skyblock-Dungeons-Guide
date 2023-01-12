@@ -30,24 +30,16 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Passthrough;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
+@Passthrough(exportName = "$", bindName = "wgtNormal", type = Widget.class)
+@Passthrough(exportName = "$hovered", bindName = "wgtHover", type = Widget.class)
+@Passthrough(exportName = "$pressed", bindName = "wgtPressed", type = Widget.class)
+@Passthrough(exportName = "$disabled", bindName = "wgtDisabled", type = Widget.class)
 public class Button extends AnnotatedWidget implements Renderer {
-
-    @Export(attributeName = "$")
-    @Bind(variableName = "wgtNormal")
-    public final BindableAttribute<Widget> _1 = new BindableAttribute<Widget>(Widget.class);
-    @Export(attributeName = "$hovered")
-    @Bind(variableName = "wgtHover")
-    public final BindableAttribute<Widget> _2 = new BindableAttribute<Widget>(Widget.class);
-    @Export(attributeName = "$pressed")
-    @Bind(variableName = "wgtPressed")
-    public final BindableAttribute<Widget> _3 = new BindableAttribute<Widget>(Widget.class);
-    @Export(attributeName = "$disabled")
-    @Bind(variableName = "wgtDisabled")
-    public final BindableAttribute<Widget> _4 = new BindableAttribute<Widget>(Widget.class);
 
     @Bind(variableName = "refDisabled")
     public final BindableAttribute<DomElement> disabled = new BindableAttribute<DomElement>(DomElement.class);
@@ -126,6 +118,9 @@ public class Button extends AnnotatedWidget implements Renderer {
 
     @Override
     public void mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
-        getDomElement().setCursor(EnumCursor.POINTING_HAND);
+        if (isDisabled.getValue())
+            getDomElement().setCursor(EnumCursor.NOT_ALLOWED);
+        else
+            getDomElement().setCursor(EnumCursor.POINTING_HAND);
     }
 }

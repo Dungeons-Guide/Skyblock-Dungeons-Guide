@@ -20,11 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Passthrough;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Passthroughs;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.lang3.tuple.Pair;
 
-import javax.xml.bind.Element;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
 import java.util.*;
@@ -73,11 +75,29 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     }
 
 
+    protected static Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> createPassthroughs(Class clazz) {
+        if (clazz.getAnnotation(Passthroughs.class) == null) return Pair.of(Collections.EMPTY_MAP, Collections.EMPTY_MAP);
+        Map<String, BindableAttribute> attributeMap1 = new HashMap<>();
+        Map<String, BindableAttribute> attributeMap2 = new HashMap<>();
+        Passthrough[] throughs = ((Passthroughs) clazz.getAnnotation(Passthroughs.class)).value();
+        for (Passthrough through : throughs) {
+            BindableAttribute attribute = new BindableAttribute(through.type());
+            attributeMap1.put(through.exportName(), attribute);
+            attributeMap2.put(through.bindName(), attribute);
+        }
+        return Pair.of(attributeMap1, attributeMap2);
+    }
 
 
     private Map<String, BindableAttribute> getExportedAttributes() {
-        if (exportedAttributes == null)
+        if (exportedAttributes == null) {
             exportedAttributes = AnnotatedExportOnlyWidget.getExportedAttributes(getClass(), this);
+            importedAttributes = AnnotatedImportOnlyWidget.getImportedAttributes(getClass(), this);
+
+            Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> stuff = createPassthroughs(getClass());
+            exportedAttributes.putAll(stuff.getLeft());
+            importedAttributes.putAll(stuff.getRight());
+        }
         return exportedAttributes;
     }
 
@@ -87,8 +107,14 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     }
 
     private Map<String, BindableAttribute> getImportedAttributes() {
-        if (importedAttributes == null)
+        if (importedAttributes == null) {
+            exportedAttributes = AnnotatedExportOnlyWidget.getExportedAttributes(getClass(), this);
             importedAttributes = AnnotatedImportOnlyWidget.getImportedAttributes(getClass(), this);
+
+            Pair<Map<String, BindableAttribute>, Map<String, BindableAttribute>> stuff = createPassthroughs(getClass());
+            exportedAttributes.putAll(stuff.getLeft());
+            importedAttributes.putAll(stuff.getRight());
+        }
         return importedAttributes;
     }
 

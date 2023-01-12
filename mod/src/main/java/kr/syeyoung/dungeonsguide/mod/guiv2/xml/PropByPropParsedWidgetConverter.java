@@ -65,27 +65,26 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                 MethodHandle invocationTarget = rootWidget.getInvocationTarget(variable);
                 if (invocationTarget == null) throw new IllegalStateException("No invocationTarget target found for "+attribute+" for "+variable+"!");
 
-                // convert methodhandle to functional interface.
-                Class functionalInterface = exported.getType();
-                if (!functionalInterface.isInterface()) throw new IllegalArgumentException("Should be interface");
-                if (functionalInterface.getDeclaredMethods().length != 1) throw new IllegalArgumentException("Should be functional interface");
-                Method m = functionalInterface.getDeclaredMethods()[0];
+                    // convert methodhandle to functional interface.
+                    Class functionalInterface = exported.getType();
+                    if (!functionalInterface.isInterface()) throw new IllegalArgumentException("Should be interface");
+                    if (functionalInterface.getDeclaredMethods().length != 1)
+                        throw new IllegalArgumentException("Should be functional interface");
+                    Method m = functionalInterface.getDeclaredMethods()[0];
 
-                MethodType mt = MethodType.methodType(m.getReturnType(), m.getParameterTypes());
-                try {
-                    Object obj = LambdaMetafactory.metafactory(MethodHandles.lookup(), m.getName(),
-                                    MethodType.methodType(functionalInterface, rootWidget.getClass()),
-                            mt,
-                            invocationTarget,
-                            invocationTarget.type().dropParameterTypes(0, 1))
-                            .getTarget()
-                            .invoke(rootWidget);
-                    exported.setValue(obj);
-                } catch (Throwable e) {
-                    throw new RuntimeException(e);
-                }
-
-
+                    MethodType mt = MethodType.methodType(m.getReturnType(), m.getParameterTypes());
+                    try {
+                        Object obj = LambdaMetafactory.metafactory(MethodHandles.lookup(), m.getName(),
+                                        MethodType.methodType(functionalInterface, rootWidget.getClass()),
+                                        mt,
+                                        invocationTarget,
+                                        invocationTarget.type().dropParameterTypes(0, 1))
+                                .getTarget()
+                                .invoke(rootWidget);
+                        exported.setValue(obj);
+                    } catch (Throwable e) {
+                        throw new RuntimeException(e);
+                    }
                 // this should bind to methodhandle
             } else if (attribute.equals("slot")) {
             } else {

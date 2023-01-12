@@ -1,0 +1,40 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<AbstractButton bind:click="buttonClick" bind:disabled="disabled">
+    <bgcolor bind:backgroundColor="backgroundColor">
+        <col mainAlign="CENTER">
+            <Text bind:text="text" bind:color="textColor" align="CENTER"/>
+        </col>
+    </bgcolor>
+    <bgcolor slot="hovered" bind:backgroundColor="hoveredBackgroundColor">
+        <col mainAlign="CENTER">
+            <Text bind:text="text" bind:color="hoveredTextColor" align="CENTER"/>
+        </col>
+    </bgcolor>
+    <bgcolor slot="disabled" bind:backgroundColor="disabledBackgroundColor">
+        <col mainAlign="CENTER">
+            <Text bind:text="text" bind:color="disabledTextColor" align="CENTER"/>
+        </col>
+    </bgcolor>
+    <bgcolor slot="pressed" bind:backgroundColor="pressedBackgroundColor">
+        <col mainAlign="CENTER">
+            <Text bind:text="text" bind:color="pressedTextColor" align="CENTER"/>
+        </col>
+    </bgcolor>
+</AbstractButton>

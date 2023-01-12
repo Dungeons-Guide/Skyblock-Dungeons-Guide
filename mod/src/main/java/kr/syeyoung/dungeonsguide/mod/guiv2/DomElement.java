@@ -175,8 +175,6 @@ public class DomElement {
 
 
     public void mouseReleased0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int state) {
-        if (absBounds == null) return;
-        if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
