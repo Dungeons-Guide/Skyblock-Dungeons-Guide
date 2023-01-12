@@ -18,9 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import org.jetbrains.annotations.NotNull;
+
 import java.util.Iterator;
 
-public class ElementTreeWalkIterator implements Iterator<DomElement> {
+public class ElementTreeWalkIterator implements Iterator<DomElement>, Iterable<DomElement> {
     private DomElement current;
     public ElementTreeWalkIterator(DomElement child) {
         this.current = child;
@@ -36,5 +38,11 @@ public class ElementTreeWalkIterator implements Iterator<DomElement> {
         DomElement c1 = current;
         current = current.getParent();
         return c1;
+    }
+
+    @NotNull
+    @Override
+    public Iterator<DomElement> iterator() {
+        return this;
     }
 }

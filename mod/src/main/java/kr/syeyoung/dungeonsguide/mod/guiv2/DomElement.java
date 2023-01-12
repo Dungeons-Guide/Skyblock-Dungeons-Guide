@@ -157,6 +157,7 @@ public class DomElement {
     }
 
     public boolean mouseClicked0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int mouseButton) {
+        if (absBounds == null) return false;
         if (!absBounds.contains(absMouseX, absMouseY)) {
             return false;
         }
@@ -174,6 +175,7 @@ public class DomElement {
 
 
     public void mouseReleased0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int state) {
+        if (absBounds == null) return;
         if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent : children) {
@@ -185,6 +187,7 @@ public class DomElement {
     }
 
     public void mouseClickMove0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int clickedMouseButton, long timeSinceLastClick) {
+        if (absBounds == null) return;
         if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent  : children) {
@@ -195,6 +198,7 @@ public class DomElement {
         widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
     }
     public void mouseScrolled0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        if (absBounds == null) return;
         if (!absBounds.contains(absMouseX, absMouseY)) return;
 
         for (DomElement childComponent  : children) {
@@ -208,6 +212,7 @@ public class DomElement {
 
     private boolean wasMouseIn = false;
     public void mouseMoved0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        if (absBounds == null) return;
         if (!absBounds.contains(absMouseX, absMouseY)) {
             if (wasMouseIn) widget.mouseExited(absMouseX, absMouseY, relMouseX0, relMouseY0);
             wasMouseIn = false;

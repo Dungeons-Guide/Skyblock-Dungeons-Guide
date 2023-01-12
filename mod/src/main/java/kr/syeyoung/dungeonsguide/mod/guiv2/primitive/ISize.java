@@ -22,4 +22,8 @@ public interface ISize {
     double getWidth();
 
     double getHeight();
+
+    default boolean contains(double x, double y) {
+        return 0 <= x && 0 <= y && x < getWidth() && y < getHeight();
+    }
 }

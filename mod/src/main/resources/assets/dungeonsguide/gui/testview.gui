@@ -45,6 +45,30 @@
                                                     <Text bind:text="variable" color="#FF777777"/>
                                                 </bgcolor>
                                             </flexible>
+                                            <size width="60" height="20">
+                                                <AbstractButton on:click="buttonClick" bind:disabled="bDisable">
+                                                    <bgcolor backgroundColor="#FF005500">
+                                                        <col mainAlign="CENTER">
+                                                            <Text text="normal" color="#FF777777" align="CENTER"/>
+                                                        </col>
+                                                    </bgcolor>
+                                                    <bgcolor slot="hovered" backgroundColor="#FF009900">
+                                                        <col mainAlign="CENTER">
+                                                            <Text text="hovered" color="#FF777777" align="CENTER"/>
+                                                        </col>
+                                                    </bgcolor>
+                                                    <bgcolor slot="disabled" backgroundColor="#FF444444">
+                                                        <col mainAlign="CENTER">
+                                                            <Text text="disabled" color="#FF777777" align="CENTER"/>
+                                                        </col>
+                                                    </bgcolor>
+                                                    <bgcolor slot="pressed" backgroundColor="#FF00F00F">
+                                                        <col mainAlign="CENTER">
+                                                            <Text text="pressed" color="#FF777777" align="CENTER"/>
+                                                        </col>
+                                                    </bgcolor>
+                                                </AbstractButton>
+                                            </size>
                                         </row>
                                         <flexible>
                                             <Placeholder/>

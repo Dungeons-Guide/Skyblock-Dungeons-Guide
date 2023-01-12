@@ -35,6 +35,7 @@ public abstract class Widget {
     private DomElement domElement = new DomElement();
 
 
+    private boolean multiatfirst = false;
     public DomElement createDomElement(DomElement parent) {
         if (domElement.getWidget() != null) throw new IllegalStateException("Controller already has corresponding DomElement!");
         domElement = new DomElement();

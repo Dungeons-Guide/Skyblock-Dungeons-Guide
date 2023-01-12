@@ -54,6 +54,7 @@ public class DomElementRegistry {
         converters.put("Placeholder", new ExportedWidgetConverter(Placeholder::new));
         converters.put("TextField", new ExportedWidgetConverter(TextField::new));
         converters.put("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
+        converters.put("AbstractButton", new ExportedWidgetConverter(Button::new));
 
         converters.put("TestView", new ExportedWidgetConverter(TestView::new));
     }

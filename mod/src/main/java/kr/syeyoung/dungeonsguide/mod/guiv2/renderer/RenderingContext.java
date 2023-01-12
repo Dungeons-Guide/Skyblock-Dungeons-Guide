@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -26,29 +29,13 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
+import java.util.Stack;
 
 /**
  * Why are render methods here not static?
  * Well, might put them all into one gigantic array and only do 1 call.
  */
 public class RenderingContext {
-//    public void clip(int x, int y, int width, int height) {
-//        if (width < 0 || height < 0) return;
-//
-//        // transform the values to well... the thing
-//        Rectangle valueinsystem = domElement.getRelativeBound();
-//        Rectangle valueoutofsystem = domElement.getAbsBounds();
-//
-//        double xScale = valueoutofsystem.width / valueinsystem.getWidth();
-//        double yScale = valueoutofsystem.height / valueinsystem.getHeight();
-//
-//        int resWidth = (int) Math.ceil(width * xScale);
-//        int resHeight = (int) Math.ceil(height * yScale);
-//        int resX = (int) (valueoutofsystem.x + x * xScale);
-//        int resY = (int) (valueoutofsystem.y + y * yScale);
-//
-//        GL11.glScissor(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
-//    }
     public void drawRect(double left, double top, double right, double bottom, int color) {
         double i;
         if (left < right) {
@@ -83,6 +70,45 @@ public class RenderingContext {
         GlStateManager.disableBlend();
     }
 
-    public void clip(int i, int i1, double v, double v1) {
+    public Stack<Rectangle> clips = new Stack<>();
+
+    public void pushClip(Rect absBounds, Size size, double x, double y, double width, double height) {
+        if (width < 0 || height < 0) return;
+
+        Rectangle previousClip;
+        if (clips.size() == 0)
+            previousClip = new Rectangle(0,0,Integer.MAX_VALUE, Integer.MAX_VALUE);
+        else
+            previousClip = clips.peek();
+
+        double xScale = absBounds.getWidth() / size.getWidth();
+        double yScale = absBounds.getHeight() / size.getHeight();
+
+        int resWidth = (int) Math.ceil(width * xScale);
+        int resHeight = (int) Math.ceil(height * yScale);
+        int resX = (int) (absBounds.getX()+ x * xScale);
+        int resY = (int) (absBounds.getY() + y * yScale);
+
+        Rectangle newClip = new Rectangle(resX, Minecraft.getMinecraft().displayHeight - (resY+resHeight), resWidth, resHeight);
+        newClip = previousClip.intersection(newClip);
+
+        if (clips.size() == 0)
+            GL11.glEnable(GL11.GL_SCISSOR_TEST);
+
+        clips.push(newClip);
+
+        GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
+    }
+
+    public void popClip() {
+        Rectangle currentClip = clips.pop();
+
+
+        if (clips.size() == 0)
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        else {
+            Rectangle newClip = clips.peek();
+            GL11.glScissor(newClip.x, newClip.y, newClip.width, newClip.height);
+        }
     }
 }

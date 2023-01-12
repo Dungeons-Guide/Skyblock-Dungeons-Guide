@@ -58,8 +58,8 @@ public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
         DomElement domElement = getDomElement().getChildren().get(0);
 
-        int width = (int) (left.getValue() + right.getValue());
-        int height = (int) (top.getValue() + bottom.getValue());
+        double width =  (left.getValue() + right.getValue());
+        double height =  (top.getValue() + bottom.getValue());
         Size dim = domElement.getLayouter().layout(domElement, new ConstraintBox(
                 constraintBox.getMinWidth() - width,
                 constraintBox.getMaxWidth() - width,

@@ -94,8 +94,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         context.drawRect(1,1,bounds.getWidth() - 1, bounds.getHeight() - 1, Color.black.getRGB());
 
         Minecraft mc = Minecraft.getMinecraft();
-        context.clip(1, 1, bounds.getWidth() -2, bounds.getHeight()-2);
-//        GL11.glEnable(GL11.GL_SCISSOR_TEST);
+        context.pushClip(buildContext.getAbsBounds(), bounds, 1, 1, bounds.getWidth() -2, bounds.getHeight()-2);
 
         String text = value.getValue();
         FontRenderer fr = mc.fontRendererObj;
@@ -123,7 +122,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
                     Gui.drawRect(3 + x, y, 4 + x, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
             }
         }
-//        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        context.popClip();
     }
 
     private void setCursor0(int cursor) {

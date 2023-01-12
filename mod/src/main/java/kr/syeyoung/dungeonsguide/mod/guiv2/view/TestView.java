@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
 
@@ -33,10 +34,17 @@ public class TestView extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "variable")
     public final BindableAttribute<String> bindableAttribute = new BindableAttribute<>(String.class, "");
 
+    @Bind(variableName = "bDisable")
+    public final BindableAttribute<Boolean> bindableAttribute2 = new BindableAttribute<>(Boolean.class, false);
 
     @Override
     public void onMount() {
         super.onMount();
         bindableAttribute.setValue(Minecraft.getMinecraft().thePlayer.getName());
+    }
+
+    @On(functionName = "buttonClick")
+    public void onClick() {
+        bindableAttribute2.setValue(!bindableAttribute2.getValue());
     }
 }

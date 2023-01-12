@@ -24,12 +24,10 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
 import net.minecraft.util.ResourceLocation;
 
+import javax.xml.bind.Element;
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 /**
  * This class is for widgets using xml to describe their layout
@@ -56,9 +54,19 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     public final List<Widget> build(DomElement buildContext) {
         try (Parser parser = DomElementRegistry.obtainParser(target)) {
             ParserElement element = parser.getRootNode();
-            ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(element.getNodename());
-            Widget w = converter.convert(this, element);
-            return Collections.singletonList(w);
+            if (element.getNodename().equals("multi")) {
+                List<Widget> widgets = new ArrayList<>();
+                for (ParserElement child : element.getChildren()) {
+                    ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(child.getNodename());
+                    Widget w = converter.convert(this, child);
+                    widgets.add(w);
+                }
+                return widgets;
+            } else {
+                ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(element.getNodename());
+                Widget w = converter.convert(this, element);
+                return Collections.singletonList(w);
+            }
         } catch (IOException e) {
             throw new RuntimeException(e);
         }

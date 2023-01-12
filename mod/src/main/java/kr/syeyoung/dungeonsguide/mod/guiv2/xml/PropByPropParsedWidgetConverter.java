@@ -73,9 +73,13 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
 
                 MethodType mt = MethodType.methodType(m.getReturnType(), m.getParameterTypes());
                 try {
-                    Object obj = LambdaMetafactory.metafactory(MethodHandles.publicLookup(), m.getName(),
-                                    MethodType.methodType(functionalInterface),
-                            mt.generic(), invocationTarget, mt).getTarget().invokeExact();
+                    Object obj = LambdaMetafactory.metafactory(MethodHandles.lookup(), m.getName(),
+                                    MethodType.methodType(functionalInterface, rootWidget.getClass()),
+                            mt,
+                            invocationTarget,
+                            invocationTarget.type().dropParameterTypes(0, 1))
+                            .getTarget()
+                            .invoke(rootWidget);
                     exported.setValue(obj);
                 } catch (Throwable e) {
                     throw new RuntimeException(e);
