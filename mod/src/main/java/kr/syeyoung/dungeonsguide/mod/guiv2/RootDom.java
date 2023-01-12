@@ -43,7 +43,8 @@ public class RootDom extends DomElement {
         setRenderer(SingleChildRenderer.INSTANCE);
         setWidget(new DummyWidget());
 
-        widget.createDomElement(this);// and it's mounted!
+        DomElement element = widget.createDomElement(this);// and it's mounted!
+        addElement(element);
     }
 
     @Getter

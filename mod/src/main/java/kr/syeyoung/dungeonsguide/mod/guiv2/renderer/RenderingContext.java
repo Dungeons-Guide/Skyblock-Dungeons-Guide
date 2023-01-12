@@ -69,7 +69,22 @@ public class RenderingContext {
         worldRenderer.pos(left, top, 0.0).endVertex();
         tessellator.draw();
         GlStateManager.enableTexture2D();
-        GlStateManager.disableBlend();
+    }
+    public void drawScaledCustomSizeModalRect(double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
+        double f = 1.0F / tileWidth;
+        double g = 1.0F / tileHeight;
+        GlStateManager.enableTexture2D();
+        GlStateManager.enableBlend();
+        GlStateManager.color(1,1,1,1);
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        worldRenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
+        worldRenderer.pos(x, (y + height), 0.0).tex((u * f), ((v + vHeight) * g)).endVertex();
+        worldRenderer.pos((x + width), (y + height), 0.0).tex(((u + uWidth) * f), ((v + vHeight) * g)).endVertex();
+        worldRenderer.pos((x + width), y, 0.0).tex(((u + uWidth) * f), (v * g)).endVertex();
+        worldRenderer.pos(x, y, 0.0).tex((u * f), (v * g)).endVertex();
+        tessellator.draw();
     }
 
     public Stack<Rectangle> clips = new Stack<>();

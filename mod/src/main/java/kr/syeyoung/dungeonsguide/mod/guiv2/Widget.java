@@ -37,7 +37,7 @@ public abstract class Widget {
         if (domElement.getWidget() != null) throw new IllegalStateException("Controller already has corresponding DomElement!");
         domElement = new DomElement();
         domElement.setWidget(this);
-        parent.addElement(domElement);
+        domElement.setParent(parent);
 
         domElement.setLayouter(createLayouter());
         domElement.setRenderer(createRenderer());
@@ -45,7 +45,8 @@ public abstract class Widget {
         // build
         List<Widget> widgets = build(domElement);
         for (Widget widget : widgets) {
-            widget.createDomElement(domElement);
+            DomElement domElement1 = widget.createDomElement(domElement);
+            domElement.addElement(domElement1);
         }
         return domElement;
     }

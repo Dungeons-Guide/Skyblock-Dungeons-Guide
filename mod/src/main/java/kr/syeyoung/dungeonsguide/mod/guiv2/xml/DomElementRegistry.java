@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ResourceImage;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserException;
@@ -33,41 +34,51 @@ import java.util.Map;
 
 public class DomElementRegistry {
     private static final Map<String, ParsedWidgetConverter> converters = new HashMap<>();
+    
+    public static void register(String xmlName, ParsedWidgetConverter converter) {
+        converters.put(xmlName, converter);
+    }
 
     public static <T extends Widget, R extends Widget & ImportingWidget> ParsedWidgetConverter<T, R> obtainConverter(String name) {
         return converters.get(name);
     }
 
     static {
-        converters.put("stack", new ExportedWidgetConverter(Stack::new));
-        converters.put("size", new ExportedWidgetConverter(SizedBox::new));
-        converters.put("scaler", new ExportedWidgetConverter(Scaler::new));
-        converters.put("row", new ExportedWidgetConverter(Row::new));
-        converters.put("padding", new ExportedWidgetConverter(Padding::new));
-        converters.put("col", new ExportedWidgetConverter(Column::new));
-        converters.put("bgcolor", new ExportedWidgetConverter(Background::new));
-        converters.put("flexible", new ExportedWidgetConverter(Flexible::new));
-        converters.put("line", new ExportedWidgetConverter(Line::new));
-        converters.put("border", new ExportedWidgetConverter(Border::new));
-        converters.put("Text", new ExportedWidgetConverter(Text::new));
-        converters.put("slot", new ExportedWidgetConverter(Slot::new));
-        converters.put("clip", new ExportedWidgetConverter(Clip::new));
-        converters.put("measure", new ExportedWidgetConverter(Measure::new));
-        converters.put("UnconstrainedBox", new ExportedWidgetConverter(UnconstrainedBox::new));
-        converters.put("absXY", new ExportedWidgetConverter(AbsXY::new));
-        converters.put("Placeholder", new ExportedWidgetConverter(Placeholder::new));
-        converters.put("TextField", new ExportedWidgetConverter(TextField::new));
-        converters.put("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
-        converters.put("AbstractButton", new ExportedWidgetConverter(Button::new));
-        converters.put("ScrollablePanel", new ExportedWidgetConverter(ScrollablePanel::new));
-        converters.put("AbstractScrollBar", new ExportedWidgetConverter(Scrollbar::new));
-        converters.put("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleButton.gui")));
-        converters.put("SimpleScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleScrollBar.gui")));
-        converters.put("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleHorizontalScrollBar.gui")));
-        converters.put("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleVerticalScrollBar.gui")));
-        converters.put("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/slowlist.gui")));
+        register("stack", new ExportedWidgetConverter(Stack::new));
+        register("size", new ExportedWidgetConverter(SizedBox::new));
+        register("scaler", new ExportedWidgetConverter(Scaler::new));
+        register("row", new ExportedWidgetConverter(Row::new));
+        register("padding", new ExportedWidgetConverter(Padding::new));
+        register("col", new ExportedWidgetConverter(Column::new));
+        register("bgcolor", new ExportedWidgetConverter(Background::new));
+        register("align", new ExportedWidgetConverter(Align::new));
+        register("flexible", new ExportedWidgetConverter(Flexible::new));
+        register("line", new ExportedWidgetConverter(Line::new));
+        register("border", new ExportedWidgetConverter(Border::new));
+        register("Text", new ExportedWidgetConverter(Text::new));
+        register("slot", new ExportedWidgetConverter(Slot::new));
+        register("clip", new ExportedWidgetConverter(Clip::new));
+        register("measure", new ExportedWidgetConverter(Measure::new));
+        register("UnconstrainedBox", new ExportedWidgetConverter(UnconstrainedBox::new));
+        register("absXY", new ExportedWidgetConverter(AbsXY::new));
+        register("Placeholder", new ExportedWidgetConverter(Placeholder::new));
+        register("TextField", new ExportedWidgetConverter(TextField::new));
+        register("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
+        register("AbstractButton", new ExportedWidgetConverter(Button::new));
+        register("ScrollablePanel", new ExportedWidgetConverter(ScrollablePanel::new));
+        register("AbstractScrollBar", new ExportedWidgetConverter(Scrollbar::new));
+        register("aspectRatio", new ExportedWidgetConverter(AspectRatioFitter::new));
+        register("BareResourceImage", new ExportedWidgetConverter(ResourceImage::new));
+        register("TestView", new ExportedWidgetConverter(TestView::new));
+        
+        register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleButton.gui")));
+        register("SimpleScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleScrollBar.gui")));
+        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleHorizontalScrollBar.gui")));
+        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleVerticalScrollBar.gui")));
+        register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/slowlist.gui")));
+        
+        register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/ratioResourceImage.gui")));
 
-        converters.put("TestView", new ExportedWidgetConverter(TestView::new));
     }
 
     public static Parser obtainParser(ResourceLocation resourceLocation) {

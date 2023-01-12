@@ -40,6 +40,9 @@
                                             <col mainAlign="END">
                                                 <TextField placeholder="input text" bind:value="variable"/>
                                                 <row mainAlign="CENTER">
+                                                    <size height="32">
+                                                        <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                                    </size>
                                                     <Text text="Hello, "/>
                                                     <size width="10" height="0"/>
                                                     <flexible>

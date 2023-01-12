@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Stack;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
@@ -30,6 +31,7 @@ import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
@@ -45,10 +47,10 @@ public class DomElement {
     private Layouter layouter = NullLayouter.INSTANCE; // layouts subelements
 
     @Getter
-    @Setter(AccessLevel.PRIVATE)
+    @Setter
     private DomElement parent;
     @Getter
-    private List<DomElement> children = new LinkedList<>();
+    private List<DomElement> children = new ArrayList<>();
 
     @Getter
     Context context;
@@ -126,6 +128,7 @@ public class DomElement {
     public void keyPressed0(char typedChar, int keyCode) {
         for (DomElement childComponent  : children) {
             childComponent.keyPressed0(typedChar, keyCode);
+            if (widget instanceof Stack) break;
         }
 
         if (isFocused())
@@ -134,6 +137,7 @@ public class DomElement {
     public void keyHeld0(char typedChar, int keyCode) {
         for (DomElement childComponent  : children) {
             childComponent.keyHeld0(typedChar, keyCode);
+            if (widget instanceof Stack) break;
         }
 
         if (isFocused())
@@ -142,8 +146,8 @@ public class DomElement {
     public void keyReleased0(char typedChar, int keyCode) {
         for (DomElement childComponent  : children) {
             childComponent.keyReleased0(typedChar, keyCode);
+            if (widget instanceof Stack) break;
         }
-
         if (isFocused())
             widget.keyReleased(typedChar, keyCode);
     }
@@ -168,6 +172,8 @@ public class DomElement {
             if (childComponent.mouseClicked0(absMouseX, absMouseY, transformed.x, transformed.y, mouseButton)) {
                 return true;
             }
+
+            if (widget instanceof Stack) break;
         }
 
         return widget.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
@@ -181,6 +187,7 @@ public class DomElement {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
             childComponent.mouseReleased0(absMouseX, absMouseY, transformed.x, transformed.y, state);
+            if (widget instanceof Stack) break;
         }
         widget.mouseReleased(absMouseX, absMouseY, relMouseX0, relMouseY0, state);
     }
@@ -192,6 +199,7 @@ public class DomElement {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
             childComponent.mouseClickMove0(absMouseX, absMouseY, transformed.x, transformed.y, clickedMouseButton, timeSinceLastClick);
+            if (widget instanceof Stack) break;
         }
         if (isFocused())
             widget.mouseClickMove(absMouseX, absMouseY, relMouseX0, relMouseY0, clickedMouseButton, timeSinceLastClick);
@@ -205,6 +213,7 @@ public class DomElement {
             if (childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount)) {
                 return true;
             }
+            if (widget instanceof Stack) break;
         }
         if (!absBounds.contains(absMouseX, absMouseY) && !isFocused()) return false;
         return widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
@@ -226,6 +235,7 @@ public class DomElement {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
             childComponent.mouseMoved0(absMouseX, absMouseY,  transformed.x, transformed.getY());
+            if (widget instanceof Stack) break;
         }
         widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
     }

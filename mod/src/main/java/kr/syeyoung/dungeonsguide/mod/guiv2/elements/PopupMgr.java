@@ -52,8 +52,12 @@ public class PopupMgr extends AnnotatedWidget {
         super.onUnmount();
     }
 
-    public void openPopup(DomElement element) {
-        domElementBindableAttribute.getValue().addElementFirst(element);
+    public static PopupMgr getPopupMgr(DomElement buildContext) {
+        return buildContext.getContext().getValue(PopupMgr.class, "popup");
+    }
+
+    public void openPopup(Widget element) {
+        domElementBindableAttribute.getValue().addElementFirst(element.createDomElement(getDomElement()));
     }
 
     public void closePopup() {

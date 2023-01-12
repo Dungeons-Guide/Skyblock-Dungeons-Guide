@@ -25,18 +25,49 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
+import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
 
-public class Stack extends AnnotatedExportOnlyWidget {
+public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
+    @Override
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        for (int i = buildContext.getChildren().size() - 1; i >= 0; i --) {
+            DomElement value = buildContext.getChildren().get(i);
+            Rect original = value.getRelativeBound();
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(original.getX(), original.getY(), 0);
+
+            double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
+            double absYScale = buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight();
+
+            Rect elementABSBound = new Rect(
+                    (buildContext.getAbsBounds().getX() + original.getX() * absXScale),
+                    (buildContext.getAbsBounds().getY() + original.getY() * absYScale),
+                    (original.getWidth() * absXScale),
+                    (original.getHeight() * absYScale)
+            );
+            value.setAbsBounds(elementABSBound);
+
+            if (i > 0)
+             value.getRenderer().doRender(-1, -1, -1, -1, partialTicks, context, value);
+            if (i == 0)
+                value.getRenderer().doRender(absMouseX, absMouseY,
+                        relMouseX - original.getX(),
+                        relMouseY - original.getY(), partialTicks, context, value);
+            GlStateManager.popMatrix();
+        }
+    }
+
     public static class StackingLayouter implements Layouter {
         public static final StackingLayouter INSTANCE = new StackingLayouter();
         @Override
@@ -63,10 +94,5 @@ public class Stack extends AnnotatedExportOnlyWidget {
     @Override
     protected Layouter createLayouter() {
         return StackingLayouter.INSTANCE;
-    }
-
-    @Override
-    protected Renderer createRenderer() {
-        return OnlyChildrenRenderer.INSTANCE;
     }
 }

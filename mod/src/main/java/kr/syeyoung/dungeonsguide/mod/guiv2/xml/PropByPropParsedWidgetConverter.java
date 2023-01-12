@@ -121,8 +121,8 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                 } else if (attribute.getType() == Widget.class) {
                     if (elements.size() > 1) throw new IllegalArgumentException("More than 1 for single widget: "+stringListEntry.getKey());
                     if (elements.size() == 1)
-                    attribute.setValue(DomElementRegistry.obtainConverter(elements.get(0).getNodename())
-                            .convert(rootWidget, elements.get(0)));
+                        attribute.setValue(DomElementRegistry.obtainConverter(elements.get(0).getNodename())
+                                .convert(rootWidget, elements.get(0)));
                     else attribute.setValue(null);
                 } else if (attribute.getType() == ParserElementList.class) {
                     attribute.setValue(elements);

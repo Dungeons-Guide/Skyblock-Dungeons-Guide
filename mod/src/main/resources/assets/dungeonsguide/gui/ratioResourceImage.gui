@@ -16,13 +16,11 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<measure bind:size="size">
-    <stack>
-        <absXY bind:x="x" bind:y="y">
-            <size bind:width="width" bind:height="height">
-                <slot bind:child="thumb"/>
-            </size>
-        </absXY>
-        <slot bind:child="track"/>
-    </stack>
-</measure>
+<wrapper x="0" y="0">
+    <aspectRatio bind:width="width" bind:height="height">
+        <BareResourceImage bind:location="location"
+                           bind:uvX="x" bind:uvY="y"
+                           bind:uvWidth="width" bind:uvHeight="height"
+                           bind:textureWidth="textureWidth" bind:textureHeight="textureHeight"/>
+    </aspectRatio>
+</wrapper>
