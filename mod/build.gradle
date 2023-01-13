@@ -14,38 +14,6 @@ java {
     toolchain.languageVersion.set(JavaLanguageVersion.of(8))
 }
 
-loom {
-    launchConfigs {
-        client {
-            // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
-//            property("mixin.debug", "true")
-//            property("asmhelper.verbose", "true")
-//            arg("--mixin", "mixins.examplemod.json")
-
-        }
-    }
-    runConfigs {
-        named("client") {
-            ideConfigGenerated(true)
-            vmArgs.remove("-XstartOnFirstThread")
-        }
-    }
-    runs {
-        client {
-            runDir = '../runtime'
-            property('devauth.enabled','true')
-            property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
-            property('dg.loader', 'devenv')
-            client()
-            vmArgs.remove("-XstartOnFirstThread")
-        }
-    }
-    forge {
-        pack200Provider.set(new dev.architectury.pack200.java.Pack200Adapter())
-    }
-}
-
-
 sourceSets.main {
     output.setResourcesDir(file("$buildDir/classes/java/main"))
 }
@@ -53,14 +21,26 @@ sourceSets.main {
 
 repositories {
     mavenCentral()
-    maven { url "https://jitpack.io" }
-    maven {url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1"}
+    maven {
+        url "https://jitpack.io/"
+        content {
+            includeGroupByRegex("(com|io)\\.github\\..+")
+        }
+    }
+    maven { url "https://pkgs.dev.azure.com/djtheredstoner/DevAuth/_packaging/public/maven/v1" }
 }
 
 configurations {
     implementation.extendsFrom shadowImpl
 }
 
+def devenvMod = configurations.create("devenvMod") {
+    setTransitive(false)
+    setVisible(false)
+}
+
+def testWithNeu = project.findProperty("dg.testwithneu") == "true"
+printf("TestWithNeu: %s", testWithNeu)
 
 dependencies {
     minecraft("com.mojang:minecraft:1.8.9")
@@ -83,7 +63,44 @@ dependencies {
 
     compileOnly project(path: ":loader")
     runtimeOnly project(path: ":loader")
+
+    if (testWithNeu) {
+        runtimeOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22'
+        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:e603cf2:all')
+    }
 }
+
+loom {
+    launchConfigs {
+        client {
+            // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
+//            property("mixin.debug", "true")
+//            property("asmhelper.verbose", "true")
+//            arg("--mixin", "mixins.examplemod.json")
+            arg("--mods", devenvMod.files.collect { file("../runtime").relativePath(it) }.join(","))
+        }
+    }
+    runConfigs {
+        named("client") {
+            ideConfigGenerated(true)
+            vmArgs.remove("-XstartOnFirstThread")
+        }
+    }
+    runs {
+        client {
+            runDir = '../runtime'
+            property('devauth.enabled', 'true')
+            property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
+            property('dg.loader', 'devenv')
+            client()
+            vmArgs.remove("-XstartOnFirstThread")
+        }
+    }
+    forge {
+        pack200Provider.set(new dev.architectury.pack200.java.Pack200Adapter())
+    }
+}
+
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
