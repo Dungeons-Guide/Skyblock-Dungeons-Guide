@@ -22,14 +22,14 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.EntityLivingRenderListener;
 import net.minecraft.entity.passive.*;
 import net.minecraftforge.client.event.RenderLivingEvent;
 
 
-public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRenderListener {
+public class FeatureHideAnimals extends SimpleFeature  {
     public FeatureHideAnimals() {
         super("Dungeon.Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
         addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheeps", "Hide Sheeps", true, "boolean", nval -> sheep = nval));
@@ -49,7 +49,7 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    @Override
+    @DGEventHandler()
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
@@ -68,10 +68,5 @@ public class FeatureHideAnimals extends SimpleFeature implements EntityLivingRen
         } else if (renderPlayerEvent.entity instanceof EntityRabbit && rabbit) {
             renderPlayerEvent.setCanceled(true);
         }
-    }
-
-    @Override
-    public void onEntityRenderPost(RenderLivingEvent.Post renderPlayerEvent) {
-
     }
 }

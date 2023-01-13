@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,12 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.listener;
+package kr.syeyoung.dungeonsguide.mod.events.annotations;
 
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
+@Retention(RetentionPolicy.RUNTIME)
+@Target(ElementType.METHOD)
+public @interface DGEventHandler {
+    boolean triggerOutOfSkyblock() default false;
 
-
-public interface DiscordUserJoinRequestListener {
-    void onDiscordUserJoinRequest(DiscordUserJoinRequestEvent event);
+    boolean ignoreDisabled() default false;
 }

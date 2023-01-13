@@ -21,17 +21,15 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.mod.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TitleRender;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
-import net.minecraftforge.common.MinecraftForge;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import java.util.Map;
 import java.util.Objects;
@@ -42,7 +40,7 @@ import static kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult.REMOVE_CHAT;
 /**
  * CREDITS FOR THE COUNTDOWN SOUNDTRACK: <a href="https://www.youtube.com/watch?v=acCqrA-JxAw">...</a>
  */
-public class FeatureEpicCountdown extends SimpleFeature implements TickListener {
+public class FeatureEpicCountdown extends SimpleFeature {
 
     static volatile long updatedAt;
     static volatile int secondsLeft;
@@ -104,8 +102,8 @@ public class FeatureEpicCountdown extends SimpleFeature implements TickListener 
     static final String GO_TEXT = "GO!!!";
     String lastSec;
 
-    @SubscribeEvent
-    public void onTick(){
+    @DGEventHandler
+    public void onTick(DGTickEvent event){
         if(!isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
 
@@ -134,7 +132,7 @@ public class FeatureEpicCountdown extends SimpleFeature implements TickListener 
     }
 
 
-    @SubscribeEvent
+    @DGEventHandler
     public void onRender(RenderGameOverlayEvent.Post postRender) {
         if (!isEnabled()) return;
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))

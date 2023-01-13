@@ -20,21 +20,22 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.StompConnectedListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 
-public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedListener, TickListener {
+public class FeatureUpdateAlarm extends SimpleFeature  {
     public FeatureUpdateAlarm() {
         super("Misc", "Update Alarm","Show a warning in chat when a version has been released.", "etc.updatealarm", true);
     }
 
     private String stompPayload;
-    @Override
-    public void onTick() {
+
+    @DGEventHandler
+    public void onTick(DGTickEvent event) {
         if (stompPayload != null) {
             ChatTransmitter.addToQueue(new ChatComponentText(stompPayload));
             stompPayload = null;
@@ -42,7 +43,7 @@ public class FeatureUpdateAlarm extends SimpleFeature implements StompConnectedL
         }
     }
 
-    @Override
+    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onStompConnected(StompConnectedEvent event) {
 
         event.getStompInterface().subscribe("/topic/updates", (stompClient ,payload) -> {

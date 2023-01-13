@@ -33,8 +33,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.mod.features.text.*;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
@@ -55,7 +56,7 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListener {
+public class FeatureSoulRoomWarning extends TextHUDFeature {
 
     public FeatureSoulRoomWarning() {
         super("Dungeon.HUDs","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn", true, getFontRenderer().getStringWidth("There is a fairy soul in this room!"), getFontRenderer().FONT_HEIGHT);
@@ -89,8 +90,8 @@ public class FeatureSoulRoomWarning extends TextHUDFeature implements TickListen
     }
 
 
-    @Override
-    public void onTick() {
+    @DGEventHandler
+    public void onTick(DGTickEvent event) {
         if (!skyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || !DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getMapProcessor().isInitialized()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
