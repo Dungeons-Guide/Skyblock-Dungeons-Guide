@@ -9,7 +9,7 @@ run/*
 DEBUG/*
 sdk/*
 essential/*
-runtime/*
+runtime/**
 # Ignore Gradle GUI config
 gradle-app.setting
 

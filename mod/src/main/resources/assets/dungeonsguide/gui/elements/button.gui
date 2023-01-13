@@ -1,0 +1,6 @@
+<multi>
+    <slot bind:child="wgtNormal" bind:ref="refNormal"/>
+    <slot bind:child="wgtDisabled" bind:ref="refDisabled"/>
+    <slot bind:child="wgtHover" bind:ref="refHover"/>
+    <slot bind:child="wgtPressed" bind:ref="refPressed"/>
+</multi>

@@ -1,0 +1,46 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<col crossAlign="STRETCH">
+    <flexible>
+        <row crossAlign="STRETCH">
+            <flexible>
+                <measure bind:size="viewportSize">
+                    <clip>
+                        <absXY bind:x="contentX" bind:y="contentY">
+                            <UnconstrainedBox bind:direction="direction">
+                                <measure bind:size="contentSize">
+                                    <slot bind:child="$"/>
+                                </measure>
+                            </UnconstrainedBox>
+                        </absXY>
+                    </clip>
+                </measure>
+            </flexible>
+            <SimpleVerticalScrollBar bind:ref="vertRef" bind:thickness="verticalThickness" min="0" bind:max="contentHeight" bind:current="y" bind:thumbValue="viewportHeight"/>
+        </row>
+    </flexible>
+    <row>
+        <flexible>
+            <SimpleHorizontalScrollBar bind:ref="horzRef" bind:thickness="horizontalThickness" min="0" bind:max="contentWidth" bind:current="x" bind:thumbValue="viewportWidth"/>
+        </flexible>
+        <size bind:width="verticalThickness" bind:height="horizontalThickness">
+            <bgcolor backgroundColor="#FF1F1F1F"/>
+        </size>
+    </row>
+</col>

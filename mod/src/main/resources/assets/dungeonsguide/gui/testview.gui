@@ -1,0 +1,83 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2022  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FFFF0000">
+    <PopupManager>
+        <row mainAlign="CENTER">
+            <flexible fit="TIGHT">
+                <bgcolor backgroundColor="#FF003300"/>
+            </flexible>
+            <flexible fit="TIGHT">
+                <col mainAlign="CENTER">
+                    <flexible fit="TIGHT">
+                        <bgcolor backgroundColor="#FF0000FF"/>
+                    </flexible>
+                    <flexible fit="TIGHT">
+                        <padding left="20.0" right="20.0" top="10.0" bottom="10.0">
+                            <border>
+                                <line slot="left" dir="VERTICAL" thickness="5.0" color="#FF00FF00"/>
+                                <line slot="top" dir="HORIZONTAL" thickness="5.0" color="#FF00FF00"/>
+                                <line slot="bottom" dir="HORIZONTAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA" factor="10"/>
+                                <line slot="right" dir="VERTICAL" thickness="5.0" color="#FF00FF00" pattern="0xAAAA"/>
+                                <scaler scale="2.0" slot="content">
+                                    <ScrollablePanel>
+                                        <size width="1000" height="1000">
+                                            <col mainAlign="END">
+                                                <TextField placeholder="input text" bind:value="variable"/>
+                                                <row mainAlign="CENTER">
+                                                    <size height="32">
+                                                        <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                                    </size>
+                                                    <Text text="Hello, "/>
+                                                    <size width="10" height="0"/>
+                                                    <flexible>
+                                                        <bgcolor backgroundColor="#FF00FFFF">
+                                                            <Text bind:text="variable" color="#FF777777"/>
+                                                        </bgcolor>
+                                                    </flexible>
+                                                    <size width="60" height="20">
+                                                        <ColorButton on:click="buttonClick" bind:disabled="bDisable"
+                                                                     backgroundColor="#FF005500"          textColor="#FF777777"
+                                                                     hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
+                                                                     disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
+                                                                     pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
+                                                                     bind:text="variable"
+                                                        />
+                                                    </size>
+                                                </row>
+                                                <flexible>
+                                                    <Placeholder/>
+                                                </flexible>
+                                            </col>
+                                        </size>
+                                    </ScrollablePanel>
+                                </scaler>
+                            </border>
+                        </padding>
+                    </flexible>
+                    <flexible fit="TIGHT" flex="2">
+                        <bgcolor backgroundColor="#FF0000FF"/>
+                    </flexible>
+                </col>
+            </flexible>
+            <flexible fit="TIGHT">
+                <bgcolor backgroundColor="#FF003300"/>
+            </flexible>
+        </row>
+    </PopupManager>
+</bgcolor>

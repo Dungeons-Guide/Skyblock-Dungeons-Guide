@@ -1,0 +1,3 @@
+<stack bind:ref="stackRef">
+    <slot bind:child="$"/>
+</stack>
