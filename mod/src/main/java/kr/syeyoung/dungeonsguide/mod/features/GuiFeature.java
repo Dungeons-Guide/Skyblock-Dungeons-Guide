@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ScreenRenderListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
@@ -37,6 +37,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -45,7 +46,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Getter
-public abstract class GuiFeature extends AbstractFeature implements ScreenRenderListener {
+public abstract class GuiFeature extends AbstractFeature {
     @Setter
     private GUIRectangle featureRect;
     @Setter(value = AccessLevel.PROTECTED)
@@ -65,9 +66,10 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         this.featureRect = new GUIRectangle(0, 0, width, height);
     }
 
-    @Override
-    public void drawScreen(float partialTicks) {
+    @DGEventHandler
+    public void drawScreen(RenderGameOverlayEvent.Post postRender) {
         if (!isEnabled()) return;
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
 
         GlStateManager.pushMatrix();
         Rectangle featureRect = this.featureRect.getRectangleNoScale();
@@ -77,7 +79,7 @@ public abstract class GuiFeature extends AbstractFeature implements ScreenRender
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
 
         GlStateManager.translate(featureRect.x, featureRect.y, 0);
-        drawHUD(partialTicks);
+        drawHUD(postRender.partialTicks);
 
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
         GlStateManager.popMatrix();

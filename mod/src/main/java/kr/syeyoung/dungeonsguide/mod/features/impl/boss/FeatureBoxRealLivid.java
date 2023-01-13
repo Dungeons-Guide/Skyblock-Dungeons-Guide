@@ -23,15 +23,16 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorLivid;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 
-public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderListener {
+public class FeatureBoxRealLivid extends SimpleFeature {
     public FeatureBoxRealLivid() {
         super("Dungeon.Bossfight.Floor 5", "Box Real Livid", "Box Real Livid in bossfight", "Dungeon.Bossfight.realLividBox", true);
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Livid", new AColor(0,255,0,150), "acolor", nval -> color = nval));
@@ -40,8 +41,9 @@ public class FeatureBoxRealLivid extends SimpleFeature implements WorldRenderLis
     AColor color = null;
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    @Override
-    public void drawWorld(float partialTicks) {
+    @DGEventHandler
+    public void drawWorld(RenderWorldLastEvent event) {
+        float partialTicks = event.partialTicks;
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;

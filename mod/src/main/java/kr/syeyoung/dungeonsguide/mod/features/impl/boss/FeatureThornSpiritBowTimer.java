@@ -23,8 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TitleListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.TitleEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -36,7 +36,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatListener, TitleListener {
+public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     public FeatureThornSpiritBowTimer() {
         super("Dungeon.Bossfight.Floor 4", "Display Spirit bow timer", "Displays how long until spirit bow gets destroyed", "bossfight.spiritbowdisplay", false, getFontRenderer().getStringWidth("Spirit Bow Destruction: 2m 00s"), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
@@ -77,7 +77,7 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
     }
     private long time = 0;
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (!(skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
         String text = clientChatReceivedEvent.message.getFormattedText();
@@ -101,10 +101,10 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature implements ChatLi
         }
     }
 
-    @Override
-    public void onTitle(S45PacketTitle renderPlayerEvent) {
+    @DGEventHandler
+    public void onTitle(TitleEvent event) {
         if (!(skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        if (renderPlayerEvent.getMessage().getFormattedText().contains("picked up")) {
+        if (event.getPacketTitle().getMessage().getFormattedText().contains("picked up")) {
             time = System.currentTimeMillis() + 21000;
         }
     }

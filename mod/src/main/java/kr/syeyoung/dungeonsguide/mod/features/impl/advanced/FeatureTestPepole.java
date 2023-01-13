@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -47,7 +47,6 @@ import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
@@ -62,7 +61,7 @@ import java.util.regex.Pattern;
 
 import static kr.syeyoung.dungeonsguide.mod.utils.TabListUtil.getString;
 
-public class FeatureTestPepole extends GuiFeature implements ChatListener, DungeonStartListener {
+public class FeatureTestPepole extends GuiFeature  {
 
     Logger logger = LogManager.getLogger("FeatureTestPepole");
     private Float scale;
@@ -232,7 +231,7 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
         readynessIndicator.put("go", true);
     }
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (!txt.startsWith("§r§9Party §8>")) return;
@@ -265,8 +264,8 @@ public class FeatureTestPepole extends GuiFeature implements ChatListener, Dunge
 
     }
 
-    @Override
-    public void onDungeonStart() {
+    @DGEventHandler
+    public void onDungeonStart(DungeonStartedEvent event) {
         ready.clear();
     }
 

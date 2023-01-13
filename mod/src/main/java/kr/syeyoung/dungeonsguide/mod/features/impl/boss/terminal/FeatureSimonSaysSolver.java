@@ -23,15 +23,15 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.InteractListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
@@ -39,7 +39,7 @@ import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
 
-public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRenderListener, TickListener, InteractListener {
+public class FeatureSimonSaysSolver extends SimpleFeature {
     public FeatureSimonSaysSolver() {
         super("Dungeon.Bossfight.Floor 7+","Simon Says Solver","Solver for Simon says puzzle", "Dungeon.Bossfight.simonsays2");
     }
@@ -48,8 +48,9 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
     private final List<BlockPos> orderbuild = new ArrayList<BlockPos>();
     private final LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
 
-    @Override
-    public void drawWorld(float partialTicks) {
+    @DGEventHandler
+    public void drawWorld(RenderWorldLastEvent event) {
+        float partialTicks = event.partialTicks;
         if (!isEnabled()) return;
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) {
@@ -65,8 +66,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
             RenderUtils.highlightBlock(orderclick.get(1), new Color(255, 170, 0, 100), partialTicks, false);
     }
     private boolean wasButton = false;
-    @Override
-    public void onTick() {
+    @DGEventHandler
+    public void onTick(DGTickEvent tickEvent) {
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) {
             wasButton = false;
@@ -93,7 +94,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature implements WorldRender
         }
     }
 
-    @Override
+    @DGEventHandler
     public void onInteract(PlayerInteractEvent event) {
         if (!isEnabled()) return;
 

@@ -36,7 +36,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-public abstract class AbstractFeature {
+public abstract class AbstractFeature implements IFeature {
     @Getter
     private final String category;
     @Getter

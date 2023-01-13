@@ -21,13 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.EntityLivingRenderListener;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.client.event.RenderLivingEvent;
 
 
-public class FeatureHideNameTags extends SimpleFeature implements EntityLivingRenderListener {
+public class FeatureHideNameTags extends SimpleFeature  {
     public FeatureHideNameTags() {
         super("Dungeon.Mobs", "Hide mob nametags", "Hide mob nametags in dungeon", "dungeon.hidenametag", false);
     }
@@ -35,7 +35,7 @@ public class FeatureHideNameTags extends SimpleFeature implements EntityLivingRe
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    @Override
+    @DGEventHandler
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
@@ -45,10 +45,5 @@ public class FeatureHideNameTags extends SimpleFeature implements EntityLivingRe
             if (armorStand.getAlwaysRenderNameTag())
                 renderPlayerEvent.setCanceled(true);
         }
-    }
-
-    @Override
-    public void onEntityRenderPost(RenderLivingEvent.Post renderPlayerEvent) {
-
     }
 }

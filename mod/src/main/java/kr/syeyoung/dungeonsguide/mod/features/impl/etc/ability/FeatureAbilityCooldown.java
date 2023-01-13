@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability;
 
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -39,7 +39,7 @@ import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListener, TickListener {
+public class FeatureAbilityCooldown extends TextHUDFeature {
 
     public FeatureAbilityCooldown() {
         super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2", false, 100, getFontRenderer().FONT_HEIGHT * 5);
@@ -302,7 +302,8 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
     Pattern thePattern3 = Pattern.compile("§r§aUsed (.+)§r§a!§r");
 
     private String lastActionbarAbility;
-    @Override
+
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) {
             Matcher m = thePattern.matcher(clientChatReceivedEvent.message.getFormattedText());
@@ -388,8 +389,8 @@ public class FeatureAbilityCooldown extends TextHUDFeature implements ChatListen
         }
     }
 
-    @Override
-    public void onTick() {
+    @DGEventHandler
+    public void onTick(DGTickEvent event) {
         EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
         if (sp == null) return;
         if (sp.inventory == null || sp.inventory.armorInventory == null) return;

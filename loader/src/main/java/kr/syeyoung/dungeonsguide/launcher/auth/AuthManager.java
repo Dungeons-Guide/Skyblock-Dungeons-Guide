@@ -87,7 +87,7 @@ public class AuthManager {
             boolean shouldReAuth = false;
             if (getToken().isUserVerified() && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                 shouldReAuth = true;
-            }
+            } // TODO: try auth, check if current dungeons guide version is acceisible, and unload it if inaccessible.
             if (!getToken().isAuthenticated()) {
                 shouldReAuth = true;
             }

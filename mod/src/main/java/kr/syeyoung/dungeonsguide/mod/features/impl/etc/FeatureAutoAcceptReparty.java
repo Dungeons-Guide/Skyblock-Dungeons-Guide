@@ -22,12 +22,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-public class FeatureAutoAcceptReparty extends SimpleFeature implements ChatListener {
+public class FeatureAutoAcceptReparty extends SimpleFeature {
     public FeatureAutoAcceptReparty() {
         super("Party.Reparty", "Auto accept reparty", "Automatically accept reparty", "qol.autoacceptreparty", true);
     }
@@ -35,7 +35,8 @@ public class FeatureAutoAcceptReparty extends SimpleFeature implements ChatListe
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     private String lastDisband;
-    @Override
+
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.message.getFormattedText().endsWith("§ehas disbanded the party!§r")) {
             lastDisband = null;

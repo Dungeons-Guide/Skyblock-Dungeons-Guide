@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
+import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureSimonSaysSolver;
@@ -67,6 +68,8 @@ public class FeatureRegistry {
             features = new ArrayList<AbstractFeature>();
         features.add(abstractFeature);
         featuresByCategory.put(abstractFeature.getCategory(), features);
+
+        EventHandlerRegistry.registerEvents(abstractFeature);
 
         return abstractFeature;
     }

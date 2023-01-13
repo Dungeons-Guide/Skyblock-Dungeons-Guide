@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
 
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -37,12 +37,12 @@ import net.minecraftforge.client.event.GuiScreenEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
-public class FeatureGoodParties extends SimpleFeature implements GuiPostRenderListener {
+public class FeatureGoodParties extends SimpleFeature {
     public FeatureGoodParties() {
         super("Party Kicker", "Highlight parties in party viewer", "Highlight parties you can't join with red", "partykicker.goodparty",true);
     }
 
-    @Override
+    @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!isEnabled()) return;
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;
