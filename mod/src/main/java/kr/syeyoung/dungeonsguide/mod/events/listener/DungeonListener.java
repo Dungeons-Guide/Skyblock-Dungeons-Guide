@@ -147,7 +147,7 @@ public class DungeonListener {
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) {
         if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
-
+        MinecraftForge.EVENT_BUS.post(new DGTickEvent());
 
         if (SkyblockStatus.isOnSkyblock()) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

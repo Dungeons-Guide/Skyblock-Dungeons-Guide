@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonDeathEvent;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -43,7 +43,7 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener {
+public class FeatureDungeonDeaths extends TextHUDFeature {
     public FeatureDungeonDeaths() {
         super("Dungeon.HUDs", "Display Deaths", "Display names of player and death count in dungeon run", "dungeon.stats.deaths", false, getFontRenderer().getStringWidth("longestplayernamepos: 100"), getFontRenderer().FONT_HEIGHT * 6);
         this.setEnabled(false);
@@ -143,7 +143,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature implements ChatListener
     Pattern deathPattern = Pattern.compile("§r§c ☠ (.+?)§r§7 .+and became a ghost.+");
     Pattern meDeathPattern = Pattern.compile("§r§c ☠ §r§7You .+and became a ghost.+");
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!skyblockStatus.isOnDungeon()) return;

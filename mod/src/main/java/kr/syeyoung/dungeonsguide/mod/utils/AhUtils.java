@@ -23,7 +23,7 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthUtil;
-import kr.syeyoung.dungeonsguide.mod.events.impl.AuthChangedEvent;
+import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;

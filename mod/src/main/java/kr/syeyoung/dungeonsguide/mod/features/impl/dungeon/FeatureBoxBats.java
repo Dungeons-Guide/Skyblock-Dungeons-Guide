@@ -22,19 +22,20 @@ import com.google.common.base.Predicate;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.List;
 
 
-public class FeatureBoxBats extends SimpleFeature implements WorldRenderListener {
+public class FeatureBoxBats extends SimpleFeature  {
     public FeatureBoxBats() {
         super("Dungeon.Mobs", "Box Bats", "Box bats in dungeons\nDoes not appear through walls", "dungeon.batbox", true);
         addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and bats to be boxed", 20, "integer"));
@@ -43,8 +44,9 @@ public class FeatureBoxBats extends SimpleFeature implements WorldRenderListener
 
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    @Override
-    public void drawWorld(float partialTicks) {
+    @DGEventHandler
+    public void drawWorld(RenderWorldLastEvent event) {
+        float partialTicks = event.partialTicks;
         if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
 

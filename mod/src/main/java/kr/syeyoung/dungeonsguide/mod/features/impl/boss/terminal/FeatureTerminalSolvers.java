@@ -20,8 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 
 
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.*;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.inventory.GuiChest;
@@ -36,7 +37,7 @@ import org.lwjgl.input.Mouse;
 import java.util.ArrayList;
 import java.util.List;
 
-public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenListener, TickListener, GuiPostRenderListener, GuiClickListener, TooltipListener {
+public class FeatureTerminalSolvers extends SimpleFeature {
     public FeatureTerminalSolvers() {
         super("Dungeon.Bossfight.Floor 7+","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, startswith, order, navigate, correct panes)", "bossfight.terminals");
     }
@@ -55,7 +56,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
     private TerminalSolution solution;
     private final List<Slot> clicked = new ArrayList<Slot>();
 
-    @Override
+    @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
         if (!isEnabled()) return;
         solution = null;
@@ -72,8 +73,8 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         }
     }
 
-    @Override
-    public void onTick() {
+    @DGEventHandler
+    public void onTick(DGTickEvent tickEvent) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
@@ -87,7 +88,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         solution = solutionProvider.provideSolution(cc, clicked);
     }
 
-    @Override
+    @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;
@@ -130,7 +131,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         GlStateManager.enableLighting();
     }
 
-    @Override
+    @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         if (Mouse.getEventButton() == -1) return;
@@ -146,7 +147,7 @@ public class FeatureTerminalSolvers extends SimpleFeature implements GuiOpenList
         }
     }
 
-    @Override
+    @DGEventHandler
     public void onTooltip(ItemTooltipEvent event) {
         if (!isEnabled()) return;
         if (solutionProvider == null) return;

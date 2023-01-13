@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiBackgroundRenderListener;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -42,12 +42,12 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FeatureChestPrice extends SimpleFeature implements GuiBackgroundRenderListener {
+public class FeatureChestPrice extends SimpleFeature {
     public FeatureChestPrice() {
         super("Dungeon", "Show Profit of Dungeon Reward Chests","Show Profit of Dungeon Chests", "bossfight.profitchest", false);
     }
 
-    @Override
+    @DGEventHandler
     public void onGuiBGRender(GuiScreenEvent.BackgroundDrawnEvent rendered) {
         if (!isEnabled()) return;
         if (!(rendered.gui instanceof GuiChest)) return;

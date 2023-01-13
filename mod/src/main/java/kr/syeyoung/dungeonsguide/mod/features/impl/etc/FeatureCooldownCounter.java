@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonQuitListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiOpenListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -33,7 +33,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQuitListener, GuiOpenListener {
+public class FeatureCooldownCounter extends TextHUDFeature {
     public FeatureCooldownCounter() {
         super("Dungeon", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown", true, getFontRenderer().getStringWidth("Cooldown: 10s "), getFontRenderer().FONT_HEIGHT);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
@@ -79,12 +79,12 @@ public class FeatureCooldownCounter extends TextHUDFeature implements DungeonQui
         return true;
     }
 
-    @Override
-    public void onDungeonQuit() {
+    @DGEventHandler
+    public void onDungeonQuit(DungeonLeftEvent event) {
         leftDungeonTime = System.currentTimeMillis();
     }
 
-    @Override
+    @DGEventHandler
     public void onGuiOpen(GuiOpenEvent rendered) {
         if (!(rendered.gui instanceof GuiChest)) return;
         ContainerChest chest = (ContainerChest) ((GuiChest) rendered.gui).inventorySlots;

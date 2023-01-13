@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonStartListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -33,7 +33,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.*;
 
-public class FeaturePartyReady extends TextHUDFeature implements ChatListener, DungeonStartListener {
+public class FeaturePartyReady extends TextHUDFeature {
     public FeaturePartyReady() {
         super("Party","Party Ready List", "Check if your party member have said r or not", "party.readylist", false, getFontRenderer().getStringWidth("Watcher finished spawning all mobs!"), getFontRenderer().FONT_HEIGHT*4);
         getStyles().add(new TextStyle("player", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
@@ -129,7 +129,7 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
     }
 
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (!txt.startsWith("§r§9Party §8>")) return;
@@ -173,8 +173,8 @@ public class FeaturePartyReady extends TextHUDFeature implements ChatListener, D
             terminal.put(username, term);
     }
 
-    @Override
-    public void onDungeonStart() {
+    @DGEventHandler()
+    public void onDungeonStart(DungeonStartedEvent event) {
         ready.clear();
         terminal.clear();
     }

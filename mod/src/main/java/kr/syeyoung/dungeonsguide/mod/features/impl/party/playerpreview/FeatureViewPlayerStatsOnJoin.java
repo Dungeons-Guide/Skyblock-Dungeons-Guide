@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -42,8 +43,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiClickListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiPostRenderListener;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -78,7 +77,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPostRenderListener, GuiClickListener {
+public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
 
     static Minecraft mc = Minecraft.getMinecraft();
     protected Rectangle popupRect;
@@ -156,7 +155,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
                 });
     }
 
-    @Override
+    @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         if (!(mc.currentScreen instanceof GuiChat)) {
             cancelRender();
@@ -474,7 +473,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature implements GuiPo
         shouldDraw = false;
     }
 
-    @Override
+    @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         ScaledResolution scaledResolution = new ScaledResolution(mc);
         int width = scaledResolution.getScaledWidth();
