@@ -82,17 +82,14 @@ public class GuiScreenAdapter extends GuiScreen {
         int j = this.mc.displayHeight - Mouse.getEventY();
 
         if (view.isRelayoutRequested()) {
-            long start = System.nanoTime();
 
             view.setRelayoutRequested(false);
-            System.out.println("relayout!");
                 view.getLayouter().layout(view, new ConstraintBox(
                         Minecraft.getMinecraft().displayWidth,
                         Minecraft.getMinecraft().displayWidth,
                         Minecraft.getMinecraft().displayHeight,
                         Minecraft.getMinecraft().displayHeight
                 ));
-            System.out.println("Relayout took "+(System.nanoTime() - start) +"ns");
         }
 
 
@@ -278,7 +275,7 @@ public class GuiScreenAdapter extends GuiScreen {
 
     @Override
     public void handleInput() throws IOException {
-//        Keyboard.enableRepeatEvents(true); // i hope it's temproary solution
+        Keyboard.enableRepeatEvents(true); // i hope it's temproary solution NEU Incompat. ?
         super.handleInput();
     }
 }
