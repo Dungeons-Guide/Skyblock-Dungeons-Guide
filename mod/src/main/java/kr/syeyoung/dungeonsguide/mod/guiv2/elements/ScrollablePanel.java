@@ -82,7 +82,7 @@ public class ScrollablePanel extends AnnotatedWidget {
 
     }
     public ScrollablePanel() {
-        super(new ResourceLocation("dungeonsguide:gui/scrollablePanel.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/elements/scrollablePanel.gui"));
 
         contentSize.addOnUpdate((old, neu) -> {
             contentWidth.setValue(neu.getWidth() - viewportWidth.getValue());

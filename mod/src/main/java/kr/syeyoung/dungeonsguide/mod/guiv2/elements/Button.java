@@ -55,7 +55,7 @@ public class Button extends AnnotatedWidget implements Renderer {
     public final BindableAttribute<Boolean> isDisabled = new BindableAttribute<>(Boolean.class);
 
     public Button() {
-        super(new ResourceLocation("dungeonsguide:gui/button.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/elements/button.gui"));
     }
 
     @Override

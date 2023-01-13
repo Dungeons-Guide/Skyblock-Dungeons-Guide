@@ -71,12 +71,12 @@ public class DomElementRegistry {
         register("BareResourceImage", new ExportedWidgetConverter(ResourceImage::new));
         register("TestView", new ExportedWidgetConverter(TestView::new));
         
-        register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleButton.gui")));
-        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleHorizontalScrollBar.gui")));
-        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/simpleVerticalScrollBar.gui")));
-        register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/slowlist.gui")));
+        register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
+        register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
+        register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
+        register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/slowlist.gui")));
         
-        register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/ratioResourceImage.gui")));
+        register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/ratioResourceImage.gui")));
 
     }
 
