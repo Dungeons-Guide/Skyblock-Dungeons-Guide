@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+
 public final class StringConversions {
     public static <T> T convert(Class<T> clazz, String val) {
         if (clazz== Float.class) {

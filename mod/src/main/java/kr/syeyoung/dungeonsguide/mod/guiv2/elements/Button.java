@@ -22,9 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
@@ -119,10 +117,11 @@ public class Button extends AnnotatedWidget implements Renderer {
     }
 
     @Override
-    public void mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
         if (isDisabled.getValue())
             getDomElement().setCursor(EnumCursor.NOT_ALLOWED);
         else
             getDomElement().setCursor(EnumCursor.POINTING_HAND);
+        return true;
     }
 }

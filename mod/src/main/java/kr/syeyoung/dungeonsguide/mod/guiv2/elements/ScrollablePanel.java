@@ -105,8 +105,8 @@ public class ScrollablePanel extends AnnotatedWidget {
                 contentY.setValue(-neu);
         });
         direction.addOnUpdate((old, neu) -> {
-            vertThickness.setValue(neu.isVertical() ? 20 : 0.0);
-            horzThickness.setValue(neu.isHorizontal() ? 20 :0.0);
+            vertThickness.setValue(neu.isVertical() ? 7 : 0.0);
+            horzThickness.setValue(neu.isHorizontal() ? 7 :0.0);
         });
 
     }

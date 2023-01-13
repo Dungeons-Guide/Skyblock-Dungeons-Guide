@@ -40,7 +40,7 @@
             <SimpleHorizontalScrollBar bind:ref="horzRef" bind:thickness="horizontalThickness" min="0" bind:max="contentWidth" bind:current="x" bind:thumbValue="viewportWidth"/>
         </flexible>
         <size bind:width="verticalThickness" bind:height="horizontalThickness">
-            <bgcolor backgroundColor="#FF000000"/>
+            <bgcolor backgroundColor="#FF1F1F1F"/>
         </size>
     </row>
 </col>

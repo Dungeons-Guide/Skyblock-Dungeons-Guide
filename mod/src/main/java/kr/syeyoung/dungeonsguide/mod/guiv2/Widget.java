@@ -73,7 +73,9 @@ public abstract class Widget {
     public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
         return false;
     }
-    public void mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {}
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        return false;
+    }
     public void mouseClickMove(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int clickedMouseButton, long timeSinceLastClick) {}
     public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {}
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {

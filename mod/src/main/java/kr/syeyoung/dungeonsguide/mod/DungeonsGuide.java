@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
+import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
@@ -238,6 +239,7 @@ public class DungeonsGuide implements DGInterface {
 
 
         progressbar.step("Opening connection");
+        StompManager.getInstance().init();
         registerEventsForge(cosmeticsManager = new CosmeticsManager());
 
 

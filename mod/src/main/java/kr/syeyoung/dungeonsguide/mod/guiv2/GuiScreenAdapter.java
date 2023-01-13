@@ -82,6 +82,8 @@ public class GuiScreenAdapter extends GuiScreen {
         int j = this.mc.displayHeight - Mouse.getEventY();
 
         if (view.isRelayoutRequested()) {
+            long start = System.nanoTime();
+
             view.setRelayoutRequested(false);
             System.out.println("relayout!");
                 view.getLayouter().layout(view, new ConstraintBox(
@@ -90,6 +92,7 @@ public class GuiScreenAdapter extends GuiScreen {
                         Minecraft.getMinecraft().displayHeight,
                         Minecraft.getMinecraft().displayHeight
                 ));
+            System.out.println("Relayout took "+(System.nanoTime() - start) +"ns");
         }
 
 

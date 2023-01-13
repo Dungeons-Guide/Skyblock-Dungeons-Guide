@@ -16,11 +16,23 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-<wrapper thickness="20">
+
+<wrapper thickness="7" min="0" max="100" thumbValue="10" minThumbSize="20" thumbColor="#FF4F4F4F" thumbHoverColor="#FF555758" thumbActiveColor="#FF555758" backgroundColor="#FF1F1F1F">
     <size bind:width="thickness">
-        <SimpleScrollBar orientation="VERTICAL"
-            bind:min="min" bind:max="max" bind:thumbValue="thumbValue" bind:minThumbSize="minThumbSize"
-            bind:thumbColor="thumbColor" bind:thumbHoverColor="thumbHoverColor" bind:thumbActiveColor="thumbActiveColor"
-            bind:backgroundColor="backgroundColor" bind:current="current"/>
+        <AbstractScrollBar bind:max="max" bind:min="min" bind:current="current" bind:thumbValue="thumbValue" bind:minThumbSize="minThumbSize"
+                           orientation="VERTICAL">
+            <bgcolor slot="track" bind:backgroundColor="backgroundColor"/>
+            <align slot="thumb">
+                <size width="4">
+                    <ColorButton
+                            bind:backgroundColor="thumbColor"          textColor="#FFFFFFFF"
+                            bind:hoveredBackgroundColor="thumbHoverColor"   hoveredTextColor="#FFFFFFFF"
+                            disabledBackgroundColor="#00000000"  disabledTextColor="#FFFFFFFF"
+                            bind:pressedBackgroundColor="thumbActiveColor"   pressedTextColor="#FFFFFFFF"
+                            text=""
+                    />
+                </size>
+            </align>
+        </AbstractScrollBar>
     </size>
 </wrapper>
