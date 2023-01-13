@@ -70,7 +70,9 @@ public class StyledTextRenderer {
                 String str = lines[i];
                 Dimension d = null;
                 try {
+                    Minecraft.getMinecraft().mcProfiler.startSection("drawing fragment");
                     d = drawFragmentText(fr, str, ts, currX, currY, false);
+                    Minecraft.getMinecraft().mcProfiler.endSection();
                 } catch (InvocationTargetException | IllegalAccessException e) {
                     e.printStackTrace();
                 }
@@ -149,8 +151,10 @@ public class StyledTextRenderer {
             Gui.drawRect(x,y, x+fr.getStringWidth(content), y + fr.FONT_HEIGHT, bgColor);
 
 
+        Minecraft.getMinecraft().mcProfiler.startSection("reflection");
         posX.set(fr, x+1);
         posY.set(fr, y+1);
+        Minecraft.getMinecraft().mcProfiler.endSection();
 
         if (style.isShadow()) {
             char[] charArr = content.toCharArray();
@@ -162,8 +166,10 @@ public class StyledTextRenderer {
                 width +=renderChar(fr, charArr[i], color,true, false, false, false);
             }
         }
+        Minecraft.getMinecraft().mcProfiler.startSection("reflection");
         posX.set(fr, x);
         posY.set(fr, y);
+        Minecraft.getMinecraft().mcProfiler.endSection();
         {
             char[] charArr = content.toCharArray();
             float width = 0;
@@ -204,20 +210,27 @@ public class StyledTextRenderer {
 
         if (flag)
         {
+            Minecraft.getMinecraft().mcProfiler.startSection("reflection");
             posX.set(fr,(float) posX.get(fr) - f1);
             posY.set(fr,(float) posY.get(fr) - f1);
+            Minecraft.getMinecraft().mcProfiler.endSection();
         }
+        Minecraft.getMinecraft().mcProfiler.startSection("render");
 
         float f = (float) renderChar.invoke(fr, character, italicStyle);
+        Minecraft.getMinecraft().mcProfiler.endSection();
 
         if (flag)
         {
+            Minecraft.getMinecraft().mcProfiler.startSection("reflection");
             posX.set(fr,(float) posX.get(fr) + f1);
             posY.set(fr,(float) posY.get(fr) + f1);
+            Minecraft.getMinecraft().mcProfiler.endSection();
         }
 
         if (boldStyle)
         {
+            Minecraft.getMinecraft().mcProfiler.startSection("reflection");
             posX.set(fr,(float) posX.get(fr) + f1);
 
             if (flag)
@@ -225,8 +238,12 @@ public class StyledTextRenderer {
                 posX.set(fr,(float) posX.get(fr) - f1);
                 posY.set(fr,(float) posY.get(fr) - f1);
             }
+            Minecraft.getMinecraft().mcProfiler.endSection();
 
+            Minecraft.getMinecraft().mcProfiler.startSection("render");
             renderChar.invoke(fr, character, italicStyle);
+            Minecraft.getMinecraft().mcProfiler.endSection();
+            Minecraft.getMinecraft().mcProfiler.startSection("reflection");
             posX.set(fr,(float) posX.get(fr) - f1);
 
             if (flag)
@@ -235,9 +252,13 @@ public class StyledTextRenderer {
                 posY.set(fr,(float) posY.get(fr) + f1);
             }
 
+            Minecraft.getMinecraft().mcProfiler.endSection();
+
             ++f;
         }
+        Minecraft.getMinecraft().mcProfiler.startSection("do Draw");
         doDraw.invoke(fr, f);
+        Minecraft.getMinecraft().mcProfiler.endSection();
 
         return f;
     }

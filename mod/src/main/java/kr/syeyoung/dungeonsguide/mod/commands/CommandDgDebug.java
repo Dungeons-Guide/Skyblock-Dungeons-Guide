@@ -459,10 +459,12 @@ public class CommandDgDebug extends CommandBase {
         } else if ("testgui".equals(arg)) {
             GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
             new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-                            Minecraft.getMinecraft().addScheduledTask(() -> {
-                                Minecraft.getMinecraft().displayGuiScreen(adapter);
-                            });
-                        }).start();
+                Minecraft.getMinecraft().addScheduledTask(() -> {
+                    Minecraft.getMinecraft().displayGuiScreen(adapter);
+                });
+            }).start();
+        } else if ("clearprofile".equals(arg)) {
+            Minecraft.getMinecraft().mcProfiler.clearProfiling();
         } else {
             sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));

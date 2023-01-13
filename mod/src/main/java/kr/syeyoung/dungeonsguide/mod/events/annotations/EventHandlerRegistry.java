@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.events.annotations;
 
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.IFeature;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -94,7 +95,7 @@ public class EventHandlerRegistry {
                     InvocationTarget target = new InvocationTarget(
                             eventType,
                             feature,
-                            feature.getClass().getName() + "/" + declaredMethod.getName(),
+                            (feature.getClass().getSimpleName() + ":" + declaredMethod.getName()).replace(".", "/"),
                             booleanSupplier,
                             MethodHandles.publicLookup().unreflect(declaredMethod).bindTo(feature)
                     );

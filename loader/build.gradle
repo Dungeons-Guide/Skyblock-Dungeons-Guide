@@ -61,9 +61,11 @@ repositories {
 
 configurations {
     implementation.extendsFrom shadowImpl
+    modRuntimeOnly.extendsFrom devEnv {
+        transitive = false
+        visible = false
+    }
 }
-
-
 dependencies {
     minecraft("com.mojang:minecraft:1.8.9")
     mappings("de.oceanlabs.mcp:mcp_stable:22-1.8.9")
@@ -82,9 +84,9 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 
 
-    modRuntimeOnly("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
-    def files= fileTree("runtime/mods2").filter { it.isFile() }.files
-    modRuntimeOnly(files)
+    devEnv("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+    def files= fileTree("../runtime/mods2").filter { it.isFile() }
+    modLocalRuntime(files)
 }
 
 
