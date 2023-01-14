@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.GameSDKTypeMapper;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.NativeGameSDK;
 import lombok.Getter;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import java.io.File;
 import java.io.IOException;
@@ -33,6 +35,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class GameSDK {
+    private static final Logger logger = LogManager.getLogger("DG-GameSdkLoader");
     @Getter
     private static NativeGameSDK nativeGameSDK;
 
@@ -43,25 +46,25 @@ public class GameSDK {
             e.printStackTrace();
         }
     }
+
+    private static String extracted;
     public static void extractLibrary() throws IOException {
         String libName = System.mapLibraryName("discord_game_sdk");
-        String dir = "";
-        switch(Platform.getOSType()) {
-            case Platform.MAC:
-                dir = "darwin";
-                break;
-            case Platform.LINUX:
-                dir = "linux";
-                break;
-            case Platform.WINDOWS:
-                if (Platform.is64Bit()) dir = "win-x64";
-                else dir = "win-x86";
-                break;
-            default:
-                throw new IllegalStateException("Unsupported OS Type");
+        String dir = Platform.ARCH;
+
+        if (!(dir.equals("aarch64") || dir.equals("x86") || dir.equals("x86_64"))) {
+            if (Platform.is64Bit()) {
+                dir = "x86_64";
+            } else {
+                dir = "x86";
+            }
         }
 
         String resourceLoc = "/gamesdk/"+dir+"/"+libName;
+
+        logger.info("Extracting GameSdk from "+resourceLoc);
+        logger.info("Arch: "+Platform.ARCH +" | OS: "+Platform.getOSType());
+
         File targetExtractionPath = new File("native/"+libName);
         targetExtractionPath.getParentFile().mkdirs();
         try (InputStream is = GameSDK.class.getResourceAsStream(resourceLoc)) {
@@ -69,30 +72,15 @@ public class GameSDK {
             targetExtractionPath.deleteOnExit();
         }
 
+        extracted = targetExtractionPath.getAbsolutePath();
+
         nativeGameSDK = (NativeGameSDK) Native.loadLibrary(targetExtractionPath.getAbsolutePath(), NativeGameSDK.class,
                 Collections.singletonMap(Library.OPTION_TYPE_MAPPER, GameSDKTypeMapper.INSTANCE));
     }
 
     public static void cleanup() {
         nativeGameSDK = null;
-        Map options = ReflectionHelper.getPrivateValue(Native.class, null, "options");
-        options.clear();
-        try {
-            Map callbackMap = ReflectionHelper.<Map, Object>getPrivateValue(
-                    (Class<? super Object>) Class.forName("com.sun.jna.CallbackReference"),
-                    null,
-                    "callbackMap"
-            );
-            callbackMap.clear();
-        } catch (ClassNotFoundException e) {
-        }
-
-        Map infos = ReflectionHelper.getPrivateValue(Structure.class, null, "layoutInfo");
-        infos.clear();
-        Map alignments = ReflectionHelper.getPrivateValue(Native.class, null, "alignments");
-        alignments.clear();
-        Map<Class, TypeMapper> typeMapperMap = ReflectionHelper.getPrivateValue(Native.class, null, "typeMappers");
-        typeMapperMap.clear();
+        NativeLibrary.getInstance(extracted).close(); // <3 new jna
     }
 
     public static void writeString(byte[] bts, String str) {
