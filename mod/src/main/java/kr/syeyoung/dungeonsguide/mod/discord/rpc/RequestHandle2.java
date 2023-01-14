@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,20 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct;
+package kr.syeyoung.dungeonsguide.mod.discord.rpc;
 
-import com.sun.jna.Library;
-import com.sun.jna.Pointer;
-import com.sun.jna.Structure;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.GameSDKTypeMapper;
-
-import java.util.Collections;
-import java.util.Map;
-
-public abstract class DiscordStruct extends Structure {
-    public static final Map<String, Object> OPTIONS = Collections.singletonMap(Library.OPTION_TYPE_MAPPER, GameSDKTypeMapper.INSTANCE);
-    protected DiscordStruct() {
-        super(GameSDKTypeMapper.INSTANCE);
-    }
-    protected DiscordStruct(Pointer p) {super(p); read();}
+public class RequestHandle2 {
 }

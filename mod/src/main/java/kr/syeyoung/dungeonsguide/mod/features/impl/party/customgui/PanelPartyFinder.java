@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip.MTooltipInvite;
@@ -118,7 +118,7 @@ public class PanelPartyFinder extends MPanel {
         discordInvite = new MButton();
         discordInvite.setText("Invite Discord Friends");
         discordInvite.setOnActionPerformed(() -> {
-            if (RichPresenceManager.INSTANCE.getLastSetupCode() == -9999) {
+            if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
                 MModalMessage mTooltipInvite = new MModalMessage("Error", "Discord GameSDK has been disabled, or it failed to load", () -> {});
                 mTooltipInvite.setScale( new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
                 mTooltipInvite.open(this);

@@ -191,7 +191,6 @@ public class FeatureRegistry {
     public static SimpleFeature DISCORD_RICHPRESENCE;
     public static PartyInviteViewer DISCORD_ASKTOJOIN;
     public static PlayingDGAlarm DISCORD_ONLINEALARM;
-    public static SimpleFeature DISCORD_DONOTUSE;
 
 
     public static SimpleFeature DEBUG;
@@ -313,7 +312,6 @@ public class FeatureRegistry {
             });
             DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
             DISCORD_ONLINEALARM = register(new PlayingDGAlarm());
-            DISCORD_DONOTUSE = register(new SimpleFeature("Discord", "Disable Native Library", "Disables usage of jna for discord rpc support.\nBreaks any discord related feature in the mod.\nRequires mod restart to get affected.\n\nThis feature is only for those whose minecraft crashes due to discord gamesdk crash.", "discord.rpc", false));
             DEBUG = register(new FeatureDebug());
             ADVANCED_ROOMEDIT = register(new SimpleFeature("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false) {
                 {

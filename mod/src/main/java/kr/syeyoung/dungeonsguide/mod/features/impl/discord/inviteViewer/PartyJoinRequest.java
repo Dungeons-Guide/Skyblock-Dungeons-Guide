@@ -18,8 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.GameSDK;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordUser;
+import com.jagrosh.discordipc.entities.User;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle2;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -28,13 +29,15 @@ import java.awt.*;
 
 @Data
 public class PartyJoinRequest {
-    private DiscordUser discordUser;
+    private User discordUser;
+    private RequestHandle handle;
+    private RequestHandle2 handle2;
 
-    public void setDiscordUser(DiscordUser discordUser) {
+    public void setDiscordUser(User discordUser) {
         this.discordUser = discordUser;
-        username = GameSDK.readString(discordUser.username);
-        discriminator = GameSDK.readString(discordUser.discriminator);
-        avatar = GameSDK.readString(discordUser.avatar);
+        username = discordUser.getName();
+        discriminator = discordUser.getDiscriminator();
+        avatar= discordUser.getAvatarUrl();
     }
 
     private String username, discriminator, avatar;

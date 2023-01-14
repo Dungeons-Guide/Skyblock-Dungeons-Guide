@@ -51,7 +51,7 @@ public class MTooltipInviteElement extends MPanel {
 
             invite.setOnActionPerformed(() -> {
                 if (invite.isEnabled())
-                    inviteCallback.accept(jDiscordRelation.getDiscordUser().getId());
+                    inviteCallback.accept(jDiscordRelation.getDiscordUser().getIdLong());
 
                 invite.setText("Sent");
                 invite.setRoundness(2);
@@ -78,8 +78,8 @@ public class MTooltipInviteElement extends MPanel {
         }
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (!relation.getDiscordUser().getAvatar().isEmpty()){
-            String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(relation.getDiscordUser().getId())+"/"+relation.getDiscordUser().getAvatar()+"."+(relation.getDiscordUser().getAvatar().startsWith("a_") ? "gif":"png");
+        if (!relation.getDiscordUser().getAvatarUrl().isEmpty()){
+            String avatar =  relation.getDiscordUser().getAvatarUrl();
             Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -95,7 +95,7 @@ public class MTooltipInviteElement extends MPanel {
                 Gui.drawRect(3, 3, bounds.height - 6, bounds.height-6, 0xFF4E4E4E);
             }
         }
-        fr.drawString(relation.getDiscordUser().getUsername()+"#"+relation.getDiscordUser().getDiscriminator(), bounds.height,(bounds.height-fr.FONT_HEIGHT)/2, -1);
+        fr.drawString(relation.getDiscordUser().getName()+"#"+relation.getDiscordUser().getDiscriminator(), bounds.height,(bounds.height-fr.FONT_HEIGHT)/2, -1);
     }
 
     @Override

@@ -50,7 +50,9 @@ dependencies {
 
     implementation "org.jetbrains:annotations-java5:19.0.0"
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
-    implementation "org.json:json:20171018"
+    implementation 'org.json:json:20220924'
+    implementation files("lib/DiscordIPC-0.6.jar")
+
     implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
     implementation 'net.java.dev.jna:jna:5.12.1' // sorry minecraft.
@@ -127,13 +129,15 @@ tasks.shadowJar {
 
     relocate 'com.sun.jna', "kr.syeyoung.dungeonsguide.com.sun.jna"
     relocate "org.java_websocket", "kr.syeyoung.dungeonsguide.org.java_websocket"
+    relocate 'com.jagrosh.discordipc', 'kr.syeyoung.dungeonsguide.com.jagrosh.discordipc'
 
     dependencies {
         include(dependency("org.java-websocket:Java-WebSocket:1.5.1"))
         include(dependency("org.slf4j:slf4j-api:1.7.25"))
-        include(dependency("org.json:json:20171018"))
+        include(dependency("org.json:json:20220924"))
         include(dependency("com.twelvemonkeys..*:.*"))
         include(dependency("net.java.dev.jna:jna:5.12.1"))
+        include(dependency(files("lib/DiscordIPC-0.6.jar")))
     }
 }
 

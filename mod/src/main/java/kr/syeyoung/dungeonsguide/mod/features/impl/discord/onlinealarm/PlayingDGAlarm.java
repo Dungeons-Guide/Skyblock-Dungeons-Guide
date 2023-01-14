@@ -19,9 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm;
 
 
+import com.jagrosh.discordipc.entities.RichPresence;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordActivity;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
@@ -103,7 +102,7 @@ public class PlayingDGAlarm extends SimpleFeature {
         Gui.drawRect(0, 0,width,height, 0xFF23272a);
         Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
-            String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(online.getJDiscordRelation().getDiscordUser().getId())+"/"+online.getJDiscordRelation().getDiscordUser().getAvatar()+"."+(online.getJDiscordRelation().getDiscordUser().getAvatar().startsWith("a_") ? "gif":"png");
+            String avatar = online.jDiscordRelation.getDiscordUser().getAvatarUrl();
             Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -129,11 +128,11 @@ public class PlayingDGAlarm extends SimpleFeature {
 
         GlStateManager.pushMatrix();
         GlStateManager.scale(3.0,3.0,1.0);
-        fr.drawString(online.getJDiscordRelation().getDiscordUser().getUsername()+"", 0,0, 0xFFFFFFFF, true);
+        fr.drawString(online.getJDiscordRelation().getDiscordUser().getName()+"", 0,0, 0xFFFFFFFF, true);
         GlStateManager.popMatrix();
 
         GlStateManager.pushMatrix();
-        GlStateManager.translate(fr.getStringWidth(online.getJDiscordRelation().getDiscordUser().getUsername()+"") * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
+        GlStateManager.translate(fr.getStringWidth(online.getJDiscordRelation().getDiscordUser().getName()+"") * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
         fr.drawString("#"+online.getJDiscordRelation().getDiscordUser().getDiscriminator(), 0,0,0xFFaaaaaa, true);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
@@ -161,13 +160,14 @@ public class PlayingDGAlarm extends SimpleFeature {
     }
 
     public boolean isDisplayable(JDiscordRelation jDiscordRelation) {
-        EDiscordRelationshipType relationshipType = jDiscordRelation.getDiscordRelationshipType();
-        if (relationshipType == EDiscordRelationshipType.DiscordRelationshipType_Blocked) return false;
-        if (relationshipType == EDiscordRelationshipType.DiscordRelationshipType_None) return false;
-        if (relationshipType == EDiscordRelationshipType.DiscordRelationshipType_PendingIncoming) return false;
-        if (relationshipType == EDiscordRelationshipType.DiscordRelationshipType_PendingOutgoing) return false;
+        JDiscordRelation.DiscordRelationType relationshipType = jDiscordRelation.getRelationType();
+        if (relationshipType == JDiscordRelation.DiscordRelationType.Blocked) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.None) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
 
-        JDiscordActivity jDiscordActivity = jDiscordRelation.getDiscordActivity();
-        return jDiscordActivity.getApplicationId() == 816298079732498473L;
+        RichPresence presence = jDiscordRelation.getPresence();
+//        return presence.getApplicationId() == 816298079732498473L;
+        return true;
     }
 }

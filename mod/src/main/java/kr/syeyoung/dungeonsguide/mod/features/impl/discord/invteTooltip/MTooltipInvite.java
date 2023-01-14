@@ -18,14 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
-import com.sun.jna.Pointer;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityActionType;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.IDiscordActivityManager;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.interfacestruct.IDiscordCore;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -107,10 +101,10 @@ public class MTooltipInvite extends MModal {
         }
 
         String searchTxt = search.getText().trim().toLowerCase();
-        for (JDiscordRelation value : RichPresenceManager.INSTANCE.getRelationMap().values()) {
+        for (JDiscordRelation value : DiscordIntegrationManager.INSTANCE.getRelationMap().values()) {
 //            if (value.getDiscordActivity().getApplicationId() != 816298079732498473L) continue;
-            if (value.getDiscordRelationshipType() == EDiscordRelationshipType.DiscordRelationshipType_Blocked) continue;
-            if (!searchTxt.isEmpty() && !(value.getDiscordUser().getUsername().toLowerCase().contains(searchTxt))) continue;
+            if (value.getRelationType() == JDiscordRelation.DiscordRelationType.Blocked) continue;
+            if (!searchTxt.isEmpty() && !(value.getDiscordUser().getName().toLowerCase().contains(searchTxt))) continue;
             list.add(new MTooltipInviteElement(value, invited.contains(value.getDiscordUser().getId()), this::invite));
         }
         setBounds(getBounds());
@@ -118,10 +112,6 @@ public class MTooltipInvite extends MModal {
 
     public void invite(long id) {
         invited.add(id);
-        IDiscordCore iDiscordCore = RichPresenceManager.INSTANCE.getIDiscordCore();
-        IDiscordActivityManager iDiscordActivityManager = iDiscordCore.GetActivityManager.getActivityManager(iDiscordCore);
-        iDiscordActivityManager.SendInvite.sendInvite(iDiscordActivityManager, new DiscordSnowflake(id), EDiscordActivityActionType.DiscordActivityActionType_Join, "Dungeons Guide RPC Invite TESt", Pointer.NULL, (callbackData, result) -> {
-            System.out.println("Discord returned "+result+" For inviting "+id);
-        });
+        DiscordIntegrationManager.INSTANCE.sendInvite(id, "");
     }
 }

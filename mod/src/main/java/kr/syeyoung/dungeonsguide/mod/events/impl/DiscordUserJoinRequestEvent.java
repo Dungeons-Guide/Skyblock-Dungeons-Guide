@@ -18,7 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordUser;
+import com.jagrosh.discordipc.entities.User;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle2;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +30,8 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class DiscordUserJoinRequestEvent extends Event {
-    private DiscordUser discordUser;
+    private User discordUser;
+    private RequestHandle2 handle2;
+    private RequestHandle handle;
     private boolean isInvite;
 }

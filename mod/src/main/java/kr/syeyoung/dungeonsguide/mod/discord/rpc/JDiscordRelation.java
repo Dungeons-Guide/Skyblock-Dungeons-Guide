@@ -18,25 +18,41 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.rpc;
 
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordRelationship;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordStatus;
+import com.jagrosh.discordipc.entities.RichPresence;
+import com.jagrosh.discordipc.entities.User;
 import lombok.Data;
 
 @Data
 public class JDiscordRelation {
-    private EDiscordRelationshipType discordRelationshipType;
-    private EDiscordStatus status;
-    private JDiscordActivity discordActivity;
-    private JDiscordUser discordUser;
+//    private EDiscordRelationshipType discordRelationshipType;
+//    private EDiscordStatus status;
+//    private JDiscordActivity discordActivity;
+    private Status status;
+    private String applicationId;
+    private DiscordRelationType relationType;
+    private User discordUser;
 
-    public static JDiscordRelation fromJNA(DiscordRelationship relationship) {
-        JDiscordRelation jDiscordRelation = new JDiscordRelation();
-        jDiscordRelation.discordUser = JDiscordUser.fromJNA(relationship.user);
-        jDiscordRelation.discordActivity = JDiscordActivity.fromJNA(relationship.presence.activity);
-        jDiscordRelation.status = relationship.presence.status;
-        jDiscordRelation.discordRelationshipType = relationship.type;
-        return jDiscordRelation;
+    public enum Status {
+        OFFLINE, ONLINE, DO_NOT_DISTURB, IDLE, UNKNOWN;
+
+        public static Status fromString(String str) {
+            switch(str) {
+                case "offline": return OFFLINE;
+                case "online": return ONLINE;
+                case "idle": return IDLE;
+                case "dnd": return DO_NOT_DISTURB;
+            }
+            return UNKNOWN;
+        }
+    }
+    public enum DiscordRelationType {
+
+        None,
+        Friend,
+        Blocked,
+        PendingIncoming,
+        PendingOutgoing,
+        Implicit;
     }
 
 }
