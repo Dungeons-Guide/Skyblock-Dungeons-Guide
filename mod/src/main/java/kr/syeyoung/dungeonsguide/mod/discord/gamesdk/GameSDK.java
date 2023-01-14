@@ -60,6 +60,7 @@ public class GameSDK {
             }
         }
 
+
         String resourceLoc = "/gamesdk/"+dir+"/"+libName;
 
         logger.info("Extracting GameSdk from "+resourceLoc);
