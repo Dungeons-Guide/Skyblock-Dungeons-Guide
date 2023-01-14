@@ -20,16 +20,16 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 import java.util.regex.Pattern;
 
-public class FeatureDisableMessage extends SimpleFeature implements ChatListener {
+public class FeatureDisableMessage extends SimpleFeature {
     @Data
     @AllArgsConstructor
     public static class MessageData {
@@ -62,7 +62,7 @@ public class FeatureDisableMessage extends SimpleFeature implements ChatListener
     }
 
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!isEnabled()) return;

@@ -24,8 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonEndListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -36,7 +36,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.UUID;
 
-public class FeatureWatcherWarning extends TextHUDFeature implements ChatListener, DungeonEndListener {
+public class FeatureWatcherWarning extends TextHUDFeature  {
 
     public FeatureWatcherWarning() {
         super("Dungeon.Blood Room","Watcher Spawn Alert", "Alert when watcher says 'That will be enough for now'", "dungen.watcherwarn", true, getFontRenderer().getStringWidth("Watcher finished spawning all mobs!"), getFontRenderer().FONT_HEIGHT);
@@ -68,7 +68,7 @@ public class FeatureWatcherWarning extends TextHUDFeature implements ChatListene
         return text;
     }
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.message.getFormattedText().equals("§r§c[BOSS] The Watcher§r§f: That will be enough for now.§r"))  {
             warning = System.currentTimeMillis() + 2500;
@@ -81,8 +81,8 @@ public class FeatureWatcherWarning extends TextHUDFeature implements ChatListene
         }
     }
 
-    @Override
-    public void onDungeonEnd() {
+    @DGEventHandler(ignoreDisabled = true)
+    public void onDungeonEnd(DungeonEndedEvent event) {
         warning = 0;
     }
 }

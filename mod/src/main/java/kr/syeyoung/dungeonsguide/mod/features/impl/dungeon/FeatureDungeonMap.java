@@ -26,11 +26,12 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.BossroomEnterListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonEndListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonStartListener;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import net.minecraft.block.material.MapColor;
@@ -61,7 +62,7 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.List;
 
-public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener, DungeonStartListener, BossroomEnterListener {
+public class FeatureDungeonMap extends GuiFeature {
     private AColor backgroudColor;
     private AColor playerColor;
     private boolean shouldCacheMap;
@@ -102,18 +103,18 @@ public class FeatureDungeonMap extends GuiFeature implements DungeonEndListener,
 
     private boolean on = false;
 
-    @Override
-    public void onDungeonEnd() {
+    @DGEventHandler(ignoreDisabled = true)
+    public void onDungeonEnd(DungeonEndedEvent event) {
         on = false;
     }
 
-    @Override
-    public void onDungeonStart() {
+    @DGEventHandler
+    public void onDungeonStart(DungeonStartedEvent event) {
         on = true;
     }
 
-    @Override
-    public void onBossroomEnter() {
+    @DGEventHandler(ignoreDisabled = true)
+    public void onBossroomEnter(BossroomEnterEvent event) {
         on = false;
     }
 

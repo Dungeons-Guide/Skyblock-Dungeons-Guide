@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.event.ClickEvent;
 import net.minecraft.event.HoverEvent;
@@ -29,12 +29,12 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-public class FeatureCopyMessages extends SimpleFeature implements ChatListener {
+public class FeatureCopyMessages extends SimpleFeature {
     public FeatureCopyMessages() {
         super("Misc.Chat", "Copy Chat Messages", "Click on copy to copy", "etc.copymsg");
         setEnabled(false);
     }
-    @Override
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (!isEnabled()) return;
         if (clientChatReceivedEvent.type == 2) return;

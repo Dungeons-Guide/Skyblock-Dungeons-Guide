@@ -23,13 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordRelationshipType;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordActivity;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.ImageTexture;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DiscordUserUpdateListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ScreenRenderListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TickListener;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -38,6 +37,7 @@ import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -47,14 +47,14 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateListener, ScreenRenderListener, TickListener {
+public class PlayingDGAlarm extends SimpleFeature {
     public PlayingDGAlarm() {
         super("Discord", "Friend Online Notification","Notifies you in bottom when your discord friend has launched a Minecraft with DG!\n\nRequires the Friend's Discord RPC to be enabled", "discord.playingalarm");
     }
     private List<PlayerOnline> notif = new CopyOnWriteArrayList<>();
 
-    @Override
-    public void onTick() {
+    @DGEventHandler
+    public void onTick(DGTickEvent event) {
         try {
             List<PlayerOnline> partyJoinRequestList = new ArrayList<>();
             boolean isOnHypixel = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
@@ -71,9 +71,11 @@ public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateLi
 
 
 
-    @Override
-    public void drawScreen(float partialTicks) {
+    @DGEventHandler
+    public void drawScreen(RenderGameOverlayEvent.Post postRender) {
         if (!isEnabled()) return;
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
+
         try {
             GlStateManager.pushMatrix();
             GlStateManager.translate(0,0,100);
@@ -150,7 +152,7 @@ public class PlayingDGAlarm extends SimpleFeature implements DiscordUserUpdateLi
         private long end;
     }
 
-    @Override
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserUpdate(DiscordUserUpdateEvent event) {
         JDiscordRelation prev = event.getPrev(), current = event.getCurrent();
         if (!isDisplayable(prev) && isDisplayable(current)) {

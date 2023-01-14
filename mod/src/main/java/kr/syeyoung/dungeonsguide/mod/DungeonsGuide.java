@@ -32,8 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.GameSDK;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
-import kr.syeyoung.dungeonsguide.mod.events.listener.FeatureListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
@@ -54,7 +54,6 @@ import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
-import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.resources.IResourceManager;
@@ -62,8 +61,6 @@ import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.command.CommandHandler;
 import net.minecraft.command.ICommand;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EntityPlayerMP;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.util.ResourceLocation;
@@ -227,7 +224,7 @@ public class DungeonsGuide implements DGInterface {
 
         registerEventsForge(commandReparty = new CommandReparty());
 
-        registerEventsForge(new FeatureListener());
+//        registerEventsForge(new FeatureListener());
         registerEventsForge(packetListener = new PacketListener());
         registerEventsForge(new Keybinds());
 
@@ -298,6 +295,9 @@ public class DungeonsGuide implements DGInterface {
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
+
+        EventHandlerRegistry.unregisterListeners();
+
         List<ListenerList> all = ReflectionHelper.getPrivateValue(ListenerList.class, null, "allLists");
         int busId = ReflectionHelper.getPrivateValue(EventBus.class, MinecraftForge.EVENT_BUS, "busID");
         for (ListenerList listenerList : all) {

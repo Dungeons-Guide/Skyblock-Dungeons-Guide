@@ -26,11 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiClickListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.GuiPreRenderListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.WorldRenderListener;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
@@ -41,6 +39,8 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.MathHelper;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -50,7 +50,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
 
-public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderListener, GuiClickListener, WorldRenderListener {
+public class FeatureMechanicBrowse extends GuiFeature {
     public FeatureMechanicBrowse() {
         super("Dungeon.Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
         addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
@@ -89,13 +89,13 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     private int lastWidth, lastHeight;
 
     @Override
-    public void drawScreen(float partialTicks) {
+    public void drawScreen(RenderGameOverlayEvent.Post post) {
         if (!isEnabled()) return;
         int i = Mouse.getEventX();
         int j = Minecraft.getMinecraft().displayHeight - Mouse.getEventY();
         if (Minecraft.getMinecraft().displayWidth != lastWidth || Minecraft.getMinecraft().displayHeight != lastHeight) mGuiMechanicBrowser.initGui();
         lastWidth = Minecraft.getMinecraft().displayWidth; lastHeight = Minecraft.getMinecraft().displayHeight;
-        mGuiMechanicBrowser.drawScreen(i,j,partialTicks);
+        mGuiMechanicBrowser.drawScreen(i,j,post.partialTicks);
     }
 
     @Override
@@ -107,7 +107,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     @Override
     public void drawHUD(float partialTicks) { }
 
-    @Override
+    @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         try {
@@ -118,7 +118,7 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
     }
 
 
-    @Override
+    @DGEventHandler
     public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
         if (!isEnabled()) return;
         int i = Mouse.getEventX();
@@ -126,8 +126,9 @@ public class FeatureMechanicBrowse extends GuiFeature implements GuiPreRenderLis
         mGuiMechanicBrowser.drawScreen(i, j, rendered.renderPartialTicks);
     }
 
-    @Override
-    public void drawWorld(float partialTicks) {
+    @DGEventHandler
+    public void drawWorld(RenderWorldLastEvent event) {
+        float partialTicks = event.partialTicks;
         if (!isEnabled()) return;
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) return;

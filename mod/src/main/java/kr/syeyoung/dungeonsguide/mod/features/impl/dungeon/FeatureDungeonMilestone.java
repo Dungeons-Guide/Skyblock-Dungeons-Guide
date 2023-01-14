@@ -24,8 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -41,7 +41,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.regex.Pattern;
 
-public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListener {
+public class FeatureDungeonMilestone extends TextHUDFeature {
     public FeatureDungeonMilestone() {
         super("Dungeon.HUDs", "Display Current Class Milestone", "Display current class milestone of yourself", "dungeon.stats.milestone", true, getFontRenderer().getStringWidth("Milestone: 12"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
@@ -93,7 +93,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature implements ChatListe
     public static final Pattern milestone_pattern = Pattern.compile("§r§e§l(.+) Milestone §r§e(.)§r§7: .+ §r§a(.+)§r");
 
 
-    @Override
+    @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         if (!skyblockStatus.isOnDungeon()) return;

@@ -19,9 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.TooltipListener;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.item.ItemStack;
@@ -33,14 +33,14 @@ import java.util.Comparator;
 import java.util.Set;
 import java.util.TreeSet;
 
-public class FeatureTooltipPrice extends SimpleFeature implements TooltipListener {
+public class FeatureTooltipPrice extends SimpleFeature {
     public FeatureTooltipPrice() {
         super("Misc.API Features", "Item Price", "Shows price of items", "tooltip.price");
         addParameter("reqShift", new FeatureParameter<Boolean>("reqShift", "Require Shift", "If shift needs to be pressed in order for this feature to be activated", false, "boolean"));
         setEnabled(false);
     }
 
-    @Override
+    @DGEventHandler
     public void onTooltip(ItemTooltipEvent event) {
         if (!isEnabled()) return;
 

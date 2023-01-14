@@ -20,8 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonQuitListener;
-import kr.syeyoung.dungeonsguide.mod.features.listener.DungeonStartListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -31,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureDungeonRealTime extends TextHUDFeature implements DungeonStartListener, DungeonQuitListener {
+public class FeatureDungeonRealTime extends TextHUDFeature {
     public FeatureDungeonRealTime() {
         super("Dungeon.HUDs", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime", true, getFontRenderer().getStringWidth("Time(Real): 59m 59s"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
@@ -80,13 +81,13 @@ public class FeatureDungeonRealTime extends TextHUDFeature implements DungeonSta
         return actualBit;
     }
 
-    @Override
-    public void onDungeonStart() {
-    started= System.currentTimeMillis();
+    @DGEventHandler
+    public void onDungeonStart(DungeonStartedEvent event) {
+        started= System.currentTimeMillis();
     }
 
-    @Override
-    public void onDungeonQuit() {
+    @DGEventHandler(ignoreDisabled = true)
+    public void onDungeonQuit(DungeonLeftEvent event) {
         started = -1;
     }
 }

@@ -22,7 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListener;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -32,7 +32,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
-public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements ChatListener {
+public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
         super("Dungeon.HUDs", "Display # Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom", true, getFontRenderer().getStringWidth("Secrets In Room: 8/8"), getFontRenderer().FONT_HEIGHT);
         this.setEnabled(false);
@@ -86,7 +86,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature implements 
         return actualBit;
     }
 
-    @Override
+    @DGEventHandler
     public void onChat(ClientChatReceivedEvent chat) {
         if (chat.type != 2) return;
         String text = chat.message.getFormattedText();

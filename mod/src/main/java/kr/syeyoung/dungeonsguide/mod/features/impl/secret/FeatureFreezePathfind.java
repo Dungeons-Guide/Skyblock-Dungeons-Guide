@@ -19,21 +19,21 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.KeybindPressedListener;
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
-public class FeatureFreezePathfind extends SimpleFeature implements KeybindPressedListener {
+public class FeatureFreezePathfind extends SimpleFeature  {
     public FeatureFreezePathfind() {
         super("Dungeon.Secrets.Keybinds", "Global Freeze Pathfind", "Freeze Pathfind, meaning the pathfind lines won't change when you move.\nPress settings to edit the key", "secret.freezepathfind", false);
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, "keybind"));
     }
 
-    @Override
+    @DGEventHandler
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());

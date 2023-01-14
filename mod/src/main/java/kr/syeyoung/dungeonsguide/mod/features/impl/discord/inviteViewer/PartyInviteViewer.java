@@ -22,9 +22,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.*;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -32,6 +33,7 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
+import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
@@ -42,7 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderListener, ScreenRenderListener, TickListener, GuiClickListener, DiscordUserJoinRequestListener {
+public class PartyInviteViewer extends SimpleFeature {
     public PartyInviteViewer() {
         super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.party_invite_viewer");
     }
@@ -52,22 +54,24 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
         return false;
     }
 
-    @Override
+    @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
         renderRequests(true);
     }
 
-    @Override
-    public void drawScreen(float partialTicks) {
+    @DGEventHandler
+    public void drawScreen(RenderGameOverlayEvent.Post postRender) {
         if (!isEnabled()) return;
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
+
         try {
             renderRequests(false);
         } catch (Throwable t) {
             t.printStackTrace();
         }
     }
-    @Override
-    public void onTick() {
+    @DGEventHandler
+    public void onTick(DGTickEvent tickEvent) {
         try {
             List<PartyJoinRequest> partyJoinRequestList = new ArrayList<>();
             boolean isOnHypixel = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
@@ -89,7 +93,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
     }
 
 
-    @Override
+    @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         if (!isEnabled()) return;
         int mouseX = Mouse.getX();
@@ -306,7 +310,7 @@ public class PartyInviteViewer extends SimpleFeature implements GuiPostRenderLis
         GlStateManager.popMatrix();
     }
 
-    @Override
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserJoinRequest(DiscordUserJoinRequestEvent event) {
         PartyJoinRequest partyInvite = new PartyJoinRequest();
         partyInvite.setDiscordUser(event.getDiscordUser());

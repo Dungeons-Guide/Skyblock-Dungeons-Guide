@@ -20,21 +20,21 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.KeybindPressedListener;
 import net.minecraft.util.ChatComponentText;
 import org.lwjgl.input.Keyboard;
 
-public class FeatureBloodRush extends SimpleFeature implements KeybindPressedListener {
+public class FeatureBloodRush extends SimpleFeature {
     public FeatureBloodRush() {
         super("Dungeon.Secrets.Blood Rush", "Blood Rush Mode", "Auto pathfind to witherdoors. \nCan be toggled with key set in settings", "secret.bloodrush", false);
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, "keybind"));
     }
 
-    @Override
+    @DGEventHandler
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());

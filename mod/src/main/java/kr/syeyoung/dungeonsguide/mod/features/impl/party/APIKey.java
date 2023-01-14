@@ -20,14 +20,14 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.listener.ChatListenerGlobal;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-public class APIKey extends SimpleFeature implements ChatListenerGlobal {
+public class APIKey extends SimpleFeature {
 
     public APIKey() {
         super("Misc.API Features", "API KEY", "Sets api key","partykicker.apikey");
@@ -39,7 +39,7 @@ public class APIKey extends SimpleFeature implements ChatListenerGlobal {
     }
 
 
-    @Override
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
         String str = clientChatReceivedEvent.message.getFormattedText();
