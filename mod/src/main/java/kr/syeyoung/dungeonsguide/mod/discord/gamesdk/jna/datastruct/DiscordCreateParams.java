@@ -64,7 +64,7 @@ public class DiscordCreateParams extends DiscordStruct { public DiscordCreatePar
 
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList("client_id", "flags", "events", "event_data", "application_events", "application_version", "user_events",
+        return Arrays.asList("client_id", "flags", "events", "event_data", "application_events", "application_version", "user_events", "relationship_events", "relationship_version",
                 "user_version", "image_events", "image_version", "activity_events", "activity_version", "lobby_events", "lobby_version",
                 "network_events", "network_version", "overlay_events", "overlay_version", "storage_events", "storage_version", "store_events",
                 "store_version", "voice_events", "voice_version", "achievement_events", "achievement_version");

@@ -20,23 +20,25 @@ package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityPartyPrivacy;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.Int32;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt32;
 
 import java.util.Arrays;
 import java.util.List;
 
+public class DiscordRect extends DiscordStruct {
+    public Int32 left;
+    public Int32 top;
+    public Int32 right;
+    public Int32 bottom;
 
-public class DiscordActivityParty extends DiscordStruct {
-    public byte[] id = new byte[128];
-    public DiscordPartySize discordActivityParty;
-    public EDiscordActivityPartyPrivacy privacy;
-    public DiscordActivityParty() {super();} public DiscordActivityParty(Pointer pointer) {super(pointer);}
+    public DiscordRect() {super();} public DiscordRect(Pointer pointer) {super(pointer);}
 
-    public static class ByReference extends DiscordActivityParty implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
-    public static class ByValue extends DiscordActivityParty implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+    public static class ByReference extends DiscordRect implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
+    public static class ByValue extends DiscordRect implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
 
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList("id", "discordActivityParty", "privacy");
+        return Arrays.asList("left", "top", "right", "bottom");
     }
 }

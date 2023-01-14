@@ -28,7 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordVersion;
 
 public interface NativeGameSDK extends Library {
     
-    public static final int DISCORD_VERSION = 2;
+    public static final int DISCORD_VERSION = 3;
     public static final int DISCORD_APPLICATION_MANAGER_VERSION = 1;
     public static final int DISCORD_USER_MANAGER_VERSION = 1;
     public static final int DISCORD_IMAGE_MANAGER_VERSION = 1;
@@ -36,7 +36,7 @@ public interface NativeGameSDK extends Library {
     public static final int DISCORD_RELATIONSHIP_MANAGER_VERSION = 1;
     public static final int DISCORD_LOBBY_MANAGER_VERSION = 1;
     public static final int DISCORD_NETWORK_MANAGER_VERSION = 1;
-    public static final int DISCORD_OVERLAY_MANAGER_VERSION = 1;
+    public static final int DISCORD_OVERLAY_MANAGER_VERSION = 2;
     public static final int DISCORD_STORAGE_MANAGER_VERSION = 1;
     public static final int DISCORD_STORE_MANAGER_VERSION = 1;
     public static final int DISCORD_VOICE_MANAGER_VERSION = 1;

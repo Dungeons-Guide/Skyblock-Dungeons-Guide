@@ -20,25 +20,28 @@ package kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct;
 
 import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordSkuType;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordLobbyType;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.DiscordSnowflake;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.Int32;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt32;
 
 import java.util.Arrays;
 import java.util.List;
 
+public class DiscordImeUnderline extends DiscordStruct {
+    public Int32 from;
+    public Int32 to;
+    public UInt32 color;
+    public UInt32 background_color;
+    public boolean thick;
 
-public class DiscordSku extends DiscordStruct {
-    public DiscordSnowflake id = new DiscordSnowflake();
-    public EDiscordSkuType type = EDiscordSkuType.DiscordSkuType_Application;
-    public byte[] name = new byte[256];
-    public DiscordSkuPrice price;
-    public DiscordSku() {super();} public DiscordSku(Pointer pointer) {super(pointer);}
+    public DiscordImeUnderline() {super();} public DiscordImeUnderline(Pointer pointer) {super(pointer);}
 
-    public static class ByReference extends DiscordSku implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
-    public static class ByValue extends DiscordSku implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
+    public static class ByReference extends DiscordImeUnderline implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
+    public static class ByValue extends DiscordImeUnderline implements Structure.ByValue { public ByValue() {super();} public ByValue(Pointer pointer) {super(pointer);}}
 
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList("id", "type", "name", "price");
+        return Arrays.asList("from", "to", "color", "background_color", "thick");
     }
 }

@@ -70,7 +70,8 @@ public enum EDiscordResult {
     DiscordResult_UnauthorizedForAchievement(40),
     DiscordResult_InvalidGiftCode(41),
     DiscordResult_PurchaseError(42),
-    DiscordResult_TransactionAborted(43);
+    DiscordResult_TransactionAborted(43),
+    DiscordResult_DrawingInitFailed(44);
 
     @Getter
     private final int value;

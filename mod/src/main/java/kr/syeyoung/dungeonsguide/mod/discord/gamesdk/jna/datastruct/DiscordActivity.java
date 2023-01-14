@@ -22,6 +22,7 @@ import com.sun.jna.Pointer;
 import com.sun.jna.Structure;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityType;
 import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.Int64;
+import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.typedef.UInt32;
 
 import java.util.Arrays;
 import java.util.List;
@@ -38,6 +39,8 @@ public class DiscordActivity extends DiscordStruct {
     public DiscordActivityParty party;
     public DiscordActivitySecrets secrets;
     public boolean instance;
+    public UInt32 supported_platform;
+
     public DiscordActivity() {super();} public DiscordActivity(Pointer pointer) {super(pointer);}
 
     public static class ByReference extends DiscordActivity implements Structure.ByReference { public ByReference() {super();} public ByReference(Pointer pointer) {super(pointer);}}
@@ -45,6 +48,6 @@ public class DiscordActivity extends DiscordStruct {
 
     @Override
     protected List getFieldOrder() {
-        return Arrays.asList("activityType", "applicationId", "name", "state", "details", "timestamps", "assets", "party", "secrets", "instance");
+        return Arrays.asList("activityType", "applicationId", "name", "state", "details", "timestamps", "assets", "party", "secrets", "instance", "supported_platform");
     }
 }
