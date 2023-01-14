@@ -68,6 +68,8 @@ dependencies {
         runtimeOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22'
         add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:e603cf2:all')
     }
+    def files= fileTree("../runtime/mods2").filter { it.isFile() }
+    add("devenvMod", files)
 }
 
 loom {

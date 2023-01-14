@@ -85,8 +85,6 @@ dependencies {
 
 
     devEnv("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
-    def files= fileTree("../runtime/mods2").filter { it.isFile() }
-    modLocalRuntime(files)
 }
 
 
