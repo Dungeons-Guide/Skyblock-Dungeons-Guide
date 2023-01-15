@@ -37,6 +37,9 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
@@ -52,7 +55,7 @@ public class DiscordIntegrationManager implements IPCListener {
     public static DiscordIntegrationManager INSTANCE = new DiscordIntegrationManager();
     private IPCClient ipcClient;
     private final Thread t = new Thread(DungeonsGuide.THREAD_GROUP, this::run);
-
+    private Logger logger = LogManager.getLogger("DG-DiscordIntegrationManager");
 
     private DiscordIntegrationManager(){
         ipcClient = new IPCClient(816298079732498473L, DungeonsGuide.THREAD_FACTORY);
@@ -67,38 +70,48 @@ public class DiscordIntegrationManager implements IPCListener {
     }
 
     public void sendInvite(String id, String content) {
-        ipcClient.send(new JSONObject()
+        JSONObject payload = new JSONObject()
                 .put("cmd", "ACTIVITY_INVITE_USER")
                 .put("args", new JSONObject()
-                        .put("type", 1)
-                        .put("user_id", id)
-                        .put("content", content)
-                        .put("pid",getPID())
-                ), null);
+                                .put("type", 1)
+                                .put("user_id", id)
+                                .put("content", content)
+                                .put("pid",getPID()));
+        ipcClient.send(payload, new Callback(success ->{}, fail -> {
+                    logger.log(Level.WARN, "Discord failed send Invite for "+fail+"\n Sent payload: "+payload);
+        }));
     }
 
 
     public void respondToJoinRequest(String userId, PartyJoinRequest.Reply accept) {
+        JSONObject payload = null;
         if (accept == PartyJoinRequest.Reply.ACCEPT) {
-            ipcClient.send(new JSONObject()
+            payload = new JSONObject()
                     .put("cmd", "SEND_ACTIVITY_JOIN_INVITE")
-                    .put("args", new JSONObject().put("user_id", userId)), null);
-        } else if (accept == PartyJoinRequest.Reply.DENY || accept == PartyJoinRequest.Reply.IGNORE) {
-            ipcClient.send(new JSONObject()
+                    .put("args", new JSONObject().put("user_id", userId));
+        } else  {
+            payload = new JSONObject()
                     .put("cmd", "CLOSE_ACTIVITY_JOIN_REQUEST")
-                    .put("args", new JSONObject().put("user_id", userId)), null);
+                    .put("args", new JSONObject().put("user_id", userId));
         }
+        JSONObject finalPayload = payload;
+        ipcClient.send(payload, new Callback(success ->{}, fail -> {
+            logger.log(Level.WARN, "Discord failed respond to join request for "+fail+"\n Sent payload: "+ finalPayload);
+        }));
     }
 
     public void acceptInvite(InviteHandle handle) {
-        ipcClient.send(new JSONObject()
+        JSONObject payload = new JSONObject()
                 .put("cmd", "ACCEPT_ACTIVITY_INVITE")
                 .put("args", new JSONObject()
                         .put("type", 1)
                         .put("user_id", handle.getUserId())
                         .put("session_id", handle.getSessionId())
                         .put("channel_id", handle.getChannelId())
-                        .put("message_id", handle.getMessageId())), null);
+                        .put("message_id", handle.getMessageId()));
+        ipcClient.send(payload, new Callback(success ->{}, fail -> {
+            logger.log(Level.WARN, "Discord failed accept invite for "+fail+"\n Sent payload: "+ payload);
+        }));
     }
 
 
@@ -115,7 +128,6 @@ public class DiscordIntegrationManager implements IPCListener {
         } catch (Throwable t) {
             t.printStackTrace();
         }
-
     }
 
     private void onRelationshipUpdate(Packet packet){
@@ -135,12 +147,9 @@ public class DiscordIntegrationManager implements IPCListener {
                 data.getJSONObject("user")
                         .getString("avatar"));
         MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(user));
-        System.out.println("Received Join Request from " + user.getId() + " - " + user.getName());
     }
     private void onActivityInvite(Packet packet) {
         JSONObject data = packet.getJson().getJSONObject("data");
-
-
         if (!data.getJSONObject("activity").getString("application_id").equals("816298079732498473"))
             return;
         MinecraftForge.EVENT_BUS.post(new DiscordUserInvitedEvent(
@@ -158,7 +167,6 @@ public class DiscordIntegrationManager implements IPCListener {
                         data.getString("channel_id"),
                         data.getString("message_id")
                 )));
-        System.out.println("Received Invite  from ???");
     }
 
     private void onRelationshipLoad(Packet object) {
@@ -177,9 +185,9 @@ public class DiscordIntegrationManager implements IPCListener {
     private void sendRichPresence(RichPresence presence) {
         ipcClient.send(new JSONObject()
                 .put("cmd","SET_ACTIVITY")
-                .put("args", new JSONObject())
+                .put("args", new JSONObject()
                 .put("pid",getPID())
-                .put("activity",presence == null ? null : presence.toJson()), null);
+                .put("activity",presence == null ? null : presence.toJson())), new Callback(success ->{}, fail -> {System.out.println(fail);}));
     }
     private void updatePresence() {
         if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
@@ -194,7 +202,7 @@ public class DiscordIntegrationManager implements IPCListener {
             presence.setLargeImage("mort", "mort");
             presence.setState(name);
             presence.setParty(
-                    Optional.ofNullable( PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(""),
+                    Optional.ofNullable( PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null),
                     Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyRawMembers).map(Set::size).orElse(1),
                     PartyManager.INSTANCE.getMaxParty()
             );
@@ -243,17 +251,17 @@ public class DiscordIntegrationManager implements IPCListener {
     public void onActivityJoin(Packet packet) {
         String secret = packet.getJson().getJSONObject("data").getString("secret");
         PartyManager.INSTANCE.joinWithToken(secret);
-        System.out.println("Trying to join with token "+secret);
+        logger.log(Level.DEBUG, "Trying to join with token: "+secret);
     }
 
     @Override
     public void onClose(IPCClient client, JSONObject json) {
-        System.out.println("closed: ");
+        logger.log(Level.DEBUG, "IPC Client closed with: "+json);
     }
 
     @Override
     public void onDisconnect(IPCClient client, Throwable t) {
-        t.printStackTrace();
+        logger.log(Level.DEBUG, "IPC Client disconnected for: ", t);
     }
 
 

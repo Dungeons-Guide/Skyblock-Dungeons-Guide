@@ -249,7 +249,7 @@ public class DungeonsGuide implements DGInterface {
         if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
             registerCommands(commandReparty);
         }
-
+        DiscordIntegrationManager.INSTANCE.isLoaded();
 
 
         TimeScoreUtil.init();
