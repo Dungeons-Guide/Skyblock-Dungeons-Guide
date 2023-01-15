@@ -69,4 +69,9 @@ public class SizedBox extends AnnotatedExportOnlyWidget implements Layouter {
         child.setRelativeBound(new Rect(0,0,dim.getWidth(),dim.getHeight()));
         return dim;
     }
+
+    @Override
+    public boolean canCutRequest() {
+        return true;
+    }
 }

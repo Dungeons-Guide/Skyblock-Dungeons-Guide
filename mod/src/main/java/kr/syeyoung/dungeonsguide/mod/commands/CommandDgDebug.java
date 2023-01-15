@@ -102,11 +102,6 @@ public class CommandDgDebug extends CommandBase {
             ScoreBoardUtils.forEachLineClean(l -> {
                 ChatTransmitter.addToQueue("LINE: " + l, false);
             });
-        } else if ("title".equals(arg)) {
-            if (args.length == 2) {
-                System.out.println("Displayuing title:" + args[1]);
-                TitleRender.displayTitle(args[1], "", 10, 40, 20);
-            }
         } else if ("mockdungeonstart".equals(arg)) {
             if (!Minecraft.getMinecraft().isSingleplayer()) {
                 ChatTransmitter.addToQueue("This only works in singlepauer", false);

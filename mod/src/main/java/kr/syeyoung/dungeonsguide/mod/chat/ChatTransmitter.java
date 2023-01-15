@@ -78,8 +78,6 @@ public class ChatTransmitter {
                 Minecraft.getMinecraft().thePlayer.addChatMessage(event.message);
             }
         }
-
-
     }
 
 

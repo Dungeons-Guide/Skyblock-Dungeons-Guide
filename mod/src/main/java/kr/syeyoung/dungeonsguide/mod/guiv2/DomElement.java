@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Stack;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.NullLayouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -100,6 +101,12 @@ public class DomElement {
     // event propagation
 
     public void requestRelayout() {
+        if (layouter.canCutRequest()) {
+            layouter.layout(this, new ConstraintBox(
+                    size.getWidth(), size.getWidth(), size.getHeight(), size.getHeight()
+            ));
+            return;
+        }
         if (parent != null)
             parent.requestRelayout();
     }

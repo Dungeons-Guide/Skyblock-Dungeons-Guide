@@ -51,6 +51,9 @@ public class NotificationManager {
 
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
+            return;
+
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         int widthX = fr.getStringWidth("X");

@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
@@ -230,6 +231,7 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(PartyManager.INSTANCE);
         registerEventsForge(ChatProcessor.INSTANCE);
         registerEventsForge(StaticResourceCache.INSTANCE);
+        registerEventsForge(OverlayManager.getEventHandler());
 
         registerEventsForge(new AhUtils());
 

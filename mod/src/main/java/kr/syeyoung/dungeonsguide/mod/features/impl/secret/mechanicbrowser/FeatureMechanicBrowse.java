@@ -89,13 +89,13 @@ public class FeatureMechanicBrowse extends GuiFeature {
     private int lastWidth, lastHeight;
 
     @Override
-    public void drawScreen(RenderGameOverlayEvent.Post post) {
+    public void drawScreen(float partialTicks) {
         
         int i = Mouse.getEventX();
         int j = Minecraft.getMinecraft().displayHeight - Mouse.getEventY();
         if (Minecraft.getMinecraft().displayWidth != lastWidth || Minecraft.getMinecraft().displayHeight != lastHeight) mGuiMechanicBrowser.initGui();
         lastWidth = Minecraft.getMinecraft().displayWidth; lastHeight = Minecraft.getMinecraft().displayHeight;
-        mGuiMechanicBrowser.drawScreen(i,j,post.partialTicks);
+        mGuiMechanicBrowser.drawScreen(i,j,partialTicks);
     }
 
     @Override

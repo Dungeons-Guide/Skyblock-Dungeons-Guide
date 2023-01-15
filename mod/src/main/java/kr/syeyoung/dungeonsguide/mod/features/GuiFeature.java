@@ -29,6 +29,17 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -43,12 +54,25 @@ import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 public abstract class GuiFeature extends AbstractFeature {
-    @Setter
     private GUIRectangle featureRect;
+
+    public void setFeatureRect(GUIRectangle featureRect) {
+        this.featureRect = featureRect;
+
+        Rectangle loc = featureRect.getRectangleNoScale();
+        widget = new OverlayWidget(
+                new WidgetFeatureWrapper(),
+                OverlayType.UNDER_CHAT,
+                new Rect(loc.x, loc.y, loc.width, loc.height)
+        );
+        OverlayManager.getInstance().updateOverlayPosition(widget);
+    }
+
     @Setter(value = AccessLevel.PROTECTED)
     private boolean keepRatio;
     @Setter(value = AccessLevel.PROTECTED)
@@ -57,6 +81,8 @@ public abstract class GuiFeature extends AbstractFeature {
     private double defaultHeight;
     private final double defaultRatio;
 
+    private OverlayWidget widget;
+
     protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key);
         this.keepRatio = keepRatio;
@@ -64,30 +90,39 @@ public abstract class GuiFeature extends AbstractFeature {
         this.defaultHeight = height;
         this.defaultRatio = defaultWidth / defaultHeight;
         this.featureRect = new GUIRectangle(0, 0, width, height);
+
+        Rectangle loc = featureRect.getRectangleNoScale();
+        widget = new OverlayWidget(
+            new WidgetFeatureWrapper(),
+            OverlayType.UNDER_CHAT,
+            new Rect(loc.x, loc.y, loc.width, loc.height)
+        );
+        OverlayManager.getInstance().addOverlay(widget);
     }
 
-    @DGEventHandler
-    public void drawScreen(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
+    public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
+        @Override
+        public List<Widget> build(DomElement buildContext) {
+            return Collections.emptyList();
+        }
 
-        GlStateManager.pushMatrix();
+        @Override
+        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+            drawScreen(partialTicks);
+        }
+
+        @Override
+        public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+            return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        }
+    }
+
+    public void drawScreen(float partialTicks) {
         Rectangle featureRect = this.featureRect.getRectangleNoScale();
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.scale(1.0/scaledResolution.getScaleFactor(), 1.0/scaledResolution.getScaleFactor(), 1);
         clip(featureRect.x, featureRect.y, featureRect.width, featureRect.height);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
-
-        GlStateManager.translate(featureRect.x, featureRect.y, 0);
-        drawHUD(postRender.partialTicks);
-
+        drawHUD(partialTicks);
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
-        GlStateManager.popMatrix();
-
-
-        GlStateManager.enableBlend();
-        GlStateManager.color(1,1,1,1);
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
     }
 
 
@@ -112,6 +147,14 @@ public abstract class GuiFeature extends AbstractFeature {
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
         this.featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
+
+        Rectangle loc = featureRect.getRectangleNoScale();
+        widget = new OverlayWidget(
+                new WidgetFeatureWrapper(),
+                OverlayType.UNDER_CHAT,
+                new Rect(loc.x, loc.y, loc.width, loc.height)
+        );
+        OverlayManager.getInstance().updateOverlayPosition(widget);
     }
 
     @Override

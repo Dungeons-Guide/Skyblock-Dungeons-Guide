@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,21 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
+package kr.syeyoung.dungeonsguide.mod.overlay;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-
-public interface Layouter {
-    public abstract Size layout(DomElement buildContext, ConstraintBox constraintBox);
-    public static double clamp(double val, double min, double max) {
-        if (val < min) return min;
-        if (val > max) return max;
-        return val;
-    }
-
-    default boolean canCutRequest() {
-        return false;
-    }
+public enum OverlayType {
+    UNDER_CHAT, OVER_CHAT, OVER_ANY
 }

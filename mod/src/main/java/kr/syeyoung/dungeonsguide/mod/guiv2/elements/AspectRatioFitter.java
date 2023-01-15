@@ -81,6 +81,11 @@ public class AspectRatioFitter extends AnnotatedExportOnlyWidget implements Layo
     }
 
     @Override
+    public boolean canCutRequest() {
+        return Flexible.FlexFit.TIGHT == fit.getValue();
+    }
+
+    @Override
     public List<Widget> build(DomElement buildContext) {
         return Collections.singletonList(widget.getValue());
     }

@@ -74,4 +74,9 @@ public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
         getDomElement().getChildren().get(0).setRelativeBound(new Rect(0,0, dim.getWidth(),dim.getHeight()));
         return dim;
     }
+
+    @Override
+    public boolean canCutRequest() {
+        return Flexible.FlexFit.TIGHT == fit.getValue();
+    }
 }
