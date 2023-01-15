@@ -41,7 +41,7 @@ public class OverlayManagerRootWidget extends Widget implements Layouter {
         DomElement domElement = overlayWidget.createDomElement(getDomElement());
         getDomElement().addElement(domElement);
 
-        Rect posSize = overlayWidget.positionSize;
+        Rect posSize = overlayWidget.positionSize.get();
         Size size = domElement.getLayouter().layout(domElement, new ConstraintBox(posSize.getWidth(), posSize.getWidth(), posSize.getHeight(), posSize.getHeight()));
         domElement.setRelativeBound(new Rect(posSize.getX(), posSize.getY(), size.getWidth(), size.getHeight()));
     }
@@ -52,7 +52,7 @@ public class OverlayManagerRootWidget extends Widget implements Layouter {
 
     public void updateOverlayPosition(OverlayWidget overlayWidget) {
         DomElement domElement = overlayWidget.getDomElement();
-        Rect posSize = overlayWidget.positionSize;
+        Rect posSize = overlayWidget.positionSize.get();
         Size size = domElement.getLayouter().layout(domElement, new ConstraintBox(posSize.getWidth(), posSize.getWidth(), posSize.getHeight(), posSize.getHeight()));
         domElement.setRelativeBound(new Rect(posSize.getX(), posSize.getY(), size.getWidth(), size.getHeight()));
     }
@@ -62,7 +62,7 @@ public class OverlayManagerRootWidget extends Widget implements Layouter {
         for (DomElement child : buildContext.getChildren()) {
             if (!(child.getWidget() instanceof OverlayWidget)) continue;
 
-            Rect posSize = ((OverlayWidget) child.getWidget()).positionSize;
+            Rect posSize = ((OverlayWidget) child.getWidget()).positionSize.get();
             Size size = child.getLayouter().layout(child, new ConstraintBox(posSize.getWidth(), posSize.getWidth(), posSize.getHeight(), posSize.getHeight()));
             child.setRelativeBound(new Rect(posSize.getX(), posSize.getY(), size.getWidth(), size.getHeight()));
         }

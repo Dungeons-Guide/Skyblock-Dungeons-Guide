@@ -33,12 +33,13 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Collections;
 import java.util.List;
+import java.util.function.Supplier;
 
 @AllArgsConstructor
 public class OverlayWidget extends Widget implements Renderer, Layouter {
     public Widget wrappingWidget;
     public OverlayType overlayType;
-    public Rect positionSize;
+    public Supplier<Rect> positionSize;
 
     @Override
     public List<Widget> build(DomElement buildContext) {

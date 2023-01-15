@@ -63,7 +63,12 @@ public class OverlayManager {
     private OverlayManager() {
         this.mc = Minecraft.getMinecraft();
         view = new RootDom(root);
+        guiResize(null);
+        view.setMounted(true);
+    }
 
+    @SubscribeEvent()
+    public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
         view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
         view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
         view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
@@ -73,26 +78,23 @@ public class OverlayManager {
                 Minecraft.getMinecraft().displayHeight,
                 Minecraft.getMinecraft().displayHeight
         ));
-        view.setMounted(true);
     }
 
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
             return;
-        System.out.println("overlay");
         view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
         drawScreen(postRender.partialTicks);
     }
 
     @SubscribeEvent
     public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
-        System.out.println("gui: "+postRender.gui);
-        if (postRender.gui instanceof GuiChat)
-            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
-        else
-            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
-        drawScreen(postRender.renderPartialTicks);
+//        if (postRender.gui instanceof GuiChat)
+//            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
+//        else
+//            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
+//        drawScreen(postRender.renderPartialTicks);
     }
 
 
@@ -113,7 +115,6 @@ public class OverlayManager {
         GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
         GlStateManager.enableDepth();
-        GlStateManager.disableTexture2D();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 

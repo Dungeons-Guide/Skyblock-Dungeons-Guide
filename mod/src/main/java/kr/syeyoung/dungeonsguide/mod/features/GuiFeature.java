@@ -63,13 +63,6 @@ public abstract class GuiFeature extends AbstractFeature {
 
     public void setFeatureRect(GUIRectangle featureRect) {
         this.featureRect = featureRect;
-
-        Rectangle loc = featureRect.getRectangleNoScale();
-        widget = new OverlayWidget(
-                new WidgetFeatureWrapper(),
-                OverlayType.UNDER_CHAT,
-                new Rect(loc.x, loc.y, loc.width, loc.height)
-        );
         OverlayManager.getInstance().updateOverlayPosition(widget);
     }
 
@@ -91,11 +84,13 @@ public abstract class GuiFeature extends AbstractFeature {
         this.defaultRatio = defaultWidth / defaultHeight;
         this.featureRect = new GUIRectangle(0, 0, width, height);
 
-        Rectangle loc = featureRect.getRectangleNoScale();
         widget = new OverlayWidget(
             new WidgetFeatureWrapper(),
             OverlayType.UNDER_CHAT,
-            new Rect(loc.x, loc.y, loc.width, loc.height)
+            () -> {
+                Rectangle loc = featureRect.getRectangleNoScale();
+                return new Rect(loc.x, loc.y, loc.width, loc.height);
+            }
         );
         OverlayManager.getInstance().addOverlay(widget);
     }
@@ -147,13 +142,6 @@ public abstract class GuiFeature extends AbstractFeature {
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
         this.featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
-
-        Rectangle loc = featureRect.getRectangleNoScale();
-        widget = new OverlayWidget(
-                new WidgetFeatureWrapper(),
-                OverlayType.UNDER_CHAT,
-                new Rect(loc.x, loc.y, loc.width, loc.height)
-        );
         OverlayManager.getInstance().updateOverlayPosition(widget);
     }
 

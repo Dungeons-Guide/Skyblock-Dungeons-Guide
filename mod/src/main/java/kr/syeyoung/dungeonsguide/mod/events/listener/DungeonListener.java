@@ -273,66 +273,70 @@ public class DungeonListener {
     @SubscribeEvent
     public void onWorldRender(RenderWorldLastEvent renderWorldLastEvent) {
         if (!SkyblockStatus.isOnDungeon()) return;
+        try {
 
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (context == null) {
-            return;
-        }
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            if (context == null) {
+                return;
+            }
 
-        if (FeatureRegistry.DEBUG.isEnabled()) {
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
-                for (DungeonDoor door : dungeonRoom.getDoors()) {
-                    RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+            if (FeatureRegistry.DEBUG.isEnabled()) {
+                for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+                    for (DungeonDoor door : dungeonRoom.getDoors()) {
+                        RenderUtils.renderDoor(door, renderWorldLastEvent.partialTicks);
+                    }
                 }
             }
-        }
 
 
-        if (context.getBossfightProcessor() != null) {
-            context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
-        }
-
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
-
-        DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
-        if (dungeonRoom != null) {
-            if (dungeonRoom.getRoomProcessor() != null) {
-                dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
+            if (context.getBossfightProcessor() != null) {
+                context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
             }
-        }
 
-        if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null) {
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
 
-            Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
-            BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
-            for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                boolean blocked = dungeonRoom.isBlocked(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-
-                RenderUtils.highlightBox(
-                        AxisAlignedBB.fromBounds(
-                                allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
-                                allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
-                        ), blocked ? new Color(0x55FF0000, true) : new Color(0x3300FF00, true), renderWorldLastEvent.partialTicks, false);
-
-            }
-        }
-
-        if (EditingContext.getEditingContext() != null) {
-            GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
-            if (guiScreen instanceof GuiDungeonParameterEdit) {
-                ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
-                if (valueEdit != null) {
-                    valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+            DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+            if (dungeonRoom != null) {
+                if (dungeonRoom.getRoomProcessor() != null) {
+                    dungeonRoom.getRoomProcessor().drawWorld(renderWorldLastEvent.partialTicks);
                 }
-            } else if (guiScreen instanceof GuiDungeonValueEdit) {
-                ValueEdit valueEdit = ((GuiDungeonValueEdit) guiScreen).getValueEdit();
-                if (valueEdit != null) {
-                    valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
-                }
-            } else if (guiScreen instanceof GuiDungeonAddSet) {
-                ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
             }
+
+            if (FeatureRegistry.DEBUG.isEnabled() && dungeonRoom != null) {
+
+                Vec3 player = Minecraft.getMinecraft().thePlayer.getPositionVector();
+                BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
+                for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
+                    boolean blocked = dungeonRoom.isBlocked(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+
+                    RenderUtils.highlightBox(
+                            AxisAlignedBB.fromBounds(
+                                    allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
+                                    allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
+                            ), blocked ? new Color(0x55FF0000, true) : new Color(0x3300FF00, true), renderWorldLastEvent.partialTicks, false);
+
+                }
+            }
+
+            if (EditingContext.getEditingContext() != null) {
+                GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
+                if (guiScreen instanceof GuiDungeonParameterEdit) {
+                    ValueEdit valueEdit = ((GuiDungeonParameterEdit) guiScreen).getValueEdit();
+                    if (valueEdit != null) {
+                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+                    }
+                } else if (guiScreen instanceof GuiDungeonValueEdit) {
+                    ValueEdit valueEdit = ((GuiDungeonValueEdit) guiScreen).getValueEdit();
+                    if (valueEdit != null) {
+                        valueEdit.renderWorld(renderWorldLastEvent.partialTicks);
+                    }
+                } else if (guiScreen instanceof GuiDungeonAddSet) {
+                    ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 
