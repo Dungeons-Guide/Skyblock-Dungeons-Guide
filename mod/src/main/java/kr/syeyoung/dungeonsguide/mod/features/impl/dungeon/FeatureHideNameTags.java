@@ -37,7 +37,7 @@ public class FeatureHideNameTags extends SimpleFeature  {
 
     @DGEventHandler
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
-        if (!isEnabled()) return;
+        
         if (!skyblockStatus.isOnDungeon()) return;
 
         if (renderPlayerEvent.entity instanceof EntityArmorStand) {

@@ -61,7 +61,7 @@ public class PartyInviteViewer extends SimpleFeature {
 
     @DGEventHandler
     public void drawScreen(RenderGameOverlayEvent.Post postRender) {
-        if (!isEnabled()) return;
+        
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
 
         try {
@@ -95,7 +95,7 @@ public class PartyInviteViewer extends SimpleFeature {
 
     @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-        if (!isEnabled()) return;
+        
         int mouseX = Mouse.getX();
         int mouseY = Minecraft.getMinecraft().displayHeight - Mouse.getY() +3;
         for (PartyJoinRequest joinRequest:joinRequests) {

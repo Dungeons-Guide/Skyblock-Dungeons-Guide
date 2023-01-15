@@ -44,7 +44,7 @@ public class FeatureGoodParties extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
-        if (!isEnabled()) return;
+        
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) return;
         GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
         ContainerChest cont = (ContainerChest) chest.inventorySlots;

@@ -71,7 +71,7 @@ public class PlayingDGAlarm extends SimpleFeature {
 
     @DGEventHandler
     public void drawScreen(RenderGameOverlayEvent.Post postRender) {
-        if (!isEnabled()) return;
+        
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
 
         try {

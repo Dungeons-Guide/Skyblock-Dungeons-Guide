@@ -49,7 +49,6 @@ public class FeatureChestPrice extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiBGRender(GuiScreenEvent.BackgroundDrawnEvent rendered) {
-        if (!isEnabled()) return;
         if (!(rendered.gui instanceof GuiChest)) return;
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 

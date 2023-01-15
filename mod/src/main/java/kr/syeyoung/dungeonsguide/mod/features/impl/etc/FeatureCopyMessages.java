@@ -36,7 +36,7 @@ public class FeatureCopyMessages extends SimpleFeature {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
-        if (!isEnabled()) return;
+        
         if (clientChatReceivedEvent.type == 2) return;
 
         clientChatReceivedEvent.message.appendSibling(new ChatComponentText("   §7[Copy]").setChatStyle(new ChatStyle().setChatClickEvent(new ClickEvent(ClickEvent.Action.SUGGEST_COMMAND, TextUtils.stripColor(clientChatReceivedEvent.message.getFormattedText()))).setChatHoverEvent(new HoverEvent(HoverEvent.Action.SHOW_TEXT, new ChatComponentText("§eCopy Message")))));

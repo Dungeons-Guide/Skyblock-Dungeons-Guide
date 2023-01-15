@@ -68,7 +68,6 @@ public abstract class GuiFeature extends AbstractFeature {
 
     @DGEventHandler
     public void drawScreen(RenderGameOverlayEvent.Post postRender) {
-        if (!isEnabled()) return;
         if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
 
         GlStateManager.pushMatrix();

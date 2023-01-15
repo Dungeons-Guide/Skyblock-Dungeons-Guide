@@ -53,7 +53,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
         if (event.gui == null) guiCustomPartyFinder = null;
-        if (!isEnabled()) return;
+        
         if (!(event.gui instanceof GuiChest)) return;
         GuiChest chest = (GuiChest) event.gui;
         if (!(chest.inventorySlots instanceof ContainerChest)) return;

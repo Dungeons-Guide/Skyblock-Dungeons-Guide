@@ -51,7 +51,7 @@ public class FeatureHideAnimals extends SimpleFeature  {
 
     @DGEventHandler()
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
-        if (!isEnabled()) return;
+        
         if (!skyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;

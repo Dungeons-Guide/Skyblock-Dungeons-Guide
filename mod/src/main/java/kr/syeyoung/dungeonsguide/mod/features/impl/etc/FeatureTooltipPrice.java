@@ -42,7 +42,7 @@ public class FeatureTooltipPrice extends SimpleFeature {
 
     @DGEventHandler
     public void onTooltip(ItemTooltipEvent event) {
-        if (!isEnabled()) return;
+        
 
         boolean activated = !this.<Boolean>getParameter("reqShift").getValue() || Keyboard.isKeyDown(Keyboard.KEY_LSHIFT) || Keyboard.isKeyDown(Keyboard.KEY_RSHIFT);
 

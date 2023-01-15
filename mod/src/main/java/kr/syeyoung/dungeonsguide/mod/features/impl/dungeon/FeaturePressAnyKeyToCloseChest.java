@@ -41,7 +41,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     @DGEventHandler
     public void onKeyInput(GuiScreenEvent.KeyboardInputEvent keyboardInputEvent) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        if (!isEnabled()) return;
+        
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
         if (screen instanceof GuiChest){
@@ -65,7 +65,7 @@ public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
         GuiScreen screen = Minecraft.getMinecraft().currentScreen;
-        if (!isEnabled()) return;
+        
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
         if (Mouse.getEventButton() == -1) return;
 

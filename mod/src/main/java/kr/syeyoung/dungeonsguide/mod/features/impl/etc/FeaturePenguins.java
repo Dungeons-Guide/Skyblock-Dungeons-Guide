@@ -82,7 +82,7 @@ public class FeaturePenguins extends SimpleFeature {
     @DGEventHandler
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
 
-        if (!isEnabled()) return;
+        
         if (renderPlayerEvent.entityPlayer.isInvisible()) return;
         renderPlayerEvent.setCanceled(true);
         GlStateManager.pushMatrix();

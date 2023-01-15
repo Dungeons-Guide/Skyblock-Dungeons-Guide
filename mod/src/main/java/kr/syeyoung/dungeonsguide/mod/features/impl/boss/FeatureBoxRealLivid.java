@@ -44,7 +44,6 @@ public class FeatureBoxRealLivid extends SimpleFeature {
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
         float partialTicks = event.partialTicks;
-        if (!isEnabled()) return;
         if (!skyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() == null) return;

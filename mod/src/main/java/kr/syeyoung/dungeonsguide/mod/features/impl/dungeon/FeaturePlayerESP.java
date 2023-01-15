@@ -48,7 +48,7 @@ public class FeaturePlayerESP extends SimpleFeature {
 
 
         if (preCalled) return;
-        if (!isEnabled()) return;
+        
 
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();

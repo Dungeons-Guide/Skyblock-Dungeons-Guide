@@ -90,7 +90,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
 
     @Override
     public void drawScreen(RenderGameOverlayEvent.Post post) {
-        if (!isEnabled()) return;
+        
         int i = Mouse.getEventX();
         int j = Minecraft.getMinecraft().displayHeight - Mouse.getEventY();
         if (Minecraft.getMinecraft().displayWidth != lastWidth || Minecraft.getMinecraft().displayHeight != lastHeight) mGuiMechanicBrowser.initGui();
@@ -109,7 +109,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
 
     @DGEventHandler
     public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-        if (!isEnabled()) return;
+        
         try {
             mGuiMechanicBrowser.handleMouseInput();
         } catch (IOException e) {
@@ -120,7 +120,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
 
     @DGEventHandler
     public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
-        if (!isEnabled()) return;
+        
         int i = Mouse.getEventX();
         int j = Minecraft.getMinecraft().displayHeight - Mouse.getEventY();
         mGuiMechanicBrowser.drawScreen(i, j, rendered.renderPartialTicks);
@@ -129,7 +129,7 @@ public class FeatureMechanicBrowse extends GuiFeature {
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
         float partialTicks = event.partialTicks;
-        if (!isEnabled()) return;
+        
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         if (!skyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || !DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getMapProcessor().isInitialized()) return;
