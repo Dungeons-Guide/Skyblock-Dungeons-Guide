@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
 import com.jagrosh.discordipc.entities.User;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle;
+import kr.syeyoung.dungeonsguide.mod.discord.InviteHandle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -30,5 +30,5 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @AllArgsConstructor
 public class DiscordUserInvitedEvent extends Event {
     private User discordUser;
-    private RequestHandle handle;
+    private InviteHandle handle;
 }

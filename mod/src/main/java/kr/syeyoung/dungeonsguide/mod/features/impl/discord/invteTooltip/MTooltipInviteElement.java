@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
 
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
@@ -78,8 +78,8 @@ public class MTooltipInviteElement extends MPanel {
         }
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (!relation.getDiscordUser().getAvatarUrl().isEmpty()){
-            String avatar =  relation.getDiscordUser().getAvatarUrl();
+        if (!relation.getDiscordUser().getEffectiveAvatarUrl().isEmpty()){
+            String avatar =  relation.getDiscordUser().getEffectiveAvatarUrl();
             Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {

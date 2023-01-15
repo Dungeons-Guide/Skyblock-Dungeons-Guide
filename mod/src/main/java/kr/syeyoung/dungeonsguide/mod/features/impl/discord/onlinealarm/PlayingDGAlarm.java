@@ -19,9 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm;
 
 
-import com.jagrosh.discordipc.entities.RichPresence;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.JDiscordRelation;
+import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
@@ -102,7 +101,7 @@ public class PlayingDGAlarm extends SimpleFeature {
         Gui.drawRect(0, 0,width,height, 0xFF23272a);
         Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
-            String avatar = online.jDiscordRelation.getDiscordUser().getAvatarUrl();
+            String avatar = online.jDiscordRelation.getDiscordUser().getEffectiveAvatarUrl();
             Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -154,6 +153,7 @@ public class PlayingDGAlarm extends SimpleFeature {
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserUpdate(DiscordUserUpdateEvent event) {
         JDiscordRelation prev = event.getPrev(), current = event.getCurrent();
+        if (prev == null) return;
         if (!isDisplayable(prev) && isDisplayable(current)) {
             notif.add(new PlayerOnline(current, System.currentTimeMillis()+3000));
         }
@@ -166,6 +166,6 @@ public class PlayingDGAlarm extends SimpleFeature {
         if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
         if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
 
-        return jDiscordRelation.getApplicationId().equals("816298079732498473");
+        return "816298079732498473".equals(jDiscordRelation.getApplicationId());
     }
 }

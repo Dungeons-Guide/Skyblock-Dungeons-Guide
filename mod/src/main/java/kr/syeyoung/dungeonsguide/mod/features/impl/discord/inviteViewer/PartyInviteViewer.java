@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.DiscordIntegrationManager;
+import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
@@ -113,28 +113,28 @@ public class PartyInviteViewer extends SimpleFeature {
                     if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.ACCEPT);
+                        DiscordIntegrationManager.INSTANCE.respondToJoinRequest(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.ACCEPT);
                         return;
                     }
 
                     if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.DENY);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.DENY);
+                        DiscordIntegrationManager.INSTANCE.respondToJoinRequest(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.DENY);
                         return;
                     }
 
                     if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.IGNORE);
+                        DiscordIntegrationManager.INSTANCE.respondToJoinRequest(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.IGNORE);
                         return;
                     }
                 } else {
                     if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.accept(joinRequest.getHandle());
+                        DiscordIntegrationManager.INSTANCE.acceptInvite(joinRequest.getHandle());
                         return;
                     }
 

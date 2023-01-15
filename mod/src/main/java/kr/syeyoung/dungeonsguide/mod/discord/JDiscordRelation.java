@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,11 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.discord.rpc;
+package kr.syeyoung.dungeonsguide.mod.discord;
 
-import com.jagrosh.discordipc.entities.RichPresence;
 import com.jagrosh.discordipc.entities.User;
 import lombok.Data;
+import org.json.JSONObject;
 
 @Data
 public class JDiscordRelation {
@@ -55,4 +55,25 @@ public class JDiscordRelation {
         Implicit;
     }
 
+
+    public static JDiscordRelation parse(JSONObject data) {
+        JDiscordRelation relation = new JDiscordRelation();
+        JDiscordRelation.DiscordRelationType relationType = JDiscordRelation.DiscordRelationType.values()[data.getInt("type")];
+        JSONObject userJson = data.getJSONObject("user");
+        User user = new User(userJson.getString("username"), userJson.getString("discriminator"),
+                Long.parseUnsignedLong(userJson.getString("id")),
+                userJson.isNull("avatar") ? null : userJson.getString("avatar"));
+        JDiscordRelation.Status status = JDiscordRelation.Status.fromString(data.getJSONObject("presence").getString("status"));
+
+        relation.setRelationType(relationType);
+        relation.setDiscordUser(user);
+        relation.setStatus(status);
+
+        if (data.has("activity") && !data.isNull("activity")) {
+            JSONObject activity = data.getJSONObject("activity");
+            String appId = activity.getString("application_id");
+            relation.setApplicationId(appId);
+        }
+        return relation;
+    }
 }

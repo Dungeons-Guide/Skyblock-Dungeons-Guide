@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.DiscordIntegrationManager;
+import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip.MTooltipInvite;

@@ -16,14 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.discord.rpc;
+package kr.syeyoung.dungeonsguide.mod.discord;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class RequestHandle {
+public class InviteHandle {
     private String userId;
     private String sessionId;
     private String channelId;
