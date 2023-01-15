@@ -166,8 +166,6 @@ public class PlayingDGAlarm extends SimpleFeature {
         if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
         if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
 
-        RichPresence presence = jDiscordRelation.getPresence();
-//        return presence.getApplicationId() == 816298079732498473L;
-        return true;
+        return jDiscordRelation.getApplicationId().equals("816298079732498473");
     }
 }

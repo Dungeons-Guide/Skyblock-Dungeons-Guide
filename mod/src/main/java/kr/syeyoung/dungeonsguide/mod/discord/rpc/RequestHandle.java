@@ -18,5 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord.rpc;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
 public class RequestHandle {
+    private String userId;
+    private String sessionId;
+    private String channelId;
+    private String messageId;
 }

@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -112,21 +113,21 @@ public class PartyInviteViewer extends SimpleFeature {
                     if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getHandle2(), PartyJoinRequest.Reply.ACCEPT);
+                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.ACCEPT);
                         return;
                     }
 
                     if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.DENY);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getHandle2(), PartyJoinRequest.Reply.DENY);
+                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.DENY);
                         return;
                     }
 
                     if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
                         joinRequest.setTtl(60);
-                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getHandle2(), PartyJoinRequest.Reply.IGNORE);
+                        DiscordIntegrationManager.INSTANCE.respond(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.IGNORE);
                         return;
                     }
                 } else {
@@ -314,7 +315,16 @@ public class PartyInviteViewer extends SimpleFeature {
         PartyJoinRequest partyInvite = new PartyJoinRequest();
         partyInvite.setDiscordUser(event.getDiscordUser());
         partyInvite.setExpire(System.currentTimeMillis() + 30000L);
-        partyInvite.setInvite(event.isInvite());
+        partyInvite.setInvite(false);
+        joinRequests.add(partyInvite);
+    }
+    @DGEventHandler(triggerOutOfSkyblock = true)
+    public void onDiscordUserJoinRequest(DiscordUserInvitedEvent event) {
+        PartyJoinRequest partyInvite = new PartyJoinRequest();
+        partyInvite.setDiscordUser(event.getDiscordUser());
+        partyInvite.setHandle(event.getHandle());
+        partyInvite.setExpire(System.currentTimeMillis() + 30000L);
+        partyInvite.setInvite(true);
         joinRequests.add(partyInvite);
     }
 }

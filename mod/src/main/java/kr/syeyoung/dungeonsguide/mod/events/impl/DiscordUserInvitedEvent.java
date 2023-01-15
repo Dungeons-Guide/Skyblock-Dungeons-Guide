@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2023  cyoung06 (syeyoung)
+ * Copyright (C) 2021  cyoung06
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,7 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.discord.rpc;
+package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-public class RequestHandle2 {
+import com.jagrosh.discordipc.entities.User;
+import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.EqualsAndHashCode;
+import net.minecraftforge.fml.common.eventhandler.Event;
+
+@Data
+@EqualsAndHashCode(callSuper=false)
+@AllArgsConstructor
+public class DiscordUserInvitedEvent extends Event {
+    private User discordUser;
+    private RequestHandle handle;
 }

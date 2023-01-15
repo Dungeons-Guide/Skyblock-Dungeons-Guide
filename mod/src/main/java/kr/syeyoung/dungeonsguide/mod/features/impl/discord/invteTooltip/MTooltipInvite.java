@@ -112,6 +112,6 @@ public class MTooltipInvite extends MModal {
 
     public void invite(long id) {
         invited.add(id);
-        DiscordIntegrationManager.INSTANCE.sendInvite(id, "");
+        DiscordIntegrationManager.INSTANCE.sendInvite(Long.toUnsignedString(id), "Pls join my game");
     }
 }

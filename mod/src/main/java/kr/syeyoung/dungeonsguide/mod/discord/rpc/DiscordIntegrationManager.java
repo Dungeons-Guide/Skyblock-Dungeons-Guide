@@ -28,6 +28,7 @@ import com.jagrosh.discordipc.entities.pipe.PipeStatus;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -39,6 +40,7 @@ import net.minecraftforge.common.MinecraftForge;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.lang.management.ManagementFactory;
 import java.time.Instant;
 import java.time.ZoneId;
 import java.time.ZoneOffset;
@@ -99,15 +101,28 @@ public class DiscordIntegrationManager implements IPCListener {
 
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    public void respond(RequestHandle2 handle, PartyJoinRequest.Reply accept) {
-//        if (activityManager == null) return;
-//        activityManager.SendRequestReply.sendRequestReply(activityManager, userID, reply, Pointer.NULL, (callbackData, result) -> {
-//            System.out.println("Discord Returned "+result+" For Replying "+reply+" To "+userID.longValue()+"L");
-//        });
+    public void respond(String userId, PartyJoinRequest.Reply accept) {
+        if (accept == PartyJoinRequest.Reply.ACCEPT) {
+            ipcClient.send(new JSONObject()
+                    .put("cmd", "SEND_ACTIVITY_JOIN_INVITE")
+                    .put("args", new JSONObject().put("user_id", userId)), null);
+        } else if (accept == PartyJoinRequest.Reply.DENY || accept == PartyJoinRequest.Reply.IGNORE) {
+            ipcClient.send(new JSONObject()
+                    .put("cmd", "CLOSE_ACTIVITY_JOIN_REQUEST")
+                    .put("args", new JSONObject().put("user_id", userId)), null);
+        }
     }
 
     public void accept(RequestHandle handle) {
         // ACCEPT_ACTIVITY_INVITE
+        ipcClient.send(new JSONObject()
+                .put("cmd", "ACCEPT_ACTIVITY_INVITE")
+                .put("args", new JSONObject()
+                        .put("type", 1)
+                        .put("user_id", handle.getUserId())
+                        .put("session_id", handle.getSessionId())
+                        .put("channel_id", handle.getChannelId())
+                        .put("message_id", handle.getMessageId())), null);
 
     }
     public void updatePresence() {
@@ -152,16 +167,6 @@ public class DiscordIntegrationManager implements IPCListener {
     public void onActivityJoin(IPCClient client, String secret) {
         PartyManager.INSTANCE.joinWithToken(secret);
         System.out.println("Trying to join with token "+secret);
-    }
-
-    @Override
-    public void onActivityJoinRequest(IPCClient client, String secret, User user) {
-        try {
-            MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(user, new RequestHandle2(), null, false));
-        } catch (Throwable t) {
-            t.printStackTrace();
-        } // requesthandle2
-        System.out.println("Received Join Request from "+user.getId()+" - "+user.getName());
     }
 
     @Override
@@ -229,10 +234,45 @@ public class DiscordIntegrationManager implements IPCListener {
             JDiscordRelation relation = parse(data);
             JDiscordRelation old = relationMap.put(relation.getDiscordUser().getIdLong(), relation);
             MinecraftForge.EVENT_BUS.post(new DiscordUserUpdateEvent(old, relation));
+        } else if (type.equals("ACTIVITY_JOIN_REQUEST")) {
+            JSONObject data = packet.getJson().getJSONObject("data");
+            try {
+                User user =  new User(data.getJSONObject("user")
+                        .getString("username"),
+                        data.getJSONObject("user")
+                                .getString("discriminator"),
+                        Long.parseUnsignedLong(data.getJSONObject("user")
+                                .getString("id")),
+                        data.getJSONObject("user")
+                                .getString("avatar"));
+                MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(user));
+                System.out.println("Received Join Request from "+user.getId()+" - "+user.getName());
+            } catch (Throwable t) {
+                t.printStackTrace();
+            }
         } else if (type.equals("ACTIVITY_INVITE")) {
             // some1 invite me. RequestHandle
+            //{"cmd":"DISPATCH","data":{"user":{"id":"310702108997320705","username":"nea89","discriminator":"0998","avatar":"abf6e48fa230ef0339059bf07ff01a9f","avatar_decoration":null,"bot":false,"flags":4325376,"premium_type":0},"activity":{"application_id":"816298079732498473","assets":{"large_image":"816487567804989461","large_text":"mort"},"created_at":"1673783244721","details":"blah","flags":194,"id":"35ed478de33b7940","name":"Skyblock Dungeons Guide","party":{"id":"asdasdadjfilkdjflksjldfjlsd","size":[1,50]},"session_id":"559d9370e1334d8607bb83ca85d1f1e3","state":"blah","supported_platforms":["desktop","android","ios"],"timestamps":{},"type":0},"type":1,"channel_id":"1017804419330494508","message_id":"1064149363808555108"},"evt":"ACTIVITY_INVITE","nonce":null}
+            JSONObject data = packet.getJson().getJSONObject("data");
             try {
-                MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(new User("","",0,""), null, new RequestHandle(), true));
+
+                if (!data.getJSONObject("activity").getString("application_id").equals("816298079732498473"))
+                    return;
+                MinecraftForge.EVENT_BUS.post(new DiscordUserInvitedEvent(
+                        new User(data.getJSONObject("user")
+                                .getString("username"),
+                                data.getJSONObject("user")
+                                        .getString("discriminator"),
+                                Long.parseUnsignedLong(data.getJSONObject("user")
+                                        .getString("id")),
+                                data.getJSONObject("user")
+                                        .getString("avatar")),
+                        new RequestHandle(
+                                data.getJSONObject("user").getString("id"),
+                                data.getJSONObject("activity").getString("session_id"),
+                                data.getString("channel_id"),
+                                data.getString("message_id")
+                        )));
             } catch (Throwable t) {
                 t.printStackTrace();
             } // requesthandle2
@@ -240,9 +280,21 @@ public class DiscordIntegrationManager implements IPCListener {
         }
     }
 
-    public void sendInvite(long id, String content) {
-//        ipcClient.send();
-        // idk how
+    public void sendInvite(String id, String content) {
+        ipcClient.send(new JSONObject()
+                .put("cmd", "ACTIVITY_INVITE_USER")
+                .put("args", new JSONObject()
+                        .put("type", 1)
+                        .put("user_id", id)
+                        .put("content", content)
+                        .put("pid",getPID())
+                ), null);
+    }
+
+    private static int getPID()
+    {
+        String pr = ManagementFactory.getRuntimeMXBean().getName();
+        return Integer.parseInt(pr.substring(0,pr.indexOf('@')));
     }
 
     public void init() {
@@ -253,4 +305,5 @@ public class DiscordIntegrationManager implements IPCListener {
         ipcClient.close();
         ipcClient = null;
     }
+
 }

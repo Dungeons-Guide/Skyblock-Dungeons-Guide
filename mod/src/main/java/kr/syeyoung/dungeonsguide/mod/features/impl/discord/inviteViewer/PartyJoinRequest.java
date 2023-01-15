@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 import com.jagrosh.discordipc.entities.User;
 import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RequestHandle2;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
@@ -31,7 +30,6 @@ import java.awt.*;
 public class PartyJoinRequest {
     private User discordUser;
     private RequestHandle handle;
-    private RequestHandle2 handle2;
 
     public void setDiscordUser(User discordUser) {
         this.discordUser = discordUser;
