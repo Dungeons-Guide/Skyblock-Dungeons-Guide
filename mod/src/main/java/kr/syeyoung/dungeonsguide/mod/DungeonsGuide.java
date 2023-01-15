@@ -29,8 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.GameSDK;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
@@ -250,12 +249,9 @@ public class DungeonsGuide implements DGInterface {
         if (FeatureRegistry.ETC_REPARTY.isEnabled()) {
             registerCommands(commandReparty);
         }
+        DiscordIntegrationManager.INSTANCE.isLoaded();
 
-        if (FeatureRegistry.DISCORD_DONOTUSE.isEnabled()) {
-            System.setProperty("dg.safe", "true");
-        }
 
-        registerEventsForge(RichPresenceManager.INSTANCE);
         TimeScoreUtil.init();
 
         ProgressManager.pop(progressbar);
@@ -396,6 +392,7 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
 
+        DiscordIntegrationManager.INSTANCE.cleanup();
 
         THREAD_GROUP.interrupt();
         THREAD_GROUP.stop();
@@ -404,11 +401,6 @@ public class DungeonsGuide implements DGInterface {
         } catch (InterruptedException e) {
         }
         THREAD_GROUP.destroy();
-        try {
-            GameSDK.cleanup();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
     }
 
     @Override

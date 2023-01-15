@@ -20,10 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.enumuration.EDiscordActivityJoinRequestReply;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -113,28 +113,28 @@ public class PartyInviteViewer extends SimpleFeature {
                     if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                         joinRequest.setTtl(60);
-                        RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Yes);
+                        DiscordIntegrationManager.INSTANCE.respondToJoinRequest(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.ACCEPT);
                         return;
                     }
 
                     if (joinRequest.getDenyRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.DENY);
                         joinRequest.setTtl(60);
-                        RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_No);
+                        DiscordIntegrationManager.INSTANCE.respondToJoinRequest(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.DENY);
                         return;
                     }
 
                     if (joinRequest.getIgnoreRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.IGNORE);
                         joinRequest.setTtl(60);
-                        RichPresenceManager.INSTANCE.respond(joinRequest.getDiscordUser().id, EDiscordActivityJoinRequestReply.DiscordActivityJoinRequestReply_Ignore);
+                        DiscordIntegrationManager.INSTANCE.respondToJoinRequest(joinRequest.getDiscordUser().getId(), PartyJoinRequest.Reply.IGNORE);
                         return;
                     }
                 } else {
                     if (joinRequest.getAcceptRect().contains(mouseX, mouseY)) {
                         joinRequest.setReply(PartyJoinRequest.Reply.ACCEPT);
                         joinRequest.setTtl(60);
-                        RichPresenceManager.INSTANCE.accept(joinRequest.getDiscordUser().id);
+                        DiscordIntegrationManager.INSTANCE.acceptInvite(joinRequest.getHandle());
                         return;
                     }
 
@@ -211,7 +211,7 @@ public class PartyInviteViewer extends SimpleFeature {
             Gui.drawRect(0, 0,width,height, 0xFF23272a);
             Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
         {
-            String avatar = "https://cdn.discordapp.com/avatars/"+Long.toUnsignedString(partyJoinRequest.getDiscordUser().id.longValue())+"/"+partyJoinRequest.getAvatar()+"."+(partyJoinRequest.getAvatar().startsWith("a_") ? "gif":"png");
+            String avatar = "https://cdn.discordapp.com/avatars/"+partyJoinRequest.getDiscordUser().getId()+"/"+partyJoinRequest.getAvatar()+"."+(partyJoinRequest.getAvatar().startsWith("a_") ? "gif":"png");
             Future<ImageTexture> loadedImageFuture = loadImage(avatar);
             ImageTexture loadedImage = null;
             if (loadedImageFuture.isDone()) {
@@ -315,7 +315,16 @@ public class PartyInviteViewer extends SimpleFeature {
         PartyJoinRequest partyInvite = new PartyJoinRequest();
         partyInvite.setDiscordUser(event.getDiscordUser());
         partyInvite.setExpire(System.currentTimeMillis() + 30000L);
-        partyInvite.setInvite(event.isInvite());
+        partyInvite.setInvite(false);
+        joinRequests.add(partyInvite);
+    }
+    @DGEventHandler(triggerOutOfSkyblock = true)
+    public void onDiscordUserJoinRequest(DiscordUserInvitedEvent event) {
+        PartyJoinRequest partyInvite = new PartyJoinRequest();
+        partyInvite.setDiscordUser(event.getDiscordUser());
+        partyInvite.setHandle(event.getHandle());
+        partyInvite.setExpire(System.currentTimeMillis() + 30000L);
+        partyInvite.setInvite(true);
         joinRequests.add(partyInvite);
     }
 }

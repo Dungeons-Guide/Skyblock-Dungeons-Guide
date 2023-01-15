@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.dungeonsguide.mod.discord.gamesdk.jna.datastruct.DiscordUser;
+import com.jagrosh.discordipc.entities.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -28,6 +28,5 @@ import net.minecraftforge.fml.common.eventhandler.Event;
 @EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
 public class DiscordUserJoinRequestEvent extends Event {
-    private DiscordUser discordUser;
-    private boolean isInvite;
+    private User discordUser;
 }

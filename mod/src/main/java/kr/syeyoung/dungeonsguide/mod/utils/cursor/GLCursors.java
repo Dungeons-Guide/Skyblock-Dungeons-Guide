@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.utils.cursor;
 
 
 import com.google.common.base.Throwables;
+import com.sun.jna.Native;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -186,14 +187,14 @@ public class GLCursors {
         Pointer hIcon = user32
                 .LoadCursorW(Pointer.NULL, cursor);
         long ptrVal = Pointer.nativeValue(hIcon);
-        ByteBuffer handle = BufferUtils.createByteBuffer(Pointer.SIZE); // Why does it have to be direct? well it crashes without it.
+        ByteBuffer handle = BufferUtils.createByteBuffer(Native.POINTER_SIZE); // Why does it have to be direct? well it crashes without it.
         if (handle.order() == ByteOrder.LITTLE_ENDIAN) {
-            for (int i = 0; i < Pointer.SIZE; i++) {
+            for (int i = 0; i < Native.POINTER_SIZE; i++) {
                 byte value = (byte) ((ptrVal >> i * 8) & 0xFF);
                 handle.put(value);
             }
         } else {
-            for (int i = Pointer.SIZE; i >= 0; i++) {
+            for (int i = Native.POINTER_SIZE; i >= 0; i++) {
                 byte value = (byte) ((ptrVal >> i * 8) & 0xFF);
                 handle.put(value);
             }

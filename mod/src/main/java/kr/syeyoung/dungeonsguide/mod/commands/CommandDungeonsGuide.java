@@ -23,7 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
-import kr.syeyoung.dungeonsguide.mod.discord.rpc.RichPresenceManager;
+import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
@@ -32,12 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiMainMenu;
-import net.minecraft.client.gui.GuiMultiplayer;
-import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.realms.RealmsBridge;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -76,7 +72,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 FeatureViewPlayerStatsOnJoin.processPartyMembers(context);
             });
         } else if (args[0].equalsIgnoreCase("asktojoin") || args[0].equalsIgnoreCase("atj")) {
-            if (RichPresenceManager.INSTANCE.getLastSetupCode() == -9999) {
+            if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
                 return;
             }
