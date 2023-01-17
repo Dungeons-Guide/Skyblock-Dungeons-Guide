@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
@@ -30,16 +31,26 @@ import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.client.renderer.texture.TextureManager;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.util.ResourceLocation;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
 
 import javax.imageio.ImageIO;
 import javax.imageio.ImageReader;
+import javax.imageio.metadata.IIOMetadata;
+import javax.imageio.metadata.IIOMetadataNode;
 import javax.imageio.stream.ImageInputStream;
 import java.awt.*;
 import java.awt.image.BufferedImage;
 import java.io.IOException;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.HashMap;
 import java.util.Iterator;
+import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.function.Consumer;
 
 @Data
 public class ImageTexture {
@@ -53,8 +64,9 @@ public class ImageTexture {
     private int frames;
     private int size;
 
-    @Getter @Setter
-    private int lastFrame = 0;
+    private long startedPlayingAt = -1;
+
+    private int delayTime;
 
     public void buildGLThings() {
         previewTexture = new DynamicTexture(image);
@@ -76,6 +88,15 @@ public class ImageTexture {
         BufferedImage dummyFrame = reader.read(0);
         width = dummyFrame.getWidth(); height = dummyFrame.getHeight();
 
+        IIOMetadata imageMetaData =  reader.getImageMetadata(0);
+        String metaFormatName = imageMetaData.getNativeMetadataFormatName();
+
+        IIOMetadataNode root = (IIOMetadataNode)imageMetaData.getAsTree(metaFormatName);
+
+        IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
+
+        delayTime = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime"));
+
 
         image = new BufferedImage(width, height * frames, dummyFrame.getType());
         Graphics2D graphics2D = image.createGraphics();
@@ -87,9 +108,25 @@ public class ImageTexture {
         reader.dispose(); imageInputStream.close(); huc.disconnect();
     }
 
-    public void drawFrame(int frame, int x, int y, int width, int height) {
+
+    private static IIOMetadataNode getNode(IIOMetadataNode rootNode, String nodeName) {
+        int nNodes = rootNode.getLength();
+        for (int i = 0; i < nNodes; i++) {
+            if (rootNode.item(i).getNodeName().compareToIgnoreCase(nodeName)== 0) {
+                return((IIOMetadataNode) rootNode.item(i));
+            }
+        }
+        IIOMetadataNode node = new IIOMetadataNode(nodeName);
+        rootNode.appendChild(node);
+        return(node);
+    }
+
+    public void drawFrame(double x, double y, double width, double height) {
         if (getResourceLocation() == null)
             buildGLThings();
+        if (startedPlayingAt == -1) startedPlayingAt = System.currentTimeMillis();
+
+        int frame = (int) (((System.currentTimeMillis() - startedPlayingAt) / delayTime) % frames);
 
         TextureManager textureManager = Minecraft.getMinecraft().getTextureManager();
         textureManager.bindTexture(getResourceLocation());
@@ -99,20 +136,35 @@ public class ImageTexture {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
-        worldrenderer.pos((double)x, (double)(y + height), 0.0D)
+        worldrenderer.pos(x, (y + height), 0.0D)
                 .tex(0,((frame+1) * height)/ ((double)frames * height)).endVertex();
-        worldrenderer.pos((double)(x + width), (double)(y + height), 0.0D)
+        worldrenderer.pos((x + width), (y + height), 0.0D)
                 .tex(1, ((frame+1) * height)/ ((double)frames * height)).endVertex();
-        worldrenderer.pos((double)(x + width), (double)y, 0.0D)
+        worldrenderer.pos((x + width), y, 0.0D)
                 .tex(1,(frame * height)/ ((double)frames * height)).endVertex();
-        worldrenderer.pos((double)x, (double)y, 0.0D)
+        worldrenderer.pos(x, y, 0.0D)
                 .tex(0,  (frame * height) / ((double)frames * height)).endVertex();
         tessellator.draw();
     }
 
-    public void drawFrameAndIncrement(int x, int y, int width, int height) {
-        drawFrame(lastFrame, x,y,width,height);
-        lastFrame++;
-        if (lastFrame >= frames) lastFrame = 0;
+    public static final ExecutorService executorService = Executors.newFixedThreadPool(3, DungeonsGuide.THREAD_FACTORY);
+    public static final Map<String, ImageTexture> imageMap = new HashMap<>();
+    public static final Logger logger = LogManager.getLogger("DG-ImageLoader");
+    public static void loadImage(String url, Consumer<ImageTexture> callback) {
+        if (imageMap.containsKey(url)) {
+            callback.accept(imageMap.get(url));
+            return;
+        }
+        if (url.isEmpty()) callback.accept(null);
+        executorService.submit(() -> {
+            try {
+                ImageTexture imageTexture = new ImageTexture(url);
+                imageMap.put(url, imageTexture);
+                callback.accept(imageTexture);
+            } catch (Exception e) {
+                callback.accept(null);
+                logger.log(Level.WARN, "An error occured while loading image from: "+url, e);
+            }
+        });
     }
 }

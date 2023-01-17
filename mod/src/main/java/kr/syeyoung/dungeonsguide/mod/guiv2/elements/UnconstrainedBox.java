@@ -57,4 +57,15 @@ public class UnconstrainedBox extends AnnotatedExportOnlyWidget implements Layou
         childCtx.setRelativeBound(new Rect(0,0, dim.getWidth(), dim.getHeight()));
         return new Size(dim.getWidth(), dim.getHeight());
     }
+
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), height);
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width);
+    }
 }

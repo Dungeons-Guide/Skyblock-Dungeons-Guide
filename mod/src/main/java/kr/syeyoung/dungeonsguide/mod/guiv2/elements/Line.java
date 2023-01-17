@@ -92,6 +92,15 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     }
 
     @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return direction.getValue() == Orientation.HORIZONTAL ? 0 : this.thickness.getValue();
+    }
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return direction.getValue() == Orientation.VERTICAL ? 0 : this.thickness.getValue();
+    }
+
+    @Override
     public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
         double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
 

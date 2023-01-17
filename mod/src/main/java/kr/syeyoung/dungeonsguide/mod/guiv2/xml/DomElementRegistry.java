@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ResourceImage;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.URLImage;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserException;
@@ -69,6 +70,8 @@ public class DomElementRegistry {
         register("AbstractScrollBar", new ExportedWidgetConverter(Scrollbar::new));
         register("aspectRatio", new ExportedWidgetConverter(AspectRatioFitter::new));
         register("BareResourceImage", new ExportedWidgetConverter(ResourceImage::new));
+        register("IntrinsicWidth", new ExportedWidgetConverter(IntrinsicWidth::new));
+        register("IntrinsicHeight", new ExportedWidgetConverter(IntrinsicHeight::new));
         register("TestView", new ExportedWidgetConverter(TestView::new));
         
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
@@ -77,7 +80,7 @@ public class DomElementRegistry {
         register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/slowlist.gui")));
         
         register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/ratioResourceImage.gui")));
-
+        register("UrlImage", new ExportedWidgetConverter(URLImage::new));
     }
 
     public static Parser obtainParser(ResourceLocation resourceLocation) {

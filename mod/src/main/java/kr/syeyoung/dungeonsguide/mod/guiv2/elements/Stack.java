@@ -81,6 +81,24 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
             }
             return new Size(maxW, maxH);
         }
+
+        @Override
+        public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+            double max = 0;
+            for (DomElement child : buildContext.getChildren()) {
+                max = Double.max(max, child.getLayouter().getMaxIntrinsicWidth(child, height));
+            }
+            return max;
+        }
+
+        @Override
+        public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+            double max = 0;
+            for (DomElement child : buildContext.getChildren()) {
+                max = Double.max(max, child.getLayouter().getMaxIntrinsicHeight(child, width));
+            }
+            return max;
+        }
     }
 
 

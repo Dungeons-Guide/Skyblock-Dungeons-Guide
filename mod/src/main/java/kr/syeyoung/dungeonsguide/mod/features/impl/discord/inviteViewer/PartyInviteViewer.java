@@ -47,6 +47,8 @@ import java.util.concurrent.*;
 public class PartyInviteViewer extends SimpleFeature {
     public PartyInviteViewer() {
         super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.party_invite_viewer");
+
+
     }
 
     @Override
@@ -222,7 +224,7 @@ public class PartyInviteViewer extends SimpleFeature {
                 }
             }
             if (loadedImage != null) {
-                loadedImage.drawFrameAndIncrement( 7,7,height-14,height-14);
+                loadedImage.drawFrame( 7,7,height-14,height-14);
             } else {
                 Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
             }

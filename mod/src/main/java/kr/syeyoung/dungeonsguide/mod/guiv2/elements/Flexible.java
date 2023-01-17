@@ -67,12 +67,23 @@ public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
                         new ConstraintBox(constraintBox.getMaxWidth() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
                                 , constraintBox.getMaxHeight() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
                         : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
-        DomElement child = getDomElement().getChildren().get(0);
+        DomElement child = buildContext.getChildren().get(0);
 
         Size dim = child.getLayouter().layout(child, box);
 
-        getDomElement().getChildren().get(0).setRelativeBound(new Rect(0,0, dim.getWidth(),dim.getHeight()));
+        buildContext.getChildren().get(0).setRelativeBound(new Rect(0,0, dim.getWidth(),dim.getHeight()));
         return dim;
+    }
+
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), height);
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width);
     }
 
     @Override

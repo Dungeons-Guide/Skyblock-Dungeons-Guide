@@ -33,4 +33,11 @@ public interface Layouter {
     default boolean canCutRequest() {
         return false;
     }
+
+    default double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return 0;
+    }
+    default double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return 0;
+    }
 }

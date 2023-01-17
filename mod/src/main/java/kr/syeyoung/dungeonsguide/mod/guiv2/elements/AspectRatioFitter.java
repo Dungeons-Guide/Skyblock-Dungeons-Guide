@@ -81,6 +81,16 @@ public class AspectRatioFitter extends AnnotatedExportOnlyWidget implements Layo
     }
 
     @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return height * this.width.getValue() / this.height.getValue();
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return width * this.height.getValue() / this.width.getValue();
+    }
+
+    @Override
     public boolean canCutRequest() {
         return Flexible.FlexFit.TIGHT == fit.getValue();
     }

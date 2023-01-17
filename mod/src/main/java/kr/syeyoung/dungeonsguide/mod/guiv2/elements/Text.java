@@ -211,4 +211,18 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
                 Layouter.clamp(maxWidth2, constraintBox.getMinWidth(), constraintBox.getMaxWidth()),
                 Layouter.clamp( (fr.FONT_HEIGHT * lineSpacing.getValue()) * wrappedTexts.size(), constraintBox.getMinHeight(), constraintBox.getMaxHeight()));
     }
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        int max = 0;
+        for (String s : this.text.getValue().split("\n")) {
+            max = Integer.max(max, fr.getStringWidth(s));
+        }
+        return max;
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return this.text.getValue().split("\n").length * (fr.FONT_HEIGHT * lineSpacing.getValue());
+    }
 }

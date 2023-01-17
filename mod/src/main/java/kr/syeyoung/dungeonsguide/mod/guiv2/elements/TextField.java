@@ -79,6 +79,15 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         return Collections.EMPTY_LIST;
     }
 
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return 0;
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return 15;
+    }
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {

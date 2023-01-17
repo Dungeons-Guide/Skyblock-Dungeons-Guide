@@ -74,4 +74,14 @@ public class SizedBox extends AnnotatedExportOnlyWidget implements Layouter {
     public boolean canCutRequest() {
         return true;
     }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return this.height.getValue();
+    }
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return this.width.getValue();
+    }
 }

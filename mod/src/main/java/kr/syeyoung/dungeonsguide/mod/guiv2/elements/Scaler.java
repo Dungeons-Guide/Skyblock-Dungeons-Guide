@@ -49,7 +49,7 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
     }
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        DomElement child = getDomElement().getChildren().get(0);
+        DomElement child = buildContext.getChildren().get(0);
         Size dims = child.getLayouter().layout(child, new ConstraintBox(
                 (constraintBox.getMinWidth() / scale.getValue()),
                 (constraintBox.getMaxWidth() / scale.getValue()),
@@ -62,6 +62,18 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
         child.setSize(new Size(dims.getWidth(), dims.getHeight()));
 
         return new Size(dims.getWidth() * scale.getValue(), dims.getHeight() * scale.getValue());
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        DomElement child = buildContext.getChildren().get(0);
+        return child.getLayouter().getMaxIntrinsicHeight(child, width / scale.getValue()) * scale.getValue();
+    }
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        DomElement child = buildContext.getChildren().get(0);
+        return child.getLayouter().getMaxIntrinsicWidth(child, height / scale.getValue()) * scale.getValue();
     }
 
     @Override

@@ -118,6 +118,38 @@ public class Border extends AnnotatedExportOnlyWidget implements Layouter {
         return new Size(dimension.getWidth() + lw + rw, dimension.getHeight() + th + bh);
     }
 
+
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        DomElement top = null, bottom = null, left = null, right = null, content = null;
+        for (DomElement child : buildContext.getChildren()) {
+            if (child.getWidget() == this.top.getValue()) top = child;
+            if (child.getWidget() == this.bottom.getValue()) bottom = child;
+            if (child.getWidget() == this.left.getValue()) left = child;
+            if (child.getWidget() == this.right.getValue()) right = child;
+            if (child.getWidget() == this.content.getValue()) content = child;
+        }
+        return content.getLayouter().getMaxIntrinsicWidth(content, height)
+                + left.getLayouter().getMaxIntrinsicWidth(left, height)
+                + right.getLayouter().getMaxIntrinsicWidth(right, height);
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        DomElement top = null, bottom = null, left = null, right = null, content = null;
+        for (DomElement child : buildContext.getChildren()) {
+            if (child.getWidget() == this.top.getValue()) top = child;
+            if (child.getWidget() == this.bottom.getValue()) bottom = child;
+            if (child.getWidget() == this.left.getValue()) left = child;
+            if (child.getWidget() == this.right.getValue()) right = child;
+            if (child.getWidget() == this.content.getValue()) content = child;
+        }
+        return content.getLayouter().getMaxIntrinsicHeight(content, width)
+                + top.getLayouter().getMaxIntrinsicHeight(top, width)
+                + bottom.getLayouter().getMaxIntrinsicHeight(bottom, width);
+    }
+
     @Override
     protected Renderer createRenderer() {
         return OnlyChildrenRenderer.INSTANCE;

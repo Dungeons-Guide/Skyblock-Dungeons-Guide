@@ -93,7 +93,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         CrossAxisAlignment crossAxisAlignment = hAlign.getValue();
         MainAxisAlignment mainAxisAlignment = vAlign.getValue();
         Map<DomElement, Size> saved = new HashMap<>();
-        for (DomElement child : getDomElement().getChildren()) {
+        for (DomElement child : buildContext.getChildren()) {
             if (!(child.getWidget() instanceof Flexible)) {
                 Size requiredSize = child.getLayouter().layout(child, new ConstraintBox(
                         crossAxisAlignment == CrossAxisAlignment.STRETCH
@@ -109,7 +109,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
 
         boolean flexFound = false;
         int sumFlex = 0;
-        for (DomElement child : getDomElement().getChildren()) {
+        for (DomElement child : buildContext.getChildren()) {
             if (child.getWidget() instanceof Flexible) {
                 sumFlex += Math.min(1, ((Flexible) child.getWidget()).flex.getValue());
                 flexFound = true;
@@ -123,7 +123,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
             double remainingHeight = effheight - height;
             double heightPer = remainingHeight / sumFlex;
 
-            for (DomElement child : getDomElement().getChildren()) {
+            for (DomElement child : buildContext.getChildren()) {
                 if (child.getWidget() instanceof Flexible) {
                     Size requiredSize = child.getLayouter().layout(child, new ConstraintBox(
                             crossAxisAlignment == CrossAxisAlignment.STRETCH
@@ -150,14 +150,14 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
             double remaining = effheight - height;
             if (remaining > 0) {
                 starty = 0;
-                heightDelta = remaining / (getDomElement().getChildren().size()-1);
+                heightDelta = remaining / (buildContext.getChildren().size()-1);
             } else {
                 starty = (effheight - height) / 2;
             }
         } else if (mainAxisAlignment == MainAxisAlignment.SPACE_EVENLY) {
             double remaining = effheight - height;
             if (remaining > 0) {
-                heightDelta = remaining / (getDomElement().getChildren().size()+1);
+                heightDelta = remaining / (buildContext.getChildren().size()+1);
                 starty = heightDelta;
             } else {
                 starty= (effheight - height) / 2;
@@ -165,14 +165,14 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         } else if (mainAxisAlignment == MainAxisAlignment.SPACE_AROUND) {
             double remaining = effheight - height;
             if (remaining > 0) {
-                heightDelta = 2 * remaining / getDomElement().getChildren().size();
+                heightDelta = 2 * remaining / buildContext.getChildren().size();
                 starty = heightDelta / 2;
             } else {
                 starty = (effheight - height / 2);
             }
         }
 
-        for (DomElement child : getDomElement().getChildren()) {
+        for (DomElement child : buildContext.getChildren()) {
             Size size = saved.get(child);
 
             child.setRelativeBound(new Rect(
@@ -189,5 +189,46 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
                 width,
                 effheight
         );
+    }
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        double height = 0;
+        double flex = 0;
+        double maxPer = 0;
+        for (DomElement child : buildContext.getChildren()) {
+            if (child.getWidget() instanceof Flexible) {
+                flex += ((Flexible) child.getWidget()).flex.getValue();
+                maxPer = Double.max(maxPer, child.getLayouter().getMaxIntrinsicHeight(buildContext, width) /
+                        ((Flexible) child.getWidget()).flex.getValue());
+            } else {
+                height += child.getLayouter().getMaxIntrinsicHeight(buildContext, width);
+            }
+        }
+        return height + maxPer * flex;
+    }
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        double maxWidth = 0;
+        double heightTaken = 0;
+        int sumFlex = 0;
+        for (DomElement child : buildContext.getChildren()) {
+            if (!(child.getWidget() instanceof Flexible)) {
+                heightTaken += child.getLayouter().getMaxIntrinsicWidth(buildContext, Double.POSITIVE_INFINITY);
+                maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(buildContext, 0));
+            } else {
+                sumFlex += ((Flexible) child.getWidget()).flex.getValue();
+            }
+        }
+        double leftOver = height - heightTaken;
+        if (sumFlex > 0) {
+            double per = leftOver / sumFlex;
+            for (DomElement child : buildContext.getChildren()) {
+                if (child.getWidget() instanceof Flexible) {
+                    maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(buildContext, per * ((Flexible) child.getWidget()).flex.getValue()));
+                }
+            }
+        }
+        return maxWidth;
     }
 }

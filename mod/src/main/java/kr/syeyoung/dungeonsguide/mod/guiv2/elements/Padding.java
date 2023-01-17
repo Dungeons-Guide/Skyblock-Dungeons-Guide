@@ -56,7 +56,7 @@ public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        DomElement domElement = getDomElement().getChildren().get(0);
+        DomElement domElement = buildContext.getChildren().get(0);
 
         double width =  (left.getValue() + right.getValue());
         double height =  (top.getValue() + bottom.getValue());
@@ -76,5 +76,18 @@ public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
 
 
         return new Size(dim.getWidth() + width, dim.getHeight() + height);
+    }
+
+
+    @Override
+    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        return left.getValue() + right.getValue() +
+                (buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), height));
+    }
+
+    @Override
+    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+        return top.getValue() + bottom.getValue() + (
+                buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width));
     }
 }

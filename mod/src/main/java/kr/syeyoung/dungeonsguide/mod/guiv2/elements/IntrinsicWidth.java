@@ -31,45 +31,35 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import java.util.Collections;
 import java.util.List;
 
-public class Align extends AnnotatedExportOnlyWidget implements Layouter {
-    @Export(attributeName = "hAlign")
-    public final BindableAttribute<Alignment> hAlign = new BindableAttribute<>(Alignment.class, Alignment.CENTER);
-    @Export(attributeName = "vAlign")
-    public final BindableAttribute<Alignment> vAlign = new BindableAttribute<>(Alignment.class, Alignment.CENTER);
-
+public class IntrinsicWidth extends AnnotatedExportOnlyWidget implements Layouter {
     @Export(attributeName = "$")
-    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
-    public static enum Alignment {
-        START, CENTER, END
-    }
+    public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
 
     @Override
     public List<Widget> build(DomElement buildContext) {
-        return Collections.singletonList(child.getValue());
+        return Collections.singletonList(widget.getValue());
     }
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        DomElement theOnly = buildContext.getChildren().get(0);
-        Size size = theOnly.getLayouter().layout(theOnly, new ConstraintBox(
-                0, constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight()
+        DomElement elem = buildContext.getChildren().get(0);
+        double width = elem.getLayouter().getMaxIntrinsicWidth(elem, constraintBox.getMaxHeight() == Double.POSITIVE_INFINITY ? 0 : constraintBox.getMaxHeight());
+        Size size = elem.getLayouter().layout(buildContext, new ConstraintBox(
+                width, width, constraintBox.getMinHeight(), constraintBox.getMaxHeight()
         ));
-        theOnly.setRelativeBound(new Rect(
-                (constraintBox.getMaxWidth() - size.getWidth())/2,
-                (constraintBox.getMaxHeight() - size.getHeight())/2,
-                size.getWidth(), size.getHeight()
-        ));
-        return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        elem.setRelativeBound(new Rect(0,0,size.getWidth(), size.getHeight()));
+        return size;
     }
-
 
     @Override
     public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
-        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), height);
+        DomElement elem = buildContext.getChildren().get(0);
+        return elem.getLayouter().getMaxIntrinsicWidth(elem, height);
     }
 
     @Override
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
-        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width);
+        DomElement elem = buildContext.getChildren().get(0);
+        return elem.getLayouter().getMaxIntrinsicHeight(elem, width);
     }
 }
