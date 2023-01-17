@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.PartyJoinRequest;
+import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.Reply;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import lombok.Getter;
@@ -83,9 +83,9 @@ public class DiscordIntegrationManager implements IPCListener {
     }
 
 
-    public void respondToJoinRequest(String userId, PartyJoinRequest.Reply accept) {
+    public void respondToJoinRequest(String userId, Reply accept) {
         JSONObject payload = null;
-        if (accept == PartyJoinRequest.Reply.ACCEPT) {
+        if (accept == Reply.ACCEPT) {
             payload = new JSONObject()
                     .put("cmd", "SEND_ACTIVITY_JOIN_INVITE")
                     .put("args", new JSONObject().put("user_id", userId));
@@ -125,6 +125,7 @@ public class DiscordIntegrationManager implements IPCListener {
             ipcClient.subscribe("RELATIONSHIP_UPDATE", this::onRelationshipUpdate);
             ipcClient.send(new JSONObject().put("cmd", "GET_RELATIONSHIPS"), new Callback(this::onRelationshipLoad));
             ipcClient.setListener(this);
+            System.out.println("Connecting");
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -225,7 +226,7 @@ public class DiscordIntegrationManager implements IPCListener {
                 presence.setJoinSecret(PartyManager.INSTANCE.getAskToJoinSecret());
             }
             presence.setInstance(false);
-            sendRichPresence(presence.build());
+//            sendRichPresence(presence.build());
         }
     }
     private void run() {

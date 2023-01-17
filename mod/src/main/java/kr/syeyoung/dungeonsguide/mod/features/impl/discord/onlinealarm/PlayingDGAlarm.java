@@ -26,7 +26,12 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.ImageTexture;
+import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.WidgetPartyInviteViewer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -46,116 +51,31 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
 public class PlayingDGAlarm extends SimpleFeature {
+    private WidgetOnlinePeopleViewer onlinePeopleViewer;
+    private OverlayWidget widget;
+
     public PlayingDGAlarm() {
         super("Discord", "Friend Online Notification","Notifies you in bottom when your discord friend has launched a Minecraft with DG!\n\nRequires the Friend's Discord RPC to be enabled", "discord.playingalarm");
+        widget = new OverlayWidget(
+                onlinePeopleViewer = new WidgetOnlinePeopleViewer(),
+                OverlayType.OVER_ANY,
+                () -> new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight)
+        );
+        OverlayManager.getInstance().addOverlay(widget);
     }
-    private List<PlayerOnline> notif = new CopyOnWriteArrayList<>();
 
-    @DGEventHandler
+    @DGEventHandler(triggerOutOfSkyblock = true)
     public void onTick(DGTickEvent event) {
         try {
-            List<PlayerOnline> partyJoinRequestList = new ArrayList<>();
-            boolean isOnHypixel = DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnHypixel();
-            for (PlayerOnline joinRequest:notif) {
-                if (!isOnHypixel){
-                    partyJoinRequestList.add(joinRequest);
-                } else if (joinRequest.getEnd() < System.currentTimeMillis()) {
-                    partyJoinRequestList.add(joinRequest);
-                }
-            }
-            notif.removeAll(partyJoinRequestList);
+            onlinePeopleViewer.tick();
         } catch (Throwable e) {e.printStackTrace();}
     }
-
-
-
-    @DGEventHandler
-    public void drawScreen(RenderGameOverlayEvent.Post postRender) {
-        
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR)) return;
-
-        try {
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(0,0,100);
-            ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-            GlStateManager.scale(1.0 / sr.getScaleFactor(), 1.0 / sr.getScaleFactor(), 1.0);
-            int height = 90;
-            int gap = 5;
-            int x = Minecraft.getMinecraft().displayWidth-350-gap;
-            int y = Minecraft.getMinecraft().displayHeight-(height+gap)*notif.size();
-            for (PlayerOnline partyJoinRequest : notif) {
-                renderRequest(partyJoinRequest, x, y, 350,height);
-                y += height + gap;
-            }
-            GlStateManager.popMatrix();
-            GlStateManager.enableBlend();
-        } catch (Throwable t) {
-            t.printStackTrace();
-        }
-    }
-
-    public void renderRequest(PlayerOnline online, int x, int y, int width, int height) {
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(x,y,0);
-
-        Gui.drawRect(0, 0,width,height, 0xFF23272a);
-        Gui.drawRect(2, 2, width-2, height-2, 0XFF2c2f33);
-        {
-            String avatar = online.jDiscordRelation.getDiscordUser().getEffectiveAvatarUrl();
-            Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
-            ImageTexture loadedImage = null;
-            if (loadedImageFuture.isDone()) {
-                try {
-                    loadedImage = loadedImageFuture.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (loadedImage != null) {
-                loadedImage.drawFrameAndIncrement( 7,7,height-14,height-14);
-            } else {
-                Gui.drawRect(7, 7, height - 7, height-7, 0xFF4E4E4E);
-            }
-        }
-
-        GlStateManager.enableBlend();
-        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(height +3,7, 0);
-
-        GlStateManager.pushMatrix();
-        GlStateManager.scale(3.0,3.0,1.0);
-        fr.drawString(online.getJDiscordRelation().getDiscordUser().getName()+"", 0,0, 0xFFFFFFFF, true);
-        GlStateManager.popMatrix();
-
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(fr.getStringWidth(online.getJDiscordRelation().getDiscordUser().getName()+"") * 3 + 1, (int)(fr.FONT_HEIGHT*1.5), 0);
-        fr.drawString("#"+online.getJDiscordRelation().getDiscordUser().getDiscriminator(), 0,0,0xFFaaaaaa, true);
-        GlStateManager.popMatrix();
-        GlStateManager.pushMatrix();
-        GlStateManager.translate(0, fr.FONT_HEIGHT * 3 + 5, 0);
-        GlStateManager.scale(1.0,1.0,1.0);
-        fr.drawString("Started Playing Skyblock! (Dismissed in "+(TextUtils.formatTime(online.getEnd() - System.currentTimeMillis()))+")", 0,0,0xFFFFFFFF,false);
-        GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
-        GlStateManager.popMatrix();
-    }
-
-
-    @Data @AllArgsConstructor
-    public static class PlayerOnline {
-        private JDiscordRelation jDiscordRelation;
-        private long end;
-    }
-
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserUpdate(DiscordUserUpdateEvent event) {
         JDiscordRelation prev = event.getPrev(), current = event.getCurrent();
         if (prev == null) return;
         if (!isDisplayable(prev) && isDisplayable(current)) {
-            notif.add(new PlayerOnline(current, System.currentTimeMillis()+3000));
+            onlinePeopleViewer.addUser(current);
         }
     }
 

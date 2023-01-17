@@ -35,6 +35,7 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Text extends AnnotatedExportOnlyWidget implements Layouter, Renderer {
     @Export(attributeName = "text")
@@ -50,7 +51,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
         final int width;
         final String text;
     }
-    public List<WrappedTextData> wrappedTexts = new ArrayList();
+    public List<WrappedTextData> wrappedTexts = new CopyOnWriteArrayList<>();
     @Export(attributeName = "font")
     public final BindableAttribute<FontRenderer> fontRenderer =new BindableAttribute<>(FontRenderer.class, Minecraft.getMinecraft().fontRendererObj);
 
@@ -108,7 +109,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        wrappedTexts.clear();
+        List<WrappedTextData> wrappedTexts = new ArrayList<>();
 
         FontRenderer fr = fontRenderer.getValue();
         String text = this.text.getValue();
@@ -205,7 +206,7 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
             wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
         }
 
-
+        this.wrappedTexts = wrappedTexts;
 
         return new Size(hadToWrap ? constraintBox.getMaxWidth() :
                 Layouter.clamp(maxWidth2, constraintBox.getMinWidth(), constraintBox.getMaxWidth()),
@@ -221,6 +222,8 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
         return max;
     }
 
+    // TODO: incorporate line breaking into
+    // TODO: maybe turn into rich text?
     @Override
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
         return this.text.getValue().split("\n").length * (fr.FONT_HEIGHT * lineSpacing.getValue());

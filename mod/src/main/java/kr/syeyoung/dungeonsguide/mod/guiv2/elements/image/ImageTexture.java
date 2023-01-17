@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,13 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.image;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Data;
-import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -95,8 +93,11 @@ public class ImageTexture {
 
         IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
 
-        delayTime = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime"));
-
+        try {
+            delayTime = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime"));
+        } catch (Exception e) {
+            delayTime = 1000;
+        }
 
         image = new BufferedImage(width, height * frames, dummyFrame.getType());
         Graphics2D graphics2D = image.createGraphics();

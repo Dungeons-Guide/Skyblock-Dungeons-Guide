@@ -28,6 +28,7 @@ public class OnlyChildrenRenderer implements Renderer {
     public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
         for (DomElement value : buildContext.getChildren()) {
             Rect original = value.getRelativeBound();
+            if (original == null) continue;
             GlStateManager.pushMatrix();
             GlStateManager.translate(original.getX(), original.getY(), 0);
 

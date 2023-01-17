@@ -112,7 +112,7 @@ public class EventHandlerRegistry {
 
     private static Map<Class<? extends Event>, IEventListener> registeredHandlers = new HashMap<>();
 
-    public static void registerActualListeners() {
+    public static synchronized void registerActualListeners() {
         for (Class<? extends Event> aClass : targets.keySet()) {
             if (registeredHandlers.containsKey(aClass)) continue;
             try {

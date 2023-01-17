@@ -44,6 +44,7 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
         for (int i = buildContext.getChildren().size() - 1; i >= 0; i --) {
             DomElement value = buildContext.getChildren().get(i);
             Rect original = value.getRelativeBound();
+            if (original == null) return;
             GlStateManager.pushMatrix();
             GlStateManager.translate(original.getX(), original.getY(), 0);
 

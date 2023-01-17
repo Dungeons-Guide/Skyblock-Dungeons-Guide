@@ -44,7 +44,7 @@ public class IntrinsicHeight extends AnnotatedExportOnlyWidget implements Layout
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
         DomElement elem = buildContext.getChildren().get(0);
         double height = elem.getLayouter().getMaxIntrinsicHeight(elem, constraintBox.getMaxWidth() == Double.POSITIVE_INFINITY ? 0 : constraintBox.getMaxWidth());
-        Size size = elem.getLayouter().layout(buildContext, new ConstraintBox(
+        Size size = elem.getLayouter().layout(elem, new ConstraintBox(
                 constraintBox.getMinWidth(), constraintBox.getMaxWidth(), height, height
         ));
         elem.setRelativeBound(new Rect(0,0,size.getWidth(), size.getHeight()));

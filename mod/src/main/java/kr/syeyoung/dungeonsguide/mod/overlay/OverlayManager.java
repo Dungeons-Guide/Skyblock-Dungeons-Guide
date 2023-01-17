@@ -32,6 +32,7 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
@@ -90,11 +91,11 @@ public class OverlayManager {
 
     @SubscribeEvent
     public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
-//        if (postRender.gui instanceof GuiChat)
-//            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
-//        else
-//            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
-//        drawScreen(postRender.renderPartialTicks);
+        if (postRender.gui instanceof GuiChat)
+            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
+        else
+            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
+        drawScreen(postRender.renderPartialTicks);
     }
 
 
@@ -104,6 +105,7 @@ public class OverlayManager {
 
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GlStateManager.pushMatrix();
+        GlStateManager.translate(0,0,50);
         GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.enableAlpha();
@@ -115,6 +117,7 @@ public class OverlayManager {
         GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
         GlStateManager.enableDepth();
+        GlStateManager.enableTexture2D();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
@@ -195,7 +198,7 @@ public class OverlayManager {
     private int lastX, lastY;
 
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void handleMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) throws IOException {
         try {
             int i = Mouse.getEventX();
@@ -247,7 +250,7 @@ public class OverlayManager {
         }
     }
 
-    @SubscribeEvent
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void handleKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre keyboardInputEvent) throws IOException {
         if (Keyboard.getEventKeyState()) {
             if (Keyboard.isRepeatEvent())

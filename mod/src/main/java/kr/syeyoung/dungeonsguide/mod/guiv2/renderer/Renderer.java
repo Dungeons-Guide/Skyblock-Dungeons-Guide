@@ -30,5 +30,7 @@ public interface Renderer {
      * @param pos
      * @return
      */
-    default Position transformPoint(DomElement element, Position pos) {return new Position(pos.getX() - element.getRelativeBound().getX(), pos.getY() - element.getRelativeBound().getY());}
+    default Position transformPoint(DomElement element, Position pos) {
+        if (element.getRelativeBound() == null) return pos;
+        return new Position(pos.getX() - element.getRelativeBound().getX(), pos.getY() - element.getRelativeBound().getY());}
 }

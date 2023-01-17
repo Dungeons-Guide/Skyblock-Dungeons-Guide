@@ -123,6 +123,7 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
             GL11.glVertex2d(w/2.0f, h);
         }
         GL11.glEnd();
+        GlStateManager.enableTexture2D();
 
         if (pattern != null) {
             GL11.glDisable(GL11.GL_LINE_STIPPLE);

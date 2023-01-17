@@ -46,7 +46,6 @@ public class DomElementRegistry {
 
     static {
         register("stack", new ExportedWidgetConverter(Stack::new));
-        register("size", new ExportedWidgetConverter(SizedBox::new));
         register("scaler", new ExportedWidgetConverter(Scaler::new));
         register("row", new ExportedWidgetConverter(Row::new));
         register("padding", new ExportedWidgetConverter(Padding::new));
@@ -60,6 +59,7 @@ public class DomElementRegistry {
         register("slot", new ExportedWidgetConverter(Slot::new));
         register("clip", new ExportedWidgetConverter(Clip::new));
         register("measure", new ExportedWidgetConverter(Measure::new));
+        register("ConstrainedBox", new ExportedWidgetConverter(ConstrainedBox::new));
         register("UnconstrainedBox", new ExportedWidgetConverter(UnconstrainedBox::new));
         register("absXY", new ExportedWidgetConverter(AbsXY::new));
         register("Placeholder", new ExportedWidgetConverter(Placeholder::new));
@@ -73,12 +73,12 @@ public class DomElementRegistry {
         register("IntrinsicWidth", new ExportedWidgetConverter(IntrinsicWidth::new));
         register("IntrinsicHeight", new ExportedWidgetConverter(IntrinsicHeight::new));
         register("TestView", new ExportedWidgetConverter(TestView::new));
-        
+
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
         register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
         register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
         register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/slowlist.gui")));
-        
+        register("size", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/size.gui")));
         register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/ratioResourceImage.gui")));
         register("UrlImage", new ExportedWidgetConverter(URLImage::new));
     }

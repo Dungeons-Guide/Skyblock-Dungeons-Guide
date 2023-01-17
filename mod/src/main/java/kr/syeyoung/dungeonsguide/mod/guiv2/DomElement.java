@@ -35,6 +35,7 @@ import lombok.Setter;
 import java.util.ArrayList;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DomElement {
     @Getter
@@ -51,7 +52,7 @@ public class DomElement {
     @Setter
     private DomElement parent;
     @Getter
-    private List<DomElement> children = new ArrayList<>();
+    private List<DomElement> children = new CopyOnWriteArrayList<>();
 
     @Getter
     Context context;

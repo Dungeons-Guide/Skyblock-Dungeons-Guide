@@ -36,6 +36,8 @@ public class Clip extends AnnotatedExportOnlyWidget implements Renderer {
     @Override
     public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
         if (buildContext.getChildren().isEmpty()) return;
+        if (buildContext.getSize().getWidth() <= 0 || buildContext.getSize().getHeight() <= 0)
+            return;
         context.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
 
         DomElement value = buildContext.getChildren().get(0);

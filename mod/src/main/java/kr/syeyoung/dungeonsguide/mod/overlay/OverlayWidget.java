@@ -55,6 +55,7 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
+        if (original == null) return;
         GlStateManager.translate(original.getX(), original.getY(), 0);
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();

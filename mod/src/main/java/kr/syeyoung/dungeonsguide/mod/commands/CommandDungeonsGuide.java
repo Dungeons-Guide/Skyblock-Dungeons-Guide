@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -105,8 +106,7 @@ public class CommandDungeonsGuide extends CommandBase {
             cosmeticsManager.requestCosmeticsList();
             cosmeticsManager.requestActiveCosmetics();
             StaticResourceCache.INSTANCE.purgeCache();
-            FeatureRegistry.DISCORD_ASKTOJOIN.imageMap.clear();
-            FeatureRegistry.DISCORD_ASKTOJOIN.futureMap.clear();
+            ImageTexture.imageMap.clear();
 
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
         } else if (args[0].equals("pbroadcast")) {

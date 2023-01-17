@@ -97,7 +97,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
             if (!(child.getWidget() instanceof Flexible)) {
                 Size requiredSize = child.getLayouter().layout(child, new ConstraintBox(
                         crossAxisAlignment == CrossAxisAlignment.STRETCH
-                                ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, Integer.MAX_VALUE
+                                ? constraints.getMaxWidth() : 0, constraints.getMaxWidth(), 0, Double.POSITIVE_INFINITY
                 ));
                 saved.put(child, requiredSize);
                 width = Math.max(width, requiredSize.getWidth());
@@ -111,13 +111,13 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         int sumFlex = 0;
         for (DomElement child : buildContext.getChildren()) {
             if (child.getWidget() instanceof Flexible) {
-                sumFlex += Math.min(1, ((Flexible) child.getWidget()).flex.getValue());
+                sumFlex += Math.max(1, ((Flexible) child.getWidget()).flex.getValue());
                 flexFound = true;
             }
         }
 
-        if (flexFound && effheight == Integer.MAX_VALUE) throw new IllegalStateException("Max height can not be infinite with flex elements");
-        else if (effheight == Integer.MAX_VALUE) effheight = height;
+        if (flexFound && effheight == Double.POSITIVE_INFINITY) throw new IllegalStateException("Max height can not be infinite with flex elements");
+        else if (effheight == Double.POSITIVE_INFINITY) effheight = height;
 
         if (flexFound) {
             double remainingHeight = effheight - height;
@@ -135,7 +135,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
                 }
             }
         }
-        width = constraints.getMaxWidth() == Integer.MAX_VALUE ? width : constraints.getMaxWidth();
+        width = constraints.getMaxWidth() == Double.POSITIVE_INFINITY ? width : constraints.getMaxWidth();
 
 
 
@@ -198,10 +198,10 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         for (DomElement child : buildContext.getChildren()) {
             if (child.getWidget() instanceof Flexible) {
                 flex += ((Flexible) child.getWidget()).flex.getValue();
-                maxPer = Double.max(maxPer, child.getLayouter().getMaxIntrinsicHeight(buildContext, width) /
+                maxPer = Double.max(maxPer, child.getLayouter().getMaxIntrinsicHeight(child, width) /
                         ((Flexible) child.getWidget()).flex.getValue());
             } else {
-                height += child.getLayouter().getMaxIntrinsicHeight(buildContext, width);
+                height += child.getLayouter().getMaxIntrinsicHeight(child, width);
             }
         }
         return height + maxPer * flex;
@@ -214,8 +214,8 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         int sumFlex = 0;
         for (DomElement child : buildContext.getChildren()) {
             if (!(child.getWidget() instanceof Flexible)) {
-                heightTaken += child.getLayouter().getMaxIntrinsicWidth(buildContext, Double.POSITIVE_INFINITY);
-                maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(buildContext, 0));
+                heightTaken += child.getLayouter().getMaxIntrinsicHeight(child, 0);
+                maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(child, 0));
             } else {
                 sumFlex += ((Flexible) child.getWidget()).flex.getValue();
             }
@@ -223,9 +223,10 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         double leftOver = height - heightTaken;
         if (sumFlex > 0) {
             double per = leftOver / sumFlex;
+            if (height == 0) per = 0;
             for (DomElement child : buildContext.getChildren()) {
                 if (child.getWidget() instanceof Flexible) {
-                    maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(buildContext, per * ((Flexible) child.getWidget()).flex.getValue()));
+                    maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(child, per * ((Flexible) child.getWidget()).flex.getValue()));
                 }
             }
         }

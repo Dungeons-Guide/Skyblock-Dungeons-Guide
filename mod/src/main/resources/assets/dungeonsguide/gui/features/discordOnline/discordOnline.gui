@@ -1,0 +1,52 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+    <padding left="5" right="5" top="2.5" bottom="2.5">
+        <border>
+            <line slot="left" dir="VERTICAL" thickness="1.0" color="#FF23272A"/>
+            <line slot="top" dir="HORIZONTAL" thickness="1.0" color="#FF23272A"/>
+            <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FF23272A"/>
+            <line slot="right" dir="VERTICAL" thickness="1.0" color="#FF23272A"/>
+            <bgcolor slot="content" backgroundColor="#FF2C2F33">
+                <padding left="3" right="3" top="3" bottom="3">
+                    <IntrinsicHeight>
+                        <IntrinsicWidth>
+                        <row>
+                            <UrlImage bind:url="avatarUrl"/>
+                            <size width="5"></size>
+                            <flexible>
+                                <col crossAlign="START">
+                                    <row crossAlign="END">
+                                        <scaler scale="3.0">
+                                            <Text bind:text="username" color="#FFFFFFFF"/>
+                                        </scaler>
+                                        <Text text="#" color="#FFAAAAAA"/>
+                                        <Text bind:text="discriminator" color="#FFAAAAAA"/>
+                                    </row>
+                                    <size height="5"/>
+                                    <Text text="started playing with Dungeons Guide!" color="#FFFFFFFF"/>
+                                    <size height="5"/>
+                                </col>
+                            </flexible>
+                        </row>
+                        </IntrinsicWidth>
+                    </IntrinsicHeight>
+                </padding>
+            </bgcolor>
+        </border>
+    </padding>

@@ -38,6 +38,8 @@ public class OverlayManagerRootWidget extends Widget implements Layouter {
     }
 
     public void addOverlay(OverlayWidget overlayWidget) {
+        if (getDomElement().getChildren().contains(overlayWidget.getDomElement())) return;
+
         DomElement domElement = overlayWidget.createDomElement(getDomElement());
         getDomElement().addElement(domElement);
 

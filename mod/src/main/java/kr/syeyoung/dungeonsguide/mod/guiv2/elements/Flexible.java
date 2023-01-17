@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import java.awt.*;
 import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 // yes it's that flexible from flutter
 public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
@@ -50,8 +51,8 @@ public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
     }
 
     public Flexible() {
-        flex.addOnUpdate((a,b) -> getDomElement().requestRelayout());
-        fit.addOnUpdate((a,b) -> getDomElement().requestRelayout());
+        flex.addOnUpdate((a,b) -> Optional.ofNullable(getDomElement().getParent()).ifPresent(DomElement::requestRelayout));
+        fit.addOnUpdate((a,b) -> Optional.ofNullable(getDomElement().getParent()).ifPresent(DomElement::requestRelayout));
     }
 
     @Override
@@ -64,8 +65,8 @@ public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
         FlexFit fit = this.fit.getValue();
         ConstraintBox box =
                 fit == FlexFit.TIGHT ?
-                        new ConstraintBox(constraintBox.getMaxWidth() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
-                                , constraintBox.getMaxHeight() == Integer.MAX_VALUE ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
+                        new ConstraintBox(constraintBox.getMaxWidth() == Double.POSITIVE_INFINITY ? 0 : constraintBox.getMaxWidth(), constraintBox.getMaxWidth()
+                                , constraintBox.getMaxHeight() == Double.POSITIVE_INFINITY ? 0 : constraintBox.getMaxHeight(), constraintBox.getMaxHeight())
                         : ConstraintBox.loose(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
         DomElement child = buildContext.getChildren().get(0);
 

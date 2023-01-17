@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
 import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.ImageTexture;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -38,6 +38,8 @@ import java.util.function.Consumer;
 public class MTooltipInviteElement extends MPanel {
     private JDiscordRelation relation;
     private MButton invite;
+    private ImageTexture texture;
+
     public MTooltipInviteElement(JDiscordRelation jDiscordRelation, boolean invited, Consumer<Long> inviteCallback) {
         this.relation = jDiscordRelation;
         this.invite = new MButton();
@@ -67,6 +69,12 @@ public class MTooltipInviteElement extends MPanel {
             invite.setForeground(new Color(0xFF02EE67));
         }
 
+        if (!jDiscordRelation.getDiscordUser().getEffectiveAvatarUrl().isEmpty()) {
+            ImageTexture.loadImage(jDiscordRelation.getDiscordUser().getEffectiveAvatarUrl(), (cback) -> {
+                this.texture = cback;
+            });
+        }
+
         add(invite);
     }
 
@@ -78,23 +86,12 @@ public class MTooltipInviteElement extends MPanel {
         }
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (!relation.getDiscordUser().getEffectiveAvatarUrl().isEmpty()){
-            String avatar =  relation.getDiscordUser().getEffectiveAvatarUrl();
-            Future<ImageTexture> loadedImageFuture = FeatureRegistry.DISCORD_ASKTOJOIN.loadImage(avatar);
-            ImageTexture loadedImage = null;
-            if (loadedImageFuture.isDone()) {
-                try {
-                    loadedImage = loadedImageFuture.get();
-                } catch (InterruptedException | ExecutionException e) {
-                    e.printStackTrace();
-                }
-            }
-            if (loadedImage != null) {
-                loadedImage.drawFrameAndIncrement( 3,3,bounds.height-6,bounds.height-6);
+            if (texture != null) {
+                texture.drawFrame( 3,3,bounds.height-6,bounds.height-6);
             } else {
                 Gui.drawRect(3, 3, bounds.height - 6, bounds.height-6, 0xFF4E4E4E);
             }
-        }
+
         fr.drawString(relation.getDiscordUser().getName()+"#"+relation.getDiscordUser().getDiscriminator(), bounds.height,(bounds.height-fr.FONT_HEIGHT)/2, -1);
     }
 
