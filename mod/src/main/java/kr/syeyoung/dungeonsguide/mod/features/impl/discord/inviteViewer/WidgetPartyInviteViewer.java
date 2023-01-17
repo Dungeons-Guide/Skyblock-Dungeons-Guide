@@ -52,10 +52,10 @@ public class WidgetPartyInviteViewer extends AnnotatedWidget {
 
     public void addInvite(DiscordUserInvitedEvent inviteEvent) {
         if (inviteUid.contains(inviteEvent.getDiscordUser().getId())) return;
-        inviteUid.add(inviteEvent.getDiscordUser().getId());
         WidgetInvite invite;
         columnApi.getValue().addWidget(invite = new WidgetInvite(this, inviteEvent));
         widgetList.add(invite);
+        inviteUid.add(inviteEvent.getDiscordUser().getId());
     }
 
     public void remove(Widget widget) {

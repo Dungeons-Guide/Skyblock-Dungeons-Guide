@@ -35,9 +35,13 @@ public class WidgetJoinRequest extends AnnotatedWidget implements TTL{
     public final BindableAttribute<String> discriminator;
     @Bind(variableName = "avatarUrl")
     public final BindableAttribute<String> avatarURL;
+    @Bind(variableName = "visible")
+    public final BindableAttribute<String> visiblePage = new BindableAttribute<>(String.class, "buttons");
+
     private WidgetPartyInviteViewer inviteViewer;
     private DiscordUserJoinRequestEvent event;
     private long start;
+    private boolean actionDone = false;
     public WidgetJoinRequest(WidgetPartyInviteViewer parent, DiscordUserJoinRequestEvent joinRequestEvent) {
         super(new ResourceLocation("dungeonsguide:gui/features/discordParty/joinRequest.gui"));
         this.inviteViewer = parent;
@@ -54,17 +58,23 @@ public class WidgetJoinRequest extends AnnotatedWidget implements TTL{
 
     @On(functionName = "accept")
     public void accept() {
-        inviteViewer.remove(this);
+        start = System.currentTimeMillis();
+        visiblePage.setValue("accepted");
+        actionDone = true;
         DiscordIntegrationManager.INSTANCE.respondToJoinRequest(event.getDiscordUser().getId(), Reply.ACCEPT);
     }
     @On(functionName = "deny")
     public void deny() {
-        inviteViewer.remove(this);
+        start = System.currentTimeMillis();
+        visiblePage.setValue("denied");
+        actionDone = true;
         DiscordIntegrationManager.INSTANCE.respondToJoinRequest(event.getDiscordUser().getId(), Reply.DENY);
     }
     @On(functionName = "ignore")
     public void ignore() {
-        inviteViewer.remove(this);
+        start = System.currentTimeMillis();
+        visiblePage.setValue("ignored");
+        actionDone = true;
         DiscordIntegrationManager.INSTANCE.respondToJoinRequest(event.getDiscordUser().getId(), Reply.IGNORE);
     }
 
@@ -75,6 +85,6 @@ public class WidgetJoinRequest extends AnnotatedWidget implements TTL{
 
     @Override
     public long ttl() {
-        return FeatureRegistry.DISCORD_ASKTOJOIN.<Integer>getParameter("ttl").getValue() * 1000;
+        return actionDone ? 2000 : FeatureRegistry.DISCORD_ASKTOJOIN.<Integer>getParameter("ttl").getValue() * 1000;
     }
 }

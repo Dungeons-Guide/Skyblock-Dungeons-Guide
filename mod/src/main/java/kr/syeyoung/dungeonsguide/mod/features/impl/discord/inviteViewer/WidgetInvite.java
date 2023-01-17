@@ -36,9 +36,15 @@ public class WidgetInvite extends AnnotatedWidget implements TTL {
     public final BindableAttribute<String> discriminator;
     @Bind(variableName = "avatarUrl")
     public final BindableAttribute<String> avatarURL;
+    @Bind(variableName = "visible")
+    public final BindableAttribute<String> visiblePage = new BindableAttribute<>(String.class, "buttons");
+
     private WidgetPartyInviteViewer inviteViewer;
     private DiscordUserInvitedEvent event;
     private long start;
+
+
+    private boolean actionDone = false;
     public WidgetInvite(WidgetPartyInviteViewer parent, DiscordUserInvitedEvent invitedEvent) {
         super(new ResourceLocation("dungeonsguide:gui/features/discordParty/invite.gui"));
         this.inviteViewer = parent;
@@ -55,21 +61,25 @@ public class WidgetInvite extends AnnotatedWidget implements TTL {
 
     @On(functionName = "accept")
     public void accept() {
-        inviteViewer.remove(this);
+        actionDone = true;
+        visiblePage.setValue("accepted");
+        start = System.currentTimeMillis();
         DiscordIntegrationManager.INSTANCE.acceptInvite(event.getHandle());
     }
     @On(functionName = "deny")
     public void deny() {
-        inviteViewer.remove(this);
+        actionDone = true;
+        visiblePage.setValue("denied");
+        start = System.currentTimeMillis();
     }
 
     @Override
     public long startedDisplaying() {
-        return 0;
+        return start;
     }
 
     @Override
     public long ttl() {
-        return FeatureRegistry.DISCORD_ASKTOJOIN.<Integer>getParameter("ttl").getValue() * 1000;
+        return actionDone ? 2000 : FeatureRegistry.DISCORD_ASKTOJOIN.<Integer>getParameter("ttl").getValue() * 1000;
     }
 }

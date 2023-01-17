@@ -43,47 +43,52 @@
                                     <size height="5"/>
                                     <size height="30">
                                         <scaler scale="2.0">
-                                            <row crossAlign="START">
-                                                <flexible fit="TIGHT" flex="1">
-                                                    <size/>
-                                                </flexible>
-                                                <flexible fit="TIGHT" flex="3">
-                                                    <ColorButton on:click="accept"
-                                                                 backgroundColor="#FF7289DA"          textColor="#FFFFFFFF"
-                                                                 hoveredBackgroundColor="#FF859DF0"   hoveredTextColor="#FFFFFFFF"
-                                                                 disabledBackgroundColor="0"  disabledTextColor="0"
-                                                                 pressedBackgroundColor="#FF9BB0FF"   pressedTextColor="#FFFFFFFF"
-                                                                 text="ACCEPT"
-                                                    />
-                                                </flexible>
-                                                <flexible fit="TIGHT" flex="1">
-                                                    <size/>
-                                                </flexible>
-                                                <flexible fit="TIGHT" flex="3">
-                                                    <ColorButton on:click="deny"
-                                                                 backgroundColor="#FF99AAB5"          textColor="#FFFFFFFF"
-                                                                 hoveredBackgroundColor="#FFAEC0CB"   hoveredTextColor="#FFFFFFFF"
-                                                                 disabledBackgroundColor="0"  disabledTextColor="0"
-                                                                 pressedBackgroundColor="#FFCADDE8"   pressedTextColor="#FFFFFFFF"
-                                                                 text="DENY"
-                                                    />
-                                                </flexible>
-                                                <flexible fit="TIGHT" flex="1">
-                                                    <size/>
-                                                </flexible>
-                                                <flexible fit="TIGHT" flex="3">
-                                                    <ColorButton on:click="ignore"
-                                                                 backgroundColor="#FF99AAB5"          textColor="#FFFFFFFF"
-                                                                 hoveredBackgroundColor="#FFAEC0CB"   hoveredTextColor="#FFFFFFFF"
-                                                                 disabledBackgroundColor="0"  disabledTextColor="0"
-                                                                 pressedBackgroundColor="#FFCADDE8"   pressedTextColor="#FFFFFFFF"
-                                                                 text="Ignore"
-                                                    />
-                                                </flexible>
-                                                <flexible fit="TIGHT" flex="1">
-                                                    <size/>
-                                                </flexible>
-                                            </row>
+                                            <SelectiveContainer bind:visible="visible">
+                                                <row crossAlign="START" slot="buttons">
+                                                    <flexible fit="TIGHT" flex="1">
+                                                        <size/>
+                                                    </flexible>
+                                                    <flexible fit="TIGHT" flex="3">
+                                                        <ColorButton on:click="accept"
+                                                                     backgroundColor="#FF7289DA"          textColor="#FFFFFFFF"
+                                                                     hoveredBackgroundColor="#FF859DF0"   hoveredTextColor="#FFFFFFFF"
+                                                                     disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                     pressedBackgroundColor="#FF9BB0FF"   pressedTextColor="#FFFFFFFF"
+                                                                     text="ACCEPT"
+                                                        />
+                                                    </flexible>
+                                                    <flexible fit="TIGHT" flex="1">
+                                                        <size/>
+                                                    </flexible>
+                                                    <flexible fit="TIGHT" flex="3">
+                                                        <ColorButton on:click="deny"
+                                                                     backgroundColor="#FF99AAB5"          textColor="#FFFFFFFF"
+                                                                     hoveredBackgroundColor="#FFAEC0CB"   hoveredTextColor="#FFFFFFFF"
+                                                                     disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                     pressedBackgroundColor="#FFCADDE8"   pressedTextColor="#FFFFFFFF"
+                                                                     text="DENY"
+                                                        />
+                                                    </flexible>
+                                                    <flexible fit="TIGHT" flex="1">
+                                                        <size/>
+                                                    </flexible>
+                                                    <flexible fit="TIGHT" flex="3">
+                                                        <ColorButton on:click="ignore"
+                                                                     backgroundColor="#FF99AAB5"          textColor="#FFFFFFFF"
+                                                                     hoveredBackgroundColor="#FFAEC0CB"   hoveredTextColor="#FFFFFFFF"
+                                                                     disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                     pressedBackgroundColor="#FFCADDE8"   pressedTextColor="#FFFFFFFF"
+                                                                     text="Ignore"
+                                                        />
+                                                    </flexible>
+                                                    <flexible fit="TIGHT" flex="1">
+                                                        <size/>
+                                                    </flexible>
+                                                </row>
+                                                <Text text="Accepted Join Request" slot="accepted" color="#FFFFFFFF"/>
+                                                <Text text="Denied Join Request" slot="denied" color="#FFFFFFFF"/>
+                                                <Text text="Ignored Join Request" slot="ignored" color="#FFFFFFFF"/>
+                                            </SelectiveContainer>
                                         </scaler>
                                     </size>
                                 </col>

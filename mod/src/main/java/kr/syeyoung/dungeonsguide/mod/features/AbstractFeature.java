@@ -73,7 +73,7 @@ public abstract class AbstractFeature implements IFeature {
     }
 
     public void loadConfig(JsonObject jsonObject) { // gets key, calls it
-        enabled = jsonObject.get("$enabled").getAsBoolean();
+        setEnabled(jsonObject.get("$enabled").getAsBoolean());
 
         for (Map.Entry<String, FeatureParameter> parameterEntry : parameters.entrySet()) {
             parameterEntry.getValue().setToDefault();

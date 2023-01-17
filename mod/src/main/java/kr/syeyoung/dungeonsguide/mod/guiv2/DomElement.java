@@ -101,6 +101,11 @@ public class DomElement {
 
     // event propagation
 
+
+    public void requestRelayoutParent() {
+        if (parent != null)
+            parent.requestRelayout();
+    }
     public void requestRelayout() {
         if (layouter.canCutRequest() && size != null) {
             layouter.layout(this, new ConstraintBox(

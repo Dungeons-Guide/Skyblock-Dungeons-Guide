@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.WidgetPartyInviteViewer;
@@ -50,18 +51,21 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
 
-public class PlayingDGAlarm extends SimpleFeature {
+public class PlayingDGAlarm extends AbstractGuiFeature {
     private WidgetOnlinePeopleViewer onlinePeopleViewer;
     private OverlayWidget widget;
 
     public PlayingDGAlarm() {
         super("Discord", "Friend Online Notification","Notifies you in bottom when your discord friend has launched a Minecraft with DG!\n\nRequires the Friend's Discord RPC to be enabled", "discord.discord_playingalarm");
-        widget = new OverlayWidget(
+    }
+
+    @Override
+    public OverlayWidget instantiateWidget() {
+        return new OverlayWidget(
                 onlinePeopleViewer = new WidgetOnlinePeopleViewer(),
                 OverlayType.OVER_ANY,
                 () -> new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight)
         );
-        OverlayManager.getInstance().addOverlay(widget);
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)

@@ -226,7 +226,7 @@ public class DiscordIntegrationManager implements IPCListener {
                 presence.setJoinSecret(PartyManager.INSTANCE.getAskToJoinSecret());
             }
             presence.setInstance(false);
-//            sendRichPresence(presence.build());
+            sendRichPresence(presence.build());
         }
     }
     private void run() {
@@ -249,8 +249,11 @@ public class DiscordIntegrationManager implements IPCListener {
 
 
 
+    private long next = 0;
     public void onActivityJoin(Packet packet) {
         String secret = packet.getJson().getJSONObject("data").getString("secret");
+        if (System.currentTimeMillis() < next) return;
+        next = System.currentTimeMillis() + 500;
         PartyManager.INSTANCE.joinWithToken(secret);
         logger.log(Level.DEBUG, "Trying to join with token: "+secret);
     }

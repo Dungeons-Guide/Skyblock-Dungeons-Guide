@@ -71,7 +71,6 @@ public class SkyblockStatus {
 
     }
 
-
     public static boolean isOnSkyblock(){
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
@@ -94,7 +93,7 @@ public class SkyblockStatus {
     @Setter
     private boolean forceIsOnDungeon;
 
-    public boolean isOnHypixel() {
+    public static boolean isOnHypixel() {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.thePlayer == null) return false;
         if (!mc.isSingleplayer() && mc.thePlayer.getClientBrand() != null) {

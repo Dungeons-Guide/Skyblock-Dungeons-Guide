@@ -58,12 +58,12 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-public abstract class GuiFeature extends AbstractFeature {
+public abstract class GuiFeature extends AbstractGuiFeature {
     private GUIRectangle featureRect;
 
     public void setFeatureRect(GUIRectangle featureRect) {
         this.featureRect = featureRect;
-        OverlayManager.getInstance().updateOverlayPosition(widget);
+        updatePosition();
     }
 
     @Setter(value = AccessLevel.PROTECTED)
@@ -74,8 +74,6 @@ public abstract class GuiFeature extends AbstractFeature {
     private double defaultHeight;
     private final double defaultRatio;
 
-    private OverlayWidget widget;
-
     protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key);
         this.keepRatio = keepRatio;
@@ -83,16 +81,6 @@ public abstract class GuiFeature extends AbstractFeature {
         this.defaultHeight = height;
         this.defaultRatio = defaultWidth / defaultHeight;
         this.featureRect = new GUIRectangle(0, 0, width, height);
-
-        widget = new OverlayWidget(
-            new WidgetFeatureWrapper(),
-            OverlayType.UNDER_CHAT,
-            () -> {
-                Rectangle loc = featureRect.getRectangleNoScale();
-                return new Rect(loc.x, loc.y, loc.width, loc.height);
-            }
-        );
-        OverlayManager.getInstance().addOverlay(widget);
     }
 
     public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
@@ -110,6 +98,17 @@ public abstract class GuiFeature extends AbstractFeature {
         public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
             return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
         }
+    }
+
+    public OverlayWidget instantiateWidget() {
+        return new OverlayWidget(
+                new WidgetFeatureWrapper(),
+                OverlayType.UNDER_CHAT,
+                () -> {
+                    Rectangle loc = featureRect.getRectangleNoScale();
+                    return new Rect(loc.x, loc.y, loc.width, loc.height);
+                }
+        );
     }
 
     public void drawScreen(float partialTicks) {
@@ -142,7 +141,7 @@ public abstract class GuiFeature extends AbstractFeature {
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
         this.featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
-        OverlayManager.getInstance().updateOverlayPosition(widget);
+        updatePosition();
     }
 
     @Override

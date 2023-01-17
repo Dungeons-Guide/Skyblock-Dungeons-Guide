@@ -52,10 +52,10 @@ public class ConstrainedBox extends AnnotatedExportOnlyWidget implements Layoute
     }
 
     public ConstrainedBox() {
-        minWidth.addOnUpdate((a, b) -> getDomElement().requestRelayout());
-        minHeight.addOnUpdate((a, b) -> getDomElement().requestRelayout());
-        maxWidth.addOnUpdate((a, b) -> getDomElement().requestRelayout());
-        maxHeight.addOnUpdate((a, b) -> getDomElement().requestRelayout());
+        minWidth.addOnUpdate((a, b) -> getDomElement().requestRelayoutParent());
+        minHeight.addOnUpdate((a, b) -> getDomElement().requestRelayoutParent());
+        maxWidth.addOnUpdate((a, b) -> getDomElement().requestRelayoutParent());
+        maxHeight.addOnUpdate((a, b) -> getDomElement().requestRelayoutParent());
     }
 
     @Override

@@ -20,11 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
@@ -50,19 +52,22 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.*;
 
-public class PartyInviteViewer extends SimpleFeature {
+public class PartyInviteViewer extends AbstractGuiFeature {
     private WidgetPartyInviteViewer partyInviteViewer;
     private OverlayWidget widget;
     public PartyInviteViewer() {
         super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.discord_party_invite_viewer");
 
         addParameter("ttl", new FeatureParameter<Integer>("ttl", "Request Duration", "The duration after which the requests will be dismissed automatically. The value is in seconds.", 15, "integer"));
-        widget = new OverlayWidget(
+    }
+
+    @Override
+    public OverlayWidget instantiateWidget() {
+        return new OverlayWidget(
                 partyInviteViewer = new WidgetPartyInviteViewer(),
                 OverlayType.OVER_ANY,
                 () -> new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight)
         );
-        OverlayManager.getInstance().addOverlay(widget);
     }
 
     @Override
@@ -85,6 +90,7 @@ public class PartyInviteViewer extends SimpleFeature {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserJoinRequest(DiscordUserInvitedEvent event) {
-        partyInviteViewer.addInvite(event);
+        if (SkyblockStatus.isOnHypixel())
+            partyInviteViewer.addInvite(event);
     }
 }
