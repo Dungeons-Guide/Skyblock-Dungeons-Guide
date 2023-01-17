@@ -110,7 +110,7 @@ public class EventHandlerRegistry {
         registerActualListeners();
     }
 
-    private static Map<Event, IEventListener> registeredHandlers = new HashMap<>();
+    private static Map<Class<? extends Event>, IEventListener> registeredHandlers = new HashMap<>();
 
     public static void registerActualListeners() {
         for (Class<? extends Event> aClass : targets.keySet()) {
@@ -134,7 +134,7 @@ public class EventHandlerRegistry {
                     }
                     profiler.endSection();
                 });
-                registeredHandlers.put(ev, registered);
+                registeredHandlers.put(aClass, registered);
             } catch (Exception e) {
                 throw new RuntimeException("An error occured while registering listener for "+aClass.getName(), e);
             }
@@ -142,8 +142,14 @@ public class EventHandlerRegistry {
     }
 
     public static void unregisterListeners() {
-        for (Map.Entry<Event, IEventListener> eventIEventListenerEntry : registeredHandlers.entrySet()) {
-            eventIEventListenerEntry.getKey().getListenerList().unregister(busID, eventIEventListenerEntry.getValue());
+        for (Map.Entry<Class<? extends Event>, IEventListener> eventIEventListenerEntry : registeredHandlers.entrySet()) {
+            try {
+                Event ev = eventIEventListenerEntry.getKey().getConstructor().newInstance();
+                ev.getListenerList().unregister(busID, eventIEventListenerEntry.getValue());
+            } catch (InstantiationException | NoSuchMethodException | InvocationTargetException |
+                     IllegalAccessException e) {
+                e.printStackTrace();
+            }
         }
         registeredHandlers.clear();
     }
