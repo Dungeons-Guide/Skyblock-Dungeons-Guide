@@ -54,7 +54,7 @@ public class PartyInviteViewer extends SimpleFeature {
     private WidgetPartyInviteViewer partyInviteViewer;
     private OverlayWidget widget;
     public PartyInviteViewer() {
-        super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.party_invite_viewer");
+        super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.discord_party_invite_viewer");
 
         addParameter("ttl", new FeatureParameter<Integer>("ttl", "Request Duration", "The duration after which the requests will be dismissed automatically. The value is in seconds.", 15, "integer"));
         widget = new OverlayWidget(

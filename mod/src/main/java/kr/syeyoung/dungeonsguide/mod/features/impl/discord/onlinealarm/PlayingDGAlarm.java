@@ -55,7 +55,7 @@ public class PlayingDGAlarm extends SimpleFeature {
     private OverlayWidget widget;
 
     public PlayingDGAlarm() {
-        super("Discord", "Friend Online Notification","Notifies you in bottom when your discord friend has launched a Minecraft with DG!\n\nRequires the Friend's Discord RPC to be enabled", "discord.playingalarm");
+        super("Discord", "Friend Online Notification","Notifies you in bottom when your discord friend has launched a Minecraft with DG!\n\nRequires the Friend's Discord RPC to be enabled", "discord.discord_playingalarm");
         widget = new OverlayWidget(
                 onlinePeopleViewer = new WidgetOnlinePeopleViewer(),
                 OverlayType.OVER_ANY,
@@ -81,10 +81,11 @@ public class PlayingDGAlarm extends SimpleFeature {
 
     public boolean isDisplayable(JDiscordRelation jDiscordRelation) {
         JDiscordRelation.DiscordRelationType relationshipType = jDiscordRelation.getRelationType();
-        if (relationshipType == JDiscordRelation.DiscordRelationType.Blocked) return false;
-        if (relationshipType == JDiscordRelation.DiscordRelationType.None) return false;
-        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
-        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
+//        if (relationshipType == JDiscordRelation.DiscordRelationType.Blocked) return false;
+//        if (relationshipType == JDiscordRelation.DiscordRelationType.None) return false;
+//        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
+//        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
+        if (relationshipType != JDiscordRelation.DiscordRelationType.Friend) return false;
 
         return "816298079732498473".equals(jDiscordRelation.getApplicationId());
     }

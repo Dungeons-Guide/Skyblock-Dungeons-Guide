@@ -305,7 +305,7 @@ public class FeatureRegistry {
             ETC_COLLECT_SCORE = register(new FeatureCollectScore());
             COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());
             COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
-            DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.richpresence", true) {
+            DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.discordrichpresence", true) {
                 {
                     addParameter("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
                 }
