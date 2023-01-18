@@ -128,24 +128,6 @@ public class FeatureMechanicBrowse extends GuiFeature {
         fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
     }
 
-    @DGEventHandler
-    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-//
-//        try {
-//            mGuiMechanicBrowser.handleMouseInput();
-//        } catch (IOException e) {
-//            e.printStackTrace();
-//        }
-    }
-
-
-    @DGEventHandler
-    public void onGuiPreRender(GuiScreenEvent.DrawScreenEvent.Pre rendered) {
-//
-//        int i = Mouse.getEventX();
-//        int j = Minecraft.getMinecraft().displayHeight - Mouse.getEventY();
-//        mGuiMechanicBrowser.drawScreen(i, j, rendered.renderPartialTicks);
-    }
 
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
