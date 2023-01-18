@@ -31,7 +31,7 @@ import java.util.List;
 public class Slot extends AnnotatedExportOnlyWidget {
     @Export(attributeName = "child")
     public final BindableAttribute<Widget> replacement = new BindableAttribute<>(Widget.class);
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> original = new BindableAttribute<>(Widget.class);
 
     @Override

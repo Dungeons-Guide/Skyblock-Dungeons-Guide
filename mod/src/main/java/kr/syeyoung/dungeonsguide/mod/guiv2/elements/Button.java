@@ -33,10 +33,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-@Passthrough(exportName = "$", bindName = "wgtNormal", type = Widget.class)
-@Passthrough(exportName = "$hovered", bindName = "wgtHover", type = Widget.class)
-@Passthrough(exportName = "$pressed", bindName = "wgtPressed", type = Widget.class)
-@Passthrough(exportName = "$disabled", bindName = "wgtDisabled", type = Widget.class)
+@Passthrough(exportName = "_", bindName = "wgtNormal", type = Widget.class)
+@Passthrough(exportName = "_hovered", bindName = "wgtHover", type = Widget.class)
+@Passthrough(exportName = "_pressed", bindName = "wgtPressed", type = Widget.class)
+@Passthrough(exportName = "_disabled", bindName = "wgtDisabled", type = Widget.class)
 public class Button extends AnnotatedWidget implements Renderer {
 
     @Bind(variableName = "refDisabled")

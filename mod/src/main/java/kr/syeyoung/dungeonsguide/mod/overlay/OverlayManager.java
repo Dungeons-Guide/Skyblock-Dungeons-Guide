@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -63,39 +64,53 @@ public class OverlayManager {
 
     private OverlayManager() {
         this.mc = Minecraft.getMinecraft();
-        view = new RootDom(root);
+        PopupMgr popupMgr = new PopupMgr();
+        popupMgr.child.setValue(root);
+        view = new RootDom(popupMgr);
         guiResize(null);
         view.setMounted(true);
     }
 
     @SubscribeEvent()
     public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
-        view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.getLayouter().layout(view, new ConstraintBox(
-                Minecraft.getMinecraft().displayWidth,
-                Minecraft.getMinecraft().displayWidth,
-                Minecraft.getMinecraft().displayHeight,
-                Minecraft.getMinecraft().displayHeight
+        try {
+            view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.getLayouter().layout(view, new ConstraintBox(
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayHeight,
+                    Minecraft.getMinecraft().displayHeight
         ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-            return;
-        view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
-        drawScreen(postRender.partialTicks);
+        try {
+            if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
+                return;
+            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
+            drawScreen(postRender.partialTicks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @SubscribeEvent
     public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
-        if (postRender.gui instanceof GuiChat)
-            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
-        else
-            view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
-        drawScreen(postRender.renderPartialTicks);
+        try {
+            if (postRender.gui instanceof GuiChat)
+                view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
+            else
+                view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
+            drawScreen(postRender.renderPartialTicks);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
 
@@ -103,6 +118,14 @@ public class OverlayManager {
         int i = Mouse.getEventX();
         int j = this.mc.displayHeight - Mouse.getEventY();
 
+        if (view.isRelayoutRequested()) {
+            view.getLayouter().layout(view, new ConstraintBox(
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayHeight,
+                    Minecraft.getMinecraft().displayHeight
+            ));
+        }
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GlStateManager.pushMatrix();
         GlStateManager.translate(0,0,50);

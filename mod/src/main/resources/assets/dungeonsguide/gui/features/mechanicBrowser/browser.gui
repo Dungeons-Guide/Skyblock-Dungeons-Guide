@@ -1,0 +1,55 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<scaler bind:scale="scale">
+    <border>
+        <line slot="left" dir="VERTICAL" thickness="1.0" color="#FF444444"/>
+        <line slot="top" dir="HORIZONTAL" thickness="1.0" color="#FF444444"/>
+        <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FF444444"/>
+        <line slot="right" dir="VERTICAL" thickness="1.0" color="#FF444444"/>
+        <bgcolor slot="content" backgroundColor="#FF262626">
+            <col crossAlign="STRETCH">
+                <padding left="1" top="1" bottom="1">
+                    <clip>
+                        <row>
+                            <Text text="Selected: " color="#FFAAAAAA"/>
+                            <size width="4" height="0"/>
+                            <Text bind:text="current" bind:color="color"/>
+                        </row>>
+                    </clip>
+                </padding>
+                <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FF444444"/>
+                <flexible>
+                    <ScrollablePanel direction="VERTICAL">
+                        <col crossAlign="STRETCH">
+                            <ColorButton on:click="cancel" hPadding="1"
+                                         backgroundColor="#FF555555"          textColor="#FFEEEEEE"
+                                         hoveredBackgroundColor="#FF636363"   hoveredTextColor="#FFEEEEEE"
+                                         disabledBackgroundColor="0"  disabledTextColor="0"
+                                         pressedBackgroundColor="#FF707070"   pressedTextColor="#FFEEEEEE"
+                                         text="§bCancel Current"
+                            />
+                            <col bind:_="children" crossAlign="START">
+                            </col>
+                        </col>
+                    </ScrollablePanel>
+                </flexible>
+            </col>
+        </bgcolor>
+    </border>
+</scaler>

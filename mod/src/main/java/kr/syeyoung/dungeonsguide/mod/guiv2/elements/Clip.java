@@ -62,7 +62,7 @@ public class Clip extends AnnotatedExportOnlyWidget implements Renderer {
         context.popClip();
     }
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
 
     @Override

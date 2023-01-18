@@ -42,7 +42,7 @@ public class ConstrainedBox extends AnnotatedExportOnlyWidget implements Layoute
     public final BindableAttribute<Double> maxHeight = new BindableAttribute<>(Double.class, Double.POSITIVE_INFINITY);
 
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
 

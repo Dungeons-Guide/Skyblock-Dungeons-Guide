@@ -31,7 +31,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.ResourceLocation;
 
-@Passthrough(exportName = "$", bindName = "$", type = Widget.class)
+@Passthrough(exportName = "_", bindName = "_", type = Widget.class)
 public class ScrollablePanel extends AnnotatedWidget {
     @Bind(variableName = "contentX")
     public final BindableAttribute<Double> contentX = new BindableAttribute<>(Double.class);
@@ -85,15 +85,15 @@ public class ScrollablePanel extends AnnotatedWidget {
         super(new ResourceLocation("dungeonsguide:gui/elements/scrollablePanel.gui"));
 
         contentSize.addOnUpdate((old, neu) -> {
-            contentWidth.setValue(neu.getWidth() - viewportWidth.getValue());
-            contentHeight.setValue(neu.getHeight() - viewportHeight.getValue());
+            contentWidth.setValue(Math.max(0, neu.getWidth() - viewportWidth.getValue()));
+            contentHeight.setValue(Math.max(0, neu.getHeight() - viewportHeight.getValue()));
         });
 
         viewportSize.addOnUpdate((old, neu) -> {
             viewportWidth.setValue(neu.getWidth());
             viewportHeight.setValue(neu.getHeight());
-            contentWidth.setValue(contentSize.getValue().getWidth() - viewportWidth.getValue());
-            contentHeight.setValue(contentSize.getValue().getHeight() - viewportHeight.getValue());
+            contentWidth.setValue(Math.max(0, contentSize.getValue().getWidth() - viewportWidth.getValue()));
+            contentHeight.setValue(Math.max(0, contentSize.getValue().getHeight() - viewportHeight.getValue()));
         });
 
         x.addOnUpdate((old, neu) -> {

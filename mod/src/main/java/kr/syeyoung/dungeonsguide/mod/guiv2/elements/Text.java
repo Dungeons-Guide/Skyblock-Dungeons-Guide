@@ -226,6 +226,102 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     // TODO: maybe turn into rich text?
     @Override
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
-        return this.text.getValue().split("\n").length * (fr.FONT_HEIGHT * lineSpacing.getValue());
+        List<WrappedTextData> wrappedTexts = new ArrayList<>();
+        FontRenderer fr = fontRenderer.getValue();
+        String text = this.text.getValue();
+
+        boolean hadToWrap = false;
+        int maxWidth2 = 0;
+
+
+        WordBreak wordBreak = this.wordBreak.getValue();
+
+        String[] splitByLine = text.split("\n");
+        for (String line : splitByLine) {
+            String[] splitByWord = line.split(" ");
+            double maxWidth = width;
+            int currentWidth = 0;
+            boolean added = false;
+            StringBuilder currentLine = new StringBuilder();
+            for (String s : splitByWord) {
+                int strWidth = fr.getStringWidth((added ? " " : "") +s);
+                if (strWidth + currentWidth <= maxWidth) {
+                    if (added) currentLine.append(" ");
+                    currentLine.append(s);
+                    added = true;
+                    currentWidth += strWidth;
+                } else {
+                    hadToWrap = true;
+                    // need to break word.
+                    if (wordBreak == WordBreak.WORD) {
+                        String current = s;
+                        if (fr.getStringWidth(s) > maxWidth) {
+                            // there is no hope. just continue.
+                            current = currentLine.toString()+ " "+s;
+                        } else {
+                            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
+                            current = s;
+                        }
+
+                        // binary search unsplittable.
+                        while (fr.getStringWidth(current) > maxWidth) {
+                            currentLine = new StringBuilder("");
+                            String remaining = "";
+                            currentWidth = 0;
+                            double remainingWidth = maxWidth - currentWidth;
+                            while(current.length() > 1 && remainingWidth > 4) {
+                                String query = current.substring(0, current.length()/2);
+                                int len = fr.getStringWidth(query);
+                                if (len <= remainingWidth) {
+                                    currentLine.append(query);
+                                    remainingWidth -= len;
+                                    current = current.substring(current.length() / 2);
+                                } else {
+                                    remaining = current.substring(current.length() / 2) + remaining;
+                                    current = query;
+                                }
+                            }
+                            remaining = current + remaining;
+
+                            wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
+
+                            current = remaining;
+                        }
+                        currentLine = new StringBuilder(current);
+                        currentWidth = fr.getStringWidth(current);
+                    } else if (wordBreak == WordBreak.NEVER) {
+                        currentLine.append(" ").append(s);
+                        currentWidth += strWidth;
+                        break;
+                    } else {
+                        // binary search correct length-
+                        String current = " "+s;
+                        double remainingWidth = maxWidth - currentWidth;
+                        String remaining = "";
+                        while(current.length() > 1 && remainingWidth > 4) {
+                            String query = current.substring(0, current.length()/2);
+                            int len = fr.getStringWidth(query);
+                            if (len <= remainingWidth) {
+                                currentLine.append(query);
+                                remainingWidth -= len;
+                                current = current.substring(current.length() / 2);
+                            } else {
+                                remaining = current.substring(current.length() / 2) + remaining;
+                                current = query;
+                            }
+                        }
+                        remaining = current + remaining;
+
+                        wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
+                        currentLine = new StringBuilder(remaining);
+                        currentWidth = fr.getStringWidth(remaining);
+                    }
+                }
+            }
+            if (currentWidth > maxWidth2) maxWidth2 = currentWidth;
+            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
+        }
+
+        return (fr.FONT_HEIGHT * lineSpacing.getValue()) * wrappedTexts.size();
     }
 }

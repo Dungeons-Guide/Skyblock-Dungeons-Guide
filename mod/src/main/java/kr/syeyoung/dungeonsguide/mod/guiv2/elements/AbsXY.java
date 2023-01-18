@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class AbsXY extends AnnotatedExportOnlyWidget implements Layouter {
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
     @Export(attributeName = "x")

@@ -37,7 +37,7 @@ import java.util.Optional;
 // yes it's that flexible from flutter
 public class Flexible extends AnnotatedExportOnlyWidget implements Layouter {
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
 
     @Export(attributeName = "flex")

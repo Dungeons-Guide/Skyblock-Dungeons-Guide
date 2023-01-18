@@ -46,6 +46,6 @@ public class TestView extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "buttonClick")
     public void onClick() {
-        PopupMgr.getPopupMgr(getDomElement()).openPopup(new TestPopup());
+        PopupMgr.getPopupMgr(getDomElement()).openPopup(new TestPopup(), null);
     }
 }

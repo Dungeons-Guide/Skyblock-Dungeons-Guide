@@ -41,6 +41,8 @@ public class DomElementRegistry {
     }
 
     public static <T extends Widget, R extends Widget & ImportingWidget> ParsedWidgetConverter<T, R> obtainConverter(String name) {
+        if (!converters.containsKey(name))
+            System.out.println("Try to get nonexistant widget "+name);
         return converters.get(name);
     }
 

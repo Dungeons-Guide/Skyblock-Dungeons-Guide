@@ -30,8 +30,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Passthrough;
 import net.minecraft.util.ResourceLocation;
 
-@Passthrough(exportName = "$track", bindName = "track", type = Widget.class)
-@Passthrough(exportName = "$thumb", bindName = "thumb", type = Widget.class)
+@Passthrough(exportName = "_track", bindName = "track", type = Widget.class)
+@Passthrough(exportName = "_thumb", bindName = "thumb", type = Widget.class)
 public class Scrollbar extends AnnotatedWidget {
     // to set location and stuff
     @Bind(variableName = "x")
@@ -148,7 +148,6 @@ public class Scrollbar extends AnnotatedWidget {
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {
         moving = false;
-        System.out.println(getDomElement().isFocused());
     }
 
     @Override

@@ -46,6 +46,6 @@ public final class StringConversions {
         } else if (clazz== Boolean.class) {
             return (T) Boolean.valueOf(val);
         }
-        throw new UnsupportedOperationException("cant convert to "+clazz.getName());
+        throw new UnsupportedOperationException("cant convert to "+clazz.getName()+": "+val);
     }
 }

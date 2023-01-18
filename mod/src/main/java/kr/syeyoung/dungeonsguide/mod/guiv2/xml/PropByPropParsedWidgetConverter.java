@@ -30,10 +30,7 @@ import java.lang.invoke.MethodHandle;
 import java.lang.invoke.MethodHandles;
 import java.lang.invoke.MethodType;
 import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extends Widget & ImportingWidget> implements ParsedWidgetConverter<W, R> {
@@ -46,10 +43,13 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
     public W convert(R rootWidget, ParserElement element) {
         W partial = instantiateWidget();
 
+        Set<String> boundSlots = new HashSet<>();
         for (String attribute : element.getAttributes()) {
             if (attribute.startsWith("bind:")) {
                 String name = attribute.substring(5);
                 String variable = element.getAttributeValue(attribute);
+                if (name.startsWith("_"))
+                    boundSlots.add(name);
 
                 BindableAttribute exported = getExportedAttribute(partial, name);
                 if (exported == null) throw new IllegalStateException("No exported variable found named "+name+"!");
@@ -107,7 +107,8 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
         }
 
         for (Map.Entry<String, List<ParserElement>> stringListEntry : children.entrySet()) {
-            BindableAttribute attribute = getExportedAttribute(partial, "$"+stringListEntry.getKey());
+            if (boundSlots.contains("_"+stringListEntry.getKey())) continue;
+            BindableAttribute attribute = getExportedAttribute(partial, "_"+stringListEntry.getKey());
             if (attribute == null) {
                 // ???
             } else {

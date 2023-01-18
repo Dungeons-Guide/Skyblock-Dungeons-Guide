@@ -40,7 +40,7 @@ public class SelectiveContainer extends AnnotatedExportOnlyWidget {
             if (getDomElement().getChildren().size() > 0)
                 getDomElement().removeElement(getDomElement().getChildren().get(0));
             if (getDomElement().getParent() != null) {
-                Widget widget = widgetMap.get("$"+visibleChild.getValue()).getValue();
+                Widget widget = widgetMap.get("_"+visibleChild.getValue()).getValue();
                 getDomElement().addElement(widget.createDomElement(getDomElement()));
             }
         });
@@ -48,13 +48,13 @@ public class SelectiveContainer extends AnnotatedExportOnlyWidget {
 
     @Override
     public List<Widget> build(DomElement buildContext) {
-        return Collections.singletonList(widgetMap.get("$"+visibleChild.getValue()).getValue());
+        return Collections.singletonList(widgetMap.get("_"+visibleChild.getValue()).getValue());
     }
 
     @Override
     public <T> BindableAttribute<T> getExportedAttribute(String attributeName) {
         BindableAttribute<T> bindableAttribute =  super.getExportedAttribute(attributeName);
-        if (bindableAttribute == null && attributeName.startsWith("$")) {
+        if (bindableAttribute == null && attributeName.startsWith("_")) {
             BindableAttribute attribute = new BindableAttribute(Widget.class);
             widgetMap.put(attributeName, attribute);
             return attribute;

@@ -37,7 +37,7 @@ public class Align extends AnnotatedExportOnlyWidget implements Layouter {
     @Export(attributeName = "vAlign")
     public final BindableAttribute<Alignment> vAlign = new BindableAttribute<>(Alignment.class, Alignment.CENTER);
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
     public static enum Alignment {
         START, CENTER, END

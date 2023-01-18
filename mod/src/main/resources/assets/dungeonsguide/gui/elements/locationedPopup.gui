@@ -15,20 +15,6 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-
-<col crossAlign="START">
-    <size height="11">
-        <ColorButton on:click="toggle"
-                         backgroundColor="#FF444444"          textColor="#FFFFFFFF"
-                         hoveredBackgroundColor="#FF505050"   hoveredTextColor="#FFFFFFFF"
-                         disabledBackgroundColor="0"  disabledTextColor="0"
-                         pressedBackgroundColor="#FF555555"   pressedTextColor="#FFFFFFFF"
-                         bind:text="categoryName"
-        />
-    </size>
-    <SelectiveContainer bind:visible="visible">
-        <size width="0" height="0" slot="collapsed"></size>
-        <col bind:_="children" crossAlign="START" slot="open">
-        </col>
-    </SelectiveContainer>
-</col>
+    <absXY bind:x="x" bind:y="y">
+        <slot bind:child="child" bind:ref="ref"/>
+    </absXY>

@@ -38,15 +38,15 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class Border extends AnnotatedExportOnlyWidget implements Layouter {
-    @Export(attributeName = "$left")
+    @Export(attributeName = "_left")
     public final BindableAttribute<Widget> left = new BindableAttribute<>(Widget.class);
-    @Export(attributeName = "$right")
+    @Export(attributeName = "_right")
     public final BindableAttribute<Widget> right = new BindableAttribute<>(Widget.class);
-    @Export(attributeName = "$top")
+    @Export(attributeName = "_top")
     public final BindableAttribute<Widget> top = new BindableAttribute<>(Widget.class);
-    @Export(attributeName = "$bottom")
+    @Export(attributeName = "_bottom")
     public final BindableAttribute<Widget> bottom = new BindableAttribute<>(Widget.class);
-    @Export(attributeName = "$content")
+    @Export(attributeName = "_content")
     public final BindableAttribute<Widget> content = new BindableAttribute<>(Widget.class);
 
     @Override

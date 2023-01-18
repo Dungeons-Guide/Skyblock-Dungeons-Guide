@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class AspectRatioFitter extends AnnotatedExportOnlyWidget implements Layouter {
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
     @Export(attributeName = "width")
     public final BindableAttribute<Integer> width = new BindableAttribute<>(Integer.class, 1);

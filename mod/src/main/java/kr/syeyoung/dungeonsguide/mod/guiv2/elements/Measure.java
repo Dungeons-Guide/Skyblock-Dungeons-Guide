@@ -56,7 +56,7 @@ public class Measure extends AnnotatedExportOnlyWidget implements Layouter {
         return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width);
     }
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
 
     @Export(attributeName = "size")

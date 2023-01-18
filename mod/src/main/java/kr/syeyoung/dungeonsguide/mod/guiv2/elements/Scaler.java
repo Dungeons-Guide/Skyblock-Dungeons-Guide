@@ -39,7 +39,7 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
     public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
 
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
 

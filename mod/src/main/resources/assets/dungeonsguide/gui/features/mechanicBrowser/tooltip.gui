@@ -16,19 +16,19 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<col crossAlign="START">
-    <size height="11">
-        <ColorButton on:click="toggle"
-                         backgroundColor="#FF444444"          textColor="#FFFFFFFF"
-                         hoveredBackgroundColor="#FF505050"   hoveredTextColor="#FFFFFFFF"
-                         disabledBackgroundColor="0"  disabledTextColor="0"
-                         pressedBackgroundColor="#FF555555"   pressedTextColor="#FFFFFFFF"
-                         bind:text="categoryName"
-        />
+<UnconstrainedBox>
+    <size width="120">
+        <scaler bind:scale="scale">
+            <border>
+                <line slot="left" dir="VERTICAL" thickness="1.0" color="#FF444444"/>
+                <line slot="top" dir="HORIZONTAL" thickness="1.0" color="#FF444444"/>
+                <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FF444444"/>
+                <line slot="right" dir="VERTICAL" thickness="1.0" color="#FF444444"/>
+                <bgcolor slot="content" backgroundColor="#FF262626">
+                    <col bind:_="children">
+                    </col>
+                </bgcolor>
+            </border>
+        </scaler>
     </size>
-    <SelectiveContainer bind:visible="visible">
-        <size width="0" height="0" slot="collapsed"></size>
-        <col bind:_="children" crossAlign="START" slot="open">
-        </col>
-    </SelectiveContainer>
-</col>
+</UnconstrainedBox>

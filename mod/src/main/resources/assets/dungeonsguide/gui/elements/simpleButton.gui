@@ -15,26 +15,34 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-<wrapper disabled="false">
+<wrapper disabled="false" crossAlign="CENTER" textAlign="CENTER" hPadding="0">
     <AbstractButton bind:click="click" bind:disabled="disabled">
         <bgcolor bind:backgroundColor="backgroundColor">
-            <col mainAlign="CENTER">
-                <Text bind:text="text" bind:color="textColor" align="CENTER"/>
+            <col mainAlign="CENTER" bind:crossAlign="crossAlign">
+                <padding bind:left="hPadding" bind:right="hPadding">
+                    <Text bind:text="text" bind:color="textColor" bind:align="textAlign"/>
+                </padding>
             </col>
         </bgcolor>
         <bgcolor slot="hovered" bind:backgroundColor="hoveredBackgroundColor">
-            <col mainAlign="CENTER">
-                <Text bind:text="text" bind:color="hoveredTextColor" align="CENTER"/>
+            <col mainAlign="CENTER" bind:crossAlign="crossAlign">
+                <padding bind:left="hPadding" bind:right="hPadding">
+                    <Text bind:text="text" bind:color="hoveredTextColor" bind:align="textAlign"/>
+                </padding>
             </col>
         </bgcolor>
         <bgcolor slot="disabled" bind:backgroundColor="disabledBackgroundColor">
-            <col mainAlign="CENTER">
-                <Text bind:text="text" bind:color="disabledTextColor" align="CENTER"/>
+            <col mainAlign="CENTER" bind:crossAlign="crossAlign">
+                <padding bind:left="hPadding" bind:right="hPadding">
+                    <Text bind:text="text" bind:color="disabledTextColor" bind:align="textAlign"/>
+                </padding>
             </col>
         </bgcolor>
         <bgcolor slot="pressed" bind:backgroundColor="pressedBackgroundColor">
-            <col mainAlign="CENTER">
-                <Text bind:text="text" bind:color="pressedTextColor" align="CENTER"/>
+            <col mainAlign="CENTER" bind:crossAlign="crossAlign">
+                <padding bind:left="hPadding" bind:right="hPadding">
+                    <Text bind:text="text" bind:color="pressedTextColor" bind:align="textAlign"/>
+                </padding>
             </col>
         </bgcolor>
     </AbstractButton>

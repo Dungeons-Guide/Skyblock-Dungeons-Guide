@@ -50,7 +50,7 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
     @Export(attributeName = "mainAlign")
     public final BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<WidgetList> children = new BindableAttribute<>(WidgetList.class);
 
 

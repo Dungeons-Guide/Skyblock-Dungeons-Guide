@@ -33,6 +33,6 @@ public class TestPopup extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "close")
     public void onClick() {
-        PopupMgr.getPopupMgr(getDomElement()).closePopup();
+        PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
     }
 }

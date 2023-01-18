@@ -51,7 +51,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
     @Export(attributeName = "mainAlign")
     public final BindableAttribute<MainAxisAlignment> vAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<WidgetList> widgets = new BindableAttribute<>(WidgetList.class);
 
     @Export(attributeName = "api")

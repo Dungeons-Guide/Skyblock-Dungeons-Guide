@@ -25,7 +25,7 @@
                         <absXY bind:x="contentX" bind:y="contentY">
                             <UnconstrainedBox bind:direction="direction">
                                 <measure bind:size="contentSize">
-                                    <slot bind:child="$"/>
+                                    <slot bind:child="_"/>
                                 </measure>
                             </UnconstrainedBox>
                         </absXY>

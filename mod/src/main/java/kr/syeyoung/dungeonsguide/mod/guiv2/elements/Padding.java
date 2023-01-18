@@ -39,7 +39,7 @@ public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
     public final BindableAttribute<Double> top = new BindableAttribute<>(Double.class, 0.0);
     @Export(attributeName = "bottom")
     public final BindableAttribute<Double> bottom = new BindableAttribute<>(Double.class, 0.0);
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
     public Padding() {

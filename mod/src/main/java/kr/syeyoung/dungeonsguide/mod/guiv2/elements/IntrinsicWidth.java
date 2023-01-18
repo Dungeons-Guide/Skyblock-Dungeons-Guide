@@ -32,7 +32,7 @@ import java.util.Collections;
 import java.util.List;
 
 public class IntrinsicWidth extends AnnotatedExportOnlyWidget implements Layouter {
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
 
     @Override

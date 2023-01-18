@@ -34,7 +34,7 @@ import java.util.List;
 public class UnconstrainedBox extends AnnotatedExportOnlyWidget implements Layouter {
 
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> widget = new BindableAttribute<>(Widget.class);
     @Export(attributeName = "direction")
     public final BindableAttribute<ScrollablePanel.Direction> direction = new BindableAttribute<>(ScrollablePanel.Direction.class, ScrollablePanel.Direction.BOTH);

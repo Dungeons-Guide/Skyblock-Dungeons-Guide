@@ -106,7 +106,12 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
 
         GlStateManager.color(r,g,b,a);
         GlStateManager.disableTexture2D();
-        GL11.glLineWidth(thickness.getValue());
+        GL11.glLineWidth((float) (thickness.getValue() *
+                    Double.max(
+                            buildContext.getAbsBounds().getHeight() / buildContext.getSize().getHeight(),
+                            buildContext.getAbsBounds().getWidth()/buildContext.getSize().getWidth()
+                    ))
+        );
 
         Short pattern = this.pattern.getValue();
         if (pattern != null) {

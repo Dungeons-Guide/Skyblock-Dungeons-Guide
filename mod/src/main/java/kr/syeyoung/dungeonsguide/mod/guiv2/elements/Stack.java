@@ -103,7 +103,7 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
     }
 
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<WidgetList> widgets = new BindableAttribute<>(WidgetList.class);
     @Override
     public List<Widget> build(DomElement buildContext) {

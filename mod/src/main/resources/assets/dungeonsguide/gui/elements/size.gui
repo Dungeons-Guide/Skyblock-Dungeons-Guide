@@ -18,6 +18,6 @@
 
 <wrapper width="+Infinity" height="+Infinity">
     <ConstrainedBox bind:minWidth="width" bind:maxWidth="width" bind:minHeight="height" bind:maxHeight="height">
-        <slot bind:child="$"/>
+        <slot bind:child="_"/>
     </ConstrainedBox>
 </wrapper>

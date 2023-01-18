@@ -25,6 +25,10 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.HashMap;
+import java.util.Map;
+import java.util.function.Consumer;
+
 public class PopupMgr extends AnnotatedWidget {
     public PopupMgr() {
         super(new ResourceLocation("dungeonsguide:gui/elements/popupmgr.gui"));
@@ -35,8 +39,8 @@ public class PopupMgr extends AnnotatedWidget {
     public final BindableAttribute<DomElement> domElementBindableAttribute = new BindableAttribute<>(DomElement.class);
 
 
-    @Export(attributeName = "$")
-    @Bind(variableName = "$")
+    @Export(attributeName = "_")
+    @Bind(variableName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
 
@@ -56,13 +60,30 @@ public class PopupMgr extends AnnotatedWidget {
         return buildContext.getContext().getValue(PopupMgr.class, "popup");
     }
 
-    public void openPopup(Widget element) {
-        domElementBindableAttribute.getValue().addElementFirst(element.createDomElement(getDomElement()));
+
+    private Map<DomElement, Consumer<Object>> callbacks = new HashMap<>();
+    public void openPopup(Widget element, Consumer<Object> callback) {
+        DomElement domElement = element.createDomElement(getDomElement());
+        domElementBindableAttribute.getValue().addElementFirst(domElement);
+        callbacks.put(domElement, callback);
     }
 
-    public void closePopup() {
+    public void closePopup(Object value) {
+        DomElement target = domElementBindableAttribute.getValue().getChildren().get(0);
         domElementBindableAttribute.getValue().removeElement(
-                domElementBindableAttribute.getValue().getChildren().get(0)
+                target
         );
+
+        Consumer<Object> callback = callbacks.remove(target);
+        if (callback != null)
+            callback.accept(value);
+    }
+
+    public void closePopup(Widget widget, Object value) {
+        domElementBindableAttribute.getValue().removeElement(widget.getDomElement());
+
+        Consumer<Object> callback = callbacks.get(widget.getDomElement());
+        if (callback != null)
+            callback.accept(value);
     }
 }

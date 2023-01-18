@@ -36,7 +36,7 @@ public class Background extends AnnotatedExportOnlyWidget {
     @Export(attributeName = "backgroundColor")
     public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFFFFFFFF);
 
-    @Export(attributeName = "$")
+    @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
     @Override
