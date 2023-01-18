@@ -51,7 +51,7 @@ dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation 'org.json:json:20220924'
-    implementation files("lib/DiscordIPC-1.0.jar")
+    implementation 'com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b'
 
     implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
@@ -71,7 +71,7 @@ dependencies {
 
     if (testWithNeu) {
         runtimeOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22'
-        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:e603cf2:all')
+        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:1f4d692:all')
     }
     def files= fileTree("../runtime/mods2").filter { it.isFile() }
     add("devenvMod", files)
@@ -137,7 +137,7 @@ tasks.shadowJar {
         include(dependency("org.json:json:20220924"))
         include(dependency("com.twelvemonkeys..*:.*"))
         include(dependency("net.java.dev.jna:jna:5.12.1"))
-        include(dependency(files("lib/DiscordIPC-1.0.jar")))
+        include(dependency(" com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b"))
     }
 }
 
