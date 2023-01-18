@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.v2;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -27,9 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;

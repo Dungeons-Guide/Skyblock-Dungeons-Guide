@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.v2;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;

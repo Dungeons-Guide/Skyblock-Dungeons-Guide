@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.v2;
+package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
