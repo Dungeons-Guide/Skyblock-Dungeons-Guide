@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.discord;
 
-import com.jagrosh.discordipc.entities.User;
 import lombok.Data;
 import org.json.JSONObject;
 

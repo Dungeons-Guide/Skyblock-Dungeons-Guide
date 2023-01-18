@@ -137,7 +137,7 @@ tasks.shadowJar {
         include(dependency("org.json:json:20220924"))
         include(dependency("com.twelvemonkeys..*:.*"))
         include(dependency("net.java.dev.jna:jna:5.12.1"))
-        include(dependency(" com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b"))
+        include(dependency("com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b"))
     }
 }
 

@@ -18,7 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import com.jagrosh.discordipc.entities.User;
+import kr.syeyoung.dungeonsguide.mod.discord.User;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
