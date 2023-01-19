@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,26 +16,23 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions.http;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.DGResponse;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.function.Consumer;
 
-public class AuthServerException extends AuthenticationUnavailableException {
-    private DGResponse response;
-
-    public AuthServerException(DGResponse response) {
-        super(response.getErrorMessage());
-        this.response = response;
+public class TextSpan {
+    private TextStyle textStyle;
+    private String text;
+    private List<TextSpan> children = new ArrayList<>();
+    public TextSpan(TextStyle textStyle, String text) {
+        this.textStyle = textStyle;
+        this.text = text;
     }
 
-    public String getQRCode() {
-        return response.getQrCode() == null ? null : response.getQrCode();
-    }
-
-
-    @Override
-    public String toString() {
-        return super.toString()+"\n Server ResponseCode: "+response.getResponseCode()+"\n"+response.toString();
+    public void flattenTextSpan(Consumer<FlatTextSpan> appender) {
+        appender.accept(new FlatTextSpan(textStyle, text.toCharArray()));
+        children.forEach(a -> a.flattenTextSpan(appender));
     }
 }

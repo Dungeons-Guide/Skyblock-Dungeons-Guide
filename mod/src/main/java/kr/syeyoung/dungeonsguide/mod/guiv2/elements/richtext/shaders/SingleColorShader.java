@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,26 +16,25 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions.http;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.DGResponse;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
+import net.minecraft.client.renderer.GlStateManager;
 
-public class AuthServerException extends AuthenticationUnavailableException {
-    private DGResponse response;
+public class SingleColorShader implements Shader{
+    private float r, g, b, a;
 
-    public AuthServerException(DGResponse response) {
-        super(response.getErrorMessage());
-        this.response = response;
+    // argb
+    public SingleColorShader(int color) {
+        r = ((color >> 16) & 0xFF) / 255.0f;
+        g = ((color >> 8) & 0xFF) / 255.0f;
+        b = ((color) & 0xFF) / 255.0f;
+        r = ((color >> 24) & 0xFF) / 255.0f;
     }
-
-    public String getQRCode() {
-        return response.getQrCode() == null ? null : response.getQrCode();
+    @Override
+    public void useShader() {
+        GlStateManager.color(r,g,b,a);
     }
-
 
     @Override
-    public String toString() {
-        return super.toString()+"\n Server ResponseCode: "+response.getResponseCode()+"\n"+response.toString();
-    }
+    public void freeShader() {}
 }

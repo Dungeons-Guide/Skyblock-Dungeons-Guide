@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
@@ -408,6 +409,7 @@ public class DungeonsGuide implements DGInterface {
     @Override
     public void onResourceReload(IResourceManager a) {
         GLCursors.setupCursors();
+        DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
     }
 
     private boolean showedStartUpGuide;
