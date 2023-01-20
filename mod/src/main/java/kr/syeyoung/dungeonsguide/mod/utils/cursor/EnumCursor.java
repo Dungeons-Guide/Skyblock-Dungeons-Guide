@@ -25,23 +25,48 @@ import lombok.Getter;
 @AllArgsConstructor
 @Getter
 public enum EnumCursor {
+    /** there are these hidden cursors for macos
+     * [NSCursor _windowResizeEastCursor]
+     * [NSCursor _windowResizeWestCursor]
+     * [NSCursor _windowResizeEastWestCursor]
+     * [NSCursor _windowResizeNorthCursor]
+     * [NSCursor _windowResizeSouthCursor]
+     * [NSCursor _windowResizeNorthSouthCursor]
+     * [NSCursor _windowResizeNorthEastCursor]
+     * [NSCursor _windowResizeNorthWestCursor]
+     * [NSCursor _windowResizeSouthEastCursor]
+     * [NSCursor _windowResizeSouthWestCursor]
+     * [NSCursor _windowResizeNorthEastSouthWestCursor]
+     * [NSCursor _windowResizeNorthWestSouthEastCursor]
+     * https://stackoverflow.com/questions/10733228/native-osx-lion-resize-cursor-for-custom-nswindow-or-nsview
+     */
     DEFAULT(32512,68,"arrowCursor","arrowCursor.cur"),
     POINTING_HAND(32649,60,"pointingHandCursor", "pointingHandCursor.cur"),
     OPEN_HAND(32646,58,"openHandCursor","openHandCursor.cur"),
     CLOSED_HAND(32646,52,"closedHandCursor","closedHandCursor.cur"),
     BEAM_CURSOR(32513, 152, "IBeamCursor", "IBeamCursor.cur"),
-    RESIZE_LEFT(32644, 70,"resizeLeftCursor", "resizeLeftCursor.cur"),
-    RESIZE_RIGHT(32644, 96,"resizeRightCursor", "resizeRightCursor.cur"),
-    RESIZE_LEFT_RIGHT(32644, 108, "resizeLeftRightCursor", "resizeLeftRightCursor.cur"),
-    RESIZE_UP(32645,138,"resizeUpCursor", "resizeUpCursor.cur"),
-    RESIZE_DOWN(32645,16,"resizeDownCursor", "resizeDownCursor.cur"),
-    RESIZE_UP_DOWN(32645,116,"resizeUpDownCursor", "resizeUpDownCursor.cur"),
-    RESIZE_TL(32642, 134, null, "resizeNW.cur"),
-    RESIZE_DR(32642, 14, null, "resizeSE.cur"),
-    RESIZE_TLDR(32642, 14, null, "resizeNWSE.cur"),
-    RESIZE_TR(32643, 136, null, "resizeNE.cur"),
-    RESIZE_DL(32643, 12, null, "resizeSW.cur"),
-    RESIZE_TRDL(32643, 12, null, "resizeNESW.cur"),
+
+    MOVE_BAR_LEFT(32644, 70,"resizeLeftCursor", "resizeLeftCursor.cur"),
+    MOVE_BAR_RIGHT(32644, 96,"resizeRightCursor", "resizeRightCursor.cur"),
+    MOVE_BAR_LEFT_RIGHT(32644, 108, "resizeLeftRightCursor", "resizeLeftRightCursor.cur"),
+    MOVE_BAR_UP(32645,138,"resizeUpCursor", "resizeUpCursor.cur"),
+    MOVE_BAR_DOWN(32645,16,"resizeDownCursor", "resizeDownCursor.cur"),
+    MOVE_BAR_UP_DOWN(32645,116,"resizeUpDownCursor", "resizeUpDownCursor.cur"),
+
+    RESIZE_LEFT(32644, 70,"_windowResizeWestCursor", "resizeLeftCursor.cur"),
+    RESIZE_RIGHT(32644, 96,"_windowResizeEastCursor", "resizeRightCursor.cur"),
+    RESIZE_LEFT_RIGHT(32644, 108, "_windowResizeEastWestCursor", "resizeLeftRightCursor.cur"),
+    RESIZE_UP(32645,138,"_windowResizeNorthCursor", "resizeUpCursor.cur"),
+    RESIZE_DOWN(32645,16,"_windowResizeSouthCursor", "resizeDownCursor.cur"),
+    RESIZE_UP_DOWN(32645,116,"_windowResizeNorthSouthCursor", "resizeUpDownCursor.cur"),
+
+
+    RESIZE_TL(32642, 134, "_windowResizeNorthWestCursor", "resizeNW.cur"),
+    RESIZE_DR(32642, 14, "_windowResizeSouthEastCursor", "resizeSE.cur"),
+    RESIZE_TLDR(32642, 14, "_windowResizeNorthWestSouthEastCursor", "resizeNWSE.cur"),
+    RESIZE_TR(32643, 136, "_windowResizeNorthEastCursor", "resizeNE.cur"),
+    RESIZE_DL(32643, 12, "_windowResizeSouthWestCursor", "resizeSW.cur"),
+    RESIZE_TRDL(32643, 12, "_windowResizeNorthEastSouthWestCursor", "resizeNESW.cur"),
     CROSS(32515, 34,"crosshairCursor", "crosshairCursor.cur"),
     NOT_ALLOWED(32648, -1,"operationNotAllowedCursor", "operationNotAllowedCursor.cur"),
     TEST(-1, -1, null, "testnonexistant.cur");

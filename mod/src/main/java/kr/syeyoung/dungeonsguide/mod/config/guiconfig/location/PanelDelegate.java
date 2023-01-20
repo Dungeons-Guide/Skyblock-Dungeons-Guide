@@ -380,23 +380,23 @@ public class PanelDelegate extends MPanel {
             setCursor(EnumCursor.CLOSED_HAND);
         } else if (selectedPart >= 0) {
             if (internallyThinking.width < 0 && internallyThinking.height < 0) {
-                setCursor(EnumCursor.RESIZE_TL);
+                setCursor(EnumCursor.RESIZE_TLDR);
             } else if (internallyThinking.width < 0 && internallyThinking.height >= 0) {
-                setCursor(EnumCursor.RESIZE_DL);
+                setCursor(EnumCursor.RESIZE_TRDL);
             } else if (internallyThinking.width >= 0 && internallyThinking.height >= 0) {
-                setCursor(EnumCursor.RESIZE_DR);
+                setCursor(EnumCursor.RESIZE_TLDR);
             } else if (internallyThinking.width >= 0 && internallyThinking.height < 0) {
-                setCursor(EnumCursor.RESIZE_TR);
+                setCursor(EnumCursor.RESIZE_TRDL);
             }
         } else if (lastAbsClip.contains(absMouseX, absMouseY)) {
             if (relMouseX < 4 && relMouseY < 4) {
-                setCursor(EnumCursor.RESIZE_TL);
+                setCursor(EnumCursor.RESIZE_TLDR);
             } else if (relMouseX < 4 && relMouseY > getBounds().height - 4) {
-                setCursor(EnumCursor.RESIZE_DL);
+                setCursor(EnumCursor.RESIZE_TRDL);
             } else if (relMouseX > getBounds().width - 4 && relMouseY > getBounds().height - 4) {
-                setCursor(EnumCursor.RESIZE_DR);
+                setCursor(EnumCursor.RESIZE_TLDR);
             } else if (relMouseX > getBounds().width - 4 && relMouseY < 4) {
-                setCursor(EnumCursor.RESIZE_TR);
+                setCursor(EnumCursor.RESIZE_TRDL);
             } else {
                 setCursor(EnumCursor.OPEN_HAND);
             }
