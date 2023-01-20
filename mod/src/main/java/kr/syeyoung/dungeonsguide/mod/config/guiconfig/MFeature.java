@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig;
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
-import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
@@ -85,7 +85,7 @@ public class MFeature extends MPanel {
             button.setSize(new Dimension(50, 15));
             add(button);
         }
-        if (abstractFeature instanceof GuiFeature) {
+        if (abstractFeature instanceof RawRenderingGuiFeature) {
             MButton button = new MButton();
             button.setText("Relocate");
             button.setOnActionPerformed(new Runnable() {

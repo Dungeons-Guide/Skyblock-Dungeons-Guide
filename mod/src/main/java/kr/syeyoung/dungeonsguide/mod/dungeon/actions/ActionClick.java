@@ -64,7 +64,6 @@ public class ActionClick extends AbstractAction {
         if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
                 (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
             clicked = true;
-            ChatTransmitter.sendDebugChat("ACTION FINISHED: CLICK");
         }
     }
     @Override

@@ -22,7 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -39,7 +39,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.Arrays;
 
-public class FeatureDebuggableMap extends GuiFeature  {
+public class FeatureDebuggableMap extends RawRenderingGuiFeature {
     public FeatureDebuggableMap() {
         super("Debug", "Display Debug Info included map", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.map", true, 128, 128);
         this.setEnabled(false);

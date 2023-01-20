@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import net.minecraft.block.material.MapColor;
@@ -62,7 +62,9 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.List;
 
-public class FeatureDungeonMap extends GuiFeature {
+//TODO: reduce gl drawcalls somehow
+
+public class FeatureDungeonMap extends RawRenderingGuiFeature {
     private AColor backgroudColor;
     private AColor playerColor;
     private boolean shouldCacheMap;

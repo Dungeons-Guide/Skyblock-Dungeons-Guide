@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig.location;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MGui;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import lombok.Getter;

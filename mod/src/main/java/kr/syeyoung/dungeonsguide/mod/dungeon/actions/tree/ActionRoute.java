@@ -50,17 +50,10 @@ public class ActionRoute {
         this.state = state;
         this.actionRouteProperties = actionRouteProperties;
 
-        System.out.println("Creating Action Route with mechanic:" + mechanic + " State:" + state);
         ActionChangeState actionChangeState = new ActionChangeState(mechanic, state);
         ActionTree tree= ActionTree.buildActionTree(actionChangeState, dungeonRoom);
         actions = ActionTreeUtil.linearifyActionTree(tree);
         actions.add(new ActionComplete());
-        ChatTransmitter.sendDebugChat("Created ActionRoute with " + actions.size() + " steps");
-        ChatTransmitter.sendDebugChat("========== STEPS ==========");
-        for (AbstractAction action : actions) {
-            ChatTransmitter.sendDebugChat(action.toString());
-        }
-        ChatTransmitter.sendDebugChat("=========== END ===========");
 
 
         current = 0;

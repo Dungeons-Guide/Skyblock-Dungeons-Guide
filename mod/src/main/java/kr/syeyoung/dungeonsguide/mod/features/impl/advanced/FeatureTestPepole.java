@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -61,7 +61,7 @@ import java.util.regex.Pattern;
 
 import static kr.syeyoung.dungeonsguide.mod.utils.TabListUtil.getString;
 
-public class FeatureTestPepole extends GuiFeature  {
+public class FeatureTestPepole extends RawRenderingGuiFeature {
 
     Logger logger = LogManager.getLogger("FeatureTestPepole");
     private Float scale;

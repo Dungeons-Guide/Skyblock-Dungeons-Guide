@@ -18,49 +18,28 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
-import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
-import kr.syeyoung.dungeonsguide.mod.config.types.GUIRectangle;
-import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
-import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
-public abstract class GuiFeature extends AbstractHUDFeature {
+public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
 
-    protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
+    protected RawRenderingGuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
     }
 

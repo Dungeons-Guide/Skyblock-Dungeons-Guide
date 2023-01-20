@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig.location;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIRectangle;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPopupMenu;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MTooltip;
