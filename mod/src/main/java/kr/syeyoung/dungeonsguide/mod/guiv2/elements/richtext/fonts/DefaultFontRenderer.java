@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.FlatTextSpan;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -127,7 +127,7 @@ public class DefaultFontRenderer implements FontRenderer {
     }
 
     @Override
-    public double getWidth(char text, TextStyle textStyle) {
+    public double getWidth(char text, ITextStyle textStyle) {
         double val;
         if (text == ' ') {
             val = 4;
@@ -147,7 +147,7 @@ public class DefaultFontRenderer implements FontRenderer {
     }
 
     @Override
-    public double getBaselineHeight(TextStyle textStyle) {
+    public double getBaselineHeight(ITextStyle textStyle) {
         return 7 * textStyle.getSize() / 8.0;
     }
 
@@ -161,29 +161,30 @@ public class DefaultFontRenderer implements FontRenderer {
         for (char c : lineElement.value) {
             x += renderChar(worldRenderer, x, y+1, c, lineElement.textStyle);
         }
-        if (!isShadow) lineElement.textStyle.getTextShader().freeShader();
         draw(worldRenderer);
+        if (!isShadow) lineElement.textStyle.getTextShader().freeShader();
 
         GlStateManager.disableTexture2D();
+        double baseline = getBaselineHeight(lineElement.textStyle);
         if (lineElement.textStyle.isStrikeThrough()) {
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
             if (!isShadow) lineElement.textStyle.getStrikeThroughShader().useShader();
-            worldRenderer.pos(startX, y + lineElement.textStyle.getSize()/2, 0);
-            worldRenderer.pos(x, y + lineElement.textStyle.getSize()/2, 0);
-            worldRenderer.pos(x, y + lineElement.textStyle.getSize()/2+1, 0);
-            worldRenderer.pos(startX, y + lineElement.textStyle.getSize()/2+1, 0);
-            if (!isShadow) lineElement.textStyle.getStrikeThroughShader().freeShader();
+            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(startX, y + baseline/2, 0).endVertex();
+            worldRenderer.pos(x, y + baseline/2, 0).endVertex();
+            worldRenderer.pos(x, y +baseline/2+1, 0).endVertex();
+            worldRenderer.pos(startX, y + baseline/2+1, 0).endVertex();
             draw(worldRenderer);
+            if (!isShadow) lineElement.textStyle.getStrikeThroughShader().freeShader();
         }
         if (lineElement.textStyle.isUnderline()) {
-            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
             if (!isShadow) lineElement.textStyle.getUnderlineShader().useShader();
-            worldRenderer.pos(startX, y + lineElement.textStyle.getSize(), 0);
-            worldRenderer.pos(x, y + lineElement.textStyle.getSize(), 0);
-            worldRenderer.pos(x, y + lineElement.textStyle.getSize()+1, 0);
-            worldRenderer.pos(startX, y + lineElement.textStyle.getSize()+1, 0);
-            if (!isShadow) lineElement.textStyle.getUnderlineShader().freeShader();
+            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(startX, y + baseline, 0).endVertex();
+            worldRenderer.pos(x, y + baseline, 0).endVertex();
+            worldRenderer.pos(x, y + baseline+1, 0).endVertex();
+            worldRenderer.pos(startX, y + baseline+1, 0).endVertex();
             draw(worldRenderer);
+            if (!isShadow) lineElement.textStyle.getUnderlineShader().freeShader();
         }
 
         if (isShadow) lineElement.textStyle.getShadowShader().freeShader();
@@ -192,17 +193,21 @@ public class DefaultFontRenderer implements FontRenderer {
 
     @Override
     public void render(FlatTextSpan lineElement, double x, double y, double currentScale) {
+        lastBound = null;
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
         GlStateManager.disableTexture2D();
+        GlStateManager.enableAlpha();
         if (lineElement.textStyle.getBackgroundShader() != null) {
             lineElement.textStyle.getBackgroundShader().useShader();
-            worldRenderer.pos(x, y, 0);
-            worldRenderer.pos(x + lineElement.getWidth(), y, 0);
-            worldRenderer.pos(x + lineElement.getWidth(), y + lineElement.textStyle.getSize()+1, 0);
-            worldRenderer.pos(x, y + lineElement.textStyle.getSize()+1, 0);
-            lineElement.textStyle.getBackgroundShader().freeShader();
+            worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
+            worldRenderer.pos(x, y, 0).endVertex();
+            worldRenderer.pos(x + lineElement.getWidth(), y, 0).endVertex();
+            worldRenderer.pos(x + lineElement.getWidth(), y + lineElement.textStyle.getSize(), 0).endVertex();
+            worldRenderer.pos(x, y + lineElement.textStyle.getSize(), 0).endVertex();
             draw(worldRenderer);
+            lineElement.textStyle.getBackgroundShader().freeShader();
         }
+        y += lineElement.textStyle.getTopAscent();
 
         if (lineElement.textStyle.isShadow())
             render(worldRenderer, lineElement, x+1,y+1, true);
@@ -211,9 +216,9 @@ public class DefaultFontRenderer implements FontRenderer {
 
 
 
-    private double renderChar(WorldRenderer worldRenderer, double x, double y, char ch, TextStyle textStyle) {
+    private double renderChar(WorldRenderer worldRenderer, double x, double y, char ch, ITextStyle textStyle) {
         if (ch == ' ') {
-            return 4.0F;
+            return 4.0F * textStyle.getSize() / 8.0;
         } else {
             int i = "ÀÁÂÈÊËÍÓÔÕÚßãõğİıŒœŞşŴŵžȇ\u0000\u0000\u0000\u0000\u0000\u0000\u0000 !\"#$%&'()*+,-./0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[\\]^_`abcdefghijklmnopqrstuvwxyz{|}~\u0000ÇüéâäàåçêëèïîìÄÅÉæÆôöòûùÿÖÜø£Ø×ƒáíóúñÑªº¿®¬½¼¡«»░▒▓│┤╡╢╖╕╣║╗╝╜╛┐└┴┬├─┼╞╟╚╔╩╦╠═╬╧╨╤╥╙╘╒╓╫╪┘┌█▄▌▐▀αβΓπΣσμτΦΘΩδ∞∅∈∩≡±≥≤⌠⌡÷≈°∙·√ⁿ²■\u0000".indexOf(ch);
             return i != -1 ? this.renderDefaultChar(worldRenderer, x, y, i, textStyle) : this.renderUnicodeChar(worldRenderer, x, y, ch, textStyle);
@@ -247,29 +252,34 @@ public class DefaultFontRenderer implements FontRenderer {
         renderer.reset();
     }
 
+    private ResourceLocation lastBound;
     public void bindTexture(WorldRenderer worldRenderer, ResourceLocation resourceLocation) {
+        if (resourceLocation.equals(lastBound)) return;
+        lastBound = resourceLocation;
         draw(worldRenderer);
         Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
+        worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
     }
 
-    private double renderDefaultChar(WorldRenderer worldRenderer, double posX, double posY, int ch, TextStyle textStyle) {
+    private double renderDefaultChar(WorldRenderer worldRenderer, double posX, double posY, int ch, ITextStyle textStyle) {
         int texX = ch % 16 * 8;
         int texY = ch / 16 * 8;
-        int italicsAddition = textStyle.italics ? 1 : 0;
+        int italicsAddition = textStyle.isItalics() ? 1 : 0;
         bindTexture(worldRenderer, this.locationFontTexture);
-        double charWidth = (this.charWidth[ch] - 1.0F) * textStyle.getSize() / 8.0;
+        double texWidth = (this.charWidth[ch]);
+        double charWidth = (texWidth-1) * textStyle.getSize() / 8.0;
         double charHeight = textStyle.getSize();
         // char width contains the gap between next char
 
 
-        worldRenderer.pos(posX + (float)italicsAddition, posY, 0.0F).tex((float)texX / 128.0F, (float)texY / 128.0F);
-        worldRenderer.pos(posX - (float)italicsAddition, posY + charHeight - 0.01F, 0.0F).tex((float)texX / 128.0F, ((float)texY + 7.99F) / 128.0F);
-        worldRenderer.pos(posX + charWidth+ (float)italicsAddition - 0.01F , posY, 0.0F).tex(((float)texX + charWidth - 1.01F) / 128.0F, (float)texY / 128.0F);
-        worldRenderer.pos(posX  + charWidth - (float)italicsAddition - 0.01F, posY + charHeight - 0.01F, 0.0F).tex(((float)texX + charWidth - 1.01F) / 128.0F, ((float)texY + 7.99F) / 128.0F);
+        worldRenderer.pos(posX + (float)italicsAddition, posY, 0.0F).tex((float)texX / 128.0F, (float)texY / 128.0F).endVertex();
+        worldRenderer.pos(posX - (float)italicsAddition, posY + charHeight - 0.01F, 0.0F).tex((float)texX / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
+        worldRenderer.pos(posX + charWidth+ (float)italicsAddition - 0.01F , posY+ charHeight - 0.01F, 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
+        worldRenderer.pos(posX  + charWidth - (float)italicsAddition - 0.01F, posY , 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, (float)texY / 128.0F).endVertex();
 
-        return charWidth + textStyle.getSize() / 8.0;
+        return texWidth * textStyle.getSize() / 8.0;
     }
-    private double renderUnicodeChar(WorldRenderer worldRenderer, double posX, double posY, char ch, TextStyle textStyle) {
+    private double renderUnicodeChar(WorldRenderer worldRenderer, double posX, double posY, char ch, ITextStyle textStyle) {
         if (this.glyphData[ch] == 0) {
             return 0.0F;
         } else {
@@ -281,19 +291,19 @@ public class DefaultFontRenderer implements FontRenderer {
             float texX = (float)(ch % 16 * 16) + xStart;
             float texY = (float)((ch & 255) / 16 * 16);
             float texWidth = xEnd - xStart - 0.02F;
-            float italicSlope = textStyle.italics ? 1.0F : 0.0F;
+            float italicSlope = textStyle.isItalics() ? 1.0F : 0.0F;
 
             double charWidth = texWidth * textStyle.getSize() / 16.0;
             double charHeight = textStyle.getSize();
 
             worldRenderer.pos(posX + italicSlope, posY, 0.0F)
-                    .tex(texX / 256.0F, texY / 256.0F);
+                    .tex(texX / 256.0F, texY / 256.0F).endVertex();
             worldRenderer.pos(posX - italicSlope, posY + charHeight - 0.01F, 0.0F)
-                    .tex(texX / 256.0F, (texY + 15.98F) / 256.0F);
-            worldRenderer.pos(posX + charWidth + italicSlope, posY, 0.0F)
-                    .tex((texX + texWidth) / 256.0F, texY / 256.0F);
-            worldRenderer.pos(posX + charWidth - italicSlope, posY + charHeight - 0.01F, 0.0F)
-                    .tex((texX + texWidth) / 256.0F, (texY + 15.98F) / 256.0F);
+                    .tex(texX / 256.0F, (texY + 15.98F) / 256.0F).endVertex();
+            worldRenderer.pos(posX + charWidth + italicSlope, posY + charHeight - 0.01F, 0.0F)
+                    .tex((texX + texWidth) / 256.0F, (texY+15.98F) / 256.0F).endVertex();
+            worldRenderer.pos(posX + charWidth - italicSlope, posY, 0.0F)
+                    .tex((texX + texWidth) / 256.0F, (texY) / 256.0F).endVertex();
             return charWidth + textStyle.getSize() / 8.0;
         }
     }

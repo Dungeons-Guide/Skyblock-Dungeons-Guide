@@ -88,6 +88,10 @@ public class RichText extends Widget implements Layouter, Renderer {
             usedUp += brokenWordData.getFirstWidth();
             line.add(brokenWordData.getFirst());
 
+            if (brokenWordData.getFirst().value.length == 0 && first.value.length != 0 && remaining == constraintBox.getMaxWidth()) {
+                throw new IllegalStateException("Can not fit stuff into this");
+            }
+
             maxHeight = Math.max(maxHeight, first.getHeight());
             maxBaseline = Math.max(maxBaseline, first.getBaseline());
 
@@ -97,7 +101,7 @@ public class RichText extends Widget implements Layouter, Renderer {
 
             if (brokenWordData.isBroken()) {
                 lines.add(new RichLine(line, usedUp, maxHeight, maxBaseline));
-                line.clear();
+                line = new LinkedList<>();
                 maxWidth = Math.max(maxWidth, usedUp);
                 sumHeight += maxHeight;
 
@@ -195,6 +199,8 @@ public class RichText extends Widget implements Layouter, Renderer {
                 x = width - richLine.getWidth();
             else if (align == TextAlign.CENTER)
                 x = (width - richLine.getWidth()) / 2;
+            else
+                x = 0;
             for (FlatTextSpan lineElement : richLine.getLineElements()) {
                 lineElement.textStyle.getFontRenderer()
                                 .render(lineElement, x, y + richLine.getBaseline() - lineElement.getBaseline(), currentScale);

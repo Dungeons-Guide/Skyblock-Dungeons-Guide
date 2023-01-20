@@ -18,21 +18,31 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.CompiledTextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class TextSpan {
-    private TextStyle textStyle;
+    private ITextStyle textStyle;
     private String text;
     private List<TextSpan> children = new ArrayList<>();
-    public TextSpan(TextStyle textStyle, String text) {
+    public TextSpan(ITextStyle textStyle, String text) {
         this.textStyle = textStyle;
         this.text = text;
     }
 
+    public void addChild(TextSpan textSpan) {
+        if (textSpan.textStyle instanceof ParentDelegatingTextStyle)
+            ((ParentDelegatingTextStyle) textSpan.textStyle).setParent(textStyle);
+        children.add(textSpan);
+    }
+
     public void flattenTextSpan(Consumer<FlatTextSpan> appender) {
-        appender.accept(new FlatTextSpan(textStyle, text.toCharArray()));
+        appender.accept(new FlatTextSpan(new CompiledTextStyle(textStyle), text.toCharArray()));
         children.forEach(a -> a.flattenTextSpan(appender));
     }
 }

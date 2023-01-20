@@ -18,12 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
+
 public class FlatTextSpan {
-    public final TextStyle textStyle;
+    public final ITextStyle textStyle;
 
     public final char[] value;
 
-    public FlatTextSpan(TextStyle textStyle, char[] value) {
+    public FlatTextSpan(ITextStyle textStyle, char[] value) {
         this.textStyle = textStyle;
         this.value = value;
     }
@@ -36,10 +38,10 @@ public class FlatTextSpan {
         return sum;
     }
     public double getHeight() {
-        return textStyle.getSize() * textStyle.getLineHeight();
+        return (1 + textStyle.getTopAscent() + textStyle.getBottomAscent()) * textStyle.getSize();
     }
     public double getBaseline() {
-        return textStyle.getSize() * (textStyle.getLineHeight()-1) + textStyle.getFontRenderer().getBaselineHeight(textStyle);
+        return textStyle.getSize() * (textStyle.getFontRenderer().getBaselineHeight(textStyle) + textStyle.getTopAscent());
     }
 
     public BrokenWordData breakWord(double remainingWidth, double nextLineWidth, BreakWord breakWord) {
@@ -55,6 +57,7 @@ public class FlatTextSpan {
             int potentialBreak = -1;
 
             int endIdx = value.length;
+            boolean lineBroken = false;
             for (int i = 0; i < value.length; i++) {
                 char character = value[i];
                 charWidth = textStyle.getFontRenderer().getWidth(character, textStyle);
@@ -67,22 +70,26 @@ public class FlatTextSpan {
                     } else if (scaledNextLineWidth < wordWidth) {
                         // Break at potential, word is greater than next line
                         endIdx = potentialBreak;
+                        lineBroken = true;
                         break;
                     } else {
                         // Delegate to next line.
                         endIdx = wordStart;
+                        lineBroken = true;
                         break;
                     }
 
                     // Force break.
                     if (character == '\n') {
-                        endIdx = i;
+                        endIdx = i+1;
+                        lineBroken = true;
                         break;
                     }
 
                     // Since adding space exceeded remaining width, break without adding space.
                     if (totalWidth > scaledRemainingWidth) {
                         endIdx = i;
+                        lineBroken = true;
                         break;
                     }
 
@@ -96,16 +103,27 @@ public class FlatTextSpan {
                     potentialBreak = i;
                 }
             }
+            if (potentialBreak == -1) {
+            } else if (scaledNextLineWidth < wordWidth) {
+                // Break at potential, word is greater than next line
+                endIdx = potentialBreak;
+                lineBroken = true;
+            } else {
+                // Delegate to next line.
+                endIdx = wordStart;
+                lineBroken = true;
+            }
 
             char[] first = new char[endIdx];
             System.arraycopy(value, 0, first, 0, endIdx);
 
             char[] second = null;
-            if (endIdx != value.length) {
+            if (lineBroken) {
                 int startRealWord = -1;
                 for (int i = endIdx; i< value.length; i++) {
-                    if (value[i] == ' ' || value[i] == '\n') continue;
+                    if (value[i] == ' ') continue;
                     startRealWord = i;
+                    break;
                 }
                 if (startRealWord != -1) {
                     second = new char[value.length - startRealWord];
@@ -124,13 +142,14 @@ public class FlatTextSpan {
                 resultingWidth += textStyle.getFontRenderer().getWidth(c, textStyle);
             }
 
-            return new BrokenWordData(flatTextSpan, secondSpan, endIdx != value.length, resultingWidth);
+            return new BrokenWordData(flatTextSpan, secondSpan, lineBroken, resultingWidth);
         } else {
             // break anywhere
             double scaledRemainingWidth = remainingWidth;
 
             double totalWidth = 0;
             double effectiveWidth = 0;
+            boolean lineBroken  =false;
 
             int endIdx = value.length;
             for (int i = 0; i < value.length; i++) {
@@ -141,13 +160,15 @@ public class FlatTextSpan {
 
                 if (character == '\n') {
                     // Force break.
-                    endIdx = i;
+                    endIdx = i + 1;
+                    lineBroken = true;
                     break;
                 }
 
                 if (totalWidth > scaledRemainingWidth) {
                     // break here.
                     endIdx = i;
+                    lineBroken = true;
                     break;
                 }
                 effectiveWidth += charWidth;
@@ -157,11 +178,12 @@ public class FlatTextSpan {
             System.arraycopy(value, 0, first, 0, endIdx);
 
             char[] second = null;
-            if (endIdx != value.length) {
+            if (lineBroken) {
                 int startRealWord = -1;
                 for (int i = endIdx; i< value.length; i++) {
-                    if (value[i] == ' ' || value[i] == '\n') continue;
+                    if (value[i] == ' ') continue;
                     startRealWord = i;
+                    break;
                 }
                 if (startRealWord != -1) {
                     second = new char[value.length - startRealWord];
@@ -174,7 +196,7 @@ public class FlatTextSpan {
             if (second != null)
                 secondSpan = new FlatTextSpan(textStyle, second);
 
-            return new BrokenWordData(flatTextSpan, secondSpan, endIdx != value.length, effectiveWidth);
+            return new BrokenWordData(flatTextSpan, secondSpan, lineBroken, effectiveWidth);
         }
     }
 }

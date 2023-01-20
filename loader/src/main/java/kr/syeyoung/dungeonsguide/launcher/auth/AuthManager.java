@@ -121,7 +121,10 @@ public class AuthManager {
             String token = DgAuthUtil.requestAuth();
             byte[] encSecret = DgAuthUtil.checkSessionAuthenticityAndReturnEncryptedSecret(token);
             currentToken = DgAuthUtil.verifyAuth(token, encSecret);
-            MinecraftForge.EVENT_BUS.post(new AuthChangedEvent(currentToken));
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                MinecraftForge.EVENT_BUS.post(new AuthChangedEvent(currentToken));
+            });
+
 
             if (currentToken instanceof PrivacyPolicyRequiredToken) {
                 GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());

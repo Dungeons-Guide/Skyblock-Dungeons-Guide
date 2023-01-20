@@ -19,6 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.text;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.ChromaShader;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -31,4 +34,29 @@ public class TextStyle {
     private AColor color;
     private AColor background;
     private boolean shadow = false;
+
+    public TextStyle(String groupName, AColor color, AColor background, boolean shadow) {
+        this.groupName = groupName;
+        this.color = color;
+        this.background = background;
+        this.shadow = shadow;
+    }
+
+    public void setColor(AColor color) {
+        this.color = color;
+        if (!color.isChroma())
+        linked.textShader = new SingleColorShader(color.getRGB());
+        else
+        linked.textShader = new ChromaShader(color.getChromaSpeed(), color.getRGB());
+    }
+
+    public void setBackground(AColor background) {
+        this.background = background;
+        if (!background.isChroma())
+        linked.backgroundShader = new SingleColorShader(background.getRGB());
+        else
+        linked.backgroundShader = new ChromaShader(background.getChromaSpeed(), background.getRGB());
+    }
+
+    private ParentDelegatingTextStyle linked = new ParentDelegatingTextStyle();
 }

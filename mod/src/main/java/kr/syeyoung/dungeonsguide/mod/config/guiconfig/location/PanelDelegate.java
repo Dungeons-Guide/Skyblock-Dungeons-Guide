@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig.location;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIRectangle;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPopupMenu;
@@ -41,12 +42,12 @@ import java.util.List;
 import java.util.*;
 
 public class PanelDelegate extends MPanel {
-    private final GuiFeature guiFeature;
+    private final AbstractHUDFeature guiFeature;
     private boolean draggable = false;
     private GuiGuiLocationConfig guiGuiLocationConfig;
 
     private Set<Marker> markerSet = new HashSet<>();
-    public PanelDelegate(GuiFeature guiFeature, boolean draggable, GuiGuiLocationConfig guiGuiLocationConfig) {
+    public PanelDelegate(AbstractHUDFeature guiFeature, boolean draggable, GuiGuiLocationConfig guiGuiLocationConfig) {
         this.guiFeature = guiFeature;
         this.draggable = draggable;
         this.guiGuiLocationConfig = guiGuiLocationConfig;

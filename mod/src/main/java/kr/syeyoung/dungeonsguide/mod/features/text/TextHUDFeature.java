@@ -26,18 +26,31 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MStringSelectionButton;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.*;
 
-public abstract class TextHUDFeature extends GuiFeature implements StyledTextProvider {
+public abstract class TextHUDFeature extends AbstractHUDFeature implements StyledTextProvider {
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
         addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
@@ -46,21 +59,53 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     }
 
     @Override
-    public void drawHUD(float partialTicks) {
-        if (isHUDViewable()) {
-            List<StyledText> asd = getText();
+    public boolean isVisible() {
+        return super.isVisible() && isHUDViewable();
+    }
 
-            double scale = 1;
-            if (doesScaleWithHeight()) {
-                FontRenderer fr = getFontRenderer();
-                scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
-            } else {
-                scale = this.<Float>getParameter("scale").getValue();
+    private final RichText richText = new RichText(new TextSpan(
+            ParentDelegatingTextStyle.ofDefault(),
+            ""
+    ), BreakWord.WORD, true, RichText.TextAlign.LEFT);
+
+    @Override
+    public OverlayWidget instantiateWidget() {
+        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, this::getWidgetPosition);
+    }
+
+    private Map<String, ParentDelegatingTextStyle> builtTextStyles = new HashMap<>();
+
+    @DGEventHandler
+    public void onTick(DGTickEvent dgTickEvent) {
+        try {
+            checkVisibility();
+            if (isHUDViewable()) {
+                List<StyledText> asd = getText();
+
+                ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
+                if (doesScaleWithHeight()) {
+                    if (getWidget() == null || getWidget().getDomElement() == null || getWidget().getDomElement().getSize() == null) return;
+                    defaultStyle.setSize(getFeatureRect().getRectangleNoScale().getHeight() / countLines(asd));
+                } else {
+                    defaultStyle.setSize((double) (this.<Float>getParameter("scale").getValue() * 8));
+                }
+
+                TextSpan span = new TextSpan(defaultStyle, "");
+
+                for (StyledText styledText : asd) {
+                    TextStyle style = getStylesMap().get(styledText.getGroup());
+                    TextSpan textSpan = new TextSpan(style.getLinked(), styledText.getText());
+                    span.addChild(textSpan);
+                }
+                richText.setRootSpan(span);
             }
-            GlStateManager.scale(scale, scale, 0);
-            StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),
-                    StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue()));
+        } catch (Exception e) {
+            e.printStackTrace();
         }
+    }
+
+    public static FontRenderer getFontRenderer() {
+        return Minecraft.getMinecraft().fontRendererObj;
     }
 
     public boolean doesScaleWithHeight() {
@@ -72,7 +117,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
         List<StyledText> asd = getDummyText();
         double scale = 1;
         if (doesScaleWithHeight()) {
-            FontRenderer fr = getFontRenderer();
+            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
             scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
         } else {
             scale = this.<Float>getParameter("scale").getValue();
@@ -107,6 +152,8 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
     public List<TextStyle> getStyles() {
         return this.<List<TextStyle>>getParameter("textStylesNEW").getValue();
     }
+
+
     private Map<String, TextStyle> stylesMap;
     public Map<String, TextStyle> getStylesMap() {
         if (stylesMap == null) {
@@ -117,7 +164,7 @@ public abstract class TextHUDFeature extends GuiFeature implements StyledTextPro
             }
             for (String str : getUsedTextStyle()) {
                 if (!res.containsKey(str))
-                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true), new AColor(0x00777777, true), false));
+                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true), new AColor(0x00777777, true), false, new ParentDelegatingTextStyle()));
             }
             stylesMap = res;
         }

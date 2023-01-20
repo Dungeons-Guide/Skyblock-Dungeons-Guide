@@ -39,15 +39,18 @@ public abstract class AbstractGuiFeature extends AbstractFeature {
     private boolean wasVisible = false;
     private OverlayWidget widget;
     public OverlayWidget getWidget() {
-        if (widget == null) widget = instantiateWidget();
+        if (widget == null || widget.wrappingWidget == null) widget = instantiateWidget();
+        if (widget.wrappingWidget == null) return null;
         return widget;
     }
     public void checkVisibility() {
         boolean shouldBeVisible = isVisible();
+        OverlayWidget widget = getWidget();
+        if (widget == null) return;
         if (!wasVisible && shouldBeVisible) {
-            OverlayManager.getInstance().addOverlay(getWidget());
+            OverlayManager.getInstance().addOverlay(widget);
         } else if (wasVisible && !shouldBeVisible) {
-            OverlayManager.getInstance().removeOverlay(getWidget());
+            OverlayManager.getInstance().removeOverlay(widget);
         }
         wasVisible = shouldBeVisible;
     }

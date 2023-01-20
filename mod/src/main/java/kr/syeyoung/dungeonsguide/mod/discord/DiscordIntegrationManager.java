@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.Reply;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
@@ -133,7 +134,9 @@ public class DiscordIntegrationManager implements IPCListener {
         JSONObject data = packet.getJson().getJSONObject("data");
         JDiscordRelation relation = JDiscordRelation.parse(data);
         JDiscordRelation old = relationMap.put(relation.getDiscordUser().getIdLong(), relation);
-        MinecraftForge.EVENT_BUS.post(new DiscordUserUpdateEvent(old, relation));
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            MinecraftForge.EVENT_BUS.post(new DiscordUserUpdateEvent(old, relation));
+        });
     }
     private void onActivityJoinRequest(Packet packet) {
         JSONObject data = packet.getJson().getJSONObject("data");
@@ -145,27 +148,31 @@ public class DiscordIntegrationManager implements IPCListener {
                         .getString("id")),
                 data.getJSONObject("user")
                         .getString("avatar"));
-        MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(user));
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            MinecraftForge.EVENT_BUS.post(new DiscordUserJoinRequestEvent(user));
+        });
     }
     private void onActivityInvite(Packet packet) {
         JSONObject data = packet.getJson().getJSONObject("data");
         if (!data.getJSONObject("activity").getString("application_id").equals("816298079732498473"))
             return;
-        MinecraftForge.EVENT_BUS.post(new DiscordUserInvitedEvent(
-                new User(data.getJSONObject("user")
-                        .getString("username"),
-                        data.getJSONObject("user")
-                                .getString("discriminator"),
-                        Long.parseUnsignedLong(data.getJSONObject("user")
-                                .getString("id")),
-                        data.getJSONObject("user")
-                                .getString("avatar")),
-                new InviteHandle(
-                        data.getJSONObject("user").getString("id"),
-                        data.getJSONObject("activity").getString("session_id"),
-                        data.getString("channel_id"),
-                        data.getString("message_id")
-                )));
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            MinecraftForge.EVENT_BUS.post(new DiscordUserInvitedEvent(
+                    new User(data.getJSONObject("user")
+                            .getString("username"),
+                            data.getJSONObject("user")
+                                    .getString("discriminator"),
+                            Long.parseUnsignedLong(data.getJSONObject("user")
+                                    .getString("id")),
+                            data.getJSONObject("user")
+                                    .getString("avatar")),
+                    new InviteHandle(
+                            data.getJSONObject("user").getString("id"),
+                            data.getJSONObject("activity").getString("session_id"),
+                            data.getString("channel_id"),
+                            data.getString("message_id")
+                    )));
+        });
     }
 
     private void onRelationshipLoad(Packet object) {

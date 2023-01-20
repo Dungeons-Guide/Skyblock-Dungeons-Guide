@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.location;
 
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
+import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.GuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MGui;
@@ -56,8 +57,8 @@ public class GuiGuiLocationConfig extends MGui {
     public GuiGuiLocationConfig(final GuiScreen before, AbstractFeature featureWhitelist) {
         this.before = before;
         for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
-            if (feature instanceof GuiFeature && feature.isEnabled()) {
-                getMainPanel().add(new PanelDelegate((GuiFeature) feature, featureWhitelist == null || feature == featureWhitelist, this));
+            if (feature instanceof AbstractHUDFeature && feature.isEnabled()) {
+                getMainPanel().add(new PanelDelegate((AbstractHUDFeature) feature, featureWhitelist == null || feature == featureWhitelist, this));
             }
         }
 

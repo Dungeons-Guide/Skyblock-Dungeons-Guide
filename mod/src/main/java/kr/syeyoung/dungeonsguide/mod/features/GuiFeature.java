@@ -58,29 +58,10 @@ import java.util.Collections;
 import java.util.List;
 
 @Getter
-public abstract class GuiFeature extends AbstractGuiFeature {
-    private GUIRectangle featureRect;
-
-    public void setFeatureRect(GUIRectangle featureRect) {
-        this.featureRect = featureRect;
-        updatePosition();
-    }
-
-    @Setter(value = AccessLevel.PROTECTED)
-    private boolean keepRatio;
-    @Setter(value = AccessLevel.PROTECTED)
-    private double defaultWidth;
-    @Setter(value = AccessLevel.PROTECTED)
-    private double defaultHeight;
-    private final double defaultRatio;
+public abstract class GuiFeature extends AbstractHUDFeature {
 
     protected GuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
-        super(category, name, description, key);
-        this.keepRatio = keepRatio;
-        this.defaultWidth = width;
-        this.defaultHeight = height;
-        this.defaultRatio = defaultWidth / defaultHeight;
-        this.featureRect = new GUIRectangle(0, 0, width, height);
+        super(category, name, description, key, keepRatio, width, height);
     }
 
     public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
@@ -104,15 +85,12 @@ public abstract class GuiFeature extends AbstractGuiFeature {
         return new OverlayWidget(
                 new WidgetFeatureWrapper(),
                 OverlayType.UNDER_CHAT,
-                () -> {
-                    Rectangle loc = featureRect.getRectangleNoScale();
-                    return new Rect(loc.x, loc.y, loc.width, loc.height);
-                }
+                this::getWidgetPosition
         );
     }
 
     public void drawScreen(float partialTicks) {
-        Rectangle featureRect = this.featureRect.getRectangleNoScale();
+        Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
         clip(featureRect.x, featureRect.y, featureRect.width, featureRect.height);
         GL11.glEnable(GL11.GL_SCISSOR_TEST);
         drawHUD(partialTicks);
@@ -135,60 +113,5 @@ public abstract class GuiFeature extends AbstractGuiFeature {
     public static FontRenderer getFontRenderer() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         return fr;
-    }
-
-    @Override
-    public void loadConfig(JsonObject jsonObject) {
-        super.loadConfig(jsonObject);
-        this.featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
-        updatePosition();
-    }
-
-    @Override
-    public JsonObject saveConfig() {
-        JsonObject object = super.saveConfig();
-        object.add("$bounds", TypeConverterRegistry.getTypeConverter("guirect", GUIRectangle.class).serialize(featureRect));
-        return object;
-    }
-
-    public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
-        ArrayList<MPanel> mPanels = new ArrayList<>();
-        mPanels.add(new MLabel(){
-            {
-                setText(getName());
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(Minecraft.getMinecraft().fontRendererObj.getStringWidth(getName()), 20);
-            }
-        });
-        mPanels.add(new MButton() {
-            {
-                setText("Edit");
-                setOnActionPerformed(() -> {
-                    GuiScreen guiScreen = guiGuiLocationConfig.getBefore();
-                    if (guiScreen == null) {
-                        guiScreen = new GuiConfigV2();
-                    }
-                    Minecraft.getMinecraft().displayGuiScreen(guiScreen);
-                    if (guiScreen instanceof GuiConfigV2) {
-                        ((GuiConfigV2) guiScreen).getRootConfigPanel().setCurrentPageAndPushHistory(getEditRoute(((GuiConfigV2) guiScreen).getRootConfigPanel()));
-                    }
-                });
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(100,20);
-            }
-        });
-        mPanels.add(new MPassiveLabelAndElement("Enabled", new MToggleButton() {{
-            setEnabled(GuiFeature.this.isEnabled());
-            setOnToggle(() ->{
-                GuiFeature.this.setEnabled(isEnabled());
-            }); }
-        }));
-        return mPanels;
     }
 }

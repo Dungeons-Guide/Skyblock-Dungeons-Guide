@@ -16,33 +16,26 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
-import lombok.Data;
+import net.minecraft.client.renderer.GlStateManager;
 
-@Data
-public class TextStyle {
-    public Double size;
-    public Double lineHeight;
-
-    public boolean bold;
-    public boolean italics;
-    public boolean strikeThrough;
-    public boolean underline;
-    public boolean outline;
-    public boolean shadow;
-
-    public Shader backgroundShader;
-    public Shader textShader;
-    public Shader strikeThroughShader;
-    public Shader underlineShader;
-    public Shader outlineShader;
-    public Shader shadowShader;
+public class ChromaShader implements Shader {
+    private float r, g, b, a;
+    public ChromaShader(float chromaSpeed, int color) {
+        r = ((color >> 16) & 0xFF) / 255.0f;
+        g = ((color >> 8) & 0xFF) / 255.0f;
+        b = ((color) & 0xFF) / 255.0f;
+        a = ((color >> 24) & 0xFF) / 255.0f;
+    }
 
 
+    // argb=
+    @Override
+    public void useShader() {
+        GlStateManager.color(r,g,b,a);
+    }
 
-    public TextStyle parent;
-    public FontRenderer fontRenderer;
+    @Override
+    public void freeShader() {}
 }
