@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.TitleRender;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 
@@ -147,7 +146,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if (actualSecondsLeft <= 0) {
             if(!Objects.equals(lastSec, GO_TEXT)){
                 lastSec = GO_TEXT;
-                TitleRender.displayTitle(lastSec, "", 2, 25, 15);
+                Minecraft.getMinecraft().ingameGUI.displayTitle(lastSec, "", 2, 25, 15);
             }
             return;
         }
@@ -159,9 +158,9 @@ public class FeatureEpicCountdown extends SimpleFeature {
                 Minecraft.getMinecraft().thePlayer.playSound("skyblock_dungeons_guide:readysetgo", 1F, 1F);
             }
             if(actualSecondsLeft > 5){
-                TitleRender.displayTitle(string, "", 1, 10, 8);
+                Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 10, 8);
             }else{
-                TitleRender.displayTitle(string, "", 1, 6, 4);
+                Minecraft.getMinecraft().ingameGUI.displayTitle(string, "", 1, 6, 4);
             }
             lastSec = string;
         }

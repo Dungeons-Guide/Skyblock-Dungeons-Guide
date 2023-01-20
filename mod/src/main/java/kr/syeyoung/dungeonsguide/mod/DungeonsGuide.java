@@ -43,7 +43,6 @@ import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
-import kr.syeyoung.dungeonsguide.mod.utils.TitleRender;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.Getter;
@@ -189,7 +188,6 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(skyblockStatus);
         registerEventsForge(ChatTransmitter.INSTANCE);
         registerEventsForge(new BlockCache());
-        registerEventsForge(TitleRender.getInstance());
 
         (new FeatureRegistry()).init();
 
@@ -210,9 +208,6 @@ public class DungeonsGuide implements DGInterface {
 
         dungeonFacade.init();
 
-
-
-        TitleRender.getInstance();
 
         CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
         CommandDgDebug command = new CommandDgDebug();
