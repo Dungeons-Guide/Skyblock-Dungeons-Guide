@@ -127,7 +127,7 @@ tasks.shadowJar {
 
     archiveFileName = jar.archiveFileName
 
-    relocate 'com.sun.jna', "kr.syeyoung.dungeonsguide.com.sun.jna"
+//    relocate 'com.sun.jna', "kr.syeyoung.dungeonsguide.com.sun.jna"
     relocate "org.java_websocket", "kr.syeyoung.dungeonsguide.org.java_websocket"
     relocate 'com.jagrosh.discordipc', 'kr.syeyoung.dungeonsguide.com.jagrosh.discordipc'
 
