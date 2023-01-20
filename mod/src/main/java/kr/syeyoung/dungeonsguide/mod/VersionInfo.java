@@ -30,7 +30,7 @@ import java.io.IOException;
 import java.util.Optional;
 
 public class VersionInfo {
-    public static final String VERSION = "2023/01/01-651ce09";
+    public static final String VERSION = "4.0.0-beta1.0";
 
     public static IDGLoader getCurrentLoader() {
         return Main.getMain().getCurrentLoader();
