@@ -133,7 +133,7 @@ public class DungeonRoomInfoRegistry {
             for (String name : lines) {
                 if (!name.endsWith(".roomdata")) continue;
                 try {
-                    InputStream fis = Main.class.getResourceAsStream("/"+name);
+                    InputStream fis = DungeonsGuide.class.getResourceAsStream("/"+name);
                     ObjectInputStream ois = new ObjectInputStream(fis);
                     DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
                     ois.close();
