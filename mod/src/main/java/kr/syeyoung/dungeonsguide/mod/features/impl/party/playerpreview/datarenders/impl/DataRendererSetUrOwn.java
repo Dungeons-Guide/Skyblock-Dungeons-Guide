@@ -24,6 +24,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 
 import java.awt.*;
+import java.util.List;
 
 public class DataRendererSetUrOwn implements IDataRenderer {
     @Override
@@ -37,8 +38,8 @@ public class DataRendererSetUrOwn implements IDataRenderer {
     }
 
     @Override
-    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
-
+    public List<String> onHover(PlayerProfile playerProfile) {
+        return null;
     }
 
     @Override

@@ -17,7 +17,7 @@
   -->
 
 <UnconstrainedBox>
-    <size width="120">
+    <size width="86">
         <scaler bind:scale="scale">
             <border>
                 <line slot="left" dir="VERTICAL" thickness="1.0" color="#FF444444"/>

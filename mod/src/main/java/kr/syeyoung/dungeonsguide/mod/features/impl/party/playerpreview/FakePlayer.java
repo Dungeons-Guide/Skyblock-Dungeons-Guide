@@ -41,19 +41,49 @@ public class FakePlayer extends EntityOtherPlayerMP {
     @Setter
     @Getter
     private PlayerProfile skyblockProfile;
+
+    public void setSkyblockProfile(PlayerProfile skyblockProfile) {
+        this.skyblockProfile = skyblockProfile;
+
+        armor = skyblockProfile.getCurrentArmor();
+        this.inventory.armorInventory = skyblockProfile.getCurrentArmor().getArmorSlots();
+
+        int highestDungeonScore = Integer.MIN_VALUE;
+        if (skyblockProfile.getInventory() != null) {
+            ItemStack highestItem = null;
+            for (ItemStack itemStack : skyblockProfile.getInventory()) {
+                if (itemStack == null) continue;
+                NBTTagCompound display = itemStack.getTagCompound().getCompoundTag("display");
+                if (display == null) continue;
+                NBTTagList nbtTagList = display.getTagList("Lore", 8);
+                if (nbtTagList == null) continue;
+                for (int i = 0; i < nbtTagList.tagCount(); i++) {
+                    String str = nbtTagList.getStringTagAt(i);
+                    if (TextUtils.stripColor(str).startsWith("Gear")) {
+                        int dungeonScore = Integer.parseInt(TextUtils.keepIntegerCharactersOnly(TextUtils.stripColor(str).split(" ")[2]));
+                        if (dungeonScore > highestDungeonScore) {
+                            highestItem = itemStack;
+                            highestDungeonScore = dungeonScore;
+                        }
+                    }
+                }
+            }
+
+            this.inventory.mainInventory[0] = highestItem;
+            this.inventory.currentItem = 0;
+        }
+    }
+
     private final SkinFetcher.SkinSet skinSet;
-    private final PlayerProfile.Armor armor;
-    @Getter
-    private final int profileNumber;
+    private PlayerProfile.Armor armor;
 
     private FakePlayer(World w) {
         super(w, null);
         throw new UnsupportedOperationException("what");
     }
 
-    public FakePlayer(GameProfile playerProfile, SkinFetcher.SkinSet skinSet, PlayerProfile skyblockProfile, int profileNumber) {
+    public FakePlayer(GameProfile playerProfile, SkinFetcher.SkinSet skinSet, PlayerProfile skyblockProfile) {
         super(Minecraft.getMinecraft().theWorld, playerProfile);
-        this.profileNumber = profileNumber;
         this.skyblockProfile = skyblockProfile;
         this.skinSet = skinSet;
         armor = skyblockProfile.getCurrentArmor();

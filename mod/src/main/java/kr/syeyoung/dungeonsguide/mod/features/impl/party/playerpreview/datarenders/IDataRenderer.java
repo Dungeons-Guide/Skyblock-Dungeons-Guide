@@ -21,10 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 
 import java.awt.*;
+import java.util.List;
 
 public interface IDataRenderer {
     Dimension renderData(PlayerProfile playerProfile);
-    void onHover(PlayerProfile playerProfile, int mouseX, int mouseY);
+    List<String> onHover(PlayerProfile playerProfile);
 
 
     Dimension renderDummy();

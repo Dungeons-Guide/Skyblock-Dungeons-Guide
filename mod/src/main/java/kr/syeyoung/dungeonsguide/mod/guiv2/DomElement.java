@@ -232,11 +232,10 @@ public class DomElement {
         if (!absBounds.contains(absMouseX, absMouseY)) {
             if (wasMouseIn) widget.mouseExited(absMouseX, absMouseY, relMouseX0, relMouseY0);
             wasMouseIn = false;
-            return false;
+        } else {
+            if (!wasMouseIn) widget.mouseEntered(absMouseX, absMouseY, relMouseX0, relMouseY0);
+            wasMouseIn = true;
         }
-        if (!wasMouseIn) widget.mouseEntered(absMouseX, absMouseY, relMouseX0, relMouseY0);
-        wasMouseIn = true;
-
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
@@ -244,7 +243,9 @@ public class DomElement {
                 return true;
             }
         }
-        return widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
+        if (wasMouseIn)
+            return widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
+        return false;
     }
 
     public void setCursor(EnumCursor enumCursor) {

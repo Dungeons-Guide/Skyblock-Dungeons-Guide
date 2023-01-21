@@ -28,7 +28,6 @@ import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -99,17 +98,16 @@ public class DataRendererTalismans implements IDataRenderer {
     }
 
     @Override
-    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
+    public List<String> onHover(PlayerProfile playerProfile) {
         int[] rawData = (int[]) playerProfile.getAdditionalProperties().get("talismanCnt");
-        if (rawData == null) return;
+        if (rawData == null) return null;
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         List<String> list = new ArrayList<>();
 
         for (Rarity r : Rarity.values()) {
             list.add(r.getColor()+r.name()+"§7: §e"+rawData[r.idx]);
         }
-        GuiUtils.drawHoveringText(list,mouseX, mouseY,
-                scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
+        return list;
     }
 
 

@@ -23,11 +23,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.List;
 
 public class DataRendererLilyWeight implements IDataRenderer {
     @Override
@@ -52,11 +51,10 @@ public class DataRendererLilyWeight implements IDataRenderer {
     }
 
     @Override
-    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
+    public List<String> onHover(PlayerProfile playerProfile) {
         PlayerProfile.LilyWeight lilyWeight= playerProfile.getLilyWeight();
-        if (lilyWeight == null) return;
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GuiUtils.drawHoveringText(Arrays.asList(
+        if (lilyWeight == null) return null;
+        return Arrays.asList(
                         "§bDungeon Weights§7: §e"+ String.format("%.3f",lilyWeight.getCatacombs_base()+lilyWeight.getCatacombs_master()+lilyWeight.getCatacombs_exp()),
                         "   §bCatacomb Completion§7: §e"+String.format("%.3f",lilyWeight.getCatacombs_base()),
                         "   §bMaster Completion§7: §e"+String.format("%.3f", lilyWeight.getCatacombs_master()),
@@ -66,7 +64,6 @@ public class DataRendererLilyWeight implements IDataRenderer {
                         "   §bOverflow Weight§7: §e"+String.format("%.3f", lilyWeight.getSkill_overflow()),
                         "§bSlayer Weight§7: §e"+String.format("%.3f", lilyWeight.getSlayer()),
                         "§bTotal§7: §e"+String.format("%.3f", lilyWeight.getTotal())
-                ),mouseX, mouseY,
-                scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
+                );
     }
 }

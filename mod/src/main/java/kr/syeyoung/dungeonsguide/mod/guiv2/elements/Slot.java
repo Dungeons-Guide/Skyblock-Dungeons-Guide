@@ -33,6 +33,24 @@ public class Slot extends AnnotatedExportOnlyWidget {
     @Export(attributeName = "_")
     public final BindableAttribute<Widget> original = new BindableAttribute<>(Widget.class);
 
+    public Slot() {
+        replacement.addOnUpdate(this::update);
+        original.addOnUpdate(this::update);
+    }
+
+    private void update(Widget widget, Widget widget1) {
+        if (this.getDomElement().getParent() == null) return;
+        getDomElement().removeElement(getDomElement().getChildren().get(0));
+
+        DomElement domElement = null;
+        if (replacement.getValue() != null) domElement = replacement.getValue().createDomElement(getDomElement());
+        else if (original.getValue() != null) domElement = original.getValue().createDomElement(getDomElement());
+
+        if (domElement != null)
+            getDomElement().addElement(domElement);
+    }
+
+
     @Override
     public List<Widget> build(DomElement buildContext) {
         if (replacement.getValue() != null) return Collections.singletonList(replacement.getValue());

@@ -28,11 +28,10 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarende
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.List;
 
 public class DataRenderDungeonHighestFloorStat implements IDataRenderer {
     private final DungeonType dungeonType;
@@ -82,17 +81,16 @@ public class DataRenderDungeonHighestFloorStat implements IDataRenderer {
     }
 
     @Override
-    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
+    public List<String> onHover(PlayerProfile playerProfile) {
 
         DungeonSpecificData<DungeonStat> dungeonStatDungeonSpecificData = playerProfile.getDungeonStats().get(dungeonType);
-        if (dungeonStatDungeonSpecificData == null) return;
-        if (dungeonStatDungeonSpecificData.getData().getHighestCompleted() == -1) return;
+        if (dungeonStatDungeonSpecificData == null) return null;
+        if (dungeonStatDungeonSpecificData.getData().getHighestCompleted() == -1) return null;
         FloorSpecificData<DungeonStat.PlayedFloor> playedFloorFloorSpecificData = dungeonStatDungeonSpecificData.getData().getPlays().get( dungeonStatDungeonSpecificData.getData().getHighestCompleted());
-        if (playedFloorFloorSpecificData == null) return;
+        if (playedFloorFloorSpecificData == null) return null;
         String floorName = (dungeonType == DungeonType.CATACOMBS ? "F" : "M") + dungeonStatDungeonSpecificData.getData().getHighestCompleted();
 
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GuiUtils.drawHoveringText(Arrays.asList(
+        return Arrays.asList(
                 "§bFloor "+floorName,
                 "§bBest Score§7: §f"+playedFloorFloorSpecificData.getData().getBestScore(),
                 "§bTotal Completions§7: §f"+playedFloorFloorSpecificData.getData().getCompletions(),
@@ -103,6 +101,6 @@ public class DataRenderDungeonHighestFloorStat implements IDataRenderer {
                 "§bFastest Run§7: §f"+(playedFloorFloorSpecificData.getData().getFastestTime() != -1? TextUtils.formatTime(playedFloorFloorSpecificData.getData().getFastestTime()) : "§7N/A"),
                 "§bMost Mobs Killed§7: §f"+playedFloorFloorSpecificData.getData().getMostMobsKilled(),
                 "§bTotal Mobs Killed§7: §f"+playedFloorFloorSpecificData.getData().getMobsKilled()
-        ), mouseX, mouseY, scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
+        );
     }
 }

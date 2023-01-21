@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -26,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.HoverEventRenderPlayer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
@@ -94,7 +96,10 @@ public class CommandDungeonsGuide extends CommandBase {
             try {
                 ApiFetcher.fetchUUIDAsync(args[1])
                         .thenAccept(a -> {
-                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + args[1] + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new FeatureViewPlayerStatsOnJoin.HoverEventRenderPlayer(a.orElse(null))))));
+                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + args[1] + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(
+                                    new HoverEventRenderPlayer(
+                                            new GameProfile(FeatureViewPlayerStatsOnJoin.fromString(a.orElse(null)), args[1])
+                                    )))));
                         });
             } catch (Exception e) {
                 e.printStackTrace();

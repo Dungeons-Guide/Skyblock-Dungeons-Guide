@@ -26,11 +26,10 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.XPUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
-import net.minecraftforge.fml.client.config.GuiUtils;
 
 import java.awt.*;
 import java.util.Arrays;
+import java.util.List;
 
 public class DataRendererSkillLv implements IDataRenderer {
     private final Skill skill;
@@ -69,12 +68,10 @@ public class DataRendererSkillLv implements IDataRenderer {
     }
 
     @Override
-    public void onHover(PlayerProfile playerProfile, int mouseX, int mouseY) {
+    public List<String> onHover(PlayerProfile playerProfile) {
         Double xp = playerProfile.getSkillXp().get(skill);
-        if (xp == null) return;
+        if (xp == null) return null;
         XPUtils.XPCalcResult xpCalcResult = XPUtils.getSkillXp(skill, xp);
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GuiUtils.drawHoveringText(Arrays.asList("§bCurrent Lv§7: §e"+xpCalcResult.getLevel(),"§bExp§7: §e"+ TextUtils.format((long)xpCalcResult.getRemainingXp()) + "§7/§e"+TextUtils.format((long)xpCalcResult.getNextLvXp()), "§bTotal Xp§7: §e"+ TextUtils.format(xp.longValue())),mouseX, mouseY,
-                scaledResolution.getScaledWidth(), scaledResolution.getScaledHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
+        return Arrays.asList("§bCurrent Lv§7: §e"+xpCalcResult.getLevel(),"§bExp§7: §e"+ TextUtils.format((long)xpCalcResult.getRemainingXp()) + "§7/§e"+TextUtils.format((long)xpCalcResult.getNextLvXp()), "§bTotal Xp§7: §e"+ TextUtils.format(xp.longValue()));
     }
 }

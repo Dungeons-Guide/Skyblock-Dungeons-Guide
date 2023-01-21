@@ -90,7 +90,6 @@ public class FeatureTerminalSolvers extends SimpleFeature {
 
     @DGEventHandler
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
-        if (!isEnabled()) return;
         if (solutionProvider == null) return;
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChest)) {
             solution = null;

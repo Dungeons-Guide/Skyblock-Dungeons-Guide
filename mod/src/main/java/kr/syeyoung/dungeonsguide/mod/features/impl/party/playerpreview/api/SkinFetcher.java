@@ -75,7 +75,6 @@ public class SkinFetcher {
                 }
             }
         }, true);
-
         return skinSet2;
     }
 

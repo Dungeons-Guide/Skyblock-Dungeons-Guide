@@ -191,7 +191,7 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onRender(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
             return;
 
         if (!SkyblockStatus.isOnDungeon()) return;

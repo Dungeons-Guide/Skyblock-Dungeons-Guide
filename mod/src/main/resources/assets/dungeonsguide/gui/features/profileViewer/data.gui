@@ -1,0 +1,72 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<row>
+    <size width="90">
+        <col>
+            <flexible>
+                <!--Player model-->
+                <slot bind:child="playerModel"/>
+            </flexible>
+
+            <size height="11">
+                <row>
+                    <flexible>
+                        <ColorButton on:click="switchProfile" hPadding="1"
+                                     backgroundColor="#FF30AFD3"          textColor="#FFFFFFFF"
+                                     hoveredBackgroundColor="#FFFFFFFF"   hoveredTextColor="#FF30AFd3"
+                                     disabledBackgroundColor="0"  disabledTextColor="0"
+                                     pressedBackgroundColor="#FFFFFFFF"   pressedTextColor="#FF30AFd3"
+                                     text="§bSwitch Profile"
+                        />
+                    </flexible>
+                    <size width="11">
+                        <ColorButton on:click="openInventory" hPadding="1"
+                                     backgroundColor="#FF555555"          textColor="#FFFFFFFF"
+                                     hoveredBackgroundColor="#FF636363"   hoveredTextColor="#FFFFFFFF"
+                                     disabledBackgroundColor="0"  disabledTextColor="0"
+                                     pressedBackgroundColor="#FF707070"   pressedTextColor="#FFFFFFFF"
+                                     text="§eI" bind:ref="invButtonRef"
+                        />
+                    </size>
+                </row>
+            </size>
+            <size height="27">
+                <ColorButton on:click="invite" hPadding="1"
+                             backgroundColor="#FF7289DA"          textColor="#FFFFFFFF"
+                             hoveredBackgroundColor="#FF859DF0"   hoveredTextColor="#FFFFFFFF"
+                             disabledBackgroundColor="0"  disabledTextColor="0"
+                             pressedBackgroundColor="#FF859DF0"   pressedTextColor="#FFFFFFFF"
+                             text="Invite"
+                />
+            </size>
+            <size height="27">
+                <ColorButton on:click="kick" hPadding="1"
+                             backgroundColor="#FFFF3333"          textColor="#FFFFFFFF"
+                             hoveredBackgroundColor="#FFFF7777"   hoveredTextColor="#FFFFFFFF"
+                             disabledBackgroundColor="0"  disabledTextColor="0"
+                             pressedBackgroundColor="#FFFF7777"   pressedTextColor="#FFFFFFFF"
+                             text="Kick"
+                />
+            </size>
+        </col>
+    </size>
+    <flexible>
+        <col bind:_="datarenderers"/>
+    </flexible>
+</row>
