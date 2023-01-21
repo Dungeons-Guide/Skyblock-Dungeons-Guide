@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
@@ -28,7 +27,9 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import lombok.Setter;
 
-import java.util.*;
+import java.util.Collections;
+import java.util.LinkedList;
+import java.util.List;
 
 public class RichText extends Widget implements Layouter, Renderer {
     private TextSpan rootSpan;

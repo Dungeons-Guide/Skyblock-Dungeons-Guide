@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.launcher.auth.token;
 
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthUtil;
 import kr.syeyoung.dungeonsguide.launcher.auth.DgAuthUtil;
 import org.json.JSONObject;
 

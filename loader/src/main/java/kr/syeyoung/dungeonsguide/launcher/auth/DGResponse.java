@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import org.json.JSONObject;
 
 @Data
 @AllArgsConstructor

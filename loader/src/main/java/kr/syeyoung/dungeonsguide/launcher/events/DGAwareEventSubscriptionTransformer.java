@@ -30,7 +30,6 @@ import java.util.List;
 import static org.objectweb.asm.ClassWriter.COMPUTE_FRAMES;
 import static org.objectweb.asm.Opcodes.*;
 import static org.objectweb.asm.Type.*;
-import static org.objectweb.asm.Type.VOID_TYPE;
 
 public class DGAwareEventSubscriptionTransformer implements IClassTransformer
 {

@@ -20,10 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
 
 import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -31,8 +30,6 @@ import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.awt.*;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.Future;
 import java.util.function.Consumer;
 
 public class MTooltipInviteElement extends MPanel {

@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.launcher;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
@@ -48,9 +48,13 @@ import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.lwjgl.LWJGLException;
 
-import java.io.*;
+import java.io.File;
+import java.io.IOException;
 import java.security.Security;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.UUID;
 
 @Mod(modid = Main.MOD_ID, version = Main.VERSION)
 public class Main

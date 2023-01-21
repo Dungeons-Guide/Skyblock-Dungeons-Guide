@@ -27,7 +27,10 @@ import net.minecraft.util.ResourceLocation;
 
 import java.io.IOException;
 import java.lang.invoke.MethodHandle;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
 public class DelegatingWidget extends Widget implements ExportedWidget, ImportingWidget {
 

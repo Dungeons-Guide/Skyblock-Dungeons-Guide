@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.launcher.exceptions.http;
 
 import lombok.Getter;
-import org.json.JSONObject;
 
 public class ResponseParsingException extends RuntimeException {
     @Getter

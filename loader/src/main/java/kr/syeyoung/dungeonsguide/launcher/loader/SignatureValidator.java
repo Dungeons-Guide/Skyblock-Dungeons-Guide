@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.InvalidSignatureException;
-import org.apache.commons.codec.binary.Base64;
 import org.bouncycastle.openpgp.*;
 import org.bouncycastle.openpgp.jcajce.JcaPGPObjectFactory;
 import org.bouncycastle.openpgp.operator.jcajce.JcaKeyFingerprintCalculator;
@@ -29,9 +28,6 @@ import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProv
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.security.*;
-import java.security.spec.InvalidKeySpecException;
-import java.security.spec.X509EncodedKeySpec;
 
 public class SignatureValidator {
     private static final String dungeonsGuideMasterSigningKey = "-----BEGIN PGP PUBLIC KEY BLOCK-----\n" +

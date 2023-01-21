@@ -18,11 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
-import com.google.common.base.Throwables;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.launcher.auth.AuthUtil;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import org.apache.logging.log4j.LogManager;
@@ -35,8 +30,6 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Timer;
-import java.util.TimerTask;
 
 public class AhUtils {
     public static volatile Map<String, AuctionData> auctions = new HashMap<String, AuctionData>();

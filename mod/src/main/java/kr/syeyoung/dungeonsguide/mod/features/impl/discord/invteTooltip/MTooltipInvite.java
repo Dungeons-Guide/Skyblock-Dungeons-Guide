@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip;
 
-import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
+import kr.syeyoung.dungeonsguide.mod.discord.JDiscordRelation;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;

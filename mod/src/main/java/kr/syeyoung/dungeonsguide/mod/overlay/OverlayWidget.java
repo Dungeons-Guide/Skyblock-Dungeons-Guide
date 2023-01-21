@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import lombok.AllArgsConstructor;
-import lombok.Getter;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Collections;

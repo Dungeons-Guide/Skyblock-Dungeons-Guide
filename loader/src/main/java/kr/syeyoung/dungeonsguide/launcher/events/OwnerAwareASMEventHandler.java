@@ -18,14 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher.events;
 
-import static org.objectweb.asm.Opcodes.*;
-
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.WeakHashMap;
-
 import net.minecraftforge.fml.common.ModContainer;
-
 import net.minecraftforge.fml.common.eventhandler.Event;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.IEventListener;
@@ -35,7 +28,9 @@ import org.objectweb.asm.ClassWriter;
 import org.objectweb.asm.MethodVisitor;
 import org.objectweb.asm.Type;
 
-import com.google.common.collect.Maps;
+import java.lang.reflect.Method;
+
+import static org.objectweb.asm.Opcodes.*;
 
 
 public class OwnerAwareASMEventHandler implements IEventListener

@@ -18,12 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.launcher.coremod;
 
-import net.minecraft.launchwrapper.ITweaker;
-import net.minecraft.launchwrapper.LaunchClassLoader;
 import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
 
-import java.io.File;
-import java.util.List;
 import java.util.Map;
 
 public class DGTweaker implements IFMLLoadingPlugin {

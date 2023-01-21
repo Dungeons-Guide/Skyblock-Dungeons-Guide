@@ -19,8 +19,6 @@
 package kr.syeyoung.dungeonsguide.launcher;
 
 import net.minecraft.client.resources.IResourceManager;
-import net.minecraftforge.fml.common.event.FMLInitializationEvent;
-import net.minecraftforge.fml.common.event.FMLPreInitializationEvent;
 
 import java.io.File;
 

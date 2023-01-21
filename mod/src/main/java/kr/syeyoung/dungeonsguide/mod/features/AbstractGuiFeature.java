@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 

@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.renderer;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import net.minecraft.client.Minecraft;
@@ -27,8 +26,6 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL33;
-import org.lwjgl.opengl.GL42;
 
 import java.awt.*;
 import java.util.Stack;

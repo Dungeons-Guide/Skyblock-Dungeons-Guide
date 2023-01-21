@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import lombok.Getter;
 
-import java.util.*;
+import java.util.List;
 
 public abstract class Widget {
 

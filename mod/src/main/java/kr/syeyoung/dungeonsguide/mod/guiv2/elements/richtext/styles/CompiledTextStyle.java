@@ -20,8 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
-import lombok.Getter;
-import lombok.Setter;
 
 public class CompiledTextStyle implements ITextStyle {
     public Double size;

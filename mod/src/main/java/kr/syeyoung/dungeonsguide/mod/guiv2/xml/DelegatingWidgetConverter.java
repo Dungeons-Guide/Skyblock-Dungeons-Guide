@@ -20,21 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElementList;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.util.ResourceLocation;
-
-import java.lang.invoke.LambdaMetafactory;
-import java.lang.invoke.MethodHandle;
-import java.lang.invoke.MethodHandles;
-import java.lang.invoke.MethodType;
-import java.lang.reflect.Method;
-import java.util.HashMap;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 public class DelegatingWidgetConverter<R extends Widget & ImportingWidget> extends PropByPropParsedWidgetConverter<DelegatingWidget, R> {
     private final ResourceLocation resourceLocation;

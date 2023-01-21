@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions;
 
-import lombok.AllArgsConstructor;
-
 public class NoSuitableLoaderFoundException extends Exception {
     private String jvmFlag;
     private String configuration;

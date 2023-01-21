@@ -20,9 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml.data;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.StringConversions;
 import org.w3c.dom.*;
-import scala.tools.nsc.doc.base.comment.Link;
 
-import java.util.*;
+import java.util.HashSet;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Set;
 
 public class W3CBackedParserElement implements ParserElement {
     private final Element backingElement;

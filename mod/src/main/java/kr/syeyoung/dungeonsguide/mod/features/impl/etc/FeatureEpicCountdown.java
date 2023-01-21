@@ -19,8 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -28,13 +26,9 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraftforge.client.event.RenderGameOverlayEvent;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-import java.util.Map;
 import java.util.Objects;
-
-import static kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult.NONE;
-import static kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult.REMOVE_CHAT;
 
 /**
  * CREDITS FOR THE COUNTDOWN SOUNDTRACK: <a href="https://www.youtube.com/watch?v=acCqrA-JxAw">...</a>
@@ -54,29 +48,31 @@ public class FeatureEpicCountdown extends SimpleFeature {
         addParameter("sounds", new FeatureParameter<>("sounds", "Countdown SFX", "^^^", true, "boolean", nval -> sfxenabled = nval));
 
         lastSec = GO_TEXT;
-
-        ChatProcessor.INSTANCE.subscribe(FeatureEpicCountdown::processChat);
     }
 
-    public static ChatProcessResult processChat(String txt, Map<String, Object> context) {
+    @DGEventHandler
+    public void procesSChat(ClientChatReceivedEvent receivedEvent) {
+        String txt = receivedEvent.message.getFormattedText();
+
+        // TODO: make a good chat remover with configurable chats, search chats recdeived and stuff, but not for now
         if(cleanChat){
             if(txt.startsWith("§e[NPC] §bMort§f: §rTalk to me to change your class and ready up.§r")){
-                return REMOVE_CHAT;
+                receivedEvent.setCanceled(true);
             }
             if(txt.startsWith("§r§aYour active Potion Effects have been paused and stored.")){
-                return REMOVE_CHAT;
+                receivedEvent.setCanceled(true);
             }
             if(txt.startsWith("§e[NPC] §bMort§f: §rGood luck.§r")){
-                return REMOVE_CHAT;
+                receivedEvent.setCanceled(true);
             }
             if(txt.startsWith("§e[NPC] §bMort§f: §rYou should find it useful if you get lost.§r")){
-                return REMOVE_CHAT;
+                receivedEvent.setCanceled(true);
             }
             if(TextUtils.stripColor(txt).contains("[NPC] Mort: Here, I found this map")){
-                return REMOVE_CHAT;
+                receivedEvent.setCanceled(true);
             }
-            if(txt.startsWith("§r§a[Berserk] §r§f")){
-                return REMOVE_CHAT;
+            if(txt.startsWith("§r§a[Berserk] §r§f")){ // huh? wtf?
+                receivedEvent.setCanceled(true);
             }
         }
 
@@ -91,15 +87,12 @@ public class FeatureEpicCountdown extends SimpleFeature {
             secondsLeft = Integer.parseInt(secondsStr);
             updatedAt = System.currentTimeMillis();
 
-            return REMOVE_CHAT;
+            receivedEvent.setCanceled(true);
         }
-
-        return NONE;
-
     }
 
-    static final String GO_TEXT = "GO!!!";
-    String lastSec;
+    private static final String GO_TEXT = "GO!!!";
+    private String lastSec;
 
     @DGEventHandler
     public void onTick(DGTickEvent event){
@@ -115,28 +108,6 @@ public class FeatureEpicCountdown extends SimpleFeature {
                 }
             }
         });
-
-
-//                   www.hypixel.net§r
-//                   §r
-//                   Starting in: 0:57§r
-//                   §r
-//                   B kokoniara Lv25§r
-//                   §r
-//                    The Catacombs F3§r
-//                   Late Winter 3rd§r
-//                   §r
-//                   10/22/22 m65G 28266§r
-
-    }
-
-
-    @DGEventHandler
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
-        
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
-            return;
-
         long timepassed = System.currentTimeMillis() - updatedAt;
 
         long secs = timepassed / 1000;
@@ -165,7 +136,18 @@ public class FeatureEpicCountdown extends SimpleFeature {
             lastSec = string;
         }
 
-    }
 
+//                   www.hypixel.net§r
+//                   §r
+//                   Starting in: 0:57§r
+//                   §r
+//                   B kokoniara Lv25§r
+//                   §r
+//                    The Catacombs F3§r
+//                   Late Winter 3rd§r
+//                   §r
+//                   10/22/22 m65G 28266§r
+
+    }
 
 }

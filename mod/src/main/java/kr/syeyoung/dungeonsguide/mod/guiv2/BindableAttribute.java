@@ -22,7 +22,6 @@ import lombok.Getter;
 
 import java.util.*;
 import java.util.function.BiConsumer;
-import java.util.function.Consumer;
 
 public class BindableAttribute<T> {
     public BindableAttribute(Class<T> type) {

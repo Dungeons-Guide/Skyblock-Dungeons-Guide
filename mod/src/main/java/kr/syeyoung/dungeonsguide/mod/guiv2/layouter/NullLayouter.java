@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.layouter;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 
 public class NullLayouter implements Layouter {

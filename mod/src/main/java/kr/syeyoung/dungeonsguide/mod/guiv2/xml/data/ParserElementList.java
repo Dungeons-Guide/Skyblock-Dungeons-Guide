@@ -18,8 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.xml.data;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-
 import java.util.List;
 
 public interface ParserElementList extends List<ParserElement> {

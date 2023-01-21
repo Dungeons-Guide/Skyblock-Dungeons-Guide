@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.launcher.util;
 
 import io.nayuki.qrcodegen.QrCode;
 
-import javax.imageio.ImageIO;
 import java.awt.image.BufferedImage;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
