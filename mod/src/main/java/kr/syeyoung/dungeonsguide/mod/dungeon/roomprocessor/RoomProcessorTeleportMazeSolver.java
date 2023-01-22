@@ -87,7 +87,10 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
 
         if (b == Blocks.stone_slab || b == Blocks.stone_slab2) {
             boolean teleport = false;
-            if (lastPlayerLocation != null && lastPlayerLocation.distanceSq(pos2) < 3) {
+            if (lastPlayerLocation == null) {
+                return;
+            }
+            if (lastPlayerLocation.distanceSq(pos2) < 3) {
                 return;
             }
             for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation, pos2)) {

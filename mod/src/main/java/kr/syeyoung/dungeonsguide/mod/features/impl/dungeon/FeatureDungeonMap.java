@@ -447,6 +447,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         Minecraft.getMinecraft().getTextureManager().bindTexture(mapIcons);
         for (Vec4b vec4b : mapData.mapDecorations.values()) {
             if (vec4b.func_176110_a() == 1 || this.shouldShowOtherPlayers) {
+                GlStateManager.enableTexture2D();
                 GlStateManager.pushMatrix();
                 GlStateManager.translate(vec4b.func_176112_b() / 2.0F + 64.0F, vec4b.func_176113_c() / 2.0F + 64.0F, -0.02F);
                 GlStateManager.rotate((vec4b.func_176111_d() * 360) / 16.0F, 0.0F, 0.0F, 1.0F);
@@ -458,9 +459,9 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
                 GlStateManager.translate(-0.125F, 0.125F, 0.0F);
                 byte b0 = vec4b.func_176110_a();
                 float f1 = (b0 % 4) / 4.0F;
-                float f2 = (b0 / 4f) / 4.0F;
+                float f2 = (b0 / 4) / 4.0F;
                 float f3 = (b0 % 4 + 1) / 4.0F;
-                float f4 = (b0 / 4f + 1) / 4.0F;
+                float f4 = (b0 / 4 + 1) / 4.0F;
                 worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
                 worldrenderer.pos(-1.0D, 1.0D, k * -0.001F).tex(f1, f2).endVertex();
                 worldrenderer.pos(1.0D, 1.0D, k * -0.001F).tex(f3, f2).endVertex();

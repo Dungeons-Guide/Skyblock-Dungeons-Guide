@@ -98,7 +98,8 @@ public class DungeonRoom {
     }
 
     public void setCurrentState(RoomState currentState) {
-        context.getRecorder().createEvent(new DungeonStateChangeEvent(unitPoints.iterator().next(), dungeonRoomInfo.getName(), this.currentState, currentState));
+        context.getRecorder().createEvent(new DungeonStateChangeEvent(unitPoints.iterator().next(),
+                dungeonRoomInfo == null ? null : dungeonRoomInfo.getName(), this.currentState, currentState));
         this.currentState = currentState;
     }
 
