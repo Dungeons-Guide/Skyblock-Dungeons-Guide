@@ -174,5 +174,6 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
                     .closePopup(this.tooltip, null);
             this.tooltip = null;
         }
+        super.onUnmount();
     }
 }

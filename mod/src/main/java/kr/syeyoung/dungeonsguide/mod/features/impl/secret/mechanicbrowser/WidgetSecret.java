@@ -67,18 +67,23 @@ public class WidgetSecret extends AnnotatedWidget {
 
         onSelect.accept(id);
 
-        PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
-        popupMgr.openPopup(popup = new LocationedPopup(x, y, new WidgetStateTooltip(room, mechanic, id)), (val) -> {
-            if (val == null)
-                onSelect.accept(null);
-            popup = null;
-        });
+        if (popup == null) {
+            PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
+            popupMgr.openPopup(popup = new LocationedPopup(x, y, new WidgetStateTooltip(room, mechanic, id)), (val) -> {
+                if (val == null)
+                    onSelect.accept(null);
+                popup = null;
+            });
+        }
     }
 
     @Override
     public void onUnmount() {
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
-        if (popup != null)
+        if (popup != null) {
             popupMgr.closePopup(popup, "a");
+            popup = null;
+        }
+        super.onUnmount();
     }
 }

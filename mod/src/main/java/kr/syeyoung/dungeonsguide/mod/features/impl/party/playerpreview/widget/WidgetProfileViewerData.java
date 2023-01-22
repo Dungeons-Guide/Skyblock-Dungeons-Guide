@@ -114,20 +114,25 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
         double x = abs.getX() + abs.getWidth();
         double y = abs.getY();
 
-        PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
-        Scaler scaler = new Scaler();
-        scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
-        scaler.child.setValue(new WidgetPlayerInventory(
-                playerSkyblockData.getPlayerProfiles()[idx]
-        ));
-        popupMgr.openPopup(popup = new LocationedPopup(x, y, scaler), null);
+        if (popup == null) {
+            PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
+            Scaler scaler = new Scaler();
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.child.setValue(new WidgetPlayerInventory(
+                    playerSkyblockData.getPlayerProfiles()[idx]
+            ));
+            popupMgr.openPopup(popup = new LocationedPopup(x, y, scaler), null);
+        }
     }
 
     @Override
     public void onUnmount() {
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
-        if (popup != null)
+        if (popup != null) {
             popupMgr.closePopup(popup, null);
+            popup = null;
+        }
+        super.onUnmount();
     }
 
 }

@@ -108,5 +108,6 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
                     .closePopup(this.tooltip, null);
             this.tooltip = null;
         }
+        super.onUnmount();
     }
 }

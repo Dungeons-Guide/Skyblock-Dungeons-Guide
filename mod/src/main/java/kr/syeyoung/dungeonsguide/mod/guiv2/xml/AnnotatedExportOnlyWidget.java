@@ -81,7 +81,7 @@ public abstract class AnnotatedExportOnlyWidget extends Widget implements Export
     }
 
     public void onUnmount() {
-        for (BindableAttribute value : exportedAttributes.values()) {
+        for (BindableAttribute value : getExportedAttributes().values()) {
             value.unexportAll();
         }
     }

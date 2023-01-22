@@ -61,4 +61,12 @@ public class SelectiveContainer extends AnnotatedExportOnlyWidget {
         }
         return bindableAttribute;
     }
+
+    @Override
+    public void onUnmount() {
+        for (BindableAttribute<Widget> value : widgetMap.values()) {
+            value.unexportAll();
+        }
+        super.onUnmount();
+    }
 }

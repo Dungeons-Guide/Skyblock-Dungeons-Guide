@@ -144,5 +144,6 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
                     .closePopup(this.tooltip, null);
             this.tooltip = null;
         }
+        super.onUnmount();
     }
 }
