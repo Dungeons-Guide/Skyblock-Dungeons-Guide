@@ -127,7 +127,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
                     .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip), (a) -> {
                         this.tooltip = null;
                     });
-        return false;
+        return true;
     }
 
     @Override
