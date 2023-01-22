@@ -23,11 +23,15 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.MapProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
+import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
+import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomDiscoverEvent;
+import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
@@ -53,14 +57,11 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.List;
 import java.util.*;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
+import java.util.concurrent.*;
 
 @Getter
 public class DungeonRoom {
-    private final List<Point> unitPoints;
+    private final Set<Point> unitPoints;
     private final short shape;
     private final byte color;
 
@@ -97,7 +98,7 @@ public class DungeonRoom {
     }
 
     public void setCurrentState(RoomState currentState) {
-        context.createEvent(new DungeonStateChangeEvent(unitPoints.get(0), dungeonRoomInfo.getName(), this.currentState, currentState));
+        context.getRecorder().createEvent(new DungeonStateChangeEvent(unitPoints.iterator().next(), dungeonRoomInfo.getName(), this.currentState, currentState));
         this.currentState = currentState;
     }
 
@@ -152,6 +153,7 @@ public class DungeonRoom {
             }, 0, TimeUnit.MILLISECONDS);
         }
     }
+    private static final ExecutorService roomMatcherThread = Executors.newSingleThreadExecutor( DungeonsGuide.THREAD_FACTORY);
 
     private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(4, DungeonsGuide.THREAD_FACTORY);
     @Getter
@@ -169,7 +171,7 @@ public class DungeonRoom {
 
     private RoomProcessor roomProcessor;
 
-    public DungeonRoom(List<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
+    public DungeonRoom(Set<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
         this.shape = shape;
         this.color = color;
@@ -200,18 +202,45 @@ public class DungeonRoom {
         arr = new long[lenx *leny * lenz * 2 / 8];;
 
         buildDoors(doorsAndStates);
-        buildRoom();
         nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
+
+        roomMatcherThread.submit(() -> {
+            try {
+                matchRoomAndSetupRoomProcessor();
+                matched = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        });
+    }
+    private volatile boolean matched = false;
+    private volatile boolean matching = false;
+
+    public void tryRematch() {
+        if (matched) return;
+        if (matching )return;
+        matching = true;
+        roomMatcherThread.submit(() -> {
+            try {
+                matchRoomAndSetupRoomProcessor();
+                matched = true;
+            } catch (Exception e) {
+                e.printStackTrace();
+            } finally {
+                matching = false;
+            }
+        });
+    }
+    private void matchRoomAndSetupRoomProcessor() {
+        buildRoom();
         updateRoomProcessor();
-
-
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
     private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
-        BlockPos pos = context.getMapProcessor().roomPointToWorldPoint(minRoomPt).add(16,0,16);
+        BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16,0,16);
         for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
             Vector2d vector2d = doorsAndState.getFirst();
             BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
@@ -231,7 +260,19 @@ public class DungeonRoom {
         if (dungeonRoomInfo == null) {
             dungeonRoomInfo = roomMatcher.createNew();
             if (color == 18) dungeonRoomInfo.setProcessorId("bossroom");
+        } else {
+            context.getRecorder().createEvent(new DungeonRoomMatchEvent(getUnitPoints().iterator().next(),
+                    getRoomMatcher().getRotation(), new SerializableBlockPos(getMin()),
+                    new SerializableBlockPos(getMax()), getShape(), getColor(),
+                    dungeonRoomInfo.getUuid(),
+                    dungeonRoomInfo.getName(),
+                    dungeonRoomInfo.getProcessorId()));
         }
+        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! shape: " + getShape() + " color: " +getColor() + " unitPos: " + unitPoints.iterator().next().x + "," + unitPoints.iterator().next().y));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! mapMin: " + getMin() + " mapMx: " + getMax()));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("New Map matched! id: " + dungeonRoomInfo.getUuid() + " name: " + dungeonRoomInfo.getName() +" proc: "+dungeonRoomInfo.getProcessorId()));
+
+
         this.dungeonRoomInfo = dungeonRoomInfo;
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
     }
@@ -286,8 +327,8 @@ public class DungeonRoom {
     }
 
     public boolean canAccessAbsolute(BlockPos pos) {
-        MapProcessor mapProcessor = this.context.getMapProcessor();
-        Point roomPt = mapProcessor.worldPointToRoomPoint(pos);
+        DungeonRoomScaffoldParser mapProcessor = this.context.getScaffoldParser();
+        Point roomPt = mapProcessor.getDungeonMapLayout().worldPointToRoomPoint(pos);
         roomPt.translate(-minRoomPt.x, -minRoomPt.y);
 
         return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;

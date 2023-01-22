@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
@@ -74,7 +75,7 @@ public class FeatureWatcherWarning extends TextHUDFeature  {
             warning = System.currentTimeMillis() + 2500;
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context ==null) return;
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                 if (dungeonRoom != null && dungeonRoom.getColor() == 18)
                     dungeonRoom.setCurrentState(DungeonRoom.RoomState.DISCOVERED);
             }
@@ -82,7 +83,7 @@ public class FeatureWatcherWarning extends TextHUDFeature  {
     }
 
     @DGEventHandler(ignoreDisabled = true)
-    public void onDungeonEnd(DungeonEndedEvent event) {
+    public void onDungeonEnd(DungeonLeftEvent event) {
         warning = 0;
     }
 }

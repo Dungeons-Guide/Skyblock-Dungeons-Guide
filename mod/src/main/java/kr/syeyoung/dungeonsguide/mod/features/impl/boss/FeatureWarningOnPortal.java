@@ -112,9 +112,9 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         FeatureDungeonScore.ScoreCalculation scoreCalculation = FeatureRegistry.DUNGEON_SCORE.calculateScore();
 
-        boolean failed = context.getDungeonRoomList().stream().anyMatch(a -> a.getCurrentState() == DungeonRoom.RoomState.FAILED);
-        if (context.getMapProcessor().getUndiscoveredRoom() > 0) {
-            texts.add(new StyledText("There are at least "+context.getMapProcessor().getUndiscoveredRoom()+" undiscovered rooms!\n", "warning"));
+        boolean failed = context.getScaffoldParser().getDungeonRoomList().stream().anyMatch(a -> a.getCurrentState() == DungeonRoom.RoomState.FAILED);
+        if (context.getScaffoldParser().getUndiscoveredRoom() > 0) {
+            texts.add(new StyledText("There are at least "+context.getScaffoldParser().getUndiscoveredRoom()+" undiscovered rooms!\n", "warning"));
         } else if (failed) {
             texts.add(new StyledText("There is a failed puzzle room! Yikes!\n", "warning"));
         } else if (!scoreCalculation.isFullyCleared()) {

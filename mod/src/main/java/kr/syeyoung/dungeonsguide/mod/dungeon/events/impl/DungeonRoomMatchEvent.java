@@ -28,12 +28,16 @@ import java.util.UUID;
 
 @Data
 @AllArgsConstructor
-public class DungeonRoomDiscoverEvent implements DungeonEventData {
+public class DungeonRoomMatchEvent implements DungeonEventData {
     private Point unitPt;
+    private int rotation;
     private SerializableBlockPos min;
     private SerializableBlockPos max;
     private int shape;
     private int color;
+    private UUID roomUID;
+    private String roomName;
+    private String roomProc;
 
     @Override
     public String getEventName() {

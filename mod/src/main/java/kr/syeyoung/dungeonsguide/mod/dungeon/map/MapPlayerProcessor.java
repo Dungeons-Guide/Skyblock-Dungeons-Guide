@@ -1,0 +1,177 @@
+/*
+ * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+ * Copyright (C) 2023  cyoung06 (syeyoung)
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU Affero General Public License as published
+ * by the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU Affero General Public License for more details.
+ *
+ * You should have received a copy of the GNU Affero General Public License
+ * along with this program.  If not, see <https://www.gnu.org/licenses/>.
+ */
+
+package kr.syeyoung.dungeonsguide.mod.dungeon.map;
+
+import com.google.common.collect.BiMap;
+import com.google.common.collect.HashBiMap;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.entity.player.EntityPlayer;
+import net.minecraft.item.ItemMap;
+import net.minecraft.item.ItemStack;
+import net.minecraft.util.*;
+import net.minecraft.world.storage.MapData;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
+import java.awt.*;
+import java.util.*;
+
+public class MapPlayerProcessor {
+
+   private static final Minecraft mc = Minecraft.getMinecraft();
+    private final DungeonContext context;
+    @Getter
+    private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
+    Logger logger = LogManager.getLogger("DG-MapPlayerProcessor");
+    /**
+     * If the player on the map is closer than value this it won't save it
+     * this should be done with render-distance but whateva
+     */
+    int clossnessDistance = 50;
+    private int waitDelay = 0;
+
+    public MapPlayerProcessor(DungeonContext context) {
+        this.context = context;
+    }
+
+    private static void error(String prefix) {
+        ChatTransmitter.addToQueue(new ChatComponentText(ChatTransmitter.prefix + prefix));
+    }
+
+
+
+    public void tick() {
+        if (waitDelay < 5) {
+            waitDelay++;
+            return;
+        }
+        ItemStack stack = Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(8);
+
+        if (stack == null || !(stack.getItem() instanceof ItemMap)) {
+            return;
+        }
+
+        MapData mapData = ((ItemMap) stack.getItem()).getMapData(stack, mc.theWorld);
+
+        if (mapData != null && mapIconToPlayerMap.size() < context.getPlayers().size()) {
+            getPlayersFromMap(mapData);
+        }
+
+    }
+
+
+    private void getPlayersFromMap(MapData mapdata) {
+
+        if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("Getting players from map");
+
+        if (context.getScaffoldParser() == null) return;
+        for (Map.Entry<String, Vec4b> stringVec4bEntry : mapdata.mapDecorations.entrySet()) {
+            String mapDecString = stringVec4bEntry.getKey();
+            Vec4b vec4 = stringVec4bEntry.getValue();
+
+            if (!mapIconToPlayerMap.containsValue(mapDecString)) {
+                if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap dosent have Player");
+
+                int x = vec4.func_176112_b() / 2 + 64;
+                int y = vec4.func_176113_c() / 2 + 64;
+                BlockPos mapPos = context.getScaffoldParser().getDungeonMapLayout().mapPointToWorldPoint(new Point(x, y));
+                String potentialPlayer = null;
+
+                for (String player : context.getPlayers()) {
+                    if (DungeonsGuide.getDungeonsGuide().verbose)
+                        logger.info("Player: {} isNear: {} ", player, isPlayerNear(player, mapPos));
+//                        if (!mapIconToPlayerMap.containsKey(player) && isPlayerNear(player, mapPos)) {
+                    if (!mapIconToPlayerMap.containsKey(player)) {
+                        if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("Potential profile is: " + player);
+                        potentialPlayer = player;
+                        break;
+                    }
+                }
+
+
+                if (potentialPlayer != null) {
+                    if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("potentialPlayer is not null");
+                    boolean shouldSave = true;
+
+                    for (Map.Entry<String, Vec4b> vec4bEntry : mapdata.mapDecorations.entrySet()) {
+//                        String aaa = vec4bEntry.getKey();
+                        Vec4b bbb = vec4bEntry.getValue();
+
+//                            if (mapIconToPlayerMap.containsValue(aaa) || mapDecString.equals(aaa)) {
+//                                shouldSave = false;
+//                                break;
+//                            }
+//                            else {
+                        int x2 = bbb.func_176112_b() / 2 + 64;
+                        int y2 = bbb.func_176113_c() / 2 + 64;
+                        int dx = x2 - x;
+                        int dy = y2 - y;
+                        if (dx * dx + dy * dy < clossnessDistance) {
+                            shouldSave = false;
+                            break;
+                        }
+//                            }
+                    }
+
+                    if (shouldSave) {
+                        if (DungeonsGuide.getDungeonsGuide().verbose)
+                            logger.info("added {} to mapIconPlayerMap with {}", potentialPlayer, stringVec4bEntry.getKey());
+                        if (mapIconToPlayerMap.containsKey(potentialPlayer)) {
+                            mapIconToPlayerMap.replace(potentialPlayer, stringVec4bEntry.getKey());
+                        } else {
+                            mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
+                        }
+                        if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap:");
+                        if (DungeonsGuide.getDungeonsGuide().verbose)
+                            mapIconToPlayerMap.forEach((key, value) -> logger.info("  {}: {}", key, value));
+                    } else {
+                        if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("shouldSave is false");
+                    }
+
+
+                } else {
+                    if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("potentialPlayer is null");
+                }
+
+            } else {
+                if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap has player ");
+            }
+        }
+
+
+    }
+
+    private boolean isPlayerNear(String player, BlockPos mapPos) {
+        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+
+        if (entityPlayer != null && !entityPlayer.isInvisible()) {
+            BlockPos pos = entityPlayer.getPosition();
+            int dx = mapPos.getX() - pos.getX();
+            int dz = mapPos.getZ() - pos.getZ();
+            return dx * dx + dz * dz < clossnessDistance;
+
+        }
+
+        return false;
+    }
+}

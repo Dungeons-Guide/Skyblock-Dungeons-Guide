@@ -47,7 +47,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
     public int getTotalSecretsInt() {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         int totalSecrets = 0;
-        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+        for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
             if (dungeonRoom.getTotalSecrets() != -1)
                 totalSecrets += dungeonRoom.getTotalSecrets();
         }
@@ -62,7 +62,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getMapProcessor() != null;
+        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() != null;
     }
 
     @Override
@@ -79,8 +79,8 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
     public List<StyledText> getText() {
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
-        Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getMapProcessor().worldPointToRoomPoint(player.getPosition());
-        DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getRoomMapper().get(roomPt);
+        Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(player.getPosition());
+        DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(roomPt);
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("You're in ","in"));
         if (dungeonRoom == null) {

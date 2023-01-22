@@ -24,23 +24,17 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.NestedCategory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.MapProcessor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProvider;
-import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
@@ -51,30 +45,19 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
-import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
-import net.minecraft.nbt.CompressedStreamTools;
-import net.minecraft.nbt.NBTTagCompound;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.server.MinecraftServer;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
-import net.minecraft.world.World;
 import net.minecraftforge.common.MinecraftForge;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
-import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
@@ -82,7 +65,6 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.*;
-import java.util.regex.Pattern;
 
 public class CommandDgDebug extends CommandBase {
     @Override
@@ -179,9 +161,9 @@ public class CommandDgDebug extends CommandBase {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 if (thePlayer == null) return;
                 if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
-                Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
 
-                DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+                DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
                 grp.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
             } catch (Throwable t) {
@@ -283,7 +265,7 @@ public class CommandDgDebug extends CommandBase {
         } else if ("partyid".equals(arg)) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
         } else if ("loc".equals(arg)) {
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + DungeonContext.getDungeonName()));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.locationName));
         } else if ("saverun".equals(arg)) {
             try {
                 File f = Main.getConfigDir();
@@ -300,7 +282,7 @@ public class CommandDgDebug extends CommandBase {
                 DungeonEventHolder dungeonEventHolder = new DungeonEventHolder();
                 dungeonEventHolder.setDate(dungeonContext.getInit());
                 dungeonEventHolder.setPlayers(dungeonContext.getPlayers());
-                dungeonEventHolder.setEventDataList(dungeonContext.getEvents());
+                dungeonEventHolder.setEventDataList(dungeonContext.getRecorder().getEvents());
 
 
                 ObjectOutputStream oos = new ObjectOutputStream(Files.newOutputStream(runFile.toPath()));
@@ -318,80 +300,80 @@ public class CommandDgDebug extends CommandBase {
                 sender.addChatMessage(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
             });
         } else if ("createfakeroom".equals(arg)) {// load schematic
-            File f = new File(Main.getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
-            NBTTagCompound compound;
-            try {
-                compound = CompressedStreamTools.readCompressed(new FileInputStream(f));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            byte[] blocks = compound.getByteArray("Blocks");
-            byte[] meta = compound.getByteArray("Data");
-            for (int x = 0; x < compound.getShort("Width"); x++) {
-                for (int y = 0; y < compound.getShort("Height"); y++) {
-                    for (int z = 0; z < compound.getShort("Length"); z++) {
-                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                        BlockPos pos = new BlockPos(x, y, z);
-                        World w = MinecraftServer.getServer().getEntityWorld();
-                        w.setBlockState(pos, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF), 2);
-                    }
-                }
-            }
-
-
-            DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
-                @Override
-                public BlockPos findDoor(World w, String dungeonName) {
-                    return new BlockPos(0, 0, 0);
-                }
-
-                @Override
-                public Vector2d findDoorOffset(World w, String dungeonName) {
-                    return null;
-                }
-
-                @Override
-                public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
-                    return null;
-                }
-
-                @Override
-                public boolean isTrapSpawn(String dungeonName) {
-                    return false;
-                }
-
-                @Override
-                public double secretPercentage(String dungeonName) {
-                    return 0;
-                }
-
-                @Override
-                public int speedSecond(String dungeonName) {
-                    return 0;
-                }
-            });
-            DungeonContext.setDungeonName("TEST DG");
-            DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
-            DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
-            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
-            MapProcessor mapProcessor = fakeContext.getMapProcessor();
-            mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
-            mapProcessor.setBugged(false);
-            mapProcessor.setDoorDimensions(new Dimension(4, 4));
-            mapProcessor.setTopLeftMapPoint(new Point(0, 0));
-            fakeContext.setDungeonMin(new BlockPos(0, 70, 0));
-
-            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0, 0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0, 70, 0), new BlockPos(31, 70, 31), fakeContext, Collections.emptySet());
-
-            fakeContext.getDungeonRoomList().add(dungeonRoom);
-            for (Point p : Arrays.asList(new Point(0, 0))) {
-                fakeContext.getRoomMapper().put(p, dungeonRoom);
-            }
-
-            EditingContext.createEditingContext(dungeonRoom);
-            EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
+//            File f = new File(Main.getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
+//            NBTTagCompound compound;
+//            try {
+//                compound = CompressedStreamTools.readCompressed(new FileInputStream(f));
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//                return;
+//            }
+//
+//            byte[] blocks = compound.getByteArray("Blocks");
+//            byte[] meta = compound.getByteArray("Data");
+//            for (int x = 0; x < compound.getShort("Width"); x++) {
+//                for (int y = 0; y < compound.getShort("Height"); y++) {
+//                    for (int z = 0; z < compound.getShort("Length"); z++) {
+//                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+//                        BlockPos pos = new BlockPos(x, y, z);
+//                        World w = MinecraftServer.getServer().getEntityWorld();
+//                        w.setBlockState(pos, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF), 2);
+//                    }
+//                }
+//            }
+//
+//
+//            DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
+//                @Override
+//                public BlockPos findDoor(World w, String dungeonName) {
+//                    return new BlockPos(0, 0, 0);
+//                }
+//
+//                @Override
+//                public Vector2d findDoorOffset(World w, String dungeonName) {
+//                    return null;
+//                }
+//
+//                @Override
+//                public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
+//                    return null;
+//                }
+//
+//                @Override
+//                public boolean isTrapSpawn(String dungeonName) {
+//                    return false;
+//                }
+//
+//                @Override
+//                public double secretPercentage(String dungeonName) {
+//                    return 0;
+//                }
+//
+//                @Override
+//                public int speedSecond(String dungeonName) {
+//                    return 0;
+//                }
+//            });
+//            DungeonContext.setDungeonName("TEST DG");
+//            DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
+//            DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
+//            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
+//            MapPlayerProcessor mapProcessor = fakeContext.getp();
+//            mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
+//            mapProcessor.setBugged(false);
+//            mapProcessor.setDoorDimensions(new Dimension(4, 4));
+//            mapProcessor.setTopLeftMapPoint(new Point(0, 0));
+//            fakeContext.setDungeonMin(new BlockPos(0, 70, 0));
+//
+//            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0, 0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0, 70, 0), new BlockPos(31, 70, 31), fakeContext, Collections.emptySet());
+//
+//            fakeContext.getDungeonRoomList().add(dungeonRoom);
+//            for (Point p : Arrays.asList(new Point(0, 0))) {
+//                fakeContext.getRoomMapper().put(p, dungeonRoom);
+//            }
+//
+//            EditingContext.createEditingContext(dungeonRoom);
+//            EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
         } else if ("closecontext".equals(arg)) {
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
 

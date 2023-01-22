@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
@@ -46,7 +46,7 @@ public class FeaturePartyReady extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(DungeonContext.getDungeonName());
+        return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(SkyblockStatus.locationName);
     }
 
     @Override

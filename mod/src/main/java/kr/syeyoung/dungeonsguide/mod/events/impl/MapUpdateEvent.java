@@ -16,27 +16,20 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.events.impl;
+package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventData;
-import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-
-import java.awt.*;
-import java.util.UUID;
+import lombok.EqualsAndHashCode;
+import net.minecraft.network.play.server.S2FPacketSetSlot;
+import net.minecraft.network.play.server.S30PacketWindowItems;
+import net.minecraft.world.storage.MapData;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
 @Data
+@EqualsAndHashCode(callSuper=false)
 @AllArgsConstructor
-public class DungeonRoomDiscoverEvent implements DungeonEventData {
-    private Point unitPt;
-    private SerializableBlockPos min;
-    private SerializableBlockPos max;
-    private int shape;
-    private int color;
-
-    @Override
-    public String getEventName() {
-        return "ROOM_DISCOVER";
-    }
+public class MapUpdateEvent extends Event {
+    private int mapId;
+    private MapData mapData;
 }

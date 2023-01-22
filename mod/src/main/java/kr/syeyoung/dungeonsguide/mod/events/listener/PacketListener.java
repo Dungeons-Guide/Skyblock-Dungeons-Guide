@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.map.MapDataManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
@@ -34,6 +35,7 @@ import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
@@ -77,6 +79,10 @@ public class PacketListener {
             MinecraftForge.EVENT_BUS.post(new TitleEvent((S45PacketTitle) packet));
         } else if (packet instanceof S38PacketPlayerListItem) {
             MinecraftForge.EVENT_BUS.post(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
+        }else if (packet instanceof S34PacketMaps) {
+            MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
+            ((S34PacketMaps) packet).setMapdataTo(mapData);
+            MinecraftForge.EVENT_BUS.post(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), mapData));
         }
     }
 

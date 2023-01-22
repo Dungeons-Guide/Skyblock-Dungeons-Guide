@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
@@ -32,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -91,6 +94,12 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         }
         return actualBit;
     }
+    @DGEventHandler(ignoreDisabled = true)
+    public void onDungeonEnd(DungeonLeftEvent dungeonEndedEvent) {
+        milestoneReached.clear();
+    }
+    @Getter
+    private final List<String[]> milestoneReached = new ArrayList<>();
 
     public static final Pattern milestone_pattern = Pattern.compile("§r§e§l(.+) Milestone §r§e(.)§r§7: .+ §r§a(.+)§r");
 
@@ -103,7 +112,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         if (context == null) return;
         String txt = clientChatReceivedEvent.message.getFormattedText();
         if (milestone_pattern.matcher(txt).matches()) {
-            context.getMilestoneReached().add(new String[] {
+            milestoneReached.add(new String[] {
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_REALTIME.getTimeElapsed()),
                     TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())
             });

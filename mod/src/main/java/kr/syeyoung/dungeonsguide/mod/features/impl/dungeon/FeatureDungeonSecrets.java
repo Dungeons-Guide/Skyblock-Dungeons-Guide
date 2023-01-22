@@ -30,12 +30,10 @@ import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class FeatureDungeonSecrets extends TextHUDFeature {
@@ -76,7 +74,8 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         if (getSecretsFound() != 0) return (int) Math.ceil (getSecretsFound() / getSecretPercentage() * 100);
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         int totalSecrets = 0;
-        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+        if (context.getScaffoldParser() == null) return 0;
+        for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
             if (dungeonRoom.getTotalSecrets() != -1)
                 totalSecrets += dungeonRoom.getTotalSecrets();
         }
@@ -85,9 +84,10 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     public boolean sureOfTotalSecrets() {
         if (getSecretsFound() != 0) return true;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (context.getMapProcessor().getUndiscoveredRoom() > 0) return false;
+        if (context.getScaffoldParser() == null) return false;
+        if (context.getScaffoldParser().getUndiscoveredRoom() > 0) return false;
         boolean allknown = true;
-        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+        for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
             if (dungeonRoom.getTotalSecrets() == -1) allknown = false;
         }
         return allknown;
@@ -96,9 +96,10 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     public String getTotalSecrets() {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return "?";
+        if (context.getScaffoldParser() == null) return "?";
         int totalSecrets = 0;
         boolean allknown = true;
-        for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+        for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
             if (dungeonRoom.getTotalSecrets() != -1)
                 totalSecrets += dungeonRoom.getTotalSecrets();
             else allknown = false;

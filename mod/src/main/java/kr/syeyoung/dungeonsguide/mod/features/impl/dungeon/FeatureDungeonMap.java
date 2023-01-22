@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.MapProcessor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
@@ -52,11 +52,9 @@ import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
 import net.minecraft.util.Vec4b;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.MapData;
-import org.jetbrains.annotations.Nullable;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
@@ -129,9 +127,9 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (context == null || !context.getMapProcessor().isInitialized()) return;
+        if (context == null || context.getScaffoldParser() == null) return;
+        DungeonRoomScaffoldParser mapProcessor = context.getScaffoldParser();
 
-        MapProcessor mapProcessor = context.getMapProcessor();
         MapData mapData = mapProcessor.getLatestMapData();
         Rectangle featureRect = getFeatureRect().getRectangle();
         Gui.drawRect(0, 0, featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, backgroudColor));
@@ -150,7 +148,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     @Override
     public void drawDemo(float partialTicks) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon() && context != null && context.getMapProcessor().isInitialized() && on) {
+        if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon() && context != null && context.getScaffoldParser() != null && on) {
             drawHUD(partialTicks);
             return;
         }
@@ -166,7 +164,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         RenderUtils.drawUnfilledBox(0, 0, featureRect.width, featureRect.height, this.<AColor>getParameter("border_color").getValue());
     }
 
-    public void renderMap(float partialTicks, MapProcessor mapProcessor, MapData mapData, DungeonContext context) {
+    public void renderMap(float partialTicks, DungeonRoomScaffoldParser mapProcessor, MapData mapData, DungeonContext context) {
         EntityPlayer p = Minecraft.getMinecraft().thePlayer;
 
         float postScale = this.centerMapOnPlayer ? postscaleOfMap : 1;
@@ -180,7 +178,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         GlStateManager.scale(scale, scale, 0);
         GlStateManager.scale(postScale, postScale, 0);
 
-        Vector2d pt = mapProcessor.worldPointToMapPointFLOAT(p.getPositionEyes(partialTicks));
+        Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(p.getPositionEyes(partialTicks));
         double yaw = p.rotationYaw;
         if (this.centerMapOnPlayer) {
             if (this.shouldRotateWithPlayer) {
@@ -191,7 +189,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
             GlStateManager.translate(-64, -64, 0);
         }
 
-        updateMapTexture(mapData.colors, mapProcessor, context.getDungeonRoomList());
+        updateMapTexture(mapData.colors, mapProcessor, mapProcessor.getDungeonRoomList());
 
         render();
 
@@ -208,11 +206,11 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
 
         FontRenderer fr = getFontRenderer();
         if (this.showSecretCount) {
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            for (DungeonRoom dungeonRoom : mapProcessor.getDungeonRoomList()) {
                 GlStateManager.pushMatrix();
 
-                Point mapPt = mapProcessor.roomPointToMapPoint(dungeonRoom.getUnitPoints().get(0));
-                GlStateManager.translate(mapPt.x + mapProcessor.getUnitRoomDimension().width / 2d, mapPt.y + mapProcessor.getUnitRoomDimension().height / 2d, 0);
+                Point mapPt = mapProcessor.getDungeonMapLayout().roomPointToMapPoint(dungeonRoom.getUnitPoints().iterator().next());
+                GlStateManager.translate(mapPt.x + mapProcessor.getDungeonMapLayout().getUnitRoomSize().width / 2d, mapPt.y + mapProcessor.getDungeonMapLayout().getUnitRoomSize().height / 2d, 0);
 
                 if (this.centerMapOnPlayer && this.shouldRotateWithPlayer) {
                     GlStateManager.rotate((float) (yaw - 180), 0, 0, 1);
@@ -266,7 +264,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     private final ResourceLocation generatedMapTexture = Minecraft.getMinecraft().getTextureManager().getDynamicTextureLocation("dungeonmap/map", mapTexture);
     private final int[] mapTextureData = mapTexture.getTextureData();
 
-    private void updateMapTexture(byte[] colors, MapProcessor mapProcessor, List<DungeonRoom> dungeonRooms) {
+    private void updateMapTexture(byte[] colors, DungeonRoomScaffoldParser mapProcessor, List<DungeonRoom> dungeonRooms) {
 
         if(shouldCacheMap){
             if(!didMapChange(dungeonRooms)){
@@ -288,10 +286,10 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         if (this.showSecretCount) {
             for (DungeonRoom dungeonRoom : dungeonRooms) {
                 for (Point pt : dungeonRoom.getUnitPoints()) {
-                    for (int y1 = 0; y1 < mapProcessor.getUnitRoomDimension().height; y1++) {
-                        for (int x1 = 0; x1 < mapProcessor.getUnitRoomDimension().width; x1++) {
-                            int x = MathHelper.clamp_int(pt.x * (mapProcessor.getUnitRoomDimension().width + mapProcessor.getDoorDimensions().height) + x1 + mapProcessor.getTopLeftMapPoint().x, 0, 128);
-                            int y = MathHelper.clamp_int(pt.y * (mapProcessor.getUnitRoomDimension().height + mapProcessor.getDoorDimensions().height) + y1 + mapProcessor.getTopLeftMapPoint().y, 0, 128);
+                    for (int y1 = 0; y1 < mapProcessor.getDungeonMapLayout().getUnitRoomSize().height; y1++) {
+                        for (int x1 = 0; x1 < mapProcessor.getDungeonMapLayout().getUnitRoomSize().width; x1++) {
+                            int x = MathHelper.clamp_int(pt.x * (mapProcessor.getDungeonMapLayout().getUnitRoomSize().width + mapProcessor.getDungeonMapLayout().getMapRoomGap()) + x1 + mapProcessor.getDungeonMapLayout().getOriginPoint().x, 0, 128);
+                            int y = MathHelper.clamp_int(pt.y * (mapProcessor.getDungeonMapLayout().getUnitRoomSize().height + mapProcessor.getDungeonMapLayout().getMapRoomGap()) + y1 + mapProcessor.getDungeonMapLayout().getOriginPoint().y, 0, 128);
                             int i = y * 128 + x;
                             int j = dungeonRoom.getColor();
 
@@ -354,7 +352,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     }
 
 
-    private void renderHeads(MapProcessor mapProcessor, MapData mapData, float scale, float postScale, float partialTicks) {
+    private void renderHeads(DungeonRoomScaffoldParser mapProcessor, MapData mapData, float scale, float postScale, float partialTicks) {
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
         Set<TabListEntry> playerList = getPlayerListCached();
@@ -376,7 +374,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
 
             if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == thePlayer)) {
                 // getting location from player entity
-                pt2 = mapProcessor.worldPointToMapPointFLOAT(entityplayer.getPositionEyes(partialTicks));
+                pt2 = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(entityplayer.getPositionEyes(partialTicks));
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
                 if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
             }

@@ -65,8 +65,9 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         if (context == null) return false;
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
-        DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+        if (context.getScaffoldParser() == null) return false;
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
             return false;
         }
@@ -85,8 +86,8 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         if (context == null) return Collections.emptyList();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getMapProcessor().worldPointToRoomPoint(thePlayer.getPosition());
-        DungeonRoom dungeonRoom = context.getRoomMapper().get(roomPt);
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
             return Collections.emptyList();
         }

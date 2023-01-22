@@ -26,22 +26,22 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,14 +73,15 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
     public List<String> getUsedTextStyle() {
         return Arrays.asList("username", "separator", "deaths", "total", "totalDeaths");
     }
+    @Getter
+    private final Map<String, Integer> deaths = new HashMap<>();
 
     @Override
     public List<StyledText> getText() {
 
         List<StyledText> text=  new ArrayList<StyledText>();
 
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        Map<String, Integer> deaths = context.getDeaths();
+        Map<String, Integer> deaths = getDeaths();
         int i = 0;
         int deathsCnt = 0;
         for (Map.Entry<String, Integer> death:deaths.entrySet()) {
@@ -136,7 +137,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return 0;
         int d = 0;
-        for (Integer value : context.getDeaths().values()) {
+        for (Integer value : getDeaths().values()) {
             d += value;
         }
         return d;
@@ -145,6 +146,10 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
     Pattern deathPattern = Pattern.compile("§r§c ☠ (.+?)§r§7 .+and became a ghost.+");
     Pattern meDeathPattern = Pattern.compile("§r§c ☠ §r§7You .+and became a ghost.+");
 
+    @DGEventHandler(ignoreDisabled = true)
+    public void onDungeonEnd(DungeonLeftEvent dungeonEndedEvent) {
+        this.deaths.clear();
+    }
     @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
@@ -156,17 +161,17 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         Matcher m = deathPattern.matcher(txt);
         if (m.matches()) {
             String nickname = TextUtils.stripColor(m.group(1));
-            int deaths = context.getDeaths().getOrDefault(nickname, 0);
-            context.getDeaths().put(nickname, deaths + 1);
-            context.createEvent(new DungeonDeathEvent(nickname, txt, deaths));
+            int deaths = getDeaths().getOrDefault(nickname, 0);
+            getDeaths().put(nickname, deaths + 1);
+            context.getRecorder().createEvent(new DungeonDeathEvent(nickname, txt, deaths));
             ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: "+nickname+" / "+(deaths + 1)));
         }
         Matcher m2 = meDeathPattern.matcher(txt);
         if (m2.matches()) {
             String nickname = "me";
-            int deaths = context.getDeaths().getOrDefault(nickname, 0);
-            context.getDeaths().put(nickname, deaths + 1);
-            context.createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
+            int deaths = getDeaths().getOrDefault(nickname, 0);
+            getDeaths().put(nickname, deaths + 1);
+            context.getRecorder().createEvent(new DungeonDeathEvent(Minecraft.getMinecraft().thePlayer.getName(), txt, deaths));
             ChatTransmitter.sendDebugChat(new ChatComponentText("Death verified :: me / "+(deaths + 1)));
         }
     }

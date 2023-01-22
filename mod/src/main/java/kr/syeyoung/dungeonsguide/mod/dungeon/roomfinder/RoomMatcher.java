@@ -51,6 +51,7 @@ public class RoomMatcher {
             for (int x = 0; x < xx; x++) {
                 if (x % 8 == 0 && z % 8 == 0 && dungeonRoom.getContext().getWorld().getChunkFromBlockCoords(dungeonRoom.getRelativeBlockPosAt(x, 0, z)).isEmpty()) {
                     ChatTransmitter.sendDebugChat(new ChatComponentText("Chunk Not loaded in Room Matcher"));
+                    throw new IllegalStateException("Chunk not loaded");
                 }
             }
         }

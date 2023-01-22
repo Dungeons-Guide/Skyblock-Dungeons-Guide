@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -37,9 +38,6 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResource;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.MathHelper;
 
 import java.util.ArrayList;
@@ -208,8 +206,10 @@ public class FeatureDungeonScore extends TextHUDFeature {
         if (!skyblockStatus.isOnDungeon()) return null;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return null;
-        if (!context.getMapProcessor().isInitialized()) return null;
+        if (context.getScaffoldParser() == null) return null;
 
+
+        DungeonRoomScaffoldParser parser = context.getScaffoldParser();
         int skill = 100;
         int deaths = 0;
         {
@@ -222,7 +222,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
             boolean traproomIncomplete = context.isTrapRoomGen();
             int incompletePuzzles = getUndiscoveredPuzzles();
 
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            for (DungeonRoom dungeonRoom : parser.getDungeonRoomList()) {
 //                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
 //                    bossroomIncomplete = false;
                 if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
@@ -234,7 +234,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
                 roomCnt += dungeonRoom.getUnitPoints().size();
             }
             roomSkillPenalty += incompletePuzzles * 10;
-            if (context.getMapProcessor().getUndiscoveredRoom() != 0)
+            if (parser.getUndiscoveredRoom() != 0)
                 roomCnt = getTotalRooms();
             roomSkillPenalty += (roomCnt - totalCompRooms) * 4;
 //            if (bossroomIncomplete) roomSkillPenalty -=1;
@@ -256,7 +256,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
             int completed = 0;
             double total = 0;
 
-            for (DungeonRoom dungeonRoom : context.getDungeonRoomList()) {
+            for (DungeonRoom dungeonRoom : parser.getDungeonRoomList()) {
                 if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FAILED)
                     completed += dungeonRoom.getUnitPoints().size();
                 total += dungeonRoom.getUnitPoints().size();
@@ -265,8 +265,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
             totalSecrets =  FeatureRegistry.DUNGEON_SECRETS.getTotalSecretsInt() ;
             totalSecretsKnown = FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets();
 
-            fullyCleared = completed >= getTotalRooms() && context.getMapProcessor().getUndiscoveredRoom() == 0;
-            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (context.getMapProcessor().getUndiscoveredRoom() != 0 ? DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() : completed / total * 100)), 0, 60);
+            fullyCleared = completed >= getTotalRooms() && parser.getUndiscoveredRoom() == 0;
+            explorer += MathHelper.clamp_int((int) Math.floor(6.0 / 10.0 * (parser.getUndiscoveredRoom() != 0 ? DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() : completed / total * 100)), 0, 60);
             explorer += MathHelper.clamp_int((int) Math.floor(40 * (secrets = FeatureRegistry.DUNGEON_SECRETS.getSecretsFound()) / Math.ceil(totalSecrets * context.getSecretPercentage())),0,40);
         }
         int time = 0;

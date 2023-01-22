@@ -254,8 +254,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
         BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        Point pt1 = context.getMapProcessor().worldPointToRoomPoint(pos.add(2, 0, 2));
-        Point pt2 = context.getMapProcessor().worldPointToRoomPoint(pos.add(-2, 0, -2));
+        Point pt1 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(2, 0, 2));
+        Point pt2 = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos.add(-2, 0, -2));
         if (!pt1.equals(pt2)) {
             stack = 0;
             secrets2 = -1;

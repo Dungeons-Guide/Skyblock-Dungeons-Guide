@@ -41,6 +41,8 @@ import java.util.Set;
 
 public class SkyblockStatus {
     boolean wasOnHypixel = false;
+    public static String locationName;
+
 
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent ev) {
@@ -144,7 +146,7 @@ public class SkyblockStatus {
                 }
             }
             if (sc.getJustTeam().startsWith(" §7⏣")) {
-                DungeonContext.setDungeonName(strippedLine.trim());
+                locationName = strippedLine.trim();
             }
         }
 
