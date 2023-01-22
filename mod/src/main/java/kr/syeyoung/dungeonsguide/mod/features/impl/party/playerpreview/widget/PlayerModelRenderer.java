@@ -120,7 +120,6 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
         ItemStack toHover = null;
-        System.out.println(relMouseX0+"/"+relMouseY0);
         if (relMouseX0 > 20 && relMouseX0 < 70) {
             if (33 <= relMouseY0 && relMouseY0 <= 66) {
                 toHover = fakePlayer.getInventory()[3];

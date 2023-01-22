@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api;
 
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfileParser;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -57,26 +58,37 @@ public class SkinFetcher {
         SkinSet skinSet = new SkinSet();
         CompletableFuture<SkinSet> skinSet2 = new CompletableFuture<>();
         currentReq.put(gameProfile.getId().toString(), skinSet2);
-        Minecraft.getMinecraft().getSkinManager().loadProfileTextures(gameProfile, new SkinManager.SkinAvailableCallback() {
-            public void skinAvailable(MinecraftProfileTexture.Type p_180521_1_, ResourceLocation location, MinecraftProfileTexture profileTexture) {
-                switch (p_180521_1_) {
-                    case SKIN:
-                        skinSet.setSkinLoc(location);
-                        skinSet.setSkinType(profileTexture.getMetadata("model"));
-                        if (skinSet.getSkinType() == null) {
-                            skinSet.setSkinType("default");
+            ApiFetcher.ex.submit(() -> {
+                GameProfile gameProfile1 = Minecraft.getMinecraft().getSessionService().fillProfileProperties(gameProfile, true);
+
+                Minecraft.getMinecraft().getSkinManager().loadProfileTextures(gameProfile1, new SkinManager.SkinAvailableCallback() {
+                    public void skinAvailable(MinecraftProfileTexture.Type p_180521_1_, ResourceLocation location, MinecraftProfileTexture profileTexture) {
+                        switch (p_180521_1_) {
+                            case SKIN:
+                                skinSet.setSkinLoc(location);
+                                skinSet.setSkinType(profileTexture.getMetadata("model"));
+                                if (skinSet.getSkinType() == null) {
+                                    skinSet.setSkinType("default");
+                                }
+                                skinSet2.complete(skinSet);
+                                skinSetMap.put(gameProfile.getId().toString(), new CachedData<>(System.currentTimeMillis() + 1000*60*60*3, skinSet));
+                                currentReq.get(gameProfile.getId().toString());
+                                break;
+                            case CAPE:
+                                skinSet.setCapeLoc(location);
                         }
-                        skinSet2.complete(skinSet);
-                        skinSetMap.put(gameProfile.getId().toString(), new CachedData<>(System.currentTimeMillis() + 1000*60*60*3, skinSet));
-                        currentReq.get(gameProfile.getId().toString());
-                        break;
-                    case CAPE:
-                        skinSet.setCapeLoc(location);
-                }
-            }
-        }, true);
+                    }
+                }, true);
+            });
         return skinSet2;
     }
+
+
+    public static void purgeCache() {
+        skinSetMap.clear();
+        currentReq.clear();
+    }
+
 
     @Data
     @NoArgsConstructor

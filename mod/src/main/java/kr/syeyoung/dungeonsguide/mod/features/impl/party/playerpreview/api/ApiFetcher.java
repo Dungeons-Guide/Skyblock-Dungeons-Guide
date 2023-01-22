@@ -51,7 +51,7 @@ public class ApiFetcher {
     private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
 
-    private static final ExecutorService ex = Executors.newFixedThreadPool(4, DungeonsGuide.THREAD_FACTORY);
+    public static final ExecutorService ex = Executors.newFixedThreadPool(4, DungeonsGuide.THREAD_FACTORY);
 
     private static final Set<String> invalidKeys = new HashSet<>();
 
