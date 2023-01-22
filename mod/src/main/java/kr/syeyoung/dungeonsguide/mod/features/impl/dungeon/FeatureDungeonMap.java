@@ -32,6 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import net.minecraft.block.material.MapColor;
@@ -61,6 +63,7 @@ import org.lwjgl.opengl.GL14;
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.List;
+import java.util.Set;
 
 //TODO: reduce gl drawcalls somehow
 
@@ -336,28 +339,15 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         return false;
     }
 
-    @Nullable
-    public Tuple<String[], List<NetworkPlayerInfo>> loadPlayerList() {
-        String[] names = new String[21];
-
-        List<NetworkPlayerInfo> networkList = sorter.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
-        if (networkList.size() < 40) return null;
-
-        for (int i = 0; i < 20; i++) {
-            names[i] = TabListUtil.getPlayerNameWithChecks(networkList.get(i));
-        }
-
-        return new Tuple<>(names, networkList);
-    }
 
     long nextRefresh;
 
-    Tuple<String[], List<NetworkPlayerInfo>> playerListCached;
+    Set<TabListEntry> playerListCached;
 
-    public Tuple<String[], List<NetworkPlayerInfo>> getPlayerListCached(){
+    public Set<TabListEntry> getPlayerListCached(){
         if(playerListCached == null || nextRefresh <= System.currentTimeMillis()){
             ChatTransmitter.sendDebugChat("Refreshing players on map");
-            playerListCached = loadPlayerList();
+            playerListCached = TabList.INSTANCE.getTabListEntries();
             nextRefresh = System.currentTimeMillis() + 10000;
         }
         return playerListCached;
@@ -367,18 +357,15 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     private void renderHeads(MapProcessor mapProcessor, MapData mapData, float scale, float postScale, float partialTicks) {
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
-        Tuple<String[], List<NetworkPlayerInfo>> playerList = getPlayerListCached();
-
-        List<NetworkPlayerInfo> networkList = playerList.getSecond();
-        String[] names = playerList.getFirst();
-
+        Set<TabListEntry> playerList = getPlayerListCached();
 
 
         // 21 iterations bc we only want to scan the player part of tab list
-        for (int i = 1; i < 20; i++) {
-            NetworkPlayerInfo networkPlayerInfo = networkList.get(i);
+        int i = 0;
+        for (TabListEntry playerInfo : playerList) {
+            if (++i >= 20) break;
 
-            String name = names[i];
+            String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
 
 
@@ -413,7 +400,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
             if(pt2 == null) return;
 
             if (entityplayer == thePlayer || shouldShowOtherPlayers) {
-                drawHead(scale, postScale, networkPlayerInfo, entityplayer, pt2, (float) yaw2);
+                drawHead(scale, postScale, playerInfo, entityplayer, pt2, (float) yaw2);
             }
 
         }
@@ -427,11 +414,13 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
      * @param pt2
      * @param yaw2
      */
-    private void drawHead(float scale, float postScale, NetworkPlayerInfo networkPlayerInfo, EntityPlayer entityplayer, Vector2d pt2, float yaw2) {
+    private void drawHead(float scale, float postScale, TabListEntry networkPlayerInfo, EntityPlayer entityplayer, Vector2d pt2, float yaw2) {
         GlStateManager.pushMatrix();
         boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE);
         GlStateManager.enableTexture2D();
-        Minecraft.getMinecraft().getTextureManager().bindTexture(networkPlayerInfo.getLocationSkin());
+        Minecraft.getMinecraft().getTextureManager().bindTexture(
+                networkPlayerInfo.getLocationSkin()
+        );
         int l2 = 8 + (flag1 ? 8 : 0);
         int i3 = 8 * (flag1 ? -1 : 1);
 

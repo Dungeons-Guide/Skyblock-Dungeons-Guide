@@ -27,6 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -50,8 +52,8 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     public int getSecretsFound() {
-        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
-            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r Secrets Found: §r§b") && !name.contains("%")) {
                 String noColor = TextUtils.stripColor(name);
                 return Integer.parseInt(noColor.substring(16));
@@ -60,8 +62,8 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         return 0;
     }
     public double getSecretPercentage() {
-        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
-            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r Secrets Found: §r") && name.contains("%")) {
                 String noColor = TextUtils.stripColor(name);
                 return Double.parseDouble(noColor.substring(16).replace("%", ""));

@@ -23,7 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.utils.ScoreBoardUtils;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -99,15 +101,19 @@ public class FeatureEpicCountdown extends SimpleFeature {
         if(!isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
 
 
-        ScoreBoardUtils.forEachLineClean(line -> {
-            if(line.contains("Starting in:")){
-                String time = line.replace("Starting in: ", "").replace("§r", "").replace("0:", "");
-                if(!time.isEmpty()){
-                    secondsLeft = Integer.parseInt(time);
-                    updatedAt = System.currentTimeMillis();
+        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+        if (objective != null) {
+            for (Score score : objective.getScores()) {
+                String line = TextUtils.stripColor(score.getJustTeam());
+                if(line.contains("Starting in:")){
+                    String time = line.replace("Starting in: ", "").replace("§r", "").replace("0:", "");
+                    if(!time.isEmpty()){
+                        secondsLeft = Integer.parseInt(time);
+                        updatedAt = System.currentTimeMillis();
+                    }
                 }
             }
-        });
+        }
         long timepassed = System.currentTimeMillis() - updatedAt;
 
         long secs = timepassed / 1000;

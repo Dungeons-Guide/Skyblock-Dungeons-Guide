@@ -24,14 +24,13 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.scoreboard.Score;
-import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
@@ -111,11 +110,10 @@ public class SkyblockStatus {
             return;
         }
 
-        Scoreboard scoreboard = Minecraft.getMinecraft().thePlayer.getWorldScoreboard();
-        ScoreObjective scoreObjective = scoreboard.getObjectiveInDisplaySlot(1);
-        if (scoreObjective == null) return;
+        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+        if (objective == null) return;
 
-        String objectiveName = TextUtils.stripColor(scoreObjective.getDisplayName());
+        String objectiveName = TextUtils.stripColor(objective.getDisplayName());
         boolean skyblockFound = false;
         for (String skyblock : SKYBLOCK_IN_ALL_LANGUAGES) {
             if (objectiveName.startsWith(skyblock)) {
@@ -131,20 +129,21 @@ public class SkyblockStatus {
             return;
         }
 
-        Collection<Score> scores = scoreboard.getSortedScores(scoreObjective);
+        Collection<Score> scores = objective.getScores();
         boolean foundDungeon = false;
         for (Score sc : scores) {
-            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
-            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
+            String strippedLine = TextUtils.keepScoreboardCharacters(
+                    TextUtils.stripColor(sc.getJustTeam())).trim();
             if (strippedLine.contains("Cleared: ")) {
                 foundDungeon = true;
 
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 if(context != null){
-                    context.setPercentage(Integer.parseInt(strippedLine.substring(9).split(" ")[0]));
+                    context.setPercentage(Integer.parseInt(
+                            strippedLine.substring(9).split(" ")[0]));
                 }
             }
-            if (ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).startsWith(" §7⏣")) {
+            if (sc.getJustTeam().startsWith(" §7⏣")) {
                 DungeonContext.setDungeonName(strippedLine.trim());
             }
         }

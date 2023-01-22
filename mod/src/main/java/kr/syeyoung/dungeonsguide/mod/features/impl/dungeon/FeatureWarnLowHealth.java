@@ -26,9 +26,11 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.scoreboard.Score;
 import net.minecraft.scoreboard.ScoreObjective;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.scoreboard.Scoreboard;
@@ -80,11 +82,10 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
     public List<StyledText> getText() {
         String lowestHealthName = "";
         int lowestHealth = 999999999;
-        Scoreboard scoreboard = Minecraft.getMinecraft().thePlayer.getWorldScoreboard();
-        ScoreObjective objective = scoreboard.getObjectiveInDisplaySlot(1);
-        for (Score sc : scoreboard.getSortedScores(objective)) {
-            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
-            String line = ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()).trim();
+        Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
+
+        for (Score sc : objective.getScores()) {
+            String line = sc.getVisibleName();
             String stripped = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(line));
             if (line.contains("[") && line.endsWith("❤")) {
                 String name = stripped.split(" ")[stripped.split(" ").length - 2];

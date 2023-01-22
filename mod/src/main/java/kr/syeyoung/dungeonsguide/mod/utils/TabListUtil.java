@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.utils;
 
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.FeatureDungeonMap;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -34,17 +36,16 @@ public class TabListUtil {
 
     public static List<String> getPlayersInDungeon(){
         List<String> players = new ArrayList<>();
-        List<NetworkPlayerInfo> list = FeatureDungeonMap.sorter.sortedCopy(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
 
-        if(list.size() >= 20){
-            for (int i = 1; i < 20; i++) {
+        int i = 1;
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            if (i >= 20) break;
+            String na = getPlayerNameWithChecks(tabListEntry);
 
-                String na = getPlayerNameWithChecks(list.get(i));
-
-                if(na != null){
-                    players.add(na);
-                }
+            if(na != null){
+                players.add(na);
             }
+            i++;
         }
 
         return players;
@@ -52,20 +53,12 @@ public class TabListUtil {
 
     /**
      * We make sure that the player is alive and regex their name out
-     * @param networkPlayerInfo the network player info of player
+     * @param tabListEntry the network player info of player
      * @return the username of player
      */
     @Nullable
-    public static String getPlayerNameWithChecks(NetworkPlayerInfo networkPlayerInfo) {
-        String name;
-        if (networkPlayerInfo.getDisplayName() != null) {
-            name = networkPlayerInfo.getDisplayName().getFormattedText();
-        } else {
-            name = ScorePlayerTeam.formatPlayerName(
-                    networkPlayerInfo.getPlayerTeam(),
-                    networkPlayerInfo.getGameProfile().getName()
-            );
-        }
+    public static String getPlayerNameWithChecks(TabListEntry tabListEntry) {
+        String name = tabListEntry.getEffectiveName();
 
         if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
 

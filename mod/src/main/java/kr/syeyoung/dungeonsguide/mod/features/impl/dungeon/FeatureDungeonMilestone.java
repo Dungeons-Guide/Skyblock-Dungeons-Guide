@@ -29,6 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
@@ -79,8 +81,8 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("Milestone","title"));
         actualBit.add(new StyledText(": ","separator"));
-        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
-            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r Milestone: §r")) {
                 String milestone = TextUtils.stripColor(name).substring(13);
                 actualBit.add(new StyledText(milestone+"","number"));

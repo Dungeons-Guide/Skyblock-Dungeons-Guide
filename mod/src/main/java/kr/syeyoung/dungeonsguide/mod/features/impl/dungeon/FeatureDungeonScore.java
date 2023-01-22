@@ -29,6 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TimeScoreUtil;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResource;
@@ -177,8 +179,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
 
     public int getCompleteRooms() {
-        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
-            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r Completed Rooms: §r")) {
                 String milestone = TextUtils.stripColor(name).substring(18);
                 return Integer.parseInt(milestone);
@@ -193,8 +195,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
     public int getUndiscoveredPuzzles() {
         int cnt = 0;
-        for (NetworkPlayerInfo networkPlayerInfoIn : Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap()) {
-            String name = networkPlayerInfoIn.getDisplayName() != null ? networkPlayerInfoIn.getDisplayName().getFormattedText() : ScorePlayerTeam.formatPlayerName(networkPlayerInfoIn.getPlayerTeam(), networkPlayerInfoIn.getGameProfile().getName());
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            String name = tabListEntry.getEffectiveName();
             if (name.startsWith("§r ???: ")) {
                 cnt ++;
             }

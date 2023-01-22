@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
+import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
@@ -156,7 +157,7 @@ public class DungeonsGuide implements DGInterface {
     }
 
 
-    private PacketListener packetListener;
+    private PacketInjector packetInjector;
     public void init(File f) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
 
@@ -220,8 +221,8 @@ public class DungeonsGuide implements DGInterface {
 
         registerEventsForge(commandReparty = new CommandReparty());
 
-//        registerEventsForge(new FeatureListener());
-        registerEventsForge(packetListener = new PacketListener());
+        registerEventsForge(packetInjector = new PacketInjector());
+        registerEventsForge(new PacketListener());
         registerEventsForge(new Keybinds());
 
         registerEventsForge(PartyManager.INSTANCE);
@@ -317,7 +318,7 @@ public class DungeonsGuide implements DGInterface {
             commands.remove(registeredCommand);
         }
 
-        if (packetListener != null) packetListener.cleanup();
+        if (packetInjector != null) packetInjector.cleanup();
 
         try {
             EntityPlayerSP ep = (EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer;

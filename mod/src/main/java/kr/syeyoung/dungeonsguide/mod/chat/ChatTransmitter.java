@@ -71,7 +71,7 @@ public class ChatTransmitter {
     public void onTick(TickEvent.ClientTickEvent clientTickEvent) {
         if(clientTickEvent.phase != TickEvent.Phase.START && Minecraft.getMinecraft().thePlayer == null) return;
 
-        if (!receiveQueue.isEmpty()) {
+        while (!receiveQueue.isEmpty() && Minecraft.getMinecraft().thePlayer != null) {
             ClientChatReceivedEvent event = new ClientChatReceivedEvent((byte) 1, receiveQueue.poll());
             MinecraftForge.EVENT_BUS.post(event);
             if (!event.isCanceled()) {

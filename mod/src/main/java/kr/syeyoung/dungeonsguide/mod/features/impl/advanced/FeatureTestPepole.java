@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -283,16 +285,8 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
      * @param networkPlayerInfo the network player info of player
      * @return the username of player
      */
-    private String getPlayerNameWithChecks(NetworkPlayerInfo networkPlayerInfo) {
-        String name;
-        if (networkPlayerInfo.getDisplayName() != null) {
-            name = networkPlayerInfo.getDisplayName().getFormattedText();
-        } else {
-            name = ScorePlayerTeam.formatPlayerName(
-                    networkPlayerInfo.getPlayerTeam(),
-                    networkPlayerInfo.getGameProfile().getName()
-            );
-        }
+    private String getPlayerNameWithChecks(TabListEntry networkPlayerInfo) {
+        String name = networkPlayerInfo.getEffectiveName();
 
         if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
 
@@ -303,14 +297,11 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
 
     boolean isPlayerInDungeon(String username) {
 
-        List<NetworkPlayerInfo> list = new ArrayList<>(Minecraft.getMinecraft().thePlayer.sendQueue.getPlayerInfoMap());
-
         // 19 iterations bc we only want to scan the player part of tab list
-        for (int i = 1; i < 20; i++) {
-            if(list.size() < i) break;
-            NetworkPlayerInfo networkPlayerInfo = list.get(i);
-
-            String name = getPlayerNameWithChecks(networkPlayerInfo);
+        int i = 0;
+        for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
+            if (++i >= 20) break;
+            String name = getPlayerNameWithChecks(tabListEntry);
             if (name == null) continue;
 
             EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);

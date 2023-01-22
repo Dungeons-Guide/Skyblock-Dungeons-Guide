@@ -40,23 +40,30 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.ScoreBoardUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
+import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -96,13 +103,18 @@ public class CommandDgDebug extends CommandBase {
 
 
         if ("scoreboard".equals(arg)) {
-            ScoreBoardUtils.forEachLine(l -> {
-                ChatTransmitter.addToQueue("LINE: " + l, false);
-            });
+            for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
+                ChatTransmitter.addToQueue("LINE: " + score.getVisibleName()+": "+score.getScore());
+            }
         } else if ("scoreboardclean".equals(arg)) {
-            ScoreBoardUtils.forEachLineClean(l -> {
-                ChatTransmitter.addToQueue("LINE: " + l, false);
-            });
+            for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
+                ChatTransmitter.addToQueue("LINE: " + score.getJustTeam()+": "+score.getScore());
+            }
+        }else if ("tablist".equals(arg)) {
+            for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
+                ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGamemode());
+            }
+            ChatTransmitter.addToQueue("VS");
         } else if ("mockdungeonstart".equals(arg)) {
             if (!Minecraft.getMinecraft().isSingleplayer()) {
                 ChatTransmitter.addToQueue("This only works in singlepauer", false);

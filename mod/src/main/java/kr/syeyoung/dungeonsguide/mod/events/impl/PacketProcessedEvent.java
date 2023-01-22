@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,24 +16,24 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.cosmetics;
+package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-
-import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
+import lombok.AllArgsConstructor;
+import net.minecraft.network.Packet;
 import net.minecraft.network.play.INetHandlerPlayClient;
-import net.minecraft.network.play.server.S38PacketPlayerListItem;
-import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.fml.common.eventhandler.Event;
 
-public class CustomPacketPlayerListItem extends S38PacketPlayerListItem {
-    public CustomPacketPlayerListItem(S38PacketPlayerListItem packet) {
-        super(packet.getAction());
-        getEntries().addAll(packet.getEntries());
-    }
-
-    @Override
-    public void processPacket(INetHandlerPlayClient handler) {
-        super.processPacket(handler);
-
-        MinecraftForge.EVENT_BUS.post(new PlayerListItemPacketEvent(this));
-    }
+@AllArgsConstructor
+public abstract class PacketProcessedEvent extends Event {
+    public Packet<INetHandlerPlayClient> packet;
+    public static class Pre extends PacketProcessedEvent {
+        public Pre(Packet<INetHandlerPlayClient> packet) {
+            super(packet);
+        }
+    };
+    public static class Post extends PacketProcessedEvent {
+        public Post(Packet<INetHandlerPlayClient> packet) {
+            super(packet);
+        }
+    };
 }
