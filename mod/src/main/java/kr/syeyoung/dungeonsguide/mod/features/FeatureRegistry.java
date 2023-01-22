@@ -313,7 +313,7 @@ public class FeatureRegistry {
             DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
             DISCORD_ONLINEALARM = register(new PlayingDGAlarm());
             DEBUG = register(new FeatureDebug());
-            ADVANCED_ROOMEDIT = register(new SimpleFeature("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is only for advanced users only", "advanced.roomedit", false) {
+            ADVANCED_ROOMEDIT = register(new SimpleFeature("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is for advanced users only", "advanced.roomedit", false) {
                 {
                     addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", Keyboard.KEY_R, "keybind"));
                 }
