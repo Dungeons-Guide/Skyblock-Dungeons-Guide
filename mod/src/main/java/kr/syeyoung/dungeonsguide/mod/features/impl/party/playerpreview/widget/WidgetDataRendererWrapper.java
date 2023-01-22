@@ -87,7 +87,9 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
             this.tooltip = null;
         } else if (toHover != null && this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip), null);
+                    .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip), (a) -> {
+                        this.tooltip = null;
+                    });
         return false;
     }
 

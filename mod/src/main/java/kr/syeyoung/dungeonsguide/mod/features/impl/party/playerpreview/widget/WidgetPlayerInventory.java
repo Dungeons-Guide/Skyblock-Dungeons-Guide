@@ -90,7 +90,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
         List<String> toHover = null;
-        if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) {
+        if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && playerProfile.getInventory() != null) {
             ItemStack toHoverStack = null;
             for (int i = 0; i < playerProfile.getInventory().length; i++) {
                 int x = (i % 9) * 18 + 1;
@@ -120,11 +120,13 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
         if (toHover == null && this.tooltip != null) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip, null);
+                    .closePopup(this.tooltip);
             this.tooltip = null;
         } else if (toHover != null && this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip), null);
+                    .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip), (a) -> {
+                        this.tooltip = null;
+                    });
         return false;
     }
 

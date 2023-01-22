@@ -121,7 +121,9 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
             scaler.child.setValue(new WidgetPlayerInventory(
                     playerSkyblockData.getPlayerProfiles()[idx]
             ));
-            popupMgr.openPopup(popup = new LocationedPopup(x, y, scaler), null);
+            popupMgr.openPopup(popup = new LocationedPopup(x, y, scaler), (a) -> {
+                this.popup = null;
+            });
         }
     }
 
