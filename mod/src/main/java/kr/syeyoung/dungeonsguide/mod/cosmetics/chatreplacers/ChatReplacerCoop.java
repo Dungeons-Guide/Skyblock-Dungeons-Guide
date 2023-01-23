@@ -42,14 +42,14 @@ public class ChatReplacerCoop implements IChatReplacer {
 
     @Override
     public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
+        List<Tuple<IChatComponent, IChatComponent>> replacements = new ArrayList<>();
         List<IChatComponent> iChatComponents = new ArrayList<>( event.message.getSiblings() );
         IChatComponent sibling = iChatComponents.get(0); iChatComponents.remove(sibling);
 
 
         String[] splitInto = sibling.getUnformattedTextForChat().split(" ");
         int lastValidNickname = -1;
-        int lastprefix = -1;
+        int lastPrefix = -1;
         for (int i = 0; i < splitInto.length; i++) {
             String s = TextUtils.stripColor(splitInto[i]);
             char c = s.charAt(0);
@@ -59,16 +59,16 @@ public class ChatReplacerCoop implements IChatReplacer {
         }
         if (lastValidNickname == -1) return;
 
-        if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastprefix = lastValidNickname -1;
-        else lastprefix = lastValidNickname;
+        if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastPrefix = lastValidNickname -1;
+        else lastPrefix = lastValidNickname;
 
 
-        List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(splitInto[lastValidNickname].substring(0, splitInto[lastValidNickname].length()-1)).toLowerCase());
+        List<ActiveCosmetic> cData = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(splitInto[lastValidNickname].substring(0, splitInto[lastValidNickname].length()-1)).toLowerCase());
 
-        if (cDatas == null) return;
+        if (cData == null) return;
 
             CosmeticData color = null, prefix = null;
-            for (ActiveCosmetic activeCosmetic : cDatas) {
+            for (ActiveCosmetic activeCosmetic : cData) {
                 CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
                 if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
                     color = cosmeticData;
@@ -78,11 +78,11 @@ public class ChatReplacerCoop implements IChatReplacer {
             }
 
         String building = "";
-        for (int i = 0; i < lastprefix; i++) {
+        for (int i = 0; i < lastPrefix; i++) {
             building += splitInto[i] +" ";
         }
         if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
-        for (int i = lastprefix; i < lastValidNickname; i++) {
+        for (int i = lastPrefix; i < lastValidNickname; i++) {
             building += splitInto[i] +" ";
         }
         if (color != null) {

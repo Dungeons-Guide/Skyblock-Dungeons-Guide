@@ -28,7 +28,7 @@ public class User
      * Constructs a new {@link User}.<br>
      * Only implemented internally.
      * @param name user's name
-     * @param discriminator user's discrim
+     * @param discriminator user's discriminator
      * @param id user's id
      * @param avatar user's avatar hash, or {@code null} if they have no avatar
      */
@@ -41,7 +41,7 @@ public class User
     }
 
     /**
-     * Gets the Users account name.
+     * Gets the User's account name.
      *
      * @return The Users account name.
      */
@@ -51,7 +51,7 @@ public class User
     }
 
     /**
-     * Gets the Users discriminator.
+     * Gets the User's discriminator.
      *
      * @return The Users discriminator.
      */
@@ -83,7 +83,7 @@ public class User
     /**
      * Gets the Users avatar ID.
      *
-     * @return The Users avatar ID.
+     * @return The User's avatar ID.
      */
     public String getAvatarId()
     {
@@ -133,7 +133,7 @@ public class User
     }
 
     /**
-     * Gets whether or not this User is a bot.<p>
+     * Gets whether this User is a bot or not.<p>
      *
      * While, at the time of writing this documentation, bots cannot
      * use Rich Presence features, there may be a time in the future

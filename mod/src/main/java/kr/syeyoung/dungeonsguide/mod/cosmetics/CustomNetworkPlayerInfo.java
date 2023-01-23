@@ -62,11 +62,11 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
         playerNameWithoutColor = "";
         for (String s : unformattedDisplayText.split(" ")) {
-            String strippped = TextUtils.stripColor(s);
-            if (strippped.startsWith("[")) {
+            String stripped = TextUtils.stripColor(s);
+            if (stripped.startsWith("[")) {
                 continue;
             }
-            playerNameWithoutColor = strippped;
+            playerNameWithoutColor = stripped;
             break;
         }
     }

@@ -42,18 +42,18 @@ public class ChatReplacerViewProfile implements IChatReplacer {
 
     @Override
     public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
+        List<Tuple<IChatComponent, IChatComponent>> replacements = new ArrayList<>();
         for (IChatComponent sibling : event.message.getSiblings()) {
             if (sibling.getChatStyle() != null && sibling.getChatStyle().getChatClickEvent() != null && sibling.getChatStyle().getChatClickEvent().getValue().startsWith("/viewprofile ")) {
                 String uid = sibling.getChatStyle().getChatClickEvent().getValue().split(" ")[1];
                 // TODO: make cosmeticsManager handle usernames instead of uuids
-                // apperantly now hypixels /viewprofile command gives the nickname
-//                List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayer().get(UUID.fromString(uid));
-                List<ActiveCosmetic> cDatas = null;
+                // apparently now hypixel's /viewprofile command gives the nickname
+//                List<ActiveCosmetic> cData = cosmeticsManager.getActiveCosmeticByPlayer().get(UUID.fromString(uid));
+                List<ActiveCosmetic> cData = null;
 
-                if (cDatas != null) {
+                if (cData != null) {
                     CosmeticData color=null, prefix=null;
-                    for (ActiveCosmetic activeCosmetic : cDatas) {
+                    for (ActiveCosmetic activeCosmetic : cData) {
                         CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
                         if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
                             color = cosmeticData;
@@ -64,7 +64,7 @@ public class ChatReplacerViewProfile implements IChatReplacer {
 
                     String[] splitInto = sibling.getUnformattedTextForChat().split(" ");
                     int lastValidNickname = -1;
-                    int lastprefix = -1;
+                    int lastPrefix = -1;
                     for (int i = 0; i < splitInto.length; i++) {
                         String s = TextUtils.stripColor(splitInto[i]);
                         char c = s.charAt(0);
@@ -78,15 +78,15 @@ public class ChatReplacerViewProfile implements IChatReplacer {
                     }
                     if (lastValidNickname == -1) continue;
 
-                    if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastprefix = lastValidNickname -1;
-                    else lastprefix = lastValidNickname;
+                    if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastPrefix = lastValidNickname -1;
+                    else lastPrefix = lastValidNickname;
 
                     String building = "";
-                    for (int i = 0; i < lastprefix; i++) {
+                    for (int i = 0; i < lastPrefix; i++) {
                         building += splitInto[i] +" ";
                     }
                     if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
-                    for (int i = lastprefix; i < lastValidNickname; i++) {
+                    for (int i = lastPrefix; i < lastValidNickname; i++) {
                         building += splitInto[i] +" ";
                     }
                     if (color != null) {
@@ -116,15 +116,15 @@ public class ChatReplacerViewProfile implements IChatReplacer {
 
                     ChatComponentText newChatCompText = new ChatComponentText(building);
                     newChatCompText.setChatStyle(sibling.getChatStyle());
-                    replaceMents.add(new Tuple<>(sibling, newChatCompText));
+                    replacements.add(new Tuple<>(sibling, newChatCompText));
                     break;
                 }
             }
         }
 
-        for (Tuple<IChatComponent, IChatComponent> replaceMent : replaceMents) {
-            int index = event.message.getSiblings().indexOf(replaceMent.getFirst());
-            event.message.getSiblings().set(index, replaceMent.getSecond());
+        for (Tuple<IChatComponent, IChatComponent> replacement : replacements) {
+            int index = event.message.getSiblings().indexOf(replacement.getFirst());
+            event.message.getSiblings().set(index, replacement.getSecond());
         }
     }
 }

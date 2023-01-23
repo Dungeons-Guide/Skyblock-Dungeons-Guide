@@ -43,7 +43,7 @@ public class ChatReplacerChatByMe implements IChatReplacer {
 
     @Override
     public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
-        List<Tuple<IChatComponent, IChatComponent>> replaceMents = new ArrayList<>();
+        List<Tuple<IChatComponent, IChatComponent>> replacements = new ArrayList<>();
         List<IChatComponent> iChatComponents = new ArrayList<>( event.message.getSiblings() );
         List<IChatComponent> hasMsg = new ArrayList<>();
         for (IChatComponent sibling : iChatComponents) {
@@ -57,13 +57,13 @@ public class ChatReplacerChatByMe implements IChatReplacer {
         ChatStyle origStyle = hasMsg.get(0).getChatStyle();
         String name = chatComponents.getFormattedText();
 
-        String[] splited = name.split(" ");
-        String actualName = splited[splited.length-1];
+        String[] split = name.split(" ");
+        String actualName = split[split.length-1];
 
-        List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(actualName).toLowerCase());
-        if (cDatas == null) return;
+        List<ActiveCosmetic> cData = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(TextUtils.stripColor(actualName).toLowerCase());
+        if (cData == null) return;
         CosmeticData color=null, prefix=null;
-        for (ActiveCosmetic activeCosmetic : cDatas) {
+        for (ActiveCosmetic activeCosmetic : cData) {
             CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
                 color = cosmeticData;
@@ -74,12 +74,12 @@ public class ChatReplacerChatByMe implements IChatReplacer {
 
         String building = "";
         if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
-        for (int i = 0; i < splited.length-1; i++) {
-            building += splited[i] +" ";
+        for (int i = 0; i < split.length-1; i++) {
+            building += split[i] +" ";
         }
 
         if (color != null) {
-            String nick = splited[splited.length-1];
+            String nick = split[split.length-1];
             building += color.getData().replace("&","§");
             boolean foundLegitChar = false;
             boolean foundColor = false;
@@ -94,7 +94,7 @@ public class ChatReplacerChatByMe implements IChatReplacer {
                 }
             }
         } else {
-            building += splited[splited.length-1] ;
+            building += split[split.length-1] ;
         }
 
         ChatComponentText chatComponents1 = new ChatComponentText(building);

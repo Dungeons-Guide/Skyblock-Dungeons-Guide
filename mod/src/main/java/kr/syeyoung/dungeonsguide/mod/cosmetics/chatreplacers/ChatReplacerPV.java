@@ -41,11 +41,11 @@ public class ChatReplacerPV implements IChatReplacer {
     public void translate(ClientChatReceivedEvent event, CosmeticsManager cosmeticsManager) {
             if (event.message.getChatStyle() != null && event.message.getChatStyle().getChatClickEvent() != null && event.message.getChatStyle().getChatClickEvent().getValue().startsWith("/pv")) {
                 String username = event.message.getChatStyle().getChatClickEvent().getValue().split(" ")[1];
-                List<ActiveCosmetic> cDatas = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(username.toLowerCase());
+                List<ActiveCosmetic> cData = cosmeticsManager.getActiveCosmeticByPlayerNameLowerCase().get(username.toLowerCase());
 
-                if (cDatas != null) {
+                if (cData != null) {
                     CosmeticData color=null, prefix=null;
-                    for (ActiveCosmetic activeCosmetic : cDatas) {
+                    for (ActiveCosmetic activeCosmetic : cData) {
                         CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
                         if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
                             color = cosmeticData;
@@ -56,7 +56,7 @@ public class ChatReplacerPV implements IChatReplacer {
 
                     String[] splitInto = event.message.getUnformattedTextForChat().split(" ");
                     int lastValidNickname = -1;
-                    int lastprefix = -1;
+                    int lastPrefix = -1;
                     for (int i = 0; i < splitInto.length; i++) {
                         String s = splitInto[i];
                         if (s.startsWith("§7")) s = s.substring(2);
@@ -71,15 +71,15 @@ public class ChatReplacerPV implements IChatReplacer {
                     }
                     if (lastValidNickname == -1) return;
 
-                    if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastprefix = lastValidNickname -1;
-                    else lastprefix = lastValidNickname;
+                    if (lastValidNickname -1 >= 0 && TextUtils.stripColor(splitInto[lastValidNickname - 1]).charAt(0) == '[') lastPrefix = lastValidNickname -1;
+                    else lastPrefix = lastValidNickname;
 
                     String building = "";
-                    for (int i = 0; i < lastprefix; i++) {
+                    for (int i = 0; i < lastPrefix; i++) {
                         building += splitInto[i] +" ";
                     }
                     if (prefix != null) building += prefix.getData().replace("&", "§") + " ";
-                    for (int i = lastprefix; i < lastValidNickname; i++) {
+                    for (int i = lastPrefix; i < lastValidNickname; i++) {
                         building += splitInto[i] +" ";
                     }
                     if (color != null) {

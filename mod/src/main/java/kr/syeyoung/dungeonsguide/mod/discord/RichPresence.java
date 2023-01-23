@@ -73,7 +73,7 @@ public class RichPresence
      * Constructs a {@link JSONObject} representing a payload to send to discord
      * to update a user's Rich Presence.
      *
-     * <p>This is purely internal, and should not ever need to be called outside of
+     * <p>This is purely internal and should not ever need to be called outside
      * the library.
      *
      * @return A JSONObject payload for updating a user's Rich Presence.
@@ -259,7 +259,7 @@ public class RichPresence
         }
 
         /**
-         * Sets party configurations for a team, lobby, or other form of group.
+         * Sets party configurations for a team, lobby, or another form of group.
          *
          * <p>The {@code partyId} is ID of the player's party.
          * <br>The {@code partySize} is the current size of the player's party.
@@ -267,7 +267,7 @@ public class RichPresence
          *
          * @param partyId The ID of the player's party.
          * @param partySize The current size of the player's party.
-         * @param partyMax The maximum number of player's allowed in the party.
+         * @param partyMax The maximum number of players allowed in the party.
          *
          * @return This Builder.
          */
