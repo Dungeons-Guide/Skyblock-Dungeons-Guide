@@ -58,7 +58,7 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
             }
             return base;
         }
-        if (!("open".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
+        if (!("open".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not a valid state for door");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }

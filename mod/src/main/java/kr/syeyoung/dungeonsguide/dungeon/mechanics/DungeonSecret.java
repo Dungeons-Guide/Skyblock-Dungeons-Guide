@@ -81,8 +81,8 @@ public class DungeonSecret implements DungeonMechanic {
                 Vec3 vec3 = pos.subtract(player).normalize();
                 for (int i = 0; i < player.distanceTo(pos); i++) {
                     Vec3 vec = player.addVector(vec3.xCoord * i, vec3.yCoord * i, vec3.zCoord * i);
-                    BlockPos bpos = new BlockPos(vec);
-                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(bpos);
+                    BlockPos blockPos = new BlockPos(vec);
+                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(blockPos);
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return;
                 }
@@ -139,8 +139,8 @@ public class DungeonSecret implements DungeonMechanic {
                 Vec3 vec3 = pos.subtract(player).normalize();
                 for (int i = 0; i < player.distanceTo(pos); i++) {
                     Vec3 vec = player.addVector(vec3.xCoord * i, vec3.yCoord * i, vec3.zCoord * i);
-                    BlockPos bpos = new BlockPos(vec);
-                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(bpos);
+                    BlockPos blockPos = new BlockPos(vec);
+                    IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(blockPos);
                     if (!NodeProcessorDungeonRoom.isValidBlock(blockState))
                         return SecretStatus.NOT_SURE;
                 }

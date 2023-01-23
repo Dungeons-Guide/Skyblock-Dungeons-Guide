@@ -45,7 +45,7 @@ public class DungeonDummy implements DungeonMechanic {
 
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-//        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
+//        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not a valid state for secret");
         Set<AbstractAction> base;
         Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
         if (state.equalsIgnoreCase("navigate")){
