@@ -21,10 +21,10 @@ package kr.syeyoung.dungeonsguide.launcher.auth.token;
 import java.time.Instant;
 
 public class FailedAuthToken implements AuthToken {
-    private final Throwable exeption;
+    private final Throwable exception;
 
     public FailedAuthToken(Throwable exception) {
-        this.exeption = exception;
+        this.exception = exception;
     }
 
     @Override
@@ -53,6 +53,6 @@ public class FailedAuthToken implements AuthToken {
     }
 
     public Throwable getException() {
-        return exeption;
+        return exception;
     }
 }

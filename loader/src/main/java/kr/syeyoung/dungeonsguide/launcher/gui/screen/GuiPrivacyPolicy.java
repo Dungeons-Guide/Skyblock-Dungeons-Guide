@@ -66,8 +66,10 @@ public class GuiPrivacyPolicy extends SpecialGuiScreen {
         ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 
-        fontRenderer.drawString("Please accept or deny Dungeons Guide Privacy Policy to continue", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please accept or deny Dungeons Guide Privacy Policy to continue"))/2,40,0xFFFF0000);
-        fontRenderer.drawString("Blah blah legal stuff", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please accept or deny Dungeons Guide Privacy Policy to continue"))/2,sr.getScaledHeight() / 2, 0xFFFFFFFF);
+        final String ACCEPT_POLICY_MSG = "Please accept or deny the Dungeons Guide Privacy Policy to continue";
+
+        fontRenderer.drawString(ACCEPT_POLICY_MSG, (sr.getScaledWidth()-fontRenderer.getStringWidth(ACCEPT_POLICY_MSG))/2,40,0xFFFF0000);
+        fontRenderer.drawString("Blah blah legal stuff", (sr.getScaledWidth()-fontRenderer.getStringWidth(ACCEPT_POLICY_MSG))/2,sr.getScaledHeight() / 2, 0xFFFFFFFF);
 
         super.drawScreen(mouseX, mouseY, partialTicks);
     }

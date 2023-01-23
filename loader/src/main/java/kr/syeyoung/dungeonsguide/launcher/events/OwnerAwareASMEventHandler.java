@@ -38,7 +38,7 @@ public class OwnerAwareASMEventHandler implements IEventListener
     private static int IDs = 0;
     private static final String HANDLER_DESC = Type.getInternalName(IEventListener.class);
     private static final String HANDLER_FUNC_DESC = Type.getMethodDescriptor(IEventListener.class.getDeclaredMethods()[0]);
-    private static final boolean GETCONTEXT = Boolean.parseBoolean(System.getProperty("fml.LogContext", "false"));
+    private static final boolean GET_CONTEXT = Boolean.parseBoolean(System.getProperty("fml.LogContext", "false"));
 
     private final IEventListener handler;
     private final SubscribeEvent subInfo;
@@ -56,7 +56,7 @@ public class OwnerAwareASMEventHandler implements IEventListener
     @Override
     public void invoke(Event event)
     {
-        if (GETCONTEXT)
+        if (GET_CONTEXT)
             ThreadContext.put("mod", owner == null ? "" : owner.getName());
         if (handler != null)
         {
@@ -65,7 +65,7 @@ public class OwnerAwareASMEventHandler implements IEventListener
                 handler.invoke(event);
             }
         }
-        if (GETCONTEXT)
+        if (GET_CONTEXT)
             ThreadContext.remove("mod");
     }
 

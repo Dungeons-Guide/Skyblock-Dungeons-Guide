@@ -67,7 +67,7 @@ public class UpdateRetrieverUtil {
                 updateBranch.setName(a.getString("name"));
                 updateBranch.setMetadata(JSONObject.NULL.equals(a.get("metadata")) ? new JSONObject() : a.getJSONObject("metadata"));
                 if (JSONObject.NULL.equals(a.get("metadata") )) {
-                    System.out.println("Update Branch has null metadta: "+a_);
+                    System.out.println("Update Branch has null metadata: "+a_);
                 }
                 branches.add(updateBranch);
             }
@@ -188,10 +188,10 @@ public class UpdateRetrieverUtil {
                 connection.setRequestMethod(method);
                 return connection.getInputStream();
             } catch (IOException e) {
-                throw new RuntimeException("Error occured while downloading update asset from "+method+" "+url, e);
+                throw new RuntimeException("Error occurred while downloading update asset from "+method+" "+url, e);
             }
         } catch (IOException e) {
-            throw new RuntimeException("Error occured while downloading update asset "+update+"/"+assetName, e);
+            throw new RuntimeException("Error occurred while downloading update asset "+update+"/"+assetName, e);
         }
     }
 
@@ -250,7 +250,7 @@ public class UpdateRetrieverUtil {
                     .friendlyVersionName(target.getName())
                     .build();
         } catch (Exception e) {
-            throw new NoVersionFoundException(branch, version, "Exception occured", e);
+            throw new NoVersionFoundException(branch, version, "Exception occurred", e);
         }
     }
 }

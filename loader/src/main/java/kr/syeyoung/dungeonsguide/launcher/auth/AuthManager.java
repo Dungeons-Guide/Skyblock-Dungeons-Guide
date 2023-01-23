@@ -22,7 +22,7 @@ import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.*;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedExeption;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
@@ -67,7 +67,7 @@ public class AuthManager {
      */
     public String getWorkingTokenOrThrow() {
         if (currentToken instanceof DGAuthToken) return currentToken.getToken();
-        else if (currentToken instanceof FailedAuthToken) throw new AuthFailedExeption(((FailedAuthToken) currentToken).getException());
+        else if (currentToken instanceof FailedAuthToken) throw new AuthFailedException(((FailedAuthToken) currentToken).getException());
         else if (currentToken instanceof NullToken) throw new AuthenticationUnavailableException("Null Token");
         else if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
         throw new IllegalStateException("weird token: "+currentToken);
@@ -90,7 +90,7 @@ public class AuthManager {
             boolean shouldReAuth = false;
             if (getToken().isUserVerified() && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                 shouldReAuth = true;
-            } // TODO: try auth, check if current dungeons guide version is acceisible, and unload it if inaccessible.
+            } // TODO: try auth, check if current dungeons guide version is accessible, and unload it if inaccessible.
             if (!getToken().isAuthenticated()) {
                 shouldReAuth = true;
             }
@@ -152,7 +152,7 @@ public class AuthManager {
                 currentToken = new FailedAuthToken(e);
                 NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
                         .title("Auth Error")
-                        .description("Authentication Error Occured\n"+e.getMessage())
+                        .description("Authentication Error Occurred\n"+e.getMessage())
                         .titleColor(0xFFFF0000)
                         .unremovable(true)
                         .onClick(() -> {
@@ -161,7 +161,7 @@ public class AuthManager {
                         .build());
             }
             logger.error("Re-auth failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
-            throw new AuthFailedExeption(e);
+            throw new AuthFailedException(e);
         } finally {
             reauthLock = false;
         }
@@ -186,7 +186,7 @@ public class AuthManager {
                 if (e instanceof PrivacyPolicyRequiredException) {
                     NotificationManager.INSTANCE.updateNotification(privacyPolicyRequired, Notification.builder()
                             .title("Privacy Policy")
-                            .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
+                            .description("Please accept the Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                             .titleColor(0xFFFF0000)
                             .unremovable(true)
                             .onClick(() -> {
@@ -197,7 +197,7 @@ public class AuthManager {
                     currentToken = new FailedAuthToken(e);
                     NotificationManager.INSTANCE.updateNotification(authenticationFailure, Notification.builder()
                             .title("Auth Error")
-                            .description("Authentication Error Occured\n"+e.getMessage())
+                            .description("Authentication Error Occurred\n"+e.getMessage())
                             .titleColor(0xFFFF0000)
                             .unremovable(true)
                             .onClick(() -> {
@@ -205,8 +205,8 @@ public class AuthManager {
                             })
                             .build());
                 }
-                logger.error("Accepting Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
-                throw new AuthFailedExeption(e);
+                logger.error("Accepting the Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
+                throw new AuthFailedException(e);
             } finally {
                 reauthLock = false;
             }
