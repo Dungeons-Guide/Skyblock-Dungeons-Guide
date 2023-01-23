@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProvi
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventRecorder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonNodataEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonPuzzleFailureEvent;
-import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapConstantRetreiver;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapConstantRetriever;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
@@ -50,8 +50,10 @@ import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
-import java.util.*;
+import java.util.Set;
 
 public class DungeonContext {
     @Getter @Setter
@@ -189,7 +191,7 @@ public class DungeonContext {
             processFinishedMap(mapUpdateEvent.getMapData().colors);
         }
         if (getScaffoldParser() == null) {
-            DungeonMapLayout layout = DungeonMapConstantRetreiver.beginParsingMap(mapUpdateEvent.getMapData().colors, door, doorOffset);
+            DungeonMapLayout layout = DungeonMapConstantRetriever.beginParsingMap(mapUpdateEvent.getMapData().colors, door, doorOffset);
             if (layout != null)
                 scaffoldParser = new DungeonRoomScaffoldParser(
                         layout,

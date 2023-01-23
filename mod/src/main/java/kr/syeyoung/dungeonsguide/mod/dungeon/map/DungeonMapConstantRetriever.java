@@ -30,7 +30,7 @@ import java.util.Set;
 
 
 // This class is responsible for matching the world to hand held map.
-public class DungeonMapConstantRetreiver {
+public class DungeonMapConstantRetriever {
     public static DungeonMapLayout beginParsingMap(byte[] mapData, BlockPos worldDoorLocation, Vector2d worldDoorDirection) {
         if (worldDoorLocation == null || worldDoorDirection == null) return null;
 
