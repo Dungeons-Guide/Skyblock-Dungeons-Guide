@@ -18,8 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.launcher.exceptions.auth;
 
-public class AuthFailedExeption extends AuthenticationUnavailableException {
-    public AuthFailedExeption(Throwable cause) {
+public class AuthFailedException extends AuthenticationUnavailableException {
+    public AuthFailedException(Throwable cause) {
         super(cause);
     }
 }
