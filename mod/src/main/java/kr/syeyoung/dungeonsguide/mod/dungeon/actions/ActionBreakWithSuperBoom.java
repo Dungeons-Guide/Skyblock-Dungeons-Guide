@@ -80,13 +80,13 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
         GlStateManager.enableBlend();
 
         Tessellator tessellator = Tessellator.getInstance();
-        WorldRenderer vertexbuffer = tessellator.getWorldRenderer();
-        vertexbuffer.begin(7, DefaultVertexFormats.BLOCK);
+        WorldRenderer vertexBuffer = tessellator.getWorldRenderer();
+        vertexBuffer.begin(7, DefaultVertexFormats.BLOCK);
 
         BlockRendererDispatcher blockrendererdispatcher = Minecraft.getMinecraft().getBlockRendererDispatcher();
         blockrendererdispatcher.getBlockModelRenderer().renderModel(Minecraft.getMinecraft().theWorld,
                 blockrendererdispatcher.getBlockModelShapes().getModelForState(Blocks.tnt.getDefaultState()),
-                Blocks.tnt.getDefaultState(), blockpos, vertexbuffer, false);
+                Blocks.tnt.getDefaultState(), blockpos, vertexBuffer, false);
         tessellator.draw();
 
         GlStateManager.enableLighting();

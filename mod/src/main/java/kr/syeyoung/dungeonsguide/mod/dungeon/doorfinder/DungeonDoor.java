@@ -39,9 +39,9 @@ public class DungeonDoor {
     public DungeonDoor(World world, BlockPos pos, EDungeonDoorType type) {
         this.w = world;
         this.position = pos;
-        Block itshouldbeall = world.getChunkFromBlockCoords(pos).getBlock(pos);
+        Block itShouldBeAll = world.getChunkFromBlockCoords(pos).getBlock(pos);
 
-        if (type == EDungeonDoorType.WITHER && itshouldbeall == Blocks.air) type = EDungeonDoorType.WITHER_FAIRY;
+        if (type == EDungeonDoorType.WITHER && itShouldBeAll == Blocks.air) type = EDungeonDoorType.WITHER_FAIRY;
         this.type = type;
         boolean exist = type.isExist();
 
@@ -50,7 +50,7 @@ public class DungeonDoor {
                 for (int z = -1; z<=1; z++) {
                     BlockPos pos2 = pos.add(x,y,z);
                     Block block = world.getChunkFromBlockCoords(pos2).getBlock(pos2);
-                    if (itshouldbeall != block) exist = false;
+                    if (itShouldBeAll != block) exist = false;
                 }
             }
         }

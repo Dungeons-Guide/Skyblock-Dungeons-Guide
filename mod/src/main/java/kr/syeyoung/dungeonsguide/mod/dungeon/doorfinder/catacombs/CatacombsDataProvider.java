@@ -55,12 +55,12 @@ public abstract class CatacombsDataProvider implements DungeonSpecificDataProvid
     }
 
     /**
-     * This gets all morts checks for iron bars near him
+     * This gets all Mort's checks for iron bars near him
      * and based on iron bars determine the door location
      *
      * @param w World that we are going to look for the door in
      *          world is explicitly specified instead of mc.theWorld bc we can use cached worlds
-     * @param dungeonName dungeon type eg master mode, currently unused
+     * @param dungeonName dungeon type e.g. master mode, currently unused
      * @return Block pos of the dungeon entrance
      */
     public BlockPos findDoor(World w, String dungeonName) {
