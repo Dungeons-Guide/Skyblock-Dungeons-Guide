@@ -40,10 +40,10 @@ public class DelegatingWidget extends Widget implements ExportedWidget, Importin
 
         try (Parser parser = DomElementRegistry.obtainParser(location)) {
             ParserElement element = parser.getRootNode();
-            if (!element.getNodename().equals("wrapper")) throw new IllegalArgumentException("Delegating widget root element Must be wrapper");
+            if (!element.getNodeName().equals("wrapper")) throw new IllegalArgumentException("Delegating widget root element Must be wrapper");
             List<Widget> widgets = new ArrayList<>();
             for (ParserElement child : element.getChildren()) {
-                ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(child.getNodename());
+                ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(child.getNodeName());
                 Widget w = converter.convert(this, child);
                 widgets.add(w);
             }

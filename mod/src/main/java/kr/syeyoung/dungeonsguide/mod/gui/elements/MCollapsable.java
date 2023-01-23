@@ -44,16 +44,16 @@ public class MCollapsable extends MPanel {
     @Getter @Setter
     private int leftPad = 0, leftPadElements = 13;
 
-    private Runnable onPreferedSizeChange;
+    private Runnable onPreferredSizeChange;
 
-    public MCollapsable(MPanel representing, Runnable onPreferedSizeChange) {
+    public MCollapsable(MPanel representing, Runnable onPreferredSizeChange) {
         this.representing = representing;
         super.add(representing);
         lowerElements = new MList();
         lowerElements.setGap(0);
         super.add(lowerElements);
 
-        this.onPreferedSizeChange = onPreferedSizeChange;
+        this.onPreferredSizeChange = onPreferredSizeChange;
     }
 
     @Override
@@ -112,20 +112,20 @@ public class MCollapsable extends MPanel {
     @Override
     public void add(MPanel child) {
         lowerElements.add(child);
-        if (onPreferedSizeChange != null) onPreferedSizeChange.run();
+        if (onPreferredSizeChange != null) onPreferredSizeChange.run();
     }
 
     @Override
     public void remove(MPanel panel) {
         lowerElements.remove(panel);
-        if (onPreferedSizeChange != null) onPreferedSizeChange.run();
+        if (onPreferredSizeChange != null) onPreferredSizeChange.run();
     }
 
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (relMouseX >= leftPad && relMouseY >= 0 && relMouseX <= leftPad + 10 && relMouseY <= representing.getPreferredSize().height) {
             collapsed = !collapsed;
-            if (onPreferedSizeChange != null) onPreferedSizeChange.run();
+            if (onPreferredSizeChange != null) onPreferredSizeChange.run();
         }
     }
 

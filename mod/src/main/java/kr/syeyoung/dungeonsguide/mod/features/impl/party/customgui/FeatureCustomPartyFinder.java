@@ -94,13 +94,13 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 
             NBTTagCompound stackTagCompound = item.getTagCompound();
             if (stackTagCompound.hasKey("display", 10)) {
-                NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
+                NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
 
-                if (nbttagcompound.getTagId("Lore") == 9) {
-                    NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
+                if (nbtTagCompound.getTagId("Lore") == 9) {
+                    NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
 
-                    for (int i = 0; i < nbttaglist1.tagCount(); i++) {
-                        String str = nbttaglist1.getStringTagAt(i);
+                    for (int i = 0; i < nbtTagList1.tagCount(); i++) {
+                        String str = nbtTagList1.getStringTagAt(i);
                         if (str.startsWith("§aCurrently Selected")) {
                             lastClass = str.substring(24);
                         }

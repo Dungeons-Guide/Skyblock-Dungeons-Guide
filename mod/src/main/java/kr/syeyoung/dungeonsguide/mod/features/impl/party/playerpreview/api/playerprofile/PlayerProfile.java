@@ -43,7 +43,7 @@ public class PlayerProfile {
     private int selectedWardrobe = -1;
 
     private ItemStack[] inventory;
-    private ItemStack[] enderchest;
+    private ItemStack[] enderChest;
     private ItemStack[] talismans;
 
     private int totalSecrets;

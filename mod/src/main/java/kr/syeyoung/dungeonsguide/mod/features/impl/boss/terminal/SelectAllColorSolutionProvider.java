@@ -26,7 +26,7 @@ import net.minecraft.item.EnumDyeColor;
 import java.util.ArrayList;
 import java.util.List;
 
-public class SelectAllColorSolutionProivider implements TerminalSolutionProvider {
+public class SelectAllColorSolutionProvider implements TerminalSolutionProvider {
     @Override
     public TerminalSolution provideSolution(ContainerChest chest, List<Slot> clicked) {
         TerminalSolution ts = new TerminalSolution();

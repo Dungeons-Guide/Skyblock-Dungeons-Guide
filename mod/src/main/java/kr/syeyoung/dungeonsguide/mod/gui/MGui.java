@@ -241,7 +241,7 @@ public class MGui extends GuiScreen {
 
     @Override
     public void handleInput() throws IOException {
-//        Keyboard.enableRepeatEvents(true); // i hope it's temproary solution
+//        Keyboard.enableRepeatEvents(true); // i hope it's a temporary solution
         super.handleInput();
     }
 }

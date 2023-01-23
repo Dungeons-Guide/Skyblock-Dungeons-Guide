@@ -27,15 +27,11 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.resources.DefaultPlayerSkin;
 import net.minecraft.client.resources.SkinManager;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.IChatComponent;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.WorldSettings.GameType;
-
-import java.util.UUID;
 
 @RequiredArgsConstructor
 public class TabListEntry {
@@ -43,7 +39,7 @@ public class TabListEntry {
     private final GameProfile gameProfile;
     // properties?
     @Getter @Setter
-    private final GameType gamemode;
+    private final GameType gameMode;
     @Getter @Setter
     private int ping;
     @Getter

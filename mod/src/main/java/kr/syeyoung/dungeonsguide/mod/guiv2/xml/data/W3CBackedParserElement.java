@@ -34,7 +34,7 @@ public class W3CBackedParserElement implements ParserElement {
     }
 
     @Override
-    public String getNodename() {
+    public String getNodeName() {
         return backingElement.getTagName();
     }
 

@@ -22,6 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import net.minecraft.nbt.NBTTagCompound;
 
 public interface ChamberProcessor extends RoomProcessor {
-    void onDataRecieve(NBTTagCompound compound);
+    void onDataReceive(NBTTagCompound compound);
     String getName();
 }

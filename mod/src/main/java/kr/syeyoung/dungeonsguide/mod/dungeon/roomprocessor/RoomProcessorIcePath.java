@@ -53,10 +53,10 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
 
     public RoomProcessorIcePath(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
-        findSilverFishanddoStuff();
+        findSilverFishAndDoStuff();
     }
 
-    public void findSilverFishanddoStuff() {
+    public void findSilverFishAndDoStuff() {
         final BlockPos low = getDungeonRoom().getMin();
         final BlockPos high = getDungeonRoom().getMax();
         List<EntitySilverfish> silverfishs = getDungeonRoom().getContext().getWorld().getEntities(EntitySilverfish.class, new Predicate<EntitySilverfish>() {
@@ -104,7 +104,7 @@ public class RoomProcessorIcePath extends GeneralRoomProcessor {
     public void tick() {
         super.tick();
         if (err || silverfish.isDead) {
-            findSilverFishanddoStuff();
+            findSilverFishAndDoStuff();
             if (err) return;
         }
         if (silverfish.getPosition().equals(lastSilverfishLoc)) {

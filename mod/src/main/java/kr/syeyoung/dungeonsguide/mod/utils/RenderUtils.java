@@ -301,7 +301,7 @@ public class RenderUtils {
     public static void renderBar(float x, float y, float xSize, float completed) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(icons);
         completed = (float)Math.round(completed / 0.05F) * 0.05F;
-        float notcompleted = 1.0F - completed;
+        float notCompleted = 1.0F - completed;
         int displayNum = 0;
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         float width = 0.0F;
@@ -311,7 +311,7 @@ public class RenderUtils {
         }
 
         if (completed < 1.0F && (displayNum == 2 || displayNum == 0)) {
-            width = Math.min(xSize * notcompleted, xSize / 2.0F);
+            width = Math.min(xSize * notCompleted, xSize / 2.0F);
             drawTexturedRect(x + xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F), y, width, 5.0F, (182.0F - xSize / 2.0F + Math.max(xSize * (completed - 0.5F), 0.0F)) / 256.0F, 0.7109375F, 0.2890625F, 0.30859375F, 9728);
         }
 

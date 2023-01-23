@@ -244,8 +244,8 @@ public class DefaultFontRenderer implements FontRenderer {
             i1 = 0;
 
             for(int j1 = list.size(); i1 < j1; ++i1) {
-                VertexFormatElement vertexformatelement1 = (VertexFormatElement)list.get(i1);
-                vertexformatelement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
+                VertexFormatElement vertexFormatElement1 = (VertexFormatElement)list.get(i1);
+                vertexFormatElement1.getUsage().postDraw(vertexformat, i1, i, bytebuffer);
             }
         }
 

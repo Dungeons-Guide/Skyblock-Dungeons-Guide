@@ -40,9 +40,9 @@ public class DataRendererSelectedClassLv implements IDataRenderer {
             fr.drawString("Unknown Selected", 0,0, 0xFF55ffff);
         } else {
             XPUtils.XPCalcResult xpCalcResult = XPUtils.getCataXp(dungeonStatDungeonSpecificData.getData().getExperience());
-            fr.drawString(playerProfile.getSelectedClass().getFamilarName(), 0,0, 0xFF55ffff);
-            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(playerProfile.getSelectedClass().getFamilarName()+" "),0,0xFFFFFFFF);
-            fr.drawString("★", fr.getStringWidth(playerProfile.getSelectedClass().getFamilarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
+            fr.drawString(playerProfile.getSelectedClass().getFamiliarName(), 0,0, 0xFF55ffff);
+            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(playerProfile.getSelectedClass().getFamiliarName()+" "),0,0xFFFFFFFF);
+            fr.drawString("★", fr.getStringWidth(playerProfile.getSelectedClass().getFamiliarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
 
             RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }

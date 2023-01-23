@@ -63,13 +63,13 @@ public class MScrollablePanel extends MPanel {
             @Override
             public void add(MPanel child) {
                 super.add(child);
-                evalulateContentArea();
+                evaluateContentArea();
             }
 
             @Override
             public void remove(MPanel panel) {
                 super.remove(panel);
-                evalulateContentArea();
+                evaluateContentArea();
             }
 
             @Override
@@ -88,12 +88,12 @@ public class MScrollablePanel extends MPanel {
                 for (MPanel childComponent : childComponents) {
                     childComponent.resize0(parentWidth, parentHeight);
                 }
-                evalulateContentArea();
+                evaluateContentArea();
             }
         };
         viewPort.add(contentArea);
         contentArea.setIgnoreBoundOnClip(true);
-        evalulateContentArea();
+        evaluateContentArea();
     }
 
     @Override
@@ -108,7 +108,7 @@ public class MScrollablePanel extends MPanel {
         }
     }
 
-    public void evalulateContentArea() {
+    public void evaluateContentArea() {
         if (contentArea.getChildComponents().size() == 0) {
             contentAreaDim= new Rectangle(0,0,0,0);
             return;
@@ -133,23 +133,23 @@ public class MScrollablePanel extends MPanel {
         super.setBounds(bounds);
         boolean hideX = (axis & 2) == 0, hideY = (axis & 1) == 0;
         viewPort.setBounds(new Rectangle(0,0,bounds.width, bounds.height));
-        evalulateContentArea();
+        evaluateContentArea();
         if (bounds.width >= contentAreaDim.width && hideScrollBarWhenNotNecessary) hideX = true;
         if (bounds.height >= contentAreaDim.height && hideScrollBarWhenNotNecessary) hideY = true;
 
         if (!(hideX || hideY)) {
-            Dimension preferedX = scrollBarX.getPreferredSize();
-            Dimension preferedY = scrollBarY.getPreferredSize();
-            scrollBarY.setBounds(new Rectangle(bounds.width - preferedY.width, 0, preferedY.width, bounds.height - preferedX.height));
-            scrollBarX.setBounds(new Rectangle(0, bounds.height - preferedX.height, bounds.width - preferedY.width, preferedX.height));
+            Dimension preferredX = scrollBarX.getPreferredSize();
+            Dimension preferredY = scrollBarY.getPreferredSize();
+            scrollBarY.setBounds(new Rectangle(bounds.width - preferredY.width, 0, preferredY.width, bounds.height - preferredX.height));
+            scrollBarX.setBounds(new Rectangle(0, bounds.height - preferredX.height, bounds.width - preferredY.width, preferredX.height));
         } else if ((hideY && !hideX)) {
-            Dimension preferedX = scrollBarX.getPreferredSize();
+            Dimension preferredX = scrollBarX.getPreferredSize();
             scrollBarY.setBounds(new Rectangle(0,0,0,0));
-            scrollBarX.setBounds(new Rectangle(0, bounds.height - preferedX.height, bounds.width, preferedX.height));
+            scrollBarX.setBounds(new Rectangle(0, bounds.height - preferredX.height, bounds.width, preferredX.height));
         } else if ((hideX && !hideY)) {
-            Dimension preferedY = scrollBarY.getPreferredSize();
+            Dimension preferredY = scrollBarY.getPreferredSize();
             scrollBarX.setBounds(new Rectangle(0,0,0,0));
-            scrollBarY.setBounds(new Rectangle(bounds.width - preferedY.width, 0, preferedY.width, bounds.height));
+            scrollBarY.setBounds(new Rectangle(bounds.width - preferredY.width, 0, preferredY.width, bounds.height));
         } else if (hideX && hideY){
             scrollBarY.setBounds(new Rectangle(0,0,0,0));
             scrollBarX.setBounds(new Rectangle(0,0,0,0));
@@ -161,7 +161,7 @@ public class MScrollablePanel extends MPanel {
         scrollBarY.setThumbSize(viewPort.getBounds().height);
         scrollBarX.setMax(contentAreaDim.x + contentAreaDim.width-scrollBarX.getThumbSize());
         scrollBarY.setMax(contentAreaDim.y + contentAreaDim.height-scrollBarY.getThumbSize());
-        evalulateContentArea();
+        evaluateContentArea();
     }
 
 

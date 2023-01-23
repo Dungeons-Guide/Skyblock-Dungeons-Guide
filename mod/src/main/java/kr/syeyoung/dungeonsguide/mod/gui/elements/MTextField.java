@@ -45,7 +45,7 @@ public class MTextField extends MPanel {
     private String text = "";
     @Setter
     private String placeHolder = "";
-    private int cursorBlickTicker = 0;
+    private int cursorBlinkTicker = 0;
 
     private int selectionStart = 0;
     private int selectionEnd = 0;
@@ -117,10 +117,10 @@ public class MTextField extends MPanel {
             if (cursor != -1) {
                 if (cursor > text.length()) setCursor0(text.length());
                 int x = fr.getStringWidth(text.substring(0, cursor)) - xOffset;
-                cursorBlickTicker++;
-                if (cursorBlickTicker < 10)
+                cursorBlinkTicker++;
+                if (cursorBlinkTicker < 10)
                     Gui.drawRect(3 + x, y, 4 + x, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
-                if (cursorBlickTicker == 20) cursorBlickTicker = 0;
+                if (cursorBlinkTicker == 20) cursorBlinkTicker = 0;
             }
         }
     }

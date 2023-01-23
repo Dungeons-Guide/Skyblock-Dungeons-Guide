@@ -45,8 +45,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
     }
 
     private final SkyblockStatus ss = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    private final List<BlockPos> orderbuild = new ArrayList<BlockPos>();
-    private final LinkedList<BlockPos> orderclick = new LinkedList<BlockPos>();
+    private final List<BlockPos> orderBuild = new ArrayList<BlockPos>();
+    private final LinkedList<BlockPos> orderClick = new LinkedList<BlockPos>();
 
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
@@ -60,10 +60,10 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(309,123,291) > 400) return;
 
 
-        if (orderclick.size() >= 1)
-            RenderUtils.highlightBlock(orderclick.get(0), new Color(0, 255 ,255, 100), partialTicks, false);
-        if (orderclick.size() >= 2)
-            RenderUtils.highlightBlock(orderclick.get(1), new Color(255, 170, 0, 100), partialTicks, false);
+        if (orderClick.size() >= 1)
+            RenderUtils.highlightBlock(orderClick.get(0), new Color(0, 255 ,255, 100), partialTicks, false);
+        if (orderClick.size() >= 2)
+            RenderUtils.highlightBlock(orderClick.get(1), new Color(255, 170, 0, 100), partialTicks, false);
     }
     private boolean wasButton = false;
     @DGEventHandler
@@ -76,19 +76,19 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
 
         if (wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.air) {
-            orderclick.clear();
-            orderbuild.clear();
+            orderClick.clear();
+            orderBuild.clear();
             wasButton = false;
         } else if (!wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.stone_button){
-            orderclick.addAll(orderbuild);
+            orderClick.addAll(orderBuild);
             wasButton = true;
         }
 
 
         if (!wasButton) {
             for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(310, 123, 291), new BlockPos(310, 120, 294))) {
-                if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderbuild.contains(allInBox)) {
-                    orderbuild.add(allInBox);
+                if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
+                    orderBuild.add(allInBox);
                 }
             }
         }
@@ -107,8 +107,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         BlockPos pos = event.pos.add(1,0,0);
         if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 310 && 291 <= pos.getZ() && pos.getZ() <= 294) {
             if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
-            if (pos.equals(orderclick.peek())) {
-                orderclick.poll();
+            if (pos.equals(orderClick.peek())) {
+                orderClick.poll();
             }
         }
     }

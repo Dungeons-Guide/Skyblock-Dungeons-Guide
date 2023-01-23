@@ -43,7 +43,7 @@ public class BDChamber {
 
     private ChamberProcessor processor;
 
-    // for whatever's sake, 6: z, 9: x. Starts from botoom right, left, then up
+    // for whatever's sake, 6: z, 9: x. Starts from bottom right, left, then up
 
     public OffsetPoint getOffsetPoint(int x, int z) {
         return chamberBlocks.getOffsetPointList().get(z * 9 + x);

@@ -229,7 +229,7 @@ public class GeneralEditPane extends MPanel {
         byte[] blocks = new byte[size];
         byte[] meta = new byte[size];
         byte[] extra = new byte[size];
-        byte[] extranibble = new byte[(int) Math.ceil(size / 2.0)];
+        byte[] extraNibble = new byte[(int) Math.ceil(size / 2.0)];
 
         boolean extraEx = false;
         NBTTagList tileEntitiesList = new NBTTagList();
@@ -264,11 +264,11 @@ public class GeneralEditPane extends MPanel {
                 }
             }
         }
-        for (int i = 0; i < extranibble.length; i++) {
+        for (int i = 0; i < extraNibble.length; i++) {
             if (i * 2 + 1 < extra.length) {
-                extranibble[i] = (byte) ((extra[i * 2 + 0] << 4) | extra[i * 2 + 1]);
+                extraNibble[i] = (byte) ((extra[i * 2 + 0] << 4) | extra[i * 2 + 1]);
             } else {
-                extranibble[i] = (byte) (extra[i * 2 + 0] << 4);
+                extraNibble[i] = (byte) (extra[i * 2 + 0] << 4);
             }
         }
 
@@ -277,7 +277,7 @@ public class GeneralEditPane extends MPanel {
         compound.setByteArray("Data", meta);
         compound.setString("Materials", "Alpha");
         if (extraEx) {
-            compound.setByteArray("AddBlocks", extranibble);
+            compound.setByteArray("AddBlocks", extraNibble);
         }
         compound.setTag("Entities", new NBTTagList());
         compound.setTag("TileEntities", tileEntitiesList);

@@ -81,8 +81,8 @@ public class DataRendererEditor extends MPanel {
         GlStateManager.translate(6+hamburgerWidth, 5+fr.FONT_HEIGHT+3, 0);
         int culmutativeY = 0;
         int relSelectedY = selectedY - (5+ fr.FONT_HEIGHT + 3);
-        boolean drewit = false;
-        for (String datarenderers : feature.<List<String>>getParameter("datarenderers").getValue()) {
+        boolean drewIt = false;
+        for (String dataRenderers : feature.<List<String>>getParameter("datarenderers").getValue()) {
 
             if (0 <= selectedX && selectedX <= hamburgerWidth+11 && currentlySelected != null) {
                 IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
@@ -90,7 +90,7 @@ public class DataRendererEditor extends MPanel {
                 if (dataRenderer == null) dim = new Dimension(0,fr.FONT_HEIGHT*2);
                 else dim = dataRenderer.getDimension();
 
-                if (culmutativeY + dim.height > relSelectedY && relSelectedY >= culmutativeY && !drewit) {
+                if (culmutativeY + dim.height > relSelectedY && relSelectedY >= culmutativeY && !drewIt) {
                     clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
                     GlStateManager.enableBlend();
                     GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
@@ -112,11 +112,11 @@ public class DataRendererEditor extends MPanel {
                     GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     fr.drawString("=",fr.getStringWidth("=")/2,(dim.height - fr.FONT_HEIGHT) / 2, 0xFFFFFFFF);
                     GlStateManager.translate(hamburgerWidth+1,dim.height,0);
-                    drewit = true;
+                    drewIt = true;
                 }
             }
 
-            IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
+            IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(dataRenderers);
             clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
             Dimension dim;
 
@@ -125,7 +125,7 @@ public class DataRendererEditor extends MPanel {
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
             if (dataRenderer == null) {
                 fr.drawString("Couldn't find Datarenderer", 0,0, 0xFFFF0000);
-                fr.drawString(datarenderers, 0,fr.FONT_HEIGHT, 0xFFFF0000);
+                fr.drawString(dataRenderers, 0,fr.FONT_HEIGHT, 0xFFFF0000);
                 dim = new Dimension(0, fr.FONT_HEIGHT * 2);
             } else {
                 GlStateManager.pushMatrix();
@@ -144,7 +144,7 @@ public class DataRendererEditor extends MPanel {
             culmutativeY += dim.height;
         }
 
-        if (currentlySelected != null && new Rectangle(0,5+fr.FONT_HEIGHT + 3, hamburgerWidth+11, 232).contains(selectedX, selectedY) && !drewit) {
+        if (currentlySelected != null && new Rectangle(0,5+fr.FONT_HEIGHT + 3, hamburgerWidth+11, 232).contains(selectedX, selectedY) && !drewIt) {
             IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(currentlySelected);
             Dimension dim;
                 clip(scissor.x + 6 + hamburgerWidth, scissor.y + 5+fr.FONT_HEIGHT+3, baseWidth, 230);
@@ -246,7 +246,7 @@ public class DataRendererEditor extends MPanel {
             Set<String> rest = new HashSet<>(DataRendererRegistry.getValidDataRenderer());
             rest.removeAll( feature.<List<String>>getParameter("datarenderers").getValue());
             rest.remove(currentlySelected);
-            int culmutativeY  = -scrollY;
+            int cumulativeY  = -scrollY;
             for (String datarenderers : rest) {
                 IDataRenderer dataRenderer = DataRendererRegistry.getDataRenderer(datarenderers);
                 Dimension dim;
@@ -257,12 +257,12 @@ public class DataRendererEditor extends MPanel {
                     dim = dataRenderer.getDimension();
                     GlStateManager.popMatrix();
                 }
-                culmutativeY += dim.height;
+                cumulativeY += dim.height;
 
-                if (legitRelY < culmutativeY) {
+                if (legitRelY < cumulativeY) {
                     currentlySelected = datarenderers;
                     selectedX = 155;
-                    selectedY = culmutativeY - dim.height + 5+fr.FONT_HEIGHT + 3;
+                    selectedY = cumulativeY - dim.height + 5+fr.FONT_HEIGHT + 3;
                     break;
                 }
             }

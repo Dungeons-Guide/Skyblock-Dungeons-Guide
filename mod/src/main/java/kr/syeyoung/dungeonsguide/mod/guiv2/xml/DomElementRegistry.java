@@ -42,7 +42,7 @@ public class DomElementRegistry {
 
     public static <T extends Widget, R extends Widget & ImportingWidget> ParsedWidgetConverter<T, R> obtainConverter(String name) {
         if (!converters.containsKey(name))
-            System.out.println("Try to get nonexistant widget "+name);
+            System.out.println("Try to get nonexistent widget "+name);
         return converters.get(name);
     }
 
@@ -91,7 +91,7 @@ public class DomElementRegistry {
             IResource iResource = Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation);
             return new W3CBackedParser(iResource.getInputStream());
         } catch (Exception e) {
-            throw new ParserException("An error occured while parsing "+resourceLocation, e);
+            throw new ParserException("An error occurred while parsing "+resourceLocation, e);
         }
     }
 }

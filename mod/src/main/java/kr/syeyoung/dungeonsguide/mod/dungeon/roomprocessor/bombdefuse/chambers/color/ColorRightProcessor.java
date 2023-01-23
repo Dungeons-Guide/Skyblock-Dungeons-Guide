@@ -91,7 +91,7 @@ public class ColorRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
         if (7 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             b3b = (byte) (answer / 10000);

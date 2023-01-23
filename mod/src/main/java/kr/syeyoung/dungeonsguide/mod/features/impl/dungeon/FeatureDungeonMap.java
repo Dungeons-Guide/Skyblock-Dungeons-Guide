@@ -99,9 +99,9 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     }
 
     public static final Ordering<NetworkPlayerInfo> sorter = Ordering.from((compare1, compare2) -> {
-        ScorePlayerTeam scoreplayerteam = compare1.getPlayerTeam();
-        ScorePlayerTeam scoreplayerteam1 = compare2.getPlayerTeam();
-        return ComparisonChain.start().compareTrueFirst(compare1.getGameType() != WorldSettings.GameType.SPECTATOR, compare2.getGameType() != WorldSettings.GameType.SPECTATOR).compare(scoreplayerteam != null ? scoreplayerteam.getRegisteredName() : "", scoreplayerteam1 != null ? scoreplayerteam1.getRegisteredName() : "").compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
+        ScorePlayerTeam scorePlayerTeam = compare1.getPlayerTeam();
+        ScorePlayerTeam scorePlayerTeam1 = compare2.getPlayerTeam();
+        return ComparisonChain.start().compareTrueFirst(compare1.getGameType() != WorldSettings.GameType.SPECTATOR, compare2.getGameType() != WorldSettings.GameType.SPECTATOR).compare(scorePlayerTeam != null ? scorePlayerTeam.getRegisteredName() : "", scorePlayerTeam1 != null ? scorePlayerTeam1.getRegisteredName() : "").compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
     });
 
     private boolean on = false;
@@ -408,13 +408,13 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
      * @param scale Scale of the map
      * @param postScale
      * @param networkPlayerInfo
-     * @param entityplayer
+     * @param entityPlayer
      * @param pt2
      * @param yaw2
      */
-    private void drawHead(float scale, float postScale, TabListEntry networkPlayerInfo, EntityPlayer entityplayer, Vector2d pt2, float yaw2) {
+    private void drawHead(float scale, float postScale, TabListEntry networkPlayerInfo, EntityPlayer entityPlayer, Vector2d pt2, float yaw2) {
         GlStateManager.pushMatrix();
-        boolean flag1 = entityplayer != null && entityplayer.isWearing(EnumPlayerModelParts.CAPE);
+        boolean flag1 = entityPlayer != null && entityPlayer.isWearing(EnumPlayerModelParts.CAPE);
         GlStateManager.enableTexture2D();
         Minecraft.getMinecraft().getTextureManager().bindTexture(
                 networkPlayerInfo.getLocationSkin()

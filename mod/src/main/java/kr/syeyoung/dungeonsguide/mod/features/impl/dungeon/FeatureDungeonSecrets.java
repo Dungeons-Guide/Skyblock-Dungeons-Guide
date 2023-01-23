@@ -33,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.List;
 
 public class FeatureDungeonSecrets extends TextHUDFeature {
@@ -86,11 +85,11 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context.getScaffoldParser() == null) return false;
         if (context.getScaffoldParser().getUndiscoveredRoom() > 0) return false;
-        boolean allknown = true;
+        boolean allKnown = true;
         for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-            if (dungeonRoom.getTotalSecrets() == -1) allknown = false;
+            if (dungeonRoom.getTotalSecrets() == -1) allKnown = false;
         }
-        return allknown;
+        return allKnown;
     }
 
     public String getTotalSecrets() {

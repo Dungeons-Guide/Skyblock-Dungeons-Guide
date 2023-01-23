@@ -171,9 +171,9 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
             for (ChamberSet ch:chambers) {
                 if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
-                    ch.getLeft().getProcessor().onDataRecieve(compound);
+                    ch.getLeft().getProcessor().onDataReceive(compound);
                 if (ch.getRight() != null && ch.getRight().getProcessor() != null)
-                    ch.getRight().getProcessor().onDataRecieve(compound);
+                    ch.getRight().getProcessor().onDataReceive(compound);
             }
         } catch (IOException e2) {
             e2.printStackTrace();
@@ -201,9 +201,9 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
 
                 for (ChamberSet ch:chambers) {
                     if (ch.getLeft() != null && ch.getLeft().getProcessor() != null)
-                        ch.getLeft().getProcessor().onDataRecieve(compound);
+                        ch.getLeft().getProcessor().onDataReceive(compound);
                     if (ch.getRight() != null && ch.getRight().getProcessor() != null)
-                        ch.getRight().getProcessor().onDataRecieve(compound);
+                        ch.getRight().getProcessor().onDataReceive(compound);
                 }
             } catch (Throwable t) {
                 t.printStackTrace();

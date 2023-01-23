@@ -76,7 +76,7 @@ public class AspectRatioFitter extends AnnotatedExportOnlyWidget implements Layo
 
             return new Size(widthIfHeightFit, constraintBox.getMaxHeight());
         } else {
-            throw new IllegalStateException("How is this possible mathmatically?");
+            throw new IllegalStateException("How is this possible mathematically?");
         }
     }
 

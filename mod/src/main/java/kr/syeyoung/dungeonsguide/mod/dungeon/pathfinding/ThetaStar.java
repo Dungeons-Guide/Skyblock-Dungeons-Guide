@@ -143,7 +143,7 @@ public class ThetaStar {
                 boolean flag = false;
                 if (n. parent != null) {
                     float tempGScore = n.parent.g + distSq(n.parent.coordinate.x - neighbor.coordinate.x, n.parent.coordinate.y - neighbor.coordinate.y, n.parent.coordinate.z - neighbor.coordinate.z);
-                    if (tempGScore < neighbor.g && lineofsight(n.parent, neighbor)) {
+                    if (tempGScore < neighbor.g && lineOfSight(n.parent, neighbor)) {
                         neighbor.parent = n.parent;
                         neighbor.g = tempGScore;
                         neighbor.f = tempGScore + distSq(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
@@ -168,7 +168,7 @@ public class ThetaStar {
         return true;
     }
 
-    private boolean lineofsight(Node a, Node b) {
+    private boolean lineOfSight(Node a, Node b) {
         if (a == null || b == null) return false;
         float sx = a.coordinate.x, sy = a.coordinate.y, sz = a.coordinate.z;
         int ex = b.coordinate.x, ey = b.coordinate.y, ez = b.coordinate.z;

@@ -68,7 +68,7 @@ public class StompPayload {
     }
 
     public static StompPayload parse(String payload) {
-        if (FeatureRegistry.DEBUG.isEnabled()) System.out.println("Receving.. "+payload);
+        if (FeatureRegistry.DEBUG.isEnabled()) System.out.println("Receiving.. "+payload);
 
         Scanner scanner = new Scanner(payload);
         StompPayload stompPayload = new StompPayload();

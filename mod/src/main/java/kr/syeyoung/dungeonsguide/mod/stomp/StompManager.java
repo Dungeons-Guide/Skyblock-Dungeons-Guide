@@ -57,7 +57,7 @@ public class StompManager {
 
     public void send(StompPayload payload){
         if(stompConnection != null){
-            stompConnection.sendfake(payload);
+            stompConnection.sendFake(payload);
         } else {
             logger.error("OOPS STOMP CONNECTION IS NULL AND SOMEONE TRIED TO SEND SOMETHING THIS SHOULD NOT HAPPEN");
         }

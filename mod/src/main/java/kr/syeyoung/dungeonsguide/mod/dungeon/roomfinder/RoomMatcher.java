@@ -57,7 +57,7 @@ public class RoomMatcher {
         }
 
         triedMatch = true;
-        int lowestcost = 10;
+        int lowestCost = 10;
         int lowestRot = 0;
         DungeonRoomInfo bestMatch = null;
         for (int rotation = 0; rotation < 4; rotation++) {
@@ -74,8 +74,8 @@ public class RoomMatcher {
                     this.rotation = rotation;
                     return match;
                 }
-                if (cost < lowestcost) {
-                    lowestcost = cost;
+                if (cost < lowestCost) {
+                    lowestCost = cost;
                     bestMatch = roomInfo;
                     lowestRot = rotation;
                 }

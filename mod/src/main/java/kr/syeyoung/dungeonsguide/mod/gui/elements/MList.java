@@ -43,8 +43,8 @@ public class MList extends MPanel {
     public void realignChildren() {
         int y = 0;
         for (MPanel childComponent : getChildComponents()) {
-            Dimension preferedSize = childComponent.getPreferredSize();
-            int height = Math.max(10, preferedSize.height);
+            Dimension preferredSize = childComponent.getPreferredSize();
+            int height = Math.max(10, preferredSize.height);
             childComponent.setBounds(new Rectangle(0, y, bounds.width, height));
             y += height;
             if (gap > 0)
@@ -58,9 +58,9 @@ public class MList extends MPanel {
         int maxW = 0;
         int h = 0;
         for (MPanel childComponent : getChildComponents()) {
-            Dimension preferedSize = childComponent.getPreferredSize();
-            int height = Math.max(10, preferedSize.height);
-            if (preferedSize.width > maxW) maxW = preferedSize.width;
+            Dimension preferredSize = childComponent.getPreferredSize();
+            int height = Math.max(10, preferredSize.height);
+            if (preferredSize.width > maxW) maxW = preferredSize.width;
             h += height;
             if (gap > 0) h += gap;
         }

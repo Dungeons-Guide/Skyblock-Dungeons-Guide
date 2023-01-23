@@ -92,7 +92,7 @@ public class MFeature extends MPanel {
                 @Override
                 public void run() {
                     Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(Minecraft.getMinecraft().currentScreen, abstractFeature));
-                    button.setIsclicked(false);
+                    button.setClicked(false);
                 }
             });
             button.setBackground(RenderUtils.blendAlpha(0x141414, 0.07f));

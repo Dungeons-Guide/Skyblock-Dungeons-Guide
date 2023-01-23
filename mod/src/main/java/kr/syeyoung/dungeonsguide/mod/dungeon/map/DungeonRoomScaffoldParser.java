@@ -35,8 +35,8 @@ import net.minecraft.world.storage.MapData;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
-import java.util.*;
 import java.util.List;
+import java.util.*;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
@@ -149,7 +149,7 @@ public class DungeonRoomScaffoldParser {
 
     private DungeonRoom buildRoom(byte[] mapData, Point unitPoint) {
         java.util.Queue<Point[]> toCheck = new LinkedList<>();
-        toCheck.add(new Point[]{unitPoint, unitPoint}); // requestor, target
+        toCheck.add(new Point[]{unitPoint, unitPoint}); // requester, target
         Set<Point> checked = new HashSet<>();
         Set<Point> ayConnected = new HashSet<>();
 

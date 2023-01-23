@@ -47,7 +47,7 @@ public class Border extends AnnotatedExportOnlyWidget implements Layouter {
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        // layout borders, ask them about their constraints
+        // layout borders, ask them about their constraints,
         // then layout content with space less than blahblah
         // then relayout borders.
         DomElement top = null, bottom = null, left = null, right = null, content = null;

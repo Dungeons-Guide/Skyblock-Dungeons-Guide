@@ -152,7 +152,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
         int width = getBounds().width - 60;
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
-        int shademodel = GL11.glGetInteger(GL11.GL_SHADE_MODEL);
+        int shadeModel = GL11.glGetInteger(GL11.GL_SHADE_MODEL);
         GlStateManager.shadeModel(GL11.GL_SMOOTH);
         GlStateManager.enableBlend();
         GlStateManager.disableDepth();
@@ -206,7 +206,7 @@ public class ValueEditAColor extends MPanel implements ValueEdit<AColor> {
             GL11.glVertex3f(MathHelper.sin(rad) * radius + cx, MathHelper.cos(rad) * radius + cy, 0);
         }
         GL11.glEnd();
-        GlStateManager.shadeModel(shademodel);
+        GlStateManager.shadeModel(shadeModel);
 
         GlStateManager.color(1,1,1,1);
         worldrenderer.begin(GL11.GL_LINE_LOOP, DefaultVertexFormats.POSITION);

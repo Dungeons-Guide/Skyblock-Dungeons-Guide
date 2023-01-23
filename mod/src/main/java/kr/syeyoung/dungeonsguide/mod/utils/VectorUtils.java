@@ -25,7 +25,7 @@ import net.minecraft.util.Vec3;
 import javax.vecmath.Vector2d;
 
 public class VectorUtils {
-    // Ior rooms, different coordinate system is used. Y Increses as marker goes down. X is same.
+    // Ior rooms, different coordinate system is used. Y Increases as marker goes down. X is the same.
 
 
     public static Vector2d rotateCounterClockwise(Vector2d vector2d) {

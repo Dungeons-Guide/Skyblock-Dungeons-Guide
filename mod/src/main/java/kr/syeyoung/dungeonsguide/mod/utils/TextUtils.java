@@ -42,11 +42,11 @@ public class TextUtils {
         return INTEGER_CHARACTERS.matcher(text).replaceAll("");
     }
 
-    public static String join(List list, String delimeter) {
+    public static String join(List list, String delimiter) {
         if (list.isEmpty()) return "";
         StringBuilder stringBuilder = new StringBuilder();
         for (int i = 0; i < list.size() - 1; i++) {
-            stringBuilder.append(list.get(i).toString()).append(delimeter);
+            stringBuilder.append(list.get(i).toString()).append(delimiter);
         }
         stringBuilder.append(list.get(list.size() - 1).toString());
         return stringBuilder.toString();

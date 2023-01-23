@@ -101,7 +101,7 @@ public class GLCursors {
                         break;
                 }
             } catch (Throwable e) {
-                if(verbose) logger.error("Error occured while loading cursor: {}", value);
+                if(verbose) logger.error("Error occurred while loading cursor: {}", value);
                 e.printStackTrace();
             }
             try {
@@ -110,8 +110,8 @@ public class GLCursors {
                     BufferedImage bufferedImage = null;
                     int minC = Cursor.getMinCursorSize(), maxC = Cursor.getMaxCursorSize();
                     try {
-                        ResourceLocation cursorinfo = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName());
-                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(Minecraft.getMinecraft().getResourceManager().getResource(cursorinfo).getInputStream());
+                        ResourceLocation cursorInfo = new ResourceLocation("dungeonsguide:cursors/"+value.getAltFileName());
+                        List<CursorReader.CursorData> cursorDataList = CursorReader.readFromInputStream(Minecraft.getMinecraft().getResourceManager().getResource(cursorInfo).getInputStream());
                         List<CursorReader.CursorData> cursorDataList2 = cursorDataList.stream()
                                 .filter(cdata -> cdata.getBufferedImage()  != null)
                                 .filter(cdata -> minC <= cdata.getHeight() && cdata.getHeight() <= maxC && minC <= cdata.getWidth() && cdata.getWidth() <= maxC)
@@ -124,7 +124,7 @@ public class GLCursors {
                         hotspotX = cursorData.getXHotSpot();
                         hotspotY = cursorData.getYHotSpot();
                     } catch (Throwable t) {
-                        if(verbose) logger.error("loading currsor failed with message, {}", String.valueOf(Throwables.getRootCause(t)));
+                        if(verbose) logger.error("loading cursor failed with message, {}", String.valueOf(Throwables.getRootCause(t)));
                     }
 
 
@@ -149,7 +149,7 @@ public class GLCursors {
                     c = new Cursor(effWidth, effHeight, hotspotX, height - hotspotY - 1,1,intBuffer, null);
                 }
             } catch (Throwable e) {
-                if(verbose) logger.error("Error occured while loading cursor from resource:  "+value);
+                if(verbose) logger.error("Error occurred while loading cursor from resource:  "+value);
                 e.printStackTrace();
             }
             if (c != null) {

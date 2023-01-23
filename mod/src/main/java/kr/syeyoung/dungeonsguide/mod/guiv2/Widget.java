@@ -32,7 +32,7 @@ public abstract class Widget {
     private DomElement domElement = new DomElement();
 
 
-    private boolean multiatfirst = false;
+    private boolean multiAtFirst = false;
     public DomElement createDomElement(DomElement parent) {
         domElement = new DomElement();
         domElement.setWidget(this);

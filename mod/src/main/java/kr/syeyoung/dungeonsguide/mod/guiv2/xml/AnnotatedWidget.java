@@ -58,16 +58,16 @@ public abstract class AnnotatedWidget extends Widget implements ImportingWidget,
     public final List<Widget> build(DomElement buildContext) {
         try (Parser parser = DomElementRegistry.obtainParser(target)) {
             ParserElement element = parser.getRootNode();
-            if (element.getNodename().equals("multi")) {
+            if (element.getNodeName().equals("multi")) {
                 List<Widget> widgets = new ArrayList<>();
                 for (ParserElement child : element.getChildren()) {
-                    ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(child.getNodename());
+                    ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(child.getNodeName());
                     Widget w = converter.convert(this, child);
                     widgets.add(w);
                 }
                 return widgets;
             } else {
-                ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(element.getNodename());
+                ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(element.getNodeName());
                 Widget w = converter.convert(this, element);
                 return Collections.singletonList(w);
             }

@@ -51,7 +51,7 @@ public abstract class GeneralDefuseChamberProcessor  implements ChamberProcessor
 
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
 
     }
 

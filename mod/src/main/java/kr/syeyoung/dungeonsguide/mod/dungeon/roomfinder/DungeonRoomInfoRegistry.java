@@ -99,7 +99,7 @@ public class DungeonRoomInfoRegistry {
     public static void saveAll(File dir) {
         dir.mkdirs();
         boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
-        StringBuilder nameidstring = new StringBuilder("name,uuid,processsor,secrets");
+        StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
             try {
@@ -110,13 +110,13 @@ public class DungeonRoomInfoRegistry {
                 oos.flush();
                 oos.close();
 
-                nameidstring.append("\n").append(dungeonRoomInfo.getName()).append(",").append(dungeonRoomInfo.getUuid()).append(",").append(dungeonRoomInfo.getProcessorId()).append(",").append(dungeonRoomInfo.getTotalSecrets());
+                nameIDString.append("\n").append(dungeonRoomInfo.getName()).append(",").append(dungeonRoomInfo.getUuid()).append(",").append(dungeonRoomInfo.getProcessorId()).append(",").append(dungeonRoomInfo.getTotalSecrets());
                 ids.append("roomdata/").append(dungeonRoomInfo.getUuid()).append(".roomdata\n");
             } catch (Exception e) {e.printStackTrace();}
         }
 
         try {
-            Files.write(nameidstring.toString(), new File(dir, "roomidmapping.csv"), Charset.defaultCharset());
+            Files.write(nameIDString.toString(), new File(dir, "roomidmapping.csv"), Charset.defaultCharset());
             Files.write(ids.toString(), new File(dir, "datas.txt"), Charset.defaultCharset());
         } catch (IOException e) {
             e.printStackTrace();

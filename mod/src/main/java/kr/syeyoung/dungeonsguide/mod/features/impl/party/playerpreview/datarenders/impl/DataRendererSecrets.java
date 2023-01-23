@@ -30,10 +30,10 @@ public class DataRendererSecrets implements IDataRenderer {
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        double theint = playerProfile.getTotalSecrets()/ (double)playerProfile.getDungeonStats().values().stream().flatMap(s -> s.getData().getPlays().values().stream())
+        double theInt = playerProfile.getTotalSecrets()/ (double)playerProfile.getDungeonStats().values().stream().flatMap(s -> s.getData().getPlays().values().stream())
                 .map(fs -> fs.getData().getWatcherKills()).reduce(0, Integer::sum);
         fr.drawString("§eSecrets §b"+playerProfile.getTotalSecrets()+" §7("+
-                String.format("%.2f", theint)+"/run)", 0,0,-1);
+                String.format("%.2f", theInt)+"/run)", 0,0,-1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
 

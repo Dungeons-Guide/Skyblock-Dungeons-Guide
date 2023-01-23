@@ -94,7 +94,7 @@ public class CommandDgDebug extends CommandBase {
             }
         }else if ("tablist".equals(arg)) {
             for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
-                ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGamemode());
+                ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGameMode());
             }
             ChatTransmitter.addToQueue("VS");
         } else if ("mockdungeonstart".equals(arg)) {

@@ -94,7 +94,7 @@ public class ArrowLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
         if (3 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             for (int i = 8; i >= 0; i--) {
