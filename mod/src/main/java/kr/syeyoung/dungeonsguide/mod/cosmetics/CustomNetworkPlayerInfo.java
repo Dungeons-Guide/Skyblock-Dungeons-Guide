@@ -42,7 +42,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
 
     private IChatComponent displayName;
-    private String unformattedDisplayText;
+    private String formatted;
     private String playerNameWithoutColor;
 
     public IChatComponent getOriginalDisplayName() {
@@ -53,15 +53,15 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
     public void setDisplayName(IChatComponent displayNameIn) {
         displayName = displayNameIn;
         if (displayName == null) {
-            unformattedDisplayText = null;
+            formatted = null;
             return;
         }
 
-        unformattedDisplayText = displayName.getUnformattedTextForChat();
+        formatted = displayName.getFormattedText();
 
 
         playerNameWithoutColor = "";
-        for (String s : unformattedDisplayText.split(" ")) {
+        for (String s : formatted.split(" ")) {
             String strippped = TextUtils.stripColor(s);
             if (strippped.startsWith("[")) {
                 continue;
@@ -75,28 +75,19 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
     public IChatComponent getDisplayName()
     {
 
-        String rawPlayerString;
-        String actualName;
+        String rawPlayerString =
+                formatted != null ? formatted : ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());;
+        String actualName = null;
         List<ActiveCosmetic> activeCosmetics;
-
-        // in case that the set player name is not called we do this
-        if (playerNameWithoutColor != null) {
-            activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(playerNameWithoutColor.toLowerCase());
-            rawPlayerString = unformattedDisplayText;
-            actualName = this.playerNameWithoutColor;
-        } else {
-            rawPlayerString = ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
-            actualName = "";
-            for (String s : rawPlayerString.split(" ")) {
-                String strippped = TextUtils.stripColor(s);
-                if (strippped.startsWith("[")) continue;
-                actualName = strippped;
-                break;
-            }
-            activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
+        for (String s : rawPlayerString.split(" ")) {
+            String strippped = TextUtils.stripColor(s);
+            if (strippped.startsWith("[")) continue;
+            actualName = strippped;
+            break;
         }
-
-
+        // in case that the set player name is not called we do this
+        if (actualName == null) return displayName;
+        activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
         if (activeCosmetics == null) return displayName;
         CosmeticData color=null;
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
