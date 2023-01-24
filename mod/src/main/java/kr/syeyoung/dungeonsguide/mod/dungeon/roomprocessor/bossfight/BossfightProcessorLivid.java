@@ -18,23 +18,32 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
+import net.minecraft.block.BlockColored;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.init.Blocks;
+import net.minecraft.item.EnumDyeColor;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Tuple;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.*;
 
 @Getter
 public class BossfightProcessorLivid extends GeneralBossfightProcessor {
-    private String realLividName;
-    private String prefix;
+    private String realLividName = "Hockey";
+    private String prefix = "§c";
+
+
     private EntityOtherPlayerMP realLivid;
+    private EntityArmorStand lividStand;
 
-    private final Set<String> knownLivids = new HashSet<String>();
-
-    private boolean isMasterMode;
+    private final boolean isMasterMode;
 
     public BossfightProcessorLivid(boolean isMasterMode) {
         addPhase(PhaseData.builder().phase("start").build());
@@ -51,23 +60,34 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
             put("Purple", "§5");
             put("Arcade", "§e");
     }};
+    private static final Map<Integer, String> lividMetadata = new HashMap<Integer, String>() {{
+        put(0, "Vendetta");
+        put(2, "Crossed");
+        put(4, "Arcade");
+        put(5, "Smile");
+        put(6, "Crossed");
+        put(7, "Doctor");
+        put(8, "Doctor");
+        put(10, "Purple");
+        put(11, "Frog");
+        put(13, "Scream");
+        put(14, "Hockey");
+    }};
+
+    private int correctLivid = 14;
     @Override
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving.getName().endsWith("Livid") && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
-            if (!knownLivids.contains(updateEvent.entityLiving.getName())) {
-                knownLivids.add(updateEvent.entityLiving.getName());
-                realLividName = updateEvent.entityLiving.getName();
-                realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
-                prefix = lividColorPrefix.get(realLividName.split(" ")[0]);
-            } else if (realLividName.equalsIgnoreCase(updateEvent.entityLiving.getName())) {
-                realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
-            }
+        correctLivid = Minecraft.getMinecraft().theWorld.getChunkFromBlockCoords(new BlockPos(5, 108, 42)).getBlockMetadata(new BlockPos(5, 108, 42));
+        realLividName = lividMetadata.get(correctLivid);
+        prefix = lividColorPrefix.get(realLividName);
+        if (updateEvent.entityLiving.getName().startsWith(realLividName) && updateEvent.entityLiving instanceof EntityOtherPlayerMP) {
+            realLivid = (EntityOtherPlayerMP) updateEvent.entityLiving;
         } else if (updateEvent.entityLiving.getName().startsWith(prefix+"﴾ ") && updateEvent.entityLiving instanceof EntityArmorStand) {
             lividStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }
-    private EntityArmorStand lividStand;
 
+    // §2﴾ §2§lLivid§r§r §a317M§c❤ §2﴿
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
@@ -81,6 +101,12 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         }
         healths.add(new HealthData(realLividName == null ? "unknown" : realLividName, (int) health,isMasterMode ? 600000000 : 7000000 , true));
         return healths;
+    }
+
+    private static final BlockPos lividPos = new BlockPos(6, 108, 43);
+
+    @Override
+    public void onBlockUpdate(BlockUpdateEvent blockUpdateEvent) {
     }
 
     @Override
