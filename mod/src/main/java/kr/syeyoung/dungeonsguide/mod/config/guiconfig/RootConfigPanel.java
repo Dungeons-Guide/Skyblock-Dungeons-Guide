@@ -100,7 +100,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         guiRelocate.setText("Edit Gui Locations");
         guiRelocate.setOnActionPerformed(() -> {
             Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(gui, null));
-            guiRelocate.setClicked(false);
+            guiRelocate.setBeingClicked(false);
         });
         guiRelocate.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));
         add(guiRelocate);
