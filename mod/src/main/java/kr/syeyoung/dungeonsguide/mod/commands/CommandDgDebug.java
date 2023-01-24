@@ -218,7 +218,7 @@ public class CommandDgDebug extends CommandBase {
 
     private void tabListCommand() {
         for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
-            ChatTransmitter.addToQueue(entry.getFormatted() + " " + entry.getEffectiveName() + "(" + entry.getPing() + ")" + entry.getGamemode());
+            ChatTransmitter.addToQueue(entry.getFormatted() + " " + entry.getEffectiveName() + "(" + entry.getPing() + ")" + entry.getGameMode());
         }
         ChatTransmitter.addToQueue("VS");
     }
