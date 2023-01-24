@@ -164,7 +164,7 @@ public class ImageTexture {
                 callback.accept(imageTexture);
             } catch (Exception e) {
                 callback.accept(null);
-                logger.log(Level.WARN, "An error occured while loading image from: "+url, e);
+                logger.log(Level.WARN, "An error occurred while loading image from: "+url, e);
             }
         });
     }

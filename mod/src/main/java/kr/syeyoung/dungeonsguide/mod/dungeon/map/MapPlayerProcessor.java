@@ -28,13 +28,15 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.item.ItemMap;
 import net.minecraft.item.ItemStack;
-import net.minecraft.util.*;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.Vec4b;
 import net.minecraft.world.storage.MapData;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
 import java.awt.*;
-import java.util.*;
+import java.util.Map;
 
 public class MapPlayerProcessor {
 
@@ -47,7 +49,7 @@ public class MapPlayerProcessor {
      * If the player on the map is closer than value this it won't save it
      * this should be done with render-distance but whateva
      */
-    int clossnessDistance = 50;
+    int closenessDistance = 50;
     private int waitDelay = 0;
 
     public MapPlayerProcessor(DungeonContext context) {
@@ -90,7 +92,7 @@ public class MapPlayerProcessor {
             Vec4b vec4 = stringVec4bEntry.getValue();
 
             if (!mapIconToPlayerMap.containsValue(mapDecString)) {
-                if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap dosent have Player");
+                if (DungeonsGuide.getDungeonsGuide().verbose) logger.info("mapIconToPlayerMap doesn't have Player");
 
                 int x = vec4.func_176112_b() / 2 + 64;
                 int y = vec4.func_176113_c() / 2 + 64;
@@ -126,7 +128,7 @@ public class MapPlayerProcessor {
                         int y2 = bbb.func_176113_c() / 2 + 64;
                         int dx = x2 - x;
                         int dy = y2 - y;
-                        if (dx * dx + dy * dy < clossnessDistance) {
+                        if (dx * dx + dy * dy < closenessDistance) {
                             shouldSave = false;
                             break;
                         }
@@ -168,7 +170,7 @@ public class MapPlayerProcessor {
             BlockPos pos = entityPlayer.getPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
-            return dx * dx + dz * dz < clossnessDistance;
+            return dx * dx + dz * dz < closenessDistance;
 
         }
 

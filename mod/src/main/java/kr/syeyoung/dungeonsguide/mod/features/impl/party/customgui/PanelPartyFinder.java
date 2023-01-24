@@ -313,13 +313,13 @@ public class PanelPartyFinder extends MPanel {
     public void extractPage(ItemStack itemStack) {
         NBTTagCompound stackTagCompound = itemStack.getTagCompound();
         if (stackTagCompound.hasKey("display", 10)) {
-            NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
+            NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
 
-            if (nbttagcompound.getTagId("Lore") == 9) {
-                NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
+            if (nbtTagCompound.getTagId("Lore") == 9) {
+                NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
 
-                for (int i = 0; i < nbttaglist1.tagCount(); i++) {
-                    String str = nbttaglist1.getStringTagAt(i);
+                for (int i = 0; i < nbtTagList1.tagCount(); i++) {
+                    String str = nbtTagList1.getStringTagAt(i);
                     if (str.startsWith("§ePage ")) {
                         int pg = Integer.parseInt(str.substring(7));
                         if (itemStack.getDisplayName().equals("§aPrevious Page")) page = pg+1;
@@ -337,6 +337,6 @@ public class PanelPartyFinder extends MPanel {
         for (Map.Entry<Integer, PanelPartyListElement> value : panelPartyListElementMap.entrySet()) {
             list.add(value.getValue());
         }
-        scrollablePanel.evalulateContentArea();
+        scrollablePanel.evaluateContentArea();
     }
 }

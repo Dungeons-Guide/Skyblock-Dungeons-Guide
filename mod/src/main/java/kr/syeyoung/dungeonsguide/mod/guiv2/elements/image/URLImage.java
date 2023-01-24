@@ -71,7 +71,7 @@ public class URLImage extends AnnotatedExportOnlyWidget implements Renderer, Lay
         } else if (widthIfHeightFit <= constraintBox.getMaxWidth()){
             return new Size(Layouter.clamp(widthIfHeightFit, constraintBox.getMinWidth(), constraintBox.getMaxWidth()), constraintBox.getMaxHeight());
         } else {
-            throw new IllegalStateException("How is this possible mathmatically?");
+            throw new IllegalStateException("How is this possible mathematically?");
         }
     }
 

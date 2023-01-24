@@ -31,7 +31,7 @@ public enum DungeonClass {
 
 
     private final String jsonName;
-    private final String familarName;
+    private final String familiarName;
     private static final Map<String, DungeonClass> jsonNameToClazz = new HashMap<>();
     static {
         for (DungeonClass value : values()) {

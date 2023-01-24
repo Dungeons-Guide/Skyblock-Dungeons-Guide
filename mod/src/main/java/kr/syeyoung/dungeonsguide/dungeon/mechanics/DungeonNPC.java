@@ -49,7 +49,7 @@ public class DungeonNPC implements DungeonMechanic {
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
         if (!"navigate".equalsIgnoreCase(state))
-            throw new IllegalArgumentException(state + " is not valid state for secret");
+            throw new IllegalArgumentException(state + " is not a valid state for secret");
 
         Set<AbstractAction> base = new HashSet<>();
         ActionInteract actionClick = new ActionInteract(secretPoint);

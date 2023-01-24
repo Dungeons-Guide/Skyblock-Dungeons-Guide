@@ -46,9 +46,9 @@ public class DungeonEventRecorder {
             createEvent(new DungeonSecretCountChangeEvent(latestSecretCnt, latestSecretCnt, latestTotalSecret, FeatureRegistry.DUNGEON_SECRETS.sureOfTotalSecrets()));
         }
         if (latestCrypts != FeatureRegistry.DUNGEON_TOMBS.getTombsFound()) {
-            int newlatestCrypts = FeatureRegistry.DUNGEON_TOMBS.getTombsFound();
-            createEvent(new DungeonCryptBrokenEvent(latestCrypts, newlatestCrypts));
-            this.latestCrypts = newlatestCrypts;
+            int newLatestCrypts = FeatureRegistry.DUNGEON_TOMBS.getTombsFound();
+            createEvent(new DungeonCryptBrokenEvent(latestCrypts, newLatestCrypts));
+            this.latestCrypts = newLatestCrypts;
         }
     }
 

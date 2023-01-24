@@ -64,11 +64,11 @@ public class FeatureCurrentPhase extends TextHUDFeature {
 
     @Override
     public List<StyledText> getText() {
-        String currentPhsae = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor().getCurrentPhase();
+        String currentPhase = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor().getCurrentPhase();
         List<StyledText> actualBit = new ArrayList<StyledText>();
         actualBit.add(new StyledText("Current Phase","title"));
         actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(currentPhsae,"phase"));
+        actualBit.add(new StyledText(currentPhase,"phase"));
         return actualBit;
     }
 

@@ -53,10 +53,10 @@ public class FeatureEpicCountdown extends SimpleFeature {
     }
 
     @DGEventHandler
-    public void procesSChat(ClientChatReceivedEvent receivedEvent) {
+    public void processChat(ClientChatReceivedEvent receivedEvent) {
         String txt = receivedEvent.message.getFormattedText();
 
-        // TODO: make a good chat remover with configurable chats, search chats recdeived and stuff, but not for now
+        // TODO: make a good chat remover with configurable chats, search chats recieved and stuff, but not for now
         if(cleanChat){
             if(txt.startsWith("§e[NPC] §bMort§f: §rTalk to me to change your class and ready up.§r")){
                 receivedEvent.setCanceled(true);
@@ -114,12 +114,12 @@ public class FeatureEpicCountdown extends SimpleFeature {
                 }
             }
         }
-        long timepassed = System.currentTimeMillis() - updatedAt;
+        long timePassed = System.currentTimeMillis() - updatedAt;
 
-        long secs = timepassed / 1000;
+        long secs = timePassed / 1000;
 
-        int actualSecondspassed = (int) secs;
-        actualSecondsLeft = secondsLeft - actualSecondspassed;
+        int actualSecondsPassed = (int) secs;
+        actualSecondsLeft = secondsLeft - actualSecondsPassed;
         if (actualSecondsLeft <= 0) {
             if(!Objects.equals(lastSec, GO_TEXT)){
                 lastSec = GO_TEXT;

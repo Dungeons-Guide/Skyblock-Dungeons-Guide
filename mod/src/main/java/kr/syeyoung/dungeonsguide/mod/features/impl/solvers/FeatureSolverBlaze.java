@@ -28,13 +28,13 @@ public class FeatureSolverBlaze extends SimpleFeature {
         addParameter("normBlazeColor", new FeatureParameter<AColor>("blazecolor", "Normal Blaze Color", "Normal Blaze Color", new AColor(255,255,255,255), "acolor", nval -> normBlazeColor = nval));
         addParameter("nextBlazeColor", new FeatureParameter<AColor>("blazecolor", "Next Blaze Color", "Next Blaze Color", new AColor(0,255,0,255), "acolor", nval -> nextBlazeColor = nval));
         addParameter("nextUpBlazeColor", new FeatureParameter<AColor>("blazecolor", "Next Up Blaze Color", "Color of blaze after next blaze", new AColor(255,255,0,255), "acolor", nval -> nextUpBlazeColor = nval));
-        addParameter("blazeborder", new FeatureParameter<AColor>("blazeborder", "Blaze Border Color", "Blaze border color", new AColor(255,255,255,0), "acolor", nval -> blazeborder = nval));
+        addParameter("blazeborder", new FeatureParameter<AColor>("blazeborder", "Blaze Border Color", "Blaze border color", new AColor(255,255,255,0), "acolor", nval -> blazeBorder = nval));
     }
 
     AColor normBlazeColor;
     AColor nextBlazeColor;
     AColor nextUpBlazeColor;
-    AColor blazeborder;
+    AColor blazeBorder;
 
     public AColor getBlazeColor() {
         return normBlazeColor;
@@ -46,6 +46,6 @@ public class FeatureSolverBlaze extends SimpleFeature {
         return nextUpBlazeColor;
     }
     public AColor getBorder() {
-        return blazeborder;
+        return blazeBorder;
     }
 }

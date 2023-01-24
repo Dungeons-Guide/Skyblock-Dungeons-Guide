@@ -102,9 +102,9 @@ public class FeaturePenguins extends SimpleFeature {
         GlStateManager.popMatrix();
 
 
-        EntityPlayer entitylivingbaseIn = renderPlayerEvent.entityPlayer;
+        EntityPlayer entityPlayer = renderPlayerEvent.entityPlayer;
         {
-            ItemStack itemstack = entitylivingbaseIn.getHeldItem();
+            ItemStack itemstack = entityPlayer.getHeldItem();
 
             if (itemstack != null)
             {
@@ -119,7 +119,7 @@ public class FeaturePenguins extends SimpleFeature {
 
 
 
-                if (entitylivingbaseIn.fishEntity != null)
+                if (entityPlayer.fishEntity != null)
                 {
                     itemstack = new ItemStack(Items.fishing_rod, 0);
                 }
@@ -152,7 +152,7 @@ public class FeaturePenguins extends SimpleFeature {
 
                 GlStateManager.scale(0.8,0.8,0.8);
 
-                minecraft.getItemRenderer().renderItem(entitylivingbaseIn, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON);
+                minecraft.getItemRenderer().renderItem(entityPlayer, itemstack, ItemCameraTransforms.TransformType.THIRD_PERSON);
                 GlStateManager.popMatrix();
             }
         }

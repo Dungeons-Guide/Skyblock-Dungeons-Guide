@@ -44,16 +44,16 @@ public class DataRendererClassLv implements IDataRenderer {
         ClassSpecificData<PlayerProfile.PlayerClassData> dungeonStatDungeonSpecificData = playerProfile.getPlayerClassData().get(dungeonClass);
         boolean selected = playerProfile.getSelectedClass() == dungeonClass;
         if (dungeonStatDungeonSpecificData == null) {
-            fr.drawString(dungeonClass.getFamilarName(), 0,0, 0xFF55ffff);
-            fr.drawString("Unknown", fr.getStringWidth(dungeonClass.getFamilarName()+" "),0,0xFFFFFFFF);
+            fr.drawString(dungeonClass.getFamiliarName(), 0,0, 0xFF55ffff);
+            fr.drawString("Unknown", fr.getStringWidth(dungeonClass.getFamiliarName()+" "),0,0xFFFFFFFF);
             if (selected)
-                fr.drawString("★", fr.getStringWidth(dungeonClass.getFamilarName()+" Unknown "),0,0xFFAAAAAA);
+                fr.drawString("★", fr.getStringWidth(dungeonClass.getFamiliarName()+" Unknown "),0,0xFFAAAAAA);
         } else {
             XPUtils.XPCalcResult xpCalcResult = XPUtils.getCataXp(dungeonStatDungeonSpecificData.getData().getExperience());
-            fr.drawString(dungeonClass.getFamilarName(), 0,0, 0xFF55ffff);
-            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(dungeonClass.getFamilarName()+" "),0,0xFFFFFFFF);
+            fr.drawString(dungeonClass.getFamiliarName(), 0,0, 0xFF55ffff);
+            fr.drawString(xpCalcResult.getLevel()+"", fr.getStringWidth(dungeonClass.getFamiliarName()+" "),0,0xFFFFFFFF);
             if (selected)
-                fr.drawString("★", fr.getStringWidth(dungeonClass.getFamilarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
+                fr.drawString("★", fr.getStringWidth(dungeonClass.getFamiliarName()+" "+xpCalcResult.getLevel()+" "),0,0xFFAAAAAA);
 
             RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,xpCalcResult.getRemainingXp() == 0 ? 1 : (float) (xpCalcResult.getRemainingXp() / xpCalcResult.getNextLvXp()));
         }
@@ -64,9 +64,9 @@ public class DataRendererClassLv implements IDataRenderer {
     @Override
     public Dimension renderDummy() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString(dungeonClass.getFamilarName(), 0,0, 0xFF55ffff);
-        fr.drawString("99", fr.getStringWidth(dungeonClass.getFamilarName()+" "),0,0xFFFFFFFF);
-        fr.drawString("★", fr.getStringWidth(dungeonClass.getFamilarName()+" 99 "),0,0xFFAAAAAA);
+        fr.drawString(dungeonClass.getFamiliarName(), 0,0, 0xFF55ffff);
+        fr.drawString("99", fr.getStringWidth(dungeonClass.getFamiliarName()+" "),0,0xFFFFFFFF);
+        fr.drawString("★", fr.getStringWidth(dungeonClass.getFamiliarName()+" 99 "),0,0xFFAAAAAA);
         RenderUtils.renderBar(0, fr.FONT_HEIGHT, 100,1.0f);
         return new Dimension(100, fr.FONT_HEIGHT*2);
     }

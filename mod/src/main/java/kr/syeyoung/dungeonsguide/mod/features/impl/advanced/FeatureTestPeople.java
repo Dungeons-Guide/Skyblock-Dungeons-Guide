@@ -34,7 +34,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
-import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.*;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.tileentity.TileEntitySkullRenderer;
@@ -45,7 +44,6 @@ import net.minecraft.init.Items;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagString;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
@@ -63,15 +61,15 @@ import java.util.regex.Pattern;
 
 import static kr.syeyoung.dungeonsguide.mod.utils.TabListUtil.getString;
 
-public class FeatureTestPepole extends RawRenderingGuiFeature {
+public class FeatureTestPeople extends RawRenderingGuiFeature {
 
-    Logger logger = LogManager.getLogger("FeatureTestPepole");
+    Logger logger = LogManager.getLogger("FeatureTestPeople");
     private Float scale;
-    private Set<String> lastmebersRaw;
+    private Set<String> lastMembersRaw;
     private boolean broadcastLock;
 
-    public FeatureTestPepole() {
-        super("Dungeon", "Feuture test", "NOU", "", false, 200, 100);
+    public FeatureTestPeople() {
+        super("Dungeon", "Feature test", "NOU", "", false, 200, 100);
 
 
         addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
@@ -83,11 +81,11 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
 //        }) ).start();
     }
 
-    public static void handlePartyBroadCast(String playload) {
-        String[] messagge = playload.substring(2).split(":");
+    public static void handlePartyBroadCast(String payload) {
+        String[] message = payload.substring(2).split(":");
 
-//                String random = messagge[1];
-        String username = messagge[0];
+//                String random = message[1];
+        String username = message[0];
         System.out.println("Broadcast was a self broadcast with: " + username);
         PartyManager.INSTANCE.getPartyContext().addDgUser(username);
 
@@ -97,11 +95,11 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
 //                                .put("payload", actualPayload).toString()
 //                ));
 
-//            } else if (playload.startsWith("ACK")){
-//                String ACKnick = playload.substring(3);
+//            } else if (payload.startsWith("ACK")){
+//                String ACKnick = payload.substring(3);
 //                String[] nicks = ACKnick.split(":");
 //                if(Objects.equals(nicks[0], Minecraft.getMinecraft().getSession().getUsername())) {
-//                    FeatureTestPepole.addACK(new Tuple<String, String>(nicks[1], nicks[2]));
+//                    FeatureTestPeople.addACK(new Tuple<String, String>(nicks[1], nicks[2]));
 //                }
     }
 
@@ -159,18 +157,18 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
 
         if(PartyManager.INSTANCE.getPartyContext() == null) return;
 
-        if(lastmebersRaw == null ) {
-            lastmebersRaw = PartyManager.INSTANCE.getPartyContext().getPartyRawMembers();
+        if(lastMembersRaw == null ) {
+            lastMembersRaw = PartyManager.INSTANCE.getPartyContext().getPartyRawMembers();
             return;
         }
 
         Set<String> membersRaw = PartyManager.INSTANCE.getPartyContext().getPartyRawMembers();
 
-        if(!membersRaw.equals(lastmebersRaw)){
+        if(!membersRaw.equals(lastMembersRaw)){
             logger.info("members changed unlocking locking broadcast");
             broadcastLock = true;
             broadcastYourself();
-            lastmebersRaw = membersRaw;
+            lastMembersRaw = membersRaw;
         }
     }
 
@@ -195,7 +193,7 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
             }
 
             // this line should trick mineshaft to caching the player skin
-            // im doing this bc just setting SkullOwner downloads the skin on main thread
+            // im doing this bc just setting SkullOwner downloads the skin on the main thread
             // thus causing a lag spike
             Map<MinecraftProfileTexture.Type, MinecraftProfileTexture> map = Minecraft.getMinecraft().getSkinManager().loadSkinFromCache(playerEntityByName.getGameProfile());
 
@@ -218,19 +216,19 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
 
     private static final List<String> readyPhrase = Arrays.asList("r", "rdy", "ready");
     private static final List<String> negator = Arrays.asList("not ", "not", "n", "n ");
-    private static final Map<String, Boolean> readynessIndicator = new HashMap<>();
+    private static final Map<String, Boolean> readinessIndicator = new HashMap<>();
 
     static {
-        readyPhrase.forEach(val -> readynessIndicator.put(val, true));
+        readyPhrase.forEach(val -> readinessIndicator.put(val, true));
         for (String s : negator) {
-            readyPhrase.forEach(val -> readynessIndicator.put(s + val, false));
+            readyPhrase.forEach(val -> readinessIndicator.put(s + val, false));
         }
-        readynessIndicator.put("dont start", false);
-        readynessIndicator.put("don't start", false);
-        readynessIndicator.put("dont go", false);
-        readynessIndicator.put("don't go", false);
-        readynessIndicator.put("start", true);
-        readynessIndicator.put("go", true);
+        readinessIndicator.put("dont start", false);
+        readinessIndicator.put("don't start", false);
+        readinessIndicator.put("dont go", false);
+        readinessIndicator.put("don't go", false);
+        readinessIndicator.put("start", true);
+        readinessIndicator.put("go", true);
     }
 
     @DGEventHandler()
@@ -241,9 +239,9 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
         String chat = TextUtils.stripColor(txt.substring(txt.indexOf(":") + 1)).trim().toLowerCase();
 
 
-        String usernamearea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
+        String usernameArea = TextUtils.stripColor(txt.substring(13, txt.indexOf(":")));
         String username = null;
-        for (String s : usernamearea.split(" ")) {
+        for (String s : usernameArea.split(" ")) {
             if (s.isEmpty()) continue;
             if (s.startsWith("[")) continue;
             username = s;
@@ -252,7 +250,7 @@ public class FeatureTestPepole extends RawRenderingGuiFeature {
 
         Boolean status = null;
         String longestMatch = "";
-        for (Map.Entry<String, Boolean> stringBooleanEntry : readynessIndicator.entrySet()) {
+        for (Map.Entry<String, Boolean> stringBooleanEntry : readinessIndicator.entrySet()) {
             if (chat.startsWith(stringBooleanEntry.getKey()) || chat.endsWith(stringBooleanEntry.getKey()) || (stringBooleanEntry.getKey().length() >= 3 && chat.contains(stringBooleanEntry.getKey()))) {
                 if (stringBooleanEntry.getKey().length() > longestMatch.length()) {
                     longestMatch = stringBooleanEntry.getKey();

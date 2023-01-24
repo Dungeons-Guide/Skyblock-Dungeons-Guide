@@ -80,8 +80,8 @@ public class ApiFetcher {
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
         InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
-        String serverres = IOUtils.toString(inputStreamReader);
-        return gson.fromJson(serverres, JsonObject.class);
+        String servers = IOUtils.toString(inputStreamReader);
+        return gson.fromJson(servers, JsonObject.class);
     }
 
     public static JsonArray getJsonArr(String url) throws IOException {
@@ -263,9 +263,9 @@ public class ApiFetcher {
 
 
     public static Optional<Integer> getNumberOfSecretsFromAchievement(String uid, String apiKey) throws IOException {
-        JsonObject responce = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
-        if (responce.has("player")) {
-            JsonObject treasures = responce.getAsJsonObject("player");
+        JsonObject response = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
+        if (response.has("player")) {
+            JsonObject treasures = response.getAsJsonObject("player");
             if (treasures.has("achievements")) {
                 treasures = treasures.getAsJsonObject("achievements");
                 if (treasures.has("skyblock_treasure_hunter")) {
@@ -289,7 +289,7 @@ public class ApiFetcher {
     }
 
     public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
-        System.out.println("Featching player profiles");
+        System.out.println("Fetching player profiles");
         JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
         if (!json.get("success").getAsBoolean()) return Optional.empty();
         System.out.println("Downloaded data from api");
@@ -301,7 +301,7 @@ public class ApiFetcher {
         ArrayList<PlayerProfile> playerProfiles = new ArrayList<>();
         System.out.println("Saving and parsing data");
         float lastSave = Long.MIN_VALUE;
-        PlayerProfile lastest = null;
+        PlayerProfile latest = null;
         for (JsonElement jsonElement : profiles) {
             JsonObject semiProfile = jsonElement.getAsJsonObject();
             if (!semiProfile.get("members").getAsJsonObject().has(dashTrimmed)) {
@@ -315,17 +315,17 @@ public class ApiFetcher {
             System.out.println("Finished Parsing Profile");
 
 
-            System.out.println("Getting nm of secrets from achivment");
+            System.out.println("Getting nm of secrets from achievement");
             getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(e::setTotalSecrets);
-            System.out.println("finished getting secrets from achivment");
+            System.out.println("finished getting secrets from achievement");
 
 
-            System.out.println("Gettign last save");
+            System.out.println("Getting last save");
             JsonElement last_save = semiProfile.get("last_save");
             if(last_save != null){
                 float lastSave2 = last_save.getAsLong();
                 if (lastSave2 > lastSave) {
-                    lastest = e;
+                    latest = e;
                     lastSave = lastSave2;
                 }
             }
@@ -333,9 +333,9 @@ public class ApiFetcher {
 
             playerProfiles.add(e);
         }
-        System.out.println("THE AMMOUT OF PLAYER PROFILES: " + playerProfiles.size());
+        System.out.println("THE AMOUNT OF PLAYER PROFILES: " + playerProfiles.size());
         PlayerProfile[] p = new PlayerProfile[playerProfiles.size()];
-        pp.setLastestprofileArrayIndex(getArrayIndex(p, lastest));
+        pp.setLatestProfileArrayIndex(getArrayIndex(p, latest));
         pp.setPlayerProfiles(playerProfiles.toArray(p));
         return Optional.of(pp);
     }

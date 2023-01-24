@@ -30,7 +30,7 @@ public class NormalModeDataProvider extends CatacombsDataProvider {
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: "+floor+ " Building bossfight processor"));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: " +floor+ " Building boss fight processor"));
         switch (floor) {
             case "F1":
                 return new BossfightProcessorBonzo();

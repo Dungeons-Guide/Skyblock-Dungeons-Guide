@@ -20,12 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.map;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonNodataEvent;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonContextInitializationEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -33,7 +30,7 @@ import java.util.Set;
 
 
 // This class is responsible for matching the world to hand held map.
-public class DungeonMapConstantRetreiver {
+public class DungeonMapConstantRetriever {
     public static DungeonMapLayout beginParsingMap(byte[] mapData, BlockPos worldDoorLocation, Vector2d worldDoorDirection) {
         if (worldDoorLocation == null || worldDoorDirection == null) return null;
 
@@ -74,7 +71,7 @@ public class DungeonMapConstantRetreiver {
                                     Vector2d mapDoorOffset,
                                     Vector2d worldDoorOffset, BlockPos worldDoor) {
         Point unitPoint = mapPointToRoomPoint(firstRoom.getLocation(), topLeftMapPoint, firstRoom.getSize(), doorDimension);
-        unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1); // basically we make each room 2x2 large in this coordinate, and get the center coord
+        unitPoint.translate(unitPoint.x + 1, unitPoint.y + 1); // basically, we make each room 2x2 large in this coordinate and get the center coord
         unitPoint.translate((int) mapDoorOffset.x, (int) mapDoorOffset.y);
 
         if (!worldDoorOffset.equals(mapDoorOffset))
@@ -124,10 +121,10 @@ public class DungeonMapConstantRetreiver {
 
     private static  Vector2d obtainStartingRoomToFirstRoomDoorDirection(byte[] mapData, Rectangle firstRoom) {
         Vector2d doorDir = null;
-        Point midfirstRoom = new Point(firstRoom.x + firstRoom.width / 2, firstRoom.y + firstRoom.height / 2);
+        Point midFirstRoom = new Point(firstRoom.x + firstRoom.width / 2, firstRoom.y + firstRoom.height / 2);
         final int halfWidth = firstRoom.width / 2 + 2;
         for (Vector2d v : directions) {
-            byte color = MapUtils.getMapColorAt(mapData, (int) (v.x * halfWidth + midfirstRoom.x), (int) (v.y * halfWidth + midfirstRoom.y));
+            byte color = MapUtils.getMapColorAt(mapData, (int) (v.x * halfWidth + midFirstRoom.x), (int) (v.y * halfWidth + midFirstRoom.y));
             if (color != 0) {
                 doorDir = v;
                 break;

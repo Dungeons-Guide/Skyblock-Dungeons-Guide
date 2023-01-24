@@ -55,8 +55,10 @@ import net.minecraftforge.fml.common.Loader;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.input.Mouse;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
-import java.util.*;
+import java.util.UUID;
 
 // TODO: do not limit element positioning
 // maybe a cool editor?
@@ -138,7 +140,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
             int mouseY = (Minecraft.getMinecraft().displayHeight - Mouse.getY());
 
             double width = 220 * scaledResolution.getScaleFactor();
-            double heigth = 220 * scaledResolution.getScaleFactor();
+            double height = 220 * scaledResolution.getScaleFactor();
             widget = new OverlayWidget(
                     new WidgetProfileViewer(gameProfile, FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey(),
                             scaledResolution.getScaleFactor(), () -> {
@@ -148,7 +150,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                         }
                     }),
                     OverlayType.OVER_CHAT,
-                    () -> new Rect(mouseX, mouseY-heigth, width, heigth)
+                    () -> new Rect(mouseX, mouseY-height, width, height)
             );
             OverlayManager.getInstance().addOverlay(widget);
         }

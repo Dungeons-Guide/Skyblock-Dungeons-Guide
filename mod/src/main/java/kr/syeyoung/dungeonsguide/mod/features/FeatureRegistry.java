@@ -119,7 +119,7 @@ public class FeatureRegistry {
 
 
     public static FeatureDungeonMap DUNGEON_MAP;
-    public static FeatureTestPepole TEST_PEPOLE;
+    public static FeatureTestPeople TEST_PEPOLE;
     public static FeatureDungeonRoomName DUNGEON_ROOMNAME;
     public static FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST;
     public static FeatureBoxSkelemaster DUNGEON_BOXSKELEMASTER;

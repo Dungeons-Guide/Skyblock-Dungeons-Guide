@@ -100,7 +100,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         guiRelocate.setText("Edit Gui Locations");
         guiRelocate.setOnActionPerformed(() -> {
             Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(gui, null));
-            guiRelocate.setIsclicked(false);
+            guiRelocate.setClicked(false);
         });
         guiRelocate.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));
         add(guiRelocate);
@@ -297,7 +297,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         navigation.setBounds(new Rectangle(new Point(0,1), new Dimension(Math.max(100, Math.max(navigation.getPreferredSize().width, navigationScroll.getBounds().width-10)), navigation.getPreferredSize().height)));
         navigation.realignChildren();
 
-        navigationScroll.evalulateContentArea();
+        navigationScroll.evaluateContentArea();
         Rectangle navBound;
         navigationScroll.setBounds(navBound = new Rectangle(0,50, navigation.getBounds().width+10, effectiveDim.height-50));
         contentScroll.setBounds(new Rectangle(navBound.x + navBound.width, 25, effectiveDim.width - navBound.x - navBound.width, effectiveDim.height-25));

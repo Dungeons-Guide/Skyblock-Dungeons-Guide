@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
-import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomDiscoverEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
@@ -107,7 +106,7 @@ public class DungeonRoom {
     private final Map<BlockPos, AStarCornerCut> activeBetterAStarCornerCut = new HashMap<>();
     private final Map<BlockPos, ThetaStar> activeThetaStar = new HashMap<>();
 
-    public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockaccess, Entity entityIn, BlockPos targetPos, float dist, int timeout) {
+    public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockAccess, Entity entityIn, BlockPos targetPos, float dist, int timeout) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.JPS_LEGACY) {
             return asyncPathFinder.schedule(() -> {
@@ -141,7 +140,7 @@ public class DungeonRoom {
         } else {
             return asyncPathFinder.schedule(() -> {
                 PathFinder pathFinder = new PathFinder(nodeProcessorDungeonRoom);
-                PathEntity latest = pathFinder.createEntityPathTo(blockaccess, entityIn, targetPos, dist);
+                PathEntity latest = pathFinder.createEntityPathTo(blockAccess, entityIn, targetPos, dist);
                 if (latest != null) {
                     List<Vec3> poses = new ArrayList<>();
                     for (int i = 0; i < latest.getCurrentPathLength(); i++) {
@@ -376,18 +375,18 @@ public class DungeonRoom {
             for (int l1 = i1; l1 < j1; ++l1) {
                 for (int i2 = k - 1; i2 < l; ++i2) {
                     blockPos.set(k1, i2, l1);
-                    IBlockState iblockstate1 = cachedWorld.getBlockState(blockPos);
-                    Block b = iblockstate1.getBlock();
+                    IBlockState iBlockState1 = cachedWorld.getBlockState(blockPos);
+                    Block b = iBlockState1.getBlock();
                     if (!b.getMaterial().blocksMovement())continue;
                     if (b.isFullCube() && i2 == k-1) continue;
-                    if (iblockstate1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
+                    if (iBlockState1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
                     if (b.isFullCube()) {
                         theBit |= (3L << bitStart);
                         arr[location] = theBit;
                         return true;
                     }
                     try {
-                        b.addCollisionBoxesToList(cachedWorld, blockPos, iblockstate1, bb, list, null);
+                        b.addCollisionBoxesToList(cachedWorld, blockPos, iBlockState1, bb, list, null);
                     } catch (Exception e) {
                         return true;
                     }

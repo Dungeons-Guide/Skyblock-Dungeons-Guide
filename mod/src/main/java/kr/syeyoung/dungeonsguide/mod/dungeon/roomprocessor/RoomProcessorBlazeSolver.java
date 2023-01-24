@@ -46,7 +46,7 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
     private List<EntityArmorStand> entityList = new ArrayList<EntityArmorStand>();
     private List<EntityBlaze> blazeList = new ArrayList<>();
     private EntityArmorStand next;
-    private EntityBlaze nextBlaze, theoneafterit;
+    private EntityBlaze currentBlaze, nextBlaze;
     public RoomProcessorBlazeSolver(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
         Object highToLow = dungeonRoom.getDungeonRoomInfo().getProperties().get("order");
@@ -89,16 +89,16 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
 
         if (entityList.size() > 0) {
             next = entityList.get(0);
-            nextBlaze  = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(next))).orElse(null);
+            currentBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(next))).orElse(null);
         } else {
             next = null;
-            nextBlaze = null;
+            currentBlaze = null;
         }
         if (entityList.size() > 1) {
-            EntityArmorStand thenextone = entityList.get(1);
-            theoneafterit  = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(thenextone))).orElse(null);
+            EntityArmorStand theNextOne = entityList.get(1);
+            nextBlaze = blazeList.stream().min(Comparator.comparingDouble(e -> e.getDistanceSqToEntity(theNextOne))).orElse(null);
         } else {
-            theoneafterit = null;
+            nextBlaze = null;
         }
     }
 
@@ -154,9 +154,9 @@ public class RoomProcessorBlazeSolver extends GeneralRoomProcessor {
             boolean border = true;
 
             RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getBlazeColor(), partialTicks, false);
-            if (entity == theoneafterit) {
+            if (entity == nextBlaze) {
                 RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextUpBlazeColor(), partialTicks, false);
-            } else if (entity == nextBlaze)
+            } else if (entity == currentBlaze)
                 RenderUtils.highlightBox(entity, AxisAlignedBB.fromBounds(-0.8,0, -0.8, 0.8, 2, 0.8), FeatureRegistry.SOLVER_BLAZE.getNextBlazeColor(), partialTicks, false);
 
             GlStateManager.color(1,1,1,1);

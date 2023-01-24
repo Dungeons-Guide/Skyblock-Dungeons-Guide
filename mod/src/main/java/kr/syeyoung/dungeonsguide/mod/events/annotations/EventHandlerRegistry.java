@@ -77,7 +77,7 @@ public class EventHandlerRegistry {
                 DGEventHandler dgEventHandler = declaredMethod.getAnnotation(DGEventHandler.class);
                 if (dgEventHandler == null) continue;
                 if (declaredMethod.getParameterTypes().length != 1)
-                    throw new RuntimeException("Too much or too less parameers: "+declaredMethod.getName()+" on "+clazz.getName());
+                    throw new RuntimeException("Too many or too few parameters: "+declaredMethod.getName()+" on "+clazz.getName());
                 Class eventType = declaredMethod.getParameterTypes()[0];
                 if (!targets.containsKey(eventType)) targets.put(eventType, new LinkedList<>());
 
@@ -126,7 +126,7 @@ public class EventHandlerRegistry {
                             if (target.condition == null || (target.condition.get() == Boolean.TRUE)) // it is safe to use this here.
                                 target.invokeSite.invoke(event);
                         } catch (Throwable e) {
-                            logger.error("An error occured while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
+                            logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
                         }
                         profiler.endSection();
                     }
@@ -134,7 +134,7 @@ public class EventHandlerRegistry {
                 });
                 registeredHandlers.put(aClass, registered);
             } catch (Exception e) {
-                throw new RuntimeException("An error occured while registering listener for "+aClass.getName(), e);
+                throw new RuntimeException("An error occurred while registering listener for "+aClass.getName(), e);
             }
         }
     }

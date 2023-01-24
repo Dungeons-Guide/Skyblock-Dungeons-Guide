@@ -146,7 +146,7 @@ public class ColorLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
         if (6 == compound.getByte("a")) {
             w1 = Block.getBlockById(compound.getByte("f"));
             w2 = Block.getBlockById(compound.getByte("s"));

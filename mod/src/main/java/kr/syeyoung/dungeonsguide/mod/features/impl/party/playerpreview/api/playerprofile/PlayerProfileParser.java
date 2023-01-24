@@ -140,10 +140,10 @@ public class PlayerProfileParser {
         if (playerData.has("ender_chest_contents")) {
             NBTTagCompound armor = parseBase64NBT(playerData.getAsJsonObject("ender_chest_contents").get("data").getAsString());
             NBTTagList array = armor.getTagList("i", 10);
-            playerProfile.setEnderchest(new ItemStack[array.tagCount()]);
+            playerProfile.setEnderChest(new ItemStack[array.tagCount()]);
             for (int i = 0; i < array.tagCount(); i++) {
                 NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getEnderchest()[i] = deserializeNBT(item);
+                playerProfile.getEnderChest()[i] = deserializeNBT(item);
             }
         }
         if (playerData.has("talisman_bag")) {

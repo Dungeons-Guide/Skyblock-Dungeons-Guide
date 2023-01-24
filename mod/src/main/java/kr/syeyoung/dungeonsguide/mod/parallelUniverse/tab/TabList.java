@@ -22,10 +22,8 @@ import com.google.common.collect.BiMap;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.HashBiMap;
 import com.google.common.collect.Ordering;
-import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.world.WorldSettings;
 
 import java.util.*;
@@ -34,13 +32,13 @@ public class TabList {
     public static final TabList INSTANCE = new TabList();
 
     private final SortedSet<TabListEntry> tabListEntries = new TreeSet<>(Ordering.from((compare1, compare2) -> {
-        Team scoreplayerteam = TeamManager.INSTANCE.getPlayerTeam(compare1.getGameProfile().getName());
-        Team scoreplayerteam1 = TeamManager.INSTANCE.getPlayerTeam(compare2.getGameProfile().getName());
+        Team scorePlayerTeam = TeamManager.INSTANCE.getPlayerTeam(compare1.getGameProfile().getName());
+        Team scorePlayerTeam1 = TeamManager.INSTANCE.getPlayerTeam(compare2.getGameProfile().getName());
         return ComparisonChain.start()
-                .compareTrueFirst(compare1.getGamemode() != WorldSettings.GameType.SPECTATOR,
-                        compare2.getGamemode() != WorldSettings.GameType.SPECTATOR)
-                .compare(scoreplayerteam != null ? scoreplayerteam.getTeamName() : "",
-                        scoreplayerteam1 != null ? scoreplayerteam1.getTeamName() : "")
+                .compareTrueFirst(compare1.getGameMode() != WorldSettings.GameType.SPECTATOR,
+                        compare2.getGameMode() != WorldSettings.GameType.SPECTATOR)
+                .compare(scorePlayerTeam != null ? scorePlayerTeam.getTeamName() : "",
+                        scorePlayerTeam1 != null ? scorePlayerTeam1.getTeamName() : "")
                 .compare(compare1.getGameProfile().getName(), compare2.getGameProfile().getName()).result();
     }));
     private final Map<UUID, TabListEntry> registered = new HashMap<>();

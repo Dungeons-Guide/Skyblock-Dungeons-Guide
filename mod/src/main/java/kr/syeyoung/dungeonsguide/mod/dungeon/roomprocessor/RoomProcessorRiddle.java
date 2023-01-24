@@ -61,10 +61,10 @@ public class RoomProcessorRiddle extends GeneralRoomProcessor {
         if (!ch2.startsWith("§e[NPC] ")) {
             return;
         }
-        String watsaid = TextUtils.stripColor(ch2.split(":")[1]).trim();
+        String riddleHint = TextUtils.stripColor(ch2.split(":")[1]).trim();
         boolean foundMatch = false;
         for (Pattern p:patternList) {
-            if (p.matcher(watsaid).matches()) {
+            if (p.matcher(riddleHint).matches()) {
                 foundMatch = true;
                 break;
             }

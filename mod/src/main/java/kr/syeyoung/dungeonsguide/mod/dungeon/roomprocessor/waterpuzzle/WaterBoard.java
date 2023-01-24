@@ -229,16 +229,16 @@ public class WaterBoard {
                 boolean followWater = getNodeAt(asd.getX() - 1, asd.getY()) != null && leverStates.contains(getNodeAt(asd.getX() - 1, asd.getY()).getCondition())
                         && getNodeAt(asd.getX() - 2, asd.getY()) != null && leverStates.contains(getNodeAt(asd.getX() - 2, asd.getY()).getCondition());
                 for (int i = asd.getX(); i < asd.getX() + 8; i++) {
-                    WaterNode nodehere = getNodeAt(i, asd.getY());
-                    if (nodehere == null) break;
-                    if (followWater && !nodehere.isWaterFilled(w)) break;
-                    if (!nodehere.canWaterGoThrough()) break;
-                    if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
-                    if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
+                    WaterNode nodeHere = getNodeAt(i, asd.getY());
+                    if (nodeHere == null) break;
+                    if (followWater && !nodeHere.isWaterFilled(w)) break;
+                    if (!nodeHere.canWaterGoThrough()) break;
+                    if (!leverStates.contains(nodeHere.getCondition()) && !nodeHere.isWaterFilled(w)) break;
+                    if (nodeHere.getCondition() != null && leverStates.contains(nodeHere.getCondition().invert()) && nodeHere.isWaterFilled(w)) waterBlockingStates.add(nodeHere.getCondition().invert());
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
                     if (i != asd.getX())
-                        followWater = nodehere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
-                    r.getNodes().add(nodehere);
+                        followWater = nodeHere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
+                    r.getNodes().add(nodeHere);
                     if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
                         waterBlockingStates.add(down.getCondition().invert());
                     }
@@ -250,16 +250,16 @@ public class WaterBoard {
                 followWater = getNodeAt(asd.getX()  +1, asd.getY()) != null && leverStates.contains(getNodeAt(asd.getX() + 1, asd.getY()).getCondition())
                 && getNodeAt(asd.getX()  +2, asd.getY()) != null && leverStates.contains(getNodeAt(asd.getX() + 2, asd.getY()).getCondition());
                 for (int i = asd.getX(); i > asd.getX() - 8; i--) {
-                    WaterNode nodehere = getNodeAt(i, asd.getY());
-                    if (nodehere == null) break;
-                    if (followWater && !nodehere.isWaterFilled(w)) break;
-                    if (!nodehere.canWaterGoThrough()) break;
-                    if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
-                    if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
+                    WaterNode nodeHere = getNodeAt(i, asd.getY());
+                    if (nodeHere == null) break;
+                    if (followWater && !nodeHere.isWaterFilled(w)) break;
+                    if (!nodeHere.canWaterGoThrough()) break;
+                    if (!leverStates.contains(nodeHere.getCondition()) && !nodeHere.isWaterFilled(w)) break;
+                    if (nodeHere.getCondition() != null && leverStates.contains(nodeHere.getCondition().invert()) && nodeHere.isWaterFilled(w)) waterBlockingStates.add(nodeHere.getCondition().invert());
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
                     if (i != asd.getX())
-                        followWater = nodehere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
-                    r.getNodes().add(nodehere);
+                        followWater = nodeHere.isWaterFilled(w) && (down == null || (down.canWaterGoThrough() && leverStates.contains(down.getCondition())));
+                    r.getNodes().add(nodeHere);
                     if (down != null && down.canWaterGoThrough() && down.getCondition() != null && leverStates.contains(down.getCondition().invert())) {
                         waterBlockingStates.add(down.getCondition().invert());
                     }
@@ -271,10 +271,10 @@ public class WaterBoard {
             } else {
                 int minDistToDropRight = 9999;
                 for (int i = asd.getX(); i < asd.getX() + 8; i++) {
-                    WaterNode nodehere = getNodeAt(i, asd.getY());
-                    if (nodehere == null) break;
-                    if (!nodehere.canWaterGoThrough()) break;
-                    if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
+                    WaterNode nodeHere = getNodeAt(i, asd.getY());
+                    if (nodeHere == null) break;
+                    if (!nodeHere.canWaterGoThrough()) break;
+                    if (!leverStates.contains(nodeHere.getCondition()) && !nodeHere.isWaterFilled(w)) break;
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
                     if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())))) {
                         int dist = i - asd.getX();
@@ -285,10 +285,10 @@ public class WaterBoard {
                 }
                 int minDistToDropLeft = 9999;
                 for (int i = asd.getX(); i > asd.getX() - 8; i--) {
-                    WaterNode nodehere = getNodeAt(i, asd.getY());
-                    if (nodehere == null) break;
-                    if (!nodehere.canWaterGoThrough()) break;
-                    if (!leverStates.contains(nodehere.getCondition()) && !nodehere.isWaterFilled(w)) break;
+                    WaterNode nodeHere = getNodeAt(i, asd.getY());
+                    if (nodeHere == null) break;
+                    if (!nodeHere.canWaterGoThrough()) break;
+                    if (!leverStates.contains(nodeHere.getCondition()) && !nodeHere.isWaterFilled(w)) break;
                     WaterNode down = getNodeAt(i, asd.getY() + 1);
                     if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())))) {
                         int dist = asd.getX() - i;
@@ -302,9 +302,9 @@ public class WaterBoard {
                 if (min == 9999) continue;
                 if (minDistToDropRight == min) {
                     for (int i = asd.getX(); i <= asd.getX() + minDistToDropRight; i++) {
-                        WaterNode nodehere = getNodeAt(i, asd.getY());
-                        if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
-                        r.getNodes().add(nodehere);
+                        WaterNode nodeHere = getNodeAt(i, asd.getY());
+                        if (nodeHere.getCondition() != null && leverStates.contains(nodeHere.getCondition().invert()) && nodeHere.isWaterFilled(w)) waterBlockingStates.add(nodeHere.getCondition().invert());
+                        r.getNodes().add(nodeHere);
                         WaterNode down = getNodeAt(i, asd.getY() + 1);
                         if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
                             toGoDownTo.add(down);
@@ -316,9 +316,9 @@ public class WaterBoard {
                 }
                 if (minDistToDropLeft == min) {
                     for (int i = asd.getX(); i >= asd.getX() - minDistToDropLeft; i--) {
-                        WaterNode nodehere = getNodeAt(i, asd.getY());
-                        if (nodehere.getCondition() != null && leverStates.contains(nodehere.getCondition().invert()) && nodehere.isWaterFilled(w)) waterBlockingStates.add(nodehere.getCondition().invert());
-                        r.getNodes().add(nodehere);
+                        WaterNode nodeHere = getNodeAt(i, asd.getY());
+                        if (nodeHere.getCondition() != null && leverStates.contains(nodeHere.getCondition().invert()) && nodeHere.isWaterFilled(w)) waterBlockingStates.add(nodeHere.getCondition().invert());
+                        r.getNodes().add(nodeHere);
                         WaterNode down = getNodeAt(i, asd.getY() + 1);
                         if (down != null && ((down.canWaterGoThrough() && leverStates.contains(down.getCondition())) || down.isWaterFilled(w))) {
                             toGoDownTo.add(down);

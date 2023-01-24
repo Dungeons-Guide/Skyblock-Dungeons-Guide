@@ -59,7 +59,7 @@ public class MButton extends MPanel {
         if (!enabled) {
             bg = disabled;
         } else if (getTooltipsOpen() > 0) {
-        } else if (isclicked) {
+        } else if (isClicked) {
             bg = clicked;
         } else if (new Rectangle(new Point(0,0),bounds).contains(relMousex0, relMousey0)) {
             bg = hover;
@@ -91,11 +91,11 @@ public class MButton extends MPanel {
         renderer.drawString(getText(), x,y, foreground.getRGB());
     }
 
-    boolean isclicked = false;
+    boolean isClicked = false;
     @Override
     public void mouseClicked(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int mouseButton) {
         if (lastAbsClip.contains(absMouseX, absMouseY) && getTooltipsOpen() == 0) {
-            isclicked = true;
+            isClicked = true;
             if (onActionPerformed != null)
                 onActionPerformed.run();
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
@@ -104,7 +104,7 @@ public class MButton extends MPanel {
 
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, int relMouseX, int relMouseY, int state) {
-        isclicked = false;
+        isClicked = false;
     }
 
 

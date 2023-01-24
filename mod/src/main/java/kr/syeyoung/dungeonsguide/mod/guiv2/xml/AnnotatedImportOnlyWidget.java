@@ -55,7 +55,7 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
     public final List<Widget> build(DomElement buildContext) {
         try (Parser parser = DomElementRegistry.obtainParser(target)) {
             ParserElement element = parser.getRootNode();
-            ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(element.getNodename());
+            ParsedWidgetConverter converter = DomElementRegistry.obtainConverter(element.getNodeName());
             Widget w = converter.convert(this, element);
             return Collections.singletonList(w);
         } catch (IOException e) {

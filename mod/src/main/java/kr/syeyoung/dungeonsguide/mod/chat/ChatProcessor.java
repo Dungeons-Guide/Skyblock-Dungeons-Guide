@@ -93,16 +93,16 @@ public class ChatProcessor {
         logger.info("[CHAT] {}", txt);
 
         int processed = 0;
-        int listenened = 0;
+        int listened = 0;
         Map<String, Object> context = new HashMap<>();
         Iterator<ChatSubscriber> it = chatSubscriberQueue.iterator();
         while (it.hasNext()) {
             ChatSubscriber chatSubscribed = it.next();
             context.put("removed", processed);
-            context.put("onceListenered", listenened);
+            context.put("onceListenered", listened);
             ChatProcessResult chatProcessResult = chatSubscribed.process(txt, context);
             if (chatProcessResult.isRemoveChat()) processed++;
-            if (chatProcessResult.isRemoveListener()) listenened++;
+            if (chatProcessResult.isRemoveListener()) listened++;
 
             if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
             if (chatProcessResult.isRemoveListener()) it.remove();

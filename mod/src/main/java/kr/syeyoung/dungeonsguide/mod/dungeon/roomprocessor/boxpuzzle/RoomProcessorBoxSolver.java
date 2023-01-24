@@ -100,10 +100,10 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         super.tick();
         if (!FeatureRegistry.SOLVER_BOX.isEnabled()) return;
         if (bugged) return;
-        byte[][] currboard = buildCurrentState();
+        byte[][] currBoard = buildCurrentState();
         if (puzzleSolvingThread == null) {
             calcDone = false;
-            puzzleSolvingThread = new BoxPuzzleSolvingThread(currboard, 0, 6, new Runnable() {
+            puzzleSolvingThread = new BoxPuzzleSolvingThread(currBoard, 0, 6, new Runnable() {
                 @Override
                 public void run() {
                     calcDone = true;
@@ -127,7 +127,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             calcDone = false;
             if (puzzleSolvingThread != null)
                 puzzleSolvingThread.stop();
-            puzzleSolvingThread = new BoxPuzzleSolvingThread(currboard, 0, 6, new Runnable() {
+            puzzleSolvingThread = new BoxPuzzleSolvingThread(currBoard, 0, 6, new Runnable() {
                 @Override
                 public void run() {
                     calcDone = true;
@@ -155,7 +155,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eBox Solver §7:: Solution Found!"));
             }
             step = 0;
-            lastState = currboard;
+            lastState = currBoard;
             calcDone2 = false;
             pathFindReq = true;
 
@@ -165,11 +165,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (lastState == null) return;
         boolean moved = false;
         label:
-        for (int y = 0 ; y < currboard.length; y++) {
-            for (int x = 0; x < currboard[y].length; x++) {
-                if (lastState[y][x] != currboard[y][x]) {
+        for (int y = 0 ; y < currBoard.length; y++) {
+            for (int x = 0; x < currBoard[y].length; x++) {
+                if (lastState[y][x] != currBoard[y][x]) {
                     moved = true;
-                    lastState = currboard;
+                    lastState = currBoard;
                     break label;
                 }
             }
@@ -179,7 +179,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             step++;
         }
 
-        Point player = getPlayerPos(currboard);
+        Point player = getPlayerPos(currBoard);
         boolean currYState = Minecraft.getMinecraft().thePlayer.getPosition().getY() < 68;
         if (((currYState && !player.equals(lastPlayer)) || (currYState != yState) || (moved) || pathFindReq) && solution != null) {
             Point target = null;
@@ -187,7 +187,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 BoxPuzzleSolvingThread.BoxMove boxMove = solution.get(step);
                 target = new Point(boxMove.x - boxMove.dx, boxMove.y - boxMove.dy);
             }
-            List<Point> semi_pathFound = pathfind(currboard, player, target);
+            List<Point> semi_pathFound = pathfind(currBoard, player, target);
             pathFound = new LinkedList<BlockPos>();
             for (Point point : semi_pathFound) {
                 pathFound.add(poses[point.y][point.x].add(0,-1,0));
@@ -203,7 +203,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         Point player = new Point(0,6);
         totalPath = new LinkedList<BlockPos>();
         totalPushedBlocks = new LinkedList<BlockPos>();
-        byte[][] currboard = buildCurrentState();
+        byte[][] currBoard = buildCurrentState();
         for (int i = 0; i <= solution.size(); i++) {
             Point target = null;
             BoxPuzzleSolvingThread.BoxMove boxMove = null;
@@ -211,7 +211,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                 boxMove = solution.get(i);
                 target = new Point(boxMove.x - boxMove.dx, boxMove.y - boxMove.dy);
             }
-            List<Point> semi_pathFound = pathfind(currboard, player, target);
+            List<Point> semi_pathFound = pathfind(currBoard, player, target);
             for (int i1 = semi_pathFound.size() - 1; i1 >= 0; i1--) {
                 Point point = semi_pathFound.get(i1);
                 totalPath.add(poses[point.y][point.x].add(0, -1, 0));
@@ -219,7 +219,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
 
             player = target;
             if (boxMove != null) {
-                BoxPuzzleSolvingThread.push(currboard, boxMove.x, boxMove.y, boxMove.dx, boxMove.dy);
+                BoxPuzzleSolvingThread.push(currBoard, boxMove.x, boxMove.y, boxMove.dx, boxMove.dy);
                 int fromX = boxMove.x - boxMove.dx;
                 int fromY = boxMove.y - boxMove.dy;
 
@@ -262,11 +262,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
     public List<Point> pathfind(byte[][] map, Point start, Point target2) {
         int[][] distances = new int[map.length][map[0].length];
 
-        Queue<Point> evalulate = new LinkedList<Point>();
-        evalulate.add(start);
+        Queue<Point> evaluate = new LinkedList<Point>();
+        evaluate.add(start);
         Point target = null;
-        while (!evalulate.isEmpty()) {
-            Point p = evalulate.poll();
+        while (!evaluate.isEmpty()) {
+            Point p = evaluate.poll();
             if (p.equals(target2) || (target2 == null &&p.y == 0)) {
                 target = p;
                 break;
@@ -283,7 +283,7 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
                     max = distances[resY][resX];
                 }
                 if (distances[resY][resX] == 0 && (map[resY][resX] == 0 ||map[resY][resX] == -1)) {
-                    evalulate.add(new Point(resX, resY));
+                    evaluate.add(new Point(resX, resY));
                 }
             }
             distances[p.y][p.x] = max + 1;

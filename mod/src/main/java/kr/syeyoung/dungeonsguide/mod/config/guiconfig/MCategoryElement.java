@@ -35,12 +35,12 @@ public class MCategoryElement extends MPanel {
     private int leftPad = 0;
     private int offsetX;
     private RootConfigPanel rootConfigPanel;
-    public MCategoryElement(String category, Runnable onClick, int leftPad, int offsetX, RootConfigPanel rooot) {
+    public MCategoryElement(String category, Runnable onClick, int leftPad, int offsetX, RootConfigPanel root) {
         this.category = category;
         this.onClick = onClick;
         this.leftPad = leftPad;
         this.offsetX = offsetX;
-        this.rootConfigPanel = rooot;
+        this.rootConfigPanel = root;
     }
 
     @Override

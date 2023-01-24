@@ -66,7 +66,7 @@ public class CreeperRightProcessor extends GeneralDefuseChamberProcessor {
         }
     }
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
         if (2 == compound.getByte("a")) {
             answer = compound.getInteger("b");
         }

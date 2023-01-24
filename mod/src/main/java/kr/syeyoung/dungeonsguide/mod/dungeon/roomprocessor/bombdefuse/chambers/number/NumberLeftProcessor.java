@@ -90,7 +90,7 @@ public class NumberLeftProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
         if (1 == compound.getByte("a")) {
             answer = compound.getInteger("b");
             d1 = answer / 1000;

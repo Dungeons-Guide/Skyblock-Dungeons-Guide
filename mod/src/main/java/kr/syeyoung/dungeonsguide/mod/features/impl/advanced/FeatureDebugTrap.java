@@ -62,7 +62,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
     }
 
 
-    static long getAvgTimeItTookToPAcket(){
+    static long getAvgTimeItTookToPacket(){
         return (long) avgStorage.stream().mapToLong(val -> val).average().orElse(0.0);
     }
 
@@ -91,7 +91,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
         actualBit.add(new StyledText("Bats: ","base"));
 
 
-        actualBit.add(new StyledText(String.valueOf(getAvgTimeItTookToPAcket()),"batsamm"));
+        actualBit.add(new StyledText(String.valueOf(getAvgTimeItTookToPacket()),"batsamm"));
 
         return actualBit;
     }

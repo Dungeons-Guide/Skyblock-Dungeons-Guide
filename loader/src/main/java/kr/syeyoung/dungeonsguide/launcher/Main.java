@@ -152,7 +152,7 @@ public class Main
 
     public void unload() throws DungeonsGuideUnloadingException {
         if (currentLoader != null && !currentLoader.isUnloadable()) {
-            throw new UnsupportedOperationException("Current version is not unloadable");
+            throw new UnsupportedOperationException("Current version is not able to be unloaded");
         }
         dgInterface = null;
         for (DungeonsGuideReloadListener listener : listeners) {
@@ -182,7 +182,7 @@ public class Main
         try {
             dgInterface.init(configDir);
         } catch (Exception e) {
-            throw new DungeonsGuideLoadingException("Exception occured while calling init", e);
+            throw new DungeonsGuideLoadingException("Exception occurred while calling init", e);
         }
         for (DungeonsGuideReloadListener listener : listeners) {
             listener.onLoad(dgInterface);

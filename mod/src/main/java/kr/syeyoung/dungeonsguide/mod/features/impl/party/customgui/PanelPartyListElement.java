@@ -77,11 +77,11 @@ public class PanelPartyListElement extends MPanel {
         int color = RenderUtils.blendAlpha(0x141414, 0.0f);
 
         String note = "";
-        boolean notfound = false;
-        boolean cantjoin = false;
+        boolean notFound = false;
+        boolean cantJoin = false;
         if (itemStack.getItem() == Item.getItemFromBlock(Blocks.bedrock)) {
-            cantjoin = true;
-            notfound = true;
+            cantJoin = true;
+            notFound = true;
         }
         int minClass = -1, minDungeon = -1;
         int pplIn = 0;
@@ -89,20 +89,20 @@ public class PanelPartyListElement extends MPanel {
         {
             NBTTagCompound stackTagCompound = itemStack.getTagCompound();
             if (stackTagCompound.hasKey("display", 10)) {
-                NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
+                NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
 
-                if (nbttagcompound.getTagId("Lore") == 9) {
-                    NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
+                if (nbtTagCompound.getTagId("Lore") == 9) {
+                    NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
 
-                    for (int i = 0; i < nbttaglist1.tagCount(); i++) {
-                        String str = nbttaglist1.getStringTagAt(i);
+                    for (int i = 0; i < nbtTagList1.tagCount(); i++) {
+                        String str = nbtTagList1.getStringTagAt(i);
                         if (str.startsWith("§7§7Note:")) {
                             note = str.substring(12);
                         } else if (str.startsWith("§7Class Level Required: §b")) {
                             minClass = Integer.parseInt(str.substring(26));
                         } else if (str.startsWith("§7Dungeon Level Required: §b")) {
                             minDungeon = Integer.parseInt(str.substring(28));
-                        } else if (str.startsWith("§cRequires ")) cantjoin = true;
+                        } else if (str.startsWith("§cRequires ")) cantJoin = true;
                         if (str.endsWith("§b)")) pplIn ++;
 
                         if (str.startsWith(" ") && str.contains(":")) {
@@ -127,13 +127,13 @@ public class PanelPartyListElement extends MPanel {
             }
         } catch (Exception e) {}
 
-        if (cantjoin) {}
+        if (cantJoin) {}
         else if (clicked) {
             color = RenderUtils.blendAlpha(0x141414, 0.10f);
         } else if (lastAbsClip.contains(absMousex, absMousey) && (getTooltipsOpen() == 0 || (mTooltip != null && mTooltip.isOpen()))) {
             color = RenderUtils.blendAlpha(0x141414, 0.12f);
         }
-        if (cantjoin) {}
+        if (cantJoin) {}
         else if (note.contains("§e")) {
             color = RenderUtils.blendTwoColors(color, 0x44FFFF00);
         } else if (note.contains("§6")){
@@ -164,7 +164,7 @@ public class PanelPartyListElement extends MPanel {
             name = name.substring(0, name.indexOf("'"));
         fr.drawString(name, 0,0,-1);
 
-        if (!notfound)
+        if (!notFound)
             note = "§7("+pplIn+") §f"+note;
         fr.drawString(note, fr.getStringWidth("AAAAAAAAAAAAAAAA")+5, 0,-1);
         GlStateManager.popMatrix();
@@ -172,7 +172,7 @@ public class PanelPartyListElement extends MPanel {
         String sideNote = "";
         if (minClass != -1) sideNote += "§7CLv ≥§b"+minClass+" ";
         if (minDungeon != -1) sideNote += "§7DLv ≥§b"+minDungeon+" ";
-        if (cantjoin && !notfound) sideNote = "§cCan't join";
+        if (cantJoin && !notFound) sideNote = "§cCan't join";
         sideNote = sideNote.trim();
 
         GlStateManager.translate(getBounds().width,(32 - 2*fr.FONT_HEIGHT)/2,0);

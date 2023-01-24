@@ -70,8 +70,8 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     @Override
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         if (secretPoint.getOffsetPointList().isEmpty()) return;
-        OffsetPoint firstpt = secretPoint.getOffsetPointList().get(0);
-        BlockPos pos = firstpt.getBlockPos(dungeonRoom);
+        OffsetPoint firstPoint = secretPoint.getOffsetPointList().get(0);
+        BlockPos pos = firstPoint.getBlockPos(dungeonRoom);
         RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
 

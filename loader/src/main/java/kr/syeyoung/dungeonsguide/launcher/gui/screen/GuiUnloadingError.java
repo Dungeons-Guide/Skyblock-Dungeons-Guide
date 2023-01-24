@@ -66,7 +66,7 @@ public class GuiUnloadingError extends SpecialGuiScreen {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         fontRenderer.drawString("DungeonsGuide has ran into error while reloading", (sr.getScaledWidth()-fontRenderer.getStringWidth("DungeonsGuide has ran into error while reloading"))/2,40,0xFFFF0000);
         fontRenderer.drawString("Please contact DungeonsGuide support with this screen", (sr.getScaledWidth()-fontRenderer.getStringWidth("Please contact developer with this screen"))/2, (int) (40+fontRenderer.FONT_HEIGHT*1.5),0xFFFF0000);
-        fontRenderer.drawString("Playing in this state is VERY UNSUGGESTED. Undesired behaviors might occur.", (sr.getScaledWidth()-fontRenderer.getStringWidth("Playing in this state is VERY UNSUGGESTED. Undesired behaviors might occur."))/2, (int) (40+fontRenderer.FONT_HEIGHT*3),0xFFFF0000);
+        fontRenderer.drawString("Playing in this state is NOT RECOMMENDED. Undesired behaviors might occur.", (sr.getScaledWidth()-fontRenderer.getStringWidth("Playing in this state is NOT RECOMMENDED. Undesired behaviors might occur."))/2, (int) (40+fontRenderer.FONT_HEIGHT*3),0xFFFF0000);
 
         int tenth = sr.getScaledWidth() / 10;
 

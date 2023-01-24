@@ -21,11 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.PlayerSkyblockData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.IDataRenderer;
-import kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.WidgetStateTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -34,17 +32,13 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.ExportedWidgetConverter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
-import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -74,7 +68,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
         this.gameProfile = gameProfile;
 
         playerModel.setValue(widgetPlayerModel = new WidgetPlayerModel(gameProfile, playerSkyblockData.getPlayerProfiles()
-                [idx = playerSkyblockData.getLastestprofileArrayIndex()]));
+                [idx = playerSkyblockData.getLatestProfileArrayIndex()]));
 
         List<String> stuff = FeatureRegistry.PARTYKICKER_VIEWPLAYER.<List<String>>getParameter("datarenderers").getValue();
         for (String datarenderer : stuff) {

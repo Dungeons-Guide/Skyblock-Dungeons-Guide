@@ -72,10 +72,10 @@ public class ActionTreeDisplayPane extends MPanel {
         GlStateManager.popMatrix();
     }
 
-    public int renderTree(ActionTree actionTree, int x, int y, FontRenderer fr, Point drawLineFrom, HashMap<ActionTree, Point> drawmPoints) {
-        if (drawmPoints.containsKey(actionTree)) {
+    public int renderTree(ActionTree actionTree, int x, int y, FontRenderer fr, Point drawLineFrom, HashMap<ActionTree, Point> drawnPoints) {
+        if (drawnPoints.containsKey(actionTree)) {
             // recursive, fu
-            Point pt = drawmPoints.get(actionTree);
+            Point pt = drawnPoints.get(actionTree);
 
             GlStateManager.pushMatrix();
 
@@ -124,10 +124,10 @@ public class ActionTreeDisplayPane extends MPanel {
         }
         Point pt = new Point(x + dim.width / 2, y + dim.height);
 
-        drawmPoints.put(actionTree, new Point(x + dim.width / 2, y + dim.height / 2));
+        drawnPoints.put(actionTree, new Point(x + dim.width / 2, y + dim.height / 2));
         int xOff = 0;
         for (ActionTree tree:actionTree.getChildren()) {
-            xOff += renderTree(tree, x + xOff, y + dim.height + 10, fr, pt, drawmPoints) + 10;
+            xOff += renderTree(tree, x + xOff, y + dim.height + 10, fr, pt, drawnPoints) + 10;
         }
         return Math.max(xOff, dim.width);
     }

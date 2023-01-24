@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatSubscriber;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureTestPepole;
+import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureTestPeople;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -566,7 +566,7 @@ public class PartyManager {
             String broadCastPlayload = new JSONObject(payload).getString("payload");
             System.out.println("Received broadcast");
             if(broadCastPlayload.startsWith("C:")) {
-                FeatureTestPepole.handlePartyBroadCast(broadCastPlayload);
+                FeatureTestPeople.handlePartyBroadCast(broadCastPlayload);
             }else {
                 try {
                     ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: Message Broadcasted from player:: \n" + new JSONObject(payload).getString("payload")));

@@ -94,12 +94,12 @@ public class CommandDgDebug extends CommandBase {
             }
         }else if ("tablist".equals(arg)) {
             for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
-                ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGamemode());
+                ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGameMode());
             }
             ChatTransmitter.addToQueue("VS");
         } else if ("mockdungeonstart".equals(arg)) {
             if (!Minecraft.getMinecraft().isSingleplayer()) {
-                ChatTransmitter.addToQueue("This only works in singlepauer", false);
+                ChatTransmitter.addToQueue("This only works in singlepayer", false);
                 return;
             }
 
@@ -130,18 +130,18 @@ public class CommandDgDebug extends CommandBase {
             })).start();
         } else if ("saverooms".equals(arg)) {
             DungeonRoomInfoRegistry.saveAll(Main.getConfigDir());
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated room data"));
         } else if ("loadrooms".equals(arg)) {
             try {
                 DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded room data"));
                 return;
             } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
                      NoSuchAlgorithmException | IOException | IllegalBlockSizeException |
                      NoSuchPaddingException e) {
                 e.printStackTrace();
             }
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading room data"));
         } else if ("reloadah".equals(arg)) {
             try {
                 AhUtils.loadAuctions();
@@ -150,7 +150,7 @@ public class CommandDgDebug extends CommandBase {
                      KeyStoreException | IllegalBlockSizeException | KeyManagementException e) {
                 e.printStackTrace();
             }
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fReloaded Ah data"));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fReloaded AH data"));
         } else if ("brand".equals(arg)) {
             String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
@@ -291,7 +291,7 @@ public class CommandDgDebug extends CommandBase {
                 oos.close();
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved dungeon run to " + runFile.getAbsolutePath()));
             } catch (Exception e) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
+                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error occurred while writing rundata " + e.getMessage()));
                 e.printStackTrace();
             }
         } else if ("requeststaticresource".equals(arg)) {
@@ -456,12 +456,12 @@ public class CommandDgDebug extends CommandBase {
         } else if ("clearprofile".equals(arg)) {
             Minecraft.getMinecraft().mcProfiler.clearProfiling();
         } else {
-            sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
+            sender.addChatMessage(new ChatComponentText("ain't gonna find much of anything here"));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves user-generated dungeon roomdata."));
         }
     }
 

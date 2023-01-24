@@ -19,41 +19,15 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
 import com.mojang.authlib.GameProfile;
-import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
-import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FakePlayer;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.inventory.GuiInventory;
-import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.opengl.GL11;
-import org.lwjgl.opengl.GL14;
-
-import java.util.Collections;
-import java.util.List;
 
 public class WidgetPlayerModel extends AnnotatedWidget {
 

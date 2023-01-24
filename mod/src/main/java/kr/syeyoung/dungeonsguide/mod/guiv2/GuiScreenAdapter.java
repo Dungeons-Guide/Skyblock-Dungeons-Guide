@@ -270,7 +270,7 @@ public class GuiScreenAdapter extends GuiScreen {
 
     @Override
     public void handleInput() throws IOException {
-        Keyboard.enableRepeatEvents(true); // i hope it's temproary solution NEU Incompat. ?
+        Keyboard.enableRepeatEvents(true); // I hope it's a temporary solution NEU Incompat. ?
         super.handleInput();
     }
 }

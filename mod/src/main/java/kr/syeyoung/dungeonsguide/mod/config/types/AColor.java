@@ -33,8 +33,8 @@ public class AColor extends Color {
         super(r, g, b, a);
     }
 
-    public AColor(int rgba, boolean hasalpha) {
-        super(rgba, hasalpha);
+    public AColor(int rgba, boolean hasAlpha) {
+        super(rgba, hasAlpha);
     }
 
     public AColor(AColor clone) {

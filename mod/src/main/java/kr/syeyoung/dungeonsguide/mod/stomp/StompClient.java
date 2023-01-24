@@ -64,7 +64,7 @@ public class StompClient extends WebSocketClient {
 
     private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1, DungeonsGuide.THREAD_FACTORY);
     @Override
-    public void onOpen(ServerHandshake handshakedata) {
+    public void onOpen(ServerHandshake handshakeData) {
         send(new StompPayload().method(StompHeader.CONNECT)
                 .header("accept-version","1.2")
                 .header("heart-beat", "30000,30000")
@@ -152,7 +152,7 @@ public class StompClient extends WebSocketClient {
         if (stompClientStatus != StompClientStatus.CONNECTED) throw new IllegalStateException("not connected");
     }
 
-    public void sendfake(StompPayload payload) {
+    public void sendFake(StompPayload payload) {
         makeSureStompIsConnected();
         payload.method(StompHeader.SEND);
         if (payload.headers().get("receipt") != null)

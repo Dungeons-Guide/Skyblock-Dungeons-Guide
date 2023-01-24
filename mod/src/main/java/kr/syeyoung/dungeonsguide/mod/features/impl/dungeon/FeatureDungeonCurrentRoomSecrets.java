@@ -94,13 +94,13 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
 
         int secretsIndex = text.indexOf("Secrets");
         if (secretsIndex != -1) {
-            int theindex = 0;
+            int theIndex = 0;
             for (int i = secretsIndex; i >= 0; i--) {
                 if (text.startsWith("§7", i)) {
-                    theindex = i;
+                    theIndex = i;
                 }
             }
-            String it = text.substring(theindex + 2, secretsIndex - 1);
+            String it = text.substring(theIndex + 2, secretsIndex - 1);
 
             latestCurrSecrets = Integer.parseInt(it.split("/")[0]);
             latestTotalSecrets = Integer.parseInt(it.split("/")[1]);

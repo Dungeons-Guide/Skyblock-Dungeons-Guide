@@ -65,7 +65,7 @@ public class MazeRightProcessor extends GeneralDefuseChamberProcessor {
     }
 
     @Override
-    public void onDataRecieve(NBTTagCompound compound) {
+    public void onDataReceive(NBTTagCompound compound) {
         if (5 == compound.getByte("a")) {
             int latestRequestid = compound.getInteger("b");
             latestRequest = Block.getBlockById(latestRequestid);

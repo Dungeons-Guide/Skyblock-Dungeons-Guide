@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import io.netty.channel.*;
-import kr.syeyoung.dungeonsguide.mod.events.impl.*;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -34,25 +35,25 @@ import java.util.Set;
 @ChannelHandler.Sharable
 public class PacketInjector extends ChannelDuplexHandler {
 
-    private static Set<Class> targettedPackets = new HashSet<>();
+    private static Set<Class> targetedPackets = new HashSet<>();
     static {
-        targettedPackets.add(S04PacketEntityEquipment.class);
-        targettedPackets.add(S45PacketTitle.class);
-        targettedPackets.add(S38PacketPlayerListItem.class);
-        targettedPackets.add(S30PacketWindowItems.class);
-        targettedPackets.add(S2FPacketSetSlot.class);
-        targettedPackets.add(S23PacketBlockChange.class);
-        targettedPackets.add(S22PacketMultiBlockChange.class);
-        targettedPackets.add(S3BPacketScoreboardObjective.class);
-        targettedPackets.add(S3CPacketUpdateScore.class);
-        targettedPackets.add(S3DPacketDisplayScoreboard.class);
-        targettedPackets.add(S3EPacketTeams.class);
-        targettedPackets.add(S34PacketMaps.class);
+        targetedPackets.add(S04PacketEntityEquipment.class);
+        targetedPackets.add(S45PacketTitle.class);
+        targetedPackets.add(S38PacketPlayerListItem.class);
+        targetedPackets.add(S30PacketWindowItems.class);
+        targetedPackets.add(S2FPacketSetSlot.class);
+        targetedPackets.add(S23PacketBlockChange.class);
+        targetedPackets.add(S22PacketMultiBlockChange.class);
+        targetedPackets.add(S3BPacketScoreboardObjective.class);
+        targetedPackets.add(S3CPacketUpdateScore.class);
+        targetedPackets.add(S3DPacketDisplayScoreboard.class);
+        targetedPackets.add(S3EPacketTeams.class);
+        targetedPackets.add(S34PacketMaps.class);
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Packet packet = (Packet) msg;
-        if (targettedPackets.contains(msg.getClass())) {
+        if (targetedPackets.contains(msg.getClass())) {
             RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
             MinecraftForge.EVENT_BUS.post(receivedEvent);
             packet = new WrappedPacket(receivedEvent.packet);

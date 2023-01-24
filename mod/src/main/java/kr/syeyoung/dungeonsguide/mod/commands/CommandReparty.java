@@ -49,7 +49,7 @@ public class CommandReparty extends CommandBase {
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
         if (!requestReparty(false)) {
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cCurrently Repartying"));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
         }
     }
 
@@ -65,13 +65,13 @@ public class CommandReparty extends CommandBase {
         PartyManager.INSTANCE.requestPartyList(pc -> {
             if (pc == null) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cNot in Party"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a Party!"));
                 reparting = false;
                 return;
             }
             if (!pc.hasLeader(Minecraft.getMinecraft().getSession().getUsername())) {
                 if (!noerror)
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not leader"));
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou're not the leader"));
                 reparting = false;
                 return;
             }

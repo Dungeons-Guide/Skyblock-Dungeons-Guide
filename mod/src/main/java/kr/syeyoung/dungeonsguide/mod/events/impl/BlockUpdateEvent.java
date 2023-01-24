@@ -32,6 +32,6 @@ public abstract class BlockUpdateEvent extends Event {
     @Getter @Setter
     private Set<Tuple<BlockPos, IBlockState>> updatedBlocks = new HashSet<>();
 
-    public static class Pre extends BlockUpdateEvent {};
-    public static class Post extends BlockUpdateEvent {};
+    public static class Pre extends BlockUpdateEvent {}
+    public static class Post extends BlockUpdateEvent {}
 }

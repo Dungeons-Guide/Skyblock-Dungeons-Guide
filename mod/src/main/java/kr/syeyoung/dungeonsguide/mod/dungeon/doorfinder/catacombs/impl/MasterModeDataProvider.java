@@ -31,7 +31,7 @@ public class MasterModeDataProvider extends CatacombsDataProvider {
     @Override
     public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
         String floor = dungeonName.substring(14).trim();
-        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: Master mode "+floor+ " Building bossfight processor"));
+        ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: Master mode " +floor+ " Building boss fight processor"));
         if (floor.equals("M5")) {
             return new BossfightProcessorLivid(true);
         }

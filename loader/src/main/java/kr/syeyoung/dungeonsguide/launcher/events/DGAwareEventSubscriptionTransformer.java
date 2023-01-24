@@ -74,8 +74,10 @@ public class DGAwareEventSubscriptionTransformer implements IClassTransformer
 
     private boolean buildEvents(ClassNode classNode) throws Exception
     {
-        // Yes, this recursively loads classes until we get this base class. THIS IS NOT A ISSUE. Coremods should handle re-entry just fine.
-        // If they do not this a COREMOD issue NOT a Forge/LaunchWrapper issue.
+        // Yes, this recursively loads classes until we get this base class.
+        // THIS IS NOT AN ISSUE.
+        // Coremods should handle re-entry just fine.
+        // If they do not, this is a COREMOD issue, NOT a Forge/LaunchWrapper issue.
         Class<?> parent = classLoader.loadClass(classNode.superName.replace('/', '.'));
         if (!Event.class.isAssignableFrom(parent))
         {
@@ -186,10 +188,10 @@ public class DGAwareEventSubscriptionTransformer implements IClassTransformer
         method.instructions.add(new VarInsnNode(ALOAD, 0));
         method.instructions.add(new MethodInsnNode(INVOKESPECIAL, tSuper.getInternalName(), "setup", voidDesc, false));
         method.instructions.add(new FieldInsnNode(GETSTATIC, classNode.name, "LISTENER_LIST", listDesc));
-        LabelNode initLisitener = new LabelNode();
-        method.instructions.add(new JumpInsnNode(IFNULL, initLisitener));
+        LabelNode initListener = new LabelNode();
+        method.instructions.add(new JumpInsnNode(IFNULL, initListener));
         method.instructions.add(new InsnNode(RETURN));
-        method.instructions.add(initLisitener);
+        method.instructions.add(initListener);
         method.instructions.add(new FrameNode(F_SAME, 0, null, 0, null));
         method.instructions.add(new TypeInsnNode(NEW, tList.getInternalName()));
         method.instructions.add(new InsnNode(DUP));
