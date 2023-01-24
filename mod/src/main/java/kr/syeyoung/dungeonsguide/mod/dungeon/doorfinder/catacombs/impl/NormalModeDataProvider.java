@@ -33,13 +33,13 @@ public class NormalModeDataProvider extends CatacombsDataProvider {
         ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: " +floor+ " Building boss fight processor"));
         switch (floor) {
             case "F1":
-                return new BossfightProcessorBonzo();
+                return new BossfightProcessorBonzo(false);
             case "F2":
-                return new BossfightProcessorScarf();
+                return new BossfightProcessorScarf(false);
             case "F3":
-                return new BossfightProcessorProf();
+                return new BossfightProcessorProf(false);
             case "F4":
-                return new BossfightProcessorThorn();
+                return new BossfightProcessorThorn(false);
             case "F5":
                 return new BossfightProcessorLivid(false);
             case "F6":

@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossfightProcessorScarf extends GeneralBossfightProcessor {
-    public BossfightProcessorScarf() {
+    public BossfightProcessorScarf(boolean isMasterMode) {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] Scarf §r§f: This is where the journey ends for you, Adventurers.§r")
@@ -51,7 +51,10 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
                 .phase("final-defeat")
                 .signatureMsg("§r§c[BOSS] Scarf §r§f: Whatever...§r").build()
         );
+        this.isMasterMode = isMasterMode;
     }
+
+    private boolean isMasterMode;
 
     @Override
     public List<HealthData> getHealths() {
@@ -63,7 +66,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
                 String healthPart = name.split(" ")[2];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             }
-            healths.add(new HealthData("Scarf", (int) health, 1000000, this.getCurrentPhase().equals("fight-2")));
+            healths.add(new HealthData("Scarf", (int) health, isMasterMode ? 375000000 : 1000000, this.getCurrentPhase().equals("fight-2")));
         }
         if (!getCurrentPhase().equals("start") && !getCurrentPhase().equals("final-defeat")) {
             {
@@ -73,7 +76,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Undead Priest", (int) health, 600000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("Undead Priest", (int) health, isMasterMode ? 90000000 : 600000, this.getCurrentPhase().startsWith("fight-")));
             }
             {
                 long health = 0;
@@ -82,7 +85,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Undead Warrior", (int) health, 500000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("Undead Warrior", (int) health, isMasterMode ? 75000000 : 500000, this.getCurrentPhase().startsWith("fight-")));
             }
             {
                 long health = 0;
@@ -91,7 +94,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Undead Mage", (int) health, 400000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("Undead Mage", (int) health, isMasterMode ? 60000000 : 400000, this.getCurrentPhase().startsWith("fight-")));
             }
             {
                 long health = 0;
@@ -100,7 +103,7 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Undead Archer", (int) health, 400000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("Undead Archer", (int) health, isMasterMode ? 60000000 : 400000, this.getCurrentPhase().startsWith("fight-")));
             }
         }
         return healths;

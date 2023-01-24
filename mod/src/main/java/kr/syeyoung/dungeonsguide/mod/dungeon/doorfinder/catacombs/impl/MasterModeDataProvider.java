@@ -20,8 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl;
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.CatacombsDataProvider;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorLivid;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.*;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.world.World;
 
@@ -34,6 +33,14 @@ public class MasterModeDataProvider extends CatacombsDataProvider {
         ChatTransmitter.sendDebugChat(new ChatComponentText("Floor: Master mode " +floor+ " Building boss fight processor"));
         if (floor.equals("M5")) {
             return new BossfightProcessorLivid(true);
+        } else if (floor.equals("M1")) {
+            return new BossfightProcessorBonzo(true);
+        } else if (floor.equals("M2")) {
+            return new BossfightProcessorScarf(true);
+        } else if (floor.equals("M3")) {
+            return new BossfightProcessorProf(true);
+        } else if (floor.equals("M4")) {
+            return new BossfightProcessorThorn(true);
         }
         return null;
     }

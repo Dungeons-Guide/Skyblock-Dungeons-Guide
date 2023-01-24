@@ -26,7 +26,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class BossfightProcessorProf extends GeneralBossfightProcessor {
-    public BossfightProcessorProf() {
+    public BossfightProcessorProf(boolean isMasterMode) {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
@@ -61,8 +61,10 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
                 .phase("final-defeat")
                 .signatureMsg("§r§c[BOSS] The Professor§r§f: What?! My Guardian power is unbeatable!§r").build()
         );
+        this.isMasterMode = isMasterMode;
     }
 
+    private boolean isMasterMode;
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
@@ -73,7 +75,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
                 String healthPart = name.split(" ")[3];
                 health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
             }
-            healths.add(new HealthData("The Professor", (int) health, 3000000, this.getCurrentPhase().startsWith("fight-") && !this.getCurrentPhase().equals("fight-1")));
+            healths.add(new HealthData("The Professor", (int) health, isMasterMode ? 600000000 :3000000, this.getCurrentPhase().startsWith("fight-") && !this.getCurrentPhase().equals("fight-1")));
         }
         if (!getCurrentPhase().equals("second-defeat") && !getCurrentPhase().equals("fight-3") && !getCurrentPhase().equals("final-defeat")) {
             {
@@ -83,7 +85,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Healthy Guardian", (int) health, 1000000, this.getCurrentPhase().equals("fight-1")));
+                healths.add(new HealthData("Healthy Guardian", (int) health, isMasterMode ? 120000000 : 1000000, this.getCurrentPhase().equals("fight-1")));
             }
             {
                 long health = 0;
@@ -92,7 +94,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Chaos Guardian", (int) health, 1000000, this.getCurrentPhase().equals("fight-1")));
+                healths.add(new HealthData("Chaos Guardian", (int) health, isMasterMode ? 120000000 : 1000000, this.getCurrentPhase().equals("fight-1")));
             }
             {
                 long health = 0;
@@ -101,7 +103,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Laser Guardian", (int) health, 1000000, this.getCurrentPhase().equals("fight-1")));
+                healths.add(new HealthData("Laser Guardian", (int) health, isMasterMode ? 120000000 : 1000000, this.getCurrentPhase().equals("fight-1")));
             }
             {
                 long health = 0;
@@ -110,7 +112,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[2];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Reinforced Guardian", (int) health, 1000000, this.getCurrentPhase().equals("fight-1")));
+                healths.add(new HealthData("Reinforced Guardian", (int) health, isMasterMode ? 140000000 : 1000000, this.getCurrentPhase().equals("fight-1")));
             }
         }
         return healths;

@@ -36,11 +36,12 @@ import java.util.Set;
 public class BossfightProcessorThorn extends GeneralBossfightProcessor {
 
 
-    public BossfightProcessorThorn() {
+    public BossfightProcessorThorn(boolean isMasterMode) {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight").build()
         );
         w= DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getWorld();
+        this.isMasterMode = isMasterMode;
     }
     private final Set<BlockPos> progressBar = new HashSet<BlockPos>();
     private final World w;
@@ -62,11 +63,12 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
             }
         }
     }
+    private boolean isMasterMode;
 
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
-        healths.add(new HealthData("Thorn", Math.round(BossStatus.healthScale * 4),4, true));
+        healths.add(new HealthData("Thorn", Math.round(BossStatus.healthScale * (isMasterMode ? 6 : 4)),isMasterMode ? 6 : 4, true));
         return healths;
     }
 

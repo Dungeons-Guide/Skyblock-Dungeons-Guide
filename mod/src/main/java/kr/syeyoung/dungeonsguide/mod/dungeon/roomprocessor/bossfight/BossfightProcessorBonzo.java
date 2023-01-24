@@ -21,14 +21,16 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import lombok.AllArgsConstructor;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
 import java.util.List;
 
+@AllArgsConstructor
 public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
-    public BossfightProcessorBonzo() {
+    public BossfightProcessorBonzo(boolean isMasterMode) {
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] Bonzo §r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
@@ -54,8 +56,9 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
                 .phase("final-defeat")
                 .signatureMsg("§r§c[BOSS] Bonzo §r§f: Alright, maybe I'm just weak after all..§r").build()
         );
+        this.isMasterMode = isMasterMode;
     }
-
+    private boolean isMasterMode;
 
     @Override
     public List<HealthData> getHealths() {
@@ -66,7 +69,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
             String healthPart = name.split(" ")[2];
             health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
         }
-        healths.add(new HealthData("Bonzo", (int) health,250000 , this.getCurrentPhase().startsWith("fight-")));
+        healths.add(new HealthData("Bonzo", (int) health,isMasterMode? 200_000_000: 250000 , this.getCurrentPhase().startsWith("fight-")));
         return healths;
     }
 
@@ -79,6 +82,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     @Override
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
+    // Now I'm convinced name format is always the same
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r ") && updateEvent.entityLiving instanceof EntityArmorStand) {
             bonzoStand = (EntityArmorStand) updateEvent.entityLiving;
