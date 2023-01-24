@@ -83,49 +83,49 @@ public class CommandDgDebug extends CommandBase {
         if (args.length == 0) return;
         String arg = args[0].toLowerCase();
 
-        if ("scoreboard".equalsIgnoreCase(arg)) {
+        if ("scoreboard".equals(arg)) {
             scoreboardCommand();
-        } else if ("scoreboardclean".equalsIgnoreCase(arg)) {
+        } else if ("scoreboardclean".equals(arg)) {
             scoreboardCleanCommand();
-        }else if ("tablist".equalsIgnoreCase(arg)) {
+        }else if ("tablist".equals(arg)) {
             tabListCommand();
-        } else if ("mockdungeonstart".equalsIgnoreCase(arg)) {
+        } else if ("mockdungeonstart".equals(arg)) {
             mockDungeonStartCommand(args);
-        } else if ("saverooms".equalsIgnoreCase(arg)) {
+        } else if ("saverooms".equals(arg)) {
             saveRoomsCommand();
-        } else if ("loadrooms".equalsIgnoreCase(arg)) {
+        } else if ("loadrooms".equals(arg)) {
             loadRoomsCommand();
-        } else if ("reloadah".equalsIgnoreCase(arg)) {
+        } else if ("reloadah".equals(arg)) {
             reloadAHCommand();
-        } else if ("brand".equalsIgnoreCase(arg)) {
+        } else if ("brand".equals(arg)) {
             brandCommand();
-        } else if ("pathfind".equalsIgnoreCase(arg)) {
+        } else if ("pathfind".equals(arg)) {
             pathfindCommand(args);
-        } else if ("process".equalsIgnoreCase(arg)) {
+        } else if ("process".equals(arg)) {
             processCommand1();
-        } else if ("check".equalsIgnoreCase(arg)) {
+        } else if ("check".equals(arg)) {
             checkCommand();
-        } else if ("reloaddungeon".equalsIgnoreCase(arg)) {
+        } else if ("reloaddungeon".equals(arg)) {
             reloadDungeonCommand();
-        } else if ("partyid".equalsIgnoreCase(arg)) {
+        } else if ("partyid".equals(arg)) {
             partyIdCommand();
-        } else if ("loc".equalsIgnoreCase(arg)) {
+        } else if ("loc".equals(arg)) {
             locCommand();
-        } else if ("saverun".equalsIgnoreCase(arg)) {
+        } else if ("saverun".equals(arg)) {
             saveRunCommand();
-        } else if ("requeststaticresource".equalsIgnoreCase(arg)) {
+        } else if ("requeststaticresource".equals(arg)) {
             requestStaticResource(args);
-        } else if ("createfakeroom".equalsIgnoreCase(arg)) {// load schematic
+        } else if ("createfakeroom".equals(arg)) {// load schematic
            createFakeRoomCommand();
-        } else if ("closecontext".equalsIgnoreCase(arg)) {
+        } else if ("closecontext".equals(arg)) {
             closeContextCommand();
-        } else if ("dumpsettings".equalsIgnoreCase(arg)) {
+        } else if ("dumpsettings".equals(arg)) {
             dumpSettingsCommand();
-        } else if ("readmap".equalsIgnoreCase(arg)) {
+        } else if ("readmap".equals(arg)) {
             readMapCommand(args);
-        } else if ("testgui".equalsIgnoreCase(arg)) {
+        } else if ("testgui".equals(arg)) {
             testGuiCommand();
-        } else if ("clearprofile".equalsIgnoreCase(arg)) {
+        } else if ("clearprofile".equals(arg)) {
             clearProfileCommand();
         } else {
             ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
