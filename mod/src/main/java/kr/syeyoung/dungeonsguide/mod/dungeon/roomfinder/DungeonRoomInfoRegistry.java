@@ -26,7 +26,7 @@ import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import org.apache.commons.io.IOUtils;
 import org.jetbrains.annotations.NotNull;
-
+import net.minecraft.launchwrapper.Launch;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
@@ -37,7 +37,21 @@ import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
 import java.util.*;
 
+
+
 public class DungeonRoomInfoRegistry {
+
+    /**
+     * DEV_USERS is used to check if the user is a dev user.
+     * You do not need to be in this list to use the commands if you are in a dev env.
+     * This lists whitelists users to allow them to use commands when not in a dev env.
+     */
+    private static final List<String> DEV_USERS =
+            Arrays.asList(
+                    "e686fe0aab804a71ac7011dc8c2b534c", //syeyoung
+                    "a7d6b3f1842548e58acc9a38ab9b86f7" // whalker
+            );
+
     @Getter
     private static final List<DungeonRoomInfo> registered = new ArrayList<DungeonRoomInfo>();
     private static final Map<Short, List<DungeonRoomInfo>> shapeMap = new HashMap<Short, List<DungeonRoomInfo>>();
@@ -98,7 +112,8 @@ public class DungeonRoomInfoRegistry {
 
     public static void saveAll(File dir) {
         dir.mkdirs();
-        boolean isDev = Minecraft.getMinecraft().getSession().getPlayerID().replace("-","").equals("e686fe0aab804a71ac7011dc8c2b534c");
+        //User is dev if they are in a dev environment or they are on the allowlist DEV_USERS
+        boolean isDev = (boolean) Launch.blackboard.get("fml.deobfuscatedEnvironment") || DEV_USERS.contains(Minecraft.getMinecraft().thePlayer.getUniqueID().toString().replace("-",""));
         StringBuilder nameIDString = new StringBuilder("name,uuid,processsor,secrets");
         StringBuilder ids = new StringBuilder();
         for (DungeonRoomInfo dungeonRoomInfo : registered) {
