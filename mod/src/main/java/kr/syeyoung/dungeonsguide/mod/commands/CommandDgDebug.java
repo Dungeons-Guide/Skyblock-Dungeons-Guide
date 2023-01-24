@@ -80,87 +80,112 @@ public class CommandDgDebug extends CommandBase {
 
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
-        if (args.length == 0) return;
-        String arg = args[0].toLowerCase();
-
-        if ("scoreboard".equals(arg)) {
-            scoreboardCommand();
-        } else if ("scoreboardclean".equals(arg)) {
-            scoreboardCleanCommand();
-        }else if ("tablist".equals(arg)) {
-            tabListCommand();
-        } else if ("mockdungeonstart".equals(arg)) {
-            mockDungeonStartCommand(args);
-        } else if ("saverooms".equals(arg)) {
-            saveRoomsCommand();
-        } else if ("loadrooms".equals(arg)) {
-            loadRoomsCommand();
-        } else if ("reloadah".equals(arg)) {
-            reloadAHCommand();
-        } else if ("brand".equals(arg)) {
-            brandCommand();
-        } else if ("pathfind".equals(arg)) {
-            pathfindCommand(args);
-        } else if ("process".equals(arg)) {
-            processCommand1();
-        } else if ("check".equals(arg)) {
-            checkCommand();
-        } else if ("reloaddungeon".equals(arg)) {
-            reloadDungeonCommand();
-        } else if ("partyid".equals(arg)) {
-            partyIdCommand();
-        } else if ("loc".equals(arg)) {
-            locCommand();
-        } else if ("saverun".equals(arg)) {
-            saveRunCommand();
-        } else if ("requeststaticresource".equals(arg)) {
-            requestStaticResource(args);
-        } else if ("createfakeroom".equals(arg)) {// load schematic
-           createFakeRoomCommand();
-        } else if ("closecontext".equals(arg)) {
-            closeContextCommand();
-        } else if ("dumpsettings".equals(arg)) {
-            dumpSettingsCommand();
-        } else if ("readmap".equals(arg)) {
-            readMapCommand(args);
-        } else if ("testgui".equals(arg)) {
-            testGuiCommand();
-        } else if ("clearprofile".equals(arg)) {
-            clearProfileCommand();
-        } else {
-            ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
-            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+        if (args.length == 0) {
+            return;
+        }
+        
+        switch (args[0].toLowerCase()) { //Case Insensitive
+            case "scoreboard":
+                scoreboardCommand();
+                break;
+            case "scoreboardclean":
+                scoreboardCleanCommand();
+                break;
+            case "tablist":
+                tabListCommand();
+                break;
+            case "mockdungeonstart":
+                mockDungeonStartCommand(args);
+                break;
+            case "saverooms":
+                saveRoomsCommand();
+                break;
+            case "loadrooms":
+                loadRoomsCommand();
+                break;
+            case "reloadah":
+                reloadAHCommand();
+                break;
+            case "brand":
+                brandCommand();
+                break;
+            case "pathfind":
+                pathfindCommand(args);
+                break;
+            case "process":
+                processCommand1();
+                break;
+            case "check":
+                checkCommand();
+                break;
+            case "reloaddungeon":
+                reloadDungeonCommand();
+                break;
+            case "partyid":
+                partyIdCommand();
+                break;
+            case "loc":
+                locCommand();
+                break;
+            case "saverun":
+                saveRunCommand();
+                break;
+            case "requeststaticresource":
+                requestStaticResource(args);
+                break;
+            case "createfakeroom": // load schematic
+                createFakeRoomCommand();
+                break;
+            case "closecontext":
+                closeContextCommand();
+                break;
+            case "dumpsettings":
+                dumpSettingsCommand();
+                break;
+            case "readmap":
+                readMapCommand(args);
+                break;
+            case "testgui":
+                testGuiCommand();
+                break;
+            case "clearprofile":
+                clearProfileCommand();
+                break;
+            default:
+                ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg brand §7-§f View server brand."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg info §7-§f View Current DG User info."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
+                break;
         }
     }
-    
+
     @Override
     public int getRequiredPermissionLevel() {
         return 0;
     }
-    
+
     private void scoreboardCommand() {
         for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
-            ChatTransmitter.addToQueue("LINE: " + score.getVisibleName()+": "+score.getScore());
+            ChatTransmitter.addToQueue("LINE: " + score.getVisibleName() + ": " + score.getScore());
         }
     }
-    
+
     private void scoreboardCleanCommand() {
         for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
-            ChatTransmitter.addToQueue("LINE: " + score.getJustTeam()+": "+score.getScore());
+            ChatTransmitter.addToQueue("LINE: " + score.getJustTeam() + ": " + score.getScore());
         }
     }
-    
+
     private void tabListCommand() {
         for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
-            ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGamemode());
+            ChatTransmitter.addToQueue(entry.getFormatted() + " " + entry.getEffectiveName() + "(" + entry.getPing() + ")" + entry.getGamemode());
         }
         ChatTransmitter.addToQueue("VS");
     }
-    
+
     private void mockDungeonStartCommand(String[] args) {
         if (!Minecraft.getMinecraft().isSingleplayer()) {
             ChatTransmitter.addToQueue("This only works in singlepauer", false);
@@ -193,13 +218,13 @@ public class CommandDgDebug extends CommandBase {
             }
         })).start();
     }
-    
+
     private void saveRoomsCommand() {
         DungeonRoomInfoRegistry.saveAll(Main.getConfigDir());
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
     }
-    
-    private void loadRoomsCommand(){
+
+    private void loadRoomsCommand() {
         try {
             DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
@@ -223,7 +248,7 @@ public class CommandDgDebug extends CommandBase {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fReloaded Ah data"));
     }
 
-    private void brandCommand(){
+    private void brandCommand() {
         String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
     }
@@ -232,8 +257,12 @@ public class CommandDgDebug extends CommandBase {
         try {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-            if (thePlayer == null) return;
-            if (context.getBossfightProcessor() != null) context.getBossfightProcessor().tick();
+            if (thePlayer == null) {
+                return;
+            }
+            if (context.getBossfightProcessor() != null) {
+                context.getBossfightProcessor().tick();
+            }
             Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -249,7 +278,9 @@ public class CommandDgDebug extends CommandBase {
         File dir = new File(fileRoot, "processorinput");
         File outsecret = new File(fileRoot, "processoroutsecret");
         for (File f : dir.listFiles()) {
-            if (!f.getName().endsWith(".roomdata")) continue;
+            if (!f.getName().endsWith(".roomdata")) {
+                continue;
+            }
             try {
                 InputStream fis = new FileInputStream(f);
                 ObjectInputStream ois = new ObjectInputStream(fis);
@@ -272,7 +303,9 @@ public class CommandDgDebug extends CommandBase {
     private void checkCommand() {
         File fileroot = Main.getConfigDir();
         for (File f : fileroot.listFiles()) {
-            if (!f.getName().endsWith(".roomdata")) continue;
+            if (!f.getName().endsWith(".roomdata")) {
+                continue;
+            }
             try {
                 InputStream fis = new FileInputStream(f);
                 ObjectInputStream ois = new ObjectInputStream(fis);
@@ -331,7 +364,8 @@ public class CommandDgDebug extends CommandBase {
             }
         }
     }
-    private void reloadDungeonCommand(){
+
+    private void reloadDungeonCommand() {
         try {
             MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
 
@@ -342,7 +376,7 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
-    private void partyIdCommand(){
+    private void partyIdCommand() {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
     }
 
@@ -350,7 +384,7 @@ public class CommandDgDebug extends CommandBase {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.locationName));
     }
 
-    private void saveRunCommand(){
+    private void saveRunCommand() {
         try {
             File f = Main.getConfigDir();
             File runDir = new File(f, "dungeonruns");
@@ -470,16 +504,16 @@ public class CommandDgDebug extends CommandBase {
         DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
     }
 
-    private void dumpSettingsCommand(){
+    private void dumpSettingsCommand() {
         NestedCategory nestedCategory = new NestedCategory("ROOT");
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             String category = abstractFeature.getCategory();
             NestedCategory currentRoot = nestedCategory;
             for (String s : category.split("\\.")) {
                 NestedCategory finalCurrentRoot = currentRoot;
-                if (currentRoot.children().containsKey(s))
+                if (currentRoot.children().containsKey(s)) {
                     currentRoot = currentRoot.children().get(s);
-                else {
+                } else {
                     currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull() + "." + s));
                 }
             }
@@ -493,13 +527,17 @@ public class CommandDgDebug extends CommandBase {
         Set<NestedCategory> discovered = new HashSet<>();
         while (!stak.isEmpty()) {
             Tuple<NestedCategory, Integer> n = stak.pop();
-            if (discovered.contains(n.getFirst())) continue;
+            if (discovered.contains(n.getFirst())) {
+                continue;
+            }
             discovered.add(n.getFirst());
             for (Map.Entry<String, NestedCategory> stringNestedCategoryEntry : n.getFirst().children().entrySet()) {
                 stak.push(new Tuple<>(stringNestedCategoryEntry.getValue(), n.getSecond() + 1));
             }
 
-            if (n.getFirst().categoryFull().equals("ROOT")) continue;
+            if (n.getFirst().categoryFull().equals("ROOT")) {
+                continue;
+            }
 
             String prefix = "";
             for (int i = 0; i < n.getSecond() - 1; i++) {
