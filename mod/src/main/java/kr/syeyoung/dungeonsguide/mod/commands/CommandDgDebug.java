@@ -51,6 +51,7 @@ import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.MinecraftForge;
@@ -78,12 +79,46 @@ public class CommandDgDebug extends CommandBase {
         return "dgdebug";
     }
 
+    //List of subcommands for tab support
+    private static final String[] SUBCOMMANDS = {
+            "scoreboard",
+            "scoreboardclean",
+            "tablist",
+            "mockdungeonstart",
+            "saverooms",
+            "loadrooms",
+            "reloadah",
+            "brand",
+            "pathfind",
+            "process",
+            "check",
+            "reloaddungeon",
+            "partyid",
+            "loc",
+            "saverun",
+            "requeststaticresource",
+            "createfakeroom",
+            "closecontext",
+            "dumpsettings",
+            "readmap",
+            "testgui",
+            "clearprofile"
+    };
+
+    @Override
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+        if (args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, SUBCOMMANDS);
+        }
+        return Collections.emptyList();
+    }
+
     @Override
     public void processCommand(ICommandSender sender, String[] args) throws CommandException {
         if (args.length == 0) {
             return;
         }
-        
+
         switch (args[0].toLowerCase()) { //Case Insensitive
             case "scoreboard":
                 scoreboardCommand();
@@ -166,6 +201,8 @@ public class CommandDgDebug extends CommandBase {
     public int getRequiredPermissionLevel() {
         return 0;
     }
+
+    //BEGIN COMMANDS FROM ARGS[0]
 
     private void scoreboardCommand() {
         for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
