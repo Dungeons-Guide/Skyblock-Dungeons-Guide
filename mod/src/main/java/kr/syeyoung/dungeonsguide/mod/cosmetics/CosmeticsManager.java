@@ -19,7 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
 
-import kr.syeyoung.dungeonsguide.mod.cosmetics.chatreplacers.*;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors.*;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
@@ -32,6 +34,8 @@ import net.minecraft.client.network.NetHandlerPlayClient;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.event.entity.player.PlayerEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -224,26 +228,134 @@ public class CosmeticsManager {
         requestPerms();
     }
     @Getter @Setter
-    private static List<IChatReplacer> iChatReplacers = new ArrayList<>();
+    private static List<IChatDetector> iChatDetectors = new ArrayList<>();
     static {
-        iChatReplacers.add(new ChatReplacerViewProfile());
-        iChatReplacers.add(new ChatReplacerPV());
-        iChatReplacers.add(new ChatReplacerSocialOptions());
-        iChatReplacers.add(new ChatReplacerCoop());
-        iChatReplacers.add(new ChatReplacerMessage());
-        iChatReplacers.add(new ChatReplacerChatByMe());
+        iChatDetectors.add(new ChatDetectorProbablyUniversal());
+        iChatDetectors.add(new ChatDetectorFriendList());
+        iChatDetectors.add(new ChatDetectorGuildPartyList());
+        iChatDetectors.add(new ChatDetectorPartyMessages());
+        iChatDetectors.add(new ChatDetectorJoinLeave());
     }
 
-    @SubscribeEvent(priority = EventPriority.LOWEST)
+    private final ThreadLocal<List<ReplacementContext>> contextThreadLocal = new ThreadLocal<>();
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
+        try {
+            if (clientChatReceivedEvent.type == 2) return;
+            List<ReplacementContext> total = new ArrayList<>();
+            for (IChatDetector iChatReplacer : iChatDetectors) {
+                List<ReplacementContext> replacementContext = iChatReplacer.getReplacementContext(clientChatReceivedEvent.message);
+                if (replacementContext != null) {
+                    total.addAll(replacementContext);
+                }
+            }
+            contextThreadLocal.set(total);
+        } catch (Throwable t) {
+            System.out.println(clientChatReceivedEvent.message);
+            t.printStackTrace();
+        }
+    }
+
+    @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
             if (clientChatReceivedEvent.type == 2) return;
-            for (IChatReplacer iChatReplacer : iChatReplacers) {
-                if (iChatReplacer.isAcceptable(clientChatReceivedEvent)) {
-                    iChatReplacer.translate(clientChatReceivedEvent, this);
+            if (clientChatReceivedEvent.isCanceled()) {
+                contextThreadLocal.set(null);
+                return;
+            }
+
+            List<ReplacementContext> replacementContexts = contextThreadLocal.get();
+            contextThreadLocal.set(null);
+
+            LinkedList<IChatComponent> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.message);
+            for (ReplacementContext replacementContext : replacementContexts) {
+                if (replacementContext.getUsername().isEmpty()) continue;
+                List<ActiveCosmetic> activeCosmetics = getActiveCosmeticByPlayerNameLowerCase()
+                        .get(replacementContext.getUsername().toLowerCase());
+                String color=null, prefix="[coolprefix]";
+                if (activeCosmetics != null) {
+                    for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+                        CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+                        if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
+                            color = cosmeticData.getData().replace("&", "§");
+                        } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
+                            prefix = cosmeticData.getData().replace("&", "§");
+                        }
+                    }
+                }
+
+                if (color == null && prefix == null) continue;
+
+
+                StringBuilder sb = new StringBuilder();
+                for (IChatComponent chatComponent : chatComponents) {
+                    String str = chatComponent.getUnformattedText();
+                    sb.append(str);
+                }
+
+                List<Integer> allIdxes = new ArrayList<>();
+                int lastIdx = -1;
+                String theThing = sb.toString();
+                do {
+                    lastIdx = theThing.indexOf(replacementContext.getUsername(), lastIdx+1);
+                    if (lastIdx != -1)
+                        allIdxes.add(lastIdx);
+                } while (lastIdx != -1);
+
+                int idx = allIdxes.stream()
+                        .min(Comparator.comparingInt(a -> Math.abs(a - replacementContext.getNearIdx()))).orElse(-1);
+
+                System.out.println("Was expecting to find " +replacementContext.getUsername());
+                if (idx == -1) {
+                    System.out.println("WTF?");
+
+                    List<IChatComponent> components = SurgicalReplacer.inject(chatComponents,
+                            SurgicalReplacer.linearifyMoveColorCharToStyle(
+                                    new ChatComponentText(prefix+" ")
+                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
+                            ),
+                            0, 0);
+                    clientChatReceivedEvent.message = SurgicalReplacer.combine(components);
+                    // since we couldn't find username anywhere, just do this.
                     return;
                 }
+
+                int stIdx = theThing.lastIndexOf('\n', idx) + 1;
+                String beforeUsername = theThing.substring(theThing.lastIndexOf('\n', idx) + 1, idx);
+                int startingSearch = beforeUsername.length();
+                while (true) {
+                    startingSearch = beforeUsername.lastIndexOf(' ', startingSearch-1);
+                    if (startingSearch == -1) break;
+                    if (startingSearch-1 >= 0) {
+                        char c = beforeUsername.charAt(startingSearch-1);
+                        if (c == ' ') continue;
+                        if (c == ']') continue;
+                        startingSearch ++;
+                        break;
+                    }
+                }
+
+                if (startingSearch == -1) startingSearch = 0;
+                startingSearch += stIdx;
+
+                if (color != null)
+                    chatComponents = SurgicalReplacer.inject(chatComponents,
+                            SurgicalReplacer.linearifyMoveColorCharToStyle(
+                                    new ChatComponentText(color+replacementContext.getUsername())
+                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, idx))
+                            ),
+                            idx, replacementContext.getUsername().length());
+
+                if (prefix != null)
+                    chatComponents = SurgicalReplacer.inject(chatComponents,
+                            SurgicalReplacer.linearifyMoveColorCharToStyle(
+                                    new ChatComponentText(prefix+" ")
+                                            .setChatStyle(SurgicalReplacer.getChatStyleAt(chatComponents, 0))
+                            ),
+                            startingSearch, 0);
             }
+            clientChatReceivedEvent.message = SurgicalReplacer.combine(chatComponents);
         } catch (Throwable t) {
             System.out.println(clientChatReceivedEvent.message);
             t.printStackTrace();
