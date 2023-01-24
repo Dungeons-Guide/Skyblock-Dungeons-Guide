@@ -84,20 +84,20 @@ public class CommandDgDebug extends CommandBase {
         String arg = args[0].toLowerCase();
 
 
-        if ("scoreboard".equals(arg)) {
+        if ("scoreboard".equalsIgnoreCase(arg)) {
             for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
                 ChatTransmitter.addToQueue("LINE: " + score.getVisibleName()+": "+score.getScore());
             }
-        } else if ("scoreboardclean".equals(arg)) {
+        } else if ("scoreboardclean".equalsIgnoreCase(arg)) {
             for (Score score : ScoreboardManager.INSTANCE.getSidebarObjective().getScores()) {
                 ChatTransmitter.addToQueue("LINE: " + score.getJustTeam()+": "+score.getScore());
             }
-        }else if ("tablist".equals(arg)) {
+        }else if ("tablist".equalsIgnoreCase(arg)) {
             for (TabListEntry entry : TabList.INSTANCE.getTabListEntries()) {
                 ChatTransmitter.addToQueue(entry.getFormatted()+" "+entry.getEffectiveName()+"("+entry.getPing()+")" + entry.getGamemode());
             }
             ChatTransmitter.addToQueue("VS");
-        } else if ("mockdungeonstart".equals(arg)) {
+        } else if ("mockdungeonstart".equalsIgnoreCase(arg)) {
             if (!Minecraft.getMinecraft().isSingleplayer()) {
                 ChatTransmitter.addToQueue("This only works in singlepauer", false);
                 return;
@@ -128,10 +128,10 @@ public class CommandDgDebug extends CommandBase {
                 } catch (InterruptedException ignored) {
                 }
             })).start();
-        } else if ("saverooms".equals(arg)) {
+        } else if ("saverooms".equalsIgnoreCase(arg)) {
             DungeonRoomInfoRegistry.saveAll(Main.getConfigDir());
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
-        } else if ("loadrooms".equals(arg)) {
+        } else if ("loadrooms".equalsIgnoreCase(arg)) {
             try {
                 DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
@@ -142,7 +142,7 @@ public class CommandDgDebug extends CommandBase {
                 e.printStackTrace();
             }
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
-        } else if ("reloadah".equals(arg)) {
+        } else if ("reloadah".equalsIgnoreCase(arg)) {
             try {
                 AhUtils.loadAuctions();
             } catch (CertificateException | NoSuchAlgorithmException | InvalidKeyException |
@@ -151,11 +151,11 @@ public class CommandDgDebug extends CommandBase {
                 e.printStackTrace();
             }
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fReloaded Ah data"));
-        } else if ("brand".equals(arg)) {
+        } else if ("brand".equalsIgnoreCase(arg)) {
             String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
 
-        } else if ("pathfind".equals(arg)) {
+        } else if ("pathfind".equalsIgnoreCase(arg)) {
             try {
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
@@ -169,7 +169,7 @@ public class CommandDgDebug extends CommandBase {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-        } else if ("process".equals(arg)) {
+        } else if ("process".equalsIgnoreCase(arg)) {
             File fileRoot = Main.getConfigDir();
             File dir = new File(fileRoot, "processorinput");
             File outsecret = new File(fileRoot, "processoroutsecret");
@@ -192,7 +192,7 @@ public class CommandDgDebug extends CommandBase {
                     e.printStackTrace();
                 }
             }
-        } else if ("check".equals(arg)) {
+        } else if ("check".equalsIgnoreCase(arg)) {
             File fileroot = Main.getConfigDir();
             for (File f : fileroot.listFiles()) {
                 if (!f.getName().endsWith(".roomdata")) continue;
@@ -253,7 +253,7 @@ public class CommandDgDebug extends CommandBase {
                     e.printStackTrace();
                 }
             }
-        } else if ("reloaddungeon".equals(arg)) {
+        } else if ("reloaddungeon".equalsIgnoreCase(arg)) {
             try {
                 MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
 
@@ -262,11 +262,11 @@ public class CommandDgDebug extends CommandBase {
             } catch (Throwable t) {
                 t.printStackTrace();
             }
-        } else if ("partyid".equals(arg)) {
+        } else if ("partyid".equalsIgnoreCase(arg)) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fInternal Party id: " + Optional.ofNullable(PartyManager.INSTANCE.getPartyContext()).map(PartyContext::getPartyID).orElse(null)));
-        } else if ("loc".equals(arg)) {
+        } else if ("loc".equalsIgnoreCase(arg)) {
             sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fYou're in " + SkyblockStatus.locationName));
-        } else if ("saverun".equals(arg)) {
+        } else if ("saverun".equalsIgnoreCase(arg)) {
             try {
                 File f = Main.getConfigDir();
                 File runDir = new File(f, "dungeonruns");
@@ -294,12 +294,12 @@ public class CommandDgDebug extends CommandBase {
                 sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cAn error occured while writing rundata " + e.getMessage()));
                 e.printStackTrace();
             }
-        } else if ("requeststaticresource".equals(arg)) {
+        } else if ("requeststaticresource".equalsIgnoreCase(arg)) {
             UUID uid = UUID.fromString(args[1]);
             StaticResourceCache.INSTANCE.getResource(uid).thenAccept(a -> {
                 sender.addChatMessage(new ChatComponentText(a.getResourceID() + ": " + a.getValue() + ": " + a.isExists()));
             });
-        } else if ("createfakeroom".equals(arg)) {// load schematic
+        } else if ("createfakeroom".equalsIgnoreCase(arg)) {// load schematic
 //            File f = new File(Main.getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
 //            NBTTagCompound compound;
 //            try {
@@ -374,11 +374,11 @@ public class CommandDgDebug extends CommandBase {
 //
 //            EditingContext.createEditingContext(dungeonRoom);
 //            EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));
-        } else if ("closecontext".equals(arg)) {
+        } else if ("closecontext".equalsIgnoreCase(arg)) {
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(false);
 
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(null);
-        } else if ("dumpsettings".equals(arg)) {
+        } else if ("dumpsettings".equalsIgnoreCase(arg)) {
             NestedCategory nestedCategory = new NestedCategory("ROOT");
             for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
                 String category = abstractFeature.getCategory();
@@ -423,7 +423,7 @@ public class CommandDgDebug extends CommandBase {
             }
             System.out.println(stringBuilder.toString());
             System.out.println(stringBuilder2.toString());
-        } else if ("readmap".equals(arg)) {
+        } else if ("readmap".equalsIgnoreCase(arg)) {
             try {
                 int fromX = Integer.parseInt(args[1]);
                 int fromY = Integer.parseInt(args[2]);
@@ -446,14 +446,14 @@ public class CommandDgDebug extends CommandBase {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else if ("testgui".equals(arg)) {
+        } else if ("testgui".equalsIgnoreCase(arg)) {
             GuiScreenAdapter adapter = new GuiScreenAdapter(new TestView());
             new Thread(DungeonsGuide.THREAD_GROUP, () -> {
                 Minecraft.getMinecraft().addScheduledTask(() -> {
                     Minecraft.getMinecraft().displayGuiScreen(adapter);
                 });
             }).start();
-        } else if ("clearprofile".equals(arg)) {
+        } else if ("clearprofile".equalsIgnoreCase(arg)) {
             Minecraft.getMinecraft().mcProfiler.clearProfiling();
         } else {
             sender.addChatMessage(new ChatComponentText("ain't gonna find much anything here"));
