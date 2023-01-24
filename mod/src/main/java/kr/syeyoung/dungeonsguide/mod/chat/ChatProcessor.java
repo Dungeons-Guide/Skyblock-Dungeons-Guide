@@ -100,12 +100,16 @@ public class ChatProcessor {
             ChatSubscriber chatSubscribed = it.next();
             context.put("removed", processed);
             context.put("onceListenered", listened);
-            ChatProcessResult chatProcessResult = chatSubscribed.process(txt, context);
-            if (chatProcessResult.isRemoveChat()) processed++;
-            if (chatProcessResult.isRemoveListener()) listened++;
+            try {
+                ChatProcessResult chatProcessResult = chatSubscribed.process(txt, context);
+                if (chatProcessResult.isRemoveChat()) processed++;
+                if (chatProcessResult.isRemoveListener()) listened++;
 
-            if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
-            if (chatProcessResult.isRemoveListener()) it.remove();
+                if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
+                if (chatProcessResult.isRemoveListener()) it.remove();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
         }
     }
 

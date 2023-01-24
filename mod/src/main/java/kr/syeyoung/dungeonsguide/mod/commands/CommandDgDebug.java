@@ -48,6 +48,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
+import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
@@ -185,6 +186,9 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "clearprofile":
                 clearProfileCommand();
+                break;
+            case "gimmebright":
+                Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, 1000);
                 break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
