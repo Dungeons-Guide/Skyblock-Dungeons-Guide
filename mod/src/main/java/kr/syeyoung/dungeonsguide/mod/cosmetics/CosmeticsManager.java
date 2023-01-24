@@ -273,7 +273,7 @@ public class CosmeticsManager {
                 if (replacementContext.getUsername().isEmpty()) continue;
                 List<ActiveCosmetic> activeCosmetics = getActiveCosmeticByPlayerNameLowerCase()
                         .get(replacementContext.getUsername().toLowerCase());
-                String color=null, prefix="[coolprefix]";
+                String color=null, prefix=null;
                 if (activeCosmetics != null) {
                     for (ActiveCosmetic activeCosmetic : activeCosmetics) {
                         CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
@@ -306,10 +306,7 @@ public class CosmeticsManager {
                 int idx = allIdxes.stream()
                         .min(Comparator.comparingInt(a -> Math.abs(a - replacementContext.getNearIdx()))).orElse(-1);
 
-                System.out.println("Was expecting to find " +replacementContext.getUsername());
                 if (idx == -1) {
-                    System.out.println("WTF?");
-
                     List<IChatComponent> components = SurgicalReplacer.inject(chatComponents,
                             SurgicalReplacer.linearifyMoveColorCharToStyle(
                                     new ChatComponentText(prefix+" ")
