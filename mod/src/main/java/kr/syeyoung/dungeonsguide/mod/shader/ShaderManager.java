@@ -65,22 +65,30 @@ public class ShaderManager {
         }
         if (sourceVert != null) {
             vertex = GL20.glCreateShader(GL20.GL_VERTEX_SHADER);
+            System.out.println(sourceVert);
             GL20.glShaderSource(vertex, sourceVert);
             GL20.glCompileShader(vertex);
 
             if (GL20.glGetShaderi(vertex, 35713) == 0) {
                 System.err.println(GL20.glGetShaderInfoLog(vertex, 100));
+                GL20.glDeleteShader(vertex);
+                return null;
             }
         }
 
         int fragment = -1;
         if (sourceFrag != null) {
             fragment = GL20.glCreateShader(GL20.GL_FRAGMENT_SHADER);
+            System.out.println(sourceFrag);
             GL20.glShaderSource(fragment, sourceFrag);
             GL20.glCompileShader(fragment);
 
             if (GL20.glGetShaderi(fragment, 35713) == 0) {
                 System.err.println(GL20.glGetShaderInfoLog(fragment, 100));
+                if (vertex != -1)
+                    GL20.glDeleteShader(vertex);
+                GL20.glDeleteShader(fragment);
+                return null;
             }
         }
 
@@ -96,10 +104,12 @@ public class ShaderManager {
 
         if (GL20.glGetProgrami(program, 35714) == 0) {
             System.err.println(GL20.glGetProgramInfoLog(program, 100));
+            return null;
         }
         GL20.glValidateProgram(program);
         if (GL20.glGetProgrami(program, 35715) == 0) {
             System.err.println(GL20.glGetProgramInfoLog(program, 100));
+            return null;
         }
         ShaderProgram shaderProgram = new ShaderProgram(name, program);
         shaders.put(name, shaderProgram);
@@ -113,7 +123,6 @@ public class ShaderManager {
         try (InputStream is = Minecraft.getMinecraft().getResourceManager().getResource(location).getInputStream()) {
             return IOUtils.toString(is);
         } catch (Exception e) {
-            e.printStackTrace();
         }
         return null;
     }

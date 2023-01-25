@@ -76,6 +76,7 @@ public class DomElementRegistry {
         register("IntrinsicWidth", new ExportedWidgetConverter(IntrinsicWidth::new));
         register("IntrinsicHeight", new ExportedWidgetConverter(IntrinsicHeight::new));
         register("TestView", new ExportedWidgetConverter(TestView::new));
+        register("RoundRect", new ExportedWidgetConverter(RoundRect::new));
 
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
         register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));

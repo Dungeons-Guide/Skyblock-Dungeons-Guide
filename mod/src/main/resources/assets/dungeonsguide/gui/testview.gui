@@ -25,7 +25,7 @@
             <flexible fit="TIGHT">
                 <col mainAlign="CENTER">
                     <flexible fit="TIGHT">
-                        <bgcolor backgroundColor="#FF0000FF"/>
+                        <RoundRect radius="20"/>
                     </flexible>
                     <flexible fit="TIGHT">
                         <padding left="20.0" right="20.0" top="10.0" bottom="10.0">

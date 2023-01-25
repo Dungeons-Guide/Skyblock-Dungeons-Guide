@@ -18,7 +18,7 @@
 <bgcolor backgroundColor="#33000000">
     <align>
         <size width="200" height="200">
-            <bgcolor backgroundColor="#FFFFFFFF">
+            <RoundRect radius="10" backgroundColor="#FFFFFFFF">
                 <align>
                     <size width="50" height="30">
                         <ColorButton on:click="close" disabled="false"
@@ -30,7 +30,7 @@
                         />
                     </size>
                 </align>
-            </bgcolor>
+            </RoundRect>
         </size>
     </align>
 </bgcolor>

@@ -43,6 +43,7 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
@@ -211,6 +212,9 @@ public class CommandDgDebug extends CommandBase {
                 } catch (Throwable t) {
                     t.printStackTrace();
                 }
+                break;
+            case "reloadshader":
+                ShaderManager.onResourceReload();
                 break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
