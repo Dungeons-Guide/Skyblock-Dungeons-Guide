@@ -37,7 +37,15 @@ public class ChatDetectorJoinLeave implements IChatDetector {
                         9, username, null
                 ));
             }
-        } else if (formatted.endsWith("§6joined the lobby!§r")) {
+        } else if (formatted.startsWith("§2Guild > §r§6")) {
+            if (formatted.endsWith("§r§eleft.§r") || formatted.endsWith("§r§ejoined.§r")) {
+                String strip = TextUtils.stripColor(formatted);
+                String username = strip.substring(8, strip.indexOf(' ', 8));
+                return Collections.singletonList(new ReplacementContext(
+                        8, username, null
+                ));
+            }
+        }  else if (formatted.endsWith("§6joined the lobby!§r")) {
             String[] messageSplit = TextUtils.stripColor(formatted).split(" ");
             String oldLeader = null;
             for (String s : messageSplit) {
