@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Clip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -62,19 +63,17 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
     }
 
     public OverlayWidget instantiateWidget() {
+        Clip clip = new Clip();
+        clip.widget.setValue(new WidgetFeatureWrapper());
         return new OverlayWidget(
-                new WidgetFeatureWrapper(),
+                clip,
                 OverlayType.UNDER_CHAT,
                 new GUIRectanglePositioner(this::getFeatureRect)
         );
     }
 
     public void drawScreen(float partialTicks) {
-        Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
-        clip(featureRect.x, featureRect.y, featureRect.width, featureRect.height);
-        GL11.glEnable(GL11.GL_SCISSOR_TEST);
         drawHUD(partialTicks);
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
 
@@ -83,13 +82,6 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
     public void drawDemo(float partialTicks) {
         drawHUD(partialTicks);
     }
-
-    private void clip(int x, int y, int width, int height) {
-//        int scale = resolution.getScaleFactor();
-        int scale = 1;
-        GL11.glScissor((x ) * scale, Minecraft.getMinecraft().displayHeight - (y + height) * scale, (width) * scale, height * scale);
-    }
-
     public static FontRenderer getFontRenderer() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         return fr;
