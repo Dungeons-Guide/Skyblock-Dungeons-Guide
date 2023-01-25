@@ -94,7 +94,7 @@ public class ImageTexture {
         IIOMetadataNode graphicsControlExtensionNode = getNode(root, "GraphicControlExtension");
 
         try {
-            delayTime = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime"));
+            delayTime = Integer.parseInt(graphicsControlExtensionNode.getAttribute("delayTime")) * 10;
         } catch (Exception e) {
             delayTime = 1000;
         }
