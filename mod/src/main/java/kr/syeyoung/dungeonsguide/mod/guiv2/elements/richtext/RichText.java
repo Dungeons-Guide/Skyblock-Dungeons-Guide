@@ -159,14 +159,18 @@ public class RichText extends Widget implements Layouter, Renderer {
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
         LinkedList<FlatTextSpan> flatTextSpans = new LinkedList<>();
         rootSpan.flattenTextSpan(flatTextSpans::add);
-        double remaining = width;
+        double remaining = width == 0 ? Double.POSITIVE_INFINITY : width;
         double maxHeight = 0;
         double sumHeight = 0;
         while (!flatTextSpans.isEmpty()) {
             FlatTextSpan first = flatTextSpans.pollFirst();
 
-            BrokenWordData brokenWordData = first.breakWord(remaining, width, breakWord);
+            BrokenWordData brokenWordData = first.breakWord(remaining, width == 0 ? Double.POSITIVE_INFINITY : width, breakWord);
             remaining -= brokenWordData.getFirstWidth();
+
+            if (brokenWordData.getFirst().value.length == 0 && first.value.length != 0 && remaining == width) {
+                return 0;
+            }
 
             maxHeight = Math.max(maxHeight, first.getHeight());
 
@@ -175,7 +179,7 @@ public class RichText extends Widget implements Layouter, Renderer {
             }
 
             if (brokenWordData.isBroken()) {
-                remaining = width;
+                remaining = width == 0 ? Double.POSITIVE_INFINITY : width;
                 sumHeight += maxHeight;
                 maxHeight = 0;
             }
