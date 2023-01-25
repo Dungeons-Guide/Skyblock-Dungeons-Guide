@@ -140,8 +140,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
             double width = 220 * scaledResolution.getScaleFactor();
             double height = 220 * scaledResolution.getScaleFactor();
             widget = new OverlayWidget(
-                    new WidgetProfileViewer(gameProfile, FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey(),
-                            scaledResolution.getScaleFactor(), () -> {
+                    new WidgetProfileViewer(gameProfile, FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey(), () -> {
                         if (widget != null) {
                             OverlayManager.getInstance().removeOverlay(widget);
                             widget = null;

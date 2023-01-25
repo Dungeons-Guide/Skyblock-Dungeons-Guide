@@ -39,13 +39,10 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     public final BindableAttribute<Widget> actualPV = new BindableAttribute<>(Widget.class, null);
     @Bind(variableName = "visible")
     public final BindableAttribute<String> visiblePage = new BindableAttribute<>(String.class, "fetching");
-
-    @Bind(variableName = "scale")
-    public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class, 1.0);
     private GameProfile gameProfile;
     private String apiKey;
     private Runnable close;
-    public WidgetProfileViewer(GameProfile gameProfile, String apiKey, double scale, Runnable close) {
+    public WidgetProfileViewer(GameProfile gameProfile, String apiKey, Runnable close) {
         super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/pv.gui"));
         if (apiKey.isEmpty()) {
             visiblePage.setValue("apiKeyInvalid");
@@ -53,7 +50,6 @@ public class WidgetProfileViewer extends AnnotatedWidget {
         }
         this.gameProfile = gameProfile;
         this.apiKey = apiKey;
-        this.scale.setValue(scale);
         this.close = close;
         refresh();
     }

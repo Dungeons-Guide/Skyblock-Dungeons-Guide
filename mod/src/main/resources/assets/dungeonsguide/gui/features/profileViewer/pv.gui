@@ -16,7 +16,6 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<scaler bind:scale="scale">
     <size width="220" height="220">
         <border>
             <line slot="left" dir="VERTICAL" thickness="1.0" color="#FF23272A"/>
@@ -67,4 +66,3 @@
             </bgcolor>
         </border>
     </size>
-</scaler>
