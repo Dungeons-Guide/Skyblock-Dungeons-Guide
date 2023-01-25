@@ -24,8 +24,9 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
 import lombok.Getter;
 import lombok.Setter;
+import lombok.experimental.Accessors;
 
-@Setter
+@Setter @Accessors(chain = true)
 public class ParentDelegatingTextStyle implements ITextStyle {
     public Double size;
     public Double topAscent;
