@@ -97,7 +97,7 @@ public class User
      */
     public String getAvatarUrl()
     {
-        return getAvatarId() == null ? null : "https://cdn.discord.com/avatars/" + getId() + "/" + getAvatarId()
+        return getAvatarId() == null ? null : "https://cdn.discordapp.com/avatars/" + getId() + "/" + getAvatarId()
             + (getAvatarId().startsWith("a_") ? ".gif" : ".png");
     }
 
@@ -108,7 +108,7 @@ public class User
      */
     public String getDefaultAvatarId()
     {
-        return DefaultAvatar.values()[Integer.parseInt(getDiscriminator()) % DefaultAvatar.values().length].toString();
+        return DefaultAvatar.values()[DefaultAvatar.values().length].toString();
     }
 
     /**
@@ -118,7 +118,7 @@ public class User
      */
     public String getDefaultAvatarUrl()
     {
-        return "https://discord.com/assets/" + getDefaultAvatarId() + ".png";
+        return "https://cdn.discordapp.com/embed/avatars/" + Integer.parseInt(getDiscriminator()) % 5 + ".png";
     }
 
     /**
