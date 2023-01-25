@@ -23,6 +23,7 @@ import com.jagrosh.discordipc.IPCListener;
 import com.jagrosh.discordipc.entities.Callback;
 import com.jagrosh.discordipc.entities.Packet;
 import com.jagrosh.discordipc.entities.pipe.PipeStatus;
+import com.jagrosh.discordipc.exceptions.NoDiscordClientException;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -125,6 +126,7 @@ public class DiscordIntegrationManager implements IPCListener {
             ipcClient.send(new JSONObject().put("cmd", "GET_RELATIONSHIPS"), new Callback(this::onRelationshipLoad));
             ipcClient.setListener(this);
             System.out.println("Connecting");
+        } catch (NoDiscordClientException ignored) {
         } catch (Throwable t) {
             t.printStackTrace();
         }
