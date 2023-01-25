@@ -18,5 +18,6 @@
 
 <align hAlign="END" vAlign="START">
     <col mainAlign="START" crossAlign="END" bind:api="listApi">
+        <size height="2.5"/>
     </col>
 </align>

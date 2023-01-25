@@ -16,31 +16,31 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-    <padding left="5" right="5" top="2.5" bottom="2.5">
+    <padding left="2.5" right="2.5" top="1.25" bottom="1.25">
         <border>
             <line slot="left" dir="VERTICAL" thickness="1.0" color="#FF23272A"/>
             <line slot="top" dir="HORIZONTAL" thickness="1.0" color="#FF23272A"/>
             <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FF23272A"/>
             <line slot="right" dir="VERTICAL" thickness="1.0" color="#FF23272A"/>
             <bgcolor slot="content" backgroundColor="#FF2C2F33">
-                <padding left="3" right="3" top="3" bottom="3">
+                <padding left="1.5" right="1.5" top="1.5" bottom="1.5">
                     <IntrinsicHeight>
                         <IntrinsicWidth>
                         <row>
                             <UrlImage bind:url="avatarUrl"/>
-                            <size width="5"></size>
+                            <size width="2.5"></size>
                             <flexible>
                                 <col crossAlign="START">
                                     <row crossAlign="END">
-                                        <scaler scale="3.0">
+                                        <scaler scale="1.5">
                                             <Text bind:text="username" color="#FFFFFFFF"/>
                                         </scaler>
                                         <Text text="#" color="#FFAAAAAA"/>
                                         <Text bind:text="discriminator" color="#FFAAAAAA"/>
                                     </row>
-                                    <size height="5"/>
+                                    <size height="2.5"/>
                                     <Text text="started playing with Dungeons Guide!" color="#FFFFFFFF"/>
-                                    <size height="5"/>
+                                    <size height="2.5"/>
                                 </col>
                             </flexible>
                         </row>

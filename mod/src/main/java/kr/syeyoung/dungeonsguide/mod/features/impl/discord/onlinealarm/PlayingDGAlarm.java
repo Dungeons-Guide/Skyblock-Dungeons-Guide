@@ -64,10 +64,10 @@ public class PlayingDGAlarm extends AbstractGuiFeature {
 
     public boolean isDisplayable(JDiscordRelation jDiscordRelation) {
         JDiscordRelation.DiscordRelationType relationshipType = jDiscordRelation.getRelationType();
-//        if (relationshipType == JDiscordRelation.DiscordRelationType.Blocked) return false;
-//        if (relationshipType == JDiscordRelation.DiscordRelationType.None) return false;
-//        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
-//        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.Blocked) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.None) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingIncoming) return false;
+        if (relationshipType == JDiscordRelation.DiscordRelationType.PendingOutgoing) return false;
         if (relationshipType != JDiscordRelation.DiscordRelationType.Friend) return false;
 
         return "816298079732498473".equals(jDiscordRelation.getApplicationId());
