@@ -52,7 +52,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return false;
+        return target.getBlock(dungeonRoom) == Blocks.air;
     }
 
     public ActionBreakWithSuperBoom(OffsetPoint target) {
