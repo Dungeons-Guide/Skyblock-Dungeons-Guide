@@ -34,6 +34,7 @@ public class PathfinderExecutor {
     private DungeonRoom dungeonRoom;
 
     private IPathfinder pathfinder;
+    @Getter
     private boolean isComplete = false;
     private List<Vec3> lastRoute = new ArrayList<>();
 

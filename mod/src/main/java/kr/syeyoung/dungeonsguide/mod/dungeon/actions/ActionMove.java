@@ -90,23 +90,24 @@ public class ActionMove extends AbstractAction {
     private int tick = -1;
     private List<Vec3> poses;
     private PathfinderExecutor executor;
-
     @Override
     public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
         tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
         if (executor == null) {
             executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
+            executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
         }
         if (executor != null) {
             poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
         }
 
         if (tick == 0 && actionRouteProperties.isPathfind() && executor != null) {
-            if (!FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() || poses == null || actionRouteProperties.getLineRefreshRate() != -1) {
+            if (actionRouteProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && executor.isComplete()) {
                 executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
             }
         }
     }
+
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
         if (executor != null) executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
