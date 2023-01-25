@@ -111,7 +111,6 @@ public class NotificationManager {
 
         GlStateManager.enableDepth();
         GlStateManager.popMatrix();
-
     }
     @SubscribeEvent
     public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
@@ -175,8 +174,6 @@ public class NotificationManager {
 
         GlStateManager.enableDepth();
         GlStateManager.popMatrix();
-
-
     }
 
 

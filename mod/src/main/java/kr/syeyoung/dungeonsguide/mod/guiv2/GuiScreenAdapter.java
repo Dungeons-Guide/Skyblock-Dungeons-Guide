@@ -59,16 +59,20 @@ public class GuiScreenAdapter extends GuiScreen {
         super.initGui();
         Keyboard.enableRepeatEvents(true);
         isOpen = true;
-        view.setRelativeBound(new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
-        view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+        try {
+            view.setRelativeBound(new Rect(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setAbsBounds(new Rect(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
             view.getLayouter().layout(view, new ConstraintBox(
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayHeight,
                     Minecraft.getMinecraft().displayHeight
             ));
-        view.setMounted(true);
+            view.setMounted(true);
+        }catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
@@ -76,33 +80,36 @@ public class GuiScreenAdapter extends GuiScreen {
         int i = Mouse.getEventX();
         int j = this.mc.displayHeight - Mouse.getEventY();
 
-        if (view.isRelayoutRequested()) {
+        try {
+            if (view.isRelayoutRequested()) {
 
-            view.setRelayoutRequested(false);
+                view.setRelayoutRequested(false);
                 view.getLayouter().layout(view, new ConstraintBox(
                         Minecraft.getMinecraft().displayWidth,
                         Minecraft.getMinecraft().displayWidth,
                         Minecraft.getMinecraft().displayHeight,
                         Minecraft.getMinecraft().displayHeight
                 ));
+            }
+
+
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            GlStateManager.pushMatrix();
+            GlStateManager.disableDepth();
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.alphaFunc(GL_GREATER, 0);
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
+            view.getRenderer().doRender(i, j, i, j, partialTicks, new RenderingContext(), view);
+            GlStateManager.alphaFunc(GL_GREATER, 0.1f);
+            GlStateManager.popMatrix();
+            GlStateManager.enableDepth();
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.pushMatrix();
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.alphaFunc(GL_GREATER, 0);
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-        view.getRenderer().doRender(i, j, i, j, partialTicks, new RenderingContext(), view);
-        GlStateManager.alphaFunc(GL_GREATER, 0.1f);
-        GlStateManager.popMatrix();
-        GlStateManager.enableDepth();
-        GlStateManager.disableTexture2D();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 
     @Override

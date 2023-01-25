@@ -46,12 +46,15 @@ public class BindableAttribute<T> {
         updating = true;
         T old = this.value;
         this.value = t;
-        if (!Objects.equals(t, old))
-            for (BiConsumer<T, T> onUpdate : onUpdates) {
-                onUpdate.accept(old, value);
-            }
-        updating = false;
-        initialized = true;
+        try {
+            if (!Objects.equals(t, old))
+                for (BiConsumer<T, T> onUpdate : onUpdates) {
+                    onUpdate.accept(old, value);
+                }
+        } finally {
+            updating = false;
+            initialized = true;
+        }
     }
     public T getValue() {
         return value;

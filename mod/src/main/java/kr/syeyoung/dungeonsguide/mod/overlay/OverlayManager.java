@@ -156,7 +156,6 @@ public class OverlayManager {
         GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
         GlStateManager.enableDepth();
-        GlStateManager.enableTexture2D();
         GL11.glDisable(GL11.GL_SCISSOR_TEST);
     }
 

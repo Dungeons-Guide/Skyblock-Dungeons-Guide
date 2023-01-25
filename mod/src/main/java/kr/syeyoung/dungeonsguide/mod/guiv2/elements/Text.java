@@ -50,7 +50,7 @@ public class Text extends AnnotatedExportOnlyWidget {
     public final BindableAttribute<String> text = new BindableAttribute<>(String.class, "");
 
     private final ParentDelegatingTextStyle textStyle = ParentDelegatingTextStyle.ofDefault();
-    private final RichText richText = new RichText(new TextSpan(textStyle, ""), BreakWord.WORD, true,RichText.TextAlign.LEFT);
+    private final RichText richText = new RichText(new TextSpan(textStyle, ""), BreakWord.WORD, false,RichText.TextAlign.LEFT);
     @Override
     public List<Widget> build(DomElement buildContext) {
         return Collections.singletonList(richText);

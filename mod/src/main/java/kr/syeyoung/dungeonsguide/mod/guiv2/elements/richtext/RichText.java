@@ -120,7 +120,9 @@ public class RichText extends Widget implements Layouter, Renderer {
 
         richLines = lines;
 
-        return new Size(takeAllSpace ? constraintBox.getMaxWidth() : maxWidth, sumHeight);
+        return new Size(takeAllSpace ? constraintBox.getMaxWidth() :
+                Layouter.clamp(maxWidth, constraintBox.getMinWidth(), constraintBox.getMaxWidth()),
+                Layouter.clamp(sumHeight, constraintBox.getMinHeight(), constraintBox.getMaxHeight()));
     }
 
     @Override
