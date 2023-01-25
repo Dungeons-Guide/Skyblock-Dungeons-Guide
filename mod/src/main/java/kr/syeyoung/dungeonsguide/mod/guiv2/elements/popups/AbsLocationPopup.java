@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
@@ -68,7 +69,7 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
     public void updatePos(double old, double neu) {
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         Rect rect = popupMgr.getDomElement().getAbsBounds();
-        Rect rel = popupMgr.getDomElement().getRelativeBound();
+        Size rel = popupMgr.getDomElement().getSize();
         this.x.setValue(
                 (absX.getValue() - rect.getX()) * rel.getWidth() / rect.getWidth()
         );

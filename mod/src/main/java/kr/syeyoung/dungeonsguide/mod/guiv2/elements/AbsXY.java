@@ -47,8 +47,9 @@ public class AbsXY extends AnnotatedExportOnlyWidget implements Layouter {
     }
 
     private void setLocations(double old, double neu) {
-        if (getDomElement().getChildren().size() <= 0) return;
+        if (getDomElement().getChildren().size() == 0) return;
         DomElement child = getDomElement().getChildren().get(0);
+        if (child.getSize() == null) return;
         child.setRelativeBound(new Rect(x.getValue(), y.getValue(), child.getSize().getWidth(), child.getSize().getHeight()));
     }
 
