@@ -103,7 +103,10 @@ public class CommandDgDebug extends CommandBase {
             "dumpsettings",
             "readmap",
             "testgui",
-            "clearprofile"
+            "clearprofile",
+            "fullbright",
+            "gimmebright",
+            "pfall"
     };
 
     @Override
@@ -187,30 +190,12 @@ public class CommandDgDebug extends CommandBase {
             case "clearprofile":
                 clearProfileCommand();
                 break;
+            case "fullbright":
             case "gimmebright":
-                Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, 1000);
+                fullBrightCommand(args);
                 break;
             case "pfall":
-                try {
-                    DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-                    EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-                    if (thePlayer == null) {
-                        return;
-                    }
-                    if (context.getBossfightProcessor() != null) {
-                        context.getBossfightProcessor().tick();
-                    }
-                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
-
-                    DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
-                    GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-                    // performance testing (lol)
-                    for (String s : dungeonRoom.getMechanics().keySet()) {
-                        grp.pathfind("COMMAND-"+s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
-                    }
-                } catch (Throwable t) {
-                    t.printStackTrace();
-                }
+                pFallCommand();
                 break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
@@ -654,5 +639,41 @@ public class CommandDgDebug extends CommandBase {
 
     private void clearProfileCommand() {
         Minecraft.getMinecraft().mcProfiler.clearProfiling();
+    }
+
+    private void fullBrightCommand(String[] args) {
+        int gammaVal = 1000;
+        if (args.length == 2) {
+            try {
+                gammaVal = Integer.parseInt(args[1]);
+            } catch (NumberFormatException e) {
+                e.printStackTrace();
+                ChatTransmitter.addToQueue(new ChatComponentText("Invalid number, defaulting to 1000"));
+            }
+        }
+        Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, gammaVal);
+    }
+
+    private void pFallCommand() {
+        try {
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+            if (thePlayer == null) {
+                return;
+            }
+            if (context.getBossfightProcessor() != null) {
+                context.getBossfightProcessor().tick();
+            }
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+
+            DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+            GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+            // performance testing (lol)
+            for (String s : dungeonRoom.getMechanics().keySet()) {
+                grp.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
+        }
     }
 }
