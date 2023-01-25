@@ -188,7 +188,7 @@ public class DefaultFontRenderer implements FontRenderer {
         }
 
         if (isShadow) lineElement.textStyle.getShadowShader().freeShader();
-
+        GlStateManager.enableTexture2D(); // probably it expects it to be on
     }
 
     @Override
