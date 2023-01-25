@@ -36,7 +36,7 @@ public class AbsPosPositioner implements Positioner {
         double xScale = Minecraft.getMinecraft().displayWidth/screenWidth;
         double yScale = Minecraft.getMinecraft().displayHeight /screenHeight;
         Size size = domElement.getLayouter().layout(domElement,
-                new ConstraintBox(0, screenWidth-x, 0, screenHeight - y));
+                new ConstraintBox(0, screenWidth-x /xScale, 0, screenHeight - y/yScale));
         return new Rect(x / xScale, y/ yScale, size.getWidth(), size.getHeight());
     }
 }
