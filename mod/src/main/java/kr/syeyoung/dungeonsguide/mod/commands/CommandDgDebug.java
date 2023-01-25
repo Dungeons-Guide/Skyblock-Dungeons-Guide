@@ -190,6 +190,28 @@ public class CommandDgDebug extends CommandBase {
             case "gimmebright":
                 Minecraft.getMinecraft().gameSettings.setOptionFloatValue(GameSettings.Options.GAMMA, 1000);
                 break;
+            case "pfall":
+                try {
+                    DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+                    EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+                    if (thePlayer == null) {
+                        return;
+                    }
+                    if (context.getBossfightProcessor() != null) {
+                        context.getBossfightProcessor().tick();
+                    }
+                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+
+                    DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
+                    GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
+                    // performance testing (lol)
+                    for (String s : dungeonRoom.getMechanics().keySet()) {
+                        grp.pathfind("COMMAND-"+s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
+                    }
+                } catch (Throwable t) {
+                    t.printStackTrace();
+                }
+                break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg loadrooms §7-§f Reloads dungeon roomdata."));

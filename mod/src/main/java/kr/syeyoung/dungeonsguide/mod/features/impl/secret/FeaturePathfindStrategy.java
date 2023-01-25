@@ -82,10 +82,7 @@ public class FeaturePathfindStrategy extends SimpleFeature {
     public enum PathfindStrategy {
         THETA_STAR("The default pathfinding algorithm. It will generate sub-optimal path quickly."),
         A_STAR_DIAGONAL("New pathfinding algorithm. It will generate path that looks like the one JPS generates"),
-        A_STAR_FINE_GRID("New pathfinding algorithm. It will generate path that kind of looks like stair"),
-        JPS_LEGACY("The improved pathfinding algorithm. Not suggested for usage. It will have problems on diagonal movements, thus giving wrong routes"),
-        A_STAR_LEGACY("The first pathfinding algorithm. It may have problem on navigating through stairs. This is the one used by Minecraft for mob pathfind.");
-
+        A_STAR_FINE_GRID("New pathfinding algorithm. It will generate path that kind of looks like stair");
         private final String description;
     }
 
