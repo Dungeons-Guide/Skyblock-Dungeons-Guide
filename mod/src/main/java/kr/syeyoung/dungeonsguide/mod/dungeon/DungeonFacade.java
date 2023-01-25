@@ -34,8 +34,13 @@ import java.security.NoSuchAlgorithmException;
 public class DungeonFacade {
 
     @Getter
-    @Setter
     private DungeonContext context;
+
+    public void setContext(DungeonContext context) {
+        if (this.context != null)
+            this.context.cleanup();
+        this.context = context;
+    }
 
     public void init() {
         try {

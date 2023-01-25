@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapConstantRetriever;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
@@ -54,6 +55,7 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DungeonContext {
     @Getter @Setter
@@ -66,6 +68,9 @@ public class DungeonContext {
     private DungeonRoomScaffoldParser scaffoldParser;
     @Getter
     private DungeonEventRecorder recorder = new DungeonEventRecorder();
+
+    @Getter
+    private List<PathfinderExecutor> executors = new CopyOnWriteArrayList<>();
 
 
     @Getter
@@ -91,6 +96,8 @@ public class DungeonContext {
 
     @Getter @Setter
     public int percentage;
+
+    private PathfinderExecutorExecutor executor = new PathfinderExecutorExecutor(this);
 
 
     public void setGotMimic(boolean gotMimic) {
@@ -130,6 +137,8 @@ public class DungeonContext {
 
 
         init = System.currentTimeMillis();
+
+        executor.start();
     }
 
 
@@ -200,6 +209,10 @@ public class DungeonContext {
         } else {
             getScaffoldParser().processMap(mapUpdateEvent.getMapData());
         }
+    }
+
+    public void cleanup() {
+        executor.interrupt();
     }
 
     @Getter

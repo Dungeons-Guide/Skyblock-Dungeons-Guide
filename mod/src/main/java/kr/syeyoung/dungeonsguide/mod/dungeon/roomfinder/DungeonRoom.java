@@ -32,6 +32,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarCornerCut;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGrid;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.ThetaStar;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
@@ -43,13 +47,8 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.entity.Entity;
-import net.minecraft.pathfinding.PathEntity;
-import net.minecraft.pathfinding.PathFinder;
-import net.minecraft.pathfinding.PathPoint;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
-import net.minecraft.world.IBlockAccess;
 import net.minecraft.world.World;
 
 import javax.vecmath.Vector2d;
@@ -102,62 +101,26 @@ public class DungeonRoom {
         this.currentState = currentState;
     }
 
-    private final Map<BlockPos, AStarFineGrid> activeBetterAStar = new HashMap<>();
-    private final Map<BlockPos, AStarCornerCut> activeBetterAStarCornerCut = new HashMap<>();
-    private final Map<BlockPos, ThetaStar> activeThetaStar = new HashMap<>();
+    private final Map<BlockPos, PathfinderExecutor> activePathfind = new HashMap<>();
 
-    public ScheduledFuture<List<Vec3>> createEntityPathTo(IBlockAccess blockAccess, Entity entityIn, BlockPos targetPos, float dist, int timeout) {
+    public PathfinderExecutor createEntityPathTo(BlockPos pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-        if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.JPS_LEGACY) {
-            return asyncPathFinder.schedule(() -> {
-                BlockPos min = new BlockPos(getMin().getX(), 0, getMin().getZ());
-                BlockPos max=  new BlockPos(getMax().getX(), 255, getMax().getZ());
-                JPSPathfinder pathFinder = new JPSPathfinder(this);
-                pathFinder.pathfind(entityIn.getPositionVector(), new Vec3(targetPos).addVector(0.5, 0.5, 0.5), 1.5f,timeout);
-                return pathFinder.getRoute();
-            }, 0, TimeUnit.MILLISECONDS);
-        } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID) {
-            return asyncPathFinder.schedule(() -> {
-                AStarFineGrid pathFinder =
-                        activeBetterAStar.computeIfAbsent(targetPos, (pos) -> new AStarFineGrid(this, new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5)));
-                pathFinder.pathfind(entityIn.getPositionVector(),timeout);
-                return pathFinder.getRoute();
-            }, 0, TimeUnit.MILLISECONDS);
-        }else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_DIAGONAL) {
-            return asyncPathFinder.schedule(() -> {
-                AStarCornerCut pathFinder =
-                        activeBetterAStarCornerCut.computeIfAbsent(targetPos, (pos) -> new AStarCornerCut(this, new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5)));
-                pathFinder.pathfind(entityIn.getPositionVector(),timeout);
-                return pathFinder.getRoute();
-            }, 0, TimeUnit.MILLISECONDS);
+        if (activePathfind.containsKey(pos)) return  activePathfind.get(pos);
+        PathfinderExecutor executor;
+        if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID) {
+            executor = new PathfinderExecutor(new AStarFineGrid(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
+        } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_DIAGONAL) {
+            executor = new PathfinderExecutor(new AStarCornerCut(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
         } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.THETA_STAR) {
-            return asyncPathFinder.schedule(() -> {
-                ThetaStar pathFinder =
-                        activeThetaStar.computeIfAbsent(targetPos, (pos) -> new ThetaStar(this, new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5)));
-                pathFinder.pathfind(entityIn.getPositionVector(),timeout);
-                return pathFinder.getRoute();
-            }, 0, TimeUnit.MILLISECONDS);
+            executor = new PathfinderExecutor(new ThetaStar(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
         } else {
-            return asyncPathFinder.schedule(() -> {
-                PathFinder pathFinder = new PathFinder(nodeProcessorDungeonRoom);
-                PathEntity latest = pathFinder.createEntityPathTo(blockAccess, entityIn, targetPos, dist);
-                if (latest != null) {
-                    List<Vec3> poses = new ArrayList<>();
-                    for (int i = 0; i < latest.getCurrentPathLength(); i++) {
-                        PathPoint pathPoint = latest.getPathPointFromIndex(i);
-                        poses.add(new Vec3(getMin().add(pathPoint.xCoord, pathPoint.yCoord, pathPoint.zCoord)).addVector(0.5,0.5,0.5));
-                    }
-                    return poses;
-                }
-                return new ArrayList<>();
-            }, 0, TimeUnit.MILLISECONDS);
+            return  null;
         }
+        activePathfind.put(pos, executor);
+        context.getExecutors().add(executor);
+        return executor;
     }
     private static final ExecutorService roomMatcherThread = Executors.newSingleThreadExecutor( DungeonsGuide.THREAD_FACTORY);
-
-    private static final ScheduledExecutorService asyncPathFinder = Executors.newScheduledThreadPool(4, DungeonsGuide.THREAD_FACTORY);
-    @Getter
-    private final NodeProcessorDungeonRoom nodeProcessorDungeonRoom;
 
     @Getter
     private final Map<String, Object> roomContext = new HashMap<>();
@@ -202,7 +165,6 @@ public class DungeonRoom {
         arr = new long[lenx *leny * lenz * 2 / 8];;
 
         buildDoors(doorsAndStates);
-        nodeProcessorDungeonRoom = new NodeProcessorDungeonRoom(this);
 
         roomMatcherThread.submit(() -> {
             try {
