@@ -65,11 +65,6 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         this.featureRect = new GUIRectangle(0, 0, width, height);
     }
 
-
-    public Rect getWidgetPosition() {
-        Rectangle loc = featureRect.getRectangleNoScale();
-        return new Rect(loc.x, loc.y, loc.width, loc.height);
-    }
     public abstract void drawDemo(float partialTicks);
 
     @Override

@@ -33,7 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectanglePositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
@@ -199,11 +199,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     OverlayManager.getInstance().removeOverlay(lastOpen);
                 widget = new OverlayWidget(
                     mechanicBrowser = new WidgetMechanicBrowser(dungeonRoomOpt.get()),
-                    OverlayType.OVER_CHAT,
-                    () -> {
-                        Rectangle loc = getFeatureRect().getRectangleNoScale();
-                        return new Rect(loc.x, loc.y, loc.width, loc.height);
-                    });
+                    OverlayType.OVER_CHAT, new GUIRectanglePositioner(this::getFeatureRect));
             }
         }
         if (mechanicBrowser != null)

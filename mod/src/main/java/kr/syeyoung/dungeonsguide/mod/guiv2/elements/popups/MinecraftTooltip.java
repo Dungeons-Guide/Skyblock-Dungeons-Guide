@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -52,7 +52,7 @@ public class MinecraftTooltip extends Widget implements Renderer, Layouter {
     @Override
     public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
         GuiUtils.drawHoveringText(tooltip,0,0,
-                Minecraft.getMinecraft().displayWidth,
-                Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
+                (int) buildContext.getRelativeBound().getWidth(),
+                (int) buildContext.getRelativeBound().getHeight(), -1, Minecraft.getMinecraft().fontRendererObj);
     }
 }

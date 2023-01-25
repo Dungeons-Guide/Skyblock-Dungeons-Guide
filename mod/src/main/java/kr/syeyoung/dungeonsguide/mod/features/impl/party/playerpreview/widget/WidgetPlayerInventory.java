@@ -21,9 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -124,7 +124,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
             this.tooltip = null;
         } else if (toHover != null && this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip), (a) -> {
+                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip), (a) -> {
                         this.tooltip = null;
                     });
         return true;

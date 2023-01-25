@@ -18,33 +18,26 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 
-import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FakePlayer;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.MouseTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-import lombok.AllArgsConstructor;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.inventory.GuiInventory;
 import net.minecraft.client.renderer.GlStateManager;
-import net.minecraft.client.renderer.RenderHelper;
 import net.minecraft.item.ItemStack;
 import net.minecraft.util.EnumChatFormatting;
 import org.lwjgl.opengl.GL11;
@@ -153,7 +146,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
             this.tooltip = null;
         } else if (toHover != null && this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
-                    .openPopup(this.tooltip = new MouseTooltip(absMouseX, absMouseY, actualTooltip),(a) -> {
+                    .openPopup(this.tooltip = new MouseTooltip(actualTooltip),(a) -> {
                         this.tooltip = null;
                     });
         return false;

@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
+import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
 import net.minecraft.client.Minecraft;
 
 public class PlayingDGAlarm extends AbstractGuiFeature {
@@ -42,7 +43,7 @@ public class PlayingDGAlarm extends AbstractGuiFeature {
         return new OverlayWidget(
                 onlinePeopleViewer = new WidgetOnlinePeopleViewer(),
                 OverlayType.OVER_ANY,
-                () -> new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight)
+                new WholeScreenPositioner()
         );
     }
 

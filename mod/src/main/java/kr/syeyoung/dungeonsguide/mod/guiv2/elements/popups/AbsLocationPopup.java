@@ -16,16 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.util.ResourceLocation;
 
-public class LocationedPopup extends AnnotatedWidget {
+public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "x")
     public final BindableAttribute<Double> x = new BindableAttribute<>(Double.class);
     @Bind(variableName = "y")
@@ -34,16 +37,49 @@ public class LocationedPopup extends AnnotatedWidget {
     public final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
     @Bind(variableName = "child")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
-    public LocationedPopup(double x, double y, Widget child) {
+
+    public final BindableAttribute<Double> absX = new BindableAttribute<>(Double.class);
+    public final BindableAttribute<Double> absY = new BindableAttribute<>(Double.class);
+    public boolean autoclose = false;
+    public AbsLocationPopup(double x, double y, Widget child, boolean autoclose) {
         super(new ResourceLocation("dungeonsguide:gui/elements/locationedPopup.gui"));
-        this.x.setValue(x);
-        this.y.setValue(y);
+        absX.setValue(x);
+        absY.setValue(y);
+        absX.addOnUpdate(this::updatePos);
+        absY.addOnUpdate(this::updatePos);
         this.child.setValue(child);
+        this.autoclose = autoclose;
+    }
+    public AbsLocationPopup(BindableAttribute<Double> x, BindableAttribute<Double> y, Widget child, boolean autoclose) {
+        super(new ResourceLocation("dungeonsguide:gui/elements/locationedPopup.gui"));
+        x.exportTo(this.absX);
+        y.exportTo(this.absY);
+        absX.addOnUpdate(this::updatePos);
+        absY.addOnUpdate(this::updatePos);
+        this.child.setValue(child);
+        this.autoclose = autoclose;
+    }
+
+    @Override
+    public void onMount() {
+        updatePos(0,0);
+    }
+
+    public void updatePos(double old, double neu) {
+        PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
+        Rect rect = popupMgr.getDomElement().getAbsBounds();
+        Rect rel = popupMgr.getDomElement().getRelativeBound();
+        this.x.setValue(
+                (absX.getValue() - rect.getX()) * rel.getWidth() / rect.getWidth()
+        );
+        this.y.setValue(
+                (absY.getValue() - rect.getY()) * rel.getHeight() / rect.getHeight()
+        );
     }
 
     @Override
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
-        if (!ref.getValue().getAbsBounds().contains(absMouseX, absMouseY)) {
+        if (!ref.getValue().getAbsBounds().contains(absMouseX, absMouseY) && autoclose) {
             PopupMgr.getPopupMgr(getDomElement()).closePopup(this,null);
         }
         return false;

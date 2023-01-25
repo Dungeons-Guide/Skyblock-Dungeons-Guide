@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.view;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;

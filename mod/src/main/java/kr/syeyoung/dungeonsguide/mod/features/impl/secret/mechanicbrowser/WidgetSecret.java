@@ -21,8 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.LocationedPopup;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
@@ -54,14 +54,14 @@ public class WidgetSecret extends AnnotatedWidget {
         this.onSelect = selectedId;
     }
 
-    private LocationedPopup popup;
+    private AbsLocationPopup popup;
     @On(functionName = "toggleStates")
     public void openStates() {
         Rect abs = getDomElement().getAbsBounds();
         double x = abs.getX() + abs.getWidth();
         double y = abs.getY();
 
-        if (x + 120 > Minecraft.getMinecraft().displayWidth)
+        if (!PopupMgr.getPopupMgr(getDomElement()).getDomElement().getAbsBounds().contains(x + 120 , y))
             x = abs.getX() - 120;
 
 
@@ -69,7 +69,7 @@ public class WidgetSecret extends AnnotatedWidget {
 
         if (popup == null) {
             PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
-            popupMgr.openPopup(popup = new LocationedPopup(x, y, new WidgetStateTooltip(room, mechanic, id)), (val) -> {
+            popupMgr.openPopup(popup = new AbsLocationPopup(x, y, new WidgetStateTooltip(room, mechanic, id), true), (val) -> {
                 if (val == null)
                     onSelect.accept(null);
                 popup = null;

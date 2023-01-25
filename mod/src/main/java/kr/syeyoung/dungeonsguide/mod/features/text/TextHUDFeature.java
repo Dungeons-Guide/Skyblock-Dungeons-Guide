@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectanglePositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import net.minecraft.client.Minecraft;
@@ -50,7 +51,13 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
         super(category, name, description, key, keepRatio, width, height);
         addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
-        addParameter("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string"));
+        addParameter("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string", (change) -> {
+            richText.setAlign(
+                    change.equals("LEFT") ? RichText.TextAlign.LEFT :
+                            change.equals("CENTER") ? RichText.TextAlign.CENTER :
+                                    change.equals("RIGHT") ? RichText.TextAlign.RIGHT : RichText.TextAlign.LEFT
+            );
+        }));
         addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
     }
 
@@ -66,7 +73,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
 
     @Override
     public OverlayWidget instantiateWidget() {
-        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, this::getWidgetPosition);
+        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectanglePositioner(this::getFeatureRect));
     }
 
     private Map<String, ParentDelegatingTextStyle> builtTextStyles = new HashMap<>();

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
@@ -24,21 +24,30 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import net.minecraft.util.ResourceLocation;
+import org.lwjgl.input.Mouse;
 
-public class MouseTooltip extends AnnotatedWidget {
-    @Bind(variableName = "x")
-    public final BindableAttribute<Double> x = new BindableAttribute<>(Double.class);
-    @Bind(variableName = "y")
-    public final BindableAttribute<Double> y = new BindableAttribute<>(Double.class);;
-    @Bind(variableName = "ref")
-    public final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
-    @Bind(variableName = "child")
-    public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
-    public MouseTooltip(double mouseX, double mouseY, Widget child) {
-        super(new ResourceLocation("dungeonsguide:gui/elements/locationedPopup.gui"));
-        this.x.setValue(mouseX);
-        this.y.setValue(mouseY);
-        this.child.setValue(child);
+import java.util.Collections;
+import java.util.List;
+
+public class MouseTooltip extends Widget {
+    private final AbsLocationPopup absLocationPopup;
+
+    private final BindableAttribute<Double> x = new BindableAttribute<>(Double.class, (double)Mouse.getX());
+    private final BindableAttribute<Double> y = new BindableAttribute<>(Double.class, (double)Mouse.getY());
+
+    public MouseTooltip(Widget content) {
+        absLocationPopup = new AbsLocationPopup(x,y, content, false);
+    }
+    @Override
+    public List<Widget> build(DomElement buildContext) {
+        return Collections.singletonList(absLocationPopup);
+    }
+
+    @Override
+    public void onUnmount() {
+        super.onUnmount();
+        x.unexportAll();
+        y.unexportAll();
     }
 
     @Override

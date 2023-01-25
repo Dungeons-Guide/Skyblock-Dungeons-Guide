@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,20 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.view;
+package kr.syeyoung.dungeonsguide.mod.overlay;
 
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
-import net.minecraft.util.ResourceLocation;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 
-public class TestPopup extends AnnotatedImportOnlyWidget {
-    public TestPopup() {
-        super(new ResourceLocation("dungeonsguide:gui/testpopup.gui"));
-    }
-
-    @On(functionName = "close")
-    public void onClick() {
-        PopupMgr.getPopupMgr(getDomElement()).closePopup(null);
-    }
+public interface Positioner {
+    Rect position(DomElement domElement, double screenWidth, double screenHeight);
 }

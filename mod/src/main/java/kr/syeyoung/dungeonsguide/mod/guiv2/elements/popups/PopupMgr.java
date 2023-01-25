@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
+package kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
@@ -49,6 +49,8 @@ public class PopupMgr extends AnnotatedWidget {
     public void onMount() {
         super.onMount();
         getDomElement().getContext().CONTEXT.put("popup", this);
+        getDomElement().getContext().CONTEXT.put("popupWidth", this.getDomElement().getRelativeBound().getWidth());
+        getDomElement().getContext().CONTEXT.put("popupHeight", this.getDomElement().getRelativeBound().getHeight());
     }
 
     @Override

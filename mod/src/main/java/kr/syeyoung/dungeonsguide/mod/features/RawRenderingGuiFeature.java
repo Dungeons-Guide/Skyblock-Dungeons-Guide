@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectanglePositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import lombok.Getter;
@@ -64,7 +65,7 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
         return new OverlayWidget(
                 new WidgetFeatureWrapper(),
                 OverlayType.UNDER_CHAT,
-                this::getWidgetPosition
+                new GUIRectanglePositioner(this::getFeatureRect)
         );
     }
 

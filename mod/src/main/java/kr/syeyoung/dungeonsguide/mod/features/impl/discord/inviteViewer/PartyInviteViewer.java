@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
+import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
 import net.minecraft.client.Minecraft;
 
 import java.util.concurrent.ExecutorService;
@@ -49,7 +50,7 @@ public class PartyInviteViewer extends AbstractGuiFeature {
         return new OverlayWidget(
                 partyInviteViewer = new WidgetPartyInviteViewer(),
                 OverlayType.OVER_ANY,
-                () -> new Rect(0,0,Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight)
+                new WholeScreenPositioner()
         );
     }
 

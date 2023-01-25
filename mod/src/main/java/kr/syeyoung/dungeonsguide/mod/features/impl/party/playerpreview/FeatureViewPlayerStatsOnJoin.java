@@ -37,9 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFe
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget.WidgetProfileViewer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
+import kr.syeyoung.dungeonsguide.mod.overlay.*;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -150,7 +148,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                         }
                     }),
                     OverlayType.OVER_CHAT,
-                    () -> new Rect(mouseX, mouseY-height, width, height)
+                    new AbsPosPositioner(mouseX, mouseY-height)
             );
             OverlayManager.getInstance().addOverlay(widget);
         }

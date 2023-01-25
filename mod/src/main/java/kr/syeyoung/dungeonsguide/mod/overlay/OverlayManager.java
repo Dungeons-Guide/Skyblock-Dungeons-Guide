@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -62,11 +63,19 @@ public class OverlayManager {
 
     public static final String OVERLAY_TYPE_KEY = "OVERLAY_TYPE";
 
+    private Scaler scaler;
     private OverlayManager() {
         this.mc = Minecraft.getMinecraft();
+
         PopupMgr popupMgr = new PopupMgr();
         popupMgr.child.setValue(root);
-        view = new RootDom(popupMgr);
+
+
+        scaler = new Scaler();
+        scaler.child.setValue(popupMgr);
+        scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+
+        view = new RootDom(scaler);
         guiResize(null);
         view.setMounted(true);
     }
@@ -74,6 +83,7 @@ public class OverlayManager {
     @SubscribeEvent()
     public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
         try {
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
             view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
             view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
             view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
@@ -82,7 +92,7 @@ public class OverlayManager {
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayHeight,
                     Minecraft.getMinecraft().displayHeight
-        ));
+            ));
         } catch (Exception e) {
             e.printStackTrace();
         }

@@ -44,9 +44,7 @@ public class OverlayManagerRootWidget extends Widget implements Layouter {
         DomElement domElement = overlayWidget.createDomElement(getDomElement());
         getDomElement().addElement(domElement);
 
-        Rect posSize = overlayWidget.positionSize.get();
-        Size size = domElement.getLayouter().layout(domElement, new ConstraintBox(posSize.getWidth(), posSize.getWidth(), posSize.getHeight(), posSize.getHeight()));
-        domElement.setRelativeBound(new Rect(posSize.getX(), posSize.getY(), size.getWidth(), size.getHeight()));
+        updateOverlayPosition(overlayWidget);
     }
 
     public void removeOverlay(OverlayWidget widget) {
@@ -55,19 +53,19 @@ public class OverlayManagerRootWidget extends Widget implements Layouter {
 
     public void updateOverlayPosition(OverlayWidget overlayWidget) {
         DomElement domElement = overlayWidget.getDomElement();
-        Rect posSize = overlayWidget.positionSize.get();
-        Size size = domElement.getLayouter().layout(domElement, new ConstraintBox(posSize.getWidth(), posSize.getWidth(), posSize.getHeight(), posSize.getHeight()));
-        domElement.setRelativeBound(new Rect(posSize.getX(), posSize.getY(), size.getWidth(), size.getHeight()));
+        Positioner positioner = overlayWidget.positionSize;
+        domElement.setRelativeBound(positioner.position(domElement, lastWidth, lastHeight));
     }
+
+    private double lastWidth, lastHeight;
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        lastWidth = constraintBox.getMaxWidth();
+        lastHeight = constraintBox.getMaxHeight();
         for (DomElement child : buildContext.getChildren()) {
             if (!(child.getWidget() instanceof OverlayWidget)) continue;
-
-            Rect posSize = ((OverlayWidget) child.getWidget()).positionSize.get();
-            Size size = child.getLayouter().layout(child, new ConstraintBox(posSize.getWidth(), posSize.getWidth(), posSize.getHeight(), posSize.getHeight()));
-            child.setRelativeBound(new Rect(posSize.getX(), posSize.getY(), size.getWidth(), size.getHeight()));
+            updateOverlayPosition((OverlayWidget) child.getWidget());
         }
 
         return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());

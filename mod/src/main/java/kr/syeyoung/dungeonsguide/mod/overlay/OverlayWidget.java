@@ -38,7 +38,7 @@ import java.util.function.Supplier;
 public class OverlayWidget extends Widget implements Renderer, Layouter {
     public Widget wrappingWidget;
     public OverlayType overlayType;
-    public Supplier<Rect> positionSize;
+    public Positioner positionSize;
 
     @Override
     public List<Widget> build(DomElement buildContext) {

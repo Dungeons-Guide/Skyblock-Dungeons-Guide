@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.*;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ResourceImage;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.URLImage;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.Parser;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserException;

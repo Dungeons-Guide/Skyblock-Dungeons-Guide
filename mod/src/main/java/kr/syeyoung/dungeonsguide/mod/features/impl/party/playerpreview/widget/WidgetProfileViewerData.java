@@ -27,8 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarende
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.LocationedPopup;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
@@ -101,7 +101,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
     }
 
 
-    private LocationedPopup popup;
+    private AbsLocationPopup popup;
     @On(functionName = "openInventory")
     public void openStates() {
         Rect abs = inventoryButton.getValue().getAbsBounds();
@@ -115,7 +115,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
             scaler.child.setValue(new WidgetPlayerInventory(
                     playerSkyblockData.getPlayerProfiles()[idx]
             ));
-            popupMgr.openPopup(popup = new LocationedPopup(x, y, scaler), (a) -> {
+            popupMgr.openPopup(popup = new AbsLocationPopup(x, y, scaler, true), (a) -> {
                 this.popup = null;
             });
         }
