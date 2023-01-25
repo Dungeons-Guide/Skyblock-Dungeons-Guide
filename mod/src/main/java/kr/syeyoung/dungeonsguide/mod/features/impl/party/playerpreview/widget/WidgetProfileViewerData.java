@@ -110,12 +110,9 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
 
         if (popup == null) {
             PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
-            Scaler scaler = new Scaler();
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
-            scaler.child.setValue(new WidgetPlayerInventory(
+            popupMgr.openPopup(popup = new AbsLocationPopup(x, y, new WidgetPlayerInventory(
                     playerSkyblockData.getPlayerProfiles()[idx]
-            ));
-            popupMgr.openPopup(popup = new AbsLocationPopup(x, y, scaler, true), (a) -> {
+            ), true), (a) -> {
                 this.popup = null;
             });
         }
