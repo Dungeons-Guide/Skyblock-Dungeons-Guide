@@ -40,6 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRe
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
+import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.BlockCache;
@@ -287,7 +288,6 @@ public class DungeonsGuide implements DGInterface {
     public void unload() {
         // have FUN!
 
-
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }
@@ -391,6 +391,7 @@ public class DungeonsGuide implements DGInterface {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        ShaderManager.unload();
 
         DiscordIntegrationManager.INSTANCE.cleanup();
 
@@ -407,6 +408,7 @@ public class DungeonsGuide implements DGInterface {
     public void onResourceReload(IResourceManager a) {
         GLCursors.setupCursors();
         DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
+        ShaderManager.onResourceReload();
     }
 
     private boolean showedStartUpGuide;
