@@ -190,7 +190,8 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(ChatTransmitter.INSTANCE);
         registerEventsForge(new BlockCache());
 
-        (new FeatureRegistry()).init();
+        FeatureRegistry.getFeatureList();
+
 
 
         try {

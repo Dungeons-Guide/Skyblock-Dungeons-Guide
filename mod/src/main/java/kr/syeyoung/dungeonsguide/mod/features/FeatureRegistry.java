@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureVi
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
 import kr.syeyoung.dungeonsguide.mod.features.impl.solvers.*;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import lombok.Getter;
 import org.lwjgl.input.Keyboard;
 
@@ -133,6 +134,27 @@ public class FeatureRegistry {
     public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon.Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {{
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind"));
     }});
+
+    public static final SimpleFeature GLOBAL_HUD_SCALE = register(new SimpleFeature("Misc", "Global HUD Scale", "Configure to use gui scale from Minecraft or specify custom one", "hud.globalscale", false) {
+        private boolean init = false;
+        {
+            addParameter("mc", new FeatureParameter<Boolean>("mc", "Minecraft", "Enable to use minecraft default hud scale", true, "boolean", a -> {
+                if (init)
+                OverlayManager.getEventHandler().guiResize(null);
+            }));
+            addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Custom HUD Scale",1.0f, "float", a -> {
+                if (init)
+                OverlayManager.getEventHandler().guiResize(null);
+
+            }));
+            init = true;
+        }
+
+        @Override
+        public boolean isDisyllable() {
+            return false;
+        }
+    });
 
     public static final FeatureEpicCountdown EPIC_COUNTDOWN = register(new FeatureEpicCountdown());
 

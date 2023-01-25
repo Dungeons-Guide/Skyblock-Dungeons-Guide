@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
@@ -73,17 +74,22 @@ public class OverlayManager {
 
         scaler = new Scaler();
         scaler.child.setValue(popupMgr);
-        scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+        scaler.scale.setValue(getScale());
 
         view = new RootDom(scaler);
         guiResize(null);
         view.setMounted(true);
     }
 
+    private double getScale() {
+        boolean useMc = FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").getValue();
+        if (useMc) return (double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        else return FeatureRegistry.GLOBAL_HUD_SCALE.<Float>getParameter("scale").getValue();
+    }
     @SubscribeEvent()
     public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
         try {
-            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.scale.setValue(getScale());
             view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
             view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
             view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
