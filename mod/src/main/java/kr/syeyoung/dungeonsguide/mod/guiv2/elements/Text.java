@@ -21,6 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -39,24 +44,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
 
-public class Text extends AnnotatedExportOnlyWidget implements Layouter, Renderer {
+public class Text extends AnnotatedExportOnlyWidget {
     @Export(attributeName = "text")
     public final BindableAttribute<String> text = new BindableAttribute<>(String.class, "");
 
+    private final ParentDelegatingTextStyle textStyle = new ParentDelegatingTextStyle();
+    private final RichText richText = new RichText(new TextSpan(textStyle, ""), BreakWord.WORD, true,RichText.TextAlign.LEFT);
     @Override
     public List<Widget> build(DomElement buildContext) {
-        return Collections.EMPTY_LIST;
+        return Collections.singletonList(richText);
     }
-
-    @Data @AllArgsConstructor
-    public static class WrappedTextData {
-        final int width;
-        final String text;
-    }
-    public List<WrappedTextData> wrappedTexts = new CopyOnWriteArrayList<>();
-    @Export(attributeName = "font")
-    public final BindableAttribute<FontRenderer> fontRenderer =new BindableAttribute<>(FontRenderer.class, Minecraft.getMinecraft().fontRendererObj);
-
     public static enum WordBreak {
         NEVER, WORD, LETTER
     }
@@ -77,253 +74,22 @@ public class Text extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class, 0xFF000000);
 
     public Text() {
-        text.addOnUpdate((a,b) -> getDomElement().requestRelayout());
-        fr = Minecraft.getMinecraft().fontRendererObj;
-    }
-    private FontRenderer fr;
-
-    @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
-        int y = 0;
-        int color = this.color.getValue();
-        int yInc = (int) (fr.FONT_HEIGHT * lineSpacing.getValue());
-        double width =buildContext.getSize().getWidth();
-
-        GlStateManager.enableTexture2D();
-        if (textAlign.getValue() == TextAlign.LEFT) {
-            for (WrappedTextData wrappedText : wrappedTexts) {
-                fr.drawString(wrappedText.text, 0, y, color);
-                y += yInc;
-            }
-        } else if (textAlign.getValue() == TextAlign.CENTER) {
-            for (WrappedTextData wrappedText : wrappedTexts) {
-                fr.drawString(wrappedText.text, (int) ((width-wrappedText.getWidth())/2), y, color);
-                y += yInc;
-            }
-        } else {
-            for (WrappedTextData wrappedText : wrappedTexts) {
-                fr.drawString(wrappedText.text, (int) (width - wrappedText.getWidth()), y, color);
-                y += yInc;
-            }
-        }
-    }
-
-
-    @Override
-    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        List<WrappedTextData> wrappedTexts = new ArrayList<>();
-
-        FontRenderer fr = fontRenderer.getValue();
-        String text = this.text.getValue();
-
-        boolean hadToWrap = false;
-        int maxWidth2 = 0;
-
-
-        WordBreak wordBreak = this.wordBreak.getValue();
-
-        String[] splitByLine = text.split("\n");
-        for (String line : splitByLine) {
-            String[] splitByWord = line.split(" ");
-            double maxWidth = constraintBox.getMaxWidth();
-            int currentWidth = 0;
-            boolean added = false;
-            StringBuilder currentLine = new StringBuilder();
-            for (String s : splitByWord) {
-                int strWidth = fr.getStringWidth((added ? " " : "") +s);
-                if (strWidth + currentWidth <= maxWidth) {
-                    if (added) currentLine.append(" ");
-                    currentLine.append(s);
-                    added = true;
-                    currentWidth += strWidth;
-                } else {
-                    hadToWrap = true;
-                    // need to break word.
-                    if (wordBreak == WordBreak.WORD) {
-                        String current = s;
-                        if (fr.getStringWidth(s) > maxWidth) {
-                            // there is no hope. just continue.
-                            current = currentLine.toString()+ " "+s;
-                        } else {
-                            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
-                            current = s;
-                        }
-
-                        // binary search unsplittable.
-                        while (fr.getStringWidth(current) > maxWidth) {
-                            currentLine = new StringBuilder("");
-                            String remaining = "";
-                            currentWidth = 0;
-                            double remainingWidth = maxWidth - currentWidth;
-                            while(current.length() > 1 && remainingWidth > 4) {
-                                String query = current.substring(0, current.length()/2);
-                                int len = fr.getStringWidth(query);
-                                if (len <= remainingWidth) {
-                                    currentLine.append(query);
-                                    remainingWidth -= len;
-                                    current = current.substring(current.length() / 2);
-                                } else {
-                                    remaining = current.substring(current.length() / 2) + remaining;
-                                    current = query;
-                                }
-                            }
-                            remaining = current + remaining;
-
-                            wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
-
-                            current = remaining;
-                        }
-                        currentLine = new StringBuilder(current);
-                        currentWidth = fr.getStringWidth(current);
-                    } else if (wordBreak == WordBreak.NEVER) {
-                        currentLine.append(" ").append(s);
-                        currentWidth += strWidth;
-                        break;
-                    } else {
-                        // binary search correct length-
-                        String current = " "+s;
-                        double remainingWidth = maxWidth - currentWidth;
-                        String remaining = "";
-                        while(current.length() > 1 && remainingWidth > 4) {
-                            String query = current.substring(0, current.length()/2);
-                            int len = fr.getStringWidth(query);
-                            if (len <= remainingWidth) {
-                                currentLine.append(query);
-                                remainingWidth -= len;
-                                current = current.substring(current.length() / 2);
-                            } else {
-                                remaining = current.substring(current.length() / 2) + remaining;
-                                current = query;
-                            }
-                        }
-                        remaining = current + remaining;
-
-                        wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
-                        currentLine = new StringBuilder(remaining);
-                        currentWidth = fr.getStringWidth(remaining);
-                    }
-                }
-            }
-            if (currentWidth > maxWidth2) maxWidth2 = currentWidth;
-            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
-        }
-
-        this.wrappedTexts = wrappedTexts;
-
-        return new Size(hadToWrap ? constraintBox.getMaxWidth() :
-                Layouter.clamp(maxWidth2, constraintBox.getMinWidth(), constraintBox.getMaxWidth()),
-                Layouter.clamp( (fr.FONT_HEIGHT * lineSpacing.getValue()) * wrappedTexts.size(), constraintBox.getMinHeight(), constraintBox.getMaxHeight()));
-    }
-
-    @Override
-    public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
-        int max = 0;
-        for (String s : this.text.getValue().split("\n")) {
-            max = Integer.max(max, fr.getStringWidth(s));
-        }
-        return max;
-    }
-
-    // TODO: incorporate line breaking into
-    // TODO: maybe turn into rich text?
-    @Override
-    public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
-        List<WrappedTextData> wrappedTexts = new ArrayList<>();
-        FontRenderer fr = fontRenderer.getValue();
-        String text = this.text.getValue();
-
-        boolean hadToWrap = false;
-        int maxWidth2 = 0;
-
-
-        WordBreak wordBreak = this.wordBreak.getValue();
-
-        String[] splitByLine = text.split("\n");
-        for (String line : splitByLine) {
-            String[] splitByWord = line.split(" ");
-            double maxWidth = width;
-            int currentWidth = 0;
-            boolean added = false;
-            StringBuilder currentLine = new StringBuilder();
-            for (String s : splitByWord) {
-                int strWidth = fr.getStringWidth((added ? " " : "") +s);
-                if (strWidth + currentWidth <= maxWidth) {
-                    if (added) currentLine.append(" ");
-                    currentLine.append(s);
-                    added = true;
-                    currentWidth += strWidth;
-                } else {
-                    hadToWrap = true;
-                    // need to break word.
-                    if (wordBreak == WordBreak.WORD) {
-                        String current = s;
-                        if (fr.getStringWidth(s) > maxWidth) {
-                            // there is no hope. just continue.
-                            current = currentLine.toString()+ " "+s;
-                        } else {
-                            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
-                            current = s;
-                        }
-
-                        // binary search unsplittable.
-                        while (fr.getStringWidth(current) > maxWidth) {
-                            currentLine = new StringBuilder("");
-                            String remaining = "";
-                            currentWidth = 0;
-                            double remainingWidth = maxWidth - currentWidth;
-                            while(current.length() > 1 && remainingWidth > 4) {
-                                String query = current.substring(0, current.length()/2);
-                                int len = fr.getStringWidth(query);
-                                if (len <= remainingWidth) {
-                                    currentLine.append(query);
-                                    remainingWidth -= len;
-                                    current = current.substring(current.length() / 2);
-                                } else {
-                                    remaining = current.substring(current.length() / 2) + remaining;
-                                    current = query;
-                                }
-                            }
-                            remaining = current + remaining;
-
-                            wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
-
-                            current = remaining;
-                        }
-                        currentLine = new StringBuilder(current);
-                        currentWidth = fr.getStringWidth(current);
-                    } else if (wordBreak == WordBreak.NEVER) {
-                        currentLine.append(" ").append(s);
-                        currentWidth += strWidth;
-                        break;
-                    } else {
-                        // binary search correct length-
-                        String current = " "+s;
-                        double remainingWidth = maxWidth - currentWidth;
-                        String remaining = "";
-                        while(current.length() > 1 && remainingWidth > 4) {
-                            String query = current.substring(0, current.length()/2);
-                            int len = fr.getStringWidth(query);
-                            if (len <= remainingWidth) {
-                                currentLine.append(query);
-                                remainingWidth -= len;
-                                current = current.substring(current.length() / 2);
-                            } else {
-                                remaining = current.substring(current.length() / 2) + remaining;
-                                current = query;
-                            }
-                        }
-                        remaining = current + remaining;
-
-                        wrappedTexts.add(new WrappedTextData((int) (maxWidth - remainingWidth), currentLine.toString()));
-                        currentLine = new StringBuilder(remaining);
-                        currentWidth = fr.getStringWidth(remaining);
-                    }
-                }
-            }
-            if (currentWidth > maxWidth2) maxWidth2 = currentWidth;
-            wrappedTexts.add(new WrappedTextData(currentWidth, currentLine.toString()));
-        }
-
-        return (fr.FONT_HEIGHT * lineSpacing.getValue()) * wrappedTexts.size();
+        text.addOnUpdate((a,b) ->  {
+            richText.setRootSpan(new TextSpan(textStyle, b));
+        });
+        wordBreak.addOnUpdate((a,b) -> {
+            richText.setBreakWord(b == WordBreak.WORD ? BreakWord.WORD : BreakWord.ALL);
+        });
+        lineSpacing.addOnUpdate((a,b) -> {
+            textStyle.topAscent = b;
+            richText.setRootSpan(new TextSpan(textStyle, text.getValue()));
+        });
+        textAlign.addOnUpdate((a,b) -> {
+            richText.setAlign(b == TextAlign.LEFT ? RichText.TextAlign.LEFT : b == TextAlign.CENTER ? RichText.TextAlign.CENTER : RichText.TextAlign.RIGHT);
+        });
+        color.addOnUpdate((a,b) -> {
+            textStyle.textShader = new SingleColorShader(b);
+            richText.setRootSpan(new TextSpan(textStyle, text.getValue()));
+        });
     }
 }
