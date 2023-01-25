@@ -71,8 +71,6 @@ public class RoundRect extends AnnotatedExportOnlyWidget {
                     (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),
                     Minecraft.getMinecraft().displayHeight - (float) (buildContext.getAbsBounds().getY() + buildContext.getAbsBounds().getHeight()/2));
             shaderProgram.uploadUniform("smoothness", 0.0f);
-
-            GlStateManager.color(0.0f, 1.0f, 1.0f, 1.0f);
             renderingContext.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), color.getValue());
             GL20.glUseProgram(0);
             super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
