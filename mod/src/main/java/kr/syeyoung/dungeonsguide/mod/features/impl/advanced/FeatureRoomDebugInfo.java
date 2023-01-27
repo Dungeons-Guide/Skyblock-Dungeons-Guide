@@ -39,7 +39,7 @@ import java.util.List;
 
 public class FeatureRoomDebugInfo extends TextHUDFeature {
     public FeatureRoomDebugInfo() {
-        super("Debug", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo", false, getFontRenderer().getStringWidth("longestplayernamepos: 100"), getFontRenderer().FONT_HEIGHT * 6);
+        super("Debug", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo");
         this.setEnabled(false);
         getStyles().add(new TextStyle("info", new AColor(Color.white.getRGB(),true), new AColor(0, 0,0,0), false));
     }

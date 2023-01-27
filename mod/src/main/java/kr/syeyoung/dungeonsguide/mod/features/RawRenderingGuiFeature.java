@@ -18,31 +18,55 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Clip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectanglePositioner;
+import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
 @Getter
 public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
+    private Double ratio;
 
-    protected RawRenderingGuiFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
-        super(category, name, description, key, keepRatio, width, height);
+    protected RawRenderingGuiFeature(String category, String name, String description, String key, boolean keepRatio, double width, double height) {
+        super(category, name, description, key);
+        this.ratio = keepRatio ? height / width : null;
+        if (keepRatio)
+            this.getFeatureRect().setWidth(width);
+        else {
+            this.getFeatureRect().setWidth(width);
+            this.getFeatureRect().setHeight(height);
+        }
+    }
+
+    @Override
+    public Double getKeepRatio() {
+        return ratio;
+    }
+
+    @Override
+    public boolean requiresWidthBound() {
+        return true;
+    }
+
+    @Override
+    public boolean requiresHeightBound() {
+        return ratio == null;
     }
 
     public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
@@ -58,7 +82,41 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
 
         @Override
         public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-            return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+            return new Size(getFeatureRect().getWidth(),
+                    ratio != null ? getFeatureRect().getWidth() * ratio : getFeatureRect().getHeight());
+        }
+    }
+    public class WidgetFeatureWrapper2 extends Widget implements Renderer, Layouter, MarkerProvider {
+        @Override
+        public List<Widget> build(DomElement buildContext) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+            if (buildContext.getSize().getWidth() <= 0 || buildContext.getSize().getHeight() <= 0)
+                return;
+            context.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
+            drawDemo(partialTicks);
+            context.popClip();
+        }
+
+        @Override
+        public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+            return new Size(getFeatureRect().getWidth(),
+                    ratio != null ? getFeatureRect().getWidth() * ratio : getFeatureRect().getHeight());
+        }
+
+        @Override
+        public List<Position> getMarkers() {
+            Size size = getDomElement().getSize();
+
+            return Arrays.asList(
+                    new Position(size.getWidth()/2, 0),
+                    new Position(0, size.getHeight()/2),
+                    new Position(size.getWidth()/2,size.getHeight()),
+                    new Position(size.getWidth(),size.getHeight()/2)
+            );
         }
     }
 
@@ -68,10 +126,13 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
         return new OverlayWidget(
                 clip,
                 OverlayType.UNDER_CHAT,
-                new GUIRectanglePositioner(this::getFeatureRect)
+                new GUIRectPositioner(this::getFeatureRect)
         );
     }
 
+    public Widget instantiateDemoWidget() {
+        return new WidgetFeatureWrapper2();
+    }
     public void drawScreen(float partialTicks) {
         drawHUD(partialTicks);
     }

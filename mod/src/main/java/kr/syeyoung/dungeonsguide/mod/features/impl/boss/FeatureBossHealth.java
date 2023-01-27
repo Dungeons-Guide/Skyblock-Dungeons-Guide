@@ -35,7 +35,7 @@ import java.util.List;
 
 public class FeatureBossHealth extends TextHUDFeature {
     public FeatureBossHealth() {
-        super("Dungeon.Bossfight", "Display Boss(es) Health", "Show the health of boss and minibosses in bossfight (Guardians, Priests..)", "bossfight.health", false, getFontRenderer().getStringWidth("The Professor: 4242m"), getFontRenderer().FONT_HEIGHT * 5);
+        super("Dungeon.Bossfight", "Display Boss(es) Health", "Show the health of boss and minibosses in bossfight (Guardians, Priests..)", "bossfight.health");
         this.setEnabled(true);
         addParameter("totalHealth", new FeatureParameter<Boolean>("totalHealth", "show total health", "Show total health along with current health", false, "boolean", nval -> totalHealth = nval));
         addParameter("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, "boolean", nval -> formatHealth = nval));
@@ -53,12 +53,6 @@ public class FeatureBossHealth extends TextHUDFeature {
     boolean formatHealth;
     boolean ignoreInattackable;
 
-
-
-    @Override
-    public boolean doesScaleWithHeight() {
-        return false;
-    }
 
     @Override
     public boolean isHUDViewable() {

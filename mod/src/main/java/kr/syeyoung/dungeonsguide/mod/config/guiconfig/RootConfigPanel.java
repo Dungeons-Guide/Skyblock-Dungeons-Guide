@@ -21,10 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig;
 import com.google.common.base.Function;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import lombok.Setter;
@@ -99,7 +102,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         guiRelocate = new MButton();
         guiRelocate.setText("Edit Gui Locations");
         guiRelocate.setOnActionPerformed(() -> {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(gui, null));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig())));
             guiRelocate.setBeingClicked(false);
         });
         guiRelocate.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));

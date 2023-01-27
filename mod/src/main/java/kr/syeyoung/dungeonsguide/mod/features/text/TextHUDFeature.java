@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
@@ -34,13 +35,18 @@ import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MStringSelectionButton;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
-import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectanglePositioner;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
+import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.renderer.GlStateManager;
@@ -48,8 +54,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.util.*;
 
 public abstract class TextHUDFeature extends AbstractHUDFeature implements StyledTextProvider {
-    protected TextHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
-        super(category, name, description, key, keepRatio, width, height);
+    protected TextHUDFeature(String category, String name, String description, String key) {
+        super(category, name, description, key);
         addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
         addParameter("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string", (change) -> {
             richText.setAlign(
@@ -69,11 +75,11 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     private final RichText richText = new RichText(new TextSpan(
             ParentDelegatingTextStyle.ofDefault(),
             ""
-    ), BreakWord.WORD, true, RichText.TextAlign.LEFT);
+    ), BreakWord.WORD, false, RichText.TextAlign.LEFT);
 
     @Override
     public OverlayWidget instantiateWidget() {
-        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectanglePositioner(this::getFeatureRect));
+        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectPositioner(this::getFeatureRect));
     }
 
     private Map<String, ParentDelegatingTextStyle> builtTextStyles = new HashMap<>();
@@ -86,12 +92,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
                 List<StyledText> asd = getText();
 
                 ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
-                if (doesScaleWithHeight()) {
-                    if (getWidget() == null || getWidget().getDomElement() == null || getWidget().getDomElement().getSize() == null) return;
-                    defaultStyle.setSize(getFeatureRect().getRectangleNoScale().getHeight() / countLines(asd));
-                } else {
-                    defaultStyle.setSize((double) (this.<Float>getParameter("scale").getValue() * 8));
-                }
+                defaultStyle.setSize((double) (this.<Float>getParameter("scale").getValue() * 8));
 
                 TextSpan span = new TextSpan(defaultStyle, "");
 
@@ -111,24 +112,76 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         return Minecraft.getMinecraft().fontRendererObj;
     }
 
-    public boolean doesScaleWithHeight() {
-        return true;
-    }
-
     @Override
     public void drawDemo(float partialTicks) {
         List<StyledText> asd = getDummyText();
-        double scale = 1;
-        if (doesScaleWithHeight()) {
-            FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-            scale = getFeatureRect().getRectangle().getHeight() / (fr.FONT_HEIGHT* countLines(asd));
-        } else {
-            scale = this.<Float>getParameter("scale").getValue();
-        }
+        double scale = this.<Float>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 0);
 
-        StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, (int) (Math.abs(getFeatureRect().getWidth())/scale), getStylesMap(),
+        StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, 100, getStylesMap(),
                 StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue()));
+    }
+
+    @RequiredArgsConstructor
+    public static class TextHUDDemo extends Widget implements MarkerProvider {
+        public final TextHUDFeature hudFeature;
+        @Override
+        public List<Position> getMarkers() {
+            String change = hudFeature.<String>getParameter("alignment").getValue();
+            Rect relBound = getDomElement().getRelativeBound();
+            if (change.equals("LEFT")) {
+                return Arrays.asList(
+                        new Position(0, 0),
+                        new Position(0, relBound.getHeight())
+                );
+            } else if (change.equals("CENTER")) {
+                return Arrays.asList(
+                        new Position(relBound.getWidth() /2, 0),
+                        new Position(relBound.getWidth() /2, relBound.getHeight())
+                );
+            } else if (change.equals("RIGHT")) {
+                return Arrays.asList(
+                        new Position(relBound.getWidth(), 0),
+                        new Position(relBound.getWidth(), relBound.getHeight())
+                );
+            }
+            return null;
+        }
+
+        @Override
+        public List<Widget> build(DomElement buildContext) {
+            List<StyledText> asd = hudFeature.getDummyText();
+
+            RichText richText = new RichText(new TextSpan(
+                    ParentDelegatingTextStyle.ofDefault(),
+                    ""
+            ), BreakWord.WORD, false, RichText.TextAlign.LEFT);
+            String change = hudFeature.<String>getParameter("alignment").getValue();
+            richText.setAlign(
+                    change.equals("LEFT") ? RichText.TextAlign.LEFT :
+                            change.equals("CENTER") ? RichText.TextAlign.CENTER :
+                                    change.equals("RIGHT") ? RichText.TextAlign.RIGHT : RichText.TextAlign.LEFT
+            );
+
+            ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
+            defaultStyle.setSize((double) (hudFeature.<Float>getParameter("scale").getValue() * 8));
+
+            TextSpan span = new TextSpan(defaultStyle, "");
+
+            for (StyledText styledText : asd) {
+                TextStyle style = hudFeature.getStylesMap().get(styledText.getGroup());
+                TextSpan textSpan = new TextSpan(style.getLinked(), styledText.getText());
+                span.addChild(textSpan);
+            }
+            richText.setRootSpan(span);
+
+            return Collections.singletonList(richText);
+        }
+    }
+
+    @Override
+    public Widget instantiateDemoWidget() {
+        return new TextHUDDemo(this);
     }
 
     public int countLines(List<StyledText> texts) {
@@ -212,13 +265,11 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         });
 
         mPanels.add(new MPassiveLabelAndElement("Alignment", mStringSelectionButton));
-        if (!doesScaleWithHeight()) {
-            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
-                setOnUpdate(() ->{
-                    TextHUDFeature.this.<Float>getParameter("scale").setValue(this.getData());
-                }); }
-            }));
-        }
+        mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
+            setOnUpdate(() ->{
+                TextHUDFeature.this.<Float>getParameter("scale").setValue(this.getData());
+            }); }
+        }));
 
         return mPanels;
     }

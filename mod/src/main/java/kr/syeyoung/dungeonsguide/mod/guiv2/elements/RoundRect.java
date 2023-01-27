@@ -65,7 +65,7 @@ public class RoundRect extends AnnotatedExportOnlyWidget {
         public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             ShaderProgram shaderProgram = ShaderManager.getShader("shaders/roundrect");
             shaderProgram.useShader();
-            shaderProgram.uploadUniform("radius", radius.getValue().floatValue());
+            shaderProgram.uploadUniform("radius", (float)(radius.getValue() * buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth()));
             shaderProgram.uploadUniform("halfSize", (float) buildContext.getAbsBounds().getWidth()/2, (float) buildContext.getAbsBounds().getHeight()/2);
             shaderProgram.uploadUniform("centerPos",
                     (float) (buildContext.getAbsBounds().getX()+buildContext.getAbsBounds().getWidth()/2),

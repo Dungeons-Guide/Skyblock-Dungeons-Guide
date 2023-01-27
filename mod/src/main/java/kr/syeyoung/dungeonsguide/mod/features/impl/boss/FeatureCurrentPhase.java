@@ -32,7 +32,7 @@ import java.util.List;
 
 public class FeatureCurrentPhase extends TextHUDFeature {
     public FeatureCurrentPhase() {
-        super("Dungeon.Bossfight", "Display Current Phase", "Displays the current phase of bossfight", "bossfight.phasedisplay", false, getFontRenderer().getStringWidth("Current Phase: fight-2-idk-howlng"), getFontRenderer().FONT_HEIGHT);
+        super("Dungeon.Bossfight", "Display Current Phase", "Displays the current phase of bossfight", "bossfight.phasedisplay");
         this.setEnabled(true);
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));

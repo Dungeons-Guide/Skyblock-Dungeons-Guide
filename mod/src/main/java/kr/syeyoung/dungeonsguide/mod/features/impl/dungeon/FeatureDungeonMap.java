@@ -23,6 +23,7 @@ import com.google.common.collect.Ordering;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -32,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -131,18 +133,19 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         DungeonRoomScaffoldParser mapProcessor = context.getScaffoldParser();
 
         MapData mapData = mapProcessor.getLatestMapData();
-        Rectangle featureRect = getFeatureRect().getRectangle();
-        Gui.drawRect(0, 0, featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, backgroudColor));
+        GUIPosition featureSize = getFeatureRect();
+        // TODO: redo chroma
+        Gui.drawRect(0, 0, featureSize.getWidth().intValue(), featureSize.getHeight().intValue(), RenderUtils.getColorAt(0,0, backgroudColor));
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.pushMatrix();
         if (mapData == null) {
-            Gui.drawRect(0, 0, featureRect.width, featureRect.height, 0xFFFF0000);
+            Gui.drawRect(0, 0, featureSize.getWidth().intValue(), featureSize.getHeight().intValue(), 0xFFFF0000);
         } else {
             renderMap(partialTicks, mapProcessor, mapData, context);
         }
         GlStateManager.popMatrix();
         GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0, 0, featureRect.width, featureRect.height, this.<AColor>getParameter("border_color").getValue());
+        RenderUtils.drawUnfilledBox(0, 0, featureSize.getWidth().intValue(), featureSize.getHeight().intValue(), this.<AColor>getParameter("border_color").getValue());
     }
 
     @Override
@@ -152,16 +155,16 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
             drawHUD(partialTicks);
             return;
         }
-        Rectangle featureRect = getFeatureRect().getRectangle();
-        Gui.drawRect(0, 0, featureRect.width, featureRect.height, RenderUtils.getColorAt(featureRect.x, featureRect.y, backgroudColor));
+        GUIPosition featureRect = getFeatureRect();
+        Gui.drawRect(0, 0, featureRect.getWidth().intValue(), featureRect.getWidth().intValue(), RenderUtils.getColorAt(0,0, backgroudColor));
         FontRenderer fr = getFontRenderer();
 
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-        fr.drawString("Please join a dungeon to see preview", featureRect.width / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, featureRect.height / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
+        fr.drawString("Please join a dungeon to see preview", featureRect.getWidth().intValue() / 2 - fr.getStringWidth("Please join a dungeon to see preview") / 2, featureRect.getWidth().intValue() / 2 - fr.FONT_HEIGHT / 2, 0xFFFFFFFF);
         GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0, 0, featureRect.width, featureRect.height, this.<AColor>getParameter("border_color").getValue());
+        RenderUtils.drawUnfilledBox(0, 0, featureRect.getWidth().intValue(), featureRect.getWidth().intValue(), this.<AColor>getParameter("border_color").getValue());
     }
 
     public void renderMap(float partialTicks, DungeonRoomScaffoldParser mapProcessor, MapData mapData, DungeonContext context) {
@@ -169,8 +172,8 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
 
         float postScale = this.centerMapOnPlayer ? postscaleOfMap : 1;
 
-        Rectangle featureRect = getFeatureRect().getRectangle();
-        int width = featureRect.width;
+        GUIPosition featureRect = getFeatureRect();
+        int width = featureRect.getWidth().intValue();
 
         float scale = shouldScale ? width / 128.0f : 1;
 

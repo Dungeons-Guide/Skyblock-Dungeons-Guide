@@ -32,7 +32,7 @@ import java.util.List;
 
 public class FeaturePartyList extends TextHUDFeature {
     public FeaturePartyList() {
-        super("Party","Party List", "Party List as GUI", "party.list", false, getFontRenderer().getStringWidth("Watcher finished spawning all mobs!"), getFontRenderer().FONT_HEIGHT*4);
+        super("Party","Party List", "Party List as GUI", "party.list");
         getStyles().add(new TextStyle("name", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("player", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
@@ -67,11 +67,6 @@ public class FeaturePartyList extends TextHUDFeature {
     @Override
     public List<StyledText> getDummyText() {
         return dummyText;
-    }
-
-    @Override
-    public boolean doesScaleWithHeight() {
-        return false;
     }
 
     @Override

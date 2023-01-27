@@ -192,7 +192,7 @@ public class GuiScreenAdapter extends GuiScreen {
     public void mouseMove(int mouseX, int mouseY) {
         try {
             view.mouseMoved0(mouseX, mouseY
-                    , mouseX, mouseY);
+                    , mouseX, mouseY, true);
         } catch (Throwable e) {
             if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                 e.printStackTrace();

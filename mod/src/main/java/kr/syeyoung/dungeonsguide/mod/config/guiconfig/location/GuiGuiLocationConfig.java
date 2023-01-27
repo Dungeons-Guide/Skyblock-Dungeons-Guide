@@ -42,24 +42,24 @@ public class GuiGuiLocationConfig extends MGui {
     @Getter
     private final GuiScreen before;
 
-    @Getter
-    private TreeMap<Integer, List<Marker>> markerTreeMapByX = new TreeMap<>();
-    @Getter
-    private TreeMap<Integer, List<Marker>> markerTreeMapByY = new TreeMap<>();
-    @Getter
-    private Set<Marker> markerSet = new HashSet<>();
-
-
-    Marker[] markers = new Marker[4];
+//    @Getter
+//    private TreeMap<Integer, List<Marker>> markerTreeMapByX = new TreeMap<>();
+//    @Getter
+//    private TreeMap<Integer, List<Marker>> markerTreeMapByY = new TreeMap<>();
+//    @Getter
+//    private Set<Marker> markerSet = new HashSet<>();
+//
+//
+//    Marker[] markers = new Marker[4];
 
 
     public GuiGuiLocationConfig(final GuiScreen before, AbstractFeature featureWhitelist) {
         this.before = before;
-        for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
-            if (feature instanceof AbstractHUDFeature && feature.isEnabled()) {
-                getMainPanel().add(new PanelDelegate((AbstractHUDFeature) feature, featureWhitelist == null || feature == featureWhitelist, this));
-            }
-        }
+//        for (AbstractFeature feature : FeatureRegistry.getFeatureList()) {
+//            if (feature instanceof AbstractHUDFeature && feature.isEnabled()) {
+//                getMainPanel().add(new PanelDelegate((AbstractHUDFeature) feature, featureWhitelist == null || feature == featureWhitelist, this));
+//            }
+//        }
 
         getMainPanel().setBackgroundColor(new Color(0,0,0, 100));
     }
@@ -71,49 +71,49 @@ public class GuiGuiLocationConfig extends MGui {
             new Vec3(1, 0.5, 4),
     };
 
-    public void removeAndAddMarker(Marker prev, Marker newM) {
-        if (prev != null) {
-            markerTreeMapByX.computeIfPresent(prev.getX(),(k,v) -> {
-                v.remove(prev);
-                if (v.isEmpty()) return null;
-                else return v;
-            });
-            markerTreeMapByY.computeIfPresent(prev.getY(),(k,v) -> {
-                v.remove(prev);
-                if (v.isEmpty()) return null;
-                else return v;
-            });
-            markerSet.remove(prev);
-        }
-        if (newM != null) {
-            markerTreeMapByX.compute(newM.getX(), (k,v) -> {
-                if (v == null) {
-                    return new ArrayList<>(Arrays.asList(newM));
-                } else {
-                    v.add(newM);
-                    return v;
-                }
-            });
-            markerTreeMapByY.compute(newM.getY(), (k,v) -> {
-                if (v == null) {
-                    return new ArrayList<>(Arrays.asList(newM));
-                } else {
-                    v.add(newM);
-                    return v;
-                }
-            });
-            markerSet.add(newM);
-        }
-    }
+//    public void removeAndAddMarker(Marker prev, Marker newM) {
+//        if (prev != null) {
+//            markerTreeMapByX.computeIfPresent(prev.getX(),(k,v) -> {
+//                v.remove(prev);
+//                if (v.isEmpty()) return null;
+//                else return v;
+//            });
+//            markerTreeMapByY.computeIfPresent(prev.getY(),(k,v) -> {
+//                v.remove(prev);
+//                if (v.isEmpty()) return null;
+//                else return v;
+//            });
+//            markerSet.remove(prev);
+//        }
+//        if (newM != null) {
+//            markerTreeMapByX.compute(newM.getX(), (k,v) -> {
+//                if (v == null) {
+//                    return new ArrayList<>(Arrays.asList(newM));
+//                } else {
+//                    v.add(newM);
+//                    return v;
+//                }
+//            });
+//            markerTreeMapByY.compute(newM.getY(), (k,v) -> {
+//                if (v == null) {
+//                    return new ArrayList<>(Arrays.asList(newM));
+//                } else {
+//                    v.add(newM);
+//                    return v;
+//                }
+//            });
+//            markerSet.add(newM);
+//        }
+//    }
 
     public void setupMarkers() {
-        for (int i1 = 0; i1 < markers.length; i1++) {
-            Marker orig = markers[i1];
-            Vec3 pt = facing[i1];
-            markers[i1] = new Marker((int) (pt.xCoord  * getMainPanel().getBounds().width), (int) (pt.yCoord  * getMainPanel().getBounds().height), (int) pt.zCoord, this);
-
-            removeAndAddMarker(orig, markers[i1]);
-        }
+//        for (int i1 = 0; i1 < markers.length; i1++) {
+//            Marker orig = markers[i1];
+//            Vec3 pt = facing[i1];
+//            markers[i1] = new Marker((int) (pt.xCoord  * getMainPanel().getBounds().width), (int) (pt.yCoord  * getMainPanel().getBounds().height), (int) pt.zCoord, this);
+//
+//            removeAndAddMarker(orig, markers[i1]);
+//        }
     }
 
     @Override
@@ -151,15 +151,15 @@ public class GuiGuiLocationConfig extends MGui {
     public void initGui() {
         super.initGui();
         getMainPanel().setBounds(new Rectangle(0,0,Minecraft.getMinecraft().displayWidth,Minecraft.getMinecraft().displayHeight));
-        markerTreeMapByX.clear();
-        markerTreeMapByY.clear();
-        markerSet.clear();
-        setupMarkers();
-        for (MPanel childComponent : getMainPanel().getChildComponents()) {
-            if (childComponent instanceof PanelDelegate) {
-                ((PanelDelegate) childComponent).rebuildMarker();
-            }
-        }
+//        markerTreeMapByX.clear();
+//        markerTreeMapByY.clear();
+//        markerSet.clear();
+//        setupMarkers();
+//        for (MPanel childComponent : getMainPanel().getChildComponents()) {
+//            if (childComponent instanceof PanelDelegate) {
+//                ((PanelDelegate) childComponent).rebuildMarker();
+//            }
+//        }
 
     }
 

@@ -182,6 +182,7 @@ public class CosmeticsManager {
 
         e.getStompInterface().subscribe("/user/queue/reply/cosmetic.activelist", (stompClient, payload) -> {
             activeCosmeticMap = new HashMap<>();
+            System.out.println(payload);
             JSONArray object = new JSONArray(payload);
             for (Object o : object) {
                 JSONObject jsonObject = (JSONObject) o;

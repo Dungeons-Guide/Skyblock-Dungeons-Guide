@@ -48,7 +48,7 @@ import java.util.concurrent.ExecutionException;
 
 public class FeatureDungeonScore extends TextHUDFeature {
     public FeatureDungeonScore() {
-        super("Dungeon.HUDs", "Display Current Score", "Calculate and Display current score\nThis data is from pure calculation and can be different from actual score.", "dungeon.stats.score", false, 200, getFontRenderer().FONT_HEIGHT * 4);
+        super("Dungeon.HUDs", "Display Current Score", "Calculate and Display current score\nThis data is from pure calculation and can be different from actual score.", "dungeon.stats.score");
         this.setEnabled(false);
         addParameter("verbose", new FeatureParameter<Boolean>("verbose", "Show each score instead of sum", "Skill: 100 Explore: 58 S->S+(5 tombs) instead of Score: 305", true, "boolean"));
 

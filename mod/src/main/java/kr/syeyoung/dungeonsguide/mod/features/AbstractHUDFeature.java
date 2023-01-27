@@ -21,14 +21,20 @@ package kr.syeyoung.dungeonsguide.mod.features;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
-import kr.syeyoung.dungeonsguide.mod.config.types.GUIRectangle;
+import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;
@@ -37,47 +43,84 @@ import net.minecraft.client.gui.GuiScreen;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 @Getter
 public abstract class AbstractHUDFeature extends AbstractGuiFeature {
-    private GUIRectangle featureRect;
+    private GUIPosition featureRect;
 
-    public void setFeatureRect(GUIRectangle featureRect) {
+    public void setFeatureRect(GUIPosition featureRect) {
+        if (requiresWidthBound() && featureRect.getWidth() == null) featureRect.setWidth(100.0);
+        if (requiresHeightBound() && featureRect.getHeight() == null) featureRect.setHeight(100.0);
         this.featureRect = featureRect;
         updatePosition();
     }
 
-    @Setter(value = AccessLevel.PROTECTED)
-    private boolean keepRatio;
-    @Setter(value = AccessLevel.PROTECTED)
-    private double defaultWidth;
-    @Setter(value = AccessLevel.PROTECTED)
-    private double defaultHeight;
-    private final double defaultRatio;
-
-    protected AbstractHUDFeature(String category, String name, String description, String key, boolean keepRatio, int width, int height) {
-        super(category, name, description, key);
-        this.keepRatio = keepRatio;
-        this.defaultWidth = width;
-        this.defaultHeight = height;
-        this.defaultRatio = defaultWidth / defaultHeight;
-        this.featureRect = new GUIRectangle(0, 0, width, height);
+    public void setWidth(double width) {
+        if (!requiresWidthBound()) throw new UnsupportedOperationException("Width unsettable");
+        if (width < 10) width = 10;
+        featureRect.setWidth(width);
+        updatePosition();
+    }
+    public void setHeight(double height) {
+        if (!requiresHeightBound() && (getKeepRatio() == null)) throw new UnsupportedOperationException("Height unsettable");
+        if (height < 10) height = 10;
+        if (getKeepRatio() != null)
+            featureRect.setWidth(height / getKeepRatio());
+        else
+            featureRect.setHeight(height);
+        updatePosition();
     }
 
+    protected AbstractHUDFeature(String category, String name, String description, String key) {
+        super(category, name, description, key);
+        this.featureRect = new GUIPosition(GUIPosition.OffsetType.START, 0, GUIPosition.OffsetType.START, 0,
+                requiresWidthBound() ? 0.0 : null,
+                requiresHeightBound() ? 0.0 : null);
+    }
+
+
+
+    public boolean requiresWidthBound() {return false;}
+    public boolean requiresHeightBound() {return false;}
+    public Double getKeepRatio() {return null;}
+
+
     public abstract void drawDemo(float partialTicks);
+
+    public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
+        @Override
+        public List<Widget> build(DomElement buildContext) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+            drawDemo(partialTicks);
+        }
+
+        @Override
+        public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+            return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        }
+    }
+
+    public Widget instantiateDemoWidget() {
+        return new WidgetFeatureWrapper();
+    }
 
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
-        this.featureRect = TypeConverterRegistry.getTypeConverter("guirect",GUIRectangle.class).deserialize(jsonObject.get("$bounds"));
-        updatePosition();
+        GUIPosition position = TypeConverterRegistry.getTypeConverter("guipos", GUIPosition.class).deserialize(jsonObject.get("$pos"));
+        if (position != null) setFeatureRect(position);
     }
 
     @Override
     public JsonObject saveConfig() {
         JsonObject object = super.saveConfig();
-        object.add("$bounds", TypeConverterRegistry.getTypeConverter("guirect", GUIRectangle.class).serialize(featureRect));
+        object.add("$pos", TypeConverterRegistry.getTypeConverter("guipos", GUIPosition.class).serialize(featureRect));
         return object;
     }
 

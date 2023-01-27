@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
+import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -33,7 +34,8 @@ import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectanglePositioner;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
@@ -77,8 +79,8 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         double scale = FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 1.0);
 
-        Dimension bigDim = getFeatureRect().getRectangleNoScale().getSize();
-        Dimension effectiveDim = new Dimension((int) (bigDim.width / scale),(int)( bigDim.height / scale));
+        GUIPosition bigDim = getFeatureRect();
+        Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
@@ -108,8 +110,8 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         double scale = FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 1.0);
 
-        Dimension bigDim = getFeatureRect().getRectangleNoScale().getSize();
-        Dimension effectiveDim = new Dimension((int) (bigDim.width / scale),(int)( bigDim.height / scale));
+        GUIPosition bigDim = getFeatureRect();
+        Dimension effectiveDim = new Dimension((int) (bigDim.getWidth() / scale),(int)( bigDim.getHeight() / scale));
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         Gui.drawRect(0, 0, effectiveDim.width, fr.FONT_HEIGHT + 4, 0xFF444444);
@@ -199,7 +201,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     OverlayManager.getInstance().removeOverlay(lastOpen);
                 widget = new OverlayWidget(
                     mechanicBrowser = new WidgetMechanicBrowser(dungeonRoomOpt.get()),
-                    OverlayType.OVER_CHAT, new GUIRectanglePositioner(this::getFeatureRect));
+                    OverlayType.OVER_CHAT, new GUIRectPositioner(this::getFeatureRect));
             }
         }
         if (mechanicBrowser != null)

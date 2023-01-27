@@ -71,7 +71,8 @@ dependencies {
 
     if (testWithNeu) {
         runtimeOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22'
-        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:1f4d692:all')
+//        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:1f4d692:all')
+//        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:museumthing-SNAPSHOT:all')
     }
     def files= fileTree("../runtime/mods2").filter { it.isFile() }
     add("devenvMod", files)

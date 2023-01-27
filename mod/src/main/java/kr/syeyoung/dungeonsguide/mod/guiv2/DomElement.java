@@ -227,23 +227,24 @@ public class DomElement {
 
 
     private boolean wasMouseIn = false;
-    public boolean mouseMoved0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean withinbound) {
         if (absBounds == null) return false;
-        if (!absBounds.contains(absMouseX, absMouseY)) {
+        boolean isIn = absBounds.contains(absMouseX, absMouseY) && withinbound;
+        if (!isIn) {
             if (wasMouseIn) widget.mouseExited(absMouseX, absMouseY, relMouseX0, relMouseY0);
-            wasMouseIn = false;
         } else {
             if (!wasMouseIn) widget.mouseEntered(absMouseX, absMouseY, relMouseX0, relMouseY0);
-            wasMouseIn = true;
         }
+        wasMouseIn = isIn;
+
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            if (childComponent.mouseMoved0(absMouseX, absMouseY,  transformed.x, transformed.getY())) {
+            if (childComponent.mouseMoved0(absMouseX, absMouseY,  transformed.x, transformed.getY(), isIn)) {
                 return true;
             }
         }
-        if (wasMouseIn)
+        if (isIn)
             return widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
         return false;
     }

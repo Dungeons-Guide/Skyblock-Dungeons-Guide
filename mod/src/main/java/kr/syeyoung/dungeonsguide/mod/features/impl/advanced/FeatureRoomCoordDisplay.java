@@ -39,7 +39,7 @@ import java.util.List;
 
 public class FeatureRoomCoordDisplay extends TextHUDFeature {
     public FeatureRoomCoordDisplay() {
-        super("Debug", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords", false, getFontRenderer().getStringWidth("X: 48 Y: 100 Z: 48 Facing: Z+"), 10);
+        super("Debug", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords");
         this.setEnabled(false);
         getStyles().add(new TextStyle("coord", new AColor(Color.yellow.getRGB(),true), new AColor(0, 0,0,0), false));
     }

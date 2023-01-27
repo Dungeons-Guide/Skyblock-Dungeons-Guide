@@ -21,28 +21,32 @@ package kr.syeyoung.dungeonsguide.mod.config.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class TCGUIRectangle implements TypeConverter<GUIRectangle> {
+public class TCGUIPosition implements TypeConverter<GUIPosition> {
     @Override
     public String getTypeString() {
-        return "guirect";
+        return "guipos";
     }
 
     @Override
-    public GUIRectangle deserialize(JsonElement element) {
+    public GUIPosition deserialize(JsonElement element) {
         if (element == null) return null;
-        GUIRectangle rectangle = new GUIRectangle();
-        rectangle.setX(((JsonObject)element).get("x").getAsInt());
-        rectangle.setY(((JsonObject)element).get("y").getAsInt());
-        rectangle.setWidth(((JsonObject)element).get("width").getAsInt());
-        rectangle.setHeight(((JsonObject)element).get("height").getAsInt());
+        GUIPosition rectangle = new GUIPosition();
+        rectangle.setXOffset(((JsonObject)element).get("x").getAsDouble());
+        rectangle.setYOffset(((JsonObject)element).get("y").getAsDouble());
+        rectangle.setXType(GUIPosition.OffsetType.values()[((JsonObject)element).get("xType").getAsInt()]);
+        rectangle.setYType(GUIPosition.OffsetType.values()[((JsonObject)element).get("yType").getAsInt()]);
+        rectangle.setWidth(element.getAsJsonObject().get("width") == null ? null : element.getAsJsonObject().get("width").getAsDouble());
+        rectangle.setHeight(element.getAsJsonObject().get("height") == null ? null : element.getAsJsonObject().get("height").getAsDouble());
         return rectangle;
     }
 
     @Override
-    public JsonElement serialize(GUIRectangle element) {
+    public JsonElement serialize(GUIPosition element) {
         JsonObject object = new JsonObject();
-        object.addProperty("x", element.getX());
-        object.addProperty("y", element.getY());
+        object.addProperty("x", element.getXOffset());
+        object.addProperty("y", element.getYOffset());
+        object.addProperty("xType", element.getXType().ordinal());
+        object.addProperty("yType", element.getYType().ordinal());
         object.addProperty("width", element.getWidth());
         object.addProperty("height", element.getHeight());
         return object;

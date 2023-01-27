@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -58,7 +59,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature {
 //        if (context == null) return;
 
         GlStateManager.pushMatrix();
-        double factor = getFeatureRect().getRectangle().getWidth() / 128;
+        double factor = getFeatureRect().getWidth() / 128;
         GlStateManager.scale(factor, factor, 1);
         int[] textureData = dynamicTexture.getTextureData();
         MapUtils.getImage().getRGB(0, 0, 128, 128, textureData, 0, 128);
@@ -70,20 +71,22 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature {
 
 
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) return;
-        Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
-
-        int i = (int) ((int) (Mouse.getEventX() - featureRect.getX()) / factor);
-        int j = (int) ((int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY())/ factor);
-        if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
-            GuiUtils.drawHoveringText(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors()[j * 128 + i]),(int)(Mouse.getEventX() - featureRect.getX()), (int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY()), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
-        }
+        // TODO: rewrite hover logic
+//        Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
+//
+//        int i = (int) ((int) (Mouse.getEventX() - featureRect.getX()) / factor);
+//        int j = (int) ((int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY())/ factor);
+//        if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
+//            GuiUtils.drawHoveringText(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors()[j * 128 + i]),(int)(Mouse.getEventX() - featureRect.getX()), (int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY()), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
+//        }
     }
 
     @Override
     public void drawDemo(float partialTicks) {
         FontRenderer fr = getFontRenderer();
-        Rectangle featureRect = getFeatureRect().getRectangle();
+        double width = getFeatureRect().getWidth();
+
         GL11.glLineWidth(2);
-        RenderUtils.drawUnfilledBox(0,0,featureRect.width, featureRect.height, 0xff000000, false);
+        RenderUtils.drawUnfilledBox(0,0, (int) width, (int) width, 0xff000000, false);
     }
 }
