@@ -92,6 +92,15 @@ public class Text extends AnnotatedExportOnlyWidget {
         });
     }
 
+    public Text(String text, int color, TextAlign align, WordBreak wordBreak, double lineSpacing) {
+        this();
+        this.text.setValue(text);
+        this.color.setValue(color);
+        this.textAlign.setValue(align);
+        this.wordBreak.setValue(wordBreak);
+        this.lineSpacing.setValue(lineSpacing);
+    }
+
     private void updateText() {
         textStyle.textShader = new SingleColorShader(color.getValue());
         textStyle.underlineShader = new SingleColorShader(color.getValue());

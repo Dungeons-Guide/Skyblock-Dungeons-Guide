@@ -151,7 +151,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         if (mouseButton == 0) return false;
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new AbsLocationPopup(
-                absMouseX, absMouseY, new WidgetPopupMenu(), true
+                absMouseX, absMouseY, new WidgetPopupMenu(abstractHUDFeature.getTooltipForEditor()), true
         ), null);
 
         return true;

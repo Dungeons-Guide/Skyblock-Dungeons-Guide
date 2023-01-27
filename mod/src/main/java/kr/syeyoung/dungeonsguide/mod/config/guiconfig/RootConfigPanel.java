@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig;
 
 import com.google.common.base.Function;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;

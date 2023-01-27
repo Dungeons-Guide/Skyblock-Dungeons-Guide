@@ -24,7 +24,6 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -256,20 +255,20 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     }
 
     @Override
-    public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
-        List<MPanel> mPanels = super.getTooltipForEditor(guiGuiLocationConfig);
-        StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(this.<String>getParameter("alignment").getValue());
-        MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.asList("LEFT", "CENTER", "RIGHT"), alignment.name());
-        mStringSelectionButton.setOnUpdate(() -> {
-            TextHUDFeature.this.<String>getParameter("alignment").setValue(mStringSelectionButton.getSelected());
-        });
-
-        mPanels.add(new MPassiveLabelAndElement("Alignment", mStringSelectionButton));
-        mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
-            setOnUpdate(() ->{
-                TextHUDFeature.this.<Float>getParameter("scale").setValue(this.getData());
-            }); }
-        }));
+    public List<Widget> getTooltipForEditor() {
+        List<Widget> mPanels = super.getTooltipForEditor();
+//        StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(this.<String>getParameter("alignment").getValue());
+//        MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.asList("LEFT", "CENTER", "RIGHT"), alignment.name());
+//        mStringSelectionButton.setOnUpdate(() -> {
+//            TextHUDFeature.this.<String>getParameter("alignment").setValue(mStringSelectionButton.getSelected());
+//        });
+//
+//        mPanels.add(new MPassiveLabelAndElement("Alignment", mStringSelectionButton));
+//        mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
+//            setOnUpdate(() ->{
+//                TextHUDFeature.this.<Float>getParameter("scale").setValue(this.getData());
+//            }); }
+//        }));
 
         return mPanels;
     }

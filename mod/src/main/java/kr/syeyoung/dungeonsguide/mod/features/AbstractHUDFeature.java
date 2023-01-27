@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features;
 
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
@@ -30,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -124,44 +124,35 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         return object;
     }
 
-    public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
-        ArrayList<MPanel> mPanels = new ArrayList<>();
-        mPanels.add(new MLabel(){
-            {
-                setText(getName());
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(Minecraft.getMinecraft().fontRendererObj.getStringWidth(getName()), 20);
-            }
-        });
-        mPanels.add(new MButton() {
-            {
-                setText("Edit");
-                setOnActionPerformed(() -> {
-                    GuiScreen guiScreen = guiGuiLocationConfig.getBefore();
-                    if (guiScreen == null) {
-                        guiScreen = new GuiConfigV2();
-                    }
-                    Minecraft.getMinecraft().displayGuiScreen(guiScreen);
-                    if (guiScreen instanceof GuiConfigV2) {
-                        ((GuiConfigV2) guiScreen).getRootConfigPanel().setCurrentPageAndPushHistory(getEditRoute(((GuiConfigV2) guiScreen).getRootConfigPanel()));
-                    }
-                });
-            }
-
-            @Override
-            public Dimension getPreferredSize() {
-                return new Dimension(100,20);
-            }
-        });
-        mPanels.add(new MPassiveLabelAndElement("Enabled", new MToggleButton() {{
-            setEnabled(AbstractHUDFeature.this.isEnabled());
-            setOnToggle(() ->{
-                AbstractHUDFeature.this.setEnabled(isEnabled());
-            }); }
-        }));
+    public List<Widget> getTooltipForEditor() {
+        ArrayList<Widget> mPanels = new ArrayList<>();
+        mPanels.add(new Text(getName(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0));
+//        mPanels.add(new MButton() {
+//            {
+//                setText("Edit");
+//                setOnActionPerformed(() -> {
+//                    GuiScreen guiScreen = guiGuiLocationConfig.getBefore();
+//                    if (guiScreen == null) {
+//                        guiScreen = new GuiConfigV2();
+//                    }
+//                    Minecraft.getMinecraft().displayGuiScreen(guiScreen);
+//                    if (guiScreen instanceof GuiConfigV2) {
+//                        ((GuiConfigV2) guiScreen).getRootConfigPanel().setCurrentPageAndPushHistory(getEditRoute(((GuiConfigV2) guiScreen).getRootConfigPanel()));
+//                    }
+//                });
+//            }
+//
+//            @Override
+//            public Dimension getPreferredSize() {
+//                return new Dimension(100,20);
+//            }
+//        });
+//        mPanels.add(new MPassiveLabelAndElement("Enabled", new MToggleButton() {{
+//            setEnabled(AbstractHUDFeature.this.isEnabled());
+//            setOnToggle(() ->{
+//                AbstractHUDFeature.this.setEnabled(isEnabled());
+//            }); }
+//        }));
         return mPanels;
     }
 }

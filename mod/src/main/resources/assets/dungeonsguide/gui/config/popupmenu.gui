@@ -16,34 +16,11 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <UnconstrainedBox>
-
-        <size width="200">
+        <ConstrainedBox maxWidth="200">
             <RoundRect radius="5" backgroundColor="#FF121212">
                 <padding top="5" bottom="5" left="5" right="5">
-                    <col mainAlign="START" crossAlign="STRETCH">
-                        <ColorButton disabled="false"
-                                     backgroundColor="#FF005500"          textColor="#FF777777"
-                                     hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
-                                     disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
-                                     pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
-                                     text="lol1"
-                        />
-                        <ColorButton disabled="false"
-                                     backgroundColor="#FF005500"          textColor="#FF777777"
-                                     hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
-                                     disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
-                                     pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
-                                     text="lol2"
-                        />
-                        <ColorButton disabled="false"
-                                     backgroundColor="#FF005500"          textColor="#FF777777"
-                                     hoveredBackgroundColor="#FF009900"   hoveredTextColor="#FF777777"
-                                     disabledBackgroundColor="#FF444444"  disabledTextColor="#FF777777"
-                                     pressedBackgroundColor="#FF00F00F"   pressedTextColor="#FF777777"
-                                     text="lol3"
-                        />
-                    </col>
+                    <col mainAlign="START" crossAlign="STRETCH" bind:_="items"/>
                 </padding>
             </RoundRect>
-        </size>
+        </ConstrainedBox>
 </UnconstrainedBox>

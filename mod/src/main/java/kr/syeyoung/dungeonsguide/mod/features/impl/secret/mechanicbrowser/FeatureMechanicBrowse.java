@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
@@ -34,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
@@ -157,14 +157,14 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         }
     }
     @Override
-    public List<MPanel> getTooltipForEditor(GuiGuiLocationConfig guiGuiLocationConfig) {
-        List<MPanel> mPanels = super.getTooltipForEditor(guiGuiLocationConfig);
+    public List<Widget> getTooltipForEditor() {
+        List<Widget> mPanels = super.getTooltipForEditor();
 
-            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue()) {{
-                setOnUpdate(() ->{
-                    FeatureMechanicBrowse.this.<Float>getParameter("scale").setValue(this.getData());
-                }); }
-            }));
+//            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue()) {{
+//                setOnUpdate(() ->{
+//                    FeatureMechanicBrowse.this.<Float>getParameter("scale").setValue(this.getData());
+//                }); }
+//            }));
 
         return mPanels;
     }

@@ -18,12 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.util.ResourceLocation;
 
+import java.util.List;
+
 public class WidgetPopupMenu extends AnnotatedImportOnlyWidget {
-    public WidgetPopupMenu() {
+    @Bind(variableName = "items")
+    public final BindableAttribute widgetListBindableAttribute = new BindableAttribute<>(WidgetList.class);
+
+    public WidgetPopupMenu(List<Widget> stuff) {
         super(new ResourceLocation("dungeonsguide:gui/config/popupmenu.gui"));
+        widgetListBindableAttribute.setValue(stuff);
     }
 
     @Override

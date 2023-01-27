@@ -18,7 +18,6 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig;
 
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location.GuiGuiLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
@@ -91,7 +90,7 @@ public class MFeature extends MPanel {
             button.setOnActionPerformed(new Runnable() {
                 @Override
                 public void run() {
-                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(Minecraft.getMinecraft().currentScreen, abstractFeature));
+//                    Minecraft.getMinecraft().displayGuiScreen(new GuiGuiLocationConfig(Minecraft.getMinecraft().currentScreen, abstractFeature));
                     button.setBeingClicked(false);
                 }
             });

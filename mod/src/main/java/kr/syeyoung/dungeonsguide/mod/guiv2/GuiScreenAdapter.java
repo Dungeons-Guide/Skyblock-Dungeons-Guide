@@ -35,23 +35,43 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
+import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 
 public class GuiScreenAdapter extends GuiScreen {
 
     @Getter
-    private final RootDom view;
+    private RootDom view;
     private boolean isOpen = false;
+
+    private Stack<RootDom> domStack = new Stack<>();
 
     public GuiScreenAdapter(Widget widget) {
         view = new RootDom(widget);
+        view.getContext().CONTEXT.put("screenAdapter", this);
 
         try {
             Mouse.setNativeCursor(GLCursors.getCursor(EnumCursor.DEFAULT));
         } catch (Throwable e) {
             e.printStackTrace();
         }
+    }
+
+    public void open(Widget newRoot) {
+        domStack.push(view);
+        view = new RootDom(newRoot);
+        view.getContext().CONTEXT.put("screenAdapter", this);
+        initGui();
+    }
+    public void goBack() {
+        view = domStack.pop();
+        view.getContext().CONTEXT.put("screenAdapter", this);
+        initGui();
+    }
+
+    public static GuiScreenAdapter getAdapter(DomElement domElement) {
+        return domElement.getContext().getValue(GuiScreenAdapter.class, "screenAdapter");
     }
 
     @Override
