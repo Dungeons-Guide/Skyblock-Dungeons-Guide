@@ -38,11 +38,15 @@ import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.ChatStyle;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
+
+import java.util.Collections;
+import java.util.List;
 
 public class CommandDungeonsGuide extends CommandBase {
     private boolean openConfig = false;
@@ -57,110 +61,87 @@ public class CommandDungeonsGuide extends CommandBase {
         return "dg";
     }
 
+    //List of subcommands for tab support
+    private static final String[] SUBCOMMANDS = {
+            "reparty",
+            "gui",
+            "pvall",
+            "asktojoin",
+            "atj",
+            "pv",
+            "purge",
+            "pbroadcast",
+            "partymax",
+            "reload"
+    };
+
+    @Override
+    public List<String> addTabCompletionOptions(ICommandSender sender, String[] args, BlockPos pos) {
+        if (args.length == 1) {
+            return CommandBase.getListOfStringsMatchingLastWord(args, SUBCOMMANDS);
+        }
+        return Collections.emptyList();
+    }
+
     @Override
     public void processCommand(ICommandSender sender, String[] args) {
+
         if (args.length == 0) {
             openConfig = true;
-        } else if (args[0].equalsIgnoreCase("reparty")) {
-            if (!DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(false)) {
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
-            }
-        } else if (args[0].equalsIgnoreCase("gui")) {
-            openConfig = true;
-        } else if (args[0].equalsIgnoreCase("pvall")) {
-            PartyManager.INSTANCE.requestPartyList((context) -> {
-                if (context == null) {
-                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a party!"));
-                    return;
-                }
-                FeatureViewPlayerStatsOnJoin.processPartyMembers(context);
-            });
-        } else if (args[0].equalsIgnoreCase("asktojoin") || args[0].equalsIgnoreCase("atj")) {
-            if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
-                return;
-            }
-            if (!PartyManager.INSTANCE.canInvite()) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cYou don't have permission to invite people to the party!"));
-            } else {
-                PartyManager.INSTANCE.toggleAllowAskToJoin();
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.getAskToJoinSecret() != null ? "§eon" : "§coff")));
-            }
+            return;
+        }
 
-            if (!FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled()) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Discord "));
-            }
-            if (!FeatureRegistry.DISCORD_ASKTOJOIN.isEnabled()) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Invite Viewer is disabled! Enable at /dg -> Discord ")); // how
-            }
-        } else if (args[0].equals("pv")) {
-            try {
-                ApiFetcher.fetchUUIDAsync(args[1])
-                        .thenAccept(a -> {
-                            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + args[1] + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(
-                                    new HoverEventRenderPlayer(
-                                            new GameProfile(FeatureViewPlayerStatsOnJoin.fromString(a.orElse(null)), args[1])
-                                    )))));
-                        });
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        } else if (args[0].equals("purge")) {
-            ApiFetcher.purgeCache();
-            CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
-            cosmeticsManager.requestPerms();
-            cosmeticsManager.requestCosmeticsList();
-            cosmeticsManager.requestActiveCosmetics();
-            StaticResourceCache.INSTANCE.purgeCache();
-            ImageTexture.imageMap.clear();
-            SkinFetcher.purgeCache();
+        switch (args[0].toLowerCase()) {
+            case "reparty":
+                repartyCommand();
+                break;
 
-            sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
-        } else if (args[0].equals("pbroadcast")) {
-            try {
-                String[] payload = new String[args.length - 1];
-                System.arraycopy(args, 1, payload, 0, payload.length);
-                String actualPayload = String.join(" ", payload).replace("$C$", "§");
-                StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
-                        new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
-                                .put("payload", actualPayload).toString()
-                ));
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
+            case "gui":
+                openConfig = true;
+                break;
 
+            case "pv":
+                pvCommand(args[1], sender); //args[1] is the player name
+                break;
 
-        } else if (args[0].equals("partymax") || args[0].equals("pm")) {
-            if (args.length == 1) {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
-            } else if (args.length == 2) {
-                try {
-                    int partyMax = Integer.parseInt(args[1]);
-                    if (partyMax < 2) {
-                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
-                        return;
-                    }
+            case "pvall":
+                pvAllCommand();
+                break;
 
-                    PartyManager.INSTANCE.setMaxParty(partyMax);
-                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set the party max to §e" + PartyManager.INSTANCE.getMaxParty()));
-                } catch (Exception e) {
-                    sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §c" + args[1] + " is not valid number."));
-                }
-            }
-        } else if (args[0].equals("reload")) {
-            Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
-        } else {
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reloadah §7-§f Reloads price data from server."));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets the party max §7(maximum amount people in party, for discord rpc)"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
-                sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e/dg reload §7-§f Reload Current Version of Dungeons Guide. Auto update versions will not be updated."));
+            case "asktojoin":
+            case "atj":
+                askToJoinCommand();
+                break;
+
+            case "purge":
+                purgeCommand();
+                break;
+
+            case "pbroadcast":
+                pBroadcastCommand(args);
+                break;
+
+            case "partymax":
+            case "pm":
+                partyMaxCommand(args);
+                break;
+
+            case "reload":
+                reloadCommand();
+                break;
+
+            default:
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg partymax [number] or /dg pm [number] §7-§f Sets the party max §7(maximum amount people in party, for discord rpc)"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reload §7-§f Reload Current Version of Dungeons Guide. Auto update versions will not be updated."));
+                break;
         }
     }
 
@@ -179,5 +160,108 @@ public class CommandDungeonsGuide extends CommandBase {
     @Override
     public int getRequiredPermissionLevel() {
         return 0;
+    }
+
+    private void repartyCommand() {
+        if (!DungeonsGuide.getDungeonsGuide().getCommandReparty().requestReparty(false)) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cRepartying..."));
+        }
+    }
+
+    private void pvAllCommand() {
+        PartyManager.INSTANCE.requestPartyList(context -> {
+            if (context == null) {
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou are not in a party!"));
+                return;
+            }
+            FeatureViewPlayerStatsOnJoin.processPartyMembers(context);
+        });
+    }
+
+    private void askToJoinCommand() {
+        if (!DiscordIntegrationManager.INSTANCE.isLoaded()) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord GameSDK has been disabled, or it failed to load!"));
+            return;
+        }
+        if (!PartyManager.INSTANCE.canInvite()) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cYou don't have permission to invite people to the party!"));
+        } else {
+            PartyManager.INSTANCE.toggleAllowAskToJoin();
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fToggled Ask to join to " + (PartyManager.INSTANCE.getAskToJoinSecret() != null ? "§eon" : "§coff")));
+        }
+
+        if (!FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled()) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Rich Presence is disabled! Enable at /dg -> Discord "));
+        }
+        if (!FeatureRegistry.DISCORD_ASKTOJOIN.isEnabled()) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cDiscord Invite Viewer is disabled! Enable at /dg -> Discord ")); // how
+        }
+    }
+
+    private void pvCommand(String ign, ICommandSender sender) {
+        try {
+            ApiFetcher.fetchUUIDAsync(ign)
+                    .thenAccept(a -> {
+                        assert a.orElse(null) != null;
+                        sender.addChatMessage(new ChatComponentText("§eDungeons Guide §7:: §e" + ign + "§f's Profile ").appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(
+                                new HoverEventRenderPlayer(
+                                        new GameProfile(FeatureViewPlayerStatsOnJoin.fromString(a.orElse(null)), ign)
+                                )))));
+                    });
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
+
+    private void purgeCommand() {
+        ApiFetcher.purgeCache();
+        CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
+        cosmeticsManager.requestPerms();
+        cosmeticsManager.requestCosmeticsList();
+        cosmeticsManager.requestActiveCosmetics();
+        StaticResourceCache.INSTANCE.purgeCache();
+        ImageTexture.imageMap.clear();
+        SkinFetcher.purgeCache();
+
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully purged API Cache!"));
+    }
+
+    private void pBroadcastCommand(String[] args) {
+        try {
+            String[] payload = new String[args.length - 1];
+            System.arraycopy(args, 1, payload, 0, payload.length);
+            String actualPayload = String.join(" ", payload).replace("$C$", "§");
+            StompManager.getInstance().send(new StompPayload().header("destination", "/app/party.broadcast").payload(
+                    new JSONObject().put("partyID", PartyManager.INSTANCE.getPartyContext().getPartyID())
+                            .put("payload", actualPayload).toString()
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    private void partyMaxCommand(String[] args) {
+        if (args.length == 1) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fCurrent party max is §e" + PartyManager.INSTANCE.getMaxParty()));
+        } else if (args.length == 2) {
+            try {
+                int partyMax = Integer.parseInt(args[1]);
+                if (partyMax < 2) {
+                    ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cparty max can't be smaller than 2"));
+                    return;
+                }
+
+                PartyManager.INSTANCE.setMaxParty(partyMax);
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully set the party max to §e" + PartyManager.INSTANCE.getMaxParty()));
+            } catch (Exception e) {
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §c" + args[1] + " is not valid number."));
+            }
+        }
+    }
+
+    private void reloadCommand() {
+        Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
     }
 }
