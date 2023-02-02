@@ -59,23 +59,27 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
     private double widthPlus;
     @Getter
     private double heightPlus;
-    public HUDWidgetWrapper(AbstractHUDFeature hudFeature, HUDConfigRootWidget hudConfigRootWidget) {
+    private boolean enable;
+    public HUDWidgetWrapper(AbstractHUDFeature hudFeature, HUDConfigRootWidget hudConfigRootWidget, boolean enable) {
         this.abstractHUDFeature = hudFeature;
+        this.enable = enable;
         positioner = new GUIRectPositioner(hudFeature::getFeatureRect);
         demoWidget = abstractHUDFeature.instantiateDemoWidget();
         built.add(demoWidget);
-        if (abstractHUDFeature.requiresWidthBound()) {
-            widthWidget = new WidthWidget();
-            built.add(widthWidget);
-        }
-        if (abstractHUDFeature.requiresHeightBound()) {
-            heightWidget = new HeightWidget();
-            built.add(heightWidget);
-        }
-        if ((abstractHUDFeature.requiresWidthBound() && abstractHUDFeature.requiresHeightBound()) || abstractHUDFeature.getKeepRatio() != null) {
-            // smth
-            cornerWidget = new CornerWidget();
-            built.add(cornerWidget);
+        if (enable) {
+            if (abstractHUDFeature.requiresWidthBound()) {
+                widthWidget = new WidthWidget();
+                built.add(widthWidget);
+            }
+            if (abstractHUDFeature.requiresHeightBound()) {
+                heightWidget = new HeightWidget();
+                built.add(heightWidget);
+            }
+            if ((abstractHUDFeature.requiresWidthBound() && abstractHUDFeature.requiresHeightBound()) || abstractHUDFeature.getKeepRatio() != null) {
+                // smth
+                cornerWidget = new CornerWidget();
+                built.add(cornerWidget);
+            }
         }
         rootWidget = hudConfigRootWidget;
     }
@@ -121,17 +125,18 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
 
     @Override
     protected Renderer createRenderer() {
-        return  HoverThingyRenderer.hoverThingyRenderer;
+        return new HoverThingyRenderer();
     }
 
-    public static class HoverThingyRenderer extends OnlyChildrenRenderer {
-        public static final HoverThingyRenderer hoverThingyRenderer = new HoverThingyRenderer();
+    public class HoverThingyRenderer extends OnlyChildrenRenderer {
         @Override
         public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
-            renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x40000000);
+            if (enable)
+                renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x40000000);
             GlStateManager.pushMatrix();
             super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
             GlStateManager.popMatrix();
+            if (!enable) return;
             if (buildContext.getAbsBounds().contains(absMouseX, absMouseY))
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x33FFFFFF);
         }
@@ -139,6 +144,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
 
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        if (!enable) return false;
         if (Mouse.isButtonDown(0))
             getDomElement().setCursor(EnumCursor.CLOSED_HAND);
         else
@@ -149,6 +155,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
     @Override
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
         if (mouseButton == 0) return false;
+        if (!enable) return false;
 
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new AbsLocationPopup(
                 absMouseX, absMouseY, new WidgetPopupMenu(abstractHUDFeature.getTooltipForEditor()), true

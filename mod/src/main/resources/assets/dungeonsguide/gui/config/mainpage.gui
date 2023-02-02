@@ -1,0 +1,52 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<ScrollablePanel direction="VERTICAL">
+    <padding left="5" top="5" right="5" bottom="5">
+        <col mainAlign="CENTER" crossAlign="CENTER">
+            <size height="30"/>
+            <row mainAlign="CENTER">
+                <Text text="Welcome to" color="#FF747474" size="16"/>
+                <Text text=" Dungeons Guide" color="#FF74A0C6" size="16"/>
+                <Text text="!" color="#FF747474" size="16"/>
+            </row>
+            <size height="3"/>
+            <row mainAlign="CENTER">
+                <Text text="The most " color="#FF747474" size="8"/>
+                <Text text="intelligent" color="#FFFFFF00" size="8"/>
+                <Text text=" skyblock mod" color="#FF747474" size="8"/>
+            </row>
+            <size height="20"/>
+            <line color="#FF747474"/>
+            <size height="5"/>
+            <WrapGrid minimumWidth="160" gap="5" bind:_="categories"/>
+            <size height="5"/>
+            <line color="#FF747474"/>
+            <size height="20"/>
+            <row mainAlign="CENTER">
+                <size height="32" width="32">
+                    <ResourceImage location="dungeonsguide:textures/config/discord.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                </size>
+                <size width="10" height="0"/>
+                <size height="32" width="32">
+                    <ResourceImage location="dungeonsguide:textures/config/github.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                </size>
+            </row>
+        </col>
+    </padding>
+</ScrollablePanel>

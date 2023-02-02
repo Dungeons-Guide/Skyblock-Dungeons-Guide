@@ -24,12 +24,12 @@
             <bgcolor slot="track" bind:backgroundColor="backgroundColor"/>
             <align slot="thumb">
                 <size height="4">
-                    <ColorButton
+                    <RoundButton
                             bind:backgroundColor="thumbColor"          textColor="#FFFFFFFF"
                             bind:hoveredBackgroundColor="thumbHoverColor"   hoveredTextColor="#FFFFFFFF"
                             disabledBackgroundColor="#00000000"  disabledTextColor="#FFFFFFFF"
                             bind:pressedBackgroundColor="thumbActiveColor"   pressedTextColor="#FFFFFFFF"
-                            text=""
+                            text="" radius="2"
                     />
                 </size>
             </align>

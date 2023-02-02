@@ -54,7 +54,7 @@ public class FeaturePenguins extends SimpleFeature {
 
     }
     @DGEventHandler
-    public void onTextureStitch(TextureStitchEvent event) {
+    public void onTextureStitch(TextureStitchEvent.Pre event) {
         if (event instanceof TextureStitchEvent.Pre) {
             objModel = null;
             ResourceLocation modelResourceLocation = new ResourceLocation("dungeonsguide:models/penguin.obj");
@@ -69,6 +69,9 @@ public class FeaturePenguins extends SimpleFeature {
                 e.printStackTrace();
             }
         }
+    }
+    @DGEventHandler
+    public void onTextureStitchPost(TextureStitchEvent.Post event) {
         if (objModel != null && event instanceof TextureStitchEvent.Post) {
             model = objModel.bake(objModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
         }

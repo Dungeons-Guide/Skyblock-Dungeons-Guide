@@ -1,0 +1,95 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5" bottom="5">
+
+    <AbstractButton on:click="click" disabled="false">
+        <RoundRect radius="5" backgroundColor="#FF11294d">
+            <col mainAlign="START" crossAlign="STRETCH">
+                <padding left="5" right="5" top="5" bottom="5">
+                    <IntrinsicHeight>
+                        <row mainAlign="START" crossAlign="CENTER">
+                            <aspectRatio width="1" height="1">
+                                <Stencil>
+                                    <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                    <RoundRect radius="3" slot="stencil"/>
+                                </Stencil>
+                            </aspectRatio>
+                            <size width="5" height="0"/>
+                            <flexible><Text bind:text="name" color="#FFFFFFFF" size="12"/></flexible>
+                        </row>
+                    </IntrinsicHeight>
+                </padding>
+                <flexible>
+                    <padding left="5" bottom="5" right="5" top="3">
+                        <Text bind:text="description" color="#FFAAAAAA"/>
+                    </padding>
+                </flexible>
+            </col>
+        </RoundRect>
+        <RoundRect radius="5" backgroundColor="#FF1d4481" slot="hovered">
+            <col mainAlign="START" crossAlign="STRETCH">
+                <padding left="5" right="5" top="5" bottom="5">
+                    <IntrinsicHeight>
+                        <row mainAlign="START" crossAlign="CENTER">
+
+                            <aspectRatio width="1" height="1">
+                                <Stencil>
+                                    <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                    <RoundRect radius="3" slot="stencil"/>
+                                </Stencil>
+                            </aspectRatio>
+                            <size width="5" height="0"/>
+                            <flexible><Text bind:text="name" color="#FFFFFFFF" size="12"/></flexible>
+                        </row>
+                    </IntrinsicHeight>
+                </padding>
+                <flexible>
+                    <padding left="5" bottom="5" right="5" top="3">
+                        <Text bind:text="description" color="#FFAAAAAA"/>
+                    </padding>
+                </flexible>
+            </col>
+        </RoundRect>
+        <RoundRect radius="5" backgroundColor="#FF34578e" slot="pressed">
+            <col mainAlign="START" crossAlign="STRETCH">
+                <padding left="5" right="5" top="5" bottom="5">
+                    <IntrinsicHeight>
+                        <row mainAlign="START" crossAlign="CENTER">
+
+                            <aspectRatio width="1" height="1">
+                                <Stencil>
+                                    <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                    <RoundRect radius="3" slot="stencil"/>
+                                </Stencil>
+                            </aspectRatio>
+                            <size width="5" height="0"/>
+                            <flexible><Text bind:text="name" color="#FFFFFFFF" size="12"/></flexible>
+                        </row>
+                    </IntrinsicHeight>
+                </padding>
+                <flexible>
+                    <padding left="5" bottom="5" right="5" top="3">
+                        <Text bind:text="description" color="#FFAAAAAA"/>
+                    </padding>
+                </flexible>
+            </col>
+        </RoundRect>
+        <size slot="disabled" width="0" height="0"/>
+    </AbstractButton>
+</padding>

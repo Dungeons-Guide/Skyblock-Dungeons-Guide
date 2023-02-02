@@ -26,28 +26,19 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
-import java.util.concurrent.CopyOnWriteArrayList;
 
 public class Text extends AnnotatedExportOnlyWidget {
     @Export(attributeName = "text")
     public final BindableAttribute<String> text = new BindableAttribute<>(String.class, "");
+    @Export(attributeName = "size")
+    public final BindableAttribute<Double> size = new BindableAttribute<>(Double.class, 8.0);
 
     private final ParentDelegatingTextStyle textStyle = ParentDelegatingTextStyle.ofDefault();
     private final RichText richText = new RichText(new TextSpan(textStyle, ""), BreakWord.WORD, false,RichText.TextAlign.LEFT);
@@ -84,6 +75,9 @@ public class Text extends AnnotatedExportOnlyWidget {
         lineSpacing.addOnUpdate((a,b) -> {
             updateText();
         });
+        size.addOnUpdate((a,b) -> {
+            updateText();
+        });
         textAlign.addOnUpdate((a,b) -> {
             richText.setAlign(b == TextAlign.LEFT ? RichText.TextAlign.LEFT : b == TextAlign.CENTER ? RichText.TextAlign.CENTER : RichText.TextAlign.RIGHT);
         });
@@ -92,13 +86,14 @@ public class Text extends AnnotatedExportOnlyWidget {
         });
     }
 
-    public Text(String text, int color, TextAlign align, WordBreak wordBreak, double lineSpacing) {
+    public Text(String text, int color, TextAlign align, WordBreak wordBreak, double lineSpacing, double size) {
         this();
         this.text.setValue(text);
         this.color.setValue(color);
         this.textAlign.setValue(align);
         this.wordBreak.setValue(wordBreak);
         this.lineSpacing.setValue(lineSpacing);
+        this.size.setValue(size);
     }
 
     private void updateText() {
@@ -106,6 +101,7 @@ public class Text extends AnnotatedExportOnlyWidget {
         textStyle.underlineShader = new SingleColorShader(color.getValue());
         textStyle.strikeThroughShader = new SingleColorShader(color.getValue());
         textStyle.topAscent = lineSpacing.getValue() - 1;
+        textStyle.size = size.getValue();
         TextSpan textSpan = new TextSpan(textStyle, "");
         for (TextSpan textSpan2 : parseText(text.getValue())) {
             textSpan.addChild(textSpan2);

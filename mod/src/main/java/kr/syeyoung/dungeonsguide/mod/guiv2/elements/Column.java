@@ -119,6 +119,7 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
 
         if (flexFound) {
             double remainingHeight = effheight - height;
+            if (remainingHeight < 0) remainingHeight = 0;
             double heightPer = remainingHeight / sumFlex;
 
             for (DomElement child : buildContext.getChildren()) {
@@ -207,27 +208,48 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
 
     @Override
     public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+        double startingWidth = 0;
+        double prevWidth = 0;
         double maxWidth = 0;
-        double heightTaken = 0;
-        int sumFlex = 0;
-        for (DomElement child : buildContext.getChildren()) {
-            if (!(child.getWidget() instanceof Flexible)) {
-                heightTaken += child.getLayouter().getMaxIntrinsicHeight(child, 0);
-                maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(child, 0));
-            } else {
-                sumFlex += ((Flexible) child.getWidget()).flex.getValue();
+        int circuitBreaker = 0;
+        do {
+            circuitBreaker++;
+            if (circuitBreaker > 100) {
+                try {
+                    throw new RuntimeException("Caught in infinite loop welp");
+                } catch (Exception e) { e.printStackTrace(); }
+                break;
             }
-        }
-        double leftOver = height - heightTaken;
-        if (sumFlex > 0) {
-            double per = leftOver / sumFlex;
-            if (height == 0) per = 0;
+            prevWidth = startingWidth;
+            startingWidth = maxWidth;
+            double heightTaken = 0;
+            int sumFlex = 0;
             for (DomElement child : buildContext.getChildren()) {
-                if (child.getWidget() instanceof Flexible) {
-                    maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(child, per * ((Flexible) child.getWidget()).flex.getValue()));
+                if (!(child.getWidget() instanceof Flexible)) {
+                    heightTaken += child.getLayouter().getMaxIntrinsicHeight(child, startingWidth);
+                    maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(child, 0));
+                } else {
+                    sumFlex += ((Flexible) child.getWidget()).flex.getValue();
                 }
             }
-        }
+            double leftOver = height - heightTaken;
+            if (leftOver <= 0) {
+                leftOver = 0;
+                if (prevWidth > 0)
+                    maxWidth = prevWidth;
+                break;
+            }
+            if (sumFlex > 0) {
+                double per = leftOver / sumFlex;
+                if (height == 0) per = 0;
+                for (DomElement child : buildContext.getChildren()) {
+                    if (child.getWidget() instanceof Flexible) {
+                        maxWidth = Double.max(maxWidth, child.getLayouter().getMaxIntrinsicWidth(child, per * ((Flexible) child.getWidget()).flex.getValue()));
+                    }
+                }
+            }
+            if (leftOver == 0 || sumFlex == 0) break;
+        } while (startingWidth != maxWidth);
         return maxWidth;
     }
 }

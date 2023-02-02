@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -30,12 +32,15 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureVi
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.HoverEventRenderPlayer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.SkinFetcher;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.image.ImageTexture;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.ICommandSender;
 import net.minecraft.util.BlockPos;
@@ -49,7 +54,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class CommandDungeonsGuide extends CommandBase {
-    private boolean openConfig = false;
 
     @Override
     public String getCommandName() {
@@ -65,6 +69,7 @@ public class CommandDungeonsGuide extends CommandBase {
     private static final String[] SUBCOMMANDS = {
             "reparty",
             "gui",
+            "v3",
             "pvall",
             "asktojoin",
             "atj",
@@ -87,7 +92,7 @@ public class CommandDungeonsGuide extends CommandBase {
     public void processCommand(ICommandSender sender, String[] args) {
 
         if (args.length == 0) {
-            openConfig = true;
+            target = new GuiConfigV2();
             return;
         }
 
@@ -97,9 +102,11 @@ public class CommandDungeonsGuide extends CommandBase {
                 break;
 
             case "gui":
-                openConfig = true;
+                target = new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)));
                 break;
-
+            case "v3":
+                target = new GuiScreenAdapter(new GlobalHUDScale(new MainConfigWidget()));
+                break;
             case "pv":
                 pvCommand(args[1], sender); //args[1] is the player name
                 break;
@@ -145,12 +152,14 @@ public class CommandDungeonsGuide extends CommandBase {
         }
     }
 
+    private GuiScreen target;
+
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent e) {
         try {
-            if (openConfig && e.phase == TickEvent.Phase.START) {
-                openConfig = false;
-                Minecraft.getMinecraft().displayGuiScreen(new GuiConfigV2());
+            if (target != null && e.phase == TickEvent.Phase.START) {
+                Minecraft.getMinecraft().displayGuiScreen(target);
+                target = null;
             }
         } catch (Throwable t) {
             t.printStackTrace();

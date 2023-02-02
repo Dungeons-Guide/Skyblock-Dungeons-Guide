@@ -1,0 +1,78 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5">
+    <col>
+        <line color="#FFFFFFFF"/>
+        <size width="0" height="5"/>
+        <IntrinsicHeight>
+            <row>
+                <aspectRatio width="1" height="1">
+                    <Stencil>
+                        <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                        <RoundRect radius="10" slot="stencil"/>
+                    </Stencil>
+                </aspectRatio>
+                <flexible>
+                    <col mainAlign="START" crossAlign="START">
+                        <padding left="5" right="5" top="5" bottom="5">
+                            <row crossAlign="END">
+                                <flexible>
+                                    <Text bind:text="name" color="#FFFFFFFF" size="12"/>
+                                </flexible>
+                                <SelectiveContainer bind:visible="guiRelocate">
+                                    <size width="0" height="0" slot="hide"/>
+                                    <size width="60" height="12" slot="show">
+                                        <padding left="5">
+                                            <RoundButton on:click="relocate" hPadding="1"
+                                                         text="Relocate"
+                                            />
+                                        </padding>
+                                    </size>
+                                </SelectiveContainer>
+                                <SelectiveContainer bind:visible="configure">
+                                    <size width="0" height="0" slot="hide"/>
+                                    <size width="60" height="12" slot="show">
+                                        <padding left="5">
+                                            <RoundButton on:click="configure" hPadding="1"
+                                                         text="Configure"
+                                            />
+                                        </padding>
+                                    </size>
+                                </SelectiveContainer>
+                                <SelectiveContainer bind:visible="enable">
+                                    <size width="0" height="0" slot="hide"/>
+                                    <size width="45" height="14" slot="show">
+                                        <padding left="5">
+                                            <SimpleToggleButton bind:enabled="isEnabled"/>
+                                        </padding>
+                                    </size>
+                                </SelectiveContainer>
+                            </row>
+                        </padding>
+                        <col crossAlign="START">
+                            <padding left="5" bottom="5" right="5" top="3">
+                                <Text bind:text="description" color="#FFAAAAAA"/>
+                            </padding>
+                        </col>
+                    </col>
+                </flexible>
+            </row>
+        </IntrinsicHeight>
+    </col>
+</padding>

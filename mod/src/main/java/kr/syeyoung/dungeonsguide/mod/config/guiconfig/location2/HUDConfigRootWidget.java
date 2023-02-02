@@ -97,12 +97,15 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
         markersY.add(new Position(0, lastHeight/2));
     }
 
-    public HUDConfigRootWidget() {
+    private AbstractHUDFeature filter;
+    public HUDConfigRootWidget(AbstractHUDFeature filter) {
+        this.filter = filter;
         widgets.add(new EventListenerWidget());
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             if (!(abstractFeature instanceof AbstractHUDFeature)) continue;
             if (!abstractFeature.isEnabled() && abstractFeature.isDisyllable()) continue;
-            HUDWidgetWrapper widgetWrapper = new HUDWidgetWrapper((AbstractHUDFeature) abstractFeature, this);
+            HUDWidgetWrapper widgetWrapper = new HUDWidgetWrapper((AbstractHUDFeature) abstractFeature, this,
+                    filter == null || abstractFeature == filter);
             widgets.add(widgetWrapper);
             widgets2.add(widgetWrapper);
         }
@@ -161,6 +164,7 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
             if (mouseButton != 0) return false;
             this.sx = relMouseX; this.sy = relMouseY;
             for (HUDWidgetWrapper widgetWrapper : widgets2) {
+                if (filter != null && widgetWrapper.getAbstractHUDFeature() != filter) continue;
                 if (widgetWrapper.getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) {
                     target = widgetWrapper;
                     started = widgetWrapper.getDomElement().getRelativeBound();

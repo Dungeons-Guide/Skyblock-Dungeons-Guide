@@ -25,7 +25,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -36,7 +40,7 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
 
-public class WidgetMechanicBrowser extends AnnotatedWidget {
+public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
     @Bind(variableName = "current")
     public final BindableAttribute<String> current = new BindableAttribute<>(String.class);
     @Bind(variableName = "children")
@@ -111,5 +115,13 @@ public class WidgetMechanicBrowser extends AnnotatedWidget {
     public void cancel() {
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
         grp.cancel("MECH-BROWSER");
+    }
+
+    @Override
+    public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+        FeatureMechanicBrowse featureMechanicBrowse = FeatureRegistry.SECRET_BROWSE;
+        Double ratio = featureMechanicBrowse.getRatio();
+        return new Size(featureMechanicBrowse.getFeatureRect().getWidth(),
+                ratio != null ? featureMechanicBrowse.getFeatureRect().getWidth() * ratio : featureMechanicBrowse.getFeatureRect().getHeight());
     }
 }

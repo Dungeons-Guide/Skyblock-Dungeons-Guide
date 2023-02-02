@@ -1,0 +1,40 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+    <ScrollablePanel direction="VERTICAL">
+        <padding top="5" left="5" bottom="5" right="5">
+            <col crossAlign="STRETCH" mainAlign="START">
+                <SelectiveContainer bind:visible="categoryShow">
+                    <col crossAlign="STRETCH" mainAlign="START" slot="show">
+                        <padding top="5" left="5" right="5">
+                            <Text text="Categories" size="16" color="#FFFFFFFF"/>
+                        </padding>
+                        <WrapGrid minimumWidth="160" gap="5" bind:_="categories"/>
+                        <size width="0" height="5"/>
+                    </col>
+                    <size width="0" height="0" slot="hide"/>
+                </SelectiveContainer>
+                <padding top="5" left="5" right="5">
+                    <Text text="Features" size="16" color="#FFFFFFFF"/>
+                </padding>
+                <col mainAlign="START" crossAlign="STRETCH" bind:_="items"/>
+            </col>
+        </padding>
+    </ScrollablePanel>
+</bgcolor>

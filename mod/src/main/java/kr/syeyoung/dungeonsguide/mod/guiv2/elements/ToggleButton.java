@@ -33,29 +33,27 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 
-@Passthrough(exportName = "_", bindName = "wgtNormal", type = Widget.class)
-@Passthrough(exportName = "_hovered", bindName = "wgtHover", type = Widget.class)
-@Passthrough(exportName = "_pressed", bindName = "wgtPressed", type = Widget.class)
-@Passthrough(exportName = "_disabled", bindName = "wgtDisabled", type = Widget.class)
-public class Button extends AnnotatedWidget implements Renderer {
+@Passthrough(exportName = "_on", bindName = "wgtOn", type = Widget.class)
+@Passthrough(exportName = "_off", bindName = "wgtOff", type = Widget.class)
+@Passthrough(exportName = "_hoverOn", bindName = "wgtHoverOn", type = Widget.class)
+@Passthrough(exportName = "_hoverOff", bindName = "wgtHoverOff", type = Widget.class)
+public class ToggleButton extends AnnotatedWidget implements Renderer {
 
-    @Bind(variableName = "refDisabled")
-    public final BindableAttribute<DomElement> disabled = new BindableAttribute<DomElement>(DomElement.class);
-    @Bind(variableName = "refPressed")
-    public final BindableAttribute<DomElement> pressed = new BindableAttribute<DomElement>(DomElement.class);
-    @Bind(variableName = "refHover")
-    public final BindableAttribute<DomElement> hover = new BindableAttribute<DomElement>(DomElement.class);
-    @Bind(variableName = "refNormal")
-    public final BindableAttribute<DomElement> normal = new BindableAttribute<DomElement>(DomElement.class);
+    @Bind(variableName = "refOn")
+    public final BindableAttribute<DomElement> on = new BindableAttribute<DomElement>(DomElement.class);
+    @Bind(variableName = "refOff")
+    public final BindableAttribute<DomElement> off = new BindableAttribute<DomElement>(DomElement.class);
+    @Bind(variableName = "refHoverOn")
+    public final BindableAttribute<DomElement> hoverOn = new BindableAttribute<DomElement>(DomElement.class);
+    @Bind(variableName = "refHoverOff")
+    public final BindableAttribute<DomElement> hoverOff = new BindableAttribute<DomElement>(DomElement.class);
 
 
-    @Export(attributeName = "click")
-    public final BindableAttribute<Runnable> onClick = new BindableAttribute<>(Runnable.class);
-    @Export(attributeName = "disabled")
-    public final BindableAttribute<Boolean> isDisabled = new BindableAttribute<>(Boolean.class);
+    @Export(attributeName = "enabled")
+    public final BindableAttribute<Boolean> enabled = new BindableAttribute<>(Boolean.class);
 
-    public Button() {
-        super(new ResourceLocation("dungeonsguide:gui/elements/button.gui"));
+    public ToggleButton() {
+        super(new ResourceLocation("dungeonsguide:gui/elements/toggleButton.gui"));
     }
 
     @Override
@@ -67,14 +65,10 @@ public class Button extends AnnotatedWidget implements Renderer {
     public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
         boolean isHover = buildContext.getSize().contains(relMouseX, relMouseY);
         DomElement value;
-        if (isDisabled.getValue()) {
-            value = disabled.getValue();
-        } else if (isPressed) {
-            value = pressed.getValue();
-        } else if (isHover) {
-            value = hover.getValue();
-        } else {
-            value = normal.getValue();
+        if (enabled.getValue()) {
+            value = isHover ? hoverOn.getValue() : on.getValue();
+        }  else {
+            value = isHover ? hoverOff.getValue() : off.getValue();
         }
         Rect original = value.getRelativeBound();
         GlStateManager.translate(original.getX(), original.getY(), 0);
@@ -95,34 +89,16 @@ public class Button extends AnnotatedWidget implements Renderer {
                 relMouseY - original.getY(), partialTicks, context, value);
     }
 
-    private boolean isPressed;
     @Override
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
         getDomElement().obtainFocus();
-        isPressed = true;
-
-
-        return onClick.getValue() != null;
-    }
-
-    @Override
-    public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {
-        isPressed = false;
-
-
-        if (isDisabled.getValue()) return;
-        if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) {
-            if (onClick.getValue() != null) onClick.getValue().run();
-        }
-        super.mouseReleased(absMouseX, absMouseY, relMouseX, relMouseY, state);
+        enabled.setValue(!enabled.getValue());
+        return true;
     }
 
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
-        if (isDisabled.getValue())
-            getDomElement().setCursor(EnumCursor.NOT_ALLOWED);
-        else
-            getDomElement().setCursor(EnumCursor.POINTING_HAND);
+        getDomElement().setCursor(EnumCursor.POINTING_HAND);
         return true;
     }
 }

@@ -57,6 +57,7 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.MinecraftForge;
+import org.lwjgl.opengl.*;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;

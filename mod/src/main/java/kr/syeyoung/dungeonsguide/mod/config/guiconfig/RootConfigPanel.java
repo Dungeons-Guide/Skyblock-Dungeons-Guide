@@ -101,7 +101,7 @@ public class RootConfigPanel extends MPanelScaledGUI {
         guiRelocate = new MButton();
         guiRelocate.setText("Edit Gui Locations");
         guiRelocate.setOnActionPerformed(() -> {
-            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig())));
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null))));
             guiRelocate.setBeingClicked(false);
         });
         guiRelocate.setBorder(RenderUtils.blendTwoColors(0xFF141414,0x7702EE67));

@@ -19,14 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.features;
 
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MToggleButton;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
@@ -35,13 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import lombok.AccessLevel;
 import lombok.Getter;
-import lombok.Setter;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.GuiScreen;
 
-import java.awt.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -126,7 +115,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
 
     public List<Widget> getTooltipForEditor() {
         ArrayList<Widget> mPanels = new ArrayList<>();
-        mPanels.add(new Text(getName(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0));
+        mPanels.add(new Text(getName(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
 //        mPanels.add(new MButton() {
 //            {
 //                setText("Edit");

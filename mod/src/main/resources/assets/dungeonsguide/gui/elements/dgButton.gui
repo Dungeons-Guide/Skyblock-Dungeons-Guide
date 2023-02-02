@@ -1,0 +1,52 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<wrapper disabled="false" hPadding="0" vPadding="0"
+         backgroundColor="#FF1E387A" hoveredBackgroundColor="#FF356091" disabledBackgroundColor="#FF2E2D2C" pressedBackgroundColor="#FF50799E"
+         textColor="#FFFFFFFF" hoveredTextColor="#FFFFFFFF" disabledTextColor="#FF484848" pressedTextColor="#FFFFFFFF"
+         radius="4">
+    <AbstractButton bind:click="click" bind:disabled="disabled">
+        <RoundRect bind:backgroundColor="backgroundColor" bind:radius="radius">
+            <align vAlign="CENTER" hAlign="CENTER">
+                <padding bind:left="hPadding" bind:right="hPadding" bind:top="vPadding" bind:bottom="vPadding">
+                    <Text bind:text="text" bind:color="textColor" align="CENTER"/>
+                </padding>
+            </align>
+        </RoundRect>
+        <RoundRect slot="hovered" bind:backgroundColor="hoveredBackgroundColor" bind:radius="radius">
+            <align vAlign="CENTER" hAlign="CENTER">
+                <padding bind:left="hPadding" bind:right="hPadding" bind:top="vPadding" bind:bottom="vPadding">
+                    <Text bind:text="text" bind:color="hoveredTextColor" align="CENTER"/>
+                </padding>
+            </align>
+        </RoundRect>
+        <RoundRect slot="disabled" bind:backgroundColor="disabledBackgroundColor" bind:radius="radius">
+            <align vAlign="CENTER" hAlign="CENTER">
+                <padding bind:left="hPadding" bind:right="hPadding" bind:top="vPadding" bind:bottom="vPadding">
+                    <Text bind:text="text" bind:color="disabledTextColor" align="CENTER"/>
+                </padding>
+            </align>
+        </RoundRect>
+        <RoundRect slot="pressed" bind:backgroundColor="pressedBackgroundColor" bind:radius="radius">
+            <align vAlign="CENTER" hAlign="CENTER">
+                <padding bind:left="hPadding" bind:right="hPadding" bind:top="vPadding" bind:bottom="vPadding">
+                    <Text bind:text="text" bind:color="pressedTextColor" align="CENTER"/>
+                </padding>
+            </align>
+        </RoundRect>
+    </AbstractButton>
+</wrapper>

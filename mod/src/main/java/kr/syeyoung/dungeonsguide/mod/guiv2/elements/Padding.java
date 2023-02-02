@@ -84,12 +84,14 @@ public class Padding extends AnnotatedExportOnlyWidget implements Layouter {
     @Override
     public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
         return left.getValue() + right.getValue() +
-                (buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), height));
+                (buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0),
+                        Math.max(0, height - top.getValue() - bottom.getValue())));
     }
 
     @Override
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
         return top.getValue() + bottom.getValue() + (
-                buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width));
+                buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0),
+                        Math.max(0, width - left.getValue() - right.getValue())));
     }
 }

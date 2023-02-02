@@ -16,23 +16,35 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2;
+package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
-import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.util.ResourceLocation;
 
-public class HUDLocationConfig extends AnnotatedImportOnlyWidget {
-    @Bind(variableName = "movestuff")
-    public final BindableAttribute<Widget> stuff = new BindableAttribute<>(Widget.class);
+import java.util.List;
+import java.util.stream.Collectors;
 
-    public HUDLocationConfig(AbstractHUDFeature filter) {
-        super(new ResourceLocation("dungeonsguide:gui/config/hudconfig.gui"));
-        stuff.setValue(new HUDConfigRootWidget(filter));
+public class MainPageWidget extends AnnotatedImportOnlyWidget {
+
+    @Bind(variableName = "categories")
+    public final BindableAttribute categories = new BindableAttribute<>(WidgetList.class);
+    public MainPageWidget() {
+        super(new ResourceLocation("dungeonsguide:gui/config/mainpage.gui"));
+        categories.setValue(buildCategory());
     }
+
+
+    private List<Widget> buildCategory() {
+        return FeatureRegistry.getFeaturesByCategory().keySet().stream().map(a -> a.split("\\.")[0])
+                .collect(Collectors.toSet()).stream()
+                .map( a -> new CategoryItem(() -> new CategoryPageWidget(a), a,
+                        FeatureRegistry.getCategoryDescription().getOrDefault(a, "idk")))
+                .collect(Collectors.toList());
+    }
+
 }

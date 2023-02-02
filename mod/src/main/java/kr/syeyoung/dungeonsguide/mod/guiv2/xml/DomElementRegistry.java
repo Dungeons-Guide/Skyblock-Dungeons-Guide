@@ -69,6 +69,7 @@ public class DomElementRegistry {
         register("TextField", new ExportedWidgetConverter(TextField::new));
         register("PopupManager", new ExportedWidgetConverter(PopupMgr::new));
         register("AbstractButton", new ExportedWidgetConverter(Button::new));
+        register("AbstractToggleButton", new ExportedWidgetConverter(ToggleButton::new));
         register("ScrollablePanel", new ExportedWidgetConverter(ScrollablePanel::new));
         register("AbstractScrollBar", new ExportedWidgetConverter(Scrollbar::new));
         register("aspectRatio", new ExportedWidgetConverter(AspectRatioFitter::new));
@@ -77,8 +78,14 @@ public class DomElementRegistry {
         register("IntrinsicHeight", new ExportedWidgetConverter(IntrinsicHeight::new));
         register("TestView", new ExportedWidgetConverter(TestView::new));
         register("RoundRect", new ExportedWidgetConverter(RoundRect::new));
+        register("CircularRect", new ExportedWidgetConverter(CircularRect::new));
+        register("Navigator", new ExportedWidgetConverter(Navigator::new));
+        register("Stencil", new ExportedWidgetConverter(Stencil::new));
+        register("WrapGrid", new ExportedWidgetConverter(Wrap::new));
 
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
+        register("RoundButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/dgButton.gui")));
+        register("SimpleToggleButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleToggleButton.gui")));
         register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
         register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
         register("SlowList", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/slowlist.gui")));

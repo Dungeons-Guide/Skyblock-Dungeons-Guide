@@ -54,9 +54,11 @@ public class Align extends AnnotatedExportOnlyWidget implements Layouter {
         Size size = theOnly.getLayouter().layout(theOnly, new ConstraintBox(
                 0, constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight()
         ));
-        theOnly.setRelativeBound(new Rect(
-                (constraintBox.getMaxWidth() - size.getWidth())/2,
-                (constraintBox.getMaxHeight() - size.getHeight())/2,
+
+        double x = hAlign.getValue() == Alignment.START ? 0 : hAlign.getValue() == Alignment.CENTER ? (constraintBox.getMaxWidth() - size.getWidth())/2 : constraintBox.getMaxWidth() - size.getWidth();
+        double y = vAlign.getValue() == Alignment.START ? 0 : vAlign.getValue() == Alignment.CENTER ? (constraintBox.getMaxHeight() - size.getHeight())/2 : constraintBox.getMaxHeight() - size.getHeight();
+
+        theOnly.setRelativeBound(new Rect(x, y,
                 size.getWidth(), size.getHeight()
         ));
         return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());

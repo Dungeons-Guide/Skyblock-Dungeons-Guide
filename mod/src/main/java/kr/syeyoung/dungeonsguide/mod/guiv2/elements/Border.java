@@ -126,9 +126,11 @@ public class Border extends AnnotatedExportOnlyWidget implements Layouter {
             if (child.getWidget() == this.right.getValue()) right = child;
             if (child.getWidget() == this.content.getValue()) content = child;
         }
-        return content.getLayouter().getMaxIntrinsicWidth(content, height)
-                + left.getLayouter().getMaxIntrinsicWidth(left, height)
-                + right.getLayouter().getMaxIntrinsicWidth(right, height);
+        double effHeight = height - top.getLayouter().getMaxIntrinsicHeight(top, 0)
+                - bottom.getLayouter().getMaxIntrinsicHeight(bottom, 0);
+        return content.getLayouter().getMaxIntrinsicWidth(content, effHeight)
+                + left.getLayouter().getMaxIntrinsicWidth(left, effHeight)
+                + right.getLayouter().getMaxIntrinsicWidth(right, effHeight);
     }
 
     @Override
@@ -141,7 +143,9 @@ public class Border extends AnnotatedExportOnlyWidget implements Layouter {
             if (child.getWidget() == this.right.getValue()) right = child;
             if (child.getWidget() == this.content.getValue()) content = child;
         }
-        return content.getLayouter().getMaxIntrinsicHeight(content, width)
+        double effWidth = width - left.getLayouter().getMaxIntrinsicHeight(top, 0)
+                - right.getLayouter().getMaxIntrinsicHeight(bottom, 0);
+        return content.getLayouter().getMaxIntrinsicHeight(content, effWidth)
                 + top.getLayouter().getMaxIntrinsicHeight(top, width)
                 + bottom.getLayouter().getMaxIntrinsicHeight(bottom, width);
     }

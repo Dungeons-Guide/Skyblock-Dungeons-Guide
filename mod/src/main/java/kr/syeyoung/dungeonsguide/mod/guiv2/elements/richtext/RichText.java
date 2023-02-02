@@ -90,7 +90,12 @@ public class RichText extends Widget implements Layouter, Renderer {
             line.add(brokenWordData.getFirst());
 
             if (brokenWordData.getFirst().value.length == 0 && first.value.length != 0 && remaining == constraintBox.getMaxWidth()) {
-                throw new IllegalStateException("Can not fit stuff into this");
+                try {
+                    throw new IllegalStateException("Can not fit stuff into this");
+                } catch (Exception e) {
+                    e.printStackTrace();
+                    break;
+                }
             }
 
             maxHeight = Math.max(maxHeight, first.getHeight());
