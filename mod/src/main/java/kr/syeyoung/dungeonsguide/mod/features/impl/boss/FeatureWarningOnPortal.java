@@ -18,14 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
-import com.google.common.base.Supplier;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCTextStyleList;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -36,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.features.text.PanelTextParameterConfig;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledTextProvider;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 import java.util.ArrayList;
@@ -47,7 +43,8 @@ import java.util.Map;
 public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextProvider {
     public FeatureWarningOnPortal() {
         super("Dungeon.Blood Room", "Score Warning on Watcher portal", "Display warnings such as\n- 'NOT ALL ROOMS DISCOVERED'\n- 'NOT ALL ROOMS COMPLETED'\n- 'Expected Score: 304'\n- 'MISSING 3 CRYPTS'\non portal", "bossfight.warningonportal");
-        addParameter("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
+        addParameter("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), TCTextStyleList.INSTANCE)
+                .setWidgetGenerator(param -> new CompatLayer(new PanelTextParameterConfig(FeatureWarningOnPortal.this))));
         getStyles().add(new TextStyle("warning", new AColor(255, 0,0,255), new AColor(255, 255,255,255), false));
         getStyles().add(new TextStyle("field_name", new AColor(255, 72,255,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("field_separator", new AColor(204, 204,204,255), new AColor(0, 0,0,0), false));
@@ -187,20 +184,4 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
     }
 
 
-    @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-                MFeatureEdit featureEdit = new MFeatureEdit(FeatureWarningOnPortal.this, rootConfigPanel);
-                featureEdit.addParameterEdit("textStyles", new PanelTextParameterConfig(FeatureWarningOnPortal.this));
-                for (FeatureParameter parameter: getParameters()) {
-                    if (parameter.getKey().equals("textStyles")) continue;
-                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureWarningOnPortal.this, parameter, rootConfigPanel));
-                }
-                return featureEdit;
-            }
-        });
-        return "base." + getKey() ;
-    }
 }

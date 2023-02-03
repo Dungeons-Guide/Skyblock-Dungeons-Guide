@@ -25,16 +25,13 @@ import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TCTextStyleList implements TypeConverter<List<TextStyle>> {
-    @Override
-    public String getTypeString() {
-        return "list_textStyle";
-    }
+public class TCTextStyleList implements FeatureTypeHandler<List<TextStyle>> {
+    public static final TCTextStyleList INSTANCE = new TCTextStyleList();
 
     @Override
     public List<TextStyle>  deserialize(JsonElement element) {
         JsonArray arr = element.getAsJsonArray();
-        TypeConverter<TextStyle> conv = TypeConverterRegistry.getTypeConverter("textstyle", TextStyle.class);
+        FeatureTypeHandler<TextStyle> conv = TCTextStyle.INSTANCE;
         List<TextStyle> texts = new ArrayList<TextStyle>();
         for (JsonElement element2:arr) {
             texts.add(conv.deserialize(element2));
@@ -45,7 +42,7 @@ public class TCTextStyleList implements TypeConverter<List<TextStyle>> {
     @Override
     public JsonElement serialize(List<TextStyle> element) {
         JsonArray array = new JsonArray();
-        TypeConverter<TextStyle> conv = TypeConverterRegistry.getTypeConverter("textstyle", TextStyle.class);
+        FeatureTypeHandler<TextStyle> conv = TCTextStyle.INSTANCE;
         for (TextStyle st:element) {
             array.add(conv.serialize(st));
         }

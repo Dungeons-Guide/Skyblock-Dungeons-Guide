@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
@@ -54,6 +56,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "discord")
     public void discord() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://discord.gg/VuxayCWGE8"));
         } catch (IOException | URISyntaxException e) {
@@ -63,6 +66,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "github")
     public void github() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide/"));
         } catch (IOException | URISyntaxException e) {
@@ -71,6 +75,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
     }
     @On(functionName = "store")
     public void store() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         try {
             Desktop.getDesktop().browse(new URI("https://store.dungeons.guide/"));
         } catch (IOException | URISyntaxException e) {

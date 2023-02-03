@@ -23,11 +23,8 @@ import com.google.gson.JsonObject;
 
 import java.awt.*;
 
-public class TCRectangle implements TypeConverter<Rectangle> {
-    @Override
-    public String getTypeString() {
-        return "rect";
-    }
+public class TCRectangle implements FeatureTypeHandler<Rectangle> {
+    public static final TCRectangle INSTANCE = new TCRectangle();
 
     @Override
     public Rectangle deserialize(JsonElement element) {

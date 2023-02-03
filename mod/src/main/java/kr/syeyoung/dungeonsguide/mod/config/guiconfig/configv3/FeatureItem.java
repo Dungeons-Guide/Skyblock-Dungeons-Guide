@@ -86,6 +86,8 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
 
     @On(functionName = "configure")
     public void onEdit() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Navigator.getNavigator(getDomElement()).openPage(feature.getConfigureWidget());
         // do stuff
     }
     @On(functionName = "relocate")

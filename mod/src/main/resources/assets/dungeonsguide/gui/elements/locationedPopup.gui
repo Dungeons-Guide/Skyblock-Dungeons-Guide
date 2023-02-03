@@ -15,6 +15,10 @@
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
-    <absXY bind:x="x" bind:y="y">
-        <slot bind:child="child" bind:ref="ref"/>
-    </absXY>
+<absXY bind:x="x" bind:y="y">
+    <UnconstrainedBox>
+        <measure bind:size="size">
+            <slot bind:child="child" bind:ref="ref"/>
+        </measure>
+    </UnconstrainedBox>
+</absXY>

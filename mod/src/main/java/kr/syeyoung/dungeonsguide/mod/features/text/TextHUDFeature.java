@@ -18,24 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.text;
 
-import com.google.common.base.Supplier;
-import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MFloatSelectionButton;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MPassiveLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MStringSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
@@ -55,15 +46,10 @@ import java.util.*;
 public abstract class TextHUDFeature extends AbstractHUDFeature implements StyledTextProvider {
     protected TextHUDFeature(String category, String name, String description, String key) {
         super(category, name, description, key);
-        addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), "list_textStyle"));
-        addParameter("alignment", new FeatureParameter<String>("alignment", "Alignment", "Alignment", "LEFT", "string", (change) -> {
-            richText.setAlign(
-                    change.equals("LEFT") ? RichText.TextAlign.LEFT :
-                            change.equals("CENTER") ? RichText.TextAlign.CENTER :
-                                    change.equals("RIGHT") ? RichText.TextAlign.RIGHT : RichText.TextAlign.LEFT
-            );
-        }));
-        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, "float"));
+        addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), TCTextStyleList.INSTANCE)
+                .setWidgetGenerator((param) -> new CompatLayer(new PanelTextParameterConfig(TextHUDFeature.this))));
+        addParameter("alignment", new FeatureParameter<RichText.TextAlign>("alignment", "Alignment", "Alignment", RichText.TextAlign.LEFT, new TCEnum<>(RichText.TextAlign.values()), richText::setAlign));
+        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, TCFloat.INSTANCE));
     }
 
     @Override
@@ -118,7 +104,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         GlStateManager.scale(scale, scale, 0);
 
         StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, 100, getStylesMap(),
-                StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue()));
+                StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<RichText.TextAlign>getParameter("alignment").getValue().name()));
     }
 
     @RequiredArgsConstructor
@@ -126,19 +112,19 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         public final TextHUDFeature hudFeature;
         @Override
         public List<Position> getMarkers() {
-            String change = hudFeature.<String>getParameter("alignment").getValue();
+            RichText.TextAlign change = hudFeature.<RichText.TextAlign>getParameter("alignment").getValue();
             Rect relBound = getDomElement().getRelativeBound();
-            if (change.equals("LEFT")) {
+            if (change == RichText.TextAlign.LEFT) {
                 return Arrays.asList(
                         new Position(0, 0),
                         new Position(0, relBound.getHeight())
                 );
-            } else if (change.equals("CENTER")) {
+            } else if (change == RichText.TextAlign.CENTER) {
                 return Arrays.asList(
                         new Position(relBound.getWidth() /2, 0),
                         new Position(relBound.getWidth() /2, relBound.getHeight())
                 );
-            } else if (change.equals("RIGHT")) {
+            } else if (change == RichText.TextAlign.RIGHT) {
                 return Arrays.asList(
                         new Position(relBound.getWidth(), 0),
                         new Position(relBound.getWidth(), relBound.getHeight())
@@ -155,11 +141,8 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
                     ParentDelegatingTextStyle.ofDefault(),
                     ""
             ), BreakWord.WORD, false, RichText.TextAlign.LEFT);
-            String change = hudFeature.<String>getParameter("alignment").getValue();
             richText.setAlign(
-                    change.equals("LEFT") ? RichText.TextAlign.LEFT :
-                            change.equals("CENTER") ? RichText.TextAlign.CENTER :
-                                    change.equals("RIGHT") ? RichText.TextAlign.RIGHT : RichText.TextAlign.LEFT
+                    hudFeature.<RichText.TextAlign>getParameter("alignment").getValue()
             );
 
             ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
@@ -228,33 +211,6 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
 
 
     @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-
-                MFeatureEdit featureEdit = new MFeatureEdit(TextHUDFeature.this, rootConfigPanel);
-                featureEdit.addParameterEdit("textStyleNEW", new PanelTextParameterConfig(TextHUDFeature.this));
-
-                StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue());
-                MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.asList("LEFT", "CENTER", "RIGHT"), alignment.name());
-                mStringSelectionButton.setOnUpdate(() -> {
-                    TextHUDFeature.this.<String>getParameter("alignment").setValue(mStringSelectionButton.getSelected());
-                });
-                featureEdit.addParameterEdit("alignment", new MParameterEdit(TextHUDFeature.this, TextHUDFeature.this.<String>getParameter("alignment"), rootConfigPanel, mStringSelectionButton, (a) -> false));
-
-                for (FeatureParameter parameter: getParameters()) {
-                    if (parameter.getKey().equals("textStylesNEW")) continue;
-                    if (parameter.getKey().equals("alignment")) continue;
-                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(TextHUDFeature.this, parameter, rootConfigPanel));
-                }
-                return featureEdit;
-            }
-        });
-        return "base." + getKey() ;
-    }
-
-    @Override
     public void getTooltipForEditor(List<Widget> widgets) {
         super.getTooltipForEditor(widgets);
 //        StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(this.<String>getParameter("alignment").getValue());
@@ -278,13 +234,4 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         stylesMap = null;
     }
 
-    @Override
-    public void loadConfig(JsonObject jsonObject) {
-        super.loadConfig(jsonObject);
-        StyledTextRenderer.Alignment alignment;
-        try {
-            alignment = StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<String>getParameter("alignment").getValue());
-        } catch (Exception e) {alignment = StyledTextRenderer.Alignment.LEFT;}
-        TextHUDFeature.this.<String>getParameter("alignment").setValue(alignment.name());
-    }
 }

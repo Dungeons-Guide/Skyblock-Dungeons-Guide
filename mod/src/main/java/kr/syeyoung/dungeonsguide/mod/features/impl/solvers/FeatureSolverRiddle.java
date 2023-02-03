@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.solvers;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
@@ -26,7 +27,7 @@ public class FeatureSolverRiddle extends SimpleFeature {
     public FeatureSolverRiddle() {
         super("Dungeon.Solvers.Any Floor", "Riddle", "Highlights the correct box after clicking on all 3 weirdos",  "solver.riddle");
 
-        addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box", new AColor(0,255,0,50), "acolor"));
+        addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box", new AColor(0,255,0,50), TCAColor.INSTANCE));
     }
 
     public AColor getTargetColor() {

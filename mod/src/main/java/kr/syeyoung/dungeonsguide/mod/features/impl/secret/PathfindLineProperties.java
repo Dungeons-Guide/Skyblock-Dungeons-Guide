@@ -18,16 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
-import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 
 import java.util.LinkedHashMap;
 
@@ -38,37 +32,16 @@ public class PathfindLineProperties extends SimpleFeature {
         this.parent = parent;
         this.parameters = new LinkedHashMap<>();
         if (parent != null)
-            addParameter("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, "boolean"));
-        addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useParent, "boolean"));
-        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the pathfind line", new AColor(0xFFFF0000, true), "acolor"));
-        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the pathfind line",1.0f, "float"));
-        addParameter("linerefreshrate", new FeatureParameter<Integer>("linerefreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, "integer"));
-        addParameter("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, "boolean"));
-        addParameter("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), "acolor"));
-        addParameter("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), "acolor"));
+            addParameter("useGlobal", new FeatureParameter<Boolean>("useGlobal", "Use Global Settings instead of this", "Completely ignore these settings, then use the parent one:: '"+parent.getName()+"'",  useParent, TCBoolean.INSTANCE));
+        addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Enable pathfind for secrets",  useParent, TCBoolean.INSTANCE));
+        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the pathfind line", new AColor(0xFFFF0000, true), TCAColor.INSTANCE));
+        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the pathfind line",1.0f, TCFloat.INSTANCE));
+        addParameter("linerefreshrate", new FeatureParameter<Integer>("linerefreshrate", "Line Refreshrate", "Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all", 10, TCInteger.INSTANCE));
+        addParameter("beacon", new FeatureParameter<Boolean>("beacon", "Enable Beacons", "Enable beacons for pathfind line targets",  true, TCBoolean.INSTANCE));
+        addParameter("beamColor", new FeatureParameter<AColor>("beamColor", "Beam Color", "Color of the beacon beam", new AColor(0x77FF0000, true), TCAColor.INSTANCE));
+        addParameter("beamTargetColor", new FeatureParameter<AColor>("beamTargetColor", "Target Color", "Color of the target", new AColor(0x33FF0000, true), TCAColor.INSTANCE));
     }
 
-
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-                MFeatureEdit featureEdit = new MFeatureEdit(PathfindLineProperties.this, rootConfigPanel);
-                for (FeatureParameter parameter: getParameters()) {
-                    if (parameter.getKey().startsWith("line"))
-                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> isGlobal() || !isPathfind()));
-                    else if (parameter.getKey().startsWith("beam"))
-                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> isGlobal() || !isBeacon()));
-                    else if (!parameter.getKey().equals("useGlobal"))
-                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> isGlobal()));
-                    else
-                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(PathfindLineProperties.this, parameter, rootConfigPanel, a -> false));
-                }
-                return featureEdit;
-            }
-        });
-        return "base." + getKey() ;
-    }
 
     @Override
     public boolean isDisyllable() {

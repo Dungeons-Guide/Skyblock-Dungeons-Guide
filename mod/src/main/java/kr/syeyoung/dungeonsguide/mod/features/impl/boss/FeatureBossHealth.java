@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.HealthData;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
@@ -37,9 +38,9 @@ public class FeatureBossHealth extends TextHUDFeature {
     public FeatureBossHealth() {
         super("Dungeon.Bossfight", "Display Boss(es) Health", "Show the health of boss and minibosses in bossfight (Guardians, Priests..)", "bossfight.health");
         this.setEnabled(true);
-        addParameter("totalHealth", new FeatureParameter<Boolean>("totalHealth", "show total health", "Show total health along with current health", false, "boolean", nval -> totalHealth = nval));
-        addParameter("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, "boolean", nval -> formatHealth = nval));
-        addParameter("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, "boolean", nval -> ignoreInattackable = nval));
+        addParameter("totalHealth", new FeatureParameter<Boolean>("totalHealth", "show total health", "Show total health along with current health", false, TCBoolean.INSTANCE, nval -> totalHealth = nval));
+        addParameter("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, TCBoolean.INSTANCE, nval -> formatHealth = nval));
+        addParameter("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, TCBoolean.INSTANCE, nval -> ignoreInattackable = nval));
 
         getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
         getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));

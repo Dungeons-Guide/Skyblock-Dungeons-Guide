@@ -16,6 +16,7 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
+<PopupManager>
 <align vAlign="CENTER" hAlign="CENTER">
     <ConstrainedBox maxWidth="700" maxHeight="500">
         <bgcolor backgroundColor="0xFF111111">
@@ -87,3 +88,4 @@
         </bgcolor>
     </ConstrainedBox>
 </align>
+</PopupManager>

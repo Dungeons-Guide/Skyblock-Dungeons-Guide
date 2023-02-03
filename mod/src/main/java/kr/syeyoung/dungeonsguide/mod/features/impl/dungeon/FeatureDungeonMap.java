@@ -22,8 +22,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
+import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -33,7 +32,6 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -84,20 +82,20 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     public FeatureDungeonMap() {
         super("Dungeon", "Dungeon Map", "Display dungeon map!", "dungeon.map", true, 128, 128);
         this.setEnabled(false);
-        addParameter("scale", new FeatureParameter<>("scale", "Scale map", "Whether to scale map to fit screen", true, "boolean", nval -> shouldScale = nval));
-        addParameter("cacheMap", new FeatureParameter<>("cacheMap", "Should cache map data", "name", true, "boolean", nval -> shouldCacheMap = nval));
-        addParameter("playerCenter", new FeatureParameter<>("playerCenter", "Center map at player", "Render you in the center", false, "boolean", nval -> centerMapOnPlayer = nval));
-        addParameter("rotate", new FeatureParameter<>("rotate", "Rotate map centered at player", "Only works with Center map at player enabled", false, "boolean", nval -> shouldRotateWithPlayer = nval));
-        addParameter("postScale", new FeatureParameter<>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0f, "float", nval -> postscaleOfMap = nval));
-        addParameter("useplayerheads", new FeatureParameter<>("useplayerheads", "Use player heads instead of arrows", "Option to use player heads instead of arrows", true, "boolean", nval -> showPlayerHeads = nval));
-        addParameter("showotherplayers", new FeatureParameter<>("showotherplayers", "Show other players", "Option to show other players in map", true, "boolean", nval -> shouldShowOtherPlayers = nval));
-        addParameter("showtotalsecrets", new FeatureParameter<>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, "boolean", nval -> showSecretCount = nval));
-        addParameter("playerheadscale", new FeatureParameter<>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, "float", nval -> playerHeadScale = nval));
-        addParameter("textScale", new FeatureParameter<>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, "float", nval -> textScale = nval));
+        addParameter("scale", new FeatureParameter<>("scale", "Scale map", "Whether to scale map to fit screen", true, TCBoolean.INSTANCE, nval -> shouldScale = nval));
+        addParameter("cacheMap", new FeatureParameter<>("cacheMap", "Should cache map data", "name", true, TCBoolean.INSTANCE, nval -> shouldCacheMap = nval));
+        addParameter("playerCenter", new FeatureParameter<>("playerCenter", "Center map at player", "Render you in the center", false, TCBoolean.INSTANCE, nval -> centerMapOnPlayer = nval));
+        addParameter("rotate", new FeatureParameter<>("rotate", "Rotate map centered at player", "Only works with Center map at player enabled", false, TCBoolean.INSTANCE, nval -> shouldRotateWithPlayer = nval));
+        addParameter("postScale", new FeatureParameter<>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0f, TCFloat.INSTANCE, nval -> postscaleOfMap = nval));
+        addParameter("useplayerheads", new FeatureParameter<>("useplayerheads", "Use player heads instead of arrows", "Option to use player heads instead of arrows", true, TCBoolean.INSTANCE, nval -> showPlayerHeads = nval));
+        addParameter("showotherplayers", new FeatureParameter<>("showotherplayers", "Show other players", "Option to show other players in map", true, TCBoolean.INSTANCE, nval -> shouldShowOtherPlayers = nval));
+        addParameter("showtotalsecrets", new FeatureParameter<>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, TCBoolean.INSTANCE, nval -> showSecretCount = nval));
+        addParameter("playerheadscale", new FeatureParameter<>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, TCFloat.INSTANCE, nval -> playerHeadScale = nval));
+        addParameter("textScale", new FeatureParameter<>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, TCFloat.INSTANCE, nval -> textScale = nval));
 
-        addParameter("border_color", new FeatureParameter<>("border_color", "Color of the border", "Same as name", new AColor(255, 255, 255, 255), "acolor"));
-        addParameter("background_color", new FeatureParameter<>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), "acolor", nval -> backgroudColor = nval));
-        addParameter("player_color", new FeatureParameter<>("player_color", "Color of the player border", "Same as name", new AColor(255, 255, 255, 0), "acolor", nval -> playerColor = nval));
+        addParameter("border_color", new FeatureParameter<>("border_color", "Color of the border", "Same as name", new AColor(255, 255, 255, 255), TCAColor.INSTANCE));
+        addParameter("background_color", new FeatureParameter<>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), TCAColor.INSTANCE, nval -> backgroudColor = nval));
+        addParameter("player_color", new FeatureParameter<>("player_color", "Color of the player border", "Same as name", new AColor(255, 255, 255, 0), TCAColor.INSTANCE, nval -> playerColor = nval));
     }
 
     public static final Ordering<NetworkPlayerInfo> sorter = Ordering.from((compare1, compare2) -> {

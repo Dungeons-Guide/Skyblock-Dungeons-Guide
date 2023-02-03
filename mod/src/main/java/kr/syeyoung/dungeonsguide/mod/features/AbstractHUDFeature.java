@@ -19,19 +19,29 @@
 package kr.syeyoung.dungeonsguide.mod.features;
 
 import com.google.gson.JsonObject;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
-import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCGUIPosition;
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import lombok.Getter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -102,19 +112,22 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
-        GUIPosition position = TypeConverterRegistry.getTypeConverter("guipos", GUIPosition.class).deserialize(jsonObject.get("$pos"));
+        GUIPosition position = TCGUIPosition.INSTANCE.deserialize(jsonObject.get("$pos"));
         if (position != null) setFeatureRect(position);
     }
 
     @Override
     public JsonObject saveConfig() {
         JsonObject object = super.saveConfig();
-        object.add("$pos", TypeConverterRegistry.getTypeConverter("guipos", GUIPosition.class).serialize(featureRect));
+        object.add("$pos", TCGUIPosition.INSTANCE.serialize(featureRect));
         return object;
     }
 
     public void getTooltipForEditor(List<Widget> widgets) {
         widgets.add(new Text(getName(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
+        widgets.add(new QuickEnable(this));
+        if (getConfigureWidget() != null)
+            widgets.add(new QuickConfigure(this));
 //        mPanels.add(new MButton() {
 //            {
 //                setText("Edit");
@@ -141,5 +154,39 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
 //                AbstractHUDFeature.this.setEnabled(isEnabled());
 //            }); }
 //        }));
+    }
+
+    public static class QuickEnable extends AnnotatedImportOnlyWidget {
+        @Bind(
+                variableName = "enabled"
+        )
+        public final BindableAttribute<Boolean> enabled = new BindableAttribute<Boolean>(Boolean.class);
+        public QuickEnable(AbstractHUDFeature abstractHUDFeature) {
+            super(new ResourceLocation("dungeonsguide:gui/config/popup/quickEnable.gui"));
+            enabled.setValue(abstractHUDFeature.isEnabled());
+            enabled.addOnUpdate((old, neu) -> {
+                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                abstractHUDFeature.setEnabled(neu);
+            });
+        }
+    }
+    public static class QuickConfigure extends AnnotatedImportOnlyWidget {
+        private AbstractHUDFeature abstractHUDFeature;
+        public QuickConfigure(AbstractHUDFeature abstractHUDFeature) {
+            super(new ResourceLocation("dungeonsguide:gui/config/popup/quickEdit.gui"));
+            this.abstractHUDFeature = abstractHUDFeature;
+        }
+
+        @On(functionName = "configure")
+        public void configure() {
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+            MainConfigWidget mainConfigWidget = new MainConfigWidget();
+            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));
+            Minecraft.getMinecraft().displayGuiScreen(adapter);
+
+            Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
+                    abstractHUDFeature.getConfigureWidget()
+            );
+        }
     }
 }

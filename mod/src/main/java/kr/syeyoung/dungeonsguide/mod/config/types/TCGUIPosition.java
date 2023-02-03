@@ -21,11 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.config.types;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 
-public class TCGUIPosition implements TypeConverter<GUIPosition> {
-    @Override
-    public String getTypeString() {
-        return "guipos";
-    }
+public class TCGUIPosition implements FeatureTypeHandler<GUIPosition> {
+    public static final TCGUIPosition INSTANCE = new TCGUIPosition();
 
     @Override
     public GUIPosition deserialize(JsonElement element) {

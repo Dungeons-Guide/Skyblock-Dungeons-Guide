@@ -1,0 +1,85 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<size width="137" height="102">
+    <stack>
+        <padding left="7" top="7" right="7" bottom="7">
+            <col>
+                <flexible>
+                    <row>
+                        <aspectRatio width="1" height="1">
+                            <slot bind:child="colorWheel"/>
+                        </aspectRatio>
+                        <size width="5"/>
+                        <size width="15">
+                            <slot bind:child="valueBar"/>
+                        </size>
+                        <size width="5"/>
+                        <size width="15">
+                            <slot bind:child="alphaBar"/>
+                        </size>
+                        <size width="5"/>
+                        <size width="15">
+                            <slot bind:child="chromaBar"/>
+                        </size>
+                    </row>
+                </flexible>
+                <size height="5"/>
+                <size height="20">
+                    <TextField bind:value="color"/>
+                </size>
+            </col>
+        </padding>
+        <InvertStencil>
+            <RoundRect radius="10" backgroundColor="#FFFFFFFF">
+                <padding left="1" top="1" bottom="1" right="1">
+                    <RoundRect radius="10" backgroundColor="#FF111111">
+
+                    </RoundRect>
+                </padding>
+            </RoundRect>
+            <padding left="7" top="7" right="7" bottom="7" slot="stencil">
+                <col>
+                    <flexible>
+                        <row>
+                            <aspectRatio width="1" height="1">
+                                <size width="0" height="0"/>
+                            </aspectRatio>
+                            <size width="5"/>
+                            <size width="15">
+                                <size width="0" height="0"/>
+                            </size>
+                            <size width="5"/>
+                            <size width="15">
+                                <RoundRect radius="10" backgroundColor="#FFFFFFFF"/>
+                            </size>
+                            <size width="5"/>
+                            <size width="15">
+                                <size width="0" height="0"/>
+                            </size>
+                        </row>
+                    </flexible>
+                    <size height="5"/>
+                    <size height="20">
+                        <size width="0" height="0"/>
+                    </size>
+                </col>
+            </padding>
+        </InvertStencil>
+    </stack>
+</size>

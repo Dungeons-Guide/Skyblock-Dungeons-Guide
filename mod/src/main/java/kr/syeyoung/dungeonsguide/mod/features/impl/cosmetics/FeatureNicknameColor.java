@@ -18,20 +18,18 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics;
 
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
 
 public class FeatureNicknameColor extends SimpleFeature {
     public FeatureNicknameColor() {
         super("Cosmetics", "Nickname Color", "Click on Edit to choose nickname color cosmetic", "cosmetic.nickname");
-        addParameter("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", "string"));
     }
 
     @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , () -> new PrefixSelectorGUI("color", new String[] {
+    public Widget getConfigureWidget() {
+        return new CompatLayer( new PrefixSelectorGUI("color", new String[] {
                 "§9Party §8> §r§a[RANK§6+§a] %prefix%%name%§f: TEST",
                 "§2Guild > §r§a[RANK§6+§a] %prefix%%name% §3[Vet]§f: TEST",
                 "§dTo §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
@@ -39,7 +37,6 @@ public class FeatureNicknameColor extends SimpleFeature {
                 "§r§b[RANK§c+§b] %prefix%%name%§f: TEST",
                 "§r§bCo-op > §r§a[RANK§6+§a] %prefix%%name%§f: §rTEST§r"
         }, a -> (a.replace("&", "§")+"Color "+(a.replace("&", "§").equals("§z") ? "(Rainbow on sba)" : ""))));
-        return "base." + getKey();
     }
 
     @Override

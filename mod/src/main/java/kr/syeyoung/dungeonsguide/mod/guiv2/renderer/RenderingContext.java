@@ -86,6 +86,10 @@ public class RenderingContext {
 
     public Stack<Rectangle> clips = new Stack<>();
 
+    public Rectangle currentClip() {
+        return clips.empty() ? null : clips.peek();
+    }
+
     public void pushClip(Rect absBounds, Size size, double x, double y, double width, double height) {
         if (width < 0 || height < 0) {
             width = 0;

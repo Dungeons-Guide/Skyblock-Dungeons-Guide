@@ -22,7 +22,6 @@ import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
@@ -92,7 +91,7 @@ public class CommandDungeonsGuide extends CommandBase {
     public void processCommand(ICommandSender sender, String[] args) {
 
         if (args.length == 0) {
-            target = new GuiConfigV2();
+            target = new GuiScreenAdapter(new GlobalHUDScale(new MainConfigWidget()));
             return;
         }
 
@@ -103,9 +102,6 @@ public class CommandDungeonsGuide extends CommandBase {
 
             case "gui":
                 target = new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)));
-                break;
-            case "v3":
-                target = new GuiScreenAdapter(new GlobalHUDScale(new MainConfigWidget()));
                 break;
             case "pv":
                 pvCommand(args[1], sender); //args[1] is the player name

@@ -21,13 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.features;
 import com.google.common.base.Supplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.DefaultConfigurePageWidget;
-import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverter;
-import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
+import kr.syeyoung.dungeonsguide.mod.config.types.FeatureTypeHandler;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import lombok.Getter;
@@ -78,34 +73,20 @@ public abstract class AbstractFeature implements IFeature {
             parameterEntry.getValue().setToDefault();
             JsonElement element = jsonObject.get(parameterEntry.getKey());
             if (element == null) continue;
-            TypeConverter typeConverter = TypeConverterRegistry.getTypeConverter(parameterEntry.getValue().getValue_type());
-            parameterEntry.getValue().setValue(typeConverter.deserialize(element));
+            FeatureTypeHandler featureTypeHandler = parameterEntry.getValue().getFeatureTypeHandler();
+            parameterEntry.getValue().setValue(featureTypeHandler.deserialize(element));
         }
     }
 
     public JsonObject saveConfig() {
         JsonObject object = new JsonObject();
         for (Map.Entry<String, FeatureParameter> parameterEntry : parameters.entrySet()) {
-            TypeConverter typeConverter = TypeConverterRegistry.getTypeConverter(parameterEntry.getValue().getValue_type());
-            JsonElement obj = typeConverter.serialize(parameterEntry.getValue().getValue());
+            FeatureTypeHandler featureTypeHandler =  parameterEntry.getValue().getFeatureTypeHandler();
+            JsonElement obj = featureTypeHandler.serialize(parameterEntry.getValue().getValue());
             object.add(parameterEntry.getKey(), obj);
         }
         object.addProperty("$enabled", isEnabled());
         return object;
-    }
-
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + key , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-                MFeatureEdit featureEdit = new MFeatureEdit(AbstractFeature.this, rootConfigPanel);
-                for (FeatureParameter parameter: getParameters()) {
-                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(AbstractFeature.this, parameter, rootConfigPanel));
-                }
-                return featureEdit;
-            }
-        });
-        return "base." + key ;
     }
 
     public Widget getConfigureWidget() {
@@ -116,7 +97,12 @@ public abstract class AbstractFeature implements IFeature {
     }
 
     public void setupConfigureWidget(List<Widget> widgets) {
-
+        for (FeatureParameter parameter : getParameters()) {
+            if (parameter.getWidgetGenerator() == null) continue;;
+            Widget widget = (Widget) parameter.getWidgetGenerator().apply(parameter);
+            if (widget == null) continue;;
+            widgets.add(widget);
+        }
     }
 
     public String getIcon() {

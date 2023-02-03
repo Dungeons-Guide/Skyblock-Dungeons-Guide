@@ -1,0 +1,60 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5">
+    <col>
+        <line color="#FFFFFFFF"/>
+        <size width="0" height="5"/>
+        <IntrinsicHeight>
+            <row>
+                <SelectiveContainer bind:visible="iconVisibility">
+                    <aspectRatio width="1" height="1" slot="show">
+                        <Stencil>
+                            <ResourceImage bind:location="icon" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                            <RoundRect radius="10" slot="stencil"/>
+                        </Stencil>
+                    </aspectRatio>
+                    <size width="0" height="0" slot="hide"/>
+                </SelectiveContainer>
+                <flexible>
+                    <col mainAlign="START" crossAlign="START">
+                        <padding left="5" right="5" top="5" bottom="5">
+                            <row crossAlign="END">
+                                <flexible>
+                                    <Text bind:text="name" color="#FFFFFFFF" size="12"/>
+                                </flexible>
+                            </row>
+                        </padding>
+                        <col crossAlign="START">
+                            <padding left="5" bottom="5" right="5" top="3">
+                                <Text bind:text="description" color="#FFAAAAAA"/>
+                            </padding>
+                        </col>
+                    </col>
+                </flexible>
+                <size width="150">
+                    <padding left="10" right="10" top="10" bottom="10">
+                        <align vAlign="CENTER" hAlign="CENTER">
+                            <slot bind:child="edit"/>
+                        </align>
+                    </padding>
+                </size>
+            </row>
+        </IntrinsicHeight>
+    </col>
+</padding>

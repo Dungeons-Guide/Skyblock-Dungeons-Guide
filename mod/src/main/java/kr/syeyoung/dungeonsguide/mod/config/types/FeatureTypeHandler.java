@@ -19,23 +19,14 @@
 package kr.syeyoung.dungeonsguide.mod.config.types;
 
 import com.google.gson.JsonElement;
-import com.google.gson.JsonPrimitive;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 
-import java.awt.*;
+public interface FeatureTypeHandler<T> {
+    T deserialize(JsonElement element);
+    JsonElement serialize(T element);
 
-public class TCColor implements TypeConverter<Color> {
-    @Override
-    public String getTypeString() {
-        return "color";
-    }
-
-    @Override
-    public Color deserialize(JsonElement element) {
-        return new Color(element.getAsInt());
-    }
-
-    @Override
-    public JsonElement serialize(Color element) {
-        return new JsonPrimitive(element.getRGB());
+    default Widget createDefaultWidgetFor(FeatureParameter parameter) {
+        return null;
     }
 }

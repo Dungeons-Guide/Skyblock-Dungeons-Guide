@@ -19,13 +19,17 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.GuiConfigV2;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.CategoryPageWidget;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip.MTooltipInvite;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
@@ -111,9 +115,13 @@ public class PanelPartyFinder extends MPanel {
         settings.setBackground(RenderUtils.blendAlpha(0xFF141414, 0.05f));
         settings.setText("Settings");
         settings.setOnActionPerformed(() -> {
-            GuiConfigV2 guiConfigV2 = new GuiConfigV2();
-            guiConfigV2.getRootConfigPanel().setCurrentPageAndPushHistory("ROOT."+ FeatureRegistry.PARTYKICKER_CUSTOM.getCategory());
-            Minecraft.getMinecraft().displayGuiScreen(guiConfigV2);
+            MainConfigWidget mainConfigWidget = new MainConfigWidget();
+            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));
+            Minecraft.getMinecraft().displayGuiScreen(adapter);
+
+            Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
+                    new CategoryPageWidget("Party")
+            );
         });
         discordInvite = new MButton();
         discordInvite.setText("Invite Discord Friends");

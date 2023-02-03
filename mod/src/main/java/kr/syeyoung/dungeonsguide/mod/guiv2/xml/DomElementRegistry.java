@@ -81,6 +81,7 @@ public class DomElementRegistry {
         register("CircularRect", new ExportedWidgetConverter(CircularRect::new));
         register("Navigator", new ExportedWidgetConverter(Navigator::new));
         register("Stencil", new ExportedWidgetConverter(Stencil::new));
+        register("InvertStencil", new ExportedWidgetConverter(NegativeStencil::new));
         register("WrapGrid", new ExportedWidgetConverter(Wrap::new));
 
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));

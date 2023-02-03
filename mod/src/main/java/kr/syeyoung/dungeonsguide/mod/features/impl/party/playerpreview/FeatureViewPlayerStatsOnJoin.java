@@ -25,10 +25,7 @@ import io.github.moulberry.hychat.gui.GuiChatBox;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCStringList;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -36,8 +33,11 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarenders.DataRendererEditor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget.WidgetProfileViewer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
-import kr.syeyoung.dungeonsguide.mod.overlay.*;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
+import kr.syeyoung.dungeonsguide.mod.overlay.AbsPosPositioner;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
+import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -72,7 +72,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
         super("Party", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
         addParameter("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers", "Datarenderssdasd", new ArrayList<>(Arrays.asList(
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
-        )), "stringlist"));
+        )), TCStringList.INSTANCE)
+                .setWidgetGenerator(param -> new CompatLayer(new DataRendererEditor(FeatureViewPlayerStatsOnJoin.this))));
 
 
         ChatProcessor.INSTANCE.subscribe(((txt, messageContext) -> {
@@ -178,21 +179,6 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
             ichatcomponent = Minecraft.getMinecraft().ingameGUI.getChatGUI().getChatComponent(Mouse.getX(), Mouse.getY());
         }
         return ichatcomponent;
-    }
-
-    @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey(), () -> {
-
-            MFeatureEdit featureEdit = new MFeatureEdit(FeatureViewPlayerStatsOnJoin.this, rootConfigPanel);
-            featureEdit.addParameterEdit("datarenderers", new DataRendererEditor(FeatureViewPlayerStatsOnJoin.this));
-            for (FeatureParameter parameter : getParameters()) {
-                if (parameter.getKey().equals("datarenderers")) continue;
-                featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureViewPlayerStatsOnJoin.this, parameter, rootConfigPanel));
-            }
-            return featureEdit;
-        });
-        return "base." + getKey();
     }
 
 }

@@ -18,64 +18,23 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
-import com.google.common.base.Supplier;
-import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MStringSelectionButton;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
-
-import java.awt.*;
-import java.util.Arrays;
-import java.util.stream.Collectors;
 
 public class FeaturePathfindStrategy extends SimpleFeature {
     public FeaturePathfindStrategy() {
         super("Dungeon.Secrets.Preferences", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
-        addParameter("strategy", new FeatureParameter<String>("strategy", "Pathfind Strategy", "Pathfind Strategy", "THETA_STAR", "string"));
-
+        addParameter("strategy", new FeatureParameter<PathfindStrategy>("strategy", "Pathfind Strategy", "Pathfind Strategy", PathfindStrategy.THETA_STAR, new TCEnum<>(PathfindStrategy.values()), neu -> {
+            if (this.parameters.containsKey("strategy")) this.<PathfindStrategy>getParameter("strategy").setDescription(neu.getDescription());
+        }));
     }
 
     @Override
     public boolean isDisyllable() {
         return false;
-    }
-
-    @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-
-                MFeatureEdit featureEdit = new MFeatureEdit(FeaturePathfindStrategy.this, rootConfigPanel);
-                PathfindStrategy alignment = getPathfindStrat();
-                MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.stream(PathfindStrategy.values()).map(Enum::name).collect(Collectors.toList()), alignment.name()) {
-                    @Override
-                    public Dimension getPreferredSize() {
-                        return new Dimension(150, 20);
-                    }
-                };
-                mStringSelectionButton.setOnUpdate(() -> {
-                    FeaturePathfindStrategy.this.<String>getParameter("strategy").setValue(mStringSelectionButton.getSelected());
-                    FeaturePathfindStrategy.this.<String>getParameter("strategy").setDescription(getPathfindStrat().getDescription());
-                    featureEdit.removeParameterEdit(null);
-                });
-                featureEdit.addParameterEdit("strategy", new MParameterEdit(FeaturePathfindStrategy.this, FeaturePathfindStrategy.this.<String>getParameter("strategy"), rootConfigPanel, mStringSelectionButton, (a) -> false));
-
-                for (FeatureParameter parameter: getParameters()) {
-                    if (parameter.getKey().equals("strategy")) continue;
-                    featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeaturePathfindStrategy.this, parameter, rootConfigPanel));
-                }
-                return featureEdit;
-            }
-        });
-        return "base." + getKey() ;
     }
 
     @Getter @RequiredArgsConstructor
@@ -86,18 +45,7 @@ public class FeaturePathfindStrategy extends SimpleFeature {
         private final String description;
     }
 
-    @Override
-    public void loadConfig(JsonObject jsonObject) {
-        super.loadConfig(jsonObject);
-        FeaturePathfindStrategy.PathfindStrategy alignment;
-        try {
-            alignment = PathfindStrategy.valueOf(FeaturePathfindStrategy.this.<String>getParameter("strategy").getValue());
-        } catch (Exception e) {alignment = PathfindStrategy.THETA_STAR;}
-        FeaturePathfindStrategy.this.<String>getParameter("strategy").setValue(alignment.name());
-        FeaturePathfindStrategy.this.<String>getParameter("strategy").setDescription(alignment.getDescription());
-    }
-
     public PathfindStrategy getPathfindStrat() {
-        return PathfindStrategy.valueOf(FeaturePathfindStrategy.this.<String>getParameter("strategy").getValue());
+        return FeaturePathfindStrategy.this.<PathfindStrategy>getParameter("strategy").getValue();
     }
 }

@@ -18,20 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics;
 
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCString;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
 
 public class FeatureNicknamePrefix extends SimpleFeature {
     public FeatureNicknamePrefix() {
         super("Cosmetics", "Nickname Prefix", "Click on Edit to choose prefix cosmetic", "cosmetic.prefix");
-        addParameter("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", "string"));
+        addParameter("dummy", new FeatureParameter("dummy", "dummy", "dummy", "dummy", TCString.INSTANCE));
     }
 
     @Override
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , () -> new PrefixSelectorGUI("prefix", new String[] {
+    public Widget getConfigureWidget() {
+        return new CompatLayer(new PrefixSelectorGUI("prefix", new String[] {
                 "§9Party §8> §r%prefix% §a[RANK§6+§a] %name%§f: TEST",
                 "§2Guild > §r%prefix% §a[RANK§6+§a] %name% §3[Vet]§f: TEST",
                 "§dTo §r%prefix% §r§a[RANK§r§6+§r§a] %name%§r§7: §r§7TEST§r",
@@ -39,7 +40,6 @@ public class FeatureNicknamePrefix extends SimpleFeature {
                 "§r%prefix% §b[RANK§c+§b] %name%§f: TEST",
                 "§r§bCo-op > §r%prefix% §a[RANK§6+§a] %name%§f: §rTEST§r"
         }, a->a.replace("&", "§")));
-        return "base." + getKey();
     }
 
     @Override

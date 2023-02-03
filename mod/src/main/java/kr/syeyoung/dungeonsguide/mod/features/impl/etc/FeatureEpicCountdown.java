@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -46,8 +47,8 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
     public FeatureEpicCountdown() {
         super("Dungeon.HUDs", "Epic Dungeon Start Countdown", "Shows a cool dungeon start instead of the chat messages", "etc.dungeoncountdown", true);
-        addParameter("cleanchat", new FeatureParameter<>("cleanchat", "Clean Dungeon Chat", "^^^", true, "boolean", nval -> cleanChat = nval));
-        addParameter("sounds", new FeatureParameter<>("sounds", "Countdown SFX", "^^^", true, "boolean", nval -> sfxenabled = nval));
+        addParameter("cleanchat", new FeatureParameter<>("cleanchat", "Clean Dungeon Chat", "^^^", true, TCBoolean.INSTANCE, nval -> cleanChat = nval));
+        addParameter("sounds", new FeatureParameter<>("sounds", "Countdown SFX", "^^^", true, TCBoolean.INSTANCE, nval -> sfxenabled = nval));
 
         lastSec = GO_TEXT;
     }

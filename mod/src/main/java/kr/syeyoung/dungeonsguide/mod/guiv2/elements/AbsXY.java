@@ -56,7 +56,7 @@ public class AbsXY extends AnnotatedExportOnlyWidget implements Layouter {
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
         DomElement child = buildContext.getChildren().get(0);
-        Size size = child.getLayouter().layout(buildContext, new ConstraintBox(
+        Size size = child.getLayouter().layout(child, new ConstraintBox(
                 0,constraintBox.getMaxWidth() - x.getValue(), 0, constraintBox.getMaxHeight()-y.getValue()
         ));
         child.setRelativeBound(new Rect(x.getValue(), y.getValue(), size.getWidth(), size.getHeight()));

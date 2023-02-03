@@ -93,7 +93,7 @@ public class Border extends AnnotatedExportOnlyWidget implements Layouter {
             if (top != null)
                 th= top.getLayouter().layout(top, new ConstraintBox(dimension.getWidth() + lw + rw, dimension.getWidth() + lw + rw,  th, th)).getHeight();
             if (bottom != null)
-                bh = bottom.getLayouter().layout(buildContext, new ConstraintBox(dimension.getWidth() + lw + rw, dimension.getWidth() + lw + rw,  bh,bh)).getHeight();
+                bh = bottom.getLayouter().layout(bottom, new ConstraintBox(dimension.getWidth() + lw + rw, dimension.getWidth() + lw + rw,  bh,bh)).getHeight();
         }
 
         if (top != null)

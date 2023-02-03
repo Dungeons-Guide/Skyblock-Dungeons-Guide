@@ -27,8 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.UUID;
-
 public class WidgetProfileViewer extends AnnotatedWidget {
 
     @Bind(variableName = "width")

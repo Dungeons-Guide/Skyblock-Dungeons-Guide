@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCString;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -31,7 +32,7 @@ public class APIKey extends SimpleFeature {
 
     public APIKey() {
         super("Misc.API Features", "API KEY", "Sets api key","partykicker.apikey");
-        addParameter("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "","string"));
+        addParameter("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "", TCString.INSTANCE));
     }
 
     public String getAPIKey() {

@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.types;
 
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -25,6 +26,7 @@ import java.awt.*;
 
 @Getter
 @Setter
+@EqualsAndHashCode(callSuper = true)
 public class AColor extends Color {
     private boolean chroma;
     private float chromaSpeed;

@@ -21,17 +21,16 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserInvitedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DiscordUserJoinRequestEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
-import net.minecraft.client.Minecraft;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
@@ -42,7 +41,7 @@ public class PartyInviteViewer extends AbstractGuiFeature {
     public PartyInviteViewer() {
         super("Discord", "Party Invite Viewer","Simply type /dg asktojoin or /dg atj to toggle whether ask-to-join would be presented as option on discord!\n\nRequires Discord RPC to be enabled", "discord.discord_party_invite_viewer");
 
-        addParameter("ttl", new FeatureParameter<Integer>("ttl", "Request Duration", "The duration after which the requests will be dismissed automatically. The value is in seconds.", 15, "integer"));
+        addParameter("ttl", new FeatureParameter<Integer>("ttl", "Request Duration", "The duration after which the requests will be dismissed automatically. The value is in seconds.", 15, TCInteger.INSTANCE));
     }
 
     @Override

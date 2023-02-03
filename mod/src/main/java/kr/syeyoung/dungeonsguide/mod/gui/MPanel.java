@@ -104,7 +104,7 @@ public class MPanel {
 
     public void remove(MPanel panel) {
         if (panel != null)
-        panel.setParent(null);
+            panel.setParent(null);
         this.childComponents.remove(panel);
     }
 
@@ -115,7 +115,6 @@ public class MPanel {
     private boolean ignoreBoundOnClip;
 
     public void render0(double scale, Point parentPoint, Rectangle parentClip, int absMousex, int absMousey, int relMousex0, int relMousey0, float partialTicks) { // 0,0 - a a
-
         lastParentPoint = parentPoint;
         int relMousex = relMousex0 - getBounds().x;
         int relMousey = relMousey0 - getBounds().y;

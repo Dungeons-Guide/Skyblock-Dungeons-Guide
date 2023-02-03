@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -32,11 +33,11 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 public class FeatureHideAnimals extends SimpleFeature  {
     public FeatureHideAnimals() {
         super("Dungeon.Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
-        addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheep", "Hide Sheep", true, "boolean", nval -> sheep = nval));
-        addParameter("cow", new FeatureParameter<Boolean>("cow", "Hide Cows", "Hide Cows", true, "boolean", nval -> cow = nval));
-        addParameter("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, "boolean", nval -> chicken = nval));
-        addParameter("wolf", new FeatureParameter<Boolean>("wolf", "Hide Wolves", "Hide Wolves", true, "boolean", nval -> wolf = nval));
-        addParameter("rabbit", new FeatureParameter<Boolean>("rabbit", "Hide Rabbits", "Hide Rabbits", true, "boolean", nval -> rabbit = nval));
+        addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheep", "Hide Sheep", true, TCBoolean.INSTANCE, nval -> sheep = nval));
+        addParameter("cow", new FeatureParameter<Boolean>("cow", "Hide Cows", "Hide Cows", true, TCBoolean.INSTANCE, nval -> cow = nval));
+        addParameter("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, TCBoolean.INSTANCE, nval -> chicken = nval));
+        addParameter("wolf", new FeatureParameter<Boolean>("wolf", "Hide Wolves", "Hide Wolves", true, TCBoolean.INSTANCE, nval -> wolf = nval));
+        addParameter("rabbit", new FeatureParameter<Boolean>("rabbit", "Hide Rabbits", "Hide Rabbits", true, TCBoolean.INSTANCE, nval -> rabbit = nval));
     }
 
     boolean sheep;

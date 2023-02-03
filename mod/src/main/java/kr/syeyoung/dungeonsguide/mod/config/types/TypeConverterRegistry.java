@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,35 +18,5 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.types;
 
-import java.util.HashMap;
-import java.util.Map;
-
 public class TypeConverterRegistry {
-    private static final Map<String, TypeConverter> typeConverterMap = new HashMap<String, TypeConverter>();
-
-    public static void register(TypeConverter typeConverter) {
-        typeConverterMap.put(typeConverter.getTypeString(), typeConverter);
-    }
-
-    public static TypeConverter getTypeConverter(String type_string) {
-        return typeConverterMap.get(type_string);
-    }
-    public static <T> TypeConverter<T> getTypeConverter(String type_string, Class<T> t) {
-        return (TypeConverter<T>)typeConverterMap.get(type_string);
-    }
-
-    static {
-        register(new TCBoolean());
-        register(new TCInteger());
-        register(new TCRectangle());
-        register(new TCGUIPosition());
-        register(new TCString());
-        register(new TCColor());
-        register(new TCFloat());
-        register(new TCAColor());
-        register(new TCTextStyleList());
-        register(new TCTextStyle());
-        register(new TCStringList());
-        register(new TCKeybind());
-    }
 }

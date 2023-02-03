@@ -116,6 +116,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         // draw selection
         if (getDomElement().isFocused()) {
             if (selectionStart != -1) {
+                if (selectionEnd > text.length()) selectionEnd = text.length();
                 int startX = (int) (fr.getStringWidth(text.substring(0, selectionStart)) - xOffset);
                 int endX = (int) (fr.getStringWidth(text.substring(0, selectionEnd)) - xOffset);
                 Gui.drawRect( (3 + startX), y,  (3 + endX), y + fr.FONT_HEIGHT, 0xFF00FF00);

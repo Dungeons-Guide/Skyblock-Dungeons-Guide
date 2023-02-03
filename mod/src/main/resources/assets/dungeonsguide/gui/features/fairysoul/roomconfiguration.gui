@@ -1,0 +1,49 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5">
+    <col>
+        <line color="#FFFFFFFF"/>
+        <size width="0" height="5"/>
+        <row crossAlign="END">
+            <flexible>
+                <Text text="Enable for these rooms" color="#FFFFFFFF" size="12"/>
+            </flexible>
+            <size width="60" height="12">
+                <padding left="5">
+                    <RoundButton on:click="eall" hPadding="1"
+                                 text="Enable All"
+                    />
+                </padding>
+            </size>
+            <size width="60" height="12">
+                <padding left="5">
+                    <RoundButton on:click="dall" hPadding="1"
+                                 text="Disable All"
+                    />
+                </padding>
+            </size>
+        </row>
+        <size width="0" height="5"/>
+        <RoundRect radius="5" backgroundColor="#FF333333">
+            <padding left="5" top="5" right="5" bottom="5">
+                <WrapGrid minimumWidth="160" gap="5" bind:_="rooms"/>
+            </padding>
+        </RoundRect>
+    </col>
+</padding>

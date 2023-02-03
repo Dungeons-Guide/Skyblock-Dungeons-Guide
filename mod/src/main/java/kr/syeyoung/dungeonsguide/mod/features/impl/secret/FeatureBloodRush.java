@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -31,7 +32,7 @@ import org.lwjgl.input.Keyboard;
 public class FeatureBloodRush extends SimpleFeature {
     public FeatureBloodRush() {
         super("Dungeon.Secrets.Blood Rush", "Blood Rush Mode", "Auto pathfind to witherdoors. \nCan be toggled with key set in settings", "secret.bloodrush", false);
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, "keybind"));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
     }
 
     @DGEventHandler

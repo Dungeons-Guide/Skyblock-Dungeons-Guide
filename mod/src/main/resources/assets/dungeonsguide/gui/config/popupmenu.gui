@@ -16,7 +16,7 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <UnconstrainedBox>
-        <ConstrainedBox maxWidth="200">
+        <ConstrainedBox maxWidth="150">
             <RoundRect radius="5" backgroundColor="#FF121212">
                 <padding top="5" bottom="5" left="5" right="5">
                     <col mainAlign="START" crossAlign="STRETCH" bind:_="items"/>

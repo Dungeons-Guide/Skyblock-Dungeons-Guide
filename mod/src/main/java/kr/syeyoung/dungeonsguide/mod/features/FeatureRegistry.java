@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.*;
@@ -132,17 +135,17 @@ public class FeatureRegistry {
     public static final PathfindLineProperties SECRET_BLOOD_RUSH_LINE_PROPERTIES = register(new PathfindLineProperties("Dungeon.Secrets.Blood Rush", "Blood Rush Line Settings", "Line Settings to be used", "secret.lineproperties.bloodrush", false, SECRET_LINE_PROPERTIES_GLOBAL));
     public static final FeatureBloodRush SECRET_BLOOD_RUSH = register(new FeatureBloodRush());
     public static final SimpleFeature SECRET_NEXT_KEY = register(new SimpleFeature("Dungeon.Secrets.Legacy AutoPathfind", "Auto Pathfind to new secret upon pressing a key", "Auto browse the best next secret when you press key.\nPress settings to edit the key", "secret.keyfornext", false) {{
-        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, "keybind"));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
     }});
 
     public static final SimpleFeature GLOBAL_HUD_SCALE = register(new SimpleFeature("Misc", "Global HUD Scale", "Configure to use gui scale from Minecraft or specify custom one", "hud.globalscale", false) {
         private boolean init = false;
         {
-            addParameter("mc", new FeatureParameter<Boolean>("mc", "Minecraft", "Enable to use minecraft default hud scale", true, "boolean", a -> {
+            addParameter("mc", new FeatureParameter<Boolean>("mc", "Minecraft", "Enable to use minecraft default hud scale", true, TCBoolean.INSTANCE, a -> {
                 if (init)
                 OverlayManager.getEventHandler().guiResize(null);
             }));
-            addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Custom HUD Scale",1.0f, "float", a -> {
+            addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Custom HUD Scale",1.0f, TCFloat.INSTANCE, a -> {
                 if (init)
                 OverlayManager.getEventHandler().guiResize(null);
 
@@ -197,7 +200,7 @@ public class FeatureRegistry {
     public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
     public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.discordrichpresence", true) {
         {
-            addParameter("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, "boolean"));
+            addParameter("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, TCBoolean.INSTANCE));
         }
     });
     public static final PartyInviteViewer DISCORD_ASKTOJOIN = register(new PartyInviteViewer());
@@ -205,7 +208,7 @@ public class FeatureRegistry {
     public static final FeatureDebug DEBUG = register(new FeatureDebug());
     public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is for advanced users only", "advanced.roomedit", false) {
         {
-            addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", Keyboard.KEY_R, "keybind"));
+            addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", Keyboard.KEY_R, TCKeybind.INSTANCE));
         }
     });
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());

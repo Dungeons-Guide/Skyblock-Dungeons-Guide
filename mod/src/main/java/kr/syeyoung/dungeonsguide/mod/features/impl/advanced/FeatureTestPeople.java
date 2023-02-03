@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -72,7 +73,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         super("Dungeon", "Feature test", "NOU", "", false, 200, 100);
 
 
-        addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, "float", nval -> this.scale = nval));
+        addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, TCFloat.INSTANCE, nval -> this.scale = nval));
 
 //        (new Thread(() -> {
 //            while (true){

@@ -20,12 +20,19 @@ package kr.syeyoung.dungeonsguide.mod.config.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonPrimitive;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.DomElementRegistry;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.util.ResourceLocation;
 
-public class TCBoolean implements TypeConverter<Boolean> {
-    @Override
-    public String getTypeString() {
-        return "boolean";
-    }
+public class TCBoolean implements FeatureTypeHandler<Boolean> {
+    public static final TCBoolean INSTANCE = new TCBoolean();
 
     @Override
     public Boolean deserialize(JsonElement element) {
@@ -35,5 +42,24 @@ public class TCBoolean implements TypeConverter<Boolean> {
     @Override
     public JsonElement serialize(Boolean element) {
         return new JsonPrimitive(element);
+    }
+
+    @Override
+    public Widget createDefaultWidgetFor(FeatureParameter parameter) {
+        ParameterItem parameterItem = new ParameterItem(parameter, new BooleanEditWidget(parameter));
+        return parameterItem;
+    }
+
+    public static class BooleanEditWidget extends AnnotatedImportOnlyWidget {
+        @Bind(variableName = "enabled")
+        public final BindableAttribute<Boolean> isEnabled = new BindableAttribute<>(Boolean.class);
+        public BooleanEditWidget(FeatureParameter<Boolean> featureParameter) {
+            super(new ResourceLocation("dungeonsguide:gui/config/parameter/boolean.gui"));
+            isEnabled.setValue(featureParameter.getValue());
+            isEnabled.addOnUpdate((old,neu) -> {
+                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                featureParameter.setValue(neu);
+            });
+        }
     }
 }

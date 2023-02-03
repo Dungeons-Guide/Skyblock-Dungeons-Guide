@@ -25,11 +25,8 @@ import com.google.gson.JsonPrimitive;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TCStringList implements TypeConverter<List<String>> {
-    @Override
-    public String getTypeString() {
-        return "stringlist";
-    }
+public class TCStringList implements FeatureTypeHandler<List<String>> {
+    public static final TCStringList INSTANCE = new TCStringList();
 
     @Override
     public List<String> deserialize(JsonElement element) {

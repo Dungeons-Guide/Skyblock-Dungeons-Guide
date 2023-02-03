@@ -19,6 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.solvers;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
@@ -28,13 +31,13 @@ public class FeatureSolverBox extends SimpleFeature {
     public FeatureSolverBox() {
         super("Dungeon.Solvers.Floor 3+", "Box (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box");
         this.parameters = new LinkedHashMap<>();
-        addParameter("disableText", new FeatureParameter<Boolean>("disableText", "Box Puzzle Solver Disable text", "Disable 'Type recalc to recalculate solution' showing up on top left.\nYou can still type recalc to recalc solution after disabling this feature", false, "boolean"));
-        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), "acolor"));
-        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, "float"));
+        addParameter("disableText", new FeatureParameter<Boolean>("disableText", "Box Puzzle Solver Disable text", "Disable 'Type recalc to recalculate solution' showing up on top left.\nYou can still type recalc to recalc solution after disabling this feature", false, TCBoolean.INSTANCE));
+        addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), TCAColor.INSTANCE));
+        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, TCFloat.INSTANCE));
 
-        addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the target button", new AColor(0x5500FFFF, true), "acolor"));
-        addParameter("textColor1", new FeatureParameter<AColor>("textColor1", "Text Color", "Color of the text (next step)", new AColor(0xFF00FF00, true), "acolor"));
-        addParameter("textColor2", new FeatureParameter<AColor>("textColor2", "Text Color", "Color of the text (others)", new AColor(0xFF000000, true), "acolor"));
+        addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the target button", new AColor(0x5500FFFF, true), TCAColor.INSTANCE));
+        addParameter("textColor1", new FeatureParameter<AColor>("textColor1", "Text Color", "Color of the text (next step)", new AColor(0xFF00FF00, true), TCAColor.INSTANCE));
+        addParameter("textColor2", new FeatureParameter<AColor>("textColor2", "Text Color", "Color of the text (others)", new AColor(0xFF000000, true), TCAColor.INSTANCE));
     }
     public AColor getLineColor() {
         return this.<AColor>getParameter("lineColor").getValue();

@@ -18,12 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
-import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverter;
-import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
+import kr.syeyoung.dungeonsguide.mod.config.types.FeatureTypeHandler;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.util.function.Consumer;
+import java.util.function.Function;
 
 @Data
 @AllArgsConstructor
@@ -32,31 +33,41 @@ public class FeatureParameter<T> {
     private String name;
     private String description;
     private T value;
-
-
     private T default_value;
-    private String value_type;
+    private FeatureTypeHandler<T> featureTypeHandler;
+    private Function<FeatureParameter<T>, Widget> widgetGenerator;
     private Consumer<T> changedCallback;
+    private String icon;
 
-    public FeatureParameter(String key, String name, String description, T default_value, String value_type) {
-        this(key, name, description,default_value, value_type, null);
+    public FeatureParameter(String key, String name, String description, T default_value, FeatureTypeHandler<T> converter) {
+        this(key, name, description,default_value, converter, null);
     }
 
-    public FeatureParameter(String key, String name, String description, T default_value, String value_type, Consumer<T> changedCallback) {
+    public FeatureParameter(String key, String name, String description, T default_value, FeatureTypeHandler<T> converter, Consumer<T> changedCallback) {
         this.key = key;
         this.name = name;
         this.default_value = default_value;
         this.description = description;
-        this.value_type = value_type;
+        this.featureTypeHandler = converter;
+        this.widgetGenerator = featureTypeHandler::createDefaultWidgetFor;
         if(changedCallback != null){
             this.changedCallback = changedCallback;
             changedCallback.accept(default_value);
         }
     }
 
+    public FeatureParameter<T> setWidgetGenerator(Function<FeatureParameter<T>, Widget> widgetGenerator) {
+        this.widgetGenerator = widgetGenerator;
+        return this;
+    }
+
+    public FeatureParameter<T> setIcon(String icon) {
+        this.icon = icon;
+        return this;
+    }
+
     public void setToDefault() {
-        TypeConverter<T> typeConverter = TypeConverterRegistry.getTypeConverter(getValue_type());
-        value = (T) typeConverter.deserialize(typeConverter.serialize(default_value));
+        value = (T) featureTypeHandler.deserialize(featureTypeHandler.serialize(default_value));
     }
 
     public T getValue() {

@@ -18,14 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
-import com.google.common.base.Supplier;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import org.lwjgl.input.Keyboard;
 
 import java.util.LinkedHashMap;
@@ -34,9 +31,9 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
     public FeatureCreateRefreshLine() {
         super("Dungeon.Secrets.Keybinds", "Refresh pathfind line or Trigger pathfind", "A keybind for creating or refresh pathfind lines for pathfind contexts that doesn't have line, or contexts that has refresh rate set to -1.\nPress settings to edit the key", "secret.refreshPathfind", true);
         this.parameters = new LinkedHashMap<>();
-        addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", Keyboard.KEY_NONE, "keybind"));
-        addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Force Enable pathfind for future actions when used", false, "boolean"));
-        addParameter("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "Ticks to wait per line refresh, to be overriden. If the line already has pathfind enabled, this value does nothing. Specify it to -1 to don't refresh line at all", 10, "integer"));
+        addParameter("key", new FeatureParameter<Integer>("key", "Key","Press to refresh or create pathfind line", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+        addParameter("pathfind", new FeatureParameter<Boolean>("pathfind", "Enable Pathfinding", "Force Enable pathfind for future actions when used", false, TCBoolean.INSTANCE));
+        addParameter("refreshrate", new FeatureParameter<Integer>("refreshrate", "Line Refreshrate", "Ticks to wait per line refresh, to be overriden. If the line already has pathfind enabled, this value does nothing. Specify it to -1 to don't refresh line at all", 10, TCInteger.INSTANCE));
     }
     public int getKeybind() {return this.<Integer>getParameter("key").getValue();}
     public boolean isPathfind() {
@@ -45,25 +42,6 @@ public class FeatureCreateRefreshLine extends SimpleFeature {
     public int getRefreshRate() {
         return this.<Integer>getParameter("refreshrate").getValue();
     }
-
-
-    public String getEditRoute(RootConfigPanel rootConfigPanel) {
-        ConfigPanelCreator.map.put("base." + getKey() , new Supplier<MPanel>() {
-            @Override
-            public MPanel get() {
-                MFeatureEdit featureEdit = new MFeatureEdit(FeatureCreateRefreshLine.this, rootConfigPanel);
-                for (FeatureParameter parameter: getParameters()) {
-                    if (parameter.getKey().equals("refreshrate"))
-                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureCreateRefreshLine.this, parameter, rootConfigPanel, a -> !isPathfind()));
-                    else
-                        featureEdit.addParameterEdit(parameter.getKey(), new MParameterEdit(FeatureCreateRefreshLine.this, parameter, rootConfigPanel, a -> false));
-                }
-                return featureEdit;
-            }
-        });
-        return "base." + getKey() ;
-    }
-
 
 
 }

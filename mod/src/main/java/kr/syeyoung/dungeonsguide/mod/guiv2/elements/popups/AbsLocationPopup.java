@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -38,6 +39,8 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<DomElement> ref = new BindableAttribute<>(DomElement.class);
     @Bind(variableName = "child")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
+    @Bind(variableName = "size")
+    public final BindableAttribute<Size> size = new BindableAttribute<>(Size.class, new Size(0,0));
 
     public final BindableAttribute<Double> absX = new BindableAttribute<>(Double.class);
     public final BindableAttribute<Double> absY = new BindableAttribute<>(Double.class);
@@ -48,6 +51,7 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
         absY.setValue(y);
         absX.addOnUpdate(this::updatePos);
         absY.addOnUpdate(this::updatePos);
+        size.addOnUpdate((old, neu) -> updatePos(0,0));
         this.child.setValue(child);
         this.autoclose = autoclose;
     }
@@ -57,6 +61,7 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
         y.exportTo(this.absY);
         absX.addOnUpdate(this::updatePos);
         absY.addOnUpdate(this::updatePos);
+        size.addOnUpdate((old, neu) -> updatePos(0,0));
         this.child.setValue(child);
         this.autoclose = autoclose;
     }
@@ -70,11 +75,13 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
         PopupMgr popupMgr = PopupMgr.getPopupMgr(getDomElement());
         Rect rect = popupMgr.getDomElement().getAbsBounds();
         Size rel = popupMgr.getDomElement().getSize();
+
+        Size size = this.size.getValue();
         this.x.setValue(
-                (absX.getValue() - rect.getX()) * rel.getWidth() / rect.getWidth()
+                Layouter.clamp((absX.getValue() - rect.getX()) * rel.getWidth() / rect.getWidth(), 0, rel.getWidth()-size.getWidth())
         );
         this.y.setValue(
-                (absY.getValue() - rect.getY()) * rel.getHeight() / rect.getHeight()
+                Layouter.clamp((absY.getValue() - rect.getY()) * rel.getHeight() / rect.getHeight(), 0, rel.getHeight() - size.getHeight())
         );
     }
 
@@ -84,5 +91,10 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
             PopupMgr.getPopupMgr(getDomElement()).closePopup(this,null);
         }
         return false;
+    }
+
+    @Override
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        return true;
     }
 }

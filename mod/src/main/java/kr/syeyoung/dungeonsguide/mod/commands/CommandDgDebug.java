@@ -26,7 +26,6 @@ import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.NestedCategory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -57,7 +56,6 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraftforge.common.MinecraftForge;
-import org.lwjgl.opengl.*;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -558,54 +556,54 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void dumpSettingsCommand() {
-        NestedCategory nestedCategory = new NestedCategory("ROOT");
-        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
-            String category = abstractFeature.getCategory();
-            NestedCategory currentRoot = nestedCategory;
-            for (String s : category.split("\\.")) {
-                NestedCategory finalCurrentRoot = currentRoot;
-                if (currentRoot.children().containsKey(s)) {
-                    currentRoot = currentRoot.children().get(s);
-                } else {
-                    currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull() + "." + s));
-                }
-            }
-        }
-
-        StringBuilder stringBuilder = new StringBuilder();
-        StringBuilder stringBuilder2 = new StringBuilder();
-
-        Stack<Tuple<NestedCategory, Integer>> stak = new Stack<>();
-        stak.push(new Tuple<>(nestedCategory, 0));
-        Set<NestedCategory> discovered = new HashSet<>();
-        while (!stak.isEmpty()) {
-            Tuple<NestedCategory, Integer> n = stak.pop();
-            if (discovered.contains(n.getFirst())) {
-                continue;
-            }
-            discovered.add(n.getFirst());
-            for (Map.Entry<String, NestedCategory> stringNestedCategoryEntry : n.getFirst().children().entrySet()) {
-                stak.push(new Tuple<>(stringNestedCategoryEntry.getValue(), n.getSecond() + 1));
-            }
-
-            if (n.getFirst().categoryFull().equals("ROOT")) {
-                continue;
-            }
-
-            String prefix = "";
-            for (int i = 0; i < n.getSecond() - 1; i++) {
-                prefix += "    ";
-            }
-
-            List<AbstractFeature> abstractFeatureList = FeatureRegistry.getFeaturesByCategory().getOrDefault(n.getFirst().categoryFull().substring(5), Collections.emptyList());
-            stringBuilder.append(prefix).append("- C ").append(n.getFirst().categoryFull()).append("\n");
-            stringBuilder2.append(n.getFirst().categoryFull()).append("\n");
-            for (AbstractFeature abstractFeature : abstractFeatureList) {
-                stringBuilder.append(prefix).append("    - F ").append(abstractFeature.getName()).append(" / ").append(abstractFeature.getDescription().replace("\n", "$NEW_LINE$")).append("\n");
-            }
-        }
-        System.out.println(stringBuilder.toString());
-        System.out.println(stringBuilder2.toString());
+//        NestedCategory nestedCategory = new NestedCategory("ROOT");
+//        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+//            String category = abstractFeature.getCategory();
+//            NestedCategory currentRoot = nestedCategory;
+//            for (String s : category.split("\\.")) {
+//                NestedCategory finalCurrentRoot = currentRoot;
+//                if (currentRoot.children().containsKey(s)) {
+//                    currentRoot = currentRoot.children().get(s);
+//                } else {
+//                    currentRoot.child(currentRoot = new NestedCategory(finalCurrentRoot.categoryFull() + "." + s));
+//                }
+//            }
+//        }
+//
+//        StringBuilder stringBuilder = new StringBuilder();
+//        StringBuilder stringBuilder2 = new StringBuilder();
+//
+//        Stack<Tuple<NestedCategory, Integer>> stak = new Stack<>();
+//        stak.push(new Tuple<>(nestedCategory, 0));
+//        Set<NestedCategory> discovered = new HashSet<>();
+//        while (!stak.isEmpty()) {
+//            Tuple<NestedCategory, Integer> n = stak.pop();
+//            if (discovered.contains(n.getFirst())) {
+//                continue;
+//            }
+//            discovered.add(n.getFirst());
+//            for (Map.Entry<String, NestedCategory> stringNestedCategoryEntry : n.getFirst().children().entrySet()) {
+//                stak.push(new Tuple<>(stringNestedCategoryEntry.getValue(), n.getSecond() + 1));
+//            }
+//
+//            if (n.getFirst().categoryFull().equals("ROOT")) {
+//                continue;
+//            }
+//
+//            String prefix = "";
+//            for (int i = 0; i < n.getSecond() - 1; i++) {
+//                prefix += "    ";
+//            }
+//
+//            List<AbstractFeature> abstractFeatureList = FeatureRegistry.getFeaturesByCategory().getOrDefault(n.getFirst().categoryFull().substring(5), Collections.emptyList());
+//            stringBuilder.append(prefix).append("- C ").append(n.getFirst().categoryFull()).append("\n");
+//            stringBuilder2.append(n.getFirst().categoryFull()).append("\n");
+//            for (AbstractFeature abstractFeature : abstractFeatureList) {
+//                stringBuilder.append(prefix).append("    - F ").append(abstractFeature.getName()).append(" / ").append(abstractFeature.getDescription().replace("\n", "$NEW_LINE$")).append("\n");
+//            }
+//        }
+//        System.out.println(stringBuilder.toString());
+//        System.out.println(stringBuilder2.toString());
     }
 
     private void readMapCommand(String[] args) {
