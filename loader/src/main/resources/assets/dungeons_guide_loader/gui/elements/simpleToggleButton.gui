@@ -1,0 +1,85 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<wrapper>
+    <CircularRect backgroundColor="#FF151515">
+        <padding left="1" top="1" right="1" bottom="1">
+            <AbstractToggleButton bind:enabled="enabled">
+                <CircularRect slot="on" backgroundColor="#FF333333">
+                    <row>
+                        <aspectRatio width="1" height="2" fit="TIGHT"><size/></aspectRatio>
+                        <flexible>
+                            <align vAlign="CENTER" hAlign="START">
+                                <Text text="on" align="LEFT" color="#FFFFFFFF"/>
+                            </align>
+                        </flexible>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FF00FF00" />
+                            </aspectRatio>
+                        </padding>
+                    </row>
+                </CircularRect>
+                <CircularRect slot="off" backgroundColor="#FF333333">
+                    <row>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FFFF0000" />
+                            </aspectRatio>
+                        </padding>
+                        <flexible>
+                            <align vAlign="CENTER" hAlign="END">
+                                <Text text="off" align="RIGHT" color="#FFFFFFFF"/>
+                            </align>
+                        </flexible>
+                        <aspectRatio width="1" height="2" fit="TIGHT"><size/></aspectRatio>
+                    </row>
+                </CircularRect>
+                <CircularRect slot="hoverOn" backgroundColor="#FF555555">
+                    <row>
+                        <aspectRatio width="1" height="2" fit="TIGHT"><size/></aspectRatio>
+                        <flexible>
+                            <align vAlign="CENTER" hAlign="START">
+                                <Text text="on" align="LEFT" color="#FFFFFFFF"/>
+                            </align>
+                        </flexible>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FF00FF00" />
+                            </aspectRatio>
+                        </padding>
+                    </row>
+                </CircularRect>
+                <CircularRect slot="hoverOff" backgroundColor="#FF555555">
+                    <row>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FFFF0000" />
+                            </aspectRatio>
+                        </padding>
+                        <flexible>
+                            <align vAlign="CENTER" hAlign="END">
+                                <Text text="off" align="RIGHT" color="#FFFFFFFF"/>
+                            </align>
+                        </flexible>
+                        <aspectRatio width="1" height="2" fit="TIGHT"><size/></aspectRatio>
+                    </row>
+                </CircularRect>
+            </AbstractToggleButton>
+        </padding>
+    </CircularRect>
+</wrapper>
