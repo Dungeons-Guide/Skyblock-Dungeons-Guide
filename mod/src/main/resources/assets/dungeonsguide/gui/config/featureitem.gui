@@ -22,12 +22,15 @@
         <size width="0" height="5"/>
         <IntrinsicHeight>
             <row>
-                <aspectRatio width="1" height="1">
-                    <Stencil>
-                        <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
-                        <RoundRect radius="10" slot="stencil"/>
-                    </Stencil>
-                </aspectRatio>
+                <SelectiveContainer bind:visible="iconVisibility">
+                    <aspectRatio width="1" height="1" slot="show">
+                        <Stencil>
+                            <ResourceImage bind:location="icon" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                            <RoundRect radius="10" slot="stencil"/>
+                        </Stencil>
+                    </aspectRatio>
+                    <size width="0" height="0" slot="hide"/>
+                </SelectiveContainer>
                 <flexible>
                     <col mainAlign="START" crossAlign="START">
                         <padding left="5" right="5" top="5" bottom="5">

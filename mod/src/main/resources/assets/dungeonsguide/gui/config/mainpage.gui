@@ -21,15 +21,15 @@
         <col mainAlign="CENTER" crossAlign="CENTER">
             <size height="30"/>
             <row mainAlign="CENTER">
-                <Text text="Welcome to" color="#FF747474" size="16"/>
+                <Text text="Welcome to" color="#FFFFFFFF" size="16"/>
                 <Text text=" Dungeons Guide" color="#FF74A0C6" size="16"/>
-                <Text text="!" color="#FF747474" size="16"/>
+                <Text text="?" color="#FFFFFFFF" size="16"/>
             </row>
             <size height="3"/>
             <row mainAlign="CENTER">
-                <Text text="The most " color="#FF747474" size="8"/>
+                <Text text="The most " color="#FFFFFFFF" size="8"/>
                 <Text text="intelligent" color="#FFFFFF00" size="8"/>
-                <Text text=" skyblock mod" color="#FF747474" size="8"/>
+                <Text text=" skyblock mod" color="#FFFFFFFF" size="8"/>
             </row>
             <size height="20"/>
             <line color="#FF747474"/>
@@ -40,13 +40,19 @@
             <size height="20"/>
             <row mainAlign="CENTER">
                 <size height="32" width="32">
-                    <ResourceImage location="dungeonsguide:textures/config/discord.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                    <IconButton location="dungeonsguide:textures/dglogox128.png" width="128" height="128" on:click="store"/>
                 </size>
                 <size width="10" height="0"/>
                 <size height="32" width="32">
-                    <ResourceImage location="dungeonsguide:textures/config/github.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                    <IconButton location="dungeonsguide:textures/config/discord.png" width="128" height="128" on:click="discord"/>
+                </size>
+                <size width="10" height="0"/>
+                <size height="32" width="32">
+                    <IconButton location="dungeonsguide:textures/config/github.png" width="128" height="128" on:click="github"/>
                 </size>
             </row>
+            <size height="10"/>
+            <Text text="Join the discord for mod support and more!" color="#FFAAAAAA" size="8"/>
         </col>
     </padding>
 </ScrollablePanel>

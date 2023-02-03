@@ -52,10 +52,8 @@ import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL14;
 
 import java.awt.*;
+import java.util.*;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.UUID;
 
 public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
@@ -157,16 +155,14 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         }
     }
     @Override
-    public List<Widget> getTooltipForEditor() {
-        List<Widget> mPanels = super.getTooltipForEditor();
+    public void getTooltipForEditor(List<Widget> widgets) {
+        super.getTooltipForEditor(widgets);
 
 //            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue()) {{
 //                setOnUpdate(() ->{
 //                    FeatureMechanicBrowse.this.<Float>getParameter("scale").setValue(this.getData());
 //                }); }
 //            }));
-
-        return mPanels;
     }
 
     @DGEventHandler

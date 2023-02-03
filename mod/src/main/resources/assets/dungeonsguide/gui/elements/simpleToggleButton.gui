@@ -27,16 +27,20 @@
                                 <Text text="on" align="LEFT" color="#FFFFFFFF"/>
                             </align>
                         </flexible>
-                        <aspectRatio width="1" height="1" fit="TIGHT">
-                            <CircularRect backgroundColor="#FF00FF00" />
-                        </aspectRatio>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FF00FF00" />
+                            </aspectRatio>
+                        </padding>
                     </row>
                 </CircularRect>
                 <CircularRect slot="off" backgroundColor="#FF333333">
                     <row>
-                        <aspectRatio width="1" height="1" fit="TIGHT">
-                            <CircularRect backgroundColor="#FFFF0000" />
-                        </aspectRatio>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FFFF0000" />
+                            </aspectRatio>
+                        </padding>
                         <flexible>
                             <align vAlign="CENTER" hAlign="END">
                                 <Text text="off" align="RIGHT" color="#FFFFFFFF"/>
@@ -53,16 +57,20 @@
                                 <Text text="on" align="LEFT" color="#FFFFFFFF"/>
                             </align>
                         </flexible>
-                        <aspectRatio width="1" height="1" fit="TIGHT">
-                            <CircularRect backgroundColor="#FF00FF00" />
-                        </aspectRatio>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FF00FF00" />
+                            </aspectRatio>
+                        </padding>
                     </row>
                 </CircularRect>
                 <CircularRect slot="hoverOff" backgroundColor="#FF555555">
                     <row>
-                        <aspectRatio width="1" height="1" fit="TIGHT">
-                            <CircularRect backgroundColor="#FFFF0000" />
-                        </aspectRatio>
+                        <padding left="1" right="1" top="1" bottom="1">
+                            <aspectRatio width="1" height="1" fit="TIGHT">
+                                <CircularRect backgroundColor="#FFFF0000" />
+                            </aspectRatio>
+                        </padding>
                         <flexible>
                             <align vAlign="CENTER" hAlign="END">
                                 <Text text="off" align="RIGHT" color="#FFFFFFFF"/>

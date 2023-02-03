@@ -51,6 +51,13 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
 
     @Bind(variableName = "isEnabled")
     public final BindableAttribute<Boolean> enabled = new BindableAttribute<>(Boolean.class);
+
+    @Bind(variableName = "iconVisibility")
+    public final BindableAttribute<String> iconVisibility = new BindableAttribute<>(String.class, "hide");
+    @Bind(variableName = "icon")
+    public final BindableAttribute<String> icon = new BindableAttribute<>(String.class, "dungeonsguide:textures/darklogo.png");
+
+
     private AbstractFeature feature;
 
     public FeatureItem(AbstractFeature feature) {
@@ -61,7 +68,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
         this.description.setValue(feature.getDescription());
 
         guiRelocateShow.setValue(feature instanceof AbstractHUDFeature ? "show" : "hide");
-        configureShow.setValue("show");
+        configureShow.setValue(feature.getConfigureWidget() != null ? "show" : "hide");
         enableShow.setValue(feature.isDisyllable() ? "show" : "hide");
         enabled.setValue(feature.isEnabled());
 
@@ -69,6 +76,11 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
             feature.setEnabled(neu);
         });
+
+        if (feature.getIcon() != null) {
+            icon.setValue(feature.getIcon());
+            iconVisibility.setValue("show");
+        }
     }
 
 

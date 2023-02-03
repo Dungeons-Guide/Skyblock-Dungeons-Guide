@@ -113,9 +113,8 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         return object;
     }
 
-    public List<Widget> getTooltipForEditor() {
-        ArrayList<Widget> mPanels = new ArrayList<>();
-        mPanels.add(new Text(getName(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
+    public void getTooltipForEditor(List<Widget> widgets) {
+        widgets.add(new Text(getName(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
 //        mPanels.add(new MButton() {
 //            {
 //                setText("Edit");
@@ -142,6 +141,5 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
 //                AbstractHUDFeature.this.setEnabled(isEnabled());
 //            }); }
 //        }));
-        return mPanels;
     }
 }

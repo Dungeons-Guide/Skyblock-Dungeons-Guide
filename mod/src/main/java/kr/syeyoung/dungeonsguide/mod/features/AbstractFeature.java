@@ -25,16 +25,15 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.ConfigPanelCreator;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MFeatureEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.MParameterEdit;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.RootConfigPanel;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.DefaultConfigurePageWidget;
 import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverter;
 import kr.syeyoung.dungeonsguide.mod.config.types.TypeConverterRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import lombok.Getter;
 import lombok.Setter;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public abstract class AbstractFeature implements IFeature {
     @Getter
@@ -107,6 +106,21 @@ public abstract class AbstractFeature implements IFeature {
             }
         });
         return "base." + key ;
+    }
+
+    public Widget getConfigureWidget() {
+        List<Widget> widgets = new LinkedList<>();
+        setupConfigureWidget(widgets);
+        if (widgets.isEmpty()) return null;
+        return new DefaultConfigurePageWidget(widgets);
+    }
+
+    public void setupConfigureWidget(List<Widget> widgets) {
+
+    }
+
+    public String getIcon() {
+        return null;
     }
 
     public void onParameterReset() {}

@@ -1,0 +1,51 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<wrapper disabled="false"
+         overlayColor="#00000000" hoveredOverlayColor="#22FFFFFF" disabledOverlayColor="#44000000" pressedOverlayColor="#44FFFFFF"
+         width="128" height="128">
+    <AbstractButton bind:click="click" bind:disabled="disabled">
+        <stack>
+            <Stencil>
+                <bgcolor bind:backgroundColor="overlayColor"/>
+                <ResourceImage slot="stencil" bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+            </Stencil>
+            <ResourceImage  bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+        </stack>
+        <stack slot="hovered">
+            <Stencil>
+                <bgcolor bind:backgroundColor="hoveredOverlayColor"/>
+                <ResourceImage slot="stencil" bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+            </Stencil>
+            <ResourceImage  bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+        </stack>
+        <stack slot="disabled">
+            <Stencil>
+                <bgcolor bind:backgroundColor="disabledOverlayColor"/>
+                <ResourceImage slot="stencil" bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+            </Stencil>
+            <ResourceImage  bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+        </stack>
+        <stack slot="pressed">
+            <Stencil>
+                <bgcolor bind:backgroundColor="pressedOverlayColor"/>
+                <ResourceImage slot="stencil" bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+            </Stencil>
+            <ResourceImage  bind:location="location" bind:width="width" bind:height="height" bind:textureWidth="width" bind:textureHeight="height"/>
+        </stack>
+    </AbstractButton>
+</wrapper>

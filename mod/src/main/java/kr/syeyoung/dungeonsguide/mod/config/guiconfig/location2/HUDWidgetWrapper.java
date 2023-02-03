@@ -39,6 +39,7 @@ import org.lwjgl.input.Mouse;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.LinkedList;
 import java.util.List;
 
 public class HUDWidgetWrapper extends Widget implements Layouter {
@@ -157,8 +158,10 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         if (mouseButton == 0) return false;
         if (!enable) return false;
 
+        List<Widget> widgets = new LinkedList<>();
+        abstractHUDFeature.getTooltipForEditor(widgets);
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new AbsLocationPopup(
-                absMouseX, absMouseY, new WidgetPopupMenu(abstractHUDFeature.getTooltipForEditor()), true
+                absMouseX, absMouseY, new WidgetPopupMenu(widgets), true
         ), null);
 
         return true;

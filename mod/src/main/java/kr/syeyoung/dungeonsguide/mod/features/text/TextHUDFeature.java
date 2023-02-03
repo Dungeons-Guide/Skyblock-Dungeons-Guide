@@ -255,8 +255,8 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     }
 
     @Override
-    public List<Widget> getTooltipForEditor() {
-        List<Widget> mPanels = super.getTooltipForEditor();
+    public void getTooltipForEditor(List<Widget> widgets) {
+        super.getTooltipForEditor(widgets);
 //        StyledTextRenderer.Alignment alignment = StyledTextRenderer.Alignment.valueOf(this.<String>getParameter("alignment").getValue());
 //        MStringSelectionButton mStringSelectionButton = new MStringSelectionButton(Arrays.asList("LEFT", "CENTER", "RIGHT"), alignment.name());
 //        mStringSelectionButton.setOnUpdate(() -> {
@@ -270,7 +270,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
 //            }); }
 //        }));
 
-        return mPanels;
+//        return mPanels;
     }
 
     @Override

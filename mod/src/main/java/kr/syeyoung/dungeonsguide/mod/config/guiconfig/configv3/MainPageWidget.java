@@ -23,9 +23,14 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.util.ResourceLocation;
 
+import java.awt.*;
+import java.io.IOException;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -47,4 +52,29 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
                 .collect(Collectors.toList());
     }
 
+    @On(functionName = "discord")
+    public void discord() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://discord.gg/VuxayCWGE8"));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @On(functionName = "github")
+    public void github() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://github.com/Dungeons-Guide/Skyblock-Dungeons-Guide/"));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
+    @On(functionName = "store")
+    public void store() {
+        try {
+            Desktop.getDesktop().browse(new URI("https://store.dungeons.guide/"));
+        } catch (IOException | URISyntaxException e) {
+            e.printStackTrace();
+        }
+    }
 }

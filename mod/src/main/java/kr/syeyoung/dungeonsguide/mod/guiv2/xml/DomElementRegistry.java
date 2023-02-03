@@ -85,6 +85,7 @@ public class DomElementRegistry {
 
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
         register("RoundButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/dgButton.gui")));
+        register("IconButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/iconButton.gui")));
         register("SimpleToggleButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleToggleButton.gui")));
         register("SimpleHorizontalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleHorizontalScrollBar.gui")));
         register("SimpleVerticalScrollBar", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleVerticalScrollBar.gui")));
