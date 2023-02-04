@@ -74,7 +74,7 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
 
     private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
     static {
-        dummyText.add(new StyledText("Time","title"));
+        dummyText.add(new StyledText("Time ","title"));
         dummyText.add(new StyledText("(Ig)","discriminator"));
         dummyText.add(new StyledText(": ","separator"));
         dummyText.add(new StyledText("-42h","number"));
