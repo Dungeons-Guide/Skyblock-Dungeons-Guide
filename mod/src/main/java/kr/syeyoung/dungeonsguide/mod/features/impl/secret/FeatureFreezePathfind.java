@@ -34,7 +34,7 @@ public class FeatureFreezePathfind extends SimpleFeature  {
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle freeze pathfind", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
     }
 
-    @DGEventHandler
+    @DGEventHandler(ignoreDisabled = true)
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());

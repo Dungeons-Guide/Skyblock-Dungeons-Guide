@@ -35,7 +35,7 @@ public class FeatureBloodRush extends SimpleFeature {
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle Blood Rush", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
     }
 
-    @DGEventHandler
+    @DGEventHandler(ignoreDisabled = true)
     public void onKeybindPress(KeyBindPressedEvent keyBindPressedEvent) {
         if (keyBindPressedEvent.getKey() == this.<Integer>getParameter("key").getValue()) {
             setEnabled(!isEnabled());
