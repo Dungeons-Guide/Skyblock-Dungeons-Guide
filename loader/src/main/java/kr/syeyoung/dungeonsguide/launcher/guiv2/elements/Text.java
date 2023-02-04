@@ -100,6 +100,7 @@ public class Text extends AnnotatedExportOnlyWidget {
         textStyle.textShader = new SingleColorShader(color.getValue());
         textStyle.underlineShader = new SingleColorShader(color.getValue());
         textStyle.strikeThroughShader = new SingleColorShader(color.getValue());
+        textStyle.backgroundShader = null;
         textStyle.topAscent = lineSpacing.getValue() - 1;
         textStyle.size = size.getValue();
         TextSpan textSpan = new TextSpan(textStyle, "");

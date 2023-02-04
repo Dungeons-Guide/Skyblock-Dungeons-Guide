@@ -30,6 +30,9 @@ import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotification;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotificationAutoClose;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import lombok.Getter;
@@ -92,9 +95,9 @@ public class Main
     public void initEvent(FMLInitializationEvent initializationEvent) throws ClassNotFoundException, InstantiationException, IllegalAccessException {
         MinecraftForge.EVENT_BUS.register(this);
         MinecraftForge.EVENT_BUS.register(GuiDisplayer.INSTANCE);
-        MinecraftForge.EVENT_BUS.register(NotificationManager.INSTANCE);
+        MinecraftForge.EVENT_BUS.register(NotificationManager.getEventHandler());
 
-        NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
+        NotificationManager.getInstance().updateNotification(dgUnloaded, new WidgetNotification(dgUnloaded, Notification.builder()
                         .title("Dungeons Guide Not Loaded")
                         .titleColor(0xFFFF0000)
                         .description("Click to try reloading....")
@@ -102,7 +105,7 @@ public class Main
                             GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                         })
                         .unremovable(true)
-                .build());
+                .build()));
 
         try {
             File f = new File(configDir, "loader.cfg");
@@ -159,7 +162,7 @@ public class Main
             listener.unloadReference();
         }
 
-        NotificationManager.INSTANCE.updateNotification(dgUnloaded, Notification.builder()
+        NotificationManager.getInstance().updateNotification(dgUnloaded, new WidgetNotification(dgUnloaded, Notification.builder()
                 .title("Dungeons Guide Not Loaded")
                 .titleColor(0xFFFF0000)
                 .description("Click to try reloading....")
@@ -167,7 +170,7 @@ public class Main
                     GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                 })
                 .unremovable(true)
-                .build());
+                .build()));
         if (currentLoader != null) {
             currentLoader.unloadDungeonsGuide();
         }
@@ -188,15 +191,16 @@ public class Main
             listener.onLoad(dgInterface);
         }
 
+        UUID uid = UUID.randomUUID();
 
-        NotificationManager.INSTANCE.updateNotification(UUID.randomUUID(), Notification.builder()
+        NotificationManager.getInstance().updateNotification(uid, new WidgetNotificationAutoClose(uid, Notification.builder()
                     .title("Dungeons Guide Loaded!")
                     .description("Successfully Loaded Dungeons Guide!\nLoader: "+currentLoader.loaderName()+"\nVersion: "+currentLoader.version())
                     .titleColor(0xFF00FF00)
-                    .build());
+                    .build(), 10000L));
 
 
-        NotificationManager.INSTANCE.removeNotification(dgUnloaded);
+        NotificationManager.getInstance().removeNotification(dgUnloaded);
     }
 
     private volatile IDGLoader reqLoader = null;
@@ -301,6 +305,7 @@ public class Main
 
         ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
             if (dgInterface != null) dgInterface.onResourceReload(a);
+            DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         });
     }
 

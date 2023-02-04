@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,196 +18,263 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.tooltip;
 
+import kr.syeyoung.dungeonsguide.launcher.guiv2.RootDom;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.GLCursors;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.lwjgl.input.Keyboard;
 import org.lwjgl.input.Mouse;
+import org.lwjgl.opengl.GL11;
 
-import java.awt.*;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.UUID;
+import java.io.IOException;
+
+import static org.lwjgl.opengl.GL11.GL_GREATER;
 
 public class NotificationManager {
-    public static final NotificationManager INSTANCE = new NotificationManager();
+    private final RootDom view;
+    private final Minecraft mc;
+
+    private static final NotificationManager INSTANCE = new NotificationManager();
+    @Getter
+    private final NotificationManagerRootWidget root = new NotificationManagerRootWidget();
+
+
+    public static NotificationManager getEventHandler() {
+        return INSTANCE;
+    }
+
+    public static NotificationManagerRootWidget getInstance() {
+        return getEventHandler().root;
+    }
+
+
     private NotificationManager() {
+        this.mc = Minecraft.getMinecraft();
 
+        view = new RootDom(new GlobalHUDScale(root));
+        guiResize(null);
+        view.setMounted(true);
     }
 
-    private final Map<UUID, Notification> tooltipList = new HashMap<>();
-
-    public void updateNotification(UUID uid, Notification tooltip) {
-        tooltipList.put(uid, tooltip);
+    @SubscribeEvent()
+    public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
+        try {
+            view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.setSize(new Size(Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
+            view.getLayouter().layout(view, new ConstraintBox(
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayHeight,
+                    Minecraft.getMinecraft().displayHeight
+            ));
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
-    public void removeNotification(UUID uid) {
-        tooltipList.remove(uid);
-    }
-
 
     @SubscribeEvent
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
-        if (!(postRender.type == RenderGameOverlayEvent.ElementType.EXPERIENCE || postRender.type == RenderGameOverlayEvent.ElementType.JUMPBAR))
-            return;
-
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        int widthX = fr.getStringWidth("X");
-
-        GlStateManager.pushMatrix();
-        GlStateManager.disableDepth();
-        GlStateManager.translate(sr.getScaledWidth() - 5, sr.getScaledHeight() -5, 0);
-
-        int currY = sr.getScaledHeight() - 5;
-
-        for (Notification tooltip : tooltipList.values()) {
-            int width, height;
-            String[] description = tooltip.getDescription().split("\n");
-            width =
-                    Math.max(
-                            fr.getStringWidth(tooltip.getTitle()),
-                            Arrays.stream(description).map(fr::getStringWidth).max(Integer::compareTo).orElse(300)
-                    ) + 10;
-            height = description.length * fr.FONT_HEIGHT + 15 + fr.FONT_HEIGHT;
-
-            GlStateManager.translate(0, -height, 0);
-            currY -= height;
-
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(-width, 0, 0);
-            Gui.drawRect(0, 0,width,height, 0xFF23272a);
-            Gui.drawRect(1, 1, width-1, height-1, 0XFF2c2f33);
-
-            if (!tooltip.isUnremovable()) {
-                fr.drawString("X", width - widthX - 2, 2, 0xFFFF0000);
-            }
-
-            GlStateManager.translate(5,5,0);
-            fr.drawString(tooltip.getTitle(), 0,0, tooltip.getTitleColor());
-            GlStateManager.translate(0, fr.FONT_HEIGHT + 5, 0);
-            int y = 0;
-            for (String line : description) {
-                fr.drawString(line, 0, y, 0xFFAAAAAA);
-                y += fr.FONT_HEIGHT;
-            }
-            GlStateManager.popMatrix();
-
-            tooltip.setBoundRect(new Rectangle(
-                    sr.getScaledWidth() - width - 5,
-                    currY,
-                    width,
-                    height
-            ));
-
-            currY -= 5;
-            GlStateManager.translate(0, -5, 0);
+    public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
+        try {
+            if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
+                return;
+            drawScreen(postRender.partialTicks);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        GlStateManager.enableDepth();
-        GlStateManager.popMatrix();
     }
+
     @SubscribeEvent
-    public void onGuiPostRender(GuiScreenEvent.DrawScreenEvent.Post rendered) {
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        int widthX = fr.getStringWidth("X");
-
-        GlStateManager.pushMatrix();
-        GlStateManager.disableDepth();
-        GlStateManager.translate(sr.getScaledWidth() - 5, sr.getScaledHeight() -5, 0);
-
-        int currY = sr.getScaledHeight() - 5;
-
-        for (Notification tooltip : tooltipList.values()) {
-            int width, height;
-            String[] description = tooltip.getDescription().split("\n");
-            width =
-                    Math.max(
-                            fr.getStringWidth(tooltip.getTitle()),
-                            Arrays.stream(description).map(fr::getStringWidth).max(Integer::compareTo).orElse(300)
-                    ) + 10;
-            height = description.length * fr.FONT_HEIGHT + 15 + fr.FONT_HEIGHT;
-
-            GlStateManager.translate(0, -height, 0);
-            currY -= height;
-
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(-width, 0, 0);
-            Gui.drawRect(0, 0,width,height, 0xFF23272a);
-            Gui.drawRect(1, 1, width-1, height-1, 0XFF2c2f33);
-
-            if (!tooltip.isUnremovable()) {
-                if (rendered.mouseX >= sr.getScaledWidth() - 5 - widthX - 2 && rendered.mouseX <= sr.getScaledWidth() - 2
-                        && rendered.mouseY >= currY + 2 && rendered.mouseY <= currY + 2 + fr.FONT_HEIGHT) {
-                    fr.drawString("X", width - widthX - 2, 2, 0xFFFFAAAA);
-                } else {
-                    fr.drawString("X", width - widthX - 2, 2, 0xFFFF0000);
-                }
-            }
-
-            GlStateManager.translate(5,5,0);
-            fr.drawString(tooltip.getTitle(), 0,0, tooltip.getTitleColor());
-            GlStateManager.translate(0, fr.FONT_HEIGHT + 5, 0);
-            int y = 0;
-            for (String line : description) {
-                fr.drawString(line, 0, y, 0xFFAAAAAA);
-                y += fr.FONT_HEIGHT;
-            }
-            GlStateManager.popMatrix();
-
-            tooltip.setBoundRect(new Rectangle(
-                    sr.getScaledWidth() - width - 5,
-                    currY,
-                    width,
-                    height
-            ));
-
-            currY -= 5;
-            GlStateManager.translate(0, -5, 0);
+    public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
+        try {
+            drawScreen(postRender.renderPartialTicks);
+        } catch (Exception e) {
+            e.printStackTrace();
         }
-
-        GlStateManager.enableDepth();
-        GlStateManager.popMatrix();
     }
+
+
+    private void drawScreen( float partialTicks) {
+        int i = Mouse.getEventX();
+        int j = this.mc.displayHeight - Mouse.getEventY();
+
+        if (view.isRelayoutRequested()) {
+            view.setRelayoutRequested(false);
+            view.getLayouter().layout(view, new ConstraintBox(
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayWidth,
+                    Minecraft.getMinecraft().displayHeight,
+                    Minecraft.getMinecraft().displayHeight
+            ));
+        }
+        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(0,0,50);
+        GlStateManager.disableDepth();
+        GlStateManager.enableBlend();
+        GlStateManager.enableAlpha();
+        GlStateManager.alphaFunc(GL_GREATER, 0);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+        GlStateManager.color(1, 1, 1, 1);
+        GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
+        view.getRenderer().doRender(i, j, i, j, partialTicks, new RenderingContext(), view);
+        GlStateManager.alphaFunc(GL_GREATER, 0.1f);
+        GlStateManager.popMatrix();
+        GlStateManager.enableDepth();
+        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+    }
+
+    private void keyTyped(char typedChar, int keyCode) throws IOException {
+        try {
+            view.keyPressed0(typedChar, keyCode);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+    private void keyHeld(int keyCode, char typedChar) throws IOException {
+        try {
+            view.keyHeld0(typedChar, keyCode);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+    private void keyReleased(int keyCode, char typedChar) throws IOException {
+        try {
+            view.keyReleased0(typedChar, keyCode);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+    private boolean mouseClicked(int mouseX, int mouseY, int mouseButton) throws IOException {
+        try {
+            return view.mouseClicked0(mouseX, mouseY
+                    , mouseX, mouseY, mouseButton);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+        return false;
+    }
+
+    private void mouseReleased(int mouseX, int mouseY, int state) {
+        try {
+            view.mouseReleased0(mouseX, mouseY
+                    , mouseX, mouseY, state);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+    private void mouseClickMove(int mouseX, int mouseY, int clickedMouseButton, long timeSinceLastClick) {
+        try {
+            view.mouseClickMove0(mouseX, mouseY
+                    , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+    private void mouseMove(int mouseX, int mouseY) {
+        try {
+            view.mouseMoved0(mouseX, mouseY
+                    , mouseX, mouseY, true);
+        } catch (Throwable e) {
+            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                e.printStackTrace();
+        }
+    }
+
+
+    private int touchValue;
+    private int eventButton;
+    private long lastMouseEvent;
+
+
+    private int lastX, lastY;
 
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
-    public void onMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) {
-        ScaledResolution sr = new ScaledResolution(Minecraft.getMinecraft());
-        FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        int mouseX = Mouse.getX() / sr.getScaleFactor();
-        int mouseY = (Minecraft.getMinecraft().displayHeight - Mouse.getY() +3)/ sr.getScaleFactor();
-        for (Map.Entry<UUID, Notification> tooltip_ : tooltipList.entrySet()) {
-            Notification tooltip = tooltip_.getValue();
-            if (tooltip.getBoundRect()  == null) continue;;
-            if (tooltip.getBoundRect().contains(mouseX, mouseY)) {
+    public void handleMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) throws IOException {
+        try {
+            int i = Mouse.getEventX();
+            int j = this.mc.displayHeight - Mouse.getEventY();
+            int k = Mouse.getEventButton();
 
-                mouseInputEvent.setCanceled(true);
-
-                if (Mouse.getEventButton() == -1) return;
-                if (!Mouse.getEventButtonState()) return;
-
-                int dx = mouseX - tooltip.getBoundRect().x;
-                int dy = mouseY - tooltip.getBoundRect().y;
-
-                if (!tooltip.isUnremovable()) {
-                    tooltipList.remove(tooltip_.getKey());
-                }
-                if (dx >= tooltip.getBoundRect().width - 2 - fr.getStringWidth("X") && dx <= tooltip.getBoundRect().width - 2
-                && dy >= 2 && dy <= 2 + fr.FONT_HEIGHT) {
-                } else {
-                    if (tooltip.getOnClick() != null) tooltip.getOnClick().run();
+            if (Mouse.getEventButtonState()) {
+                if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {
+                    return;
                 }
 
-                return;
+                this.eventButton = k;
+                this.lastMouseEvent = Minecraft.getSystemTime();
+                if (this.mouseClicked(i, j, this.eventButton))
+                    mouseInputEvent.setCanceled(true);
+            } else if (k != -1) {
+                if (this.mc.gameSettings.touchscreen && --this.touchValue > 0) {
+                    return;
+                }
+
+                this.eventButton = -1;
+                this.mouseReleased(i, j, k);
+            } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
+                long l = Minecraft.getSystemTime() - this.lastMouseEvent;
+                this.mouseClickMove(i, j, this.eventButton, l);
             }
+            if (lastX != i || lastY != j) {
+                try {
+                    EnumCursor prevCursor = view.getCurrentCursor();
+                    view.setCursor(EnumCursor.DEFAULT);
+                    this.mouseMove(i, j);
+                    EnumCursor newCursor = view.getCurrentCursor();
+                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
+                } catch (Throwable e) {
+                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                        e.printStackTrace();
+                }
+            }
+
+
+            int wheel = Mouse.getEventDWheel();
+            if (wheel != 0) {
+                boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
+                if (cancel) mouseInputEvent.setCanceled(true);
+            }
+            lastX = i;
+            lastY = j;
+        } catch (Throwable e) {
+            e.printStackTrace();
         }
     }
 
+    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    public void handleKeyboardInput(GuiScreenEvent.KeyboardInputEvent.Pre keyboardInputEvent) throws IOException {
+        if (Keyboard.getEventKeyState()) {
+            if (Keyboard.isRepeatEvent())
+                this.keyHeld(Keyboard.getEventKey(), Keyboard.getEventCharacter());
+            else
+                this.keyTyped(Keyboard.getEventCharacter(), Keyboard.getEventKey());
+        } else {
+            this.keyReleased(Keyboard.getEventKey(), Keyboard.getEventCharacter());
+        }
+    }
 }

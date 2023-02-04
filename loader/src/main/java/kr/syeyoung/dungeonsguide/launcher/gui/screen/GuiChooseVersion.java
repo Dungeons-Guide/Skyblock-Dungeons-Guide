@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotification;
 import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
@@ -158,11 +159,13 @@ public class GuiChooseVersion extends SpecialGuiScreen {
                                 null
                         );
 
-            NotificationManager.INSTANCE.updateNotification(UUID.randomUUID(), Notification.builder()
+            UUID random = UUID.randomUUID();
+            NotificationManager.getInstance().updateNotification(random,
+                    new WidgetNotification(random, Notification.builder()
                         .title("Successfully Copied!")
                         .description("")
                         .titleColor(0xFF00FF00)
-                        .build());
+                        .build()));
         } else if (button.id == 0) {
             dismiss();
             Main.getMain().tryReloadingWithSplash(new LocalLoader());
