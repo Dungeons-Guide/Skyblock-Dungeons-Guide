@@ -71,7 +71,6 @@ public class GUIPosition {
             else if (center >= bottom && center >= top) yOffset = OffsetType.CENTER;
             else yOffset = OffsetType.END;
         }
-        System.out.println("X: "+xOffset+" / Y: "+yOffset);
 
         GUIPosition guiPosition = new GUIPosition();
         guiPosition.xType = xOffset;
@@ -92,7 +91,6 @@ public class GUIPosition {
         } else  {
             guiPosition.yOffset = widgetLoc.getY() + widgetLoc.getHeight() - screenHeight;
         }
-        System.out.println("X: "+guiPosition.xOffset+" / Y: "+guiPosition.yOffset);
         double realScreenWidth = Minecraft.getMinecraft().displayWidth;
         double realScreenHeight = Minecraft.getMinecraft().displayHeight;
 
