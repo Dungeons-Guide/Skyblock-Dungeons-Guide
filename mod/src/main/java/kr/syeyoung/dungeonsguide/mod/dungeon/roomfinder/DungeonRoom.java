@@ -187,7 +187,8 @@ public class DungeonRoom {
                 matchRoomAndSetupRoomProcessor();
                 matched = true;
             } catch (Exception e) {
-                e.printStackTrace();
+                if (!e.getMessage().contains("Chunk not loaded"))
+                    e.printStackTrace();
             } finally {
                 matching = false;
             }
