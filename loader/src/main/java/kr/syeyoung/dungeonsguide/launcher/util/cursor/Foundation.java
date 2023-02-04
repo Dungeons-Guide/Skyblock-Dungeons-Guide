@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2021  cyoung06
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,15 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.guiv2;
+package kr.syeyoung.dungeonsguide.launcher.util.cursor;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
 
-public class Context {
-    public Map<String, Object> CONTEXT = new HashMap<>();
 
-    public <T> T getValue(Class<T> clazz, String key) {
-        return (T) CONTEXT.get(key);
-    }
+public interface Foundation extends Library {
+    Foundation INSTANCE = (Foundation) Native.loadLibrary("Foundation",
+            Foundation.class);
+
+    Pointer objc_getClass(String className);
+    Pointer sel_registerName(String selectorName);
+    Pointer objc_msgSend(Pointer receiver, Pointer selector, Object... args);
 }

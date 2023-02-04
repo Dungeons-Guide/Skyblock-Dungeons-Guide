@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2021  cyoung06
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,15 +16,22 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.guiv2;
+package kr.syeyoung.dungeonsguide.launcher.util.cursor;
 
-import java.util.HashMap;
-import java.util.Map;
+import com.sun.jna.Library;
+import com.sun.jna.Native;
+import com.sun.jna.Pointer;
+import com.sun.jna.PointerType;
 
-public class Context {
-    public Map<String, Object> CONTEXT = new HashMap<>();
+public interface X11 extends Library {
+    X11 INSTANCE = (X11) Native.loadLibrary("X11", X11.class);
+    public Pointer XCreateFontCursor(Display display,
+                               int shape);
+    public Display XOpenDisplay(String var1);
 
-    public <T> T getValue(Class<T> clazz, String key) {
-        return (T) CONTEXT.get(key);
+    public static class Display extends PointerType {
+        public Display() {
+        }
     }
+
 }

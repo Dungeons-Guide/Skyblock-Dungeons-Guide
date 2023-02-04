@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher.branch;
 
+import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.AssetNotFoundException;
@@ -29,6 +30,7 @@ import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
@@ -47,7 +49,8 @@ public class UpdateRetrieverUtil {
     }
 
     public static List<UpdateBranch> getUpdateBranches() throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/").openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/").openConnection();
+        connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setRequestMethod("GET");
@@ -78,7 +81,8 @@ public class UpdateRetrieverUtil {
     }
 
     public static List<Update> getLatestUpdates(long branchId, int page) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/?page="+page).openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/?page="+page).openConnection();
+        connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(1000);
@@ -120,7 +124,8 @@ public class UpdateRetrieverUtil {
     }
 
     public static Update getUpdate(long branchId, long updateId) throws IOException {
-        HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/"+updateId).openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/"+updateId).openConnection();
+        connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setRequestMethod("GET");
@@ -162,7 +167,8 @@ public class UpdateRetrieverUtil {
 
 
         try {
-            HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/updates/" + update.getBranchId() + "/" + update.getId() + "/" + asset.getAssetId()).openConnection();
+            HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/" + update.getBranchId() + "/" + update.getId() + "/" + asset.getAssetId()).openConnection();
+            connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
             connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "Bearer " + AuthManager.getInstance().getWorkingTokenOrThrow());
@@ -181,7 +187,8 @@ public class UpdateRetrieverUtil {
                 throw new ResponseParsingException(payload, e);
             }
             try {
-                connection = (HttpURLConnection) new URL(url).openConnection();
+                connection = (HttpsURLConnection) new URL(url).openConnection();
+                connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
                 connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
                 connection.setConnectTimeout(1000);
                 connection.setReadTimeout(5000);

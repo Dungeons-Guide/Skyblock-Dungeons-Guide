@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Passthrough;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.EnumCursor;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
 

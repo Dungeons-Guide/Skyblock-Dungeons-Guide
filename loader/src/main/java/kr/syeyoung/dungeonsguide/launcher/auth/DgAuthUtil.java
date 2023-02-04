@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
+import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.AuthToken;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.DGAuthToken;
@@ -37,6 +38,7 @@ import javax.crypto.BadPaddingException;
 import javax.crypto.Cipher;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.InputStream;
 import java.math.BigInteger;
@@ -97,7 +99,8 @@ public class DgAuthUtil {
     public static String requestAuth() throws IOException {
         GameProfile profile = Minecraft.getMinecraft().getSession().getProfile();
 
-        HttpURLConnection connection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/requestAuth").openConnection();
+        HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/requestAuth").openConnection();
+        connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setConnectTimeout(1000);
@@ -147,7 +150,8 @@ public class DgAuthUtil {
      * @throws AuthServerException when auth server throws error
      */
     public static AuthToken verifyAuth(String tempToken, byte[] encSecret) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/authenticate").openConnection();
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/authenticate").openConnection();
+        urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");
@@ -173,7 +177,8 @@ public class DgAuthUtil {
     }
 
     public static AuthToken acceptNewPrivacyPolicy(String tempToken, long version) throws IOException {
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL(Main.DOMAIN + "/auth/v2/acceptPrivacyPolicy").openConnection();
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/acceptPrivacyPolicy").openConnection();
+        urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         urlConnection.setRequestMethod("POST");
         urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
         urlConnection.setRequestProperty("Content-Type", "application/json");

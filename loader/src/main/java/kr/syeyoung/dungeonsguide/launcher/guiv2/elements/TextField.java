@@ -29,7 +29,7 @@ import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;

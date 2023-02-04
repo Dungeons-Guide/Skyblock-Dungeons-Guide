@@ -36,17 +36,17 @@ public interface ITextStyle {
 
     Boolean isShadow();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getBackgroundShader();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.shaders.Shader getBackgroundShader();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getTextShader();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.shaders.Shader getTextShader();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getStrikeThroughShader();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.shaders.Shader getStrikeThroughShader();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getUnderlineShader();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.shaders.Shader getUnderlineShader();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getOutlineShader();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.shaders.Shader getOutlineShader();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getShadowShader();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.shaders.Shader getShadowShader();
 
-    kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer getFontRenderer();
+    kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.fonts.FontRenderer getFontRenderer();
 }

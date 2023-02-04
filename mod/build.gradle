@@ -52,8 +52,8 @@ dependencies {
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation 'org.json:json:20220924'
     implementation 'com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b'
-
     implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
+
 
     implementation 'net.java.dev.jna:jna:5.12.1' // sorry minecraft.
 
@@ -138,7 +138,6 @@ tasks.shadowJar {
         include(dependency("org.json:json:20220924"))
         include(dependency("com.kohlschutter.junixsocket:junixsocket-common:2.3.4"))
         include(dependency("com.kohlschutter.junixsocket:junixsocket-native-common:2.3.4"))
-        include(dependency("com.twelvemonkeys..*:.*"))
         include(dependency("net.java.dev.jna:jna:5.12.1"))
         include(dependency("com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b"))
     }

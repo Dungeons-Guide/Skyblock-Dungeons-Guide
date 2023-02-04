@@ -27,7 +27,7 @@ import kr.syeyoung.dungeonsguide.launcher.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.DrawNothingRenderer;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.EnumCursor;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.Setter;

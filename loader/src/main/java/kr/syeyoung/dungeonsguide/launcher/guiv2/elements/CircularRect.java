@@ -27,8 +27,8 @@ import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.xml.annotations.Export;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
-import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
+import kr.syeyoung.dungeonsguide.launcher.shader.ShaderManager;
+import kr.syeyoung.dungeonsguide.launcher.shader.ShaderProgram;
 import net.minecraft.client.Minecraft;
 import org.lwjgl.opengl.GL20;
 

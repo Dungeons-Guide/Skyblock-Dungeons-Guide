@@ -76,6 +76,7 @@ dependencies {
     implementation 'io.nayuki:qrcodegen:1.4.0'
     implementation 'org.bouncycastle:bcpg-jdk15on:1.70'
 
+    implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
     compileOnly "org.projectlombok:lombok:1.18.20"
     annotationProcessor "org.projectlombok:lombok:1.18.16"
@@ -115,6 +116,7 @@ tasks.shadowJar {
         include(dependency("org.json:json:20220924"))
         include(dependency("org.bouncycastle:bcpg-jdk15on:1.70"))
         include(dependency("org.bouncycastle:bcprov-jdk15on:1.70"))
+        include(dependency("com.twelvemonkeys..*:.*"))
     }
 }
 
