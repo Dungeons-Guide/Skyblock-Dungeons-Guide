@@ -161,9 +161,7 @@ public class FeatureRegistry {
 
     public static final FeatureEpicCountdown EPIC_COUNTDOWN = register(new FeatureEpicCountdown());
 
-    public static final SimpleFeature RENDER_BREACONS = register(new SimpleFeature("Dungeon.Secrets.Preferences", "Render beacons", "Should the mod not render beacons on secret", "secret.beacons", false));
     public static final SimpleFeature DEBUG_BLOCK_CACHING = register(new SimpleFeature("Debug","Enable block getBlockCaching", "Cache all world.getBlockState callls", "debug.blockcache"));
-    public static final SimpleFeature RENDER_DESTENATION_TEXT = register(new SimpleFeature("Dungeon.Secrets.Preferences", "Render Destination text", "Should the mod not render \"destination\" on secrets", "secret.desttext", false));
     public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Dungeon.Secrets.Legacy AutoPathfind", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
     public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Dungeon.Secrets.Legacy AutoPathfind", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());

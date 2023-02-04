@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
@@ -121,7 +122,17 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
         FeatureMechanicBrowse featureMechanicBrowse = FeatureRegistry.SECRET_BROWSE;
         Double ratio = featureMechanicBrowse.getRatio();
-        return new Size(featureMechanicBrowse.getFeatureRect().getWidth(),
+        Size size=  new Size(featureMechanicBrowse.getFeatureRect().getWidth(),
                 ratio != null ? featureMechanicBrowse.getFeatureRect().getWidth() * ratio : featureMechanicBrowse.getFeatureRect().getHeight());
+
+        if (buildContext.getChildren().isEmpty()) {
+            return size;
+        }
+
+        DomElement childCtx = buildContext.getChildren().get(0);
+
+        Size dim = childCtx.getLayouter().layout(childCtx, new ConstraintBox(size.getWidth(), size.getWidth(), size.getHeight(), size.getHeight()));
+        childCtx.setRelativeBound(new Rect(0,0, dim.getWidth(), dim.getHeight()));
+        return dim;
     }
 }

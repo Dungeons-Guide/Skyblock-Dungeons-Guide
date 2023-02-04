@@ -80,6 +80,6 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
 
     @Override
     public boolean canCutRequest() {
-        return true;
+        return false;
     }
 }

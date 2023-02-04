@@ -53,7 +53,7 @@ public class DungeonFairySoul implements DungeonMechanic {
 
         Set<AbstractAction> base = new HashSet<>();
         ActionInteract actionClick = new ActionInteract(secretPoint);
-        actionClick.setPredicate((Predicate<Entity>) PredicateArmorStand.INSTANCE);
+        actionClick.setPredicate(PredicateArmorStand.INSTANCE);
         actionClick.setRadius(3);
         base.add(actionClick);
 

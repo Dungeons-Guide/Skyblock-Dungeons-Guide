@@ -34,6 +34,7 @@ public class GUIRectPositioner implements Positioner {
     @Override
     public Rect position(DomElement domElement, double screenWidth, double screenHeight) {
         GUIPosition posSize = rectSupplier.get();
+
         Size size = domElement.getLayouter().layout(domElement, new ConstraintBox(0, screenWidth, 0, screenHeight));
         return posSize.position(screenWidth, screenHeight, size);
     }

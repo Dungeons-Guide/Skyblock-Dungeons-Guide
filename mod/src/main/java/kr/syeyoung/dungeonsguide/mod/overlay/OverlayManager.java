@@ -271,7 +271,8 @@ public class OverlayManager {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                view.mouseScrolled0(i, j, i, j, wheel);
+                boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
+                if (cancel) mouseInputEvent.setCanceled(true);
             }
             lastX = i;
             lastY = j;

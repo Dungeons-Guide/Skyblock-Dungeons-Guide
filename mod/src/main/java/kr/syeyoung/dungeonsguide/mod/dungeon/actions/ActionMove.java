@@ -70,14 +70,11 @@ public class ActionMove extends AbstractAction {
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
         if (actionRouteProperties.isBeacon()) {
-            if(!FeatureRegistry.RENDER_BREACONS.isEnabled()){
-                RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
-            }
+            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
             RenderUtils.highlightBlock(pos, actionRouteProperties.getBeaconColor(), partialTicks);
         }
-        if(!FeatureRegistry.RENDER_DESTENATION_TEXT.isEnabled()){
-            RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
-        }
+        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
+
         RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, flag ? 2f : 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
