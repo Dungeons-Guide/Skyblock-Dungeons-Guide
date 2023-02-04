@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 
@@ -80,7 +81,7 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
         String lowestHealthName = "";
         int lowestHealth = 999999999;
         Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
-
+        if (objective == null) return Collections.emptyList();
         for (Score sc : objective.getScores()) {
             String line = sc.getVisibleName();
             String stripped = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(line));

@@ -129,6 +129,7 @@ public class DefaultFontRenderer implements FontRenderer {
     @Override
     public double getWidth(char text, ITextStyle textStyle) {
         double val;
+        if (text == '\n') return 0;
         if (text == ' ') {
             val = 4;
         } else {
@@ -137,7 +138,7 @@ public class DefaultFontRenderer implements FontRenderer {
                 val = this.charWidth[i];
             } else if (this.glyphData[text] != 0) {
                 int texStart = this.glyphData[text] >>> 4;
-                int texEnd = this.glyphData[text] & 15 + 1;
+                int texEnd = (this.glyphData[text] & 15) + 1;
                 val = (texEnd - texStart) / 2.0 + 1;
             } else {
                 val = 0;
@@ -217,6 +218,7 @@ public class DefaultFontRenderer implements FontRenderer {
 
 
     private double renderChar(WorldRenderer worldRenderer, double x, double y, char ch, ITextStyle textStyle) {
+        if (ch == '\n') return 0;
         if (ch == ' ') {
             return 4.0F * textStyle.getSize() / 8.0;
         } else {
@@ -286,7 +288,7 @@ public class DefaultFontRenderer implements FontRenderer {
             int i = ch / 256;
             bindTexture(worldRenderer, this.getUnicodePageLocation(i));
             float xStart = (float)(this.glyphData[ch] >>> 4);
-            float xEnd = (float)(this.glyphData[ch] & 15 + 1);
+            float xEnd = (float)((this.glyphData[ch] & 15) + 1);
 
             float texX = (float)(ch % 16 * 16) + xStart;
             float texY = (float)((ch & 255) / 16 * 16);
