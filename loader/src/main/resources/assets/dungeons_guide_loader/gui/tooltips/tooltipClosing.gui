@@ -25,20 +25,7 @@
                         <col crossAlign="STRETCH">
                             <padding left="5" right="5" top="5" bottom="5">
                                 <col crossAlign="START">
-                                    <row crossAlign="END">
-                                        <flexible>
-                                            <Text bind:text="title" bind:color="color" size="8"/>
-                                        </flexible>
-                                        <SelectiveContainer bind:visible="closeVisibility">
-                                            <row slot="show">
-                                                <size height="0" width="5"/>
-                                                <size height="10" width="10">
-                                                    <RoundButton text="X" on:click="close"/>
-                                                </size>
-                                            </row>
-                                            <size width="0" height="0" slot="hide"/>
-                                        </SelectiveContainer>
-                                    </row>
+                                    <Text bind:text="title" bind:color="color" size="8"/>
                                     <size width="0" height="3"/>
                                     <Text bind:text="description" color="#FFAAAAAA"/>
                                 </col>

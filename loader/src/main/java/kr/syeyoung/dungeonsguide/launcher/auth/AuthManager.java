@@ -144,7 +144,6 @@ public class AuthManager {
                         .title("Privacy Policy")
                         .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                         .titleColor(0xFFFF0000)
-                        .unremovable(true)
                         .onClick(() -> {
                             GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
                         })
@@ -155,7 +154,6 @@ public class AuthManager {
                         .title("Auth Error")
                         .description("Authentication Error Occurred\n"+e.getMessage())
                         .titleColor(0xFFFF0000)
-                        .unremovable(true)
                         .onClick(() -> {
                             GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
                         })
@@ -189,7 +187,6 @@ public class AuthManager {
                             .title("Privacy Policy")
                             .description("Please accept the Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                             .titleColor(0xFFFF0000)
-                            .unremovable(true)
                             .onClick(() -> {
                                 GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
                             })
@@ -200,7 +197,6 @@ public class AuthManager {
                             .title("Auth Error")
                             .description("Authentication Error Occurred\n"+e.getMessage())
                             .titleColor(0xFFFF0000)
-                            .unremovable(true)
                             .onClick(() -> {
                                 GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
                             })

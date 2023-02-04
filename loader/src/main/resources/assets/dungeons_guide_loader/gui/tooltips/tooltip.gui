@@ -26,15 +26,6 @@
                             <col crossAlign="START">
                                 <row crossAlign="END">
                                     <Text bind:text="title" bind:color="color" size="8"/>
-                                    <SelectiveContainer bind:visible="closeVisibility">
-                                        <row slot="show">
-                                            <size height="0" width="5"/>
-                                            <size height="10" width="10">
-                                                <RoundButton text="X" on:click="close"/>
-                                            </size>
-                                        </row>
-                                        <size width="0" height="0" slot="hide"/>
-                                    </SelectiveContainer>
                                 </row>
                                 <size width="0" height="3"/>
                                 <Text bind:text="description" color="#FFAAAAAA"/>

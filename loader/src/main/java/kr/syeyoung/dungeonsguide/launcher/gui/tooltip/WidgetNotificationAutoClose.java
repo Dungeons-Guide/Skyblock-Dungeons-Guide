@@ -57,16 +57,9 @@ public class WidgetNotificationAutoClose extends AnnotatedImportOnlyWidget imple
         title.setValue(notification.getTitle());
         color.setValue(notification.getTitleColor());
         description.setValue(notification.getDescription());
-        closeVisibility.setValue(notification.isUnremovable() ? "hide" : "show");
         this.uuid = uuid;
         this.delay = delay;
 
-    }
-
-    @On(functionName = "close")
-    public void close() {
-        if (!notification.isUnremovable())
-            NotificationManager.getInstance().removeNotification(uuid);
     }
 
     @Override

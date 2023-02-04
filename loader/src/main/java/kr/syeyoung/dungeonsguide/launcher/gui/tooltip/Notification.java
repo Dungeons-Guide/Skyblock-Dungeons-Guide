@@ -30,7 +30,6 @@ public class Notification {
     private String description;
 
     private Runnable onClick;
-    private boolean unremovable;
 
 
     private Rectangle boundRect;

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotification;
+import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotificationAutoClose;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
@@ -71,11 +72,11 @@ public class GuiLoadingError extends SpecialGuiScreen {
                     );
 
             UUID uuid = UUID.randomUUID();
-            NotificationManager.getInstance().updateNotification(uuid, new WidgetNotification(uuid, Notification.builder()
+            NotificationManager.getInstance().updateNotification(uuid, new WidgetNotificationAutoClose(uuid, Notification.builder()
                             .title("Successfully Copied!")
                             .description("")
                             .titleColor(0xFF00FF00)
-                    .build()));
+                    .build(), 5000L));
         }
     }
 

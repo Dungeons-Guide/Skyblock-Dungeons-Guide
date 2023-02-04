@@ -36,8 +36,6 @@ public class WidgetNotification extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> description = new BindableAttribute<>(String.class);
     @Bind(variableName = "color")
     public final BindableAttribute<Integer> color = new BindableAttribute<>(Integer.class);
-    @Bind(variableName = "closeVisibility")
-    public final BindableAttribute<String> closeVisibility = new BindableAttribute<>(String.class);
 
     private UUID uuid;
     public WidgetNotification(UUID uuid, Notification notification) {
@@ -46,14 +44,7 @@ public class WidgetNotification extends AnnotatedImportOnlyWidget {
         title.setValue(notification.getTitle());
         color.setValue(notification.getTitleColor());
         description.setValue(notification.getDescription());
-        closeVisibility.setValue(notification.isUnremovable() ? "hide" : "show");
         this.uuid = uuid;
-    }
-
-    @On(functionName = "close")
-    public void close() {
-        if (!notification.isUnremovable())
-            NotificationManager.getInstance().removeNotification(uuid);
     }
 
     @Override

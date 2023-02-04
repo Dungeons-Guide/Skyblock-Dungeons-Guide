@@ -104,7 +104,6 @@ public class Main
                         .onClick(() -> {
                             GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                         })
-                        .unremovable(true)
                 .build()));
 
         try {
@@ -169,7 +168,6 @@ public class Main
                 .onClick(() -> {
                     GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                 })
-                .unremovable(true)
                 .build()));
         if (currentLoader != null) {
             currentLoader.unloadDungeonsGuide();
