@@ -139,7 +139,7 @@ tasks.shadowJar {
         include(dependency("com.kohlschutter.junixsocket:junixsocket-common:2.3.4"))
         include(dependency("com.kohlschutter.junixsocket:junixsocket-native-common:2.3.4"))
         include(dependency("net.java.dev.jna:jna:5.12.1"))
-        include(dependency("com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b"))
+        include(dependency("com.github.Dungeons-Guide:DiscordIPC:1d33a1c"))
     }
 }
 
