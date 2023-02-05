@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.text;
 
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -49,7 +50,8 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), TCTextStyleList.INSTANCE)
                 .setWidgetGenerator((param) -> new CompatLayer(new PanelTextParameterConfig(TextHUDFeature.this))));
         addParameter("alignment", new FeatureParameter<RichText.TextAlign>("alignment", "Alignment", "Alignment", RichText.TextAlign.LEFT, new TCEnum<>(RichText.TextAlign.values()), richText::setAlign));
-        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, TCFloat.INSTANCE));
+        addParameter("scale", new FeatureParameter<Double>("scale", "Scale", "Scale", 1.0, TCDouble.INSTANCE)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
     }
 
     @Override
@@ -77,7 +79,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
                 List<StyledText> asd = getText();
 
                 ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
-                defaultStyle.setSize((double) (this.<Float>getParameter("scale").getValue() * 8));
+                defaultStyle.setSize((double) (this.<Double>getParameter("scale").getValue() * 8));
 
                 TextSpan span = new TextSpan(defaultStyle, "");
 
@@ -100,7 +102,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     @Override
     public void drawDemo(float partialTicks) {
         List<StyledText> asd = getDummyText();
-        double scale = this.<Float>getParameter("scale").getValue();
+        double scale = this.<Double>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 0);
 
         StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, 100, getStylesMap(),
@@ -146,7 +148,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
             );
 
             ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
-            defaultStyle.setSize((double) (hudFeature.<Float>getParameter("scale").getValue() * 8));
+            defaultStyle.setSize((double) (hudFeature.<Double>getParameter("scale").getValue() * 8));
 
             TextSpan span = new TextSpan(defaultStyle, "");
 
@@ -220,9 +222,9 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
 //        });
 //
 //        mPanels.add(new MPassiveLabelAndElement("Alignment", mStringSelectionButton));
-//        mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Float>getParameter("scale").getValue()) {{
+//        mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(TextHUDFeature.this.<Double>getParameter("scale").getValue()) {{
 //            setOnUpdate(() ->{
-//                TextHUDFeature.this.<Float>getParameter("scale").setValue(this.getData());
+//                TextHUDFeature.this.<Double>getParameter("scale").setValue(this.getData());
 //            }); }
 //        }));
 

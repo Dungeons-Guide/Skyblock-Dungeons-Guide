@@ -79,7 +79,7 @@ public class ActionMove extends AbstractAction {
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                RenderUtils.drawLinesVec3(poses, actionRouteProperties.getLineColor(), actionRouteProperties.getLineWidth(), partialTicks,  true);
+                RenderUtils.drawLinesVec3(poses, actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks,  true);
             }
         }
     }

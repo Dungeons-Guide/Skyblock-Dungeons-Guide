@@ -21,7 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -65,7 +66,7 @@ import static kr.syeyoung.dungeonsguide.mod.utils.TabListUtil.getString;
 public class FeatureTestPeople extends RawRenderingGuiFeature {
 
     Logger logger = LogManager.getLogger("FeatureTestPeople");
-    private Float scale;
+    private Double scale;
     private Set<String> lastMembersRaw;
     private boolean broadcastLock;
 
@@ -73,7 +74,8 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
         super("Dungeon", "Feature test", "NOU", "", false, 200, 100);
 
 
-        addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0f, TCFloat.INSTANCE, nval -> this.scale = nval));
+        addParameter("scale", new FeatureParameter<>("scale", "Scale", "Scale", 2.0, TCDouble.INSTANCE, nval -> this.scale = nval)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
 
 //        (new Thread(() -> {
 //            while (true){

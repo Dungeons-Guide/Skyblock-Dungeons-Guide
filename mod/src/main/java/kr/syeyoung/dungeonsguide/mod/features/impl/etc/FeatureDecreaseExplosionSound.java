@@ -20,7 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -30,7 +31,8 @@ import net.minecraftforge.client.event.sound.PlaySoundEvent;
 public class FeatureDecreaseExplosionSound extends SimpleFeature {
     public FeatureDecreaseExplosionSound() {
        super("Misc", "Decrease Explosion sound effect", "Decreases volume of explosions while on skyblock", "qol.explosionsound");
-        addParameter("sound", new FeatureParameter<Float>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0f, TCFloat.INSTANCE));
+        addParameter("sound", new FeatureParameter<Double>("sound", "Sound Multiplier %", "The volume of explosion effect will be multiplied by this value. 0~100", 10.0, TCDouble.INSTANCE)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0, 100))));
     }
 
     @DGEventHandler
@@ -41,7 +43,7 @@ public class FeatureDecreaseExplosionSound extends SimpleFeature {
             PositionedSoundRecord positionedSoundRecord = (PositionedSoundRecord) soundEvent.result;
             PositionedSoundRecord neweff = new PositionedSoundRecord(
                     positionedSoundRecord.getSoundLocation(),
-                    positionedSoundRecord.getVolume() * (this.<Float>getParameter("sound").getValue() / 100),
+                    (float) (positionedSoundRecord.getVolume() * (this.<Double>getParameter("sound").getValue() / 100)),
                     positionedSoundRecord.getPitch(),
                     positionedSoundRecord.getXPosF(),
                     positionedSoundRecord.getYPosF(),

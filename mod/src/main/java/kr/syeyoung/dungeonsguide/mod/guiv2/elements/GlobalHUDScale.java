@@ -49,7 +49,7 @@ public class GlobalHUDScale extends Widget implements Layouter, Renderer {
     private double getScale() {
         boolean useMc = FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").getValue();
         if (useMc) return (double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
-        else return FeatureRegistry.GLOBAL_HUD_SCALE.<Float>getParameter("scale").getValue();
+        else return FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").getValue();
     }
     
     private double scale;

@@ -22,6 +22,7 @@ import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
@@ -69,14 +70,14 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     private AColor backgroudColor;
     private AColor playerColor;
     private boolean shouldCacheMap;
-    private float playerHeadScale;
+    private double playerHeadScale;
     private boolean shouldShowOtherPlayers;
-    private float textScale;
+    private double textScale;
     private boolean showSecretCount;
     private boolean showPlayerHeads;
     private boolean shouldRotateWithPlayer;
     private boolean shouldScale;
-    private float postscaleOfMap;
+    private double postscaleOfMap;
     private boolean centerMapOnPlayer;
 
     public FeatureDungeonMap() {
@@ -86,12 +87,15 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
         addParameter("cacheMap", new FeatureParameter<>("cacheMap", "Should cache map data", "name", true, TCBoolean.INSTANCE, nval -> shouldCacheMap = nval));
         addParameter("playerCenter", new FeatureParameter<>("playerCenter", "Center map at player", "Render you in the center", false, TCBoolean.INSTANCE, nval -> centerMapOnPlayer = nval));
         addParameter("rotate", new FeatureParameter<>("rotate", "Rotate map centered at player", "Only works with Center map at player enabled", false, TCBoolean.INSTANCE, nval -> shouldRotateWithPlayer = nval));
-        addParameter("postScale", new FeatureParameter<>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0f, TCFloat.INSTANCE, nval -> postscaleOfMap = nval));
+        addParameter("postScale", new FeatureParameter<>("postScale", "Scale factor of map", "Only works with Center map at player enabled", 1.0, TCDouble.INSTANCE, nval -> postscaleOfMap = nval)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
         addParameter("useplayerheads", new FeatureParameter<>("useplayerheads", "Use player heads instead of arrows", "Option to use player heads instead of arrows", true, TCBoolean.INSTANCE, nval -> showPlayerHeads = nval));
         addParameter("showotherplayers", new FeatureParameter<>("showotherplayers", "Show other players", "Option to show other players in map", true, TCBoolean.INSTANCE, nval -> shouldShowOtherPlayers = nval));
         addParameter("showtotalsecrets", new FeatureParameter<>("showtotalsecrets", "Show Total secrets in the room", "Option to overlay total secrets in the specific room", true, TCBoolean.INSTANCE, nval -> showSecretCount = nval));
-        addParameter("playerheadscale", new FeatureParameter<>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0f, TCFloat.INSTANCE, nval -> playerHeadScale = nval));
-        addParameter("textScale", new FeatureParameter<>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0f, TCFloat.INSTANCE, nval -> textScale = nval));
+        addParameter("playerheadscale", new FeatureParameter<>("playerheadscale", "Player head scale", "Scale factor of player heads, defaults to 1", 1.0, TCDouble.INSTANCE, nval -> playerHeadScale = nval)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
+        addParameter("textScale", new FeatureParameter<>("textScale", "Text scale", "Scale factor of texts on map, defaults to 1", 1.0, TCDouble.INSTANCE, nval -> textScale = nval)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
 
         addParameter("border_color", new FeatureParameter<>("border_color", "Color of the border", "Same as name", new AColor(255, 255, 255, 255), TCAColor.INSTANCE));
         addParameter("background_color", new FeatureParameter<>("background_color", "Color of the background", "Same as name", new AColor(0x22000000, true), TCAColor.INSTANCE, nval -> backgroudColor = nval));
@@ -168,7 +172,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     public void renderMap(float partialTicks, DungeonRoomScaffoldParser mapProcessor, MapData mapData, DungeonContext context) {
         EntityPlayer p = Minecraft.getMinecraft().thePlayer;
 
-        float postScale = this.centerMapOnPlayer ? postscaleOfMap : 1;
+        double postScale = this.centerMapOnPlayer ? postscaleOfMap : 1;
 
         GUIPosition featureRect = getFeatureRect();
         int width = featureRect.getWidth().intValue();
@@ -353,7 +357,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     }
 
 
-    private void renderHeads(DungeonRoomScaffoldParser mapProcessor, MapData mapData, float scale, float postScale, float partialTicks) {
+    private void renderHeads(DungeonRoomScaffoldParser mapProcessor, MapData mapData, float scale, double postScale, float partialTicks) {
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
         Set<TabListEntry> playerList = getPlayerListCached();
@@ -413,7 +417,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
      * @param pt2
      * @param yaw2
      */
-    private void drawHead(float scale, float postScale, TabListEntry networkPlayerInfo, EntityPlayer entityPlayer, Vector2d pt2, float yaw2) {
+    private void drawHead(float scale, double postScale, TabListEntry networkPlayerInfo, EntityPlayer entityPlayer, Vector2d pt2, float yaw2) {
         GlStateManager.pushMatrix();
         boolean flag1 = entityPlayer != null && entityPlayer.isWearing(EnumPlayerModelParts.CAPE);
         GlStateManager.enableTexture2D();
@@ -441,7 +445,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
 
     private static final ResourceLocation mapIcons = new ResourceLocation("textures/map/map_icons.png");
 
-    private void renderArrows(MapData mapData, float scale, float postScale) {
+    private void renderArrows(MapData mapData, float scale, double postScale) {
         Tessellator tessellator = Tessellator.getInstance();
         WorldRenderer worldrenderer = tessellator.getWorldRenderer();
         int k = 0;

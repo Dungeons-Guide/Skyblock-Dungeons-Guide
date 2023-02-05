@@ -18,8 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.*;
@@ -145,11 +146,11 @@ public class FeatureRegistry {
                 if (init)
                 OverlayManager.getEventHandler().guiResize(null);
             }));
-            addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Custom HUD Scale",1.0f, TCFloat.INSTANCE, a -> {
+            addParameter("scale", new FeatureParameter<Double>("scale", "Scale", "Custom HUD Scale",1.0, TCDouble.INSTANCE, a -> {
                 if (init)
                 OverlayManager.getEventHandler().guiResize(null);
 
-            }));
+            }).setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
             init = true;
         }
 

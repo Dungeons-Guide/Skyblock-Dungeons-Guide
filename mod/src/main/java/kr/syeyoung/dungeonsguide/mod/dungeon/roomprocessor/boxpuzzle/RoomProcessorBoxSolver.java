@@ -363,11 +363,11 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
             }
 
             if (pathFound != null) {
-                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(),FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
+                RenderUtils.drawLines(pathFound, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, true);
             }
         } else {
             if (totalPath != null) {
-                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(),FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
+                RenderUtils.drawLines(totalPath, FeatureRegistry.SOLVER_BOX.getLineColor(), (float) FeatureRegistry.SOLVER_BOX.getLineWidth(), partialTicks, false);
             }
             if (totalPushedBlocks != null) {
                 for (int i = 0; i < totalPushedBlocks.size(); i++) {

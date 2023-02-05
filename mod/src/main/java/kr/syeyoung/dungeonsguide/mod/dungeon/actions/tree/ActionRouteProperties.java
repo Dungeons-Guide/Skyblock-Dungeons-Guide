@@ -26,7 +26,7 @@ public class ActionRouteProperties {
     private boolean pathfind;
     private int lineRefreshRate;
     private AColor lineColor;
-    private float lineWidth;
+    private double lineWidth;
 
     private boolean beacon;
     private AColor beaconColor;

@@ -18,9 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.solvers;
 
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCAColor;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
@@ -31,16 +32,17 @@ public class FeatureSolverSilverfish extends SimpleFeature {
         super("Dungeon.Solvers.Floor 3+", "Silverfish (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish");
         this.parameters = new LinkedHashMap<>();
         addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), TCAColor.INSTANCE, nval -> lineColor = nval));
-        addParameter("lineWidth", new FeatureParameter<Float>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0f, TCFloat.INSTANCE, nval -> lineWidth = nval));
+        addParameter("lineWidth", new FeatureParameter<Double>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0, TCDouble.INSTANCE, nval -> lineWidth = nval)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
     }
 
     AColor lineColor;
-    Float lineWidth;
+    Double lineWidth;
 
     public AColor getLineColor() {
         return lineColor;
     }
-    public float getLineWidth() {
+    public double getLineWidth() {
         return lineWidth;
     }
 }

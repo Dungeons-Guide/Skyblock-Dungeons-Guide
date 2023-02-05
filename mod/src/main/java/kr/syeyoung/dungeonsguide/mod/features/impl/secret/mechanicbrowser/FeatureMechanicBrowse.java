@@ -21,8 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCFloat;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -62,18 +63,19 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
     public FeatureMechanicBrowse() {
         super("Dungeon.Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
-        addParameter("scale", new FeatureParameter<Float>("scale", "Scale", "Scale", 1.0f, TCFloat.INSTANCE));
+        addParameter("scale", new FeatureParameter<Double>("scale", "Scale", "Scale", 1.0, TCDouble.INSTANCE)
+                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
     }
 
     public double getScale() {
-        return this.<Float>getParameter("scale").getValue();
+        return this.<Double>getParameter("scale").getValue();
     }
 
 
 
     @Override
     public void drawDemo(float partialTicks) {
-        double scale = FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue();
+        double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 1.0);
 
         GUIPosition bigDim = getFeatureRect();
@@ -104,7 +106,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
         GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
 
-        double scale = FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue();
+        double scale = FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
         GlStateManager.scale(scale, scale, 1.0);
 
         GUIPosition bigDim = getFeatureRect();
@@ -157,9 +159,9 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     public void getTooltipForEditor(List<Widget> widgets) {
         super.getTooltipForEditor(widgets);
 
-//            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(FeatureMechanicBrowse.this.<Float>getParameter("scale").getValue()) {{
+//            mPanels.add(new MPassiveLabelAndElement("Scale", new MFloatSelectionButton(FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue()) {{
 //                setOnUpdate(() ->{
-//                    FeatureMechanicBrowse.this.<Float>getParameter("scale").setValue(this.getData());
+//                    FeatureMechanicBrowse.this.<Double>getParameter("scale").setValue(this.getData());
 //                }); }
 //            }));
     }

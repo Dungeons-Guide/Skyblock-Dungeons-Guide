@@ -32,37 +32,48 @@ import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
-public class TCFloat implements FeatureTypeHandler<Float> {
-    public static final TCFloat INSTANCE = new TCFloat();
+public class TCDouble implements FeatureTypeHandler<Double> {
+    public static final TCDouble INSTANCE = new TCDouble();
     @Override
-    public Float deserialize(JsonElement element) {
-        return element.getAsFloat();
+    public Double deserialize(JsonElement element) {
+        return element.getAsDouble();
     }
 
     @Override
-    public JsonElement serialize(Float element) {
+    public JsonElement serialize(Double element) {
         return new JsonPrimitive(element);
     }
 
 
     @Override
     public Widget createDefaultWidgetFor(FeatureParameter parameter) {
-        ParameterItem parameterItem = new ParameterItem(parameter, new FloatEditWidget(parameter));
+        ParameterItem parameterItem = new ParameterItem(parameter, new DoubleEditWidget(parameter));
         return parameterItem;
     }
 
-    public static class FloatEditWidget extends AnnotatedImportOnlyWidget {
+    public static class DoubleEditWidget extends AnnotatedImportOnlyWidget {
         @Bind(variableName = "value")
         public final BindableAttribute<String> value = new BindableAttribute<>(String.class);
-        private float truth;
+        private double truth;
 
-        public FloatEditWidget(FeatureParameter<Float> featureParameter) {
+        private double min;
+        private double max;
+
+        public DoubleEditWidget(FeatureParameter<Double> featureParameter) {
+            this(featureParameter, Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
+        }
+
+        public DoubleEditWidget(FeatureParameter<Double> featureParameter, double min, double max) {
             super(new ResourceLocation("dungeonsguide:gui/config/parameter/number.gui"));
             this.truth = featureParameter.getValue();
-            value.setValue(String.valueOf(truth));
+            this.min = min;
+            this.max = max;
+            value.setValue(String.format("%f", truth));
             value.addOnUpdate((old, neu) -> {
                 try {
                     truth = Float.parseFloat(neu);
+                    if (truth < min) return;
+                    if (truth > max) return;
                     featureParameter.setValue(truth);
                 } catch (Exception e) {
                 }
@@ -73,14 +84,16 @@ public class TCFloat implements FeatureTypeHandler<Float> {
         public void inc() {
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
             truth += (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
-            value.setValue(String.valueOf(truth));
+            if (truth > max) truth = max;
+            value.setValue(String.format("%f", truth));
         }
 
         @On(functionName = "dec")
         public void dec() {
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
             truth -= (Keyboard.isKeyDown(Keyboard.KEY_LCONTROL) ? 1 : 0.1);
-            value.setValue(String.valueOf(truth));
+            if (truth < min) truth = min;
+            value.setValue(String.format("%f", truth));
         }
     }
 }

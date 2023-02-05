@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabelAndElement;
 
 import java.awt.*;
 
-public class ValueEditFloat extends MPanel implements ValueEdit<Float> {
+public class ValueEditFloat extends MPanel implements ValueEdit<Double> {
     private Parameter parameter;
 
 
