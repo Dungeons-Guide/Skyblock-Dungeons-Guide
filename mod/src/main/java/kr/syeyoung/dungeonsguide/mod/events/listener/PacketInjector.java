@@ -59,20 +59,22 @@ public class PacketInjector extends ChannelDuplexHandler {
             if (doStuff) {
                 RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
                 MinecraftForge.EVENT_BUS.post(receivedEvent);
+                packet = receivedEvent.packet;
             }
         } catch (Throwable t) {
             t.printStackTrace();
         }
 
         // Hopefully this works? idk
+        Packet finalPacket = packet;
         if (doStuff)
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Pre(packet));
+                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Pre(finalPacket));
             });
         super.channelRead(ctx, packet);
         if (doStuff)
             Minecraft.getMinecraft().addScheduledTask(() -> {
-                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Post(packet));
+                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Post(finalPacket));
             });
     }
 

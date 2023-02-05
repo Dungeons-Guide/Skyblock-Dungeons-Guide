@@ -218,7 +218,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
         register(new SkyblockAbility("Stinger", 150, -1, "SCORPION_BOW"));
         register(new SkyblockAbility("Eye Beam", -1, -1, "PRECURSOR_EYE"));
         register(new SkyblockAbility("Water Burst", 20, -1, "SALMON_BOOTS"));
-        register(new SkyblockAbility("Mining Speed Boost", -1, 120, null));
+        register(new SkyblockAbility("Mining Speed Boost", -1, 10000, null));
         register(new SkyblockAbility("Pikobulus", -1, 110, null));
         // abilities
 
@@ -357,7 +357,6 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
         NBTTagCompound extra = nbt.getCompoundTag("ExtraAttributes");
         if (extra == null) return;
         String id = extra.getString("id");
-        if (!skyblockAbilitiesByItemID.containsKey(id)) return;
         List<SkyblockAbility> skyblockAbility = skyblockAbilitiesByItemID.get(id);
 
         NBTTagCompound display = nbt.getCompoundTag("display");
@@ -382,12 +381,16 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
                 if (ability.endsWith(" §e§lRIGHT CLICK")) ability = ability.replace(" §e§lRIGHT CLICK", "");
                 ability = TextUtils.stripColor(ability).trim();
 
-                for (SkyblockAbility skyblockAbility1 : skyblockAbility) {
-                    if (skyblockAbility1.getName().equals(ability)) {
-                        currentAbility = skyblockAbility1;
-                        break;
+                if (skyblockAbility != null) {
+                    for (SkyblockAbility skyblockAbility1 : skyblockAbility) {
+                        if (skyblockAbility1.getName().equals(ability)) {
+                            currentAbility = skyblockAbility1;
+                            break;
+                        }
                     }
                 }
+                if (currentAbility == null)
+                    currentAbility = skyblockAbilities.get(ability);
             }
         }
     }
