@@ -57,7 +57,10 @@ public class SurgicalReplacer {
                     stringBuilder = new StringBuilder();
                 }
                 int i1 = "0123456789abcdefklmnor".indexOf(Character.toLowerCase(charArr[i + 1]));
-                if (i1 < 16) {
+                if (i1 == -1) {
+                    stringBuilder.append(c0);
+                    continue;
+                } else if (i1 < 16) {
                     randomStyle = false;
                     boldStyle = false;
                     strikethroughStyle = false;
