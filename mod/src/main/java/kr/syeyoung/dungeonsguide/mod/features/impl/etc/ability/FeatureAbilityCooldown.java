@@ -373,8 +373,14 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
                 thecd = Integer.parseInt(thecdstr);
                 currentAbility.setCooldown(thecd);
                 currentAbility = null;
-            } else if (specific.startsWith("§6Item Ability: ")) {
-                String ability = TextUtils.stripColor(specific).substring(14).trim();
+            } else if (specific.startsWith("§6Ability: ") || specific.startsWith("§6Item Ability: ")) {
+                String ability;
+                if (specific.startsWith("§6I"))
+                    ability = specific.substring(18);
+                else
+                    ability = specific.substring(11);
+                if (ability.endsWith(" §e§lRIGHT CLICK")) ability = ability.replace(" §e§lRIGHT CLICK", "");
+                ability = TextUtils.stripColor(ability).trim();
 
                 for (SkyblockAbility skyblockAbility1 : skyblockAbility) {
                     if (skyblockAbility1.getName().equals(ability)) {

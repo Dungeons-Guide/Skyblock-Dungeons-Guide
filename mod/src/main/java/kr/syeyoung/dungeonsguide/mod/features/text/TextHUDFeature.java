@@ -70,7 +70,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     private Map<String, ParentDelegatingTextStyle> builtTextStyles = new HashMap<>();
 
     @DGEventHandler
-    public void onTick(DGTickEvent dgTickEvent) {
+    public void onTick0(DGTickEvent dgTickEvent) {
         try {
             checkVisibility();
             if (isHUDViewable()) {
