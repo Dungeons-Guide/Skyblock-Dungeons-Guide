@@ -123,8 +123,9 @@ public class EventHandlerRegistry {
                     for (InvocationTarget target : targetList) {
                         profiler.startSection(target.getTargetName());
                         try {
-                            if (target.condition == null || (target.condition.get() == Boolean.TRUE)) // it is safe to use this here.
+                            if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
                                 target.invokeSite.invoke(event);
+                            }
                         } catch (Throwable e) {
                             logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
                         }

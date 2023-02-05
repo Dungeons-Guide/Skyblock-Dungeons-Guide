@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import io.netty.channel.*;
+import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
 import net.minecraft.client.Minecraft;
@@ -53,12 +54,26 @@ public class PacketInjector extends ChannelDuplexHandler {
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {
         Packet packet = (Packet) msg;
-        if (targetedPackets.contains(msg.getClass())) {
-            RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
-            MinecraftForge.EVENT_BUS.post(receivedEvent);
-            packet = new WrappedPacket(receivedEvent.packet);
+        boolean doStuff = targetedPackets.contains(msg.getClass());
+        try {
+            if (doStuff) {
+                RawPacketReceivedEvent receivedEvent = new RawPacketReceivedEvent(packet);
+                MinecraftForge.EVENT_BUS.post(receivedEvent);
+            }
+        } catch (Throwable t) {
+            t.printStackTrace();
         }
+
+        // Hopefully this works? idk
+        if (doStuff)
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Pre(packet));
+            });
         super.channelRead(ctx, packet);
+        if (doStuff)
+            Minecraft.getMinecraft().addScheduledTask(() -> {
+                MinecraftForge.EVENT_BUS.post(new PacketProcessedEvent.Post(packet));
+            });
     }
 
     @Override
@@ -71,7 +86,6 @@ public class PacketInjector extends ChannelDuplexHandler {
                 piee = new PlayerInteractEntityEvent(true, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
             else
                 piee = new PlayerInteractEntityEvent(false, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
-
             if (MinecraftForge.EVENT_BUS.post(piee)) return;
         }
         super.write(ctx, msg, promise);
