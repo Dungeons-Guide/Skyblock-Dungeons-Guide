@@ -53,7 +53,7 @@ public class FeaturePenguins extends SimpleFeature {
         OBJLoader.instance.addDomain("dungeonsguide");
 
     }
-    @DGEventHandler
+    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         if (event instanceof TextureStitchEvent.Pre) {
             objModel = null;
@@ -70,7 +70,7 @@ public class FeaturePenguins extends SimpleFeature {
             }
         }
     }
-    @DGEventHandler
+    @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitchPost(TextureStitchEvent.Post event) {
         if (objModel != null && event instanceof TextureStitchEvent.Post) {
             model = objModel.bake(objModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());

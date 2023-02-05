@@ -389,7 +389,6 @@ public class CosmeticsManager {
             }
         }
 
-
         if (color != null)
             nameFormat.displayname = color.getData().replace("&","§")+nameFormat.username;
 
