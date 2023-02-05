@@ -51,7 +51,7 @@ dependencies {
     implementation "org.jetbrains:annotations-java5:19.0.0"
     implementation "org.java-websocket:Java-WebSocket:1.5.1"
     implementation 'org.json:json:20220924'
-    implementation 'com.github.Dungeons-Guide:DiscordIPC:b597c6cd2b'
+    implementation 'com.github.Dungeons-Guide:DiscordIPC:1d33a1c'
     implementation "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
 
