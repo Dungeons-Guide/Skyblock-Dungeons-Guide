@@ -33,7 +33,8 @@ public class SurgicalReplacer {
         boolean strikethroughStyle = parentStyle.getStrikethrough();
         boolean underlineStyle = parentStyle.getUnderlined();
         boolean italicStyle = parentStyle.getItalic();
-        int colorStyle = parentStyle.getColor() == null ? 15 : parentStyle.getColor().getColorIndex();
+        char possibleLastColorChar = parentStyle.getColor() == null ? 'f' : "0123456789abcdefklmnor".charAt(parentStyle.getColor().getColorIndex());
+        boolean isLegalColor = true;
         char[] charArr = str.toCharArray();
 
         List<ChatComponentText> list = new LinkedList<>();
@@ -43,33 +44,55 @@ public class SurgicalReplacer {
             char c0 = charArr[i];
             if (c0 == 167 && i + 1 < charArr.length) {
                 if (stringBuilder.length() != 0) {
-                    ChatComponentText chatComponents = new ChatComponentText(stringBuilder.toString());
-                    chatComponents.setChatStyle(new ChatStyle()
-                            .setBold(boldStyle)
-                            .setObfuscated(randomStyle)
-                            .setStrikethrough(strikethroughStyle)
-                            .setUnderlined(underlineStyle)
-                            .setItalic(italicStyle)
-                            .setColor(EnumChatFormatting.func_175744_a(colorStyle))
-                            .setChatHoverEvent(parentStyle.getChatHoverEvent())
-                            .setChatClickEvent(parentStyle.getChatClickEvent()));
-                    list.add(chatComponents);
-                    stringBuilder = new StringBuilder();
+                    if (isLegalColor) {
+                        ChatComponentText chatComponents = new ChatComponentText(
+                                stringBuilder.toString());
+                        chatComponents.setChatStyle(new ChatStyle()
+                                .setBold(boldStyle)
+                                .setObfuscated(randomStyle)
+                                .setStrikethrough(strikethroughStyle)
+                                .setUnderlined(underlineStyle)
+                                .setItalic(italicStyle)
+                                .setColor(EnumChatFormatting.func_175744_a("0123456789abcdefklmnor".indexOf(possibleLastColorChar)))
+                                .setChatHoverEvent(parentStyle.getChatHoverEvent())
+                                .setChatClickEvent(parentStyle.getChatClickEvent()));
+                        list.add(chatComponents);
+                        stringBuilder = new StringBuilder();
+                    } else {
+                        ChatComponentText chatComponents = new ChatComponentText(
+                                "§"+possibleLastColorChar+
+                                        (randomStyle ? "§k" : "")+
+                                        (boldStyle ? "§l" : "")+
+                                        (italicStyle ? "§o" : "")+
+                                        (underlineStyle ? "§n" : "")+
+                                        (strikethroughStyle ? "§m" : "") +stringBuilder.toString());
+                        chatComponents.setChatStyle(new ChatStyle()
+                                .setBold(boldStyle)
+                                .setObfuscated(randomStyle)
+                                .setStrikethrough(strikethroughStyle)
+                                .setUnderlined(underlineStyle)
+                                .setItalic(italicStyle)
+                                .setColor(EnumChatFormatting.WHITE)
+                                .setChatHoverEvent(parentStyle.getChatHoverEvent())
+                                .setChatClickEvent(parentStyle.getChatClickEvent()));
+                        list.add(chatComponents);
+                        stringBuilder = new StringBuilder();
+                    }
                 }
                 int i1 = "0123456789abcdefklmnor".indexOf(Character.toLowerCase(charArr[i + 1]));
-                if (i1 == -1) {
-                    stringBuilder.append(c0);
-                    continue;
-                } else if (i1 < 16) {
+                if (i1 < 16) {
                     randomStyle = false;
                     boldStyle = false;
                     strikethroughStyle = false;
                     underlineStyle = false;
                     italicStyle = false;
-                    if (i1 < 0) {
-                        i1 = 15;
+                    if (i1 >= 0) {
+                        possibleLastColorChar = "0123456789abcdef".charAt(i1);
+                        isLegalColor = true;
+                    } else {
+                        possibleLastColorChar = charArr[i+1];
+                        isLegalColor = false;
                     }
-                    colorStyle = i1;
                 } else if (i1 == 16) {
                     randomStyle = true;
                 } else if (i1 == 17) {
@@ -86,7 +109,7 @@ public class SurgicalReplacer {
                     strikethroughStyle = false;
                     underlineStyle = false;
                     italicStyle = false;
-                    colorStyle = 15;
+                    possibleLastColorChar = 'f';
                 }
 
                 ++i;
@@ -94,17 +117,38 @@ public class SurgicalReplacer {
                 stringBuilder.append(c0);
             }
         }
-        ChatComponentText chatComponents = new ChatComponentText(stringBuilder.toString());
-        chatComponents.setChatStyle(new ChatStyle()
-                .setBold(boldStyle)
-                .setObfuscated(randomStyle)
-                .setStrikethrough(strikethroughStyle)
-                .setUnderlined(underlineStyle)
-                .setItalic(italicStyle)
-                .setColor(EnumChatFormatting.func_175744_a(colorStyle))
-                .setChatHoverEvent(parentStyle.getChatHoverEvent())
-                .setChatClickEvent(parentStyle.getChatClickEvent()));
-        list.add(chatComponents);
+        if (isLegalColor) {
+            ChatComponentText chatComponents = new ChatComponentText(
+                    stringBuilder.toString());
+            chatComponents.setChatStyle(new ChatStyle()
+                    .setBold(boldStyle)
+                    .setObfuscated(randomStyle)
+                    .setStrikethrough(strikethroughStyle)
+                    .setUnderlined(underlineStyle)
+                    .setItalic(italicStyle)
+                    .setColor(EnumChatFormatting.func_175744_a("0123456789abcdefklmnor".indexOf(possibleLastColorChar)))
+                    .setChatHoverEvent(parentStyle.getChatHoverEvent())
+                    .setChatClickEvent(parentStyle.getChatClickEvent()));
+            list.add(chatComponents);
+        } else {
+            ChatComponentText chatComponents = new ChatComponentText(
+                    "§"+possibleLastColorChar+
+                            (randomStyle ? "§k" : "")+
+                            (boldStyle ? "§b" : "")+
+                            (italicStyle ? "§o" : "")+
+                            (underlineStyle ? "§n" : "")+
+                            (strikethroughStyle ? "§m" : "") +stringBuilder.toString());
+            chatComponents.setChatStyle(new ChatStyle()
+                    .setBold(boldStyle)
+                    .setObfuscated(randomStyle)
+                    .setStrikethrough(strikethroughStyle)
+                    .setUnderlined(underlineStyle)
+                    .setItalic(italicStyle)
+                    .setColor(EnumChatFormatting.WHITE)
+                    .setChatHoverEvent(parentStyle.getChatHoverEvent())
+                    .setChatClickEvent(parentStyle.getChatClickEvent()));
+            list.add(chatComponents);
+        }
         return list;
     }
 
