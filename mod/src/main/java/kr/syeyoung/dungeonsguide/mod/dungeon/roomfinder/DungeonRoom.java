@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 
 import com.google.common.collect.Sets;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
@@ -47,6 +48,7 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
+import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -120,7 +122,10 @@ public class DungeonRoom {
         context.getExecutors().add(executor);
         return executor;
     }
-    private static final ExecutorService roomMatcherThread = Executors.newSingleThreadExecutor( DungeonsGuide.THREAD_FACTORY);
+    private static final ExecutorService roomMatcherThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newSingleThreadExecutor(
+            new ThreadFactoryBuilder()
+                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-RoomMatcher-%d").build()));
 
     @Getter
     private final Map<String, Object> roomContext = new HashMap<>();

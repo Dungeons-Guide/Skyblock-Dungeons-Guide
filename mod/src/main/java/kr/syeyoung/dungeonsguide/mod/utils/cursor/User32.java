@@ -24,9 +24,6 @@ import com.sun.jna.Pointer;
 
 public interface User32 extends Library {
 
-    public static User32 INSTANCE = (User32) Native
-            .loadLibrary("User32", User32.class);
-
     /** @see #LoadCursorW(Pointer, int) */
     public static final int IDC_ARROW = 32512;
     /** @see #LoadCursorW(Pointer, int) */

@@ -24,9 +24,6 @@ import com.sun.jna.Pointer;
 
 
 public interface Foundation extends Library {
-    Foundation INSTANCE = (Foundation) Native.loadLibrary("Foundation",
-            Foundation.class);
-
     Pointer objc_getClass(String className);
     Pointer sel_registerName(String selectorName);
     Pointer objc_msgSend(Pointer receiver, Pointer selector, Object... args);

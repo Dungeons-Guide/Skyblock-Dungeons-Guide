@@ -61,7 +61,6 @@ public class DiscordIntegrationManager implements IPCListener {
         ipcClient = new IPCClient(816298079732498473L, DungeonsGuide.THREAD_FACTORY);
         t.start();
     }
-
     @Getter
     private final Map<Long, JDiscordRelation> relationMap = new HashMap<>();
 
@@ -278,7 +277,9 @@ public class DiscordIntegrationManager implements IPCListener {
 
 
     public void cleanup() {
-        ipcClient.close();
+        try {
+            ipcClient.close();
+        } catch (Exception e) {e.printStackTrace();}
         this.t.interrupt();
         ipcClient = null;
     }

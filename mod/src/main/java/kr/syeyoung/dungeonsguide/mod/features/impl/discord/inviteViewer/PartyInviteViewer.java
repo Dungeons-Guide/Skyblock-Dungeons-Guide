@@ -65,8 +65,6 @@ public class PartyInviteViewer extends AbstractGuiFeature {
         } catch (Throwable e) {e.printStackTrace();}
     }
 
-    ExecutorService executorService = Executors.newFixedThreadPool(3, DungeonsGuide.THREAD_FACTORY);
-
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserJoinRequest(DiscordUserJoinRequestEvent event) {
         partyInviteViewer.addJoinRequest(event);

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.stomp;
 
 import com.google.common.base.Throwables;
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
@@ -63,9 +64,13 @@ public class StompManager {
         }
     }
 
-    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor(DungeonsGuide.THREAD_FACTORY);
+    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
+            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+            .setNameFormat("DG-StompManager-%d").build());
 
+    private volatile boolean disconnecting = false;
     public void onStompDied(StompDiedEvent event) {
+        if (disconnecting) return;
         logger.info("Stomp Connection closed, trying to reconnect - {} - {}", event.reason, event.code);
         connectStomp();
     }
@@ -83,5 +88,14 @@ public class StompManager {
                 logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
             }
         }, 5L, TimeUnit.SECONDS);
+    }
+
+    public void cleanup() {
+        if (stompConnection != null) {
+            disconnecting = true;
+            stompConnection.disconnect();
+        }
+
+        ex.shutdownNow();
     }
 }

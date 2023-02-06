@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.stomp;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
@@ -62,7 +63,10 @@ public class StompClient extends WebSocketClient {
 
     private ScheduledFuture heartbeat = null;
 
-    private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1, DungeonsGuide.THREAD_FACTORY);
+    private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1,
+            new ThreadFactoryBuilder()
+                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-StompClient-%d").build());
     @Override
     public void onOpen(ServerHandshake handshakeData) {
         send(new StompPayload().method(StompHeader.CONNECT)
@@ -130,7 +134,7 @@ public class StompClient extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         if (heartbeat != null) heartbeat.cancel(true);
-
+        ex.shutdownNow();
         MinecraftForge.EVENT_BUS.post(new StompDiedEvent(code, reason, remote));
         StompManager.getInstance().onStompDied(new StompDiedEvent(code, reason, remote));
     }

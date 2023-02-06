@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements.image;
 
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
@@ -148,7 +149,9 @@ public class ImageTexture {
         tessellator.draw();
     }
 
-    public static final ExecutorService executorService = Executors.newFixedThreadPool(3, DungeonsGuide.THREAD_FACTORY);
+    public static final ExecutorService executorService = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(3, new ThreadFactoryBuilder()
+            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+            .setNameFormat("DG-ImageFetcher-%d").build()));
     public static final Map<String, ImageTexture> imageMap = new HashMap<>();
     public static final Logger logger = LogManager.getLogger("DG-ImageLoader");
     public static void loadImage(String url, Consumer<ImageTexture> callback) {

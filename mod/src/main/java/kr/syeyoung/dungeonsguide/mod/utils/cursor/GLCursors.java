@@ -21,11 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.utils.cursor;
 
 import com.google.common.base.Throwables;
 import com.sun.jna.Native;
+import com.sun.jna.NativeLibrary;
 import com.sun.jna.Pointer;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.BufferUtils;
@@ -42,10 +44,7 @@ import java.lang.reflect.InvocationTargetException;
 import java.nio.ByteBuffer;
 import java.nio.ByteOrder;
 import java.nio.IntBuffer;
-import java.util.Comparator;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 
@@ -182,8 +181,21 @@ public class GLCursors {
         return enumCursorCursorMap.get(enumCursor);
     }
 
+    public static void cleanup() {
+        F_INSTANCE = null; U_INSTANCE = null; X_INSTANCE = null;
+
+        Map<Class, ?> blah = ReflectionHelper.getPrivateValue(Native.class, null, "typeOptions");
+        blah.remove(Foundation.class);
+        blah.remove(User32.class);
+        blah.remove(X11.class);
+    }
+
+    private static Foundation F_INSTANCE;
+    private static User32 U_INSTANCE;
+    private static X11 X_INSTANCE;
     private static Cursor createCursorWindows(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        User32 user32 = User32.INSTANCE;
+        if (U_INSTANCE == null) U_INSTANCE= Native.loadLibrary("User32", User32.class);
+        User32 user32 = U_INSTANCE;
         Pointer hIcon = user32
                 .LoadCursorW(Pointer.NULL, cursor);
         long ptrVal = Pointer.nativeValue(hIcon);
@@ -203,15 +215,17 @@ public class GLCursors {
         return createCursor(handle);
     }
     private static Cursor createCursorLinux(int cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
-        X11.Display display = X11.INSTANCE.XOpenDisplay(null);
-        Pointer fontCursor = X11.INSTANCE.XCreateFontCursor(display, cursor);
+        if (X_INSTANCE == null) X_INSTANCE= Native.loadLibrary("X11", X11.class);
+        X11.Display display = X_INSTANCE.XOpenDisplay(null);
+        Pointer fontCursor = X_INSTANCE.XCreateFontCursor(display, cursor);
         long iconPtr = Pointer.nativeValue(fontCursor);
 
         return createCursor(iconPtr);
     }
     private static Cursor createCursorMac(String cursor) throws LWJGLException, InstantiationException, InvocationTargetException, IllegalAccessException {
         // trust me, it's horrible.
-        Foundation foundation = Foundation.INSTANCE;
+        if (F_INSTANCE == null) F_INSTANCE = Native.loadLibrary("Foundation", Foundation.class);
+        Foundation foundation = F_INSTANCE;
         Pointer nsCursor = foundation.objc_getClass("NSCursor");
         Pointer selector = foundation.sel_registerName(cursor);
         Pointer thePointer = foundation.objc_msgSend(nsCursor, selector);

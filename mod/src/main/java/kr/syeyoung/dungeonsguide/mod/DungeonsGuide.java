@@ -82,7 +82,9 @@ import java.io.File;
 import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 public class DungeonsGuide implements DGInterface {
@@ -151,10 +153,16 @@ public class DungeonsGuide implements DGInterface {
         MinecraftForge.EVENT_BUS.register(object);
     }
     private List<ICommand> registeredCommands = new ArrayList<>();
+    private List<ExecutorService> executorServices = new ArrayList<>();
 
     public void registerCommands(ICommand command) {
         registeredCommands.add(command);
         ClientCommandHandler.instance.registerCommand(command);
+    }
+
+    public ExecutorService registerExecutorService(ExecutorService executorService) {
+        this.executorServices.add(executorService);
+        return executorService;
     }
 
 
@@ -293,6 +301,7 @@ public class DungeonsGuide implements DGInterface {
 
     @Override
     public void unload() {
+        StompManager.getInstance().cleanup();
         // have FUN!
 
         for (Object registeredListener : registeredListeners) {
@@ -399,8 +408,12 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
         ShaderManager.unload();
-
+        GLCursors.cleanup();
         DiscordIntegrationManager.INSTANCE.cleanup();
+
+        for (ExecutorService executorService : executorServices) {
+            executorService.shutdownNow();
+        }
 
         THREAD_GROUP.interrupt();
         THREAD_GROUP.stop();

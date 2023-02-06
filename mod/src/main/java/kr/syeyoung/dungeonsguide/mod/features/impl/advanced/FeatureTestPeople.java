@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -180,7 +181,9 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
 
 
-    ExecutorService executor = Executors.newFixedThreadPool(5, DungeonsGuide.THREAD_FACTORY);
+    ExecutorService executor = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(5, new ThreadFactoryBuilder()
+            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+            .setNameFormat("DG-FeatureTestPeople-%d").build()));
 
 
     public ItemStack getSkullByUserName(String username) {

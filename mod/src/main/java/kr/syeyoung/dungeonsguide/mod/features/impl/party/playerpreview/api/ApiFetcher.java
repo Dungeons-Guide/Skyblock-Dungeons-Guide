@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -51,7 +52,9 @@ public class ApiFetcher {
     private static final Map<String, CachedData<String>> UIDtoNickname = new ConcurrentHashMap<>();
     private static final Map<String, CachedData<GameProfile>> UIDtoGameProfile = new ConcurrentHashMap<>();
 
-    public static final ExecutorService ex = Executors.newFixedThreadPool(4, DungeonsGuide.THREAD_FACTORY);
+    public static final ExecutorService ex = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(4, new ThreadFactoryBuilder()
+            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+            .setNameFormat("DG-APIFetcher-%d").build()));
 
     private static final Set<String> invalidKeys = new HashSet<>();
 

@@ -48,12 +48,6 @@ public class DungeonRoomScaffoldParser {
     @Getter
     private MapData latestMapData;
 
-
-
-    ExecutorService es = Executors.newSingleThreadExecutor(new ThreadFactoryBuilder()
-            .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-            .setNameFormat("Dg-MapPlayerProcessor-%d").build());
-
     @Getter
     private final Map<Point, DungeonRoom> roomMap = new HashMap<>();
     @Getter
