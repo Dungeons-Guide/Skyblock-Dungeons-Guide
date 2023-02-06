@@ -261,6 +261,10 @@ public class DungeonsGuide implements DGInterface {
 
 
         Minecraft.getMinecraft().refreshResources();
+
+        // Fix Parallel universe not working when player joins hypickle before dg loads
+        if (Minecraft.getMinecraft().getNetHandler() != null)
+            Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
     }
 
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
@@ -312,7 +316,7 @@ public class DungeonsGuide implements DGInterface {
         }
 
 
-        Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet");
+        Set<ICommand> commands = ReflectionHelper.getPrivateValue(CommandHandler.class, ClientCommandHandler.instance, "commandSet","field_71561_b","field_6467","c");
 
         for (ICommand registeredCommand : registeredCommands) {
             ClientCommandHandler.instance.getCommands().remove(registeredCommand.getCommandName());
