@@ -20,10 +20,7 @@ package kr.syeyoung.dungeonsguide.launcher;
 
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.NoSuitableLoaderFoundException;
-import kr.syeyoung.dungeonsguide.launcher.exceptions.NoVersionFoundException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
@@ -67,6 +64,7 @@ public class Main
     public static final String DOMAIN = "https://v2.dungeons.guide/api";
 
     private static Main main;
+    private static volatile boolean referenceLeak = false;
 
     private static File configDir;
 
@@ -169,10 +167,17 @@ public class Main
                     GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
                 })
                 .build()));
-        if (currentLoader != null) {
-            currentLoader.unloadDungeonsGuide();
+        try {
+            if (currentLoader != null) {
+                currentLoader.unloadDungeonsGuide();
+            }
+        } catch (DungeonsGuideUnloadingException e) {
+            if (e.getCause() instanceof ReferenceLeakedException) {
+                referenceLeak = true;
+                currentLoader = null;
+            }
+            throw e;
         }
-        currentLoader = null;
 
 
     }
@@ -224,8 +229,6 @@ public class Main
             load(newLoader);
         } catch (DungeonsGuideLoadingException | DungeonsGuideUnloadingException e) {
             dgInterface = null;
-//            currentLoader = null;
-
             e.printStackTrace();
             throw e;
         } finally {

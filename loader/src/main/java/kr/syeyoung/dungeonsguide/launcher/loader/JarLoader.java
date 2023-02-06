@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.DGInterface;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingException;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
 import org.apache.commons.io.IOUtils;
@@ -109,9 +110,9 @@ public class JarLoader implements IDGLoader {
         dgInterface = null;
         System.gc();// pls do
         Reference<? extends ClassLoader> t = refQueue.poll();
-        if (t == null) throw new DungeonsGuideUnloadingException("Reference Leaked"); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
-        t.clear();
         phantomReference = null;
+        if (t == null) throw new DungeonsGuideUnloadingException(new ReferenceLeakedException("Reference Leaked")); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
+        t.clear();
     }
 
     @Override

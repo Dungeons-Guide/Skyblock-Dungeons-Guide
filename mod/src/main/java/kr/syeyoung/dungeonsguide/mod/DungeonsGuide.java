@@ -304,6 +304,7 @@ public class DungeonsGuide implements DGInterface {
         StompManager.getInstance().cleanup();
         // have FUN!
 
+
         for (Object registeredListener : registeredListeners) {
             MinecraftForge.EVENT_BUS.unregister(registeredListener);
         }

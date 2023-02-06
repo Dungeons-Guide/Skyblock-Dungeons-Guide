@@ -93,16 +93,16 @@ public class PacketInjector extends ChannelDuplexHandler {
         super.write(ctx, msg, promise);
     }
 
-    private ChannelPipeline thePipeline;
+
     @SubscribeEvent
     public void onServerConnect(FMLNetworkEvent.ClientConnectedToServerEvent event) {
-        (thePipeline =event.manager.channel().pipeline()).addBefore("packet_handler", "dg_packet_handler", this);
+        event.manager.channel().pipeline().addBefore("packet_handler", "dg_packet_handler", this);
     }
 
     public void cleanup() {
         try {
-            if (thePipeline != null)
-                thePipeline.remove("dg_packet_handler");
+            if (Minecraft.getMinecraft().getNetHandler() != null)
+                Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().remove("dg_packet_handler");
         } catch (Exception e) {
 
         }
