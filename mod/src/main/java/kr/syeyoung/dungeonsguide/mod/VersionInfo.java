@@ -29,7 +29,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.Optional;
 
 public class VersionInfo {
-    public static final String VERSION = "4.0.0-beta1.0";
+    public static final String VERSION = "4.0.0-beta4.4";
 
     public static IDGLoader getCurrentLoader() {
         return Main.getMain().getCurrentLoader();
