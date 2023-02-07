@@ -40,6 +40,12 @@ public abstract class WidgetInfo extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "version")
     public final BindableAttribute<String> version = new BindableAttribute<>(String.class, "");
 
+    @Bind(variableName = "loadVisibility")
+    public final BindableAttribute<String> loadVisibility = new BindableAttribute<>(String.class, "loadable");
+
+    @Bind(variableName = "reason")
+    public final BindableAttribute<String> reason = new BindableAttribute<>(String.class, "");
+
     public WidgetInfo() {
         super(new ResourceLocation("dungeons_guide_loader:gui/versions/versionInfo.gui"));
         makeItDefault.addOnUpdate((old, neu) ->{
@@ -52,6 +58,11 @@ public abstract class WidgetInfo extends AnnotatedImportOnlyWidget {
     }
     public void setVersion(String version) {this.version.setValue(version);}
     public void setDefault(boolean bool) {this.makeItDefault.setValue(bool);}
+
+    public void setNotLoadable(String reason) {
+        this.reason.setValue(reason);
+        this.loadVisibility.setValue("notloadable");
+    }
 
     public abstract IDGLoader getLoader();
 

@@ -381,6 +381,14 @@ public class DungeonsGuide implements DGInterface {
                 ReflectionHelper.setPrivateValue(ThreadDownloadImageData.class,(ThreadDownloadImageData) value, null, "imageBuffer", "field_110563_c", "k");
             }
         }
+        Set<ResourceLocation> toRemove = new HashSet<>();
+        for (Map.Entry<ResourceLocation, ITextureObject> resourceLocationITextureObjectEntry : mapTextureObjects.entrySet()) {
+            if (resourceLocationITextureObjectEntry.getKey().getResourceDomain().equalsIgnoreCase("dungeonsguide"))
+                toRemove.add(resourceLocationITextureObjectEntry.getKey());
+        }
+        for (ResourceLocation resourceLocation : toRemove) {
+            ITextureObject textureObject = mapTextureObjects.remove(resourceLocation);
+        }
 
 
 

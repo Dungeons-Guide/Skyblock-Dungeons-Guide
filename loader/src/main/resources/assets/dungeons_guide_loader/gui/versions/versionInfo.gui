@@ -22,17 +22,26 @@
             <UnconstrainedBox>
                 <bgcolor backgroundColor="#CC222222">
                     <padding right="3" bottom="3" top="3" left="3">
-                        <row mainAlign="END" crossAlign="CENTER">
-                            <Text text="Make this version default" color="#FFFFFFFF"/>
-                            <size width="5" height="0"/>
-                            <size width="40" height="15">
-                                <SimpleToggleButton bind:enabled="default"/>
-                            </size>
-                            <size width="5" height="0"/>
-                            <size width="40" height="15">
-                                <RoundButton text="Load" on:click="load"/>
-                            </size>
-                        </row>
+                        <SelectiveContainer bind:visible="loadVisibility">
+                            <slot slot="loadable">
+                                <row mainAlign="END" crossAlign="CENTER">
+                                    <Text text="Make this version default" color="#FFFFFFFF"/>
+                                    <size width="5" height="0"/>
+                                    <size width="40" height="15">
+                                        <SimpleToggleButton bind:enabled="default"/>
+                                    </size>
+                                    <size width="5" height="0"/>
+                                    <size width="40" height="15">
+                                        <RoundButton text="Load" on:click="load"/>
+                                    </size>
+                                </row>
+                            </slot>
+                            <slot slot="notloadable">
+                                <ConstrainedBox maxWidth="200">
+                                    <Text bind:text="reason" color="#FFFFAAAA"/>
+                                </ConstrainedBox>
+                            </slot>
+                        </SelectiveContainer>
                     </padding>
                 </bgcolor>
             </UnconstrainedBox>

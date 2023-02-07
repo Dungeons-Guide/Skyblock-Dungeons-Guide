@@ -18,8 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.branch.Update;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
+import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideLoadingException;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
 import net.minecraftforge.common.config.Configuration;
@@ -37,6 +39,12 @@ public class WidgetInfoRemote extends WidgetInfo {
         this.isLatest = isLatest;
         setVersion((isLatest ? "Latest :: " : "") + branch.getName()+"/"+update.getName()+ " ("+branch.getId()+"/"+update.getId()+")");
         setDefault(isLatest);
+
+
+        int reqVersion = update.getMetadata().has("loaderVersion") ? update.getMetadata().getInt("loaderVersion") : 0;
+        if (reqVersion > LoaderMeta.LOADER_VERSION) {
+            setNotLoadable("This version of Dungeons Guide requires loader version: " + reqVersion +" But current loader version: "+ LoaderMeta.LOADER_VERSION);
+        }
     }
 
     @Override
