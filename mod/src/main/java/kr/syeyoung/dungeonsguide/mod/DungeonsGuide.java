@@ -34,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.events.listener.DungeonListener;
+import kr.syeyoung.dungeonsguide.mod.events.listener.FreezeListener;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -170,6 +171,8 @@ public class DungeonsGuide implements DGInterface {
     private PacketInjector packetInjector;
     public void init(File f) {
         ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+
+        registerEventsForge(new FreezeListener());
 
         progressbar.step("Creating Configuration");
 

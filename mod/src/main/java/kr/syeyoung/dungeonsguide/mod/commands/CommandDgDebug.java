@@ -124,6 +124,8 @@ public class CommandDgDebug extends CommandBase {
         }
 
         switch (args[0].toLowerCase()) { //Case Insensitive
+            case "freeze":
+                while(true);
             case "scoreboard":
                 scoreboardCommand();
                 break;
