@@ -99,16 +99,6 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         return Minecraft.getMinecraft().fontRendererObj;
     }
 
-    @Override
-    public void drawDemo(float partialTicks) {
-        List<StyledText> asd = getDummyText();
-        double scale = this.<Double>getParameter("scale").getValue();
-        GlStateManager.scale(scale, scale, 0);
-
-        StyledTextRenderer.drawTextWithStylesAssociated(asd, 0, 0, 100, getStylesMap(),
-                StyledTextRenderer.Alignment.valueOf(TextHUDFeature.this.<RichText.TextAlign>getParameter("alignment").getValue().name()));
-    }
-
     @RequiredArgsConstructor
     public static class TextHUDDemo extends Widget implements MarkerProvider {
         public final TextHUDFeature hudFeature;

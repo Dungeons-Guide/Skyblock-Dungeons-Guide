@@ -89,28 +89,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
     public Double getKeepRatio() {return null;}
 
 
-    public abstract void drawDemo(float partialTicks);
-
-    public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
-        @Override
-        public List<Widget> build(DomElement buildContext) {
-            return Collections.emptyList();
-        }
-
-        @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
-            drawDemo(partialTicks);
-        }
-
-        @Override
-        public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-            return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
-        }
-    }
-
-    public Widget instantiateDemoWidget() {
-        return new WidgetFeatureWrapper();
-    }
+    public abstract Widget instantiateDemoWidget();
 
     @Override
     public void loadConfig(JsonObject jsonObject) {

@@ -93,8 +93,10 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
         return false;
     }
 
+    protected boolean cursorPassthrough = true;
+
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
-        return true;
+        return cursorPassthrough;
     }
 }

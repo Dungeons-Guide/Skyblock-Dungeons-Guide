@@ -37,6 +37,7 @@ public class MouseTooltip extends Widget {
 
     public MouseTooltip(Widget content) {
         absLocationPopup = new AbsLocationPopup(x,y, content, false);
+        absLocationPopup.cursorPassthrough = false;
     }
     @Override
     public List<Widget> build(DomElement buildContext) {
