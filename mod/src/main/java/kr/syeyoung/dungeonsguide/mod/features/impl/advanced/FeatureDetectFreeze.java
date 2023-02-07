@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.events.listener;
+package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
-import net.minecraftforge.fml.common.gameevent.TickEvent;
+import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
 import javax.swing.*;
 import java.awt.*;
@@ -31,25 +31,23 @@ import java.lang.management.ManagementFactory;
 import java.lang.management.ThreadInfo;
 import java.lang.management.ThreadMXBean;
 import java.util.Arrays;
-import java.util.Map;
 import java.util.stream.Collectors;
 
-public class FreezeListener implements Runnable {
-    public FreezeListener() {
+public class FeatureDetectFreeze extends SimpleFeature {
+    public FeatureDetectFreeze() {
+        super("Misc", "Freeze Detector", "Detect freezes, and when mc freezes for more than 3s, copy threadump and show you a popup", "misc.freezedetect", false);
         t.start();
     }
-    private volatile long lastTick = Long.MAX_VALUE;
 
-    @SubscribeEvent
-    public void onTick(TickEvent.ClientTickEvent tickEvent) {
-        lastTick = System.currentTimeMillis() + 5000;
-
+    @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
+    public void onTick() {
+        lastTick = System.currentTimeMillis() + 3000;
     }
 
 
-    Thread t = new Thread(DungeonsGuide.THREAD_GROUP,this);
+    private long lastTick = Long.MAX_VALUE;
+    private Thread t = new Thread(DungeonsGuide.THREAD_GROUP,this::run);
 
-    @Override
     public void run() {
         while(!t.isInterrupted()) {
             if (lastTick < System.currentTimeMillis() && FeatureRegistry.FREEZE_DETECTOR.isEnabled()) {
