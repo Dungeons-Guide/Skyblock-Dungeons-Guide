@@ -1,4 +1,5 @@
 plugins {
+    id "signing"
     id "idea"
     id "java"
     id "com.github.johnrengelman.shadow" version "7.1.2"
@@ -18,6 +19,10 @@ sourceSets.main {
     output.setResourcesDir(file("$buildDir/classes/java/main"))
 }
 
+signing {
+    useGpgCmd()
+    sign configurations.archives
+}
 
 repositories {
     mavenCentral()
