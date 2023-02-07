@@ -56,7 +56,7 @@ public class WidgetPrivacyPolicy extends AnnotatedImportOnlyWidget {
 
     public WidgetPrivacyPolicy() {
         super(new ResourceLocation("dungeons_guide_loader:gui/privacyPolicy/privacyPolicy.gui"));
-        reload();
+        reload0();
     }
 
     @On(functionName = "accept")
@@ -71,9 +71,8 @@ public class WidgetPrivacyPolicy extends AnnotatedImportOnlyWidget {
         Minecraft.getMinecraft().displayGuiScreen(null);
     }
 
-    @On(functionName = "reload")
-    public void reload() {
-        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+
+    public void reload0() {
         policyVisibility.setValue("loading");
         executor.submit(() -> {
             try {
@@ -97,5 +96,10 @@ public class WidgetPrivacyPolicy extends AnnotatedImportOnlyWidget {
                 policyVisibility.setValue("failed");
             }
         });
+    }
+    @On(functionName = "reload")
+    public void reload() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        reload0();
     }
 }
