@@ -20,8 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import net.minecraftforge.fml.common.gameevent.TickEvent;
 
 import javax.swing.*;
 import java.awt.*;
@@ -40,17 +42,24 @@ public class FeatureDetectFreeze extends SimpleFeature {
     }
 
     @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
-    public void onTick() {
+    public void onTick(TickEvent.ClientTickEvent tickEvent) {
         lastTick = System.currentTimeMillis() + 3000;
     }
 
+    private volatile boolean isEnabled = false;
+
+    @Override
+    public void setEnabled(boolean enabled) {
+        super.setEnabled(enabled);
+        this.isEnabled = enabled;
+    }
 
     private long lastTick = Long.MAX_VALUE;
     private Thread t = new Thread(DungeonsGuide.THREAD_GROUP,this::run);
 
     public void run() {
         while(!t.isInterrupted()) {
-            if (lastTick < System.currentTimeMillis() && FeatureRegistry.FREEZE_DETECTOR.isEnabled()) {
+            if (lastTick < System.currentTimeMillis() && isEnabled) {
                 ThreadMXBean bean = ManagementFactory.getThreadMXBean();
                 ThreadInfo[] infos = bean.dumpAllThreads(true, true);
                 String stacktrace = Arrays.stream(infos).map(Object::toString)
