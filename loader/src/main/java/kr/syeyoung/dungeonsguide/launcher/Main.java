@@ -22,8 +22,7 @@ import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.version.WidgetChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
@@ -146,11 +145,11 @@ public class Main
                 unload();
             } catch (Exception e2) {
                 e2.printStackTrace();
-                GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e2));
+                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e2))));
             }
-            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
         } catch (DungeonsGuideUnloadingException e) {
-            GuiDisplayer.INSTANCE.displayGui(new GuiUnloadingError(e));
+            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
         }
     }
 
@@ -211,16 +210,31 @@ public class Main
     }
 
     private volatile IDGLoader reqLoader = null;
+    private volatile boolean unload = false;
     public void reloadWithoutStacktraceReference(IDGLoader newLoader) {
         reqLoader = newLoader;
+    }
+    public void unloadWithoutStacktraceReference(IDGLoader newLoader) {
+        unload = true;
     }
     @SubscribeEvent
     public void onTick(TickEvent.ClientTickEvent tickEvent) {
         if (reqLoader != null) {
             IDGLoader loader = reqLoader;
             reqLoader = null;
+            unload = false;
 
             tryReloadingWithSplash(loader);
+        }
+        if (unload) {
+            try {
+                unload();
+            } catch (Exception e2) {
+                e2.printStackTrace();
+                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e2))));
+            }
+            reqLoader = null;
+            unload = false;
         }
     }
 

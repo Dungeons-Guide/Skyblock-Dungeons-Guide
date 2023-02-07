@@ -26,7 +26,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavailableException;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
@@ -41,7 +41,6 @@ import org.apache.logging.log4j.Logger;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
 
 
@@ -157,7 +156,7 @@ public class AuthManager {
                         .description("Authentication Error Occurred\n"+e.getMessage())
                         .titleColor(0xFFFF0000)
                         .onClick(() -> {
-                            GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
                         })
                         .build()));
             }
@@ -210,7 +209,7 @@ public class AuthManager {
                             .description("Authentication Error Occurred\n"+e.getMessage())
                             .titleColor(0xFFFF0000)
                             .onClick(() -> {
-                                GuiDisplayer.INSTANCE.displayGui(new GuiLoadingError(e));
+                                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
                             })
                             .build()));
                 }

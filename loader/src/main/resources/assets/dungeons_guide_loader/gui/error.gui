@@ -1,0 +1,60 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+    <stack>
+        <align hAlign="START" vAlign="END">
+            <size width="100" height="20">
+                <RoundButton text="Copy Log" on:click="copy"/>
+            </size>
+        </align>
+        <align vAlign="CENTER">
+            <ConstrainedBox maxHeight="450">
+                <col crossAlign="CENTER">
+                    <size width="0" height="10"/>
+                    <Text text="Dungeons Guide has ran into error while loading or unloading" color="#FFFFFFFF"/>
+                    <size width="0" height="10"/>
+                    <flexible>
+                        <align hAlign="CENTER">
+                            <padding left="10" right="10">
+                                <border>
+                                    <line slot="left" dir="VERTICAL" thickness="1.0" color="#FFFFFFFF"/>
+                                    <line slot="top" dir="HORIZONTAL" thickness="1.0" color="#FFFFFFFF"/>
+                                    <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FFFFFFFF"/>
+                                    <line slot="right" dir="VERTICAL" thickness="1.0" color="#FFFFFFFF"/>
+                                    <ConstrainedBox maxWidth="600" slot="content">
+                                        <bgcolor backgroundColor="#FF222222">
+                                            <ScrollablePanel>
+                                                <Text bind:text="stacktrace" color="#FFFFFFFF"/>
+                                            </ScrollablePanel>
+                                        </bgcolor>
+                                    </ConstrainedBox>
+                                </border>
+                            </padding>
+                        </align>
+                    </flexible>
+                    <size width="0" height="15"/>
+                    <size width="100" height="20">
+                        <RoundButton text="Continue" on:click="continue"/>
+                    </size>
+                    <size width="0" height="10"/>
+                </col>
+            </ConstrainedBox>
+        </align>
+    </stack>
+</bgcolor>

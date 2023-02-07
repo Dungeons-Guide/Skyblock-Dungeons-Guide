@@ -58,6 +58,7 @@ public class FlatTextSpan {
 
             int endIdx = value.length;
             boolean lineBroken = false;
+            boolean wasNewLine = false;
             for (int i = 0; i < value.length; i++) {
                 char character = value[i];
                 charWidth = textStyle.getFontRenderer().getWidth(character, textStyle);
@@ -83,6 +84,7 @@ public class FlatTextSpan {
                     if (character == '\n') {
                         endIdx = i+1;
                         lineBroken = true;
+                        wasNewLine = true;
                         break;
                     }
 
@@ -120,7 +122,8 @@ public class FlatTextSpan {
             char[] second = null;
             if (lineBroken) {
                 int startRealWord = -1;
-                for (int i = endIdx; i< value.length; i++) {
+                if (wasNewLine) startRealWord = endIdx;
+                else for (int i = endIdx; i< value.length; i++) {
                     if (value[i] == ' ') continue;
                     startRealWord = i;
                     break;
@@ -150,6 +153,7 @@ public class FlatTextSpan {
             double totalWidth = 0;
             double effectiveWidth = 0;
             boolean lineBroken  =false;
+            boolean wasNewLine = false;
 
             int endIdx = value.length;
             for (int i = 0; i < value.length; i++) {
@@ -162,6 +166,7 @@ public class FlatTextSpan {
                     // Force break.
                     endIdx = i + 1;
                     lineBroken = true;
+                    wasNewLine = true;
                     break;
                 }
 
@@ -180,7 +185,8 @@ public class FlatTextSpan {
             char[] second = null;
             if (lineBroken) {
                 int startRealWord = -1;
-                for (int i = endIdx; i< value.length; i++) {
+                if (wasNewLine) startRealWord = endIdx;
+                else for (int i = endIdx; i< value.length; i++) {
                     if (value[i] == ' ') continue;
                     startRealWord = i;
                     break;
