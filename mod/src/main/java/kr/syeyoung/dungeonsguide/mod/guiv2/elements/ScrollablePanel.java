@@ -121,13 +121,13 @@ public class ScrollablePanel extends AnnotatedWidget {
         if (direction.getValue().vertical) {
             double old = this.y.getValue(), neu;
             this.y.setValue(
-                    neu = Layouter.clamp(this.y.getValue() + scrollAmount,0, contentHeight.getValue())
+                    neu = Layouter.clamp(this.y.getValue() - scrollAmount,0, contentHeight.getValue())
             );
             return old != neu;
         } else if (direction.getValue().horizontal) {
             double old = this.x.getValue(), neu;
             this.x.setValue(
-                    neu = Layouter.clamp(this.x.getValue() + scrollAmount,0, contentWidth.getValue())
+                    neu = Layouter.clamp(this.x.getValue() - scrollAmount,0, contentWidth.getValue())
             );
             return old != neu;
         }
