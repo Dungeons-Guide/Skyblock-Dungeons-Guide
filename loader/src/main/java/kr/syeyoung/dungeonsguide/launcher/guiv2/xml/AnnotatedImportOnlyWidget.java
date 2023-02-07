@@ -85,7 +85,7 @@ public abstract class AnnotatedImportOnlyWidget extends Widget implements Import
 
     protected static Map<String, MethodHandle> getInvocationTargets(Class clazz, Object inst) {
         Map<String, MethodHandle> invocationTargets = new HashMap<>();
-        for (Method declaredMethod : clazz.getDeclaredMethods()) {
+        for (Method declaredMethod : clazz.getMethods()) {
             if (declaredMethod.getAnnotation(On.class) != null) {
                 On on = declaredMethod.getAnnotation(On.class);
 

@@ -21,14 +21,16 @@ package kr.syeyoung.dungeonsguide.launcher;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiUnloadingError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.version.WidgetChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotificationAutoClose;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
@@ -102,7 +104,7 @@ public class Main
                         .titleColor(0xFFFF0000)
                         .description("Click to try reloading....")
                         .onClick(() -> {
-                            GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
+                            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetChooseVersion())));
                         })
                 .build()));
 
@@ -114,7 +116,7 @@ public class Main
             tryReloading(idgLoader);
         } catch (NoSuitableLoaderFoundException | NoVersionFoundException e) {
             e.printStackTrace();
-            GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(e));
+            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetChooseVersion())));
         }
     }
 
@@ -166,7 +168,7 @@ public class Main
                 .titleColor(0xFFFF0000)
                 .description("Click to try reloading....")
                 .onClick(() -> {
-                    GuiDisplayer.INSTANCE.displayGui(new GuiChooseVersion(new RuntimeException("just unloaded")));
+                    GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetChooseVersion())));
                 })
                 .build()));
         try {
@@ -189,8 +191,8 @@ public class Main
         currentLoader = newLoader;
         try {
             dgInterface.init(configDir);
-        } catch (Exception e) {
-            throw new DungeonsGuideLoadingException("Exception occurred while calling init", e);
+        } catch (Throwable e) {
+            throw new DungeonsGuideLoadingException("Exception occurred while calling init\nInfo: "+currentLoader.toString(), e);
         }
         for (DungeonsGuideReloadListener listener : listeners) {
             listener.onLoad(dgInterface);
@@ -289,7 +291,9 @@ public class Main
         main = this;
         dgInterface = null;
         currentLoader = null;
-        configDir = preInitializationEvent.getModConfigurationDirectory();
+        configDir = new File(preInitializationEvent.getModConfigurationDirectory().getAbsolutePath(), "dungeonsguide");
+        if (!configDir.exists())
+            configDir.mkdirs();
 
         // setup preinit progress bar for well, progress bar!
         ProgressManager.ProgressBar bar = ProgressManager.push("DungeonsGuide", 1);

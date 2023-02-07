@@ -45,7 +45,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class WidgetPrivacyPolicy extends AnnotatedImportOnlyWidget {
-    private static final ExecutorService executor = Executors.newSingleThreadExecutor();
+    public static final ExecutorService executor = Executors.newSingleThreadExecutor();
     @Bind(variableName = "policy")
     public final BindableAttribute<Widget> policy = new BindableAttribute<>(Widget.class);
     @Bind(variableName = "policyVisibility")

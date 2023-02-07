@@ -118,7 +118,7 @@ public class RemoteLoader implements IDGLoader {
 
             return dgInterface;
         } catch (Throwable e) { // the reason why I am catching throwable here: in case NoClassDefFoundError.
-            throw new DungeonsGuideLoadingException("Version: "+branchId+" / "+updateId,e);
+            throw new DungeonsGuideLoadingException(toString(),e);
         } finally {
             ProgressStateHolder.pop();
         }
@@ -137,7 +137,7 @@ public class RemoteLoader implements IDGLoader {
             dgInterface.unload();
         } catch (Throwable e) {
             dgInterface = null;
-            throw new DungeonsGuideUnloadingException(e);
+            throw new DungeonsGuideUnloadingException(toString(),e);
         }
         if (classLoader != null)
         classLoader.cleanup();
@@ -147,7 +147,7 @@ public class RemoteLoader implements IDGLoader {
         System.gc();// pls do
         Reference<? extends ClassLoader> t = refQueue.poll();
         phantomReference = null;
-        if (t == null) throw new DungeonsGuideUnloadingException(new ReferenceLeakedException("Reference Leaked")); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
+        if (t == null) throw new DungeonsGuideUnloadingException(toString(),new ReferenceLeakedException("Reference Leaked")); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)
         t.clear();
     }
 
@@ -176,5 +176,11 @@ public class RemoteLoader implements IDGLoader {
     @Override
     public String version() {
         return friendlyBranchName+"("+branchId+")@"+friendlyVersionName+"("+updateId+")"; // maybe read the thing...
+    }
+
+
+    @Override
+    public String toString() {
+        return loaderName()+":"+version();
     }
 }

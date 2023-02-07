@@ -1,0 +1,52 @@
+
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<col crossAlign="START">
+    <padding left="5" right="10" top="5">
+        <size width="50" height="11">
+            <RoundButton text="Go Back" bind:click="back"/>
+        </size>
+    </padding>
+    <padding top="5" left="10" right="10" bottom="5">
+        <row mainAlign="CENTER">
+            <Text text="Versions (" color="#FFFFFFFF"/>
+            <Text bind:text="branch" color="#FFFFFFFF"/>
+            <Text text=")" color="#FFFFFFFF"/>
+        </row>
+    </padding>
+    <flexible>
+        <SelectiveContainer bind:visible="versionListVisibility">
+            <padding left="10" right="10" slot="loading">
+                <align vAlign="CENTER" hAlign="CENTER">
+                    <Text text="Loading..." color="#FFFFFFFF"/>
+                </align>
+            </padding>
+            <ScrollablePanel direction="VERTICAL" slot="loaded">
+                <padding left="10" right="10">
+                    <col bind:api="versionList" bind:_="widgetList"/>
+                </padding>
+            </ScrollablePanel>
+        </SelectiveContainer>
+    </flexible>
+    <padding left="10" right="10" top="5" bottom="10">
+        <size height="20">
+            <RoundButton text="Reload" on:click="reload"/>
+        </size>
+    </padding>
+</col>

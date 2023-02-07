@@ -1,0 +1,62 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+    <align vAlign="CENTER">
+        <ConstrainedBox maxHeight="450">
+            <col crossAlign="CENTER">
+                <size width="0" height="10"/>
+                <Text text="Please choose a version to load" color="#FFFFFFFF"/>
+                <size width="0" height="10"/>
+                <flexible>
+                    <align hAlign="CENTER">
+                        <ConstrainedBox maxWidth="600">
+                            <padding left="10" right="10">
+                                <row>
+                                    <flexible flex="1">
+                                        <bgcolor backgroundColor="#FF000000">
+                                            <SelectiveContainer bind:visible="listVisibility">
+                                                <slot slot="branch" bind:child="branchWidget"/>
+                                                <slot slot="version" bind:child="versionWidget"/>
+                                            </SelectiveContainer>
+                                        </bgcolor>
+                                    </flexible>
+                                    <flexible flex="2">
+                                        <bgcolor backgroundColor="#FF222222">
+                                            <SelectiveContainer bind:visible="infoVisibility">
+                                                <slot slot="show" bind:child="infoWidget"/>
+                                                <slot slot="hide"/>
+                                            </SelectiveContainer>
+                                        </bgcolor>
+                                    </flexible>
+                                </row>
+                            </padding>
+                        </ConstrainedBox>
+                    </align>
+                </flexible>
+                <size width="0" height="15"/>
+                <row mainAlign="CENTER">
+                    <size width="200" height="20">
+                        <RoundButton text="Play without Dungeons Guide" on:click="exit"/>
+                    </size>
+                </row>
+                <size width="0" height="10"/>
+            </col>
+        </ConstrainedBox>
+    </align>
+</bgcolor>

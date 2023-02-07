@@ -40,7 +40,8 @@ public class Slot extends AnnotatedExportOnlyWidget {
 
     private void update(Widget widget, Widget widget1) {
         if (this.getDomElement().getParent() == null) return;
-        getDomElement().removeElement(getDomElement().getChildren().get(0));
+        if (!this.getDomElement().getChildren().isEmpty())
+            getDomElement().removeElement(getDomElement().getChildren().get(0));
 
         DomElement domElement = null;
         if (replacement.getValue() != null) domElement = replacement.getValue().createDomElement(getDomElement());

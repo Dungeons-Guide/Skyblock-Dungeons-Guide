@@ -83,6 +83,12 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         getDomElement().removeElement(widget.getDomElement());
     }
 
+    public void removeAll() {
+        for (DomElement child : getDomElement().getChildren()) {
+            getDomElement().removeElement(child);
+        }
+    }
+
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraints) {
         double width = 0;

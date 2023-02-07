@@ -1,0 +1,62 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<stack>
+    <align vAlign="END" hAlign="END">
+        <padding right="8" bottom="8">
+            <UnconstrainedBox>
+                <bgcolor backgroundColor="#CC222222">
+                    <padding right="3" bottom="3" top="3" left="3">
+                        <row mainAlign="END" crossAlign="CENTER">
+                            <Text text="Make this version default" color="#FFFFFFFF"/>
+                            <size width="5" height="0"/>
+                            <size width="40" height="15">
+                                <SimpleToggleButton bind:enabled="default"/>
+                            </size>
+                            <size width="5" height="0"/>
+                            <size width="40" height="15">
+                                <RoundButton text="Load" on:click="load"/>
+                            </size>
+                        </row>
+                    </padding>
+                </bgcolor>
+            </UnconstrainedBox>
+        </padding>
+    </align>
+    <ScrollablePanel direction="VERTICAL">
+        <padding left="10" top="10" right="10" bottom="10">
+            <col crossAlign="START">
+                <Text text="Version Info" size="16" color="#FFFFFFFF"/>
+                <size width="0" height="5"/>
+                <line color="#FFFFFFFF"/>
+                <size width="0" height="5"/>
+                <row>
+                    <Text text="Version: " color="#FFFFFFFF"/>
+                    <Text bind:text="version" color="#FFFFFFFF"/>
+                </row>
+                <size width="0" height="10"/>
+                <Text text="Update log" size="16" color="#FFFFFFFF"/>
+                <size width="0" height="5"/>
+                <line color="#FFFFFFFF"/>
+                <size width="0" height="5"/>
+                <Text bind:text="updatelog" color="#FFFFFFFF"/>
+                <size width="0" height="25"/>
+            </col>
+        </padding>
+    </ScrollablePanel>
+</stack>

@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,10 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.exceptions;
+package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
-public class DungeonsGuideUnloadingException extends Exception {
-    public  DungeonsGuideUnloadingException(String message) {super(message);}
-    public  DungeonsGuideUnloadingException(Throwable cause) {super(cause);}
-    public  DungeonsGuideUnloadingException(String message, Throwable cause) {super(message, cause);}
+@FunctionalInterface
+public interface TriConsumer<A,B,C> {
+    void accept(A a, B b, C c);
 }

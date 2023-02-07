@@ -34,7 +34,7 @@ public class DevEnvLoader implements IDGLoader {
 
             return dgInterface;
         } catch (Throwable e) {
-            throw new DungeonsGuideLoadingException(e);
+            throw new DungeonsGuideLoadingException(toString(), e);
         }
     }
 
@@ -65,5 +65,11 @@ public class DevEnvLoader implements IDGLoader {
     @Override
     public String version() {
         return "unknown";
+    }
+
+
+    @Override
+    public String toString() {
+        return loaderName()+":"+version();
     }
 }

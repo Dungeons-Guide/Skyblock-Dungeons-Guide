@@ -1,0 +1,25 @@
+
+<col>
+    <padding top="10" left="10" right="10" bottom="5">
+        <Text text="Available Versions" color="#FFFFFFFF"/>
+    </padding>
+    <flexible>
+        <SelectiveContainer bind:visible="versionListVisibility">
+            <padding left="10" right="10" slot="loading">
+                <align vAlign="CENTER" hAlign="CENTER">
+                    <Text text="Loading..." color="#FFFFFFFF"/>
+                </align>
+            </padding>
+            <ScrollablePanel direction="VERTICAL" slot="loaded">
+                <padding left="10" right="10">
+                    <col bind:api="versionList" bind:_="widgetList"/>
+                </padding>
+            </ScrollablePanel>
+        </SelectiveContainer>
+    </flexible>
+    <padding left="10" right="10" top="5" bottom="10">
+        <size height="20">
+            <RoundButton text="Reload" on:click="reload"/>
+        </size>
+    </padding>
+</col>
