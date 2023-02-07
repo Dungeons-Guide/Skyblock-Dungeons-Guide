@@ -45,13 +45,18 @@ public class WidgetChooseVersion extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "infoWidget")
     public final BindableAttribute<Widget> infoWidget = new BindableAttribute<>(Widget.class);
     private void back() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         listVisibility.setValue("branch");
     }
 
     private void jar() {
+        infoWidget.setValue(new WidgetInfoJar());
+        infoVisibility.setValue("show");
     }
 
     private void local() {
+        infoWidget.setValue(new WidgetInfoLocal());
+        infoVisibility.setValue("show");
     }
 
     private void remote(UpdateBranch branch, Update update, boolean isLatest) {

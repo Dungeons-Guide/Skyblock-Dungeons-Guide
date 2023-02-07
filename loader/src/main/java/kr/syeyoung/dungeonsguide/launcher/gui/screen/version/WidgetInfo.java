@@ -51,6 +51,7 @@ public abstract class WidgetInfo extends AnnotatedImportOnlyWidget {
         updateLog.setValue(log);
     }
     public void setVersion(String version) {this.version.setValue(version);}
+    public void setDefault(boolean bool) {this.makeItDefault.setValue(bool);}
 
     public abstract IDGLoader getLoader();
 
@@ -68,6 +69,8 @@ public abstract class WidgetInfo extends AnnotatedImportOnlyWidget {
             setConfiguration(configuration);
             configuration.save();
         }
-        // do smth
+
+        Minecraft.getMinecraft().displayGuiScreen(null);
+        Main.getMain().tryReloadingWithSplash(idgLoader);
     }
 }

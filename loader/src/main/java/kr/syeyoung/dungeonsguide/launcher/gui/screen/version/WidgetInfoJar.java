@@ -18,36 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.launcher.gui.screen.version;
 
-import kr.syeyoung.dungeonsguide.launcher.branch.Update;
-import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
-import kr.syeyoung.dungeonsguide.launcher.loader.RemoteLoader;
+import kr.syeyoung.dungeonsguide.launcher.loader.JarLoader;
+import kr.syeyoung.dungeonsguide.launcher.loader.LocalLoader;
 import net.minecraftforge.common.config.Configuration;
 
-public class WidgetInfoRemote extends WidgetInfo {
-    private UpdateBranch updateBranch;
-    private Update update;
-    private boolean isLatest;
-    public WidgetInfoRemote(UpdateBranch branch, Update update, boolean isLatest) {
+public class WidgetInfoJar extends WidgetInfo {
+    public WidgetInfoJar() {
         super();
-        this.updateBranch = branch;
-        this.update = update;
-        this.isLatest = isLatest;
-        setUpdateLog(update.getUpdateLog());
-        this.isLatest = isLatest;
-        setVersion((isLatest ? "Latest :: " : "") + branch.getName()+"/"+update.getName()+ " ("+branch.getId()+"/"+update.getId()+")");
-        setDefault(isLatest);
+        setVersion("Local (Jar)");
+        setUpdateLog("");
     }
 
     @Override
     public void setConfiguration(Configuration configuration) {
-        configuration.get("loader", "modsource", "").set("remote");
-        configuration.get("loader", "remoteBranch", "").set(updateBranch.getName());
-        configuration.get("loader", "remoteVersion", "").set(isLatest ? "latest" : update.getName());
+        configuration.get("loader", "modsource", "").set("jar");
     }
 
     @Override
     public IDGLoader getLoader() {
-        return new RemoteLoader(updateBranch.getName(), update.getBranchId(), update.getId());
+        return new JarLoader();
     }
 }
