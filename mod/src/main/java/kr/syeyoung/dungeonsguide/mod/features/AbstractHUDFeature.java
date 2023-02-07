@@ -56,15 +56,18 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         updatePosition();
     }
 
+    public double minWidth() {return 10;}
+
+    public double minHeight() {return 10;}
     public void setWidth(double width) {
         if (!requiresWidthBound()) throw new UnsupportedOperationException("Width unsettable");
-        if (width < 10) width = 10;
+        if (width < minWidth()) width = minWidth();
         featureRect.setWidth(width);
         updatePosition();
     }
     public void setHeight(double height) {
         if (!requiresHeightBound() && (getKeepRatio() == null)) throw new UnsupportedOperationException("Height unsettable");
-        if (height < 10) height = 10;
+        if (height < minHeight()) height = minHeight();
         if (getKeepRatio() != null)
             featureRect.setWidth(height / getKeepRatio());
         else

@@ -71,7 +71,15 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         return this.<Double>getParameter("scale").getValue();
     }
 
+    @Override
+    public double minWidth() {
+        return 100 * FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
+    }
 
+    @Override
+    public double minHeight() {
+        return 50 * FeatureMechanicBrowse.this.<Double>getParameter("scale").getValue();
+    }
 
     @Override
     public void drawDemo(float partialTicks) {
