@@ -214,7 +214,7 @@ public class Main
     public void reloadWithoutStacktraceReference(IDGLoader newLoader) {
         reqLoader = newLoader;
     }
-    public void unloadWithoutStacktraceReference(IDGLoader newLoader) {
+    public void unloadWithoutStacktraceReference() {
         unload = true;
     }
     @SubscribeEvent

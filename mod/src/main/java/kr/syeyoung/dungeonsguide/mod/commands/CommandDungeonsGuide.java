@@ -76,7 +76,7 @@ public class CommandDungeonsGuide extends CommandBase {
             "purge",
             "pbroadcast",
             "partymax",
-            "reload"
+            "unload"
     };
 
     @Override
@@ -129,8 +129,8 @@ public class CommandDungeonsGuide extends CommandBase {
                 partyMaxCommand(args);
                 break;
 
-            case "reload":
-                reloadCommand();
+            case "unload":
+                unloadCommand();
                 break;
 
             default:
@@ -143,7 +143,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pv [ign] §7-§f Profile Viewer"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg pvall §7-§f Profile Viewer For all people on party"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg purge §7-§f Purge api cache."));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reload §7-§f Reload Current Version of Dungeons Guide. Auto update versions will not be updated."));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version"));
                 break;
         }
     }
@@ -266,7 +266,7 @@ public class CommandDungeonsGuide extends CommandBase {
         }
     }
 
-    private void reloadCommand() {
-        Main.getMain().reloadWithoutStacktraceReference(Main.getMain().getCurrentLoader());
+    private void unloadCommand() {
+        Main.getMain().unloadWithoutStacktraceReference();
     }
 }
