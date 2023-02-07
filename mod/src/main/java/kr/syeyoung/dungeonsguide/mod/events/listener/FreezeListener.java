@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 
@@ -51,8 +52,7 @@ public class FreezeListener implements Runnable {
     @Override
     public void run() {
         while(!t.isInterrupted()) {
-            if (lastTick < System.currentTimeMillis()) {
-
+            if (lastTick < System.currentTimeMillis() && FeatureRegistry.FREEZE_DETECTOR.isEnabled()) {
                 ThreadMXBean bean = ManagementFactory.getThreadMXBean();
                 ThreadInfo[] infos = bean.dumpAllThreads(true, true);
                 String stacktrace = Arrays.stream(infos).map(Object::toString)
@@ -64,8 +64,6 @@ public class FreezeListener implements Runnable {
                 clipboard.setContents(selection, selection);
 
                 JOptionPane.showMessageDialog(null, "Your Minecraft Seems to be frozen!\nThreadump has been copied into your clipboard!", "DG Freeze Alert", JOptionPane.INFORMATION_MESSAGE);
-
-
             }
             try {
                 Thread.sleep(16);
