@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiMainMenu;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.client.event.GuiOpenEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
@@ -31,7 +32,7 @@ public class GuiDisplayer {
     public static GuiDisplayer INSTANCE = new GuiDisplayer();
     private GuiDisplayer() {}
 
-    private Queue<SpecialGuiScreen> guiScreensToShow = new LinkedList<>();
+    private Queue<GuiScreen> guiScreensToShow = new LinkedList<>();
     private boolean isMcLoaded;
 
 
@@ -40,23 +41,21 @@ public class GuiDisplayer {
         if (guiOpenEvent.gui instanceof GuiMainMenu) {
             isMcLoaded = true;
         }
-        if (guiScreensToShow.size() > 0 && guiOpenEvent.gui != guiScreensToShow.peek()) {
-            SpecialGuiScreen gui = guiScreensToShow.peek();
+        if (isMcLoaded && !guiScreensToShow.isEmpty()) {
+            GuiScreen gui = guiScreensToShow.poll();
             if (gui == null) return;
-            gui.setOnDismiss(guiScreensToShow::poll);
             guiOpenEvent.gui = gui;
         }
     }
 
-    public void displayGui(SpecialGuiScreen specialGuiScreen) {
+    public void displayGui(GuiScreen specialGuiScreen) {
         if (specialGuiScreen == null) return;
         if (!guiScreensToShow.contains(specialGuiScreen))
             guiScreensToShow.add(specialGuiScreen);
-        if (isMcLoaded) {
-            SpecialGuiScreen gui = guiScreensToShow.peek();
-            if (gui == null) return;
-            gui.setOnDismiss(guiScreensToShow::poll);
-            Minecraft.getMinecraft().displayGuiScreen(gui);
+        if (isMcLoaded && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
+            Minecraft.getMinecraft().displayGuiScreen(null);
+        } else if (isMcLoaded) {
+            Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(null));
         }
     }
 }

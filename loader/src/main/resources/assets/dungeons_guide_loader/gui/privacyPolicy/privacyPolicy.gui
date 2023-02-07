@@ -1,0 +1,74 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+    <align vAlign="CENTER">
+        <ConstrainedBox maxHeight="450">
+            <col crossAlign="CENTER">
+                <size width="0" height="10"/>
+                <Text text="Please accept Dungeons Guide privacy policy to use server based features of Dungeons Guide" color="#FFFFFFFF"/>
+                <size width="0" height="10"/>
+                <flexible>
+                    <align hAlign="CENTER">
+                        <padding left="10" right="10">
+                            <border>
+                                <line slot="left" dir="VERTICAL" thickness="1.0" color="#FFFFFFFF"/>
+                                <line slot="top" dir="HORIZONTAL" thickness="1.0" color="#FFFFFFFF"/>
+                                <line slot="bottom" dir="HORIZONTAL" thickness="1.0" color="#FFFFFFFF"/>
+                                <line slot="right" dir="VERTICAL" thickness="1.0" color="#FFFFFFFF"/>
+                                <ConstrainedBox maxWidth="600" slot="content">
+                                    <bgcolor backgroundColor="#FF999999">
+                                        <SelectiveContainer bind:visible="policyVisibility">
+                                            <align vAlign="CENTER" hAlign="CENTER" slot="loading">
+                                                <Text text="Loading..."/>
+                                            </align>
+                                            <align vAlign="CENTER" hAlign="CENTER" slot="failed">
+                                                <col mainAlign="CENTER">
+                                                    <Text text="Failed to load"/>
+                                                    <size width="0" height="5"/>
+                                                    <size width="50" height="20">
+                                                        <RoundButton on:click="reload" text="Reload"/>
+                                                    </size>
+                                                </col>
+                                            </align>
+                                            <ScrollablePanel direction="VERTICAL" slot="loaded">
+                                                <slot bind:child="policy"/>
+                                            </ScrollablePanel>
+
+                                        </SelectiveContainer>
+                                    </bgcolor>
+                                </ConstrainedBox>
+                            </border>
+                        </padding>
+                    </align>
+                </flexible>
+                <size width="0" height="15"/>
+                <row mainAlign="CENTER">
+                    <size width="50" height="20">
+                    <RoundButton text="Accept" on:click="accept"/>
+                    </size>
+                    <size width="5" height="0"/>
+                    <size width="50" height="20">
+                    <RoundButton text="Deny" on:click="deny"/>
+                    </size>
+                </row>
+                <size width="0" height="10"/>
+            </col>
+        </ConstrainedBox>
+    </align>
+</bgcolor>

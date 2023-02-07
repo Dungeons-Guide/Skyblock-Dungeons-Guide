@@ -27,10 +27,12 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthenticationUnavaila
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.PrivacyPolicyRequiredException;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiLoadingError;
-import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiPrivacyPolicy;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotification;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.GlobalHUDScale;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -73,6 +75,7 @@ public class AuthManager {
         else if (currentToken instanceof PrivacyPolicyRequiredToken) throw new PrivacyPolicyRequiredException();
         throw new IllegalStateException("weird token: "+currentToken);
     }
+    final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, new ThreadFactoryBuilder().setNameFormat("DgAuth Pool").build());
 
 
     private volatile boolean initlock = false;
@@ -85,8 +88,6 @@ public class AuthManager {
 
         initlock = true;
 
-        ThreadFactory namedThreadFactory = new ThreadFactoryBuilder().setNameFormat("DgAuth Pool").build();
-        final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1, namedThreadFactory);
         scheduler.scheduleAtFixedRate(() -> {
             boolean shouldReAuth = false;
             if (getToken().isUserVerified() && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
@@ -131,7 +132,7 @@ public class AuthManager {
 
 
             if (currentToken instanceof PrivacyPolicyRequiredToken) {
-                GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
+                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetPrivacyPolicy())));
                 throw new PrivacyPolicyRequiredException();
             }
 
@@ -140,12 +141,13 @@ public class AuthManager {
             NotificationManager.getInstance().removeNotification(privacyPolicyRequired);
         } catch (Exception e) {
             if (e instanceof PrivacyPolicyRequiredException) {
+                NotificationManager.getInstance().removeNotification(authenticationFailure);
                 NotificationManager.getInstance().updateNotification(privacyPolicyRequired, new WidgetNotification(privacyPolicyRequired, Notification.builder()
                         .title("Privacy Policy")
                         .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                         .titleColor(0xFFFF0000)
                         .onClick(() -> {
-                            GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
+                            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetPrivacyPolicy())));
                         })
                         .build()));
             } else {
@@ -167,8 +169,18 @@ public class AuthManager {
         return currentToken;
     }
 
+    private volatile boolean accepting = false;
+    public synchronized void acceptPrivacyPolicy(long version) {
+        if (accepting) return;
+        accepting = true;
+        scheduler.schedule(() -> {try {
+            acceptPrivacyPolicy0(version);
+        } catch (Exception e) {e.printStackTrace();} finally {
+            accepting = false;
+        }}, 0, TimeUnit.MILLISECONDS);
+    }
 
-    public AuthToken acceptPrivacyPolicy(long version) {
+    private AuthToken acceptPrivacyPolicy0(long version) {
         if (reauthLock) {
             while(reauthLock);
             return currentToken;
@@ -188,7 +200,7 @@ public class AuthManager {
                             .description("Please accept the Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
                             .titleColor(0xFFFF0000)
                             .onClick(() -> {
-                                GuiDisplayer.INSTANCE.displayGui(new GuiPrivacyPolicy());
+                                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetPrivacyPolicy())));
                             })
                             .build()));
                 } else {

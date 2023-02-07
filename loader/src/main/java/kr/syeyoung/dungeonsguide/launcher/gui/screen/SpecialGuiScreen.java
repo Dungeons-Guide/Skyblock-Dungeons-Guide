@@ -29,7 +29,8 @@ public abstract class SpecialGuiScreen extends GuiScreen {
     }
 
     protected void dismiss() {
-        onDismiss.run();
+        if (onDismiss != null)
+            onDismiss.run();
         Minecraft.getMinecraft().displayGuiScreen(null);
     }
 }

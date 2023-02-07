@@ -261,7 +261,8 @@ public class GuiScreenAdapter extends GuiScreen {
                     view.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = view.getCurrentCursor();
-                    if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
+                    if (prevCursor != newCursor)
+                        Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
                     if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                         e.printStackTrace();

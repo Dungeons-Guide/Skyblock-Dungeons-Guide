@@ -32,6 +32,7 @@ import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.WidgetNotificationAutoClos
 import kr.syeyoung.dungeonsguide.launcher.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
+import kr.syeyoung.dungeonsguide.launcher.util.cursor.GLCursors;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
@@ -61,6 +62,7 @@ public class Main
 {
     public static final String MOD_ID = "dungeons_guide_loader";
     public static final String VERSION = "4.0.0";
+    public static final String POLICY = "https://v2.dungeons.guide/privacyPolicy.gui";
     public static final String DOMAIN = "https://v2.dungeons.guide/api";
 
     private static Main main;
@@ -278,6 +280,10 @@ public class Main
 
     @EventHandler
     public void preInit(FMLPreInitializationEvent preInitializationEvent) {
+        try {
+            GLCursors.setupCursors();
+        } catch (Exception e) {}
+
         Security.addProvider(new BouncyCastleProvider());
         // setup static variables
         main = this;
