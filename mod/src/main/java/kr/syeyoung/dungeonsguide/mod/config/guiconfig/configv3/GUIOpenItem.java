@@ -52,6 +52,6 @@ public class GUIOpenItem extends AnnotatedImportOnlyWidget {
     @On(functionName = "click")
     public void openPage() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
-        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(pageCreator.get())));
+        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(pageCreator.get()), Minecraft.getMinecraft().currentScreen));
     }
 }

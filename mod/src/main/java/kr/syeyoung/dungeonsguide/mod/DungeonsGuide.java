@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.commands.CommandDgDebug;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandDungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.commands.CommandReparty;
 import kr.syeyoung.dungeonsguide.mod.config.Config;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ConfigGuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CustomNetworkPlayerInfo;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
@@ -488,6 +489,8 @@ public class DungeonsGuide implements DGInterface {
     }
 
 
-
-
+    @Override
+    public Class<? extends GuiScreen> getModConfigGUI() {
+        return ConfigGuiScreenAdapter.class;
+    }
 }

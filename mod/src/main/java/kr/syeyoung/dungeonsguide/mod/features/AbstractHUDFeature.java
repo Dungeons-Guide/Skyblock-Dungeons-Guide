@@ -181,7 +181,7 @@ public abstract class AbstractHUDFeature extends AbstractGuiFeature {
         public void configure() {
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
             MainConfigWidget mainConfigWidget = new MainConfigWidget();
-            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget));
+            GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(mainConfigWidget), Minecraft.getMinecraft().currentScreen);
             Minecraft.getMinecraft().displayGuiScreen(adapter);
 
             Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(

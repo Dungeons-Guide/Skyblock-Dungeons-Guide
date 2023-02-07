@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,15 +18,28 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
-import net.minecraft.client.resources.IResourceManager;
+import net.minecraftforge.fml.client.IModGuiFactory;
 
-import java.io.File;
+import java.util.Set;
 
-public interface DGInterface {
-    void init(File resourceDir);
-    void unload();
-    void onResourceReload(IResourceManager a);
+public class DGModGuiFactory implements IModGuiFactory {
+    @Override
+    public void initialize(Minecraft minecraft) {}
 
-    Class<? extends GuiScreen> getModConfigGUI();
+    @Override
+    public Class<? extends GuiScreen> mainConfigGuiClass() {
+        return Main.getMain().getCurrentLoader() == null ? null : Main.getMain().getCurrentLoader().getInstance().getModConfigGUI();
+    }
+
+    @Override
+    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
+        return null;
+    }
+
+    @Override
+    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement runtimeOptionCategoryElement) {
+        return null;
+    }
 }

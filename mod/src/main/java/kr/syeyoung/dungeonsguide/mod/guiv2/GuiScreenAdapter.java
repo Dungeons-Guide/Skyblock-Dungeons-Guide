@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -47,7 +48,12 @@ public class GuiScreenAdapter extends GuiScreen {
 
     private Stack<RootDom> domStack = new Stack<>();
 
+    private GuiScreen parent;
     public GuiScreenAdapter(Widget widget) {
+        this(widget, null);
+    }
+    public GuiScreenAdapter(Widget widget, GuiScreen parent) {
+        this.parent = parent;
         view = new RootDom(widget);
         view.getContext().CONTEXT.put("screenAdapter", this);
 
@@ -134,6 +140,14 @@ public class GuiScreenAdapter extends GuiScreen {
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (keyCode == 1) {
+            this.mc.displayGuiScreen((GuiScreen)parent);
+            if (this.mc.currentScreen == null) {
+                this.mc.setIngameFocus();
+            }
+            return;
+        }
+
         try {
             view.keyPressed0(typedChar, keyCode);
             super.keyTyped(typedChar, keyCode);

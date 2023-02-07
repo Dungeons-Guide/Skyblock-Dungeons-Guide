@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,8 +16,14 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher;
+package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
-public class LoaderMeta {
-    public static final int LOADER_VERSION = 2;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
+import net.minecraft.client.gui.GuiScreen;
+
+public class ConfigGuiScreenAdapter extends GuiScreenAdapter {
+    public ConfigGuiScreenAdapter(GuiScreen parent) {
+        super(new GlobalHUDScale(new MainConfigWidget()), parent);
+    }
 }
