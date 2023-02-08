@@ -25,13 +25,14 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.HealthData;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FeatureBossHealth extends TextHUDFeature {
@@ -42,11 +43,11 @@ public class FeatureBossHealth extends TextHUDFeature {
         addParameter("formatHealth", new FeatureParameter<Boolean>("formatHealth", "format health", "1234568 -> 1m", true, TCBoolean.INSTANCE, nval -> formatHealth = nval));
         addParameter("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, TCBoolean.INSTANCE, nval -> ignoreInattackable = nval));
 
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("health", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator2", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("maxHealth", new AColor(0x55, 0x55,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("health", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator2", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("maxHealth", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
 
@@ -61,13 +62,8 @@ public class FeatureBossHealth extends TextHUDFeature {
     }
 
     @Override
-    public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "separator", "health", "separator2", "maxHealth");
-    }
-
-    @Override
-    public java.util.List<StyledText> getDummyText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
+    public TextSpan getDummyText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         addLine(new HealthData("The Professor", 3300000, 5000000, false), actualBit);
         addLine(new HealthData("Chaos Guardian", 500000, 2000000, true), actualBit);
         addLine(new HealthData("Healing Guardian", 1000000, 3000000, true), actualBit);
@@ -76,21 +72,21 @@ public class FeatureBossHealth extends TextHUDFeature {
         return actualBit;
     }
 
-    public void addLine(HealthData data, List<StyledText> actualBit) {
+    public void addLine(HealthData data, TextSpan actualBit) {
         if (ignoreInattackable && !data.isAttackable()) return;
 
-        actualBit.add(new StyledText(data.getName(),"title"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText( (formatHealth ? TextUtils.format(data.getHealth()) : data.getHealth()) + (totalHealth ? "" : "\n"),"health"));
+        actualBit.addChild(new TextSpan(getStyle("title"), data.getName()));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("health"), (formatHealth ? TextUtils.format(data.getHealth()) : data.getHealth()) + (totalHealth ? "" : "\n")));
         if (totalHealth) {
-            actualBit.add(new StyledText("/", "separator2"));
-            actualBit.add(new StyledText( (formatHealth ? TextUtils.format(data.getMaxHealth()) : data.getMaxHealth()) +"\n","maxHealth"));
+            actualBit.addChild(new TextSpan(getStyle("separator2"), "/"));
+            actualBit.addChild(new TextSpan(getStyle("maxHealth"), (formatHealth ? TextUtils.format(data.getMaxHealth()) : data.getMaxHealth()) +"\n"));
         }
     }
 
     @Override
-    public java.util.List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         List<HealthData> healths = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor().getHealths();
         for (HealthData heal : healths) {
             addLine(heal, actualBit);

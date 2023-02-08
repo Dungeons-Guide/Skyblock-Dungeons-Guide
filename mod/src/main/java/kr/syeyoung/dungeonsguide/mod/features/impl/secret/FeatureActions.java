@@ -27,30 +27,30 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureActions extends TextHUDFeature {
     public FeatureActions() {
         super("Dungeon.Secrets", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview");
 
-        getStyles().add(new TextStyle("pathfinding", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("mechanic", new AColor(0x55, 0xFF,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("state", new AColor(0x55, 0xFF,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("current", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("number",  new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("dot", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("action", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("afterline", new AColor(0xAA, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("pathfinding", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("mechanic", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("state", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("current", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0x00, 0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("dot", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("action", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("afterline", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xAA, 0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
 
@@ -67,42 +67,35 @@ public class FeatureActions extends TextHUDFeature {
         return dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor;
     }
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Pathfinding ","pathfinding"));
-        dummyText.add(new StyledText("Secret ","mechanic"));
-        dummyText.add(new StyledText("-> ","separator"));
-        dummyText.add(new StyledText("Found\n","state"));
-        dummyText.add(new StyledText("> ","current"));
-        dummyText.add(new StyledText("1","number"));
-        dummyText.add(new StyledText(". ","dot"));
-        dummyText.add(new StyledText("Move ","action"));
-        dummyText.add(new StyledText("OffsetPoint{x=1,y=42,z=1} \n","afterline"));
-        dummyText.add(new StyledText("  ","current"));
-        dummyText.add(new StyledText("2","number"));
-        dummyText.add(new StyledText(". ","dot"));
-        dummyText.add(new StyledText("Click ","action"));
-        dummyText.add(new StyledText("OffsetPoint{x=1,y=42,z=1} \n","afterline"));
-        dummyText.add(new StyledText("  ","current"));
-        dummyText.add(new StyledText("3","number"));
-        dummyText.add(new StyledText(". ","dot"));
-        dummyText.add(new StyledText("Profit ","action"));
-    }
 
     @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("pathfinding","mechanic","separator","state","current", "number", "dot", "action", "afterline");
-    }
-
-    @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("pathfinding"), "Pathfinding "));
+        dummyText.addChild(new TextSpan(getStyle("mechanic"), "Secret "));
+        dummyText.addChild(new TextSpan(getStyle("separator"), "-> "));
+        dummyText.addChild(new TextSpan(getStyle("state"), "Found\n"));
+        dummyText.addChild(new TextSpan(getStyle("current"), "> "));
+        dummyText.addChild(new TextSpan(getStyle("number"), "1"));
+        dummyText.addChild(new TextSpan(getStyle("dot"), ". "));
+        dummyText.addChild(new TextSpan(getStyle("action"), "Move "));
+        dummyText.addChild(new TextSpan(getStyle("afterline"), "OffsetPoint{x=1,y=42,z=1} \n"));
+        dummyText.addChild(new TextSpan(getStyle("current"), "  "));
+        dummyText.addChild(new TextSpan(getStyle("number"), "2"));
+        dummyText.addChild(new TextSpan(getStyle("dot"), ". "));
+        dummyText.addChild(new TextSpan(getStyle("action"), "Click "));
+        dummyText.addChild(new TextSpan(getStyle("afterline"), "OffsetPoint{x=1,y=42,z=1} \n"));
+        dummyText.addChild(new TextSpan(getStyle("current"), "  "));
+        dummyText.addChild(new TextSpan(getStyle("number"), "3"));
+        dummyText.addChild(new TextSpan(getStyle("dot"), ". "));
+        dummyText.addChild(new TextSpan(getStyle("action"), "Profit "));
         return dummyText;
     }
 
 
     @Override
-    public List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
@@ -111,27 +104,27 @@ public class FeatureActions extends TextHUDFeature {
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
         for (ActionRoute path : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {
-            actualBit.add(new StyledText("Pathfinding ","pathfinding"));
-            actualBit.add(new StyledText(path.getMechanic()+" ","mechanic"));
-            actualBit.add(new StyledText("-> ","separator"));
-            actualBit.add(new StyledText(path.getState()+"\n","state"));
+            actualBit.addChild(new TextSpan(getStyle("pathfinding"), "Pathfinding "));
+            actualBit.addChild(new TextSpan(getStyle("mechanic"), path.getMechanic()+" "));
+            actualBit.addChild(new TextSpan(getStyle("separator"), "-> "));
+            actualBit.addChild(new TextSpan(getStyle("state"), path.getState()+"\n"));
 
             for (int i = Math.max(0,path.getCurrent()-2); i < path.getActions().size(); i++) {
-                actualBit.add(new StyledText((i == path.getCurrent() ? ">" : " ") +" ","current"));
-                actualBit.add(new StyledText(i+"","number"));
-                actualBit.add(new StyledText(". ","dot"));
+                actualBit.addChild(new TextSpan(getStyle("current"), (i == path.getCurrent() ? ">" : " ") +" "));
+                actualBit.addChild(new TextSpan(getStyle("number"), i+""));
+                actualBit.addChild(new TextSpan(getStyle("dot"), ". "));
                 AbstractAction action = path.getActions().get(i);
                 String[] str = action.toString().split("\n");
-                actualBit.add(new StyledText(str[0] + " ","action"));
-                actualBit.add(new StyledText("(","afterline"));
+                actualBit.addChild(new TextSpan(getStyle("action"), str[0] + " "));
+                actualBit.addChild(new TextSpan(getStyle("afterline"), "("));
                 for (int i1 = 1; i1 < str.length; i1++) {
                     String base = str[i1].trim();
                     if (base.startsWith("-"))
                         base = base.substring(1);
                     base = base.trim();
-                    actualBit.add(new StyledText(base+" ","afterline"));
+                    actualBit.addChild(new TextSpan(getStyle("afterline"), base+" "));
                 }
-                actualBit.add(new StyledText(")\n","afterline"));
+                actualBit.addChild(new TextSpan(getStyle("afterline"), ")\n"));
             }
         }
         return actualBit;

@@ -24,22 +24,22 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureDungeonRoomName extends TextHUDFeature {
     public FeatureDungeonRoomName() {
         super("Dungeon.HUDs", "Display name of the room you are in", "Display name of the room you are in", "dungeon.roomname");
-        getStyles().add(new TextStyle("in", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("roomname", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("in", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("roomname", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -54,39 +54,32 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
         return totalSecrets;
     }
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("You're in ","in"));
-        dummyText.add(new StyledText("puzzle-tictactoe","roomname"));
-    }
-
     @Override
     public boolean isHUDViewable() {
         return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() != null;
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("roomname", "in");
-    }
 
     @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("in"), "You're in "));
+        dummyText.addChild(new TextSpan(getStyle("roomname"), "puzzle-tictactoe"));
         return dummyText;
     }
 
     @Override
-    public List<StyledText> getText() {
+    public TextSpan getText() {
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
         Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(player.getPosition());
         DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(roomPt);
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText("You're in ","in"));
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("in"), "You're in "));
         if (dungeonRoom == null) {
-            actualBit.add(new StyledText("Unknown","roomname"));
+            actualBit.addChild(new TextSpan(getStyle("roomname"), "Unknown"));
         } else {
-            actualBit.add(new StyledText(dungeonRoom.getDungeonRoomInfo().getName(),"roomname"));
+            actualBit.addChild(new TextSpan(getStyle("roomname"), dungeonRoom.getDungeonRoomInfo().getName()));
         }
 
 

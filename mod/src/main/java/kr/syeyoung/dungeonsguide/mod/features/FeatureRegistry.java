@@ -42,6 +42,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureVi
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
 import kr.syeyoung.dungeonsguide.mod.features.impl.solvers.*;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import lombok.Getter;
 import org.lwjgl.input.Keyboard;
@@ -79,6 +80,8 @@ public class FeatureRegistry {
 
         return abstractFeature;
     }
+
+    public static final DefaultTextHUDFeatureStyleFeature DEFAULT_STYLE = register(new DefaultTextHUDFeatureStyleFeature());
 
 
 

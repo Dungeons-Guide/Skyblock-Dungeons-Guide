@@ -24,41 +24,29 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
 import org.apache.commons.lang3.StringUtils;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class FeatureRoomDebugInfo extends TextHUDFeature {
     public FeatureRoomDebugInfo() {
         super("Debug", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo");
         this.setEnabled(false);
-        getStyles().add(new TextStyle("info", new AColor(Color.white.getRGB(),true), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("info", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(Color.white.getRGB(),true)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Line 1\nLine 2\nLine 3\nLine 4\nLine 5","info"));
-    }
-
     @Override
-    public List<StyledText> getDummyText() {
-        return dummyText;
-    }
-
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Collections.singletonList("info");
+    public TextSpan getDummyText() {
+        return new TextSpan(getStyle("info"), "Line 1\nLine 2\nLine 3\nLine 4\nLine 5");
     }
 
     @Override
@@ -71,13 +59,13 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
     }
 
     @Override
-    public List<StyledText> getText() {
-        if (!skyblockStatus.isOnDungeon()) return Collections.emptyList();
-        if (!FeatureRegistry.DEBUG.isEnabled()) return Collections.emptyList();
+    public TextSpan getText() {
+        if (!skyblockStatus.isOnDungeon()) return new TextSpan(new NullTextStyle(), "");
+        if (!FeatureRegistry.DEBUG.isEnabled()) return new TextSpan(new NullTextStyle(), "");
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (context == null) return Collections.emptyList();
+        if (context == null) return new TextSpan(new NullTextStyle(), "");
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        if (context.getScaffoldParser() == null) return Collections.emptyList();
+        if (context.getScaffoldParser() == null) return new TextSpan(new NullTextStyle(), "");
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
@@ -100,6 +88,6 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
             str +="room name: " + dungeonRoom.getDungeonRoomInfo().getName()+"\n";
             str +="room state / max secret: " + dungeonRoom.getCurrentState() + " / "+dungeonRoom.getTotalSecrets();
         }
-        return Collections.singletonList(new StyledText(str, "info"));
+        return new TextSpan(getStyle("info"), str);
     }
 }

@@ -27,9 +27,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonDeathEvent;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -38,7 +41,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-import java.util.*;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -46,11 +50,11 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
     public FeatureDungeonDeaths() {
         super("Dungeon.HUDs", "Display Deaths", "Display names of player and death count in dungeon run", "dungeon.stats.deaths");
         this.setEnabled(false);
-        getStyles().add(new TextStyle("username", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("total", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("deaths", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("totalDeaths", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("username", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("total", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("deaths", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("totalDeaths", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -61,58 +65,51 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         return context != null;
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("username", "separator", "deaths", "total", "totalDeaths");
-    }
     @Getter
     private final Map<String, Integer> deaths = new HashMap<>();
 
     @Override
-    public List<StyledText> getText() {
+    public TextSpan getText() {
 
-        List<StyledText> text=  new ArrayList<StyledText>();
+        TextSpan text=  new TextSpan(new NullTextStyle(), "");
 
         Map<String, Integer> deaths = getDeaths();
         int i = 0;
         int deathsCnt = 0;
         for (Map.Entry<String, Integer> death:deaths.entrySet()) {
-            text.add(new StyledText(death.getKey(),"username"));
-            text.add(new StyledText(": ","separator"));
-            text.add(new StyledText(death.getValue()+"\n","deaths"));
+            text.addChild(new TextSpan(getStyle("username"), death.getKey()));
+            text.addChild(new TextSpan(getStyle("separator"), ": "));
+            text.addChild(new TextSpan(getStyle("deaths"), death.getValue()+"\n"));
             deathsCnt += death.getValue();
         }
-        text.add(new StyledText("Total Deaths","total"));
-        text.add(new StyledText(": ","separator"));
-        text.add(new StyledText(getTotalDeaths()+"","totalDeaths"));
+        text.addChild(new TextSpan(getStyle("total"), "Total Deaths"));
+        text.addChild(new TextSpan(getStyle("separator"), ": "));
+        text.addChild(new TextSpan(getStyle("totalDeaths"), getTotalDeaths()+""));
 
         return text;
     }
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("syeyoung","username"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("-130\n","deaths"));
-        dummyText.add(new StyledText("rioho","username"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("-999999\n","deaths"));
-        dummyText.add(new StyledText("dungeonsguide","username"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("-42\n","deaths"));
-        dummyText.add(new StyledText("penguinman","username"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("0\n","deaths"));
-        dummyText.add(new StyledText("probablysalt","username"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("0\n","deaths"));
-        dummyText.add(new StyledText("Total Deaths","total"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("0","totalDeaths"));
-    }
-
     @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText=  new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("username"), "syeyoung"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("deaths"), "-130\n"));
+        dummyText.addChild(new TextSpan(getStyle("username"), "rioho"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("deaths"), "-999999\n"));
+        dummyText.addChild(new TextSpan(getStyle("username"), "dungeonsguide"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("deaths"), "-42\n"));
+        dummyText.addChild(new TextSpan(getStyle("username"), "penguinman"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("deaths"), "0\n"));
+        dummyText.addChild(new TextSpan(getStyle("username"), "probablysalt"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("deaths"), "0\n"));
+        dummyText.addChild(new TextSpan(getStyle("total"), "Total Deaths"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("totalDeaths"), "0"));
         return dummyText;
     }
 

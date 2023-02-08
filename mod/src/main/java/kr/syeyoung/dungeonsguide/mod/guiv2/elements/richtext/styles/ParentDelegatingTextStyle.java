@@ -65,7 +65,7 @@ public class ParentDelegatingTextStyle implements ITextStyle {
         parentDelegatingTextStyle.shadow = false;
         parentDelegatingTextStyle.outline = false;
 
-        parentDelegatingTextStyle.backgroundShader = new SingleColorShader(0xFFFFFFFF);
+        parentDelegatingTextStyle.backgroundShader = new SingleColorShader(0x00000000);
         parentDelegatingTextStyle.textShader = new SingleColorShader(0xFFFFFFFF);
         parentDelegatingTextStyle.strikeThroughShader = new SingleColorShader(0xFF000000);
         parentDelegatingTextStyle.underlineShader = new SingleColorShader(0xFF000000);

@@ -23,37 +23,26 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
         super("Dungeon.HUDs", "Display # Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom");
         this.setEnabled(false);
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("currentSecrets", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator2", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("totalSecrets",  new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("currentSecrets", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator2", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("totalSecrets", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
-
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Secrets In Room","title"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("5","currentSecrets"));
-        dummyText.add(new StyledText("/","separator2"));
-        dummyText.add(new StyledText("8","totalSecrets"));
-    }
 
     @Override
     public boolean isHUDViewable() {
@@ -61,13 +50,14 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     }
 
     @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "separator", "currentSecrets", "separator2", "totalSecrets");
-    }
-
-    @Override
-    public List<StyledText> getDummyText() {
-        return dummyText;
+    public TextSpan getDummyText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Secrets In Room"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("currentSecrets"), "5"));
+        actualBit.addChild(new TextSpan(getStyle("separator2"), "/"));
+        actualBit.addChild(new TextSpan(getStyle("totalSecrets"), "8"));
+        return actualBit;
     }
 
     private int latestCurrSecrets = 0;
@@ -75,14 +65,14 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
 
 
     @Override
-    public List<StyledText> getText() {
-        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() != null) return new ArrayList<StyledText>();
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText("Secrets In Room","title"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(latestCurrSecrets +"","currentSecrets"));
-        actualBit.add(new StyledText("/","separator2"));
-        actualBit.add(new StyledText(latestTotalSecrets +"","totalSecrets"));
+    public TextSpan getText() {
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() != null) return new TextSpan(new NullTextStyle(), "");
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Secrets In Room"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("currentSecrets"), latestCurrSecrets +""));
+        actualBit.addChild(new TextSpan(getStyle("separator2"), "/"));
+        actualBit.addChild(new TextSpan(getStyle("totalSecrets"), latestTotalSecrets +""));
         return actualBit;
     }
 

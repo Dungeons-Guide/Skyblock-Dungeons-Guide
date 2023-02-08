@@ -20,23 +20,22 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeaturePartyList extends TextHUDFeature {
     public FeaturePartyList() {
         super("Party","Party List", "Party List as GUI", "party.list");
-        getStyles().add(new TextStyle("name", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("player", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("allinvite", new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("name", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("player", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("allinvite", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         setEnabled(false);
     }
 
@@ -44,50 +43,43 @@ public class FeaturePartyList extends TextHUDFeature {
     public boolean isHUDViewable() {
         return  PartyManager.INSTANCE.getPartyContext() != null;
     }
+    
 
     @Override
-    public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList("name" ,"separator", "player", "allinvite");
-    }
-
-    private static final List<StyledText> dummyText = new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Leader","name"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("syeyoung","player"));
-        dummyText.add(new StyledText("\nModerator","name"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("rioho, RaidShadowLegends, Tricked","player"));
-        dummyText.add(new StyledText("\nMember","name"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("Everyone","player"));
-        dummyText.add(new StyledText("\nAll invite Off","allinvite"));
-    }
-
-    @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("name"), "Leader"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("player"), "syeyoung"));
+        dummyText.addChild(new TextSpan(getStyle("name"), "\nModerator"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("player"), "rioho, RaidShadowLegends, Tricked"));
+        dummyText.addChild(new TextSpan(getStyle("name"), "\nMember"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("player"), "Everyone"));
+        dummyText.addChild(new TextSpan(getStyle("allinvite"), "\nAll invite Off"));
         return dummyText;
     }
 
     @Override
-    public List<StyledText> getText() {
+    public TextSpan getText() {
         PartyContext pc = PartyManager.INSTANCE.getPartyContext();
-        List<StyledText> text= new ArrayList<>();
-            text.add(new StyledText("Leader","name"));
-            text.add(new StyledText(": ","separator"));
-            text.add(new StyledText(pc.getPartyOwner()+"","player"));
-            text.add(new StyledText("\nModerator","name"));
-            text.add(new StyledText(": ","separator"));
-            text.add(new StyledText(pc.getPartyModerator() == null ? "????" : String.join(", ", pc.getPartyModerator()) + (pc.isModeratorComplete() ? "" : " ?"),"player"));
-            text.add(new StyledText("\nMember","name"));
-            text.add(new StyledText(": ","separator"));
-            text.add(new StyledText(pc.getPartyMember() == null ? "????" : String.join(", ", pc.getPartyMember()) + (pc.isMemberComplete() ? "" : " ?"),"player"));
+        TextSpan text = new TextSpan(new NullTextStyle(), "");
+            text.addChild(new TextSpan(getStyle("name"), "Leader"));
+            text.addChild(new TextSpan(getStyle("separator"), ": "));
+            text.addChild(new TextSpan(getStyle("player"), pc.getPartyOwner()+""));
+            text.addChild(new TextSpan(getStyle("name"), "\nModerator"));
+            text.addChild(new TextSpan(getStyle("separator"), ": "));
+            text.addChild(new TextSpan(getStyle("player"), pc.getPartyModerator() == null ? "????" : String.join(", ", pc.getPartyModerator()) + (pc.isModeratorComplete() ? "" : " ?")));
+            text.addChild(new TextSpan(getStyle("name"), "\nMember"));
+            text.addChild(new TextSpan(getStyle("separator"), ": "));
+            text.addChild(new TextSpan(getStyle("player"), pc.getPartyMember() == null ? "????" : String.join(", ", pc.getPartyMember()) + (pc.isMemberComplete() ? "" : " ?")));
             if (pc.getAllInvite() != null && !pc.getAllInvite())
-                text.add(new StyledText("\nAll invite Off","allinvite"));
+                text.addChild(new TextSpan(getStyle("allinvite"), "\nAll invite Off"));
             else if (pc.getAllInvite() != null)
-                text.add(new StyledText("\nAll invite On","allinvite"));
+                text.addChild(new TextSpan(getStyle("allinvite"), "\nAll invite On"));
             else
-                text.add(new StyledText("\nAll invite Unknown","allinvite"));
+                text.addChild(new TextSpan(getStyle("allinvite"), "\nAll invite Unknown"));
         return text;
     }
 }

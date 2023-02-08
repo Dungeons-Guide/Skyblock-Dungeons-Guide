@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.CategoryPageWidge
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.invteTooltip.MTooltipInvite;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;

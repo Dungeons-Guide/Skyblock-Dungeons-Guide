@@ -18,16 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.text;
 
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
-import kr.syeyoung.dungeonsguide.mod.config.types.*;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCRTextStyleMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
@@ -40,18 +39,15 @@ import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.*;
 
-public abstract class TextHUDFeature extends AbstractHUDFeature implements StyledTextProvider {
+public abstract class TextHUDFeature extends AbstractHUDFeature {
     protected TextHUDFeature(String category, String name, String description, String key) {
         super(category, name, description, key);
-        addParameter("textStylesNEW", new FeatureParameter<List<TextStyle>>("textStylesNEW", "", "", new ArrayList<TextStyle>(), TCTextStyleList.INSTANCE)
-                .setWidgetGenerator((param) -> new CompatLayer(new PanelTextParameterConfig(TextHUDFeature.this))));
-        addParameter("alignment", new FeatureParameter<RichText.TextAlign>("alignment", "Alignment", "Alignment", RichText.TextAlign.LEFT, new TCEnum<>(RichText.TextAlign.values()), richText::setAlign));
-        addParameter("scale", new FeatureParameter<Double>("scale", "Scale", "Scale", 1.0, TCDouble.INSTANCE)
-                .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
+
+        addParameter("alignment", new FeatureParameter<>("alignment", "Alignment", "Alignment", RichText.TextAlign.LEFT, new TCEnum<>(RichText.TextAlign.values()), richText::setAlign));
+        addParameter("newstyle", new FeatureParameter<>("newstyle", "TextStyle", "", styleMap, new TCRTextStyleMap(), this::updateStyle));
     }
 
     @Override
@@ -68,27 +64,13 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
     public OverlayWidget instantiateWidget() {
         return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectPositioner(this::getFeatureRect));
     }
-
-    private Map<String, ParentDelegatingTextStyle> builtTextStyles = new HashMap<>();
-
     @DGEventHandler
     public void onTick0(DGTickEvent dgTickEvent) {
         try {
             checkVisibility();
             if (isHUDViewable()) {
-                List<StyledText> asd = getText();
-
-                ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
-                defaultStyle.setSize((double) (this.<Double>getParameter("scale").getValue() * 8));
-
-                TextSpan span = new TextSpan(defaultStyle, "");
-
-                for (StyledText styledText : asd) {
-                    TextStyle style = getStylesMap().get(styledText.getGroup());
-                    TextSpan textSpan = new TextSpan(style.getLinked(), styledText.getText());
-                    span.addChild(textSpan);
-                }
-                richText.setRootSpan(span);
+                TextSpan asd = getText();
+                richText.setRootSpan(asd);
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -127,27 +109,14 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
 
         @Override
         public List<Widget> build(DomElement buildContext) {
-            List<StyledText> asd = hudFeature.getDummyText();
+            TextSpan textSpan = hudFeature.getDummyText();
 
             RichText richText = new RichText(new TextSpan(
                     ParentDelegatingTextStyle.ofDefault(),
                     ""
-            ), BreakWord.WORD, false, RichText.TextAlign.LEFT);
-            richText.setAlign(
-                    hudFeature.<RichText.TextAlign>getParameter("alignment").getValue()
-            );
+            ), BreakWord.WORD, false, hudFeature.<RichText.TextAlign>getParameter("alignment").getValue());
 
-            ParentDelegatingTextStyle defaultStyle = ParentDelegatingTextStyle.ofDefault();
-            defaultStyle.setSize((double) (hudFeature.<Double>getParameter("scale").getValue() * 8));
-
-            TextSpan span = new TextSpan(defaultStyle, "");
-
-            for (StyledText styledText : asd) {
-                TextStyle style = hudFeature.getStylesMap().get(styledText.getGroup());
-                TextSpan textSpan = new TextSpan(style.getLinked(), styledText.getText());
-                span.addChild(textSpan);
-            }
-            richText.setRootSpan(span);
+            richText.setRootSpan(textSpan);
 
             return Collections.singletonList(richText);
         }
@@ -158,49 +127,40 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
         return new TextHUDDemo(this);
     }
 
-    public int countLines(List<StyledText> texts) {
-        StringBuilder things = new StringBuilder();
-        for (StyledText text : texts) {
-            things.append(text.getText());
-        }
-        String things2 = things.toString().trim();
-        int lines = 1;
-        for (char c : things2.toCharArray()) {
-            if (c == '\n') lines++;
-        }
-        return  lines;
-    }
 
     public abstract boolean isHUDViewable();
 
-    public abstract List<String> getUsedTextStyle();
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
         return getText();
     }
-    public abstract List<StyledText> getText();
+    public abstract TextSpan getText();
 
-    public List<TextStyle> getStyles() {
-        return this.<List<TextStyle>>getParameter("textStylesNEW").getValue();
+
+    private Map<String, DefaultingDelegatingTextStyle> defaultStyleMap = new HashMap<>();
+    private Map<String, DefaultingDelegatingTextStyle> styleMap = new HashMap<>();
+    public void registerDefaultStyle(String name, DefaultingDelegatingTextStyle style) {
+        defaultStyleMap.put(name, style);
+    }
+    public DefaultingDelegatingTextStyle getStyle(String name) {
+        return styleMap.get(name);
     }
 
-
-    private Map<String, TextStyle> stylesMap;
-    public Map<String, TextStyle> getStylesMap() {
-        if (stylesMap == null) {
-            List<TextStyle> styles = getStyles();
-            Map<String, TextStyle> res = new HashMap<String, TextStyle>();
-            for (TextStyle ts : styles) {
-                res.put(ts.getGroupName(), ts);
-            }
-            for (String str : getUsedTextStyle()) {
-                if (!res.containsKey(str))
-                    res.put(str, new TextStyle(str, new AColor(0xffffffff, true), new AColor(0x00777777, true), false, new ParentDelegatingTextStyle()));
-            }
-            stylesMap = res;
+    public void updateStyle(Map<String, DefaultingDelegatingTextStyle> map) {
+        styleMap.clear();
+        Set<String> wasIn = new HashSet<>(map.keySet());
+        Set<String> needsToBeIn = new HashSet<>(defaultStyleMap.keySet());
+        needsToBeIn.removeAll(wasIn);
+        for (Map.Entry<String, DefaultingDelegatingTextStyle> stringDefaultingDelegatingTextStyleEntry : map.entrySet()) {
+            if (!defaultStyleMap.containsKey(stringDefaultingDelegatingTextStyleEntry.getKey())) continue;
+            DefaultingDelegatingTextStyle newStyle = stringDefaultingDelegatingTextStyleEntry.getValue();
+            newStyle.setParent(() -> defaultStyleMap.get(stringDefaultingDelegatingTextStyleEntry.getKey()));
+            styleMap.put(stringDefaultingDelegatingTextStyleEntry.getKey(), newStyle);
         }
-        return stylesMap;
+        for (String s : needsToBeIn) {
+            styleMap.put(s, new DefaultingDelegatingTextStyle().setParent(() -> defaultStyleMap.get(s)));
+            map.put(s, styleMap.get(s));
+        }
     }
-
 
     @Override
     public void getTooltipForEditor(List<Widget> widgets) {
@@ -223,7 +183,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature implements Style
 
     @Override
     public void onParameterReset() {
-        stylesMap = null;
+
     }
 
 }

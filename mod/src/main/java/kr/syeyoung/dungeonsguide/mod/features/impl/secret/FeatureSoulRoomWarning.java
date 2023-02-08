@@ -32,8 +32,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.text.*;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -51,7 +53,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
     public FeatureSoulRoomWarning() {
         super("Dungeon.HUDs","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn");
-        getStyles().add(new TextStyle("warning", new AColor(0xFF, 0x69,0x17,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("warning", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x69,0x17,255)).setBackgroundShader(new AColor(0, 0,0,0)));
 
         addParameter("roomuids", new FeatureParameter<>("roomuids", "Disabled room Names", "Disable for these rooms", new ArrayList<>(), TCStringList.INSTANCE)
                 .setWidgetGenerator(RoomConfiguration::new));
@@ -63,22 +65,14 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
         return warning > System.currentTimeMillis();
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Collections.singletonList("warning");
-    }
 
     private UUID lastRoomUID = UUID.randomUUID();
     private long warning = 0;
 
-    private static final List<StyledText> text = new ArrayList<StyledText>();
-    static {
-        text.add(new StyledText("There is a fairy soul in this room!", "warning"));
-    }
 
     @Override
-    public List<StyledText> getText() {
-        return text;
+    public TextSpan getText() {
+        return new TextSpan(getStyle("warning"), "There is a fairy soul in this room!");
     }
 
 

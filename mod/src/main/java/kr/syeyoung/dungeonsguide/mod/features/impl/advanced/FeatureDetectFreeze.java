@@ -20,8 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 

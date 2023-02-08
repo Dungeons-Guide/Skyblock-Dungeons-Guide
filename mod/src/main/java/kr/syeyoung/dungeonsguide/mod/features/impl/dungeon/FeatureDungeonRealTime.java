@@ -23,23 +23,22 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureDungeonRealTime extends TextHUDFeature {
     public FeatureDungeonRealTime() {
         super("Dungeon.HUDs", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime");
         this.setEnabled(false);
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("discriminator", new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("number", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("discriminator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     private long started = -1;
@@ -48,36 +47,30 @@ public class FeatureDungeonRealTime extends TextHUDFeature {
         return System.currentTimeMillis() - started;
     }
 
-    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Time ","title"));
-        dummyText.add(new StyledText("(Real)","discriminator"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("-42h","number"));
-    }
 
     @Override
     public boolean isHUDViewable() {
         return started != -1;
     }
 
-    @Override
-    public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "discriminator", "separator", "number");
-    }
 
     @Override
-    public java.util.List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("title"), "Time "));
+        dummyText.addChild(new TextSpan(getStyle("discriminator"), "(Real)"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("number"), "-42h"));
         return dummyText;
     }
 
     @Override
-    public java.util.List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText("Time","title"));
-        actualBit.add(new StyledText("(Real)","discriminator"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(TextUtils.formatTime(getTimeElapsed()),"number"));
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Time"));
+        actualBit.addChild(new TextSpan(getStyle("discriminator"), "(Real)"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("number"), TextUtils.formatTime(getTimeElapsed())));
         return actualBit;
     }
 

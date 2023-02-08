@@ -25,35 +25,29 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 
 public class FeatureRoomCoordDisplay extends TextHUDFeature {
     public FeatureRoomCoordDisplay() {
         super("Debug", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords");
         this.setEnabled(false);
-        getStyles().add(new TextStyle("coord", new AColor(Color.yellow.getRGB(),true), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("coord", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(Color.yellow.getRGB(),true)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("X: 0 Y: 3 Z: 5 Facing: Z+","coord"));
-    }
 
     @Override
-    public List<StyledText> getDummyText() {
-        return dummyText;
+    public TextSpan getDummyText() {
+        return new TextSpan(getStyle("coord"), "X: 0 Y: 3 Z: 5 Facing: Z+");
     }
 
     private static final String[] facing = {"Z+", "X-", "Z-", "X+"};
@@ -75,21 +69,16 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
     }
 
     @Override
-    public List<String> getUsedTextStyle() {
-        return Collections.singletonList("coord");
-    }
-
-    @Override
-    public List<StyledText> getText() {
-        if (!skyblockStatus.isOnDungeon()) return Collections.emptyList();
+    public TextSpan getText() {
+        if (!skyblockStatus.isOnDungeon()) return new TextSpan(new NullTextStyle(), "");
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (context == null) return Collections.emptyList();
+        if (context == null) return new TextSpan(new NullTextStyle(), "");
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
-            return Collections.emptyList();
+            return new TextSpan(new NullTextStyle(), "");
         }
 
         int facing = (int) (thePlayer.rotationYaw + 45) % 360;
@@ -98,7 +87,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos((int)thePlayer.posX, (int)thePlayer.posY, (int)thePlayer.posZ));
 
-        return Collections.singletonList(new StyledText("X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Facing: "+ FeatureRoomCoordDisplay.facing[real], "coord"));
+        return new TextSpan(getStyle("coord"), "X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Facing: "+ FeatureRoomCoordDisplay.facing[real]);
     }
 
 }

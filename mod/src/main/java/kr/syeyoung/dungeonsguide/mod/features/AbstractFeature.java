@@ -18,12 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.features;
 
-import com.google.common.base.Supplier;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.DefaultConfigurePageWidget;
 import kr.syeyoung.dungeonsguide.mod.config.types.FeatureTypeHandler;
-import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import lombok.Getter;
 import lombok.Setter;

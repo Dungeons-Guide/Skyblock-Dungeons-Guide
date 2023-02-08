@@ -18,17 +18,19 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.text;
 
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
 import lombok.Getter;
 import lombok.Setter;
 import lombok.experimental.Accessors;
 
+import java.util.function.Supplier;
+
 @Setter @Accessors(chain = true)
-public class DefaultingDelegatingTextStyle implements ITextStyle {
+public class DefaultingDelegatingTextStyle implements ITextStyle, Cloneable {
     public Double size;
     public Double topAscent;
     public Double bottomAscent;
@@ -42,17 +44,23 @@ public class DefaultingDelegatingTextStyle implements ITextStyle {
     public Boolean outline;
     public Boolean shadow;
 
-    public Shader backgroundShader;
-    public Shader textShader;
-    public Shader strikeThroughShader;
-    public Shader underlineShader;
-    public Shader outlineShader;
-    public Shader shadowShader;
+    public AColor backgroundShader;
+    public AColor textShader;
+    public AColor strikeThroughShader;
+    public AColor underlineShader;
+    public AColor outlineShader;
+    public AColor shadowShader;
 
 
     @Getter @Setter
-    public DefaultingDelegatingTextStyle parent;
+    public Supplier<DefaultingDelegatingTextStyle> parent;
     public FontRenderer fontRenderer;
+
+    public static DefaultingDelegatingTextStyle derive(Supplier<DefaultingDelegatingTextStyle> parent) {
+        DefaultingDelegatingTextStyle defaultTextHUDFeatureStyleFeature = new DefaultingDelegatingTextStyle();
+        defaultTextHUDFeatureStyleFeature.setParent(parent);
+        return defaultTextHUDFeatureStyleFeature;
+    }
 
     public static DefaultingDelegatingTextStyle ofDefault() {
         DefaultingDelegatingTextStyle parentDelegatingTextStyle = new DefaultingDelegatingTextStyle();
@@ -66,94 +74,106 @@ public class DefaultingDelegatingTextStyle implements ITextStyle {
         parentDelegatingTextStyle.shadow = false;
         parentDelegatingTextStyle.outline = false;
 
-        parentDelegatingTextStyle.backgroundShader = new SingleColorShader(0x00FFFFFF);
-        parentDelegatingTextStyle.textShader = new SingleColorShader(0xFFFFFFFF);
-        parentDelegatingTextStyle.strikeThroughShader = new SingleColorShader(0xFF000000);
-        parentDelegatingTextStyle.underlineShader = new SingleColorShader(0xFF000000);
-        parentDelegatingTextStyle.outlineShader = new SingleColorShader(0xFF000000);
-        parentDelegatingTextStyle.shadowShader = new SingleColorShader(0xFF000000);
+        parentDelegatingTextStyle.backgroundShader = null;
+        parentDelegatingTextStyle.textShader = new AColor(0xFFFFFFFF, true);
+        parentDelegatingTextStyle.strikeThroughShader = new AColor(0xFF000000, true);
+        parentDelegatingTextStyle.underlineShader = new AColor(0xFF000000, true);
+        parentDelegatingTextStyle.outlineShader = new AColor(0xFF000000, true);
+        parentDelegatingTextStyle.shadowShader = new AColor(0xFF000000, true);
 
         parentDelegatingTextStyle.fontRenderer = DefaultFontRenderer.DEFAULT_RENDERER;
         return parentDelegatingTextStyle;
     }
+    
+    public DefaultingDelegatingTextStyle getParent() {
+        return parent.get();
+    }
 
     @Override
     public Double getSize() {
-        return parent != null && size == null ? parent.getSize() : size;
+        return parent != null && size == null ? getParent().getSize() : size;
     }
 
     @Override
     public Double getTopAscent() {
-        return parent != null && topAscent == null ? parent.getTopAscent() : topAscent;
+        return parent != null && topAscent == null ? getParent().getTopAscent() : topAscent;
     }
 
     @Override
     public Double getBottomAscent() {
-        return parent != null && bottomAscent == null ? parent.getBottomAscent() : bottomAscent;
+        return parent != null && bottomAscent == null ? getParent().getBottomAscent() : bottomAscent;
     }
 
     @Override
     public Boolean isBold() {
-        return parent != null && bold == null ? parent.isBold() : bold;
+        return parent != null && bold == null ? getParent().isBold() : bold;
     }
 
     @Override
     public Boolean isItalics() {
-        return parent != null && italics == null ? parent.isItalics() : italics;
+        return parent != null && italics == null ? getParent().isItalics() : italics;
     }
 
     @Override
     public Boolean isOutline() {
-        return parent != null && outline == null ? parent.isOutline() : outline;
+        return parent != null && outline == null ? getParent().isOutline() : outline;
     }
 
     @Override
     public Boolean isShadow() {
-        return parent != null && shadow == null ? parent.isShadow() : shadow;
+        return parent != null && shadow == null ? getParent().isShadow() : shadow;
     }
 
     @Override
     public Boolean isStrikeThrough() {
-        return parent != null && strikeThrough == null ? parent.isStrikeThrough() : strikeThrough;
+        return parent != null && strikeThrough == null ? getParent().isStrikeThrough() : strikeThrough;
     }
 
     @Override
     public Boolean isUnderline() {
-        return parent != null && underline == null ? parent.isUnderline() : underline;
+        return parent != null && underline == null ? getParent().isUnderline() : underline;
     }
 
     @Override
     public FontRenderer getFontRenderer() {
-        return parent != null && fontRenderer == null ? parent.getFontRenderer() : fontRenderer;
+        return parent != null && fontRenderer == null ? getParent().getFontRenderer() : fontRenderer;
     }
 
     @Override
     public Shader getShadowShader() {
-        return parent != null && shadowShader == null ? parent.getShadowShader() : shadowShader;
+        return parent != null && shadowShader == null ? getParent().getShadowShader() : shadowShader.getShader();
     }
 
     @Override
     public Shader getBackgroundShader() {
-        return parent != null && backgroundShader == null ? parent.getBackgroundShader() : backgroundShader;
+        return parent != null && backgroundShader == null ? getParent().getBackgroundShader() : backgroundShader.getShader();
     }
 
     @Override
     public Shader getOutlineShader() {
-        return parent != null && outlineShader == null ? parent.getOutlineShader() : outlineShader;
+        return parent != null && outlineShader == null ? getParent().getOutlineShader() : outlineShader.getShader();
     }
 
     @Override
     public Shader getStrikeThroughShader() {
-        return parent != null && strikeThroughShader == null ? parent.getStrikeThroughShader() : strikeThroughShader;
+        return parent != null && strikeThroughShader == null ? getParent().getStrikeThroughShader() : strikeThroughShader.getShader();
     }
 
     @Override
     public Shader getTextShader() {
-        return parent != null && textShader == null ? parent.getTextShader() : textShader;
+        return parent != null && textShader == null ? getParent().getTextShader() : textShader.getShader();
     }
 
     @Override
     public Shader getUnderlineShader() {
-        return parent != null && underlineShader == null ? parent.getUnderlineShader() : underlineShader;
+        return parent != null && underlineShader == null ? getParent().getUnderlineShader() : underlineShader.getShader();
+    }
+
+    public DefaultingDelegatingTextStyle clone() {
+        try {
+            return (DefaultingDelegatingTextStyle) super.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

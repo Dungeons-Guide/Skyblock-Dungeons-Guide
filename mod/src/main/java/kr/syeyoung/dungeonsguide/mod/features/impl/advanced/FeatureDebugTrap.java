@@ -21,34 +21,27 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 public class FeatureDebugTrap extends TextHUDFeature {
     public FeatureDebugTrap() {
         super("Debug", "Display the current amount of bat entities", "", "advanced.bat");
-        getStyles().add(new TextStyle("base", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("batsamm", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("base", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("batsamm", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
-    
-    
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
-    private static final List<StyledText> dummyText=  new ArrayList<>();
-    static {
-        dummyText.add(new StyledText("Bats: ","base"));
-        dummyText.add(new StyledText("9999","batsamm"));
-    }
-
 
     static List<Long> avgStorage = new ArrayList<>();
 
@@ -72,26 +65,24 @@ public class FeatureDebugTrap extends TextHUDFeature {
     }
 
     @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("batsamm", "base");
+    public TextSpan getDummyText() {
+        TextSpan textSpan = new TextSpan(new NullTextStyle(), "");
+        textSpan.addChild(new TextSpan(getStyle("base"), "Bats: "));
+        textSpan.addChild(new TextSpan(getStyle("batsamm"), "9999"));
+        return textSpan;
     }
 
     @Override
-    public List<StyledText> getDummyText() {
-        return dummyText;
-    }
-
-    @Override
-    public List<StyledText> getText() {
+    public TextSpan getText() {
 
         List<Entity> bats = Minecraft.getMinecraft().theWorld.getEntities(EntityBat.class, e -> true);
 
 
-        List<StyledText> actualBit = new ArrayList<>();
-        actualBit.add(new StyledText("Bats: ","base"));
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("base"), "Bats: "));
 
 
-        actualBit.add(new StyledText(String.valueOf(getAvgTimeItTookToPacket()),"batsamm"));
+        actualBit.addChild(new TextSpan(getStyle("batsamm"), String.valueOf(getAvgTimeItTookToPacket())));
 
         return actualBit;
     }

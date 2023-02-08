@@ -23,17 +23,11 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCGUIPosition;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -42,7 +36,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
-import java.util.Collections;
 import java.util.List;
 
 @Getter

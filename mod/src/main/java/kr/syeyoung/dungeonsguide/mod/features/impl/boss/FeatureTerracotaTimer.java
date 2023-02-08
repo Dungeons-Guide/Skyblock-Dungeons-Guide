@@ -23,33 +23,26 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorSadan;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.entity.boss.BossStatus;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureTerracotaTimer extends TextHUDFeature {
     public FeatureTerracotaTimer() {
         super("Dungeon.Bossfight.Floor 6", "Display Terracotta phase timer", "Displays Terracotta phase timer", "bossfight.terracota");
         this.setEnabled(true);
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("time", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("time", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Terracottas","title"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("1m 99s","time"));
-    }
     @Override
     public boolean isHUDViewable() {
         return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorSadan &&
@@ -57,21 +50,20 @@ public class FeatureTerracotaTimer extends TextHUDFeature {
     }
 
     @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "separator", "number", "unit");
+    public TextSpan getDummyText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Terracottas"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("time"), "1m 99s"));
+        return actualBit;
     }
 
     @Override
-    public List<StyledText> getDummyText() {
-        return dummyText;
-    }
-
-    @Override
-    public List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText("Terracottas","title"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(TextUtils.formatTime((long) (BossStatus.healthScale * 1000 * 60 * 1.5)),"time"));
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Terracottas"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("time"), TextUtils.formatTime((long) (BossStatus.healthScale * 1000 * 60 * 1.5))));
         return actualBit;
     }
 

@@ -26,9 +26,12 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -45,11 +48,11 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     public FeatureAbilityCooldown() {
         super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2");
-        getStyles().add(new TextStyle("abilityname", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("number", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("unit",new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("ready",new AColor(0xDF, 0x00,0x67,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("abilityname", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("unit",DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("ready",DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xDF, 0x00,0x67,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         addParameter("disable", new FeatureParameter<Boolean>("disable", "Disable outside of dungeon", "Disable the feature when out of dungeon", false, TCBoolean.INSTANCE));
         addParameter("decimal", new FeatureParameter<Integer>("decimal", "Decimal places", "ex) 2 -> Cooldown: 3.21 3-> Cooldown: 3.210", 0, TCInteger.INSTANCE));
     }
@@ -59,31 +62,23 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
         return SkyblockStatus.isOnSkyblock() && (!this.<Boolean>getParameter("disable").getValue() || (this.<Boolean>getParameter("disable").getValue() && SkyblockStatus.isOnSkyblock()));
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("abilityname", "separator", "number", "unit", "ready");
-    }
-
-    private static final List<StyledText> dummy = new ArrayList<>();
-
-    static {
-        dummy.add(new StyledText("Random Ability", "abilityname"));
-        dummy.add(new StyledText(": ", "separator"));
-        dummy.add(new StyledText("10", "number"));
-        dummy.add(new StyledText("s\n", "unit"));
-        dummy.add(new StyledText("Random Ability2", "abilityname"));
-        dummy.add(new StyledText(": ", "separator"));
-        dummy.add(new StyledText("10", "number"));
-        dummy.add(new StyledText("m ", "unit"));
-        dummy.add(new StyledText("9", "number"));
-        dummy.add(new StyledText("s\n", "unit"));
-        dummy.add(new StyledText("Random Ability", "abilityname"));
-        dummy.add(new StyledText(": ", "separator"));
-        dummy.add(new StyledText("READY", "ready"));
-    }
 
     @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummy = new TextSpan(new NullTextStyle(), "");
+        dummy.addChild(new TextSpan(getStyle("abilityname"), "Random Ability"));
+        dummy.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummy.addChild(new TextSpan(getStyle("number"), "10"));
+        dummy.addChild(new TextSpan(getStyle("unit"), "s\n"));
+        dummy.addChild(new TextSpan(getStyle("abilityname"), "Random Ability2"));
+        dummy.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummy.addChild(new TextSpan(getStyle("number"), "10"));
+        dummy.addChild(new TextSpan(getStyle("unit"), "m "));
+        dummy.addChild(new TextSpan(getStyle("number"), "9"));
+        dummy.addChild(new TextSpan(getStyle("unit"), "s\n"));
+        dummy.addChild(new TextSpan(getStyle("abilityname"), "Random Ability"));
+        dummy.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummy.addChild(new TextSpan(getStyle("ready"), "READY"));
         return dummy;
     }
 
@@ -250,24 +245,24 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     });
 
     @Override
-    public List<StyledText> getText() {
-        List<StyledText> cooldowns = new ArrayList<>();
+    public TextSpan getText() {
+        TextSpan cooldowns = new TextSpan(new NullTextStyle(), "");
 
         for (UsedAbility usedAbility : usedAbilities) {
             long end = usedAbility.getCooldownEnd();
             if (System.currentTimeMillis() >= end) {
                 if (System.currentTimeMillis() <= end + 20000) {
-                    cooldowns.add(new StyledText(usedAbility.getAbility().getName(), "abilityname"));
-                    cooldowns.add(new StyledText(": ", "separator"));
-                    cooldowns.add(new StyledText("READY\n", "ready"));
+                    cooldowns.addChild(new TextSpan(getStyle("abilityname"), usedAbility.getAbility().getName()));
+                    cooldowns.addChild(new TextSpan(getStyle("separator"), ": "));
+                    cooldowns.addChild(new TextSpan(getStyle("ready"), "READY\n"));
                 }
             } else {
-                cooldowns.add(new StyledText(usedAbility.getAbility().getName(), "abilityname"));
-                cooldowns.add(new StyledText(": ", "separator"));
+                cooldowns.addChild(new TextSpan(getStyle("abilityname"), usedAbility.getAbility().getName()));
+                cooldowns.addChild(new TextSpan(getStyle("separator"), ": "));
                 long millies = end-System.currentTimeMillis();
                 double decimalPlaces = (double ) Math.pow(10, 3- this.<Integer>getParameter("decimal").getValue());
                 if (decimalPlaces == 0) {
-                    cooldowns.add(new StyledText( this.<Integer>getParameter("decimal").getValue()+" decimal places? You'd be joking\n", "unit"));
+                    cooldowns.addChild(new TextSpan(getStyle("unit"), this.<Integer>getParameter("decimal").getValue()+" decimal places? You'd be joking\n"));
                     continue;
                 }
                 millies = (long) (((millies-1) / decimalPlaces + 1) * decimalPlaces);
@@ -277,18 +272,18 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
                 String secondStr = String.format("%."+(this.<Integer>getParameter("decimal").getValue())+"f", seconds);
 
                 if (hr > 0) {
-                    cooldowns.add(new StyledText(String.valueOf(hr), "number"));
-                    cooldowns.add(new StyledText("h ", "unit"));
+                    cooldowns.addChild(new TextSpan(getStyle("number"), String.valueOf(hr)));
+                    cooldowns.addChild(new TextSpan(getStyle("unit"), "h "));
                 }
                 if (hr > 0 || min > 0) {
-                    cooldowns.add(new StyledText(String.valueOf(min), "number"));
-                    cooldowns.add(new StyledText("m ", "unit"));
+                    cooldowns.addChild(new TextSpan(getStyle("number"), String.valueOf(min)));
+                    cooldowns.addChild(new TextSpan(getStyle("unit"), "m "));
                 }
                 if (hr > 0 || min > 0 || seconds > 0) {
-                    cooldowns.add(new StyledText(secondStr, "number"));
-                    cooldowns.add(new StyledText("s ", "unit"));
+                    cooldowns.addChild(new TextSpan(getStyle("number"), secondStr));
+                    cooldowns.addChild(new TextSpan(getStyle("unit"), "s "));
                 }
-                cooldowns.add(new StyledText("\n", "unit"));
+                cooldowns.addChild(new TextSpan(getStyle("unit"), "\n"));
             }
         }
         return cooldowns;

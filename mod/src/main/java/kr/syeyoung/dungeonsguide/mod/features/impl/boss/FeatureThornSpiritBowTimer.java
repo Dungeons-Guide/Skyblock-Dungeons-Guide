@@ -25,53 +25,46 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorThorn;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.TitleEvent;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     public FeatureThornSpiritBowTimer() {
         super("Dungeon.Bossfight.Floor 4", "Display Spirit bow timer", "Displays how long until spirit bow gets destroyed", "bossfight.spiritbowdisplay");
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("time", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("time", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-    private static final List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Spirit Bow Destruction","title"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("1s","time"));
-    }
     @Override
     public boolean isHUDViewable() {
         return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn && time > System.currentTimeMillis();
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "separator", "time");
-    }
 
     @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("title"), "Spirit Bow Destruction"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("time"), "1s"));
         return dummyText;
     }
 
     @Override
-    public List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText("Spirit Bow Destruction","title"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(TextUtils.formatTime(time - System.currentTimeMillis()),"time"));
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Spirit Bow Destruction"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("time"), TextUtils.formatTime(time - System.currentTimeMillis())));
         return actualBit;
     }
     private long time = 0;

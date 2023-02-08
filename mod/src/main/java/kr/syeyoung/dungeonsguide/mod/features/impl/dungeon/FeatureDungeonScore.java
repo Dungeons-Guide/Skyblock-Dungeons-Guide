@@ -28,9 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -41,9 +43,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.util.MathHelper;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
 
@@ -53,15 +52,15 @@ public class FeatureDungeonScore extends TextHUDFeature {
         this.setEnabled(false);
         addParameter("verbose", new FeatureParameter<Boolean>("verbose", "Show each score instead of sum", "Skill: 100 Explore: 58 S->S+(5 tombs) instead of Score: 305", true, TCBoolean.INSTANCE));
 
-        getStyles().add(new TextStyle("scorename", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("score", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("brackets", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("etc",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("currentScore", new AColor(0xFF, 0xAA,0x00,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("arrow",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("nextScore", new AColor(0xFF, 0xAA,0x00,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("required",  new AColor(0xAA,0xAA,0xAA,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("scorename", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("score", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("brackets", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("etc", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("currentScore", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("arrow", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("nextScore", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("required", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -70,98 +69,89 @@ public class FeatureDungeonScore extends TextHUDFeature {
         return skyblockStatus.isOnDungeon();
     }
 
-    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
-    private static final java.util.List<StyledText> dummyText2=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Score","scorename"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("305 ","score"));
-        dummyText.add(new StyledText("(","brackets"));
-        dummyText.add(new StyledText("S+","currentScore"));
-        dummyText.add(new StyledText(")","brackets"));
+    @Override
+    public TextSpan getDummyText() {
 
-
-
-        dummyText2.add(new StyledText("Skill","scorename"));
-        dummyText2.add(new StyledText(": ","separator"));
-        dummyText2.add(new StyledText("100 ","score"));
-        dummyText2.add(new StyledText("(","brackets"));
-        dummyText2.add(new StyledText("0 Deaths","etc"));
-        dummyText2.add(new StyledText(")\n","brackets"));
-        dummyText2.add(new StyledText("Explorer","scorename"));
-        dummyText2.add(new StyledText(": ","separator"));
-        dummyText2.add(new StyledText("99 ","score"));
-        dummyText2.add(new StyledText("(","brackets"));
-        dummyText2.add(new StyledText("Rooms O Secrets 39/40","etc"));
-        dummyText2.add(new StyledText(")\n","brackets"));
-        dummyText2.add(new StyledText("Time","scorename"));
-        dummyText2.add(new StyledText(": ","separator"));
-        dummyText2.add(new StyledText("100 ","score"));
-        dummyText2.add(new StyledText("Bonus","scorename"));
-        dummyText2.add(new StyledText(": ","separator"));
-        dummyText2.add(new StyledText("0 ","score"));
-        dummyText2.add(new StyledText("Total","scorename"));
-        dummyText2.add(new StyledText(": ","separator"));
-        dummyText2.add(new StyledText("299\n","score"));
-        dummyText2.add(new StyledText("S","currentScore"));
-        dummyText2.add(new StyledText("->","arrow"));
-        dummyText2.add(new StyledText("S+ ","nextScore"));
-        dummyText2.add(new StyledText("(","brackets"));
-        dummyText2.add(new StyledText("1 Required 1 crypt","required"));
-        dummyText2.add(new StyledText(")","brackets"));
-
+        if (this.<Boolean>getParameter("verbose").getValue()) {
+            TextSpan dummyText2 = new TextSpan(new NullTextStyle(), "");
+            dummyText2.addChild(new TextSpan(getStyle("scorename"), "Skill"));
+            dummyText2.addChild(new TextSpan(getStyle("separator"), ": "));
+            dummyText2.addChild(new TextSpan(getStyle("score"), "100 "));
+            dummyText2.addChild(new TextSpan(getStyle("brackets"), "("));
+            dummyText2.addChild(new TextSpan(getStyle("etc"), "0 Deaths"));
+            dummyText2.addChild(new TextSpan(getStyle("brackets"), ")\n"));
+            dummyText2.addChild(new TextSpan(getStyle("scorename"), "Explorer"));
+            dummyText2.addChild(new TextSpan(getStyle("separator"), ": "));
+            dummyText2.addChild(new TextSpan(getStyle("score"), "99 "));
+            dummyText2.addChild(new TextSpan(getStyle("brackets"), "("));
+            dummyText2.addChild(new TextSpan(getStyle("etc"), "Rooms O Secrets 39/40"));
+            dummyText2.addChild(new TextSpan(getStyle("brackets"), ")\n"));
+            dummyText2.addChild(new TextSpan(getStyle("scorename"), "Time"));
+            dummyText2.addChild(new TextSpan(getStyle("separator"), ": "));
+            dummyText2.addChild(new TextSpan(getStyle("score"), "100 "));
+            dummyText2.addChild(new TextSpan(getStyle("scorename"), "Bonus"));
+            dummyText2.addChild(new TextSpan(getStyle("separator"), ": "));
+            dummyText2.addChild(new TextSpan(getStyle("score"), "0 "));
+            dummyText2.addChild(new TextSpan(getStyle("scorename"), "Total"));
+            dummyText2.addChild(new TextSpan(getStyle("separator"), ": "));
+            dummyText2.addChild(new TextSpan(getStyle("score"), "299\n"));
+            dummyText2.addChild(new TextSpan(getStyle("currentScore"), "S"));
+            dummyText2.addChild(new TextSpan(getStyle("arrow"), "->"));
+            dummyText2.addChild(new TextSpan(getStyle("nextScore"), "S+ "));
+            dummyText2.addChild(new TextSpan(getStyle("brackets"), "("));
+            dummyText2.addChild(new TextSpan(getStyle("required"), "1 Required 1 crypt"));
+            dummyText2.addChild(new TextSpan(getStyle("brackets"), ")"));
+            return dummyText2;
+        } else {
+            TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+            dummyText.addChild(new TextSpan(getStyle("scorename"), "Score"));
+            dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+            dummyText.addChild(new TextSpan(getStyle("score"), "305 "));
+            dummyText.addChild(new TextSpan(getStyle("brackets"), "("));
+            dummyText.addChild(new TextSpan(getStyle("currentScore"), "S+"));
+            dummyText.addChild(new TextSpan(getStyle("brackets"), ")"));
+            return dummyText;
+        }
     }
 
     @Override
-    public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList("scorename", "separator", "score", "brackets", "etc", "currentScore", "arrow", "nextScore", "required");
-
-    }
-
-    @Override
-    public java.util.List<StyledText> getDummyText() {
-
-        if (this.<Boolean>getParameter("verbose").getValue()) {return dummyText2;} else return dummyText;
-    }
-
-    @Override
-    public java.util.List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
 
         ScoreCalculation score = calculateScore();
-        if (score == null) return new ArrayList<StyledText>();
+        if (score == null) return new TextSpan(new NullTextStyle(), "");
         int sum = score.time + score.skill + score.explorer + score.bonus;
         if (this.<Boolean>getParameter("verbose").getValue()) {
-            actualBit.add(new StyledText("Skill", "scorename"));
-            actualBit.add(new StyledText(": ", "separator"));
-            actualBit.add(new StyledText(score.skill + " ", "score"));
-            actualBit.add(new StyledText("(", "brackets"));
-            actualBit.add(new StyledText(score.deaths + " Deaths", "etc"));
-            actualBit.add(new StyledText(")\n", "brackets"));
-            actualBit.add(new StyledText("Explorer", "scorename"));
-            actualBit.add(new StyledText(": ", "separator"));
-            actualBit.add(new StyledText(score.explorer + " ", "score"));
-            actualBit.add(new StyledText("(", "brackets"));
-            actualBit.add(new StyledText("Rooms " + (score.fullyCleared ? "O" : "X") + " Secrets " + score.secrets + "/" + score.effectiveTotalSecrets +" of "+score.getTotalSecrets() + (score.totalSecretsKnown ? "" : "?"), "etc"));
-            actualBit.add(new StyledText(")\n", "brackets"));
-            actualBit.add(new StyledText("Time", "scorename"));
-            actualBit.add(new StyledText(": ", "separator"));
-            actualBit.add(new StyledText(score.time + " ", "score"));
-            actualBit.add(new StyledText("Bonus", "scorename"));
-            actualBit.add(new StyledText(": ", "separator"));
-            actualBit.add(new StyledText(score.bonus + " ", "score"));
-            actualBit.add(new StyledText("Total", "scorename"));
-            actualBit.add(new StyledText(": ", "separator"));
-            actualBit.add(new StyledText(sum + "\n", "score"));
-            actualBit.addAll(buildRequirement(score));
+            actualBit.addChild(new TextSpan(getStyle("scorename"), "Skill"));
+            actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+            actualBit.addChild(new TextSpan(getStyle("score"), score.skill + " "));
+            actualBit.addChild(new TextSpan(getStyle("brackets"), "("));
+            actualBit.addChild(new TextSpan(getStyle("etc"), score.deaths + " Deaths"));
+            actualBit.addChild(new TextSpan(getStyle("brackets"), ")\n"));
+            actualBit.addChild(new TextSpan(getStyle("scorename"), "Explorer"));
+            actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+            actualBit.addChild(new TextSpan(getStyle("score"), score.explorer + " "));
+            actualBit.addChild(new TextSpan(getStyle("brackets"), "("));
+            actualBit.addChild(new TextSpan(getStyle("etc"), "Rooms " + (score.fullyCleared ? "O" : "X") + " Secrets " + score.secrets + "/" + score.effectiveTotalSecrets +" of "+score.getTotalSecrets() + (score.totalSecretsKnown ? "" : "?")));
+            actualBit.addChild(new TextSpan(getStyle("brackets"), ")\n"));
+            actualBit.addChild(new TextSpan(getStyle("scorename"), "Time"));
+            actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+            actualBit.addChild(new TextSpan(getStyle("score"), score.time + " "));
+            actualBit.addChild(new TextSpan(getStyle("scorename"), "Bonus"));
+            actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+            actualBit.addChild(new TextSpan(getStyle("score"), score.bonus + " "));
+            actualBit.addChild(new TextSpan(getStyle("scorename"), "Total"));
+            actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+            actualBit.addChild(new TextSpan(getStyle("score"), sum + "\n"));
+            actualBit.addChild(buildRequirement(score));
         } else {
             String letter = getLetter(sum);
-            actualBit.add(new StyledText("Score", "scorename"));
-            actualBit.add(new StyledText(": ", "separator"));
-            actualBit.add(new StyledText(sum + " ", "score"));
-            actualBit.add(new StyledText("(", "brackets"));
-            actualBit.add(new StyledText(letter, "currentScore"));
-            actualBit.add(new StyledText(")", "brackets"));
+            actualBit.addChild(new TextSpan(getStyle("scorename"), "Score"));
+            actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+            actualBit.addChild(new TextSpan(getStyle("score"), sum + " "));
+            actualBit.addChild(new TextSpan(getStyle("brackets"), "("));
+            actualBit.addChild(new TextSpan(getStyle("currentScore"), letter));
+            actualBit.addChild(new TextSpan(getStyle("brackets"), ")"));
         }
 
         return actualBit;
@@ -325,13 +315,13 @@ public class FeatureDungeonScore extends TextHUDFeature {
         if (letter.equals("S")) return "S+";
         else return null;
     }
-    public List<StyledText> buildRequirement(ScoreCalculation calculation) {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
+    public TextSpan buildRequirement(ScoreCalculation calculation) {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         int current = calculation.time + calculation.bonus + calculation.explorer + calculation.skill;
         String currentLetter = getLetter(current);
         String nextLetter=  getNextLetter(currentLetter);
         if (nextLetter == null) {
-            actualBit.add(new StyledText("S+ Expected","nextScore"));
+            actualBit.addChild(new TextSpan(getStyle("nextScore"), "S+ Expected"));
             return actualBit;
         }
         int req = getScoreRequirement(nextLetter);
@@ -344,12 +334,12 @@ public class FeatureDungeonScore extends TextHUDFeature {
         double secretPer = 40.0 / calculation.effectiveTotalSecrets;
         int secrets = (int) Math.ceil(reqPT / secretPer);
 
-        actualBit.add(new StyledText(currentLetter,"currentScore"));
-        actualBit.add(new StyledText("->","arrow"));
-        actualBit.add(new StyledText(nextLetter+" ","nextScore"));
-        actualBit.add(new StyledText("(","brackets"));
-        actualBit.add(new StyledText(reqPT2+" required "+tombsBreakable+" crypt "+secrets+" secrets","required"));
-        actualBit.add(new StyledText(")","brackets"));
+        actualBit.addChild(new TextSpan(getStyle("currentScore"), currentLetter));
+        actualBit.addChild(new TextSpan(getStyle("arrow"), "->"));
+        actualBit.addChild(new TextSpan(getStyle("nextScore"), nextLetter+" "));
+        actualBit.addChild(new TextSpan(getStyle("brackets"), "("));
+        actualBit.addChild(new TextSpan(getStyle("required"), reqPT2+" required "+tombsBreakable+" crypt "+secrets+" secrets"));
+        actualBit.addChild(new TextSpan(getStyle("brackets"), ")"));
         return actualBit;
     }
 }

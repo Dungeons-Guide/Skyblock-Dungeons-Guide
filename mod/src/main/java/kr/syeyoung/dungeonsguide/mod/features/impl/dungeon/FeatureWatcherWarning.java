@@ -26,21 +26,18 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
 import java.util.UUID;
 
-public class FeatureWatcherWarning extends TextHUDFeature  {
+public class FeatureWatcherWarning extends TextHUDFeature {
 
     public FeatureWatcherWarning() {
         super("Dungeon.Blood Room","Watcher Spawn Alert", "Alert when watcher says 'That will be enough for now'", "dungen.watcherwarn");
-        getStyles().add(new TextStyle("warning", new AColor(0xFF, 0x69,0x17,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("warning", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x69,0x17,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         setEnabled(false);
     }
 
@@ -50,23 +47,14 @@ public class FeatureWatcherWarning extends TextHUDFeature  {
         return warning > System.currentTimeMillis();
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Collections.singletonList("warning");
-    }
-
     private final UUID lastRoomUID = UUID.randomUUID();
     private long warning = 0;
 
-    private static final List<StyledText> text = new ArrayList<StyledText>();
-    static {
-        text.add(new StyledText("Watcher finished spawning all mobs!", "warning"));
+    @Override
+    public TextSpan getText() {
+        return new TextSpan(getStyle("warning"), "Watcher finished spawning all mobs!");
     }
 
-    @Override
-    public List<StyledText> getText() {
-        return text;
-    }
 
     @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {

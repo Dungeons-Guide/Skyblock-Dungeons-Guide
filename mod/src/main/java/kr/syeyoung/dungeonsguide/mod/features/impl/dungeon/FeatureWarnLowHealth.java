@@ -24,28 +24,26 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Objective;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.List;
 
 
 public class FeatureWarnLowHealth extends TextHUDFeature {
     public FeatureWarnLowHealth() {
         super("Dungeon.Teammates", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn");
         addParameter("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, TCInteger.INSTANCE));
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("number", new AColor(0xFF, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("unit", new AColor(0xFF, 0x55,0x55,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("unit", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         setEnabled(false);
     }
 
@@ -59,29 +57,21 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
     }
 
     @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "separator", "number", "unit");
-    }
-
-    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("DungeonsGuide","title"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("500","number"));
-        dummyText.add(new StyledText("hp","unit"));
-    }
-
-    @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("title"), "DungeonsGuide"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("number"), "500"));
+        dummyText.addChild(new TextSpan(getStyle("unit"), "hp"));
         return dummyText;
     }
 
     @Override
-    public List<StyledText> getText() {
+    public TextSpan getText() {
         String lowestHealthName = "";
         int lowestHealth = 999999999;
         Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
-        if (objective == null) return Collections.emptyList();
+        if (objective == null) return new TextSpan(new NullTextStyle(), "");
         for (Score sc : objective.getScores()) {
             String line = sc.getVisibleName();
             String stripped = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(line));
@@ -94,13 +84,13 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
                 }
             }
         }
-        if (lowestHealth > this.<Integer>getParameter("threshold").getValue()) return new ArrayList<StyledText>();
+        if (lowestHealth > this.<Integer>getParameter("threshold").getValue()) return new TextSpan(new NullTextStyle(), "");
 
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText(lowestHealthName,"title"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(lowestHealth+"","number"));
-        actualBit.add(new StyledText("hp","unit"));
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), lowestHealthName));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("number"), lowestHealth+""));
+        actualBit.addChild(new TextSpan(getStyle("unit"), "hp"));
         return actualBit;
     }
 }

@@ -21,11 +21,11 @@ package kr.syeyoung.dungeonsguide.mod.features.text;
 import lombok.Data;
 
 @Data
-public class StyledText {
+public class StyledTextSpan {
     private String text;
     private String group;
 
-    public StyledText(String group, String text) {
+    public StyledTextSpan(String group, String text) {
         this.text = text;
         this.group = group;
     }

@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.types;
 
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.ChromaShader;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
@@ -50,6 +53,11 @@ public class AColor extends Color {
         aColor.chroma = this.chroma;
         aColor.chromaSpeed = this.chromaSpeed;
         return aColor;
+    }
+
+    public Shader getShader() {
+        if (chroma) return new ChromaShader(chromaSpeed, getRGB());
+        else return new SingleColorShader(getRGB());
     }
 
     @Override

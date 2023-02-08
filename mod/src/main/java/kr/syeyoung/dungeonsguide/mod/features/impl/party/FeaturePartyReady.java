@@ -23,9 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -36,11 +39,11 @@ import java.util.*;
 public class FeaturePartyReady extends TextHUDFeature {
     public FeaturePartyReady() {
         super("Party","Party Ready List", "Check if your party member have said r or not", "party.readylist");
-        getStyles().add(new TextStyle("player", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("ready", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("notready", new AColor(0xFF, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("terminal", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("player", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("ready", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("notready", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("terminal", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         setEnabled(true);
     }
 
@@ -49,37 +52,30 @@ public class FeaturePartyReady extends TextHUDFeature {
         return  PartyManager.INSTANCE.getPartyContext() != null && PartyManager.INSTANCE.getPartyContext().isPartyExistHypixel() && "Dungeon Hub".equals(SkyblockStatus.locationName);
     }
 
-    @Override
-    public List<String> getUsedTextStyle() {
-        return Arrays.asList("separator", "player", "ready", "notready", "terminal");
-    }
-
-    private static final List<StyledText> dummyText = new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("syeyoung","player"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("Ready","ready"));
-        dummyText.add(new StyledText(" 4","terminal"));
-        dummyText.add(new StyledText("\nrioho","player"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("Ready","ready"));
-        dummyText.add(new StyledText(" 3","terminal"));
-        dummyText.add(new StyledText("\nRaidShadowLegends","player"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("Not Ready","notready"));
-        dummyText.add(new StyledText(" 2t","terminal"));
-        dummyText.add(new StyledText("\nTricked","player"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("Ready","ready"));
-        dummyText.add(new StyledText(" ss","terminal"));
-        dummyText.add(new StyledText("\nMr. Penguin","player"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("Not Ready","notready"));
-        dummyText.add(new StyledText(" 2b","terminal"));
-    }
 
     @Override
-    public List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("player"), "syeyoung"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("ready"), "Ready"));
+        dummyText.addChild(new TextSpan(getStyle("terminal"), " 4"));
+        dummyText.addChild(new TextSpan(getStyle("player"), "\nrioho"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("ready"), "Ready"));
+        dummyText.addChild(new TextSpan(getStyle("terminal"), " 3"));
+        dummyText.addChild(new TextSpan(getStyle("player"), "\nRaidShadowLegends"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("notready"), "Not Ready"));
+        dummyText.addChild(new TextSpan(getStyle("terminal"), " 2t"));
+        dummyText.addChild(new TextSpan(getStyle("player"), "\nTricked"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("ready"), "Ready"));
+        dummyText.addChild(new TextSpan(getStyle("terminal"), " ss"));
+        dummyText.addChild(new TextSpan(getStyle("player"), "\nMr. Penguin"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("notready"), "Not Ready"));
+        dummyText.addChild(new TextSpan(getStyle("terminal"), " 2b"));
         return dummyText;
     }
 
@@ -87,19 +83,19 @@ public class FeaturePartyReady extends TextHUDFeature {
     private Map<String, String> terminal = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
 
     @Override
-    public List<StyledText> getText() {
+    public TextSpan getText() {
         PartyContext pc = PartyManager.INSTANCE.getPartyContext();
-        List<StyledText> text= new ArrayList<>();
+        TextSpan text = new TextSpan(new NullTextStyle(), "");
         boolean first = true;
         for (String partyRawMember : pc.getPartyRawMembers()) {
-            text.add(new StyledText((first ? "":"\n") + partyRawMember, "player"));
-            text.add(new StyledText(": ","separator"));
+            text.addChild(new TextSpan(getStyle("player"), (first ? "":"\n") + partyRawMember));
+            text.addChild(new TextSpan(getStyle("separator"), ": "));
             if (ready.contains(partyRawMember))
-                text.add(new StyledText("Ready","ready"));
+                text.addChild(new TextSpan(getStyle("ready"), "Ready"));
             else
-                text.add(new StyledText("Not Ready","notready"));
+                text.addChild(new TextSpan(getStyle("notready"), "Not Ready"));
             if (terminal.get(partyRawMember) != null) {
-                text.add(new StyledText(" "+ terminal.get(partyRawMember), "terminal"));
+                text.addChild(new TextSpan(getStyle("terminal"), " "+ terminal.get(partyRawMember)));
             }
             first =false;
         }

@@ -24,27 +24,26 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
-
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
 
 public class FeatureDungeonSecrets extends TextHUDFeature {
     public FeatureDungeonSecrets() {
         super("Dungeon.HUDs", "Display Total # of Secrets", "Display how much total secrets have been found in a dungeon run.\n+ sign means DG does not know the correct number, but it's somewhere above that number.", "dungeon.stats.secrets");
         this.setEnabled(false);
-        getStyles().add(new TextStyle("title", new AColor(0x00, 0xAA,0xAA,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("currentSecrets", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("separator2", new AColor(0x55, 0x55,0x55,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("totalSecrets", new AColor(0x55, 0xFF,0xFF,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("unknown", new AColor(0xFF, 0xFF,0x55,255), new AColor(0, 0,0,0), false));
+        registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("currentSecrets", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator2", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("totalSecrets", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("unknown", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
@@ -107,15 +106,6 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     }
 
 
-    private static final java.util.List<StyledText> dummyText=  new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("Secrets","title"));
-        dummyText.add(new StyledText(": ","separator"));
-        dummyText.add(new StyledText("999","currentSecrets"));
-        dummyText.add(new StyledText("/","separator2"));
-        dummyText.add(new StyledText("2","totalSecrets"));
-        dummyText.add(new StyledText("+","unknown"));
-    }
 
     @Override
     public boolean isHUDViewable() {
@@ -123,25 +113,27 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     }
 
     @Override
-    public java.util.List<String> getUsedTextStyle() {
-        return Arrays.asList("title", "separator", "currentSecrets", "separator2", "totalSecrets", "unknown");
-    }
-
-    @Override
-    public java.util.List<StyledText> getDummyText() {
+    public TextSpan getDummyText() {
+        TextSpan dummyText = new TextSpan(new NullTextStyle(), "");
+        dummyText.addChild(new TextSpan(getStyle("title"), "Secrets"));
+        dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
+        dummyText.addChild(new TextSpan(getStyle("currentSecrets"), "999"));
+        dummyText.addChild(new TextSpan(getStyle("separator2"), "/"));
+        dummyText.addChild(new TextSpan(getStyle("totalSecrets"), "2"));
+        dummyText.addChild(new TextSpan(getStyle("unknown"), "+"));
         return dummyText;
     }
 
     @Override
-    public java.util.List<StyledText> getText() {
-        List<StyledText> actualBit = new ArrayList<StyledText>();
-        actualBit.add(new StyledText("Secrets","title"));
-        actualBit.add(new StyledText(": ","separator"));
-        actualBit.add(new StyledText(getSecretsFound() +"","currentSecrets"));
-        actualBit.add(new StyledText("/","separator2"));
+    public TextSpan getText() {
+        TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
+        actualBit.addChild(new TextSpan(getStyle("title"), "Secrets"));
+        actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
+        actualBit.addChild(new TextSpan(getStyle("currentSecrets"), getSecretsFound() +""));
+        actualBit.addChild(new TextSpan(getStyle("separator2"), "/"));
 
-        actualBit.add(new StyledText((int)Math.ceil(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getSecretPercentage())+" of "+getTotalSecretsInt(),"totalSecrets"));
-        actualBit.add(new StyledText(getTotalSecrets().contains("+") ? "+" : "","unknown"));
+        actualBit.addChild(new TextSpan(getStyle("totalSecrets"), (int)Math.ceil(getTotalSecretsInt() * DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getSecretPercentage())+" of "+getTotalSecretsInt()));
+        actualBit.addChild(new TextSpan(getStyle("unknown"), getTotalSecrets().contains("+") ? "+" : ""));
         return actualBit;
     }
 
