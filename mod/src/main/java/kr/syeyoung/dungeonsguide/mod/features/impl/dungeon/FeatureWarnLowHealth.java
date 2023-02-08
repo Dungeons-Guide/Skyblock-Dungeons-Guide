@@ -41,7 +41,7 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
         super("Dungeon.Teammates", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn");
         addParameter("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, TCInteger.INSTANCE));
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         registerDefaultStyle("unit", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         setEnabled(false);

@@ -44,9 +44,9 @@ public class FeatureBossHealth extends TextHUDFeature {
         addParameter("ignoreInattackable", new FeatureParameter<Boolean>("ignoreInattackable", "Don't show health of in-attackable enemy", "For example, do not show guardians health when they're not attackable", false, TCBoolean.INSTANCE, nval -> ignoreInattackable = nval));
 
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("health", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
-        registerDefaultStyle("separator2", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator2", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("maxHealth", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 

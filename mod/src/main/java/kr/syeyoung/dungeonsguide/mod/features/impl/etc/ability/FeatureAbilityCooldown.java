@@ -49,7 +49,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
     public FeatureAbilityCooldown() {
         super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2");
         registerDefaultStyle("abilityname", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
         registerDefaultStyle("unit",DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("ready",DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xDF, 0x00,0x67,255)).setBackgroundShader(new AColor(0, 0,0,0)));

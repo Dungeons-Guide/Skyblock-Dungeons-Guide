@@ -53,9 +53,9 @@ public class FeatureDungeonScore extends TextHUDFeature {
         addParameter("verbose", new FeatureParameter<Boolean>("verbose", "Show each score instead of sum", "Skill: 100 Explore: 58 S->S+(5 tombs) instead of Score: 305", true, TCBoolean.INSTANCE));
 
         registerDefaultStyle("scorename", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("score", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
-        registerDefaultStyle("brackets", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("brackets", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("etc", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         registerDefaultStyle("currentScore", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         registerDefaultStyle("arrow", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));

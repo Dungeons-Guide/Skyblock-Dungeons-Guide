@@ -30,7 +30,7 @@ import java.util.Set;
 
 public class DefaultTextHUDFeatureStyleFeature extends SimpleFeature {
     public enum Styles {
-        NAME, VALUE
+        NAME, VALUE, SEPARATOR
     }
 
     public DefaultTextHUDFeatureStyleFeature() {
@@ -38,6 +38,7 @@ public class DefaultTextHUDFeatureStyleFeature extends SimpleFeature {
 
         registerDefaultStyle(Styles.NAME, DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x00, 0xAA,0xAA,255)));
         registerDefaultStyle(Styles.VALUE, DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)));
+        registerDefaultStyle(Styles.SEPARATOR, DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)));
         addParameter("newstyle", new FeatureParameter<>("newstyle", "TextStyle", "", styleMap, new TCRTextStyleMap(), this::updateStyle));
     }
 
