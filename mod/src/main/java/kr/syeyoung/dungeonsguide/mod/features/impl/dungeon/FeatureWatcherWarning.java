@@ -26,6 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
@@ -37,7 +39,7 @@ public class FeatureWatcherWarning extends TextHUDFeature {
 
     public FeatureWatcherWarning() {
         super("Dungeon.Blood Room","Watcher Spawn Alert", "Alert when watcher says 'That will be enough for now'", "dungen.watcherwarn");
-        registerDefaultStyle("warning", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x69,0x17,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("warning", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.WARNING)));
         setEnabled(false);
     }
 

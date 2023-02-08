@@ -52,7 +52,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
         registerDefaultStyle("unit",DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("ready",DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xDF, 0x00,0x67,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("ready",DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.WARNING))); // kinda warning
         addParameter("disable", new FeatureParameter<Boolean>("disable", "Disable outside of dungeon", "Disable the feature when out of dungeon", false, TCBoolean.INSTANCE));
         addParameter("decimal", new FeatureParameter<Integer>("decimal", "Decimal places", "ex) 2 -> Cooldown: 3.21 3-> Cooldown: 3.210", 0, TCInteger.INSTANCE));
     }

@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
@@ -39,7 +40,8 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
     public FeatureRoomDebugInfo() {
         super("Debug", "Display Room Debug Info", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.roominfo");
         this.setEnabled(false);
-        registerDefaultStyle("info", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(Color.white.getRGB(),true)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("info", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
+                .setTextShader(new AColor(Color.white.getRGB(),true)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();

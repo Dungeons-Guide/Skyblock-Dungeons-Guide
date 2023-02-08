@@ -43,14 +43,16 @@ public class FeatureActions extends TextHUDFeature {
         super("Dungeon.Secrets", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview");
 
         registerDefaultStyle("pathfinding", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("mechanic", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("mechanic", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
+                .setTextShader(new AColor(0x55, 0xFF,0x55,255)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
-        registerDefaultStyle("state", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("state", DefaultingDelegatingTextStyle.derive(() -> getStyle("mechanic"))
+                .setTextShader(new AColor(0x55, 0xFF,0x55,255)));
         registerDefaultStyle("current", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
-        registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0x00, 0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("dot", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("action", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
-        registerDefaultStyle("afterline", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xAA, 0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("afterline", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
     }
 
 

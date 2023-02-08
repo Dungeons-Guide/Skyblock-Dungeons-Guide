@@ -42,8 +42,8 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
         addParameter("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, TCInteger.INSTANCE));
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
-        registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("unit", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
+                .setTextShader(new AColor(0xFF, 0x55,0x55,255)));
         setEnabled(false);
     }
 
@@ -62,7 +62,6 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
         dummyText.addChild(new TextSpan(getStyle("title"), "DungeonsGuide"));
         dummyText.addChild(new TextSpan(getStyle("separator"), ": "));
         dummyText.addChild(new TextSpan(getStyle("number"), "500"));
-        dummyText.addChild(new TextSpan(getStyle("unit"), "hp"));
         return dummyText;
     }
 
@@ -90,7 +89,6 @@ public class FeatureWarnLowHealth extends TextHUDFeature {
         actualBit.addChild(new TextSpan(getStyle("title"), lowestHealthName));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
         actualBit.addChild(new TextSpan(getStyle("number"), lowestHealth+""));
-        actualBit.addChild(new TextSpan(getStyle("unit"), "hp"));
         return actualBit;
     }
 }

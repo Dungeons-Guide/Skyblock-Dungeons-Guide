@@ -30,15 +30,22 @@ import java.util.Set;
 
 public class DefaultTextHUDFeatureStyleFeature extends SimpleFeature {
     public enum Styles {
-        NAME, VALUE, SEPARATOR
+        DEFAULT, NAME, VALUE, SEPARATOR, FRACTION, EXTRA_INFO, TOTAL, BRACKET, WARNING
     }
 
     public DefaultTextHUDFeatureStyleFeature() {
         super("Misc", "Quick HUD Style Settings", "Configure the default hud style", "misc.defaulthud");
 
-        registerDefaultStyle(Styles.NAME, DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x00, 0xAA,0xAA,255)));
-        registerDefaultStyle(Styles.VALUE, DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)));
-        registerDefaultStyle(Styles.SEPARATOR, DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)));
+        registerDefaultStyle(Styles.DEFAULT, DefaultingDelegatingTextStyle.ofDefault());
+        registerDefaultStyle(Styles.NAME, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0x00, 0xAA,0xAA,255)));
+        registerDefaultStyle(Styles.VALUE, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0x55, 0xFF,0xFF,255)));
+        registerDefaultStyle(Styles.SEPARATOR, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0x55, 0x55,0x55,255)));
+        registerDefaultStyle(Styles.EXTRA_INFO, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0xAA,0xAA,0xAA,255)));
+        registerDefaultStyle(Styles.BRACKET, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0x55, 0x55,0x55,255)));
+        registerDefaultStyle(Styles.WARNING, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0xFF, 0x69,0x17,255)));
+
+        registerDefaultStyle(Styles.FRACTION, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.SEPARATOR)));
+        registerDefaultStyle(Styles.TOTAL, DefaultingDelegatingTextStyle.derive(() -> getStyle(Styles.VALUE)));
         addParameter("newstyle", new FeatureParameter<>("newstyle", "TextStyle", "", styleMap, new TCRTextStyleMap(), this::updateStyle));
     }
 

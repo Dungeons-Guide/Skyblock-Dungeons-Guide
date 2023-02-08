@@ -141,32 +141,32 @@ public class DefaultingDelegatingTextStyle implements ITextStyle, Cloneable {
 
     @Override
     public Shader getShadowShader() {
-        return parent != null && shadowShader == null ? getParent().getShadowShader() : shadowShader.getShader();
+        return parent != null && shadowShader == null ? getParent().getShadowShader() : shadowShader == null ? null : shadowShader.getShader();
     }
 
     @Override
     public Shader getBackgroundShader() {
-        return parent != null && backgroundShader == null ? getParent().getBackgroundShader() : backgroundShader.getShader();
+        return parent != null && backgroundShader == null ? getParent().getBackgroundShader() : backgroundShader == null ? null : backgroundShader.getShader();
     }
 
     @Override
     public Shader getOutlineShader() {
-        return parent != null && outlineShader == null ? getParent().getOutlineShader() : outlineShader.getShader();
+        return parent != null && outlineShader == null ? getParent().getOutlineShader() : outlineShader == null ? null : outlineShader.getShader();
     }
 
     @Override
     public Shader getStrikeThroughShader() {
-        return parent != null && strikeThroughShader == null ? getParent().getStrikeThroughShader() : strikeThroughShader.getShader();
+        return parent != null && strikeThroughShader == null ? getParent().getStrikeThroughShader() : strikeThroughShader == null ? null : strikeThroughShader.getShader();
     }
 
     @Override
     public Shader getTextShader() {
-        return parent != null && textShader == null ? getParent().getTextShader() : textShader.getShader();
+        return parent != null && textShader == null ? getParent().getTextShader() : textShader == null ? null : textShader.getShader();
     }
 
     @Override
     public Shader getUnderlineShader() {
-        return parent != null && underlineShader == null ? getParent().getUnderlineShader() : underlineShader.getShader();
+        return parent != null && underlineShader == null ? getParent().getUnderlineShader() : underlineShader == null ? null : underlineShader.getShader();
     }
 
     public DefaultingDelegatingTextStyle clone() {

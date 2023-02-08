@@ -55,12 +55,14 @@ public class FeatureDungeonScore extends TextHUDFeature {
         registerDefaultStyle("scorename", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("score", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
-        registerDefaultStyle("brackets", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
-        registerDefaultStyle("etc", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("currentScore", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("arrow", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("nextScore", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("required", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0xAA,0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("brackets", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.BRACKET)));
+        registerDefaultStyle("etc", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
+        registerDefaultStyle("currentScore", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
+                .setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("arrow", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
+        registerDefaultStyle("nextScore", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
+                .setTextShader(new AColor(0xFF, 0xAA,0x00,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("required", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
     }
 
     SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
