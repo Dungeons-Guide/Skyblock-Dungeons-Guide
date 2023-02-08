@@ -46,10 +46,10 @@ public class FeatureActions extends TextHUDFeature {
         registerDefaultStyle("mechanic", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         registerDefaultStyle("state", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("current", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("current", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.ofDefault().setTextShader( new AColor(0x00, 0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
         registerDefaultStyle("dot", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0x55,0x55,255)).setBackgroundShader(new AColor(0, 0,0,0)));
-        registerDefaultStyle("action", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0x55, 0xFF,0xFF,255)).setBackgroundShader(new AColor(0, 0,0,0)));
+        registerDefaultStyle("action", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
         registerDefaultStyle("afterline", DefaultingDelegatingTextStyle.ofDefault().setTextShader(new AColor(0xAA, 0xAA,0xAA,255)).setBackgroundShader(new AColor(0, 0,0,0)));
     }
 
