@@ -26,10 +26,10 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
-import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
@@ -41,7 +41,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
     public FeatureRoomCoordDisplay() {
         super("Debug", "Display Coordinate Relative to the Dungeon Room and room's rotation", "X: 0 Y: 3 Z: 5 Facing: Z+" , "advanced.coords");
         this.setEnabled(false);
-        registerDefaultStyle("coord", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
+        registerDefaultStyle("coord", DefaultingDelegatingTextStyle.derive("Feature Default - Coord", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))
                 .setTextShader(new AColor(Color.yellow.getRGB(),true)));
     }
 

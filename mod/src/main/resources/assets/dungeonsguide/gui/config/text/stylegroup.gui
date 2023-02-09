@@ -1,0 +1,43 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<col crossAlign="START">
+    <padding top="3" bottom="3">
+        <bgcolor backgroundColor="#FF000000">
+            <padding left="5">
+                <SelectiveContainer bind:visible="inherit">
+                    <row slot="show">
+                        <Text text="Inherited From " color="#FFAAAAAA"/>
+                        <RoundRect backgroundColor="#FFCCCCCC" radius="3">
+                            <padding left="3" right="3" top="1" bottom="1">
+                                <Text bind:text="name" color="#FF111111"/>
+                            </padding>
+                        </RoundRect>
+                    </row>
+                    <Text bind:text="name" color="#FFFFFFFF" slot="hide"/>
+                </SelectiveContainer>
+            </padding>
+        </bgcolor>
+    </padding>
+    <bgcolor backgroundColor="#FF222222">
+        <padding left="5" right="5" top="2" bottom="2">
+            <col bind:_="styles">
+            </col>
+        </padding>
+    </bgcolor>
+</col>

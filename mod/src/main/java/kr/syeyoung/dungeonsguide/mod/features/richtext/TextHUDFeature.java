@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.text;
+package kr.syeyoung.dungeonsguide.mod.features.richtext;
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.MarkerProvider;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.config.WidgetTextStyleConfig;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
@@ -47,7 +48,8 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
         super(category, name, description, key);
 
         addParameter("alignment", new FeatureParameter<>("alignment", "Alignment", "Alignment", RichText.TextAlign.LEFT, new TCEnum<>(RichText.TextAlign.values()), richText::setAlign));
-        addParameter("newstyle", new FeatureParameter<>("newstyle", "TextStyle", "", styleMap, new TCRTextStyleMap(), this::updateStyle));
+        addParameter("newstyle", new FeatureParameter<>("newstyle", "TextStyle", "", styleMap, new TCRTextStyleMap(), this::updateStyle)
+                .setWidgetGenerator((param) -> new WidgetTextStyleConfig(getDummyText(), styleMap)));
     }
 
     @Override
@@ -153,11 +155,12 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
         for (Map.Entry<String, DefaultingDelegatingTextStyle> stringDefaultingDelegatingTextStyleEntry : map.entrySet()) {
             if (!defaultStyleMap.containsKey(stringDefaultingDelegatingTextStyleEntry.getKey())) continue;
             DefaultingDelegatingTextStyle newStyle = stringDefaultingDelegatingTextStyleEntry.getValue();
+            newStyle.setName("User Setting of "+defaultStyleMap.get(stringDefaultingDelegatingTextStyleEntry.getKey()).name);
             newStyle.setParent(() -> defaultStyleMap.get(stringDefaultingDelegatingTextStyleEntry.getKey()));
             styleMap.put(stringDefaultingDelegatingTextStyleEntry.getKey(), newStyle);
         }
         for (String s : needsToBeIn) {
-            styleMap.put(s, new DefaultingDelegatingTextStyle().setParent(() -> defaultStyleMap.get(s)));
+            styleMap.put(s, DefaultingDelegatingTextStyle.derive("User Setting of "+defaultStyleMap.get(s).name, () -> defaultStyleMap.get(s)));
             map.put(s, styleMap.get(s));
         }
     }

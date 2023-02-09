@@ -29,14 +29,9 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
-import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.OnlyChildrenRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.overlay.GUIRectPositioner;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
-import kr.syeyoung.dungeonsguide.mod.overlay.Positioner;
 import lombok.Getter;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.*;
@@ -103,7 +98,7 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
         widgets.add(new EventListenerWidget());
         for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
             if (!(abstractFeature instanceof AbstractHUDFeature)) continue;
-            if (!abstractFeature.isEnabled() && abstractFeature.isDisyllable()) continue;
+            if (!abstractFeature.isEnabled() && abstractFeature.isDisableable()) continue;
             HUDWidgetWrapper widgetWrapper = new HUDWidgetWrapper((AbstractHUDFeature) abstractFeature, this,
                     filter == null || abstractFeature == filter);
             widgets.add(widgetWrapper);

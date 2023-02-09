@@ -33,7 +33,7 @@ public class FeaturePathfindStrategy extends SimpleFeature {
     }
 
     @Override
-    public boolean isDisyllable() {
+    public boolean isDisableable() {
         return false;
     }
 

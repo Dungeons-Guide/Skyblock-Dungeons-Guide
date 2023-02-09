@@ -1,0 +1,51 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" top="5">
+    <col>
+        <line color="#FFFFFFFF"/>
+        <size width="0" height="5"/>
+        <size height="200">
+            <row crossAlign="STRETCH">
+                <flexible>
+                    <ScrollablePanel>
+                        <slot bind:child="text"/>
+                    </ScrollablePanel>
+                </flexible>
+                <flexible flex="2">
+                    <SelectiveContainer bind:visible="visibility">
+                        <align vAlign="START" slot="group">
+                            <padding left="5" top="5" right="5" bottom="5">
+                                <col>
+                                    <Text text="Select group to edit" color="#FFFFFF00"/>
+                                    <size height="5"/>
+                                    <WrapGrid minimumWidth="70" gap="5" bind:_="groups"/>
+                                    <size height="5"/>
+                                    <Text text="Try hovering over buttons" color="#FFAAAA00"/>
+                                </col>
+                            </padding>
+                        </align>
+                        <ScrollablePanel direction="VERTICAL" slot="style">
+                            <slot bind:child="styleEdit"/>
+                        </ScrollablePanel>
+                    </SelectiveContainer>
+                </flexible>
+            </row>
+        </size>
+    </col>
+</padding>

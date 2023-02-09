@@ -19,12 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.text.DefaultTextHUDFeatureStyleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
-import kr.syeyoung.dungeonsguide.mod.features.text.NullTextStyle;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextHUDFeature;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
@@ -32,10 +31,10 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 public class FeaturePartyList extends TextHUDFeature {
     public FeaturePartyList() {
         super("Party","Party List", "Party List as GUI", "party.list");
-        registerDefaultStyle("name", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
-        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
-        registerDefaultStyle("player", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
-        registerDefaultStyle("allinvite", DefaultingDelegatingTextStyle.derive(() -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
+        registerDefaultStyle("name", DefaultingDelegatingTextStyle.derive("Feature Default - Name", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
+        registerDefaultStyle("player", DefaultingDelegatingTextStyle.derive("Feature Default - Player", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
+        registerDefaultStyle("allinvite", DefaultingDelegatingTextStyle.derive("Feature Default - Allinvite", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
         setEnabled(false);
     }
 

@@ -18,11 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.types;
 
-import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 
 
 public class TCRTextStyle implements FeatureTypeHandler<DefaultingDelegatingTextStyle> {
@@ -43,10 +41,10 @@ public class TCRTextStyle implements FeatureTypeHandler<DefaultingDelegatingText
         textStyle.setShadow(object.has("shadow") && !object.get("shadow").isJsonNull()? object.get("shadow").getAsBoolean() : null);
         textStyle.setBackgroundShader(object.has("backgroundColor") && !object.get("backgroundColor").isJsonNull()? TCAColor.INSTANCE.deserialize(object.get("backgroundColor")) : null);
         textStyle.setTextShader(object.has("textColor") && !object.get("textColor").isJsonNull()? TCAColor.INSTANCE.deserialize(object.get("textColor")) : null);
-        textStyle.setStrikeThroughShader(object.has("strikethroughColor") && !object.get("strikethroughColor").isJsonNull()? TCAColor.INSTANCE.deserialize(object.get("strikethroughColor")) : null);
-        textStyle.setUnderlineShader(object.has("underlineColor") && !object.get("underlineColor").isJsonNull()? TCAColor.INSTANCE.deserialize(object.get("underlineColor")) : null);
-        textStyle.setOutlineShader(object.has("outlineColor") && !object.get("outlineColor").isJsonNull()? TCAColor.INSTANCE.deserialize(object.get("outlineColor")) : null);
-        textStyle.setShadowShader(object.has("shadowColor") && !object.get("shadowColor").isJsonNull()? TCAColor.INSTANCE.deserialize(object.get("shadowColor")) : null);
+        textStyle.setStrikeThroughShader(object.has("strikethroughColor") && !object.get("strikethroughColor").isJsonNull()? TCOptAColor.INSTANCE.deserialize(object.get("strikethroughColor")) : null);
+        textStyle.setUnderlineShader(object.has("underlineColor") && !object.get("underlineColor").isJsonNull()? TCOptAColor.INSTANCE.deserialize(object.get("underlineColor")) : null);
+        textStyle.setOutlineShader(object.has("outlineColor") && !object.get("outlineColor").isJsonNull()? TCOptAColor.INSTANCE.deserialize(object.get("outlineColor")) : null);
+        textStyle.setShadowShader(object.has("shadowColor") && !object.get("shadowColor").isJsonNull()? TCOptAColor.INSTANCE.deserialize(object.get("shadowColor")) : null);
         return textStyle;
     }
 
@@ -64,10 +62,10 @@ public class TCRTextStyle implements FeatureTypeHandler<DefaultingDelegatingText
         jsonObject.addProperty("shadow", element.shadow);
         jsonObject.add("backgroundColor", element.backgroundShader == null ? null : TCAColor.INSTANCE.serialize(element.backgroundShader));
         jsonObject.add("textColor", element.textShader == null ? null : TCAColor.INSTANCE.serialize(element.textShader));
-        jsonObject.add("strikethroughColor", element.strikeThroughShader == null ? null : TCAColor.INSTANCE.serialize(element.strikeThroughShader));
-        jsonObject.add("underlineColor", element.underlineShader == null ? null : TCAColor.INSTANCE.serialize(element.underlineShader));
-        jsonObject.add("outlineColor", element.outlineShader == null ? null : TCAColor.INSTANCE.serialize(element.outlineShader));
-        jsonObject.add("shadowColor", element.shadowShader == null ? null : TCAColor.INSTANCE.serialize(element.shadowShader));
+        jsonObject.add("strikethroughColor", element.strikeThroughShader == null ? null : TCOptAColor.INSTANCE.serialize(element.strikeThroughShader));
+        jsonObject.add("underlineColor", element.underlineShader == null ? null : TCOptAColor.INSTANCE.serialize(element.underlineShader));
+        jsonObject.add("outlineColor", element.outlineShader == null ? null : TCOptAColor.INSTANCE.serialize(element.outlineShader));
+        jsonObject.add("shadowColor", element.shadowShader == null ? null : TCOptAColor.INSTANCE.serialize(element.shadowShader));
         return jsonObject;
     }
 }

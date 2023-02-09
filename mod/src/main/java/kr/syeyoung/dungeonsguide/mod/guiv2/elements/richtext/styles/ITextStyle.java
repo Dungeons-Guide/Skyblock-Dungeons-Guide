@@ -35,6 +35,7 @@ public interface ITextStyle {
     Boolean isOutline();
 
     Boolean isShadow();
+    Boolean hasBackground();
 
     kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader getBackgroundShader();
 

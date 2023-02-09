@@ -58,7 +58,6 @@ public class ColorEditPopup extends AnnotatedImportOnlyWidget {
 
         color.addOnUpdate((old, neu) -> {
             try {
-                System.out.println(neu);
                 AColor color1 = new AColor(Integer.parseUnsignedInt(neu.substring(1),16), true);
                 color1.setChromaSpeed(aColorBindableAttribute.getValue().getChromaSpeed());
                 color1.setChroma(aColorBindableAttribute.getValue().isChroma());

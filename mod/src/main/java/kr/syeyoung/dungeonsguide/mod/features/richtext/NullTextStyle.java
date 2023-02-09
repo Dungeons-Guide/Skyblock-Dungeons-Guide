@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.text;
+package kr.syeyoung.dungeonsguide.mod.features.richtext;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.FontRenderer;
@@ -31,6 +31,11 @@ public class NullTextStyle implements ITextStyle, Cloneable {
     @Override
     public Double getSize() {
         return 0.0;
+    }
+
+    @Override
+    public Boolean hasBackground() {
+        return false;
     }
 
     @Override
@@ -85,22 +90,22 @@ public class NullTextStyle implements ITextStyle, Cloneable {
 
     @Override
     public Shader getStrikeThroughShader() {
-        return null;
+        return new SingleColorShader(0);
     }
 
     @Override
     public Shader getUnderlineShader() {
-        return null;
+        return new SingleColorShader(0);
     }
 
     @Override
     public Shader getOutlineShader() {
-        return null;
+        return new SingleColorShader(0);
     }
 
     @Override
     public Shader getShadowShader() {
-        return null;
+        return new SingleColorShader(0);
     }
 
     @Override

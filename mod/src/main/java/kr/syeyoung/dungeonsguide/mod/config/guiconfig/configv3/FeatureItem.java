@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -32,8 +31,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
-
-import java.util.function.Supplier;
 
 public class FeatureItem extends AnnotatedImportOnlyWidget {
 
@@ -69,7 +66,7 @@ public class FeatureItem extends AnnotatedImportOnlyWidget {
 
         guiRelocateShow.setValue(feature instanceof AbstractHUDFeature ? "show" : "hide");
         configureShow.setValue(feature.getConfigureWidget() != null ? "show" : "hide");
-        enableShow.setValue(feature.isDisyllable() ? "show" : "hide");
+        enableShow.setValue(feature.isDisableable() ? "show" : "hide");
         enabled.setValue(feature.isEnabled());
 
         enabled.addOnUpdate((old, neu) -> {

@@ -40,7 +40,7 @@ public class FeatureNicknameColor extends SimpleFeature {
     }
 
     @Override
-    public boolean isDisyllable() {
+    public boolean isDisableable() {
         return false;
     }
 }

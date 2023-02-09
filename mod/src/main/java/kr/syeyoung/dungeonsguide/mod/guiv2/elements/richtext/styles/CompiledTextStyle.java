@@ -32,6 +32,7 @@ public class CompiledTextStyle implements ITextStyle {
     public boolean underline;
     public boolean outline;
     public boolean shadow;
+    public boolean background;
 
     public Shader backgroundShader;
     public Shader textShader;
@@ -54,6 +55,7 @@ public class CompiledTextStyle implements ITextStyle {
         this.underline = from.isUnderline();
         this.outline = from.isOutline();
         this.shadow = from.isShadow();
+        this.background = from.hasBackground();
 
         this.backgroundShader = from.getBackgroundShader();
         this.textShader = from.getTextShader();
@@ -62,6 +64,12 @@ public class CompiledTextStyle implements ITextStyle {
         this.outlineShader = from.getOutlineShader();
         this.shadowShader = from.getShadowShader();
         this.fontRenderer = from.getFontRenderer();
+    }
+
+
+    @Override
+    public Boolean hasBackground() {
+        return background;
     }
 
     @Override

@@ -50,7 +50,7 @@ public class PartyInviteViewer extends AbstractGuiFeature {
     }
 
     @Override
-    public boolean isDisyllable() {
+    public boolean isDisableable() {
         return false;
     }
 

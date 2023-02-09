@@ -33,7 +33,7 @@ public class ParentDelegatingTextStyle implements ITextStyle {
     public Double bottomAscent;
 
 
-
+    public Boolean background;
     public Boolean bold;
     public Boolean italics;
     public Boolean strikeThrough;
@@ -64,8 +64,9 @@ public class ParentDelegatingTextStyle implements ITextStyle {
         parentDelegatingTextStyle.underline = false;
         parentDelegatingTextStyle.shadow = false;
         parentDelegatingTextStyle.outline = false;
+        parentDelegatingTextStyle.background = false;
 
-        parentDelegatingTextStyle.backgroundShader = new SingleColorShader(0x00000000);
+        parentDelegatingTextStyle.backgroundShader = new SingleColorShader(0xFFFFFF00);
         parentDelegatingTextStyle.textShader = new SingleColorShader(0xFFFFFFFF);
         parentDelegatingTextStyle.strikeThroughShader = new SingleColorShader(0xFF000000);
         parentDelegatingTextStyle.underlineShader = new SingleColorShader(0xFF000000);
@@ -89,6 +90,11 @@ public class ParentDelegatingTextStyle implements ITextStyle {
     @Override
     public Double getBottomAscent() {
         return parent != null && bottomAscent == null ? parent.getBottomAscent() : bottomAscent;
+    }
+
+    @Override
+    public Boolean hasBackground() {
+        return parent != null && background == null ? parent.hasBackground() : background;
     }
 
     @Override
@@ -155,4 +161,6 @@ public class ParentDelegatingTextStyle implements ITextStyle {
     public Shader getUnderlineShader() {
         return parent != null && underlineShader == null ? parent.getUnderlineShader() : underlineShader;
     }
+
+
 }

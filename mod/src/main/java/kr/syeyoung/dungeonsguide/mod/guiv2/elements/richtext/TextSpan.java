@@ -21,14 +21,18 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.CompiledTextStyle;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ITextStyle;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
+import lombok.Getter;
+import lombok.Setter;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.function.Consumer;
 
 public class TextSpan {
+    @Getter @Setter
     private ITextStyle textStyle;
     private String text;
+    @Getter
     private List<TextSpan> children = new ArrayList<>();
     public TextSpan(ITextStyle textStyle, String text) {
         this.textStyle = textStyle;

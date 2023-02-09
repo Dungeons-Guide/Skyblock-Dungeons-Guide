@@ -160,7 +160,12 @@ public class DefaultFontRenderer implements FontRenderer {
         GlStateManager.enableTexture2D();
         worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION_TEX);
         for (char c : lineElement.value) {
-            x += renderChar(worldRenderer, x, y+1, c, lineElement.textStyle);
+            double offset = renderChar(worldRenderer, x, y+1, c, lineElement.textStyle);
+            if (lineElement.textStyle.isBold()) {
+                renderChar(worldRenderer, x+1, y+1, c, lineElement.textStyle);
+                offset += 1;
+            }
+            x+= offset;
         }
         draw(worldRenderer);
         if (!isShadow) lineElement.textStyle.getTextShader().freeShader();
@@ -171,9 +176,9 @@ public class DefaultFontRenderer implements FontRenderer {
             if (!isShadow) lineElement.textStyle.getStrikeThroughShader().useShader();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
             worldRenderer.pos(startX, y + baseline/2, 0).endVertex();
-            worldRenderer.pos(x, y + baseline/2, 0).endVertex();
-            worldRenderer.pos(x, y +baseline/2+1, 0).endVertex();
             worldRenderer.pos(startX, y + baseline/2+1, 0).endVertex();
+            worldRenderer.pos(x, y +baseline/2+1, 0).endVertex();
+            worldRenderer.pos(x, y + baseline/2, 0).endVertex();
             draw(worldRenderer);
             if (!isShadow) lineElement.textStyle.getStrikeThroughShader().freeShader();
         }
@@ -181,9 +186,9 @@ public class DefaultFontRenderer implements FontRenderer {
             if (!isShadow) lineElement.textStyle.getUnderlineShader().useShader();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
             worldRenderer.pos(startX, y + baseline, 0).endVertex();
-            worldRenderer.pos(x, y + baseline, 0).endVertex();
-            worldRenderer.pos(x, y + baseline+1, 0).endVertex();
             worldRenderer.pos(startX, y + baseline+1, 0).endVertex();
+            worldRenderer.pos(x, y + baseline+1, 0).endVertex();
+            worldRenderer.pos(x, y + baseline, 0).endVertex();
             draw(worldRenderer);
             if (!isShadow) lineElement.textStyle.getUnderlineShader().freeShader();
         }
@@ -198,13 +203,13 @@ public class DefaultFontRenderer implements FontRenderer {
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
         GlStateManager.disableTexture2D();
         GlStateManager.enableAlpha();
-        if (lineElement.textStyle.getBackgroundShader() != null) {
+        if (lineElement.textStyle.hasBackground()) {
             lineElement.textStyle.getBackgroundShader().useShader();
             worldRenderer.begin(GL11.GL_QUADS, DefaultVertexFormats.POSITION);
             worldRenderer.pos(x, y, 0).endVertex();
-            worldRenderer.pos(x + lineElement.getWidth(), y, 0).endVertex();
-            worldRenderer.pos(x + lineElement.getWidth(), y + lineElement.textStyle.getSize(), 0).endVertex();
             worldRenderer.pos(x, y + lineElement.textStyle.getSize(), 0).endVertex();
+            worldRenderer.pos(x + lineElement.getWidth(), y + lineElement.textStyle.getSize(), 0).endVertex();
+            worldRenderer.pos(x + lineElement.getWidth(), y, 0).endVertex();
             draw(worldRenderer);
             lineElement.textStyle.getBackgroundShader().freeShader();
         }
@@ -276,8 +281,8 @@ public class DefaultFontRenderer implements FontRenderer {
 
         worldRenderer.pos(posX + (float)italicsAddition, posY, 0.0F).tex((float)texX / 128.0F, (float)texY / 128.0F).endVertex();
         worldRenderer.pos(posX - (float)italicsAddition, posY + charHeight - 0.01F, 0.0F).tex((float)texX / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
-        worldRenderer.pos(posX + charWidth+ (float)italicsAddition - 0.01F , posY+ charHeight - 0.01F, 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
-        worldRenderer.pos(posX  + charWidth - (float)italicsAddition - 0.01F, posY , 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, (float)texY / 128.0F).endVertex();
+        worldRenderer.pos(posX + charWidth - (float)italicsAddition - 0.01F , posY+ charHeight - 0.01F, 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, ((float)texY + 7.99F) / 128.0F).endVertex();
+        worldRenderer.pos(posX  + charWidth + (float)italicsAddition - 0.01F, posY , 0.0F).tex(((float)texX + texWidth - 1.01F) / 128.0F, (float)texY / 128.0F).endVertex();
 
         return texWidth * textStyle.getSize() / 8.0;
     }
@@ -302,9 +307,9 @@ public class DefaultFontRenderer implements FontRenderer {
                     .tex(texX / 256.0F, texY / 256.0F).endVertex();
             worldRenderer.pos(posX - italicSlope, posY + charHeight - 0.01F, 0.0F)
                     .tex(texX / 256.0F, (texY + 15.98F) / 256.0F).endVertex();
-            worldRenderer.pos(posX + charWidth + italicSlope, posY + charHeight - 0.01F, 0.0F)
+            worldRenderer.pos(posX + charWidth - italicSlope, posY + charHeight - 0.01F, 0.0F)
                     .tex((texX + texWidth) / 256.0F, (texY+15.98F) / 256.0F).endVertex();
-            worldRenderer.pos(posX + charWidth - italicSlope, posY, 0.0F)
+            worldRenderer.pos(posX + charWidth + italicSlope, posY, 0.0F)
                     .tex((texX + texWidth) / 256.0F, (texY) / 256.0F).endVertex();
             return charWidth + textStyle.getSize() / 8.0;
         }

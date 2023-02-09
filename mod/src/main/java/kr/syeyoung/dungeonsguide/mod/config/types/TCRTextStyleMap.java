@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.config.types;
 
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import kr.syeyoung.dungeonsguide.mod.features.text.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
 
 import java.util.HashMap;
 import java.util.Map;

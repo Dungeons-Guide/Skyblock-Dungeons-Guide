@@ -1,0 +1,15 @@
+<size width="10" height="10">
+    <RoundRect backgroundColor="#FFAAAAAA" radius="3">
+        <padding left="1" top="1" right="1" bottom="1">
+            <SelectiveContainer bind:visible="enabled">
+                <RoundRect slot="show" backgroundColor="#FF000000" radius="3">
+                    <align>
+                        <Text text="v" color="#FFAAAAAA"/>
+                    </align>
+                </RoundRect>
+                <RoundRect slot="hide" backgroundColor="#FF000000" radius="3">
+                </RoundRect>
+            </SelectiveContainer>
+        </padding>
+    </RoundRect>
+</size>

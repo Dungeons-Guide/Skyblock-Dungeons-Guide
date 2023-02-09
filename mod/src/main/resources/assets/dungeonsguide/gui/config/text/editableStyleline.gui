@@ -1,0 +1,68 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding top="3" bottom="3">
+    <row>
+        <SelectiveContainer bind:visible="disableable">
+            <size width="10" height="10" slot="show">
+                <SimpleCheckBox bind:enabled="enabled"/>
+            </size>
+            <size width="10" height="10" slot="hide">
+                    <RoundRect backgroundColor="#FFAAAAAA" radius="3">
+                        <padding left="1" top="1" right="1" bottom="1">
+                            <RoundRect slot="show" backgroundColor="#FF000000" radius="3">
+                                <align>
+                                    <Text text="v" color="#FFAAAAAA"/>
+                                </align>
+                            </RoundRect>
+                        </padding>
+                    </RoundRect>
+            </size>
+        </SelectiveContainer>
+        <size width="5" height="0"/>
+        <flexible>
+            <size height="13">
+                <SelectiveContainer bind:visible="enabled2">
+                        <stack slot="disable">
+                            <align vAlign="CENTER">
+                                <line thickness="1.5" color="#FF111111"/>
+                            </align>
+                            <row>
+                                <size width="100" height="9">
+                                    <Text bind:text="name" color="#FFAAAAAA"/>
+                                </size>
+                                <flexible fit="LOOSE">
+                                    <slot bind:child="value"/>
+                                </flexible>
+                            </row>
+                        </stack>
+                    <row slot="enable">
+                        <size width="100">
+                            <align vAlign="CENTER" hAlign="START">
+                                <Text bind:text="name" color="#FFFFFFFF"/>
+                            </align>
+                        </size>
+                        <flexible fit="LOOSE">
+                            <slot bind:child="actualEdit"/>
+                        </flexible>
+                    </row>
+                </SelectiveContainer>
+            </size>
+        </flexible>
+    </row>
+</padding>

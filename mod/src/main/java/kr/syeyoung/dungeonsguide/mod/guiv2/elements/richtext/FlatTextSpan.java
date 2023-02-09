@@ -41,7 +41,7 @@ public class FlatTextSpan {
         return (1 + textStyle.getTopAscent() + textStyle.getBottomAscent()) * textStyle.getSize();
     }
     public double getBaseline() {
-        return textStyle.getSize() * (textStyle.getFontRenderer().getBaselineHeight(textStyle) + textStyle.getTopAscent());
+        return textStyle.getFontRenderer().getBaselineHeight(textStyle) + textStyle.getSize() * textStyle.getTopAscent();
     }
 
     public BrokenWordData breakWord(double remainingWidth, double nextLineWidth, BreakWord breakWord) {

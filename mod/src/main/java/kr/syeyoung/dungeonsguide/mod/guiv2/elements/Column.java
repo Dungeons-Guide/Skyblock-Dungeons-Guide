@@ -79,6 +79,12 @@ public class Column extends AnnotatedExportOnlyWidget implements Layouter {
         }
     }
 
+    public void removeAllWidget() {
+        for (DomElement child : getDomElement().getChildren()) {
+            getDomElement().removeElement(child);
+        }
+    }
+
     public void removeWidget(Widget widget) {
         getDomElement().removeElement(widget.getDomElement());
     }

@@ -109,7 +109,7 @@ public abstract class AbstractFeature implements IFeature {
 
     public void onParameterReset() {}
 
-    public boolean isDisyllable() {
+    public boolean isDisableable() {
         return true;
     }
 }

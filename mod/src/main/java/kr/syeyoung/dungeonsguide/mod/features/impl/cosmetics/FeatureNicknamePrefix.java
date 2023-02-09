@@ -43,7 +43,7 @@ public class FeatureNicknamePrefix extends SimpleFeature {
     }
 
     @Override
-    public boolean isDisyllable() {
+    public boolean isDisableable() {
         return false;
     }
 }
