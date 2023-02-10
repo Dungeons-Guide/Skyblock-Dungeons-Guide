@@ -85,7 +85,9 @@ public class PacketListener {
             MinecraftForge.EVENT_BUS.post(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
         }else if (packet instanceof S34PacketMaps) {
             MapData mapData = MapDataManager.INSTANCE.createMapData(((S34PacketMaps) packet).getMapId());
-            ((S34PacketMaps) packet).setMapdataTo(mapData);
+            try {
+                ((S34PacketMaps) packet).setMapdataTo(mapData);
+            } catch (Exception ignored) {} // hypixel seem to be sending bad map datas.
             MinecraftForge.EVENT_BUS.post(new MapUpdateEvent(((S34PacketMaps) packet).getMapId(), mapData));
         }
     }
