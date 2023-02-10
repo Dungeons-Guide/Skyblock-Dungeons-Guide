@@ -25,7 +25,7 @@ public class StyledText {
     private String text;
     private String group;
 
-    public StyledText(String group, String text) {
+    public StyledText(String text, String group) {
         this.text = text;
         this.group = group;
     }
