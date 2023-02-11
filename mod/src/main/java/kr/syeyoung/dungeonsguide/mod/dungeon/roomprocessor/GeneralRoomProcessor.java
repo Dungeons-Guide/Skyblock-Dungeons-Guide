@@ -81,7 +81,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void tick() {
         if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
             searchForNextTarget();
-        }else if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
+        }
+        if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
                     DungeonSecret dungeonSecret = (DungeonSecret) value.getValue();
@@ -95,7 +96,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
                         pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
                 }
             }
-        } else if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
+        }
+        if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonRoomDoor) {
                     DungeonRoomDoor dungeonDoor = (DungeonRoomDoor) value.getValue();
