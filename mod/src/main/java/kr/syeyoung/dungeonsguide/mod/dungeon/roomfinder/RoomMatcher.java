@@ -26,6 +26,8 @@ import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChatComponentText;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import java.util.List;
 
@@ -44,17 +46,6 @@ public class RoomMatcher {
 
     public DungeonRoomInfo match() {
         if (triedMatch) return match;
-
-        int zz = dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1;
-        int xx = dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1;
-        for (int z = 0; z < zz; z ++) {
-            for (int x = 0; x < xx; x++) {
-                if (x % 8 == 0 && z % 8 == 0 && dungeonRoom.getContext().getWorld().getChunkFromBlockCoords(dungeonRoom.getRelativeBlockPosAt(x, 0, z)).isEmpty()) {
-                    ChatTransmitter.sendDebugChat(new ChatComponentText("Chunk Not loaded in Room Matcher"));
-                    throw new IllegalStateException("Chunk not loaded");
-                }
-            }
-        }
 
         triedMatch = true;
         int lowestCost = 10;

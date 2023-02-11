@@ -52,6 +52,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -84,8 +86,39 @@ public class DungeonRoom {
 
     private Map<String, DungeonMechanic> cached = null;
 
-    @Getter
-    private final World cachedWorld;
+    private World cachedWorld;
+
+    public World getCachedWorld() {
+        if (this.cachedWorld != null) return cachedWorld;
+
+
+        int minZChunk = getMin().getZ() >> 4;
+        int minXChunk = getMin().getX() >> 4;
+        int maxZChunk = getMax().getZ() >> 4;
+        int maxXChunk = getMax().getX() >> 4;
+
+        for (int z = minZChunk; z <= maxZChunk; z++) {
+            for (int x = minXChunk; x <= maxXChunk; x++) {
+                Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
+                if (c.isEmpty()) {
+                    ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
+                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                }
+                for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
+                    if (extendedBlockStorage == null) {
+                        ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
+                        throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                    }
+                }
+            }
+        }
+
+        ChunkCache chunkCache = new ChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
+        CachedWorld cachedWorld =  new CachedWorld(chunkCache);
+
+
+        return this.cachedWorld = cachedWorld;
+    }
     public Map<String, DungeonMechanic> getMechanics() {
         if (cached == null || EditingContext.getEditingContext() != null) {
             cached = new HashMap<>(dungeonRoomInfo.getMechanics());
@@ -139,6 +172,7 @@ public class DungeonRoom {
 
     private RoomProcessor roomProcessor;
 
+    private Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates;
     public DungeonRoom(Set<Point> points, short shape, byte color, BlockPos min, BlockPos max, DungeonContext context, Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
         this.unitPoints = points;
         this.shape = shape;
@@ -156,9 +190,6 @@ public class DungeonRoom {
         unitHeight = (int) Math.ceil(max.getZ() - min.getZ() / 32.0);
 
 
-        ChunkCache chunkCache = new ChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
-        this.cachedWorld =  new CachedWorld(chunkCache);
-
 
 
         minx = min.getX() * 2; miny = 0; minz = min.getZ() * 2;
@@ -169,8 +200,7 @@ public class DungeonRoom {
         lenz = maxz - minz;
         arr = new long[lenx *leny * lenz * 2 / 8];;
 
-        buildDoors(doorsAndStates);
-
+        this.doorsAndStates = doorsAndStates;
         roomMatcherThread.submit(() -> {
             try {
                 matchRoomAndSetupRoomProcessor();
@@ -192,7 +222,7 @@ public class DungeonRoom {
                 matchRoomAndSetupRoomProcessor();
                 matched = true;
             } catch (Exception e) {
-                if (!e.getMessage().contains("Chunk not loaded"))
+                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded"))
                     e.printStackTrace();
             } finally {
                 matching = false;
@@ -200,7 +230,9 @@ public class DungeonRoom {
         });
     }
     private void matchRoomAndSetupRoomProcessor() {
+        getCachedWorld();
         buildRoom();
+        buildDoors(doorsAndStates);
         updateRoomProcessor();
     }
 
@@ -255,7 +287,7 @@ public class DungeonRoom {
         // validate x y z's
         BlockPos pos = new BlockPos(x,y,z);
         if (canAccessAbsolute(pos)) {
-            return cachedWorld.getBlockState(pos).getBlock();
+            return getCachedWorld().getBlockState(pos).getBlock();
         }
         return null;
     }
@@ -264,7 +296,7 @@ public class DungeonRoom {
         // validate x y z's
         if (canAccessRelative(x,z)) {
             BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
-            return cachedWorld.getBlockState(pos).getBlock();
+            return getCachedWorld().getBlockState(pos).getBlock();
         }
         return null;
     }
@@ -278,7 +310,7 @@ public class DungeonRoom {
         // validate x y z's
         if (canAccessRelative(x,z)) {
             BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
-            IBlockState iBlockState = cachedWorld.getBlockState(pos);
+            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
             return iBlockState.getBlock().getMetaFromState(iBlockState);
         }
         return -1;
@@ -288,7 +320,7 @@ public class DungeonRoom {
         // validate x y z's
         BlockPos pos = new BlockPos(x,y,z);
         if (canAccessAbsolute(pos)) {
-            IBlockState iBlockState = cachedWorld.getBlockState(pos);
+            IBlockState iBlockState = getCachedWorld().getBlockState(pos);
             return iBlockState.getBlock().getMetaFromState(iBlockState);
         }
         return -1;
@@ -343,7 +375,7 @@ public class DungeonRoom {
             for (int l1 = i1; l1 < j1; ++l1) {
                 for (int i2 = k - 1; i2 < l; ++i2) {
                     blockPos.set(k1, i2, l1);
-                    IBlockState iBlockState1 = cachedWorld.getBlockState(blockPos);
+                    IBlockState iBlockState1 = getCachedWorld().getBlockState(blockPos);
                     Block b = iBlockState1.getBlock();
                     if (!b.getMaterial().blocksMovement())continue;
                     if (b.isFullCube() && i2 == k-1) continue;
@@ -354,7 +386,7 @@ public class DungeonRoom {
                         return true;
                     }
                     try {
-                        b.addCollisionBoxesToList(cachedWorld, blockPos, iBlockState1, bb, list, null);
+                        b.addCollisionBoxesToList(getCachedWorld(), blockPos, iBlockState1, bb, list, null);
                     } catch (Exception e) {
                         return true;
                     }
