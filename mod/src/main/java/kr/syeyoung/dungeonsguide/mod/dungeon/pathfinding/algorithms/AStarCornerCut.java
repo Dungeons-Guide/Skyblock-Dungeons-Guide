@@ -114,16 +114,21 @@ public class AStarCornerCut  implements IPathfinder {
 
     @Override
     public void setTarget(Vec3 from) {
-        if (lastSx != (int)Math.round(from.xCoord * 2) || lastSy != (int)Math.round(from.yCoord*2) || lastSz != (int)Math.round(from.zCoord * 2)) {
+        int tobeX = (int) Math.round(from.xCoord * 2);
+        int tobeY = (int) Math.round(from.zCoord * 2);
+        int tobeZ = (int) Math.round(from.yCoord * 2);
+        if (lastSx != tobeX || lastSy != tobeY || lastSz != tobeZ) {
         } else {
             return;
         }
+        if (dungeonRoom.isBlocked(tobeX, tobeY, tobeZ)) return;
+
+        this.lastSx = tobeX;
+        this.lastSz = tobeY;
+        this.lastSy = tobeZ;
         open.clear();
         pfindIdx++;
         found = false;
-        this.lastSx = (int) Math.round(from.xCoord * 2);
-        this.lastSy = (int) Math.round(from.yCoord * 2);
-        this.lastSz = (int) Math.round(from.zCoord * 2);
 
         goalNode = openNode(lastSx, lastSy, lastSz);
 
