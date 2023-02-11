@@ -54,6 +54,15 @@ public class WidgetSecret extends AnnotatedWidget {
         this.onSelect = selectedId;
     }
 
+    @Override
+    public void onMount() {
+        super.onMount();
+        secretName.setValue(id+" §7("+ mechanic.getCurrentState(room) +", "+
+                (mechanic.getRepresentingPoint(room) != null ?
+                        String.format("%.1f", MathHelper.sqrt_double(mechanic.getRepresentingPoint(room).getBlockPos(room).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()))) : "")
+                +"m)");
+    }
+
     private AbsLocationPopup popup;
     @On(functionName = "toggleStates")
     public void openStates() {
