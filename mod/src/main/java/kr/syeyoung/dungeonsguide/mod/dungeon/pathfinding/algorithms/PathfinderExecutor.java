@@ -42,6 +42,7 @@ public class PathfinderExecutor {
         this.pathfinder = pathfinder;
         this.target = target;
         this.dungeonRoom = dungeonRoom;
+
         pathfinder.init(dungeonRoom, target);
     }
 

@@ -63,7 +63,7 @@ public class ActionMoveNearestAir extends AbstractAction {
     @Override
     public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
         tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
-        if (executor == null) {
+        if (executor == null && actionRouteProperties.isPathfind()) {
             executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
             executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
         }
