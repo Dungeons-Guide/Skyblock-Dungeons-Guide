@@ -28,5 +28,6 @@ public interface IPathfinder {
     boolean doOneStep();
 
     void setTarget(Vec3 from);
+    Vec3 getTarget();
     List<Vec3> getRoute(Vec3 from);
 }

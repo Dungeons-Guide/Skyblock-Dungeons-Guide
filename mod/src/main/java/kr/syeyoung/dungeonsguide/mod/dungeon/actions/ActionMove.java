@@ -107,7 +107,8 @@ public class ActionMove extends AbstractAction {
 
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
-        if (executor != null) executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+        if (executor == null) executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
+        executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
     @Override
     public String toString() {

@@ -59,7 +59,7 @@ public class PathfinderExecutor {
     public List<Vec3> getRoute(Vec3 target) {
         if (!isComplete) return lastRoute;
         List<Vec3> route = pathfinder.getRoute(target);
-        if (route == null) return lastRoute = pathfinder.getRoute(getTarget());
+        if (route == null) return lastRoute = pathfinder.getRoute(pathfinder.getTarget());
         else return lastRoute = route;
     }
 }
