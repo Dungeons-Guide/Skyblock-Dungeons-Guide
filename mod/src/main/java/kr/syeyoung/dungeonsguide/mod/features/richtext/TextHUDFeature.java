@@ -142,6 +142,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
     private Map<String, DefaultingDelegatingTextStyle> styleMap = new HashMap<>();
     public void registerDefaultStyle(String name, DefaultingDelegatingTextStyle style) {
         defaultStyleMap.put(name, style);
+        styleMap.put(name, DefaultingDelegatingTextStyle.derive("User Setting of "+name, () -> defaultStyleMap.get(name)));
     }
     public DefaultingDelegatingTextStyle getStyle(String name) {
         return styleMap.get(name);
