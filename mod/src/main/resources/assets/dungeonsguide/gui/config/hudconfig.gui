@@ -22,7 +22,7 @@
             <slot bind:child="movestuff"/>
         </PopupManager>
         <align vAlign="CENTER" hAlign="CENTER">
-            <Text text="Right Click On Elements to Open Popup Menu" color="#FFFFFFFF"/>
+            <Text text="Right Click On Elements to Open Popup Menu" color="#FFFFFF00"/>
         </align>
     </stack>
 </bgcolor>
