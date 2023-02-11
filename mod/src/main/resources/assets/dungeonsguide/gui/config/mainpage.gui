@@ -40,7 +40,7 @@
             <size height="20"/>
             <row mainAlign="CENTER">
                 <size height="32" width="32">
-                    <IconButton location="dungeonsguide:textures/dglogox128.png" width="128" height="128" on:click="store"/>
+                    <IconButton location="dungeonsguide:textures/dglogox128round.png" width="128" height="128" on:click="store"/>
                 </size>
                 <size width="10" height="0"/>
                 <size height="32" width="32">
