@@ -45,11 +45,6 @@ public class MapPlayerProcessor {
     @Getter
     private final BiMap<String, String> mapIconToPlayerMap = HashBiMap.create();
     Logger logger = LogManager.getLogger("DG-MapPlayerProcessor");
-    /**
-     * If the player on the map is closer than value this it won't save it
-     * this should be done with render-distance but whateva
-     */
-    int closenessDistance = 50;
     private int waitDelay = 0;
 
     public MapPlayerProcessor(DungeonContext context) {
@@ -67,7 +62,7 @@ public class MapPlayerProcessor {
             waitDelay++;
             return;
         }
-        ItemStack stack = Minecraft.getMinecraft().thePlayer.inventory.getStackInSlot(8);
+        ItemStack stack = mc.thePlayer.inventory.getStackInSlot(8);
 
         if (stack == null || !(stack.getItem() instanceof ItemMap)) {
             return;
@@ -128,7 +123,7 @@ public class MapPlayerProcessor {
                         int y2 = bbb.func_176113_c() / 2 + 64;
                         int dx = x2 - x;
                         int dy = y2 - y;
-                        if (dx * dx + dy * dy < closenessDistance) {
+                        if (dx * dx + dy * dy < mc.gameSettings.renderDistanceChunks * 16) {
                             shouldSave = false;
                             break;
                         }
@@ -164,13 +159,13 @@ public class MapPlayerProcessor {
     }
 
     private boolean isPlayerNear(String player, BlockPos mapPos) {
-        EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(player);
+        EntityPlayer entityPlayer = mc.theWorld.getPlayerEntityByName(player);
 
         if (entityPlayer != null && !entityPlayer.isInvisible()) {
             BlockPos pos = entityPlayer.getPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
-            return dx * dx + dz * dz < closenessDistance;
+            return dx * dx + dz * dz < mc.gameSettings.renderDistanceChunks * 16;
 
         }
 
