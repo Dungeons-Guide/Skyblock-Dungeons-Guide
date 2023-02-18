@@ -123,7 +123,7 @@ public class MapPlayerProcessor {
                         int y2 = bbb.func_176113_c() / 2 + 64;
                         int dx = x2 - x;
                         int dy = y2 - y;
-                        if (dx * dx + dy * dy < mc.gameSettings.renderDistanceChunks * 16) {
+                        if (dx * dx + dy * dy < mc.gameSettings.renderDistanceChunks * mc.gameSettings.renderDistanceChunks * 256 ) {
                             shouldSave = false;
                             break;
                         }
@@ -165,7 +165,7 @@ public class MapPlayerProcessor {
             BlockPos pos = entityPlayer.getPosition();
             int dx = mapPos.getX() - pos.getX();
             int dz = mapPos.getZ() - pos.getZ();
-            return dx * dx + dz * dz < mc.gameSettings.renderDistanceChunks * 16;
+            return dx * dx + dz * dz < mc.gameSettings.renderDistanceChunks * mc.gameSettings.renderDistanceChunks * 256;
 
         }
 
