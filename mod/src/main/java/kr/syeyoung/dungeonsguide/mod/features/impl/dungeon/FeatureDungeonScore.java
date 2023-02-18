@@ -229,7 +229,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
             roomSkillPenalty += incompletePuzzles * 10;
             if (parser.getUndiscoveredRoom() != 0)
                 roomCnt = getTotalRooms();
-            roomSkillPenalty += (roomCnt - totalCompRooms) * 4;
+            roomSkillPenalty += 80 - Math.floor(totalCompRooms * 4.0 / roomCnt);
 //            if (bossroomIncomplete) roomSkillPenalty -=1;
             if (traproomIncomplete) roomSkillPenalty -=1;
 
