@@ -107,11 +107,13 @@ public class Button extends AnnotatedWidget implements Renderer {
 
     @Override
     public void mouseReleased(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int state) {
+        boolean wasPressed = isPressed;
         isPressed = false;
 
 
+
         if (isDisabled.getValue()) return;
-        if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY)) {
+        if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && wasPressed) {
             if (onClick.getValue() != null) onClick.getValue().run();
         }
         super.mouseReleased(absMouseX, absMouseY, relMouseX, relMouseY, state);

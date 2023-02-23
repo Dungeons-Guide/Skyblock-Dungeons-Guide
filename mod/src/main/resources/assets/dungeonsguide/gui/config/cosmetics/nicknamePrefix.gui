@@ -1,0 +1,119 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+    <col crossAlign="START">
+        <padding left="10" top="10" right="10">
+            <Text text="Choose Nickname Prefix" color="#FFFFFFFF" size="12"/>
+        </padding>
+        <flexible>
+            <row>
+                <ConstrainedBox maxWidth="260">
+                    <padding top="5" left="5" bottom="5" right="5">
+                        <col>
+                            <bgcolor backgroundColor="#FF000000">
+                                <col crossAlign="CENTER">
+                                    <Text text="Preview" size="8" color="#FFFFFFFF"/>
+                                    <padding top="1" left="1" right="1" bottom="1">
+                                        <bgcolor backgroundColor="#FF222222">
+                                            <IntrinsicHeight>
+                                                <ScrollablePanel direction="HORIZONTAL">
+                                                    <padding top="5" right="5" bottom="5" left="5">
+                                                        <Text bind:text="preview" size="8" />
+                                                    </padding>
+                                                </ScrollablePanel>
+                                            </IntrinsicHeight>
+                                        </bgcolor>
+                                    </padding>
+                                </col>
+                            </bgcolor>
+                            <col mainAlign="CENTER">
+                                <size height="3"/>
+                                <row mainAlign="CENTER">
+                                    <Text text="Visit " color="#FFFFFFFF"/>
+                                    <Text text="Dungeons Guide Store" color="#FF74A0C6"/>
+                                    <Text text=" at " color="#FFFFFFFF"/>
+                                    <size height="16" width="16">
+                                        <IconButton location="dungeonsguide:textures/dglogox128round.png" width="128" height="128" on:click="shop"/>
+                                    </size>
+                                </row>
+                                <row mainAlign="CENTER">
+                                    <Text text="to purchase" color="#FFFFFFFF" align="CENTER"/>
+                                    <Text text=" cosmetics" color="#FFFFFF00" align="CENTER"/>
+                                </row>
+                                <size height="3"/>
+                                <row mainAlign="CENTER">
+                                    <Text text="and " color="#FFFFFFFF" align="CENTER"/>
+                                    <Text text="support " color="#FFFFFF00" align="CENTER"/>
+                                    <Text text="Dungeons Guide!" color="#FFFFFFFF" align="CENTER"/>
+                                </row>
+                            </col>
+                        </col>
+                    </padding>
+                </ConstrainedBox>
+                <flexible>
+                    <col>
+                        <size height="5"/>
+                        <Text text="Prefix" size="8" color="#FFFFFFFF"/>
+                        <size height="5"/>
+                        <line color="#FFFFFFFF"/>
+                        <flexible fit="LOOSE">
+                            <IntrinsicHeight>
+                                <ScrollablePanel direction="VERTICAL">
+                                    <bgcolor backgroundColor="#FF000000">
+                                        <padding top="5" left="5" bottom="5" right="5">
+                                            <col bind:_="prefixes"/>
+                                        </padding>
+                                    </bgcolor>
+                                </ScrollablePanel>
+                            </IntrinsicHeight>
+                        </flexible>
+                        <line color="#FFFFFFFF"/>
+                        <size height="5"/>
+                        <Text text="Bracket Color (some prefixes override this)" size="8" color="#FFFFFFFF"/>
+                        <size height="5"/>
+                        <line color="#FFFFFFFF"/>
+                        <flexible fit="LOOSE">
+                            <IntrinsicHeight>
+                                <ScrollablePanel direction="VERTICAL">
+                                    <bgcolor backgroundColor="#FF000000">
+                                        <padding top="5" left="5" bottom="5" right="5">
+                                            <WrapGrid minimumWidth="50" gap="5" bind:_="colors"/>
+                                        </padding>
+                                    </bgcolor>
+                                </ScrollablePanel>
+                            </IntrinsicHeight>
+                        </flexible>
+                        <line color="#FFFFFFFF"/>
+                        <padding top="5" left="5" bottom="5" right="5">
+                            <row mainAlign="END">
+                                <size width="60" height="20">
+                                    <RoundButton text="Clear" on:click="clear"/>
+                                </size>
+                                <size width="5" height="0"/>
+                                <size width="60" height="20">
+                                    <RoundButton text="Apply" on:click="apply" bind:disabled="disabled"/>
+                                </size>
+                            </row>
+                        </padding>
+                    </col>
+                </flexible>
+            </row>
+        </flexible>
+    </col>
+</bgcolor>

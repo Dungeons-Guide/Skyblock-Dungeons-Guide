@@ -93,7 +93,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
             CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData == null) continue;
-            if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
+            if (cosmeticData.getCosmeticType().equals("ncolor")) color = cosmeticData;
         }
 
         if (color != null) {

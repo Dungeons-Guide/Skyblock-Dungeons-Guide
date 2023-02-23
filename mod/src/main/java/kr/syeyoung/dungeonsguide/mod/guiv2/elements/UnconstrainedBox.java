@@ -61,11 +61,11 @@ public class UnconstrainedBox extends AnnotatedExportOnlyWidget implements Layou
 
     @Override
     public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
-        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), height);
+        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicWidth(buildContext.getChildren().get(0), direction.getValue().isVertical() ? 0 : height);
     }
 
     @Override
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
-        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), width);
+        return buildContext.getChildren().isEmpty() ? 0 : buildContext.getChildren().get(0).getLayouter().getMaxIntrinsicHeight(buildContext.getChildren().get(0), direction.getValue().isHorizontal() ? 0 : width);
     }
 }

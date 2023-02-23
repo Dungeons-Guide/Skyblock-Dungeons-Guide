@@ -101,6 +101,7 @@ public class Wrap extends AnnotatedExportOnlyWidget implements Layouter {
     public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
         List<DomElement> elements = buildContext.getChildren();
         if (elements.isEmpty()) return 0;
+        if (width == 0) width = Double.POSITIVE_INFINITY;
         int itemPerRow = (int) ((width+gap.getValue()) / (minimumWidth.getValue() + gap.getValue()));
         if (itemPerRow == 0) itemPerRow = 1;
         if (itemPerRow == Integer.MAX_VALUE) itemPerRow = elements.size();
@@ -120,7 +121,6 @@ public class Wrap extends AnnotatedExportOnlyWidget implements Layouter {
         }
         sum -= gap.getValue();
         if (sum < 0) sum = 0;
-
         return sum;
     }
 

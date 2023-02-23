@@ -274,19 +274,30 @@ public class CosmeticsManager {
                 if (replacementContext.getUsername().isEmpty()) continue;
                 List<ActiveCosmetic> activeCosmetics = getActiveCosmeticByPlayerNameLowerCase()
                         .get(replacementContext.getUsername().toLowerCase());
-                String color=null, prefix=null;
+                String color=null, rawPrefix=null, rawPrefixColor=null;
                 if (activeCosmetics != null) {
                     for (ActiveCosmetic activeCosmetic : activeCosmetics) {
                         CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-                        if (cosmeticData != null && cosmeticData.getCosmeticType().equals("color")) {
+                        if (cosmeticData != null && cosmeticData.getCosmeticType().equals("ncolor")) {
                             color = cosmeticData.getData().replace("&", "§");
-                        } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                            prefix = cosmeticData.getData().replace("&", "§");
+                        } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("nprefix")) {
+                            rawPrefix = cosmeticData.getData().replace("&", "§");
+                        } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("bracket_color")) {
+                            rawPrefixColor = cosmeticData.getData().replace("&", "§");
                         }
                     }
                 }
 
-                if (color == null && prefix == null) continue;
+                if (color == null && rawPrefix == null) continue;
+
+                String prefix = null;
+                if (rawPrefix != null) {
+                    prefix = rawPrefix.substring(1);
+                    if (!rawPrefix.startsWith("T")) {
+                        if (rawPrefixColor != null)
+                            prefix = rawPrefixColor+"["+prefix+"§r"+rawPrefixColor+"]";
+                    }
+                }
 
 
                 StringBuilder sb = new StringBuilder();

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics;
 
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.widget.WidgetNicknameColor;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
 
@@ -29,14 +30,15 @@ public class FeatureNicknameColor extends SimpleFeature {
 
     @Override
     public Widget getConfigureWidget() {
-        return new CompatLayer( new PrefixSelectorGUI("color", new String[] {
-                "§9Party §8> §r§a[RANK§6+§a] %prefix%%name%§f: TEST",
-                "§2Guild > §r§a[RANK§6+§a] %prefix%%name% §3[Vet]§f: TEST",
-                "§dTo §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
-                "§dFrom §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
-                "§r§b[RANK§c+§b] %prefix%%name%§f: TEST",
-                "§r§bCo-op > §r§a[RANK§6+§a] %prefix%%name%§f: §rTEST§r"
-        }, a -> (a.replace("&", "§")+"Color "+(a.replace("&", "§").equals("§z") ? "(Rainbow on sba)" : ""))));
+//        return new CompatLayer( new PrefixSelectorGUI("color", new String[] {
+//                "§9Party §8> §r§a[RANK§6+§a] %prefix%%name%§f: TEST",
+//                "§2Guild > §r§a[RANK§6+§a] %prefix%%name% §3[Vet]§f: TEST",
+//                "§dTo §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
+//                "§dFrom §r§r§a[RANK§r§6+§r§a] %prefix%%name%§r§7: §r§7TEST§r",
+//                "§r§b[RANK§c+§b] %prefix%%name%§f: TEST",
+//                "§r§bCo-op > §r§a[RANK§6+§a] %prefix%%name%§f: §rTEST§r"
+//        }, a -> (a.replace("&", "§")+"Color "+(a.replace("&", "§").equals("§z") ? "(Rainbow on sba)" : ""))));
+        return new WidgetNicknameColor();
     }
 
     @Override

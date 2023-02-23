@@ -55,13 +55,17 @@ public class Align extends AnnotatedExportOnlyWidget implements Layouter {
                 0, constraintBox.getMaxWidth(), 0, constraintBox.getMaxHeight()
         ));
 
-        double x = hAlign.getValue() == Alignment.START ? 0 : hAlign.getValue() == Alignment.CENTER ? (constraintBox.getMaxWidth() - size.getWidth())/2 : constraintBox.getMaxWidth() - size.getWidth();
-        double y = vAlign.getValue() == Alignment.START ? 0 : vAlign.getValue() == Alignment.CENTER ? (constraintBox.getMaxHeight() - size.getHeight())/2 : constraintBox.getMaxHeight() - size.getHeight();
+        double maxW = constraintBox.getMaxWidth() == Double.POSITIVE_INFINITY ? size.getWidth() : constraintBox.getMaxWidth();
+        double maxH = constraintBox.getMaxHeight() == Double.POSITIVE_INFINITY ? size.getHeight() : constraintBox.getMaxHeight();
+
+
+        double x = hAlign.getValue() == Alignment.START ? 0 : hAlign.getValue() == Alignment.CENTER ? (maxW - size.getWidth())/2 : maxW - size.getWidth();
+        double y = vAlign.getValue() == Alignment.START ? 0 : vAlign.getValue() == Alignment.CENTER ? (maxH - size.getHeight())/2 : maxH - size.getHeight();
 
         theOnly.setRelativeBound(new Rect(x, y,
                 size.getWidth(), size.getHeight()
         ));
-        return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+        return new Size(maxW, maxH);
     }
 
 
