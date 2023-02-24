@@ -102,14 +102,14 @@ public class WidgetChooseBranch extends AnnotatedImportOnlyWidget {
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    widgets.add(new Text("Remote Error", 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
+                    widgets.add(new Text("Remote Error\n\n"+e.getClass().getName()+": "+e.getMessage(), 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
                 }
                 if (widgets.isEmpty()) {
                     widgets.add(new Text("Seems Empty", 0xFFFFFFFF, Text.TextAlign.CENTER, Text.WordBreak.WORD, 1.0, 8.0));
                 }
 
                 widgetList.setValue(widgets);
-                if (versionList.getValue().getDomElement().getWidget() != null) {
+                if (versionList.getValue() != null && versionList.getValue().getDomElement().getWidget() != null) {
                     versionList.getValue().removeAll();
                     for (Widget widget : widgets) {
                         versionList.getValue().addWidget(widget);
