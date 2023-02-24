@@ -135,9 +135,6 @@ tasks.named("remapJar") {
     input = tasks.shadowJar.archiveFile
 }
 
-
-tasks.assemble.dependsOn tasks.remapJar
-
 task standaloneConsumerJar(type: Jar) {
     archiveClassifier = "standalone"
     from(zipTree(tasks.remapJar.archiveFile))
@@ -161,3 +158,8 @@ task standaloneDevJar(type: Jar) {
 
 
 
+tasks.assemble.dependsOn tasks.remapJar
+
+task buildStandaloneJars {}
+
+tasks.buildStandaloneJars.dependsOn tasks.standaloneConsumerJar, tasks.standaloneDevJar

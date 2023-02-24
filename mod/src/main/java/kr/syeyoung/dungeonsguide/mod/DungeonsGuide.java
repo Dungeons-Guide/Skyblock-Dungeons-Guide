@@ -269,6 +269,9 @@ public class DungeonsGuide implements DGInterface {
         VersionInfo.checkAndOpen();
 
 
+
+
+
         Minecraft.getMinecraft().refreshResources();
 
         // Fix Parallel universe not working when player joins hypickle before dg loads
