@@ -113,7 +113,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
         String prefix = currentSelectedPrefix == null ? "" : currentSelectedPrefix.getData().substring(1);
         if (currentSelectedColor != null && currentSelectedPrefix != null) {
-            char control = currentSelectedColor.getData().charAt(0);
+            char control = currentSelectedPrefix.getData().charAt(0);
             if (!(control == 'Y' || control == 'T')) {
                 prefix = currentSelectedColor.getData() + "[" + prefix + "§r" + currentSelectedColor.getData() + "]";
             }
