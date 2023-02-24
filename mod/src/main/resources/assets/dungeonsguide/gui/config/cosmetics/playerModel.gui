@@ -1,0 +1,60 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+    <col crossAlign="START">
+        <padding left="10" top="10" right="10">
+            <Text text="Choose Player Model" color="#FFFFFFFF" size="12"/>
+        </padding>
+        <flexible>
+            <row>
+                <flexible>
+                    <col>
+                        <size height="5"/>
+                        <Text text="Player Model" size="8" color="#FFFFFFFF"/>
+                        <size height="5"/>
+                        <line color="#FFFFFFFF"/>
+                        <flexible fit="LOOSE">
+                            <IntrinsicHeight>
+                                <ScrollablePanel direction="VERTICAL">
+                                    <bgcolor backgroundColor="#FF000000">
+                                        <padding top="5" left="5" bottom="5" right="5">
+                                            <WrapGrid minimumWidth="50" gap="5" bind:_="models"/>
+                                        </padding>
+                                    </bgcolor>
+                                </ScrollablePanel>
+                            </IntrinsicHeight>
+                        </flexible>
+                        <line color="#FFFFFFFF"/>
+                        <padding top="5" left="5" bottom="5" right="5">
+                            <row mainAlign="END">
+                                <size width="60" height="20">
+                                    <RoundButton text="Clear" on:click="clear"/>
+                                </size>
+                                <size width="5" height="0"/>
+                                <size width="60" height="20">
+                                    <RoundButton text="Apply" on:click="apply" bind:disabled="disabled"/>
+                                </size>
+                            </row>
+                        </padding>
+                    </col>
+                </flexible>
+            </row>
+        </flexible>
+    </col>
+</bgcolor>

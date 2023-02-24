@@ -21,8 +21,13 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 import com.google.common.collect.ImmutableMap;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.AbstractClientPlayer;
@@ -45,6 +50,10 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 
 import java.io.IOException;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.UUID;
 
 
 public class FeaturePenguins extends SimpleFeature {
@@ -82,11 +91,30 @@ public class FeaturePenguins extends SimpleFeature {
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private IBakedModel model;
 
-    @DGEventHandler
+    @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
-
-        
         if (renderPlayerEvent.entityPlayer.isInvisible()) return;
+
+        boolean isCanceled = !isEnabled();
+
+        if (isCanceled && renderPlayerEvent.entityPlayer.getGameProfile() != null) {
+            CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().get(renderPlayerEvent.entityPlayer.getGameProfile().getId());
+            if (activeCosmeticList != null) {
+                for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
+                    CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+                    if (cosmeticData.getCosmeticType().equals("model")) {
+                        isCanceled = false;
+                        break;
+                    }
+                }
+            }
+        }
+
+        if (isCanceled) return;
+
+
+
         renderPlayerEvent.setCanceled(true);
         GlStateManager.pushMatrix();
         GlStateManager.color(1,1,1,1);

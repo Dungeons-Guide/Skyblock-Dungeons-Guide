@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -293,7 +294,8 @@ public class CosmeticsManager {
                 String prefix = null;
                 if (rawPrefix != null) {
                     prefix = rawPrefix.substring(1);
-                    if (!rawPrefix.startsWith("T")) {
+                    char control = rawPrefix.charAt(0);
+                    if (control != 'T' && control != 'Y') {
                         if (rawPrefixColor != null)
                             prefix = rawPrefixColor+"["+prefix+"§r"+rawPrefixColor+"]";
                     }
@@ -389,22 +391,33 @@ public class CosmeticsManager {
     public void nameFormat(PlayerEvent.NameFormat nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
         if (activeCosmetics == null) return;
-        CosmeticData color=null;
-        CosmeticData prefix=null;
-        for (ActiveCosmetic activeCosmetic : activeCosmetics) {
-            CosmeticData cosmeticData = cosmeticDataMap.get(activeCosmetic.getCosmeticData());
-            if (cosmeticData !=null && cosmeticData.getCosmeticType().equals("color")) {
-                color = cosmeticData;
-            } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("prefix")) {
-                prefix = cosmeticData;
+        String color=null, rawPrefix=null, rawPrefixColor=null;
+            for (ActiveCosmetic activeCosmetic : activeCosmetics) {
+                CosmeticData cosmeticData = getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
+                if (cosmeticData != null && cosmeticData.getCosmeticType().equals("ncolor")) {
+                    color = cosmeticData.getData().replace("&", "§");
+                } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("nprefix")) {
+                    rawPrefix = cosmeticData.getData().replace("&", "§");
+                } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("bracket_color")) {
+                    rawPrefixColor = cosmeticData.getData().replace("&", "§");
+                }
+            }
+
+        String prefix = null;
+        if (rawPrefix != null) {
+            prefix = rawPrefix.substring(1);
+            char control = rawPrefix.charAt(0);
+            if (control != 'T' && control != 'Y') {
+                if (rawPrefixColor != null)
+                    prefix = rawPrefixColor+"["+prefix+"§r"+rawPrefixColor+"]";
             }
         }
 
         if (color != null)
-            nameFormat.displayname = color.getData().replace("&","§")+nameFormat.username;
+            nameFormat.displayname = color+nameFormat.username;
 
         if (prefix != null)
-            nameFormat.displayname = prefix.getData().replace("&","§")+" "+nameFormat.displayname;
+            nameFormat.displayname = prefix+" "+nameFormat.displayname;
 
     }
 }

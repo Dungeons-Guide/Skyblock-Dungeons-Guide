@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureSimonSay
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureTerminalSolvers;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeatureNicknameColor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeatureNicknamePrefix;
+import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeaturePlayerModel;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm.PlayingDGAlarm;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.*;
@@ -201,6 +202,7 @@ public class FeatureRegistry {
     public static final FeatureCollectScore ETC_COLLECT_SCORE = register(new FeatureCollectScore());
     public static final FeatureNicknameColor COSMETIC_NICKNAMECOLOR = register(new FeatureNicknameColor());
     public static final FeatureNicknamePrefix COSMETIC_PREFIX = register(new FeatureNicknamePrefix());
+    public static final FeaturePlayerModel COSMETIC_PLAYER_MODEL = register(new FeaturePlayerModel());
     public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.discordrichpresence", true) {
         {
             addParameter("disablenotskyblock", new FeatureParameter<Boolean>("disablenotskyblock", "Disable When not on Skyblock", "Disable When not on skyblock", false, TCBoolean.INSTANCE));

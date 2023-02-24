@@ -83,19 +83,32 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
         String toDraw = fakePlayer.getName();
         List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(
                 fakePlayer.getGameProfile().getId());
-        CosmeticData prefix = null;
-        CosmeticData color = null;
+        String color=null, rawPrefix=null, rawPrefixColor=null;
         if (activeCosmetics != null) {
             for (ActiveCosmetic activeCosmetic : activeCosmetics) {
                 CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
-                if (cosmeticData != null) {
-                    if (cosmeticData.getCosmeticType().equals("prefix")) prefix = cosmeticData;
-                    if (cosmeticData.getCosmeticType().equals("color")) color = cosmeticData;
+                if (cosmeticData != null && cosmeticData.getCosmeticType().equals("ncolor")) {
+                    color = cosmeticData.getData().replace("&", "§");
+                } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("nprefix")) {
+                    rawPrefix = cosmeticData.getData().replace("&", "§");
+                } else if (cosmeticData != null && cosmeticData.getCosmeticType().equals("bracket_color")) {
+                    rawPrefixColor = cosmeticData.getData().replace("&", "§");
                 }
             }
         }
-        toDraw = (color == null ? "§e" : color.getData().replace("&", "§")) + toDraw;
-        if (prefix != null) toDraw = prefix.getData().replace("&", "§") + " " + toDraw;
+
+        String prefix = null;
+        if (rawPrefix != null) {
+            prefix = rawPrefix.substring(1);
+            char control = rawPrefix.charAt(0);
+            if (control != 'T' && control != 'Y') {
+                if (rawPrefixColor != null)
+                    prefix = rawPrefixColor+"["+prefix+"§r"+rawPrefixColor+"]";
+            }
+        }
+
+        toDraw = (color == null ? "§e" : color) + toDraw;
+        if (prefix != null) toDraw = prefix + " " + toDraw;
 
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);

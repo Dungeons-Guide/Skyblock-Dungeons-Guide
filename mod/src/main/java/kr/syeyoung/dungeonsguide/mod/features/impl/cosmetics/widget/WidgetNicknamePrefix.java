@@ -73,6 +73,9 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
                     update();
                 }));
             } else if (value.getCosmeticType().equals("nprefix")) {
+                char control = value.getData().charAt(0);
+
+                if ((control == 'Y' || control == 'N') && !cosmeticsManager.getPerms().contains(value.getReqPerm())) continue;
                 list2.add(new WidgetButton(cosmeticsManager.getPerms().contains(value.getReqPerm()), value.getData().substring(1), () -> {
                     Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
                     currentSelectedPrefix = value;
@@ -109,9 +112,12 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
     private void update() {
         CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
         String prefix = currentSelectedPrefix == null ? "" : currentSelectedPrefix.getData().substring(1);
-        if (currentSelectedColor != null && currentSelectedPrefix != null && currentSelectedPrefix.getData().startsWith("F"))
-            prefix = currentSelectedColor.getData()+"["+prefix+"§r"+currentSelectedColor.getData()+"]";
-
+        if (currentSelectedColor != null && currentSelectedPrefix != null) {
+            char control = currentSelectedColor.getData().charAt(0);
+            if (!(control == 'Y' || control == 'T')) {
+                prefix = currentSelectedColor.getData() + "[" + prefix + "§r" + currentSelectedColor.getData() + "]";
+            }
+        }
         if (!prefix.isEmpty()) prefix += " ";
 
         preview.setValue(String.join("\n",new String[] {
