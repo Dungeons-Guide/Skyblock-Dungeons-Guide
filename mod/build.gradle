@@ -44,6 +44,10 @@ configurations {
         canBeConsumed = true
         canBeResolved = false
     }
+    unmappedMod {
+        canBeConsumed = true
+        canBeResolved = false
+    }
 }
 
 def devenvMod = configurations.create("devenvMod") {
@@ -165,7 +169,8 @@ tasks.named("remapJar") {
 tasks.assemble.dependsOn tasks.remapJar
 
 artifacts {
-    remappedMod(tasks.shadowJar)
+    remappedMod(tasks.remapJar)
+    unmappedMod(tasks.shadowJar)
 }
 
 
