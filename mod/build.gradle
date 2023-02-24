@@ -21,7 +21,9 @@ sourceSets.main {
 
 signing {
     useGpgCmd()
-    sign configurations.archives
+    if (project.findProperty("dg.dosign") == "true"){
+        sign configurations.archives
+    }
 }
 
 repositories {
@@ -37,6 +39,15 @@ repositories {
 
 configurations {
     implementation.extendsFrom shadowImpl
+    
+    remappedMod {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+    unmappedMod {
+        canBeConsumed = true
+        canBeResolved = false
+    }
 }
 
 def devenvMod = configurations.create("devenvMod") {
@@ -168,3 +179,10 @@ tasks.named("remapJar") {
 
 
 tasks.assemble.dependsOn tasks.remapJar
+
+artifacts {
+    remappedMod(tasks.remapJar)
+    unmappedMod(tasks.shadowJar)
+}
+
+

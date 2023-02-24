@@ -65,6 +65,12 @@ configurations {
         transitive = false
         visible = false
     }
+    unmappedMod {
+        visible = false
+    }
+    remappedMod {
+        visible = false
+    }
 }
 dependencies {
     minecraft("com.mojang:minecraft:1.8.9")
@@ -86,6 +92,9 @@ dependencies {
 
 
     devEnv("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
+
+    unmappedMod(project(path: ':mod', configuration: 'unmappedMod'))
+    remappedMod(project(path: ':mod', configuration: 'remappedMod'))
 }
 
 
@@ -128,3 +137,27 @@ tasks.named("remapJar") {
 
 
 tasks.assemble.dependsOn tasks.remapJar
+
+task standaloneConsumerJar(type: Jar) {
+    archiveClassifier = "standalone"
+    from(zipTree(tasks.remapJar.archiveFile))
+    from(configurations.remappedMod.files) {
+        rename ".+\\.jar", "mod.jar"
+    }
+    doLast {
+        println(archiveFile.get().asFile)
+    }
+}
+task standaloneDevJar(type: Jar) {
+    archiveClassifier = "devStandalone"
+    from(zipTree(tasks.shadowJar.archiveFile))
+    from(configurations.unmappedMod.files) {
+        rename ".+\\.jar", "mod.jar"
+    }
+    doLast {
+        println(archiveFile.get().asFile)
+    }
+}
+
+
+
