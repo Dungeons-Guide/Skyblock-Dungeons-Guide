@@ -72,22 +72,22 @@ public class VersionInfo {
     private static final Logger logger = LogManager.getLogger("OutdatedVersionWarning");
     public static void checkAndOpen() {
         try {
-//            if (VersionInfo.getCurrentLoader() instanceof DevEnvLoader) return;
-//
-//            if (VersionInfo.getCurrentLoader() instanceof RemoteLoader) {
-//                RemoteLoader loader = (RemoteLoader) VersionInfo.getCurrentLoader();
-//                Update latestUpdate = UpdateRetrieverUtil.getLatestUpdates(loader.getBranchId(), 0).get(0);
-//                if (latestUpdate.getId() == loader.getUpdateId()) return;
-//
-//                Scaler scaler = new Scaler();
-//                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
-//                scaler.child.setValue(new WidgetUpdateLog(
-//                        latestUpdate.getName(), latestUpdate.getUpdateLog()
-//                ));
-//                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
-//
-//                logger.info("Update Required!!");
-//            } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
+            if (VersionInfo.getCurrentLoader() instanceof DevEnvLoader) return;
+
+            if (VersionInfo.getCurrentLoader() instanceof RemoteLoader) {
+                RemoteLoader loader = (RemoteLoader) VersionInfo.getCurrentLoader();
+                Update latestUpdate = UpdateRetrieverUtil.getLatestUpdates(loader.getBranchId(), 0).get(0);
+                if (latestUpdate.getId() == loader.getUpdateId()) return;
+
+                Scaler scaler = new Scaler();
+                scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+                scaler.child.setValue(new WidgetUpdateLog(
+                        latestUpdate.getName(), latestUpdate.getUpdateLog()
+                ));
+                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
+
+                logger.info("Update Required!!");
+            } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
                 UpdateBranch requiredUpdateBranch = UpdateRetrieverUtil.getUpdateBranches().stream().filter(a ->
                         Optional.ofNullable(a.getMetadata())
                                 .filter(b -> b.has("additionalMeta"))
@@ -120,9 +120,9 @@ public class VersionInfo {
                         latestUpdate.getName(), latestUpdate.getUpdateLog()
                 ));
                 GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
-//            } else {
-//                logger.error("Failed to check version: Unknown Loader: " + VersionInfo.getLoaderInfo() + " / " + VersionInfo.getCurrentLoader().getClass().getName());
-//            }
+            } else {
+                logger.error("Failed to check version: Unknown Loader: " + VersionInfo.getLoaderInfo() + " / " + VersionInfo.getCurrentLoader().getClass().getName());
+            }
         } catch (Exception e) {
             logger.error("Error while checking for updates: ",e);
         }
