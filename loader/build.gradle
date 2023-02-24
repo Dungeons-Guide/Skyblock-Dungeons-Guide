@@ -130,7 +130,7 @@ tasks.shadowJar {
 }
 
 tasks.named("remapJar") {
-    archiveClassifier = "all"
+    archiveClassifier = "mapped"
     from(tasks.shadowJar)
     input = tasks.shadowJar.archiveFile
 }
