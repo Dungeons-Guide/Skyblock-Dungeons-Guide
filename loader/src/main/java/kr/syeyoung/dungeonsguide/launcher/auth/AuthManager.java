@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.*;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.auth.AuthFailedException;
@@ -91,7 +92,8 @@ public class AuthManager {
             boolean shouldReAuth = false;
             if (getToken().isUserVerified() && !getToken().getUUID().replace("-", "").equals(Minecraft.getMinecraft().getSession().getPlayerID())) {
                 shouldReAuth = true;
-            } // TODO: try auth, check if current dungeons guide version is accessible, and unload it if inaccessible.
+                Main.getMain().unloadWithoutStacktraceReference();
+            }
             if (!getToken().isAuthenticated()) {
                 shouldReAuth = true;
             }
