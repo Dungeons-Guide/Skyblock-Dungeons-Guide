@@ -114,6 +114,16 @@ loom {
     }
 }
 
+ext.genOutputDir = file("$buildDir/generated-resources")
+
+task generateVersionInfo {
+    ext.outputFile = file("$genOutputDir/versionMeta.properties")
+    outputs.file(outputFile)
+    doLast {
+        outputFile.text = "VERSION=${project.version}\nMANDATORY_VERSION=0"
+    }
+}
+sourceSets.main.output.dir genOutputDir, builtBy: generateVersionInfo
 
 tasks.withType(JavaCompile) {
     options.encoding = "UTF-8"
@@ -126,6 +136,8 @@ tasks.withType(Jar) {
 //        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
 //        this["MixinConfigs"] = "mixins.examplemod.json"
     }
+
+
 }
 
 
