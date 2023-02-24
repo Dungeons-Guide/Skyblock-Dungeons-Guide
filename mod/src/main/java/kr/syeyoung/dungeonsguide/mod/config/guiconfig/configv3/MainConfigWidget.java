@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -42,6 +43,9 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget {
     public final BindableAttribute menu = new BindableAttribute<>(WidgetList.class);
     @Bind(variableName = "relocate")
     public final BindableAttribute<Widget> relocate = new BindableAttribute<>(Widget.class);
+
+    @Bind(variableName = "version")
+    public final BindableAttribute<String> version = new BindableAttribute<>(String.class, VersionInfo.VERSION);
 
     @Bind(variableName = "mainpage")
     public final BindableAttribute<Widget> mainPage = new BindableAttribute<>(Widget.class, new MainPageWidget());

@@ -17,17 +17,16 @@
   -->
 
 <bgcolor backgroundColor="#FF111111">
-    <stack>
-        <align hAlign="START" vAlign="END">
-            <size width="100" height="20">
-                <RoundButton text="Copy Log" on:click="copy"/>
-            </size>
-        </align>
         <align vAlign="CENTER">
             <ConstrainedBox maxHeight="450">
                 <col crossAlign="CENTER">
                     <size width="0" height="10"/>
-                    <Text text="Dungeons Guide has ran into error while loading or unloading" color="#FFFFFFFF"/>
+                    <Text text="New Dungeons Guide Version is Available!" color="#FFFFFFFF" size="16"/>
+                    <size width="0" height="5"/>
+                    <row mainAlign="CENTER">
+                        <Text bind:text="version" size="8" color="#FFFFFFFF"/>
+                        <Text text=" Update Log" size="8" color="#FFFFFFFF"/>
+                    </row>
                     <size width="0" height="10"/>
                     <flexible>
                         <align hAlign="CENTER">
@@ -41,7 +40,7 @@
                                         <bgcolor backgroundColor="#FF222222">
                                             <ScrollablePanel>
                                                 <padding left="5" top="5" right="5" bottom="5">
-                                                    <Text bind:text="stacktrace" color="#FFFFFFFF"/>
+                                                    <Text bind:text="updatelog" color="#FFFFFFFF"/>
                                                 </padding>
                                             </ScrollablePanel>
                                         </bgcolor>
@@ -51,12 +50,17 @@
                         </align>
                     </flexible>
                     <size width="0" height="15"/>
-                    <size width="100" height="20">
-                        <RoundButton text="Continue" on:click="continue"/>
-                    </size>
+                    <row mainAlign="CENTER">
+                        <size width="200" height="20">
+                            <RoundButton text="Unload DG and load new version" on:click="unload"/>
+                        </size>
+                        <size width="10" height="0"/>
+                        <size width="80" height="20">
+                            <RoundButton text="Continue" on:click="continue"/>
+                        </size>
+                    </row>
                     <size width="0" height="10"/>
                 </col>
             </ConstrainedBox>
         </align>
-    </stack>
 </bgcolor>

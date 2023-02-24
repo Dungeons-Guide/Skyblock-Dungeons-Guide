@@ -56,7 +56,7 @@ public class AColor extends Color {
     }
 
     public Shader getShader() {
-        if (chroma) return new ChromaShader(chromaSpeed, getRGB());
+        if (chroma) return new ChromaShader(this);
         else return new SingleColorShader(getRGB());
     }
 

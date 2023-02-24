@@ -18,12 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
+import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.ChromaShader;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.Shader;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.shaders.SingleColorShader;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
@@ -139,13 +142,18 @@ public class Text extends AnnotatedExportOnlyWidget {
             char c0 = text.charAt(i);
             if (c0 == 167 && i + 1 < text.length()) {
                 if (!stringBuilder.toString().isEmpty()) {
+                    AColor chroma =new AColor(255,0,0,255);
+                    chroma.setChromaSpeed(0.3f);
+                    chroma.setChroma(true);
+                    Shader textShader = textColor == null ? null :
+                            textColor== 0x33333333 ? new ChromaShader(chroma) : new SingleColorShader(textColor | 0xFF000000);
                     spans.add(new TextSpan(
                             new ParentDelegatingTextStyle()
-                                    .setTextShader(textColor == null ? null : new SingleColorShader(textColor | 0xFF000000))
+                                    .setTextShader(textShader)
                                     .setBold(boldStyle)
-                                    .setStrikeThroughShader(textColor == null ? null : new SingleColorShader(textColor | 0xFF000000))
+                                    .setStrikeThroughShader(textShader)
                                     .setStrikeThrough(strikethroughStyle)
-                                    .setUnderlineShader(textColor == null ? null : new SingleColorShader(textColor | 0xFF000000))
+                                    .setUnderlineShader(textShader)
                                     .setUnderline(underlineStyle)
                                     .setItalics(italicStyle),
                             stringBuilder.toString()
@@ -154,8 +162,8 @@ public class Text extends AnnotatedExportOnlyWidget {
                 }
 
 
-                int i1 = "0123456789abcdefklmnor".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
-                if (i1 < 16) {
+                int i1 = "0123456789abcdefklmnorz".indexOf(text.toLowerCase(Locale.ENGLISH).charAt(i + 1));
+                if (i1 < 16 || i1 == 22) {
                     boldStyle = false;
                     strikethroughStyle = false;
                     underlineStyle = false;
@@ -163,7 +171,10 @@ public class Text extends AnnotatedExportOnlyWidget {
                     if (i1 < 0) {
                         i1 = 15;
                     }
-                    textColor = colorCode[i1];
+                    if (i1 == 22)
+                        textColor = 0x33333333;
+                    else
+                        textColor = colorCode[i1];
                 } else if (i1 == 16) {
                 } else if (i1 == 17) {
                     boldStyle = true;
@@ -188,13 +199,19 @@ public class Text extends AnnotatedExportOnlyWidget {
         }
 
         if (!stringBuilder.toString().isEmpty()) {
+            AColor chroma =new AColor(255,0,0,255);
+            chroma.setChromaSpeed(0.3f);
+            chroma.setChroma(true);
+            Shader textShader = textColor == null ? null :
+                    textColor== 0x33333333 ? new ChromaShader(chroma) : new SingleColorShader(textColor | 0xFF000000);
+
             spans.add(new TextSpan(
                     new ParentDelegatingTextStyle()
-                            .setTextShader(textColor == null ? null : new SingleColorShader(textColor | 0xFF000000))
+                            .setTextShader(textShader)
                             .setBold(boldStyle)
-                            .setStrikeThroughShader(textColor == null ? null : new SingleColorShader(textColor | 0xFF000000))
+                            .setStrikeThroughShader(textShader)
                             .setStrikeThrough(strikethroughStyle)
-                            .setUnderlineShader(textColor == null ? null : new SingleColorShader(textColor | 0xFF000000))
+                            .setUnderlineShader(textShader)
                             .setUnderline(underlineStyle)
                             .setItalics(italicStyle),
                     stringBuilder.toString()

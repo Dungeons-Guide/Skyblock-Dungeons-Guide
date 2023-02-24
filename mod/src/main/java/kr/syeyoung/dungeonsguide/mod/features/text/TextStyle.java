@@ -47,7 +47,7 @@ public class TextStyle {
         if (!color.isChroma())
         linked.textShader = new SingleColorShader(color.getRGB());
         else
-        linked.textShader = new ChromaShader(color.getChromaSpeed(), color.getRGB());
+        linked.textShader = new ChromaShader(color);
     }
 
     public void setBackground(AColor background) {
@@ -55,7 +55,7 @@ public class TextStyle {
         if (!background.isChroma())
         linked.backgroundShader = new SingleColorShader(background.getRGB());
         else
-        linked.backgroundShader = new ChromaShader(background.getChromaSpeed(), background.getRGB());
+        linked.backgroundShader = new ChromaShader(color);
     }
 
     private ParentDelegatingTextStyle linked = new ParentDelegatingTextStyle();
