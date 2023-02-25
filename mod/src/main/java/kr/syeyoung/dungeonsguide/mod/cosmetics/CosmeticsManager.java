@@ -340,7 +340,8 @@ public class CosmeticsManager {
                     if (startingSearch == -1) break;
                     if (startingSearch-1 >= 0) {
                         char c = beforeUsername.charAt(startingSearch-1);
-                        if (c == ']') continue;
+                        int next = beforeUsername.lastIndexOf(' ', startingSearch-1);
+                        if (c == ']' && beforeUsername.charAt(next+1) == '[') continue;
                         startingSearch ++;
                         break;
                     }
