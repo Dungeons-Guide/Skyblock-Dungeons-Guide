@@ -84,7 +84,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿
     // Now I'm convinced name format is always the same
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
-        if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r ") && updateEvent.entityLiving instanceof EntityArmorStand) {
+        if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lBonzo§r") && updateEvent.entityLiving instanceof EntityArmorStand) {
             bonzoStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }

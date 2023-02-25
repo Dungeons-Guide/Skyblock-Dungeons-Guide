@@ -122,15 +122,15 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     @Override
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r "))
+            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lScarf§r"))
                 scarfStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§6§4§lUndead Archer "))
+            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Archer"))
                 archerStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§6§4§lUndead Mage "))
+            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Mage"))
                 mageStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§6§4§lUndead Priest "))
+            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Priest"))
                 priestStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§6§4§lUndead Warrior "))
+            else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Warrior"))
                 berserkStand = (EntityArmorStand) updateEvent.entityLiving;
         }
     }

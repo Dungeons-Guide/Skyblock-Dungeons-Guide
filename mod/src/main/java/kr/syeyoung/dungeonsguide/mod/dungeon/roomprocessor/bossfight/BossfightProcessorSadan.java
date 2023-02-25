@@ -129,15 +129,15 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     @Override
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lSadan§r "))
+            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lSadan§r"))
                 sadanStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§d§lJolly Pink Giant "))
+            else if (updateEvent.entityLiving.getName().startsWith("§c§d§lJolly Pink Giant"))
                 boulderGiant = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§4§lL.A.S.R. "))
+            else if (updateEvent.entityLiving.getName().startsWith("§c§4§lL.A.S.R."))
                 laserGiant = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§3§lThe Diamond Giant "))
+            else if (updateEvent.entityLiving.getName().startsWith("§c§3§lThe Diamond Giant"))
                 diamondGiant = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§c§c§lBigfoot "))
+            else if (updateEvent.entityLiving.getName().startsWith("§c§c§lBigfoot"))
                 bigfootGiant = (EntityArmorStand) updateEvent.entityLiving;
         }
     }

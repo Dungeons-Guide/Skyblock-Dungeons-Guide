@@ -131,15 +131,15 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
     @Override
     public void onEntityUpdate(LivingEvent.LivingUpdateEvent updateEvent) {
         if (updateEvent.entityLiving instanceof EntityArmorStand) {
-            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r "))
+            if (updateEvent.entityLiving.getName().startsWith("§e﴾ §c§lThe Professor§r"))
                 profStand = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cHealthy Guardian "))
+            else if (updateEvent.entityLiving.getName().startsWith("§cHealthy Guardian"))
                 healthyGuard = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cChaos Guardian "))
+            else if (updateEvent.entityLiving.getName().startsWith("§cChaos Guardian"))
                 chaosGuard = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cLaser Guardian "))
+            else if (updateEvent.entityLiving.getName().startsWith("§cLaser Guardian"))
                 laserGuard = (EntityArmorStand) updateEvent.entityLiving;
-            else if (updateEvent.entityLiving.getName().startsWith("§cReinforced Guardian "))
+            else if (updateEvent.entityLiving.getName().startsWith("§cReinforced Guardian"))
                 reinforcedGuard = (EntityArmorStand) updateEvent.entityLiving;
         }
     }
