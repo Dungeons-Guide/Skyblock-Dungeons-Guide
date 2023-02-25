@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.Logger;
+
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManagerFactory;
@@ -37,6 +40,8 @@ import java.util.Objects;
 
 // Smh minecraft default launcher letsencrypt
 public class LetsEncrypt {
+    private static final Logger logger = LogManager.getLogger("DG-LetsEncrypt");
+
     public static SSLSocketFactory LETS_ENCRYPT;
 
     static {
@@ -53,6 +58,8 @@ public class LetsEncrypt {
         String keyStorePassword = System.getProperty( "javax.net.ssl.trustStorePassword", "" ); // You might ask, "THE DEFAULT PASSWORD IS changeit". But in fact, just loading keystore does not require a key!! https://stackoverflow.com/a/42363257
         String keyStoreType = System.getProperty("javax.net.ssl.trustStoreType", KeyStore.getDefaultType());
 
+        logger.info("Keystore: "+keyStoreLocation+" / Type: "+keyStoreType);
+
         char[] charArr = keyStorePassword.isEmpty() ? null : keyStorePassword.toCharArray();
 
         KeyStore keyStore = KeyStore.getInstance(keyStoreType);
@@ -65,6 +72,9 @@ public class LetsEncrypt {
             try (InputStream caInput = LetsEncrypt.class.getResourceAsStream("/isrgrootx1.der")) {
                 Certificate crt = cf.generateCertificate(caInput);
                 keyStore.setCertificateEntry("ISRGRootX1", crt);
+            } catch (Throwable e) {
+                logger.error("Failed to load up let's encrypt certificate, hoping whatever the keystore I loaded has it.");
+                e.printStackTrace();
             }
         }
 
