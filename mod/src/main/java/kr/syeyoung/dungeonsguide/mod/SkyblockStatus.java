@@ -131,14 +131,14 @@ public class SkyblockStatus {
             return;
         }
 
-        Collection<Score> scores = objective.getScores();
         boolean foundDungeon = false;
+
+        Collection<Score> scores = objective.getScores();
         for (Score sc : scores) {
             String strippedLine = TextUtils.keepScoreboardCharacters(
                     TextUtils.stripColor(sc.getJustTeam())).trim();
             if (strippedLine.contains("Cleared: ")) {
                 foundDungeon = true;
-
                 DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 if(context != null){
                     context.setPercentage(Integer.parseInt(
@@ -150,7 +150,7 @@ public class SkyblockStatus {
             }
         }
 
-        isOnDungeon = foundDungeon;
+        isOnDungeon = locationName.startsWith("The Catacombs") | foundDungeon;
     }
 
 }

@@ -165,11 +165,17 @@ public class DungeonListener {
                 context.getMapPlayerMarkerProcessor().tick();
                 context.tick();
             } else {
-                if (SkyblockStatus.isOnDungeon()) {
-                    DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
-                            SkyblockStatus.locationName,
-                            Minecraft.getMinecraft().thePlayer.worldObj));
-                    MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                try {
+                    if (SkyblockStatus.isOnDungeon()) {
+                        DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(new DungeonContext(
+                                SkyblockStatus.locationName,
+                                Minecraft.getMinecraft().thePlayer.worldObj));
+                        MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
+                    }
+                } catch (IllegalStateException e) {
+                    if (! "?".equals(e.getMessage())) {
+                        e.printStackTrace();
+                    }
                 }
             }
         }
