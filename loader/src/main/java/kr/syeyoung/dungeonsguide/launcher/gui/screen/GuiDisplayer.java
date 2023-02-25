@@ -35,14 +35,14 @@ public class GuiDisplayer {
     private Queue<GuiScreen> guiScreensToShow = new LinkedList<>();
     private boolean isMcLoaded;
 
-
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void onGuiOpen(GuiOpenEvent guiOpenEvent) {
-        if (guiOpenEvent.gui instanceof GuiMainMenu) {
-            isMcLoaded = true;
+        isMcLoaded = true;
+        if (Minecraft.getMinecraft().currentScreen == guiScreensToShow.peek()) {
+            guiScreensToShow.poll();
         }
-        if (isMcLoaded && !guiScreensToShow.isEmpty()) {
-            GuiScreen gui = guiScreensToShow.poll();
+        if (!guiScreensToShow.isEmpty()) {
+            GuiScreen gui = guiScreensToShow.peek();
             if (gui == null) return;
             guiOpenEvent.gui = gui;
         }
@@ -53,9 +53,11 @@ public class GuiDisplayer {
         if (!guiScreensToShow.contains(specialGuiScreen))
             guiScreensToShow.add(specialGuiScreen);
         if (isMcLoaded && Minecraft.getMinecraft().isCallingFromMinecraftThread()) {
-            Minecraft.getMinecraft().displayGuiScreen(null);
+            if (guiScreensToShow.size() == 1)
+                Minecraft.getMinecraft().displayGuiScreen(guiScreensToShow.peek());
         } else if (isMcLoaded) {
-            Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(null));
+            if (guiScreensToShow.size() == 1)
+                Minecraft.getMinecraft().addScheduledTask(() -> Minecraft.getMinecraft().displayGuiScreen(guiScreensToShow.peek()));
         }
     }
 }
