@@ -150,7 +150,10 @@ public class SkyblockStatus {
             }
         }
 
-        isOnDungeon = locationName.startsWith("The Catacombs") | foundDungeon;
+        if (locationName != null)
+            isOnDungeon = locationName.startsWith("The Catacombs") | foundDungeon;
+        else
+            isOnDungeon=false;
     }
 
 }
