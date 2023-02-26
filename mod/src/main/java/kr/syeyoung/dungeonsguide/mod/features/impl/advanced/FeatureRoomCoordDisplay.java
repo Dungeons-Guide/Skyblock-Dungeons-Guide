@@ -53,7 +53,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         return new TextSpan(getStyle("coord"), "X: 0 Y: 3 Z: 5 Facing: Z+");
     }
 
-    private static final String[] facing = {"Z+", "X-", "Z-", "X+"};
+    private static final String[] facing = {"Z+", "X-", "Z-", "X+", "??"};
 
     @Override
     public boolean isHUDViewable() {
@@ -86,7 +86,8 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
         int facing = (int) (thePlayer.rotationYaw + 45) % 360;
         if (facing < 0) facing += 360;
-        int real = (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4;
+        int real = dungeonRoom.getRoomMatcher() != null ?
+                (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4 : 4;
 
         OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos((int)thePlayer.posX, (int)thePlayer.posY, (int)thePlayer.posZ));
 
