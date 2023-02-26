@@ -19,5 +19,5 @@
 package kr.syeyoung.dungeonsguide.launcher;
 
 public class LoaderMeta {
-    public static final int LOADER_VERSION = 2;
+    public static final int LOADER_VERSION = 3;
 }
