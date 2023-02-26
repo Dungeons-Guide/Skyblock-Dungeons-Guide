@@ -72,6 +72,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
     public int getTotalSecretsInt() {
         if (getSecretsFound() != 0) return (int) Math.ceil (getSecretsFound() / getSecretPercentage() * 100);
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (context == null) return 0;
         int totalSecrets = 0;
         if (context.getScaffoldParser() == null) return 0;
         for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
@@ -110,7 +111,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon();
+        return DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null;
     }
 
     @Override
