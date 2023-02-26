@@ -32,10 +32,14 @@ public class WidgetUpdateLog extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "version")
     public final BindableAttribute<String> version = new BindableAttribute<>(String.class);
 
-    public WidgetUpdateLog(String version, String updateLog) {
+    @Bind(variableName = "disabled")
+    public final BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
+
+    public WidgetUpdateLog(String version, String updateLog, boolean autoupdate) {
         super(new ResourceLocation("dungeonsguide:gui/update.gui"));
         this.version.setValue(version);
         this.updateLog.setValue(updateLog);
+        this.disabled.setValue(!autoupdate);
     }
 
     @On(functionName = "continue")

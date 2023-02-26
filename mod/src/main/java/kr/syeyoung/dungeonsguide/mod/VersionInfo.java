@@ -36,6 +36,7 @@ import org.apache.logging.log4j.Logger;
 
 import javax.swing.*;
 import java.io.IOException;
+import java.util.List;
 import java.util.Optional;
 import java.util.Properties;
 
@@ -82,13 +83,14 @@ public class VersionInfo {
                 Scaler scaler = new Scaler();
                 scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
                 scaler.child.setValue(new WidgetUpdateLog(
-                        latestUpdate.getName(), latestUpdate.getUpdateLog()
+                        latestUpdate.getName(), latestUpdate.getUpdateLog(), true
                 ));
                 GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
 
                 logger.info("Update Required!!");
             } else if (VersionInfo.getCurrentLoader() instanceof JarLoader || VersionInfo.getCurrentLoader() instanceof LocalLoader) {
-                UpdateBranch requiredUpdateBranch = UpdateRetrieverUtil.getUpdateBranches().stream().filter(a ->
+                List<UpdateBranch> availableBranches = UpdateRetrieverUtil.getUpdateBranches();
+                UpdateBranch requiredUpdateBranch = availableBranches.stream().filter(a ->
                         Optional.ofNullable(a.getMetadata())
                                 .filter(b -> b.has("additionalMeta"))
                                 .map(b -> b.getJSONObject("additionalMeta"))
@@ -96,6 +98,13 @@ public class VersionInfo {
                                 .map(b -> b.getString("type"))
                                 .filter(b -> b.equals("update-alarm-github"))
                                 .isPresent()).findFirst().orElse(null);
+                boolean autoupdate = availableBranches.stream().anyMatch(a ->
+                        Optional.ofNullable(a.getMetadata())
+                                .filter(b -> b.has("additionalMeta"))
+                                .map(b -> b.getJSONObject("additionalMeta"))
+                                .filter(b -> b.has("type"))
+                                .map(b -> b.getString("type"))
+                                .filter(b -> b.equals("mod")).isPresent());
                 if (requiredUpdateBranch == null) {
                     logger.error("No update branch found: ???");
                     return;
@@ -117,7 +126,7 @@ public class VersionInfo {
                 Scaler scaler = new Scaler();
                 scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
                 scaler.child.setValue(new WidgetUpdateLog(
-                        latestUpdate.getName(), latestUpdate.getUpdateLog()
+                        latestUpdate.getName(), latestUpdate.getUpdateLog(), autoupdate
                 ));
                 GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler));
             } else {

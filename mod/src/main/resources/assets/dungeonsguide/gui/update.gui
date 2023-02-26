@@ -51,10 +51,10 @@
                     </flexible>
                     <size width="0" height="15"/>
                     <row mainAlign="CENTER">
-                        <size width="200" height="20">
-                            <RoundButton text="Unload DG and load new version" on:click="unload"/>
-                        </size>
-                        <size width="10" height="0"/>
+                                <size width="200" height="20">
+                                    <RoundButton text="Unload DG and load new version" bind:disabled="disabled" on:click="unload"/>
+                                </size>
+                                <size width="10" height="0"/>
                         <size width="80" height="20">
                             <RoundButton text="Continue" on:click="continue"/>
                         </size>
