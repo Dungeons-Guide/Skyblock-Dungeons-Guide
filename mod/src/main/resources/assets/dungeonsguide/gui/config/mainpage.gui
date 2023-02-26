@@ -23,7 +23,7 @@
             <row mainAlign="CENTER">
                 <Text text="Welcome to" color="#FFFFFFFF" size="16"/>
                 <Text text=" Dungeons Guide" color="#FF74A0C6" size="16"/>
-                <Text text="?" color="#FFFFFFFF" size="16"/>
+                <Text text="!" color="#FFFFFFFF" size="16"/>
             </row>
             <size height="3"/>
             <row mainAlign="CENTER">
@@ -57,6 +57,8 @@
             <Text text="Click on GUI Config to configure HUDs, including enabling or disabling them" size="8" color="#FFFFFF00"/>
             <size height="10"/>
             <Text text="Global HUD Scale can be found in Misc" size="8" color="#FFFFFF00"/>
+            <size height="10"/>
+            <Text text="There is go back button on top left" size="8" color="#FFFFFF00"/>
         </col>
     </padding>
 </ScrollablePanel>
