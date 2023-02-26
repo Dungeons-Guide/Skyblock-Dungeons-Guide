@@ -53,6 +53,10 @@
             </row>
             <size height="10"/>
             <Text text="Join the discord for mod support and more!" color="#FFAAAAAA" size="8"/>
+            <size height="10"/>
+            <Text text="Click on GUI Config to configure HUDs, including enabling or disabling them" size="8" color="#FFFFFF00"/>
+            <size height="10"/>
+            <Text text="Global HUD Scale can be found in Misc" size="8" color="#FFFFFF00"/>
         </col>
     </padding>
 </ScrollablePanel>

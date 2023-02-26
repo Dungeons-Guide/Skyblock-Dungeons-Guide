@@ -52,7 +52,7 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget {
     public MainConfigWidget() {
         super(new ResourceLocation("dungeonsguide:gui/config/normalconfig.gui"));
         menu.setValue(buildMenu());
-        relocate.setValue(new GUIOpenItem("GUI Relocate", () -> new HUDLocationConfig(null)));
+        relocate.setValue(new GUIOpenItem("GUI Config", () -> new HUDLocationConfig(null)));
     }
 
     public List<Widget> buildMenu() {
