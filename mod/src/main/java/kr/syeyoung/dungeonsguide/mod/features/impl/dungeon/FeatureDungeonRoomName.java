@@ -75,7 +75,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
         DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(roomPt);
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("in"), "You're in "));
-        if (dungeonRoom == null) {
+        if (dungeonRoom == null || dungeonRoom.getDungeonRoomInfo() == null) {
             actualBit.addChild(new TextSpan(getStyle("roomname"), "Unknown"));
         } else {
             actualBit.addChild(new TextSpan(getStyle("roomname"), dungeonRoom.getDungeonRoomInfo().getName()));
