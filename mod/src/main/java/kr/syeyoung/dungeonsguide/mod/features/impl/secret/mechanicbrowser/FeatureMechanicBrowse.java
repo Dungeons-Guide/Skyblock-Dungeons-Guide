@@ -194,7 +194,8 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                 .map(DungeonContext::getScaffoldParser)
                 .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
                 .map(a -> DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(a));
-        UUID currentUID = dungeonRoomOpt.map(a -> a.getDungeonRoomInfo().getUuid()).orElse(null);
+        UUID currentUID = dungeonRoomOpt.filter(a -> a.getDungeonRoomInfo() != null)
+                .map(a -> a.getDungeonRoomInfo().getUuid()).orElse(null);
         // Event-ify above this.
 
         if (!Objects.equals(lastRoomUid, currentUID)) {
