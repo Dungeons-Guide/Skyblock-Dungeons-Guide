@@ -182,7 +182,6 @@ public class FeatureDungeonScore extends TextHUDFeature {
     public int getTotalRooms() {
         int compRooms = getCompleteRooms();
         if (compRooms == 0) return 100;
-        System.out.println(compRooms /  (double) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage());
         return (int) Math.round(100 * (compRooms / (double) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage()));
     }
     public int getUndiscoveredPuzzles() {
@@ -227,7 +226,6 @@ public class FeatureDungeonScore extends TextHUDFeature {
             if (parser.getUndiscoveredRoom() != 0)
                 roomCnt = getTotalRooms();
             skill = (int) Math.floor(80.0 * totalCompRooms / roomCnt)+20;
-            System.out.println(skill + " / "+totalCompRooms + " / "+ roomCnt);
             skill -=  incompletePuzzles * 10;
 
             deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
