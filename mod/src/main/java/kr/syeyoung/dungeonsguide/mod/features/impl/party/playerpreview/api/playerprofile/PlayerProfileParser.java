@@ -100,7 +100,7 @@ public class PlayerProfileParser {
         playerProfile.setProfileName(getOrDefault(profile, "cute_name", ""));
 
         JsonObject playerData = profile.getAsJsonObject("members").getAsJsonObject(dashTrimmed);
-        playerProfile.setLastSave(getOrDefault(playerData, "last_save", 0L));
+        playerProfile.setSelected(profile.has("selected") && profile.get("selected").getAsBoolean());
         playerProfile.setFairySouls(getOrDefault(playerData, "fairy_souls_collected", 0));
         playerProfile.setFairyExchanges(getOrDefault(playerData, "fairy_exchanges", 0));
 

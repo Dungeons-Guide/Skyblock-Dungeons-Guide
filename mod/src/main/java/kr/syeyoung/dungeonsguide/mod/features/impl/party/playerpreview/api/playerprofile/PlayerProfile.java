@@ -33,7 +33,7 @@ public class PlayerProfile {
     private String memberUID;
     private String profileName;
 
-    private long lastSave;
+    private boolean selected;
 
     private int fairySouls;
     private int fairyExchanges;

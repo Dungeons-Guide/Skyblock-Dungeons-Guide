@@ -323,23 +323,16 @@ public class ApiFetcher {
             System.out.println("finished getting secrets from achievement");
 
 
-            System.out.println("Getting last save");
-            JsonElement last_save = semiProfile.get("last_save");
-            if(last_save != null){
-                float lastSave2 = last_save.getAsLong();
-                if (lastSave2 > lastSave) {
-                    latest = e;
-                    lastSave = lastSave2;
-                }
+            System.out.println("Getting selected profile");
+            if (e.isSelected()) {
+                latest = e;
             }
-            System.out.println("Finished getting last save");
-
             playerProfiles.add(e);
         }
         System.out.println("THE AMOUNT OF PLAYER PROFILES: " + playerProfiles.size());
         PlayerProfile[] p = new PlayerProfile[playerProfiles.size()];
-        pp.setLatestProfileArrayIndex(getArrayIndex(p, latest));
         pp.setPlayerProfiles(playerProfiles.toArray(p));
+        pp.setLatestProfileArrayIndex(getArrayIndex(p, latest));
         return Optional.of(pp);
     }
 
