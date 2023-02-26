@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.launcher.branch;
 
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.AssetNotFoundException;
@@ -51,7 +52,7 @@ public class UpdateRetrieverUtil {
     public static List<UpdateBranch> getUpdateBranches() throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/").openConnection();
         connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(1000);
@@ -83,7 +84,7 @@ public class UpdateRetrieverUtil {
     public static List<Update> getLatestUpdates(long branchId, int page) throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/?page="+page).openConnection();
         connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(1000);
         connection.setReadTimeout(3000);
@@ -126,7 +127,7 @@ public class UpdateRetrieverUtil {
     public static Update getUpdate(long branchId, long updateId) throws IOException {
         HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/"+branchId+"/"+updateId).openConnection();
         connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
         connection.setRequestProperty("Authorization", "Bearer "+ AuthManager.getInstance().getWorkingTokenOrThrow());
         connection.setRequestMethod("GET");
         connection.setConnectTimeout(1000);
@@ -169,7 +170,7 @@ public class UpdateRetrieverUtil {
         try {
             HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/updates/" + update.getBranchId() + "/" + update.getId() + "/" + asset.getAssetId()).openConnection();
             connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-            connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+            connection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Authorization", "Bearer " + AuthManager.getInstance().getWorkingTokenOrThrow());
             connection.setDoInput(true);
@@ -189,7 +190,7 @@ public class UpdateRetrieverUtil {
             try {
                 connection = (HttpsURLConnection) new URL(url).openConnection();
                 connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-                connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+                connection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
                 connection.setConnectTimeout(1000);
                 connection.setReadTimeout(5000);
                 connection.setRequestMethod(method);

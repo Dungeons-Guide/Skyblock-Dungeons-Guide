@@ -22,6 +22,7 @@ import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.exceptions.AuthenticationException;
 import com.mojang.authlib.minecraft.MinecraftSessionService;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.AuthToken;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.DGAuthToken;
@@ -101,7 +102,7 @@ public class DgAuthUtil {
 
         HttpsURLConnection connection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/requestAuth").openConnection();
         connection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
         connection.setRequestProperty("Content-Type", "application/json");
         connection.setConnectTimeout(1000);
         connection.setReadTimeout(3000);
@@ -153,7 +154,7 @@ public class DgAuthUtil {
         HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/authenticate").openConnection();
         urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         urlConnection.setRequestMethod("POST");
-        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        urlConnection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
         urlConnection.setRequestProperty("Content-Type", "application/json");
         urlConnection.setConnectTimeout(1000);
         urlConnection.setReadTimeout(3000);
@@ -180,7 +181,7 @@ public class DgAuthUtil {
         HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN + "/auth/v2/acceptPrivacyPolicy").openConnection();
         urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         urlConnection.setRequestMethod("POST");
-        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        urlConnection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
         urlConnection.setRequestProperty("Content-Type", "application/json");
         urlConnection.setConnectTimeout(1000);
         urlConnection.setReadTimeout(3000);

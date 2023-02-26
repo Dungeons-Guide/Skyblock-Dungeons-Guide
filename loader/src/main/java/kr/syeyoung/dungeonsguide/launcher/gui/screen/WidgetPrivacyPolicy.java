@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.launcher.gui.screen;
 
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.guiv2.BindableAttribute;
@@ -78,7 +79,7 @@ public class WidgetPrivacyPolicy extends AnnotatedImportOnlyWidget {
             try {
                 HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.POLICY).openConnection();
                 urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
-                urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+                urlConnection.setRequestProperty("User-Agent", "DungeonsGuideLoader/"+ LoaderMeta.LOADER_VERSION);
                 urlConnection.setConnectTimeout(1000);
                 urlConnection.setReadTimeout(3000);
                 urlConnection.setRequestMethod("GET");

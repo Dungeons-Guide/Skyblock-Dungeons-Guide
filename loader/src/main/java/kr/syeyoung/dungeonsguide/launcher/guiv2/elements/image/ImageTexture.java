@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.launcher.guiv2.elements.image;
 
 
+import kr.syeyoung.dungeonsguide.launcher.LoaderMeta;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -75,7 +76,7 @@ public class ImageTexture {
 
         URL urlObj = new URL(url);
         HttpURLConnection huc = (HttpURLConnection) urlObj.openConnection();
-        huc.addRequestProperty("User-Agent", "DungeonsGuideMod (dungeons.guide, 1.0)");
+        huc.addRequestProperty("User-Agent", "DungeonsGuideLoader (dungeons.guide, "+ LoaderMeta.LOADER_VERSION +")");
         ImageInputStream imageInputStream = ImageIO.createImageInputStream(huc.getInputStream());
         Iterator<ImageReader> readers = ImageIO.getImageReaders(imageInputStream);
         if(!readers.hasNext()) throw new IOException("No image reader what" + url);

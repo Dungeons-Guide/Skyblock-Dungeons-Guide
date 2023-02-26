@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.utils;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -31,7 +32,7 @@ public class SkyblockUtils {
         URL url = new URL("https://hypixel-api.inventivetalent.org/api/skyblock/calendar");
         HttpURLConnection connection = (HttpURLConnection) url.openConnection();
         connection.setRequestMethod("GET");
-        connection.setRequestProperty("User-Agent", "DungeonsGuide/4.0");
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
         InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
         JsonObject object = (JsonObject) new JsonParser().parse(inputStreamReader);
         if (!object.get("success").getAsBoolean()) {

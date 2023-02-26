@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.stomp;
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import lombok.Getter;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
@@ -43,6 +44,7 @@ public class StompClient extends WebSocketClient {
 
 
         addHeader("Authorization", token);
+        addHeader("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
 
         logger.info("connecting websocket");
         if (!connectBlocking()) {
