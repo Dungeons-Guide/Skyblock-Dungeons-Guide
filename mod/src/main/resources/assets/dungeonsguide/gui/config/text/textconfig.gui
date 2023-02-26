@@ -20,6 +20,8 @@
     <col>
         <line color="#FFFFFFFF"/>
         <size width="0" height="5"/>
+        <Text text="To edit text styles globally, go Misc -> Quick HUD Style Settings" color="#FFFFFF00" size="12"/>
+        <size width="0" height="5"/>
         <size height="200">
             <row crossAlign="STRETCH">
                 <flexible>
