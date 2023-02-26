@@ -38,8 +38,8 @@ import java.util.Objects;
  */
 public class FeatureEpicCountdown extends SimpleFeature {
 
-    static volatile long updatedAt;
-    static volatile int secondsLeft;
+    static long updatedAt;
+    static int secondsLeft;
     private static boolean cleanChat;
     private boolean sfxenabled;
 
@@ -108,6 +108,10 @@ public class FeatureEpicCountdown extends SimpleFeature {
                 String line = TextUtils.stripColor(score.getJustTeam());
                 if(line.contains("Starting in:")){
                     String time = line.replace("Starting in: ", "").replace("§r", "").replace("0:", "");
+                    if (time.contains(":")) {
+                        secondsLeft = Integer.parseInt(time.split(":")[0]) * 60 + Integer.parseInt(time.split(":")[1]);
+                        updatedAt = System.currentTimeMillis();
+                    }
                     if(!time.isEmpty()){
                         secondsLeft = Integer.parseInt(time);
                         updatedAt = System.currentTimeMillis();
