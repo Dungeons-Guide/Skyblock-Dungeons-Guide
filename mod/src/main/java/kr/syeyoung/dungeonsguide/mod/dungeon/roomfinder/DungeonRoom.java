@@ -201,14 +201,7 @@ public class DungeonRoom {
         arr = new long[lenx *leny * lenz * 2 / 8];;
 
         this.doorsAndStates = doorsAndStates;
-        roomMatcherThread.submit(() -> {
-            try {
-                matchRoomAndSetupRoomProcessor();
-                matched = true;
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        });
+        tryRematch();
     }
     private volatile boolean matched = false;
     private volatile boolean matching = false;
