@@ -40,25 +40,25 @@
                                     <Text text=" By syeyoung" color="#FFFFFFFF"/>
                                 </row>
                             </padding>
-                            <size width="5"/>
-                            <flexible>
-                                <align hAlign="END">
-                                    <ConstrainedBox maxWidth="150">
-                                        <size height="19">
-                                            <TextField/>
-                                        </size>
-                                    </ConstrainedBox>
-                                </align>
-                            </flexible>
-                            <aspectRatio width="1" height="1">
-                                <ColorButton on:click="back" hPadding="1"
-                                             backgroundColor="#FF1C376E"          textColor="#FFFFFFFF"
-                                             hoveredBackgroundColor="#FF1C5692"   hoveredTextColor="#FFFFFFFF"
-                                             disabledBackgroundColor="0"  disabledTextColor="0"
-                                             pressedBackgroundColor="#FF1D5F9C"   pressedTextColor="#FFFFFFFF"
-                                             text="?"
-                                />
-                            </aspectRatio>
+<!--                            <size width="5"/>-->
+<!--                            <flexible>-->
+<!--                                <align hAlign="END">-->
+<!--                                    <ConstrainedBox maxWidth="150">-->
+<!--                                        <size height="19">-->
+<!--                                            <TextField/>-->
+<!--                                        </size>-->
+<!--                                    </ConstrainedBox>-->
+<!--                                </align>-->
+<!--                            </flexible>-->
+<!--                            <aspectRatio width="1" height="1">-->
+<!--                                <ColorButton on:click="back" hPadding="1"-->
+<!--                                             backgroundColor="#FF1C376E"          textColor="#FFFFFFFF"-->
+<!--                                             hoveredBackgroundColor="#FF1C5692"   hoveredTextColor="#FFFFFFFF"-->
+<!--                                             disabledBackgroundColor="0"  disabledTextColor="0"-->
+<!--                                             pressedBackgroundColor="#FF1D5F9C"   pressedTextColor="#FFFFFFFF"-->
+<!--                                             text="?"-->
+<!--                                />-->
+<!--                            </aspectRatio>-->
                         </row>
                     </bgcolor>
                 </size>
