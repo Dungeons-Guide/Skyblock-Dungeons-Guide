@@ -65,7 +65,8 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
 
     @Override
     public TextSpan getText() {
-        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() != null) return new TextSpan(new NullTextStyle(), "");
+        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext()
+                != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() != null) return new TextSpan(new NullTextStyle(), "");
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("title"), "Secrets In Room"));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
