@@ -182,7 +182,8 @@ public class FeatureDungeonScore extends TextHUDFeature {
     public int getTotalRooms() {
         int compRooms = getCompleteRooms();
         if (compRooms == 0) return 100;
-        return (int) (100 * (compRooms / (double) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage()));
+        System.out.println(compRooms /  (double) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage());
+        return (int) Math.round(100 * (compRooms / (double) DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage()));
     }
     public int getUndiscoveredPuzzles() {
         int cnt = 0;
@@ -206,39 +207,33 @@ public class FeatureDungeonScore extends TextHUDFeature {
         int skill = 100;
         int deaths = 0;
         {
-            deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
-            skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
             int totalCompRooms= 0;
             int roomCnt = 0;
-            int roomSkillPenalty = 0;
 //            boolean bossroomIncomplete = true;
-            boolean traproomIncomplete = context.isTrapRoomGen();
+//            boolean traproomIncomplete = context.isTrapRoomGen();
             int incompletePuzzles = getUndiscoveredPuzzles();
 
             for (DungeonRoom dungeonRoom : parser.getDungeonRoomList()) {
 //                if (dungeonRoom.getColor() == 74 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
 //                    bossroomIncomplete = false;
-                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
-                    traproomIncomplete = false;
+//                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+//                    traproomIncomplete = false;
                 if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
                     totalCompRooms += dungeonRoom.getUnitPoints().size();
                 if (dungeonRoom.getColor() == 66 && (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED || dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED)) // INCOMPLETE PUZZLE ON MAP
                     incompletePuzzles++;
                 roomCnt += dungeonRoom.getUnitPoints().size();
             }
-            roomSkillPenalty += incompletePuzzles * 10;
             if (parser.getUndiscoveredRoom() != 0)
                 roomCnt = getTotalRooms();
-            roomSkillPenalty += 80 - Math.floor(totalCompRooms * 4.0 / roomCnt);
-//            if (bossroomIncomplete) roomSkillPenalty -=1;
-            if (traproomIncomplete) roomSkillPenalty -=1;
+            skill = (int) Math.floor(80.0 * totalCompRooms / roomCnt)+20;
+            System.out.println(skill + " / "+totalCompRooms + " / "+ roomCnt);
+            skill -=  incompletePuzzles * 10;
 
+            deaths = FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths();
+            skill -= FeatureRegistry.DUNGEON_DEATHS.getTotalDeaths() * 2;
 
-            skill -= roomSkillPenalty;
-
-
-
-            skill = MathHelper.clamp_int(skill, 0, 100);
+            skill = MathHelper.clamp_int(skill, 20, 100);
         }
         int explorer = 0;
         boolean fullyCleared = false;
