@@ -143,6 +143,8 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution.getCurrSlots().contains(s)) {
             clicked.add(s);
             return;
+        } else {
+            mouseInputEvent.setCanceled(true);
         }
     }
 
