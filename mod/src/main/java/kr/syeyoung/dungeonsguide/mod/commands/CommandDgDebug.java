@@ -558,6 +558,10 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void dumpSettingsCommand() {
+        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
+            System.out.println(abstractFeature.getCategory()+"\t"+abstractFeature.getName());
+        }
+
 //        NestedCategory nestedCategory = new NestedCategory("ROOT");
 //        for (AbstractFeature abstractFeature : FeatureRegistry.getFeatureList()) {
 //            String category = abstractFeature.getCategory();
