@@ -39,9 +39,11 @@ public class CategoryPageWidget extends AnnotatedImportOnlyWidget {
     public final BindableAttribute categories = new BindableAttribute<>(WidgetList.class);
     @Bind(variableName = "categoryShow")
     public final BindableAttribute<String > showCategory = new BindableAttribute<>(String.class);
+    private String category;
     public CategoryPageWidget(String category) {
         super(new ResourceLocation("dungeonsguide:gui/config/categorypage.gui"));
         items.setValue(buildMenu(category));
+        this.category = category;
         List<Widget> widgets;
         categories.setValue(widgets = buildCategory(category));
         showCategory.setValue(widgets.isEmpty() ? "hide" : "show");
@@ -61,5 +63,20 @@ public class CategoryPageWidget extends AnnotatedImportOnlyWidget {
                 .getOrDefault(category, Collections.emptyList()).stream().map(
                         a -> new FeatureItem(a)
                 ).collect(Collectors.toList());
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        CategoryPageWidget that = (CategoryPageWidget) o;
+
+        return category.equals(that.category);
+    }
+
+    @Override
+    public int hashCode() {
+        return category.hashCode();
     }
 }
