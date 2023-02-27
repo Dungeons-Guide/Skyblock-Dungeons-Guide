@@ -343,8 +343,10 @@ public class DungeonsGuide implements DGInterface {
         if (packetInjector != null) packetInjector.cleanup();
 
         try {
-            AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().getRenderManager().livingPlayer;
-            transform(ep);
+            if (Minecraft.getMinecraft().getRenderManager().livingPlayer instanceof AbstractClientPlayer) {
+                AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().getRenderManager().livingPlayer;
+                transform(ep);
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -358,7 +360,8 @@ public class DungeonsGuide implements DGInterface {
             e.printStackTrace();
         }
         NetHandlerPlayClient netHandlerPlayClient = Minecraft.getMinecraft().getNetHandler();
-        if (netHandlerPlayClient == null && (Minecraft.getMinecraft().getRenderManager().livingPlayer) != null)
+        if (netHandlerPlayClient == null && (Minecraft.getMinecraft().getRenderManager().livingPlayer) != null
+                    && Minecraft.getMinecraft().getRenderManager().livingPlayer instanceof EntityPlayerSP)
             netHandlerPlayClient = ((EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer).sendQueue;
 
         if (netHandlerPlayClient != null) {
