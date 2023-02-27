@@ -65,7 +65,7 @@
                 <line color="#FFFFFFFF"/>
                 <flexible>
                     <row>
-                        <ConstrainedBox maxWidth="100">
+                        <ConstrainedBox maxWidth="150">
                             <bgcolor backgroundColor="0xFF000000">
                                 <padding left="0" top="5" bottom="5" right="5">
                                     <col>

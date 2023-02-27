@@ -58,7 +58,7 @@ import java.util.UUID;
 
 public class FeaturePenguins extends SimpleFeature {
     public FeaturePenguins() {
-        super("Player&Mob Utils", "Penguins", "Awwww", "etc.penguin", false);
+        super("Player & Mob", "Penguins", "Awwww", "etc.penguin", false);
         OBJLoader.instance.addDomain("dungeonsguide");
 
     }

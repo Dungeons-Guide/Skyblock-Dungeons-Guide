@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 
 public class FeatureCurrentPhase extends TextHUDFeature {
     public FeatureCurrentPhase() {
-        super("Bossfight Helper", "Display Current Phase", "Displays the current phase of bossfight", "bossfight.phasedisplay");
+        super("Bossfight", "Display Current Phase", "Displays the current phase of bossfight", "bossfight.phasedisplay");
         this.setEnabled(true);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

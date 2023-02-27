@@ -39,7 +39,7 @@ import java.util.List;
 
 public class FeatureBoxSkelemaster extends SimpleFeature  {
     public FeatureBoxSkelemaster() {
-        super("Player&Mob Utils", "Box Skeleton Masters", "Box skeleton masters in dungeons", "dungeon.skeletonmasterbox", true);
+        super("Player & Mob", "Box Skeleton Masters", "Box skeleton masters in dungeons", "dungeon.skeletonmasterbox", true);
         addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and skeletonmaster to be boxed", 20, TCInteger.INSTANCE));
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Skeleton master", new AColor(255,0,0,50), TCAColor.INSTANCE));
     }

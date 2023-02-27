@@ -32,7 +32,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 
 public class FeatureHideAnimals extends SimpleFeature  {
     public FeatureHideAnimals() {
-        super("Bossfight Helper.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
+        super("Bossfight.Floor 4", "Hide animals on f4", "Hide Spirit Animals on F4. \nClick on Edit for precise setting", "bossfight.hideanimals", false);
         addParameter("sheep", new FeatureParameter<Boolean>("sheep", "Hide Sheep", "Hide Sheep", true, TCBoolean.INSTANCE, nval -> sheep = nval));
         addParameter("cow", new FeatureParameter<Boolean>("cow", "Hide Cows", "Hide Cows", true, TCBoolean.INSTANCE, nval -> cow = nval));
         addParameter("chicken", new FeatureParameter<Boolean>("chicken", "Hide Chickens", "Hide Chickens", true, TCBoolean.INSTANCE, nval -> chicken = nval));

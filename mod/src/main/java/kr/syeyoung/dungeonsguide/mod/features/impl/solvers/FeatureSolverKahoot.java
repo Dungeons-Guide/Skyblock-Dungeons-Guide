@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
 public class FeatureSolverKahoot extends SimpleFeature {
     public FeatureSolverKahoot() {
-        super("Puzzle Room Solvers", "Quiz", "Highlights the correct solution for trivia puzzle",  "solver.trivia");
+        super("Puzzle Solvers", "Quiz", "Highlights the correct solution for trivia puzzle",  "solver.trivia");
 
         addParameter("targetColor", new FeatureParameter<AColor>("targetColor", "Target Color", "Color of the solution box", new AColor(0,255,0,50), TCAColor.INSTANCE));
     }

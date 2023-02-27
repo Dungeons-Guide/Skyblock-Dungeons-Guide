@@ -39,7 +39,7 @@ import java.util.List;
 
 public class FeatureBoxBats extends SimpleFeature  {
     public FeatureBoxBats() {
-        super("Player&Mob Utils", "Box Bats", "Box bats in dungeons\nDoes not appear through walls", "dungeon.batbox", true);
+        super("Player & Mob", "Box Bats", "Box bats in dungeons\nDoes not appear through walls", "dungeon.batbox", true);
         addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and bats to be boxed", 20, TCInteger.INSTANCE));
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Bats", new AColor(255,0,0,50), TCAColor.INSTANCE));
     }

@@ -39,7 +39,7 @@ import java.util.List;
 
 public class FeatureBoxStarMobs extends SimpleFeature {
     public FeatureBoxStarMobs() {
-        super("Player&Mob Utils", "Box Starred mobs", "Box Starred mobs in dungeons", "dungeon.starmobbox", false);
+        super("Player & Mob", "Box Starred mobs", "Box Starred mobs in dungeons", "dungeon.starmobbox", false);
         addParameter("radius", new FeatureParameter<Integer>("radius", "Highlight Radius", "The maximum distance between player and starred mobs to be boxed", 20, TCInteger.INSTANCE));
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Starred mobs", new AColor(0,255,255,50), TCAColor.INSTANCE));
     }

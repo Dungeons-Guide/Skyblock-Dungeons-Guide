@@ -155,12 +155,12 @@ public class FeatureRegistry {
     public static final FeatureSolverIcefill SOLVER_ICEPATH = register(new FeatureSolverIcefill());
     public static final FeatureSolverBlaze SOLVER_BLAZE = register(new FeatureSolverBlaze());
     public static final FeatureSolverTeleport SOLVER_TELEPORT = register(new FeatureSolverTeleport());
-    public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Puzzle Room Solvers", "Creeper", "Draws line between prismarine lamps in creeper room", "solver.creeper"));
-    public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Puzzle Room Solvers", "Waterboard (Advanced)", "Calculates solution for waterboard puzzle and displays it to user", "solver.waterboard"));
+    public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Puzzle Solvers", "Creeper", "Draws line between prismarine lamps in creeper room", "solver.creeper"));
+    public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Puzzle Solvers", "Waterboard (Advanced)", "Calculates solution for waterboard puzzle and displays it to user", "solver.waterboard"));
     public static final FeatureSolverTictactoe SOLVER_TICTACTOE = register(new FeatureSolverTictactoe());
     public static final FeatureSolverRiddle SOLVER_RIDDLE = register(new FeatureSolverRiddle());
 
-    // Bossfight HelpersBossfight Helpers
+    // BossfightsBossfights
     public static final FeatureBossHealth BOSSFIGHT_HEALTH = register(new FeatureBossHealth());
     public static final FeatureHideAnimals BOSSFIGHT_HIDE_ANIMALS = register(new FeatureHideAnimals());
     public static final FeatureThornBearPercentage BOSSFIGHT_BEAR_PERCENT = register(new FeatureThornBearPercentage());
@@ -211,7 +211,7 @@ public class FeatureRegistry {
 
     // Data Communication
     public static final FeatureCollectScore ETC_COLLECT_SCORE = register(new FeatureCollectScore());
-    public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Data Transmission", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run\n\nThis automates player chatting action, (chatting data) Thus it might be against hypixel's rules.\nBut mods like auto-gg which also automate player action and is kinda allowed mod exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "dungeon.intermodcomm", false));
+    public static final SimpleFeature DUNGEON_INTERMODCOMM = register(new SimpleFeature("Communication", "Communicate With Other's Dungeons Guide", "Sends total secret in the room to others\nSo that they can use the data to calculate total secret in dungeon run\n\nThis automates player chatting action, (chatting data) Thus it might be against hypixel's rules.\nBut mods like auto-gg which also automate player action and is kinda allowed mod exist so I'm leaving this feature.\nThis option is use-at-your-risk and you'll be responsible for ban if you somehow get banned because of this feature\n(Although it is not likely to happen)\nDefaults to off", "dungeon.intermodcomm", false));
 
 
     // Dungeon HUD
