@@ -23,9 +23,13 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfi
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -38,7 +42,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-public class MainConfigWidget extends AnnotatedImportOnlyWidget {
+public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Renderer {
     @Bind(variableName = "menu")
     public final BindableAttribute menu = new BindableAttribute<>(WidgetList.class);
     @Bind(variableName = "relocate")
@@ -49,13 +53,21 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget {
 
     @Bind(variableName = "sidebar")
     public final BindableAttribute<String> sidebar = new BindableAttribute<>(String.class, "hide");
+    @Bind(variableName = "search")
+    public final BindableAttribute<String> search = new BindableAttribute<>(String.class, "");
 
     @Bind(variableName = "mainpage")
     public final BindableAttribute<Widget> mainPage = new BindableAttribute<>(Widget.class, new MainPageWidget());
+
+    private long doSearch = Long.MAX_VALUE;
     public MainConfigWidget() {
         super(new ResourceLocation("dungeonsguide:gui/config/normalconfig.gui"));
         menu.setValue(buildMenu());
         relocate.setValue(new GUIOpenItem("GUI Config", () -> new HUDLocationConfig(null)));
+
+        search.addOnUpdate((old, neu) -> {
+            doSearch = System.currentTimeMillis() + 500;
+        });
     }
 
     public List<Widget> buildMenu() {
@@ -79,5 +91,25 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget {
             this.sidebar.setValue("hide");
         else
             this.sidebar.setValue("show");
+    }
+
+    @Override
+    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        if (doSearch < System.currentTimeMillis()) {
+            doSearch = Long.MAX_VALUE;
+
+            Navigator navigator = Navigator.getNavigator(getDomElement());
+            if (search.getValue().isEmpty()) {
+                if (navigator.getCurrent() instanceof SearchPageWidget)
+                    navigator.goBack();
+            } else {
+                if (navigator.getCurrent() instanceof SearchPageWidget)
+                    navigator.setPageWithoutPush(new SearchPageWidget(search.getValue()));
+                else
+                    navigator.openPage(new SearchPageWidget(search.getValue()));
+            }
+        }
+
+        SingleChildRenderer.INSTANCE.doRender(absMouseX,absMouseY,relMouseX,relMouseY,partialTicks,context,buildContext);
     }
 }

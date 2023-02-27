@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
+import lombok.Getter;
 
 import java.util.Collections;
 import java.util.List;
@@ -35,7 +36,8 @@ public class Navigator extends AnnotatedExportOnlyWidget {
     @Export(attributeName = "_")
     public final BindableAttribute<Widget> child = new BindableAttribute<>(Widget.class);
 
-    public Widget current;
+    @Getter
+    private Widget current;
 
     public Navigator() {
         child.addOnUpdate((old, a) -> {
@@ -44,7 +46,14 @@ public class Navigator extends AnnotatedExportOnlyWidget {
     }
 
     public void openPage(Widget widget) {
+        if (widget.equals(current)) return;
         widgets.push(current);
+        getDomElement().removeElement(getDomElement().getChildren().get(0));
+        getDomElement().addElement(widget.createDomElement(getDomElement()));
+        current = widget;
+    }
+
+    public void setPageWithoutPush(Widget widget) {
         getDomElement().removeElement(getDomElement().getChildren().get(0));
         getDomElement().addElement(widget.createDomElement(getDomElement()));
         current = widget;
