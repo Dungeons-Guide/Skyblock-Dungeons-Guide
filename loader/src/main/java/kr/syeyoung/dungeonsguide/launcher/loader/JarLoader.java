@@ -101,7 +101,6 @@ public class JarLoader implements IDGLoader {
             dgInterface.unload();
         } catch (Throwable e) {
             dgInterface = null;
-            ProgressStateHolder.pop();
             throw new DungeonsGuideUnloadingException(toString(),e);
         }
         if (classLoader != null)
