@@ -52,8 +52,8 @@ public class FeatureDisableMessage extends SimpleFeature {
             new MessageData(Pattern.compile("§r.+§r§a is ready to use! Press §r.+§r§a to activate it!§r"), "Ready to use message", "\"Blah is ready to use! Press F to activate it!", "readytouse"),
             new MessageData(Pattern.compile("§r.+ §r§ais now available!§r"), "Ability Available","\"blah is now available!\"", "available"),
             new MessageData(Pattern.compile("§r§cThe Stone doesn't seem to do anything here\\.§r"), "Stone Message", "\"The Stone doesn't seem to do anything here\"", "stone"),
-            new MessageData(Pattern.compile("§r§cNo target found!§r"), "Voodoo Doll No Target", "\"No target found!\"", "voodotarget"),
-			new MessageData(Pattern.compile("§eYour §6Auto Recombobulator §erecombobulated .+§e!§r"), "Auto Recombobulator", "\"Your Auto Recombobulator recombobulated blahblah!\"", "autorecombobulator"),
+            new MessageData(Patterån.compile("§r§cNo target found!§r"), "Voodoo Doll No Target", "\"No target found!\"", "voodotarget"),
+            new MessageData(Pattern.compile("§eYour §6Auto Recombobulator §erecombobulated .+§e!§r"), "Auto Recombobulator", "\"Your Auto Recombobulator recombobulated blahblah!\"", "autorecombobulator"),
     };
 
     public FeatureDisableMessage() {
