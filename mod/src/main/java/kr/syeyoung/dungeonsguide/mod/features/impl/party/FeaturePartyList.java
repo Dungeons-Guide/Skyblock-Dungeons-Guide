@@ -30,7 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 
 public class FeaturePartyList extends TextHUDFeature {
     public FeaturePartyList() {
-        super("Party","Party List", "Party List as GUI", "party.list");
+        super("Dungeon Party","Party List", "Party List as GUI", "party.list");
         registerDefaultStyle("name", DefaultingDelegatingTextStyle.derive("Feature Default - Name", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("player", DefaultingDelegatingTextStyle.derive("Feature Default - Player", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));

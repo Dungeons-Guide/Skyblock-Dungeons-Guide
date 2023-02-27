@@ -46,7 +46,7 @@ import java.util.regex.Pattern;
 public class FeatureAbilityCooldown extends TextHUDFeature {
 
     public FeatureAbilityCooldown() {
-        super("Misc", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2");
+        super("Misc.HUD", "View Ability Cooldowns", "A handy hud for viewing cooldown abilities", "etc.abilitycd2");
         registerDefaultStyle("abilityname", DefaultingDelegatingTextStyle.derive("Feature Default - Abilityname", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive("Feature Default - Number", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));

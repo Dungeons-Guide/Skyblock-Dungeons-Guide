@@ -47,7 +47,7 @@ import java.util.regex.Pattern;
 
 public class FeatureDungeonDeaths extends TextHUDFeature {
     public FeatureDungeonDeaths() {
-        super("Dungeon.HUDs", "Display Deaths", "Display names of player and death count in dungeon run", "dungeon.stats.deaths");
+        super("Dungeon HUD.In Dungeon HUD", "Display Deaths", "Display names of player and death count in dungeon run", "dungeon.stats.deaths");
         this.setEnabled(false);
         registerDefaultStyle("username", DefaultingDelegatingTextStyle.derive("Feature Default - Username", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("total", DefaultingDelegatingTextStyle.derive("Feature Default - Total", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));

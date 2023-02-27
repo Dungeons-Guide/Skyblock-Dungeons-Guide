@@ -32,7 +32,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
     public FeatureDungeonCurrentRoomSecrets() {
-        super("Dungeon.HUDs", "Display # Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom");
+        super("Dungeon HUD.In Dungeon HUD", "Display # Secrets in current room", "Display what your actionbar says", "dungeon.stats.secretsroom");
         this.setEnabled(false);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

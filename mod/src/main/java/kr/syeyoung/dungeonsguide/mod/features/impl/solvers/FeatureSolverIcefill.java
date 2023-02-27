@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 
 public class FeatureSolverIcefill extends SimpleFeature {
     public FeatureSolverIcefill() {
-        super("Dungeon.Solvers.Floor 3+", "Icepath (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath");
+        super("Puzzle Room Solvers", "Icepath (Advanced)", "Calculates solution for icepath puzzle and displays it to user",  "solver.icepath");
         this.parameters = new LinkedHashMap<>();
         addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), TCAColor.INSTANCE));
         addParameter("lineWidth", new FeatureParameter<Double>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0, TCDouble.INSTANCE)

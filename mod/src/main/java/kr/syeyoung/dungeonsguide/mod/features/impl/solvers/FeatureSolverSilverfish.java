@@ -29,7 +29,7 @@ import java.util.LinkedHashMap;
 
 public class FeatureSolverSilverfish extends SimpleFeature {
     public FeatureSolverSilverfish() {
-        super("Dungeon.Solvers.Floor 3+", "Silverfish (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish");
+        super("Puzzle Room Solvers", "Silverfish (Advanced)", "Actively calculates solution for silverfish puzzle and displays it to user",  "solver.silverfish");
         this.parameters = new LinkedHashMap<>();
         addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), TCAColor.INSTANCE, nval -> lineColor = nval));
         addParameter("lineWidth", new FeatureParameter<Double>("lineWidth", "Line Thickness", "Thickness of the solution line",1.0, TCDouble.INSTANCE, nval -> lineWidth = nval)

@@ -62,7 +62,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     private WidgetMechanicBrowser mechanicBrowser;
 
     public FeatureMechanicBrowse() {
-        super("Dungeon.Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
+        super("Pathfinding & Secrets.Secret Browser","Secret Browser", "Browse and Pathfind secrets and mechanics in the current room", "secret.mechanicbrowse", false, 100, 300);
         addParameter("scale", new FeatureParameter<Double>("scale", "Scale", "Scale", 1.0, TCDouble.INSTANCE)
                 .setWidgetGenerator((param) -> new ParameterItem(param, new TCDouble.DoubleEditWidget(param, 0.1, Double.POSITIVE_INFINITY))));
     }

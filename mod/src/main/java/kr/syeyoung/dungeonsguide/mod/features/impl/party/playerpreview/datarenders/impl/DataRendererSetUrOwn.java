@@ -31,7 +31,7 @@ public class DataRendererSetUrOwn implements IDataRenderer {
     public Dimension renderData(PlayerProfile playerProfile) {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("§aCustomize at /dg", 0,0,-1);
-        fr.drawString("§a-> Party", 0,fr.FONT_HEIGHT,-1);
+        fr.drawString("§a-> Dungeon Party", 0,fr.FONT_HEIGHT,-1);
         fr.drawString("§a-> View player stats when join", 0,fr.FONT_HEIGHT*2,-1);
         fr.drawString("§a-> Configure", 0,fr.FONT_HEIGHT*3,-1);
         return new Dimension(100, fr.FONT_HEIGHT*4);
@@ -46,7 +46,7 @@ public class DataRendererSetUrOwn implements IDataRenderer {
     public Dimension renderDummy() {
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
         fr.drawString("§aCustomize at /dg", 0,0,-1);
-        fr.drawString("§a-> Party", 0,fr.FONT_HEIGHT,-1);
+        fr.drawString("§a-> Dungeon Party", 0,fr.FONT_HEIGHT,-1);
         fr.drawString("§a-> View player stats when join", 0,fr.FONT_HEIGHT*2,-1);
         fr.drawString("§a-> Configure", 0,fr.FONT_HEIGHT*3,-1);
         return new Dimension(100, fr.FONT_HEIGHT*4);

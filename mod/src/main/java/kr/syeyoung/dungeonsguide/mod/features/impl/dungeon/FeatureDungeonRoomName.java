@@ -36,7 +36,7 @@ import java.awt.*;
 
 public class FeatureDungeonRoomName extends TextHUDFeature {
     public FeatureDungeonRoomName() {
-        super("Dungeon.HUDs", "Display name of the room you are in", "Display name of the room you are in", "dungeon.roomname");
+        super("Dungeon HUD.In Dungeon HUD", "Display name of the room you are in", "Display name of the room you are in", "dungeon.roomname");
         registerDefaultStyle("in", DefaultingDelegatingTextStyle.derive("Feature Default - In", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("roomname", DefaultingDelegatingTextStyle.derive("Feature Default - Roomname", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
     }

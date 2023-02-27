@@ -38,7 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class FeatureWarnLowHealth extends TextHUDFeature {
     public FeatureWarnLowHealth() {
-        super("Dungeon.Teammates", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn");
+        super("Dungeon HUD.Alerts", "Low Health Warning", "Warn if someone is on low health", "dungeon.lowhealthwarn");
         addParameter("threshold", new FeatureParameter<Integer>("threshold", "Health Threshold", "Health Threshold for this feature to be toggled. default to 500", 500, TCInteger.INSTANCE));
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

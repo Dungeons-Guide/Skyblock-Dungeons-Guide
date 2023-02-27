@@ -30,7 +30,7 @@ import org.lwjgl.input.Keyboard;
 
 public class FeatureTogglePathfind extends SimpleFeature {
     public FeatureTogglePathfind() {
-        super("Dungeon.Secrets.Keybinds", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nPress settings to edit the key", "secret.togglePathfind");
+        super("Pathfinding & Secrets", "Toggle Pathfind Lines", "A key for toggling pathfound line visibility.\nPress settings to edit the key", "secret.togglePathfind");
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to toggle pathfind lines", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
     }
     public boolean togglePathfindStatus = false;

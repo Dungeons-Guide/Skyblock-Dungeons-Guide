@@ -36,7 +36,7 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCustomPartyFinder extends SimpleFeature {
     public FeatureCustomPartyFinder() {
-        super("Party","Custom Party Finder","Custom Party Finder", "party.customfinder", true);
+        super("Dungeon Party","Custom Party Finder","Custom Party Finder", "party.customfinder", true);
     }
 
     @Getter

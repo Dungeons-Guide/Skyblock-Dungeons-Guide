@@ -37,7 +37,7 @@ import java.util.UUID;
 public class FeatureWatcherWarning extends TextHUDFeature {
 
     public FeatureWatcherWarning() {
-        super("Dungeon.Blood Room","Watcher Spawn Alert", "Alert when watcher says 'That will be enough for now'", "dungen.watcherwarn");
+        super("Dungeon HUD.Alerts","Watcher Spawn Alert", "Alert when watcher says 'That will be enough for now'", "dungen.watcherwarn");
         registerDefaultStyle("warning", DefaultingDelegatingTextStyle.derive("Feature Default - Warning", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.WARNING)));
         setEnabled(false);
     }

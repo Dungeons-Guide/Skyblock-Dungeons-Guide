@@ -40,7 +40,7 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureDungeonSBTime() {
-        super("Dungeon.HUDs", "Display Ingame Dungeon Time", "Display how much time skyblock thinks has passed since dungeon run started", "dungeon.stats.igtime");
+        super("Dungeon HUD.In Dungeon HUD", "Display Ingame Dungeon Time", "Display how much time skyblock thinks has passed since dungeon run started", "dungeon.stats.igtime");
         this.setEnabled(false);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("discriminator", DefaultingDelegatingTextStyle.derive("Feature Default - Discriminator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));

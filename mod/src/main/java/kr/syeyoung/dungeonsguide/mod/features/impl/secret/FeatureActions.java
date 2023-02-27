@@ -40,7 +40,7 @@ import java.awt.*;
 
 public class FeatureActions extends TextHUDFeature {
     public FeatureActions() {
-        super("Dungeon.Secrets", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview");
+        super("Pathfinding & Secrets", "Action Viewer", "View List of actions that needs to be taken", "secret.actionview");
 
         registerDefaultStyle("pathfinding", DefaultingDelegatingTextStyle.derive("Feature Default - Pathfinding", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("mechanic", DefaultingDelegatingTextStyle.derive("Feature Default - Mechanic", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))

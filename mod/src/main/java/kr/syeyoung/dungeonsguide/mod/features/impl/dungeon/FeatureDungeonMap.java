@@ -81,7 +81,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     private boolean centerMapOnPlayer;
 
     public FeatureDungeonMap() {
-        super("Dungeon", "Dungeon Map", "Display dungeon map!", "dungeon.map", true, 128, 128);
+        super("Dungeon HUD", "Dungeon Map", "Display dungeon map!", "dungeon.map", true, 128, 128);
         this.setEnabled(false);
         addParameter("scale", new FeatureParameter<>("scale", "Scale map", "Whether to scale map to fit screen", true, TCBoolean.INSTANCE, nval -> shouldScale = nval));
         addParameter("cacheMap", new FeatureParameter<>("cacheMap", "Should cache map data", "name", true, TCBoolean.INSTANCE, nval -> shouldCacheMap = nval));

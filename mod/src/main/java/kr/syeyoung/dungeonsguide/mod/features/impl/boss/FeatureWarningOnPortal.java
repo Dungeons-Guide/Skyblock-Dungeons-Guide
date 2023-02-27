@@ -42,7 +42,7 @@ import java.util.Map;
 
 public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextProvider {
     public FeatureWarningOnPortal() {
-        super("Dungeon.Blood Room", "Score Warning on Watcher portal", "Display warnings such as\n- 'NOT ALL ROOMS DISCOVERED'\n- 'NOT ALL ROOMS COMPLETED'\n- 'Expected Score: 304'\n- 'MISSING 3 CRYPTS'\non portal", "bossfight.warningonportal");
+        super("Dungeon HUD", "Score Warning on Watcher portal", "Display warnings such as\n- 'NOT ALL ROOMS DISCOVERED'\n- 'NOT ALL ROOMS COMPLETED'\n- 'Expected Score: 304'\n- 'MISSING 3 CRYPTS'\non portal", "bossfight.warningonportal");
         addParameter("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), TCTextStyleList.INSTANCE)
                 .setWidgetGenerator(param -> new CompatLayer(new PanelTextParameterConfig(FeatureWarningOnPortal.this))));
         getStyles().add(new TextStyle("warning", new AColor(255, 0,0,255), new AColor(255, 255,255,255), false));

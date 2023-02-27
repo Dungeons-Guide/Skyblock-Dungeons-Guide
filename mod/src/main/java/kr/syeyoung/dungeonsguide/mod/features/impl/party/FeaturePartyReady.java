@@ -38,7 +38,7 @@ import java.util.*;
 
 public class FeaturePartyReady extends TextHUDFeature {
     public FeaturePartyReady() {
-        super("Party","Party Ready List", "Check if your party member have said r or not", "party.readylist");
+        super("Dungeon Party","Party Ready List", "Check if your party member have said r or not", "party.readylist");
         registerDefaultStyle("player", DefaultingDelegatingTextStyle.derive("Feature Default - Player", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("ready", DefaultingDelegatingTextStyle.derive("Feature Default - Ready", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.DEFAULT))

@@ -56,7 +56,7 @@ public class FeatureDisableMessage extends SimpleFeature {
     };
 
     public FeatureDisableMessage() {
-        super("Misc.Chat", "Disable ability messages", "Do not let ability messages show up in chatbox\nclick on Edit for more precise settings", "fixes.messagedisable", true);
+        super("Misc.Chat Utils", "Disable ability messages", "Do not let ability messages show up in chatbox\nclick on Edit for more precise settings", "fixes.messagedisable", true);
         for (MessageData messageData : PRE_DEFINED) {
             addParameter(messageData.key, new FeatureParameter<Boolean>(messageData.key, messageData.name, messageData.description, true, TCBoolean.INSTANCE));
         }

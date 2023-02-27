@@ -36,7 +36,7 @@ public class DefaultTextHUDFeatureStyleFeature extends SimpleFeature {
     }
 
     public DefaultTextHUDFeatureStyleFeature() {
-        super("Misc", "Quick HUD Style Settings", "Configure the default hud style", "misc.defaulthud");
+        super("Global HUD", "Quick HUD Style Settings", "Configure the default hud style", "misc.defaulthud");
 
         registerDefaultStyle(Styles.DEFAULT, DefaultingDelegatingTextStyle.ofDefault("Global Text"));
         registerDefaultStyle(Styles.NAME, DefaultingDelegatingTextStyle.derive("Global Default - Name", () -> getStyle(Styles.DEFAULT)).setTextShader(new AColor(0x00, 0xAA,0xAA,255)));

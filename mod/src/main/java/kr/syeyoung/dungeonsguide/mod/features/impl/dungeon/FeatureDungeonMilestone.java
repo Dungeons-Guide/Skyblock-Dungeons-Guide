@@ -44,7 +44,7 @@ import java.util.regex.Pattern;
 
 public class FeatureDungeonMilestone extends TextHUDFeature {
     public FeatureDungeonMilestone() {
-        super("Dungeon.HUDs", "Display Current Class Milestone", "Display current class milestone of yourself", "dungeon.stats.milestone");
+        super("Dungeon HUD.In Dungeon HUD", "Display Current Class Milestone", "Display current class milestone of yourself", "dungeon.stats.milestone");
         this.setEnabled(false);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

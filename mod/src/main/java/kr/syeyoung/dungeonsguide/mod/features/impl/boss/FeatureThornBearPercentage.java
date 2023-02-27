@@ -31,7 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 
 public class FeatureThornBearPercentage extends TextHUDFeature {
     public FeatureThornBearPercentage() {
-        super("Dungeon.Bossfight.Floor 4", "Display Spirit Bear Summon Percentage", "Displays spirit bear summon percentage in hud", "bossfight.spiritbear");
+        super("Bossfight Helper.Floor 4", "Display Spirit Bear Summon Percentage", "Displays spirit bear summon percentage in hud", "bossfight.spiritbear");
         this.setEnabled(true);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

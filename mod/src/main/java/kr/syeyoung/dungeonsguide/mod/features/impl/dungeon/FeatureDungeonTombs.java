@@ -33,7 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class FeatureDungeonTombs extends TextHUDFeature {
     public FeatureDungeonTombs() {
-        super("Dungeon.HUDs", "Display # of Crypts", "Display how much total crypts have been blown up in a dungeon run", "dungeon.stats.tombs");
+        super("Dungeon HUD.In Dungeon HUD", "Display # of Crypts", "Display how much total crypts have been blown up in a dungeon run", "dungeon.stats.tombs");
         this.setEnabled(false);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

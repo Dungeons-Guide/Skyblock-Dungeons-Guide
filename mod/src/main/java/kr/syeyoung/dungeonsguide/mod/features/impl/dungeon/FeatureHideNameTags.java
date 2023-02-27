@@ -29,7 +29,7 @@ import net.minecraftforge.client.event.RenderLivingEvent;
 
 public class FeatureHideNameTags extends SimpleFeature  {
     public FeatureHideNameTags() {
-        super("Dungeon.Mobs", "Hide mob nametags", "Hide mob nametags in dungeon", "dungeon.hidenametag", false);
+        super("Player&Mob Utils", "Hide mob nametags", "Hide mob nametags in dungeon", "dungeon.hidenametag", false);
     }
 
 

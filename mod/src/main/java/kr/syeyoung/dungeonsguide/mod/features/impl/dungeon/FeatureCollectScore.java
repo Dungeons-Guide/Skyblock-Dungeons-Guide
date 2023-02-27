@@ -38,7 +38,7 @@ import java.util.concurrent.ExecutionException;
 public class FeatureCollectScore extends SimpleFeature {
     Logger logger = LogManager.getLogger("FeatureCollectScore");
     public FeatureCollectScore() {
-        super("Misc", "Collect Speed Score", "Collect Speed score, run time, and floor and send that to developer's server for speed formula. This data is completely anonymous, opt out of the feature by disabling this feature", "misc.gatherscoredata", true);
+        super("Data Transmission", "Collect Speed Score", "Collect Speed score, run time, and floor and send that to developer's server for speed formula. This data is completely anonymous, opt out of the feature by disabling this feature\n\nThis feature is currently disabled serverside", "misc.gatherscoredata", true);
     }
 
     public void collectDungeonRunData(byte[] mapData, DungeonContext context) {

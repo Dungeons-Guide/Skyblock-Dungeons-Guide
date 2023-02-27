@@ -53,7 +53,7 @@ import java.util.*;
 public class FeatureSoulRoomWarning extends TextHUDFeature {
 
     public FeatureSoulRoomWarning() {
-        super("Dungeon.HUDs","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn");
+        super("Dungeon HUD.Alerts","Secret Soul Alert", "Alert if there is an fairy soul in the room", "secret.fairysoulwarn");
         registerDefaultStyle("warning", DefaultingDelegatingTextStyle.derive("Feature Default - Warning", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.WARNING)));
 
         addParameter("roomuids", new FeatureParameter<>("roomuids", "Disabled room Names", "Disable for these rooms", new ArrayList<>(), TCStringList.INSTANCE)

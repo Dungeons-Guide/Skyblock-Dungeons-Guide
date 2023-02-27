@@ -35,7 +35,7 @@ import org.lwjgl.input.Mouse;
 
 public class FeaturePressAnyKeyToCloseChest extends SimpleFeature {
     public FeaturePressAnyKeyToCloseChest() {
-        super("Dungeon", "Press Any Mouse Button or Key to close Secret Chest", "dungeon.presskeytoclose");
+        super("Misc", "Press Any Mouse Button or Key to close Secret Chest", "dungeon.presskeytoclose");
         addParameter("threshold", new FeatureParameter<Integer>("threshold", "Price Threshold", "The maximum price of item for chest to be closed. Default 1m", 1000000, TCInteger.INSTANCE));
     }
 

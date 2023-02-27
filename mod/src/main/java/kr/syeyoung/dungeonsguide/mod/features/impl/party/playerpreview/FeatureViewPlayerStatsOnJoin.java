@@ -69,7 +69,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
     }
 
     public FeatureViewPlayerStatsOnJoin() {
-        super("Party", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
+        super("Dungeon Party", "View player stats when join", "view player rendering when joining/someone joins the party", "partykicker.viewstats", true);
         addParameter("datarenderers", new FeatureParameter<List<String>>("datarenderers", "DataRenderers", "Datarenderssdasd", new ArrayList<>(Arrays.asList(
                 "catalv", "selected_class_lv", "dungeon_catacombs_higheststat", "dungeon_master_catacombs_higheststat", "skill_combat_lv", "skill_foraging_lv", "skill_mining_lv", "fairysouls", "dummy"
         )), TCStringList.INSTANCE)

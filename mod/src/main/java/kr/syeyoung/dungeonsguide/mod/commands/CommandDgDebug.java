@@ -320,7 +320,7 @@ public class CommandDgDebug extends CommandBase {
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
-            grp.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
+            grp.pathfind("COMMAND", args[1], args[2], FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
         } catch (Throwable t) {
             t.printStackTrace();
         }
@@ -679,7 +679,7 @@ public class CommandDgDebug extends CommandBase {
             GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
             // performance testing (lol)
             for (String s : dungeonRoom.getMechanics().keySet()) {
-                grp.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_GLOBAL.getRouteProperties());
+                grp.pathfind("COMMAND-" + s, s, "navigate", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
             }
         } catch (Throwable t) {
             t.printStackTrace();

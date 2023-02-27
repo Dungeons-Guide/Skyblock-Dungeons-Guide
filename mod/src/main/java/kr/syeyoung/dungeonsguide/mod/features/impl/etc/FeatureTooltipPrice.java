@@ -36,7 +36,7 @@ import java.util.TreeSet;
 
 public class FeatureTooltipPrice extends SimpleFeature {
     public FeatureTooltipPrice() {
-        super("Misc.API Features", "Item Price", "Shows price of items", "tooltip.price");
+        super("Misc", "Item Price", "Shows price of items", "tooltip.price");
         addParameter("reqShift", new FeatureParameter<Boolean>("reqShift", "Require Shift", "If shift needs to be pressed in order for this feature to be activated", false, TCBoolean.INSTANCE));
         setEnabled(false);
     }

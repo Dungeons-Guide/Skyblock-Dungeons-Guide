@@ -30,7 +30,7 @@ import java.util.LinkedHashMap;
 
 public class FeatureSolverBox extends SimpleFeature {
     public FeatureSolverBox() {
-        super("Dungeon.Solvers.Floor 3+", "Box (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box");
+        super("Puzzle Room Solvers", "Box (Advanced)", "Calculates solution for box puzzle room, and displays it to user",  "solver.box");
         this.parameters = new LinkedHashMap<>();
         addParameter("disableText", new FeatureParameter<Boolean>("disableText", "Box Puzzle Solver Disable text", "Disable 'Type recalc to recalculate solution' showing up on top left.\nYou can still type recalc to recalc solution after disabling this feature", false, TCBoolean.INSTANCE));
         addParameter("lineColor", new FeatureParameter<AColor>("lineColor", "Line Color", "Color of the solution line", new AColor(0xFF00FF00, true), TCAColor.INSTANCE));

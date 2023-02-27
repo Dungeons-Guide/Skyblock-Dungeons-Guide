@@ -31,7 +31,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 public class APIKey extends SimpleFeature {
 
     public APIKey() {
-        super("Misc.API Features", "API KEY", "Sets api key","partykicker.apikey");
+        super("Dungeon Party", "API KEY", "Sets api key","partykicker.apikey");
         addParameter("apikey", new FeatureParameter<String>("apikey", "API Key", "API key", "", TCString.INSTANCE));
     }
 

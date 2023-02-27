@@ -32,7 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
 public class FeatureDungeonRealTime extends TextHUDFeature {
     public FeatureDungeonRealTime() {
-        super("Dungeon.HUDs", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime");
+        super("Dungeon HUD.In Dungeon HUD", "Display Real Time-Dungeon Time", "Display how much real time has passed since dungeon run started", "dungeon.stats.realtime");
         this.setEnabled(false);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("discriminator", DefaultingDelegatingTextStyle.derive("Feature Default - Discriminator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));

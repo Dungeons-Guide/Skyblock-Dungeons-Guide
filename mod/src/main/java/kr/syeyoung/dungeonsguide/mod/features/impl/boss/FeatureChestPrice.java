@@ -44,7 +44,7 @@ import java.util.TreeSet;
 
 public class FeatureChestPrice extends SimpleFeature {
     public FeatureChestPrice() {
-        super("Dungeon", "Show Profit of Dungeon Reward Chests","Show Profit of Dungeon Chests", "bossfight.profitchest", false);
+        super("Dungeon HUD", "Show Profit of Dungeon Reward Chests","Show Profit of Dungeon Chests", "bossfight.profitchest", false);
     }
 
     @DGEventHandler

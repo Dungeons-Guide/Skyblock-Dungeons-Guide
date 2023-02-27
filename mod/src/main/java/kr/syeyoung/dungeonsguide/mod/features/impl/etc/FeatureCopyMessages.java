@@ -31,7 +31,7 @@ import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureCopyMessages extends SimpleFeature {
     public FeatureCopyMessages() {
-        super("Misc.Chat", "Copy Chat Messages", "Click on copy to copy", "etc.copymsg");
+        super("Misc.Chat Utils", "Copy Chat Messages", "Click on copy to copy", "etc.copymsg");
         setEnabled(false);
     }
     @DGEventHandler(triggerOutOfSkyblock = true)

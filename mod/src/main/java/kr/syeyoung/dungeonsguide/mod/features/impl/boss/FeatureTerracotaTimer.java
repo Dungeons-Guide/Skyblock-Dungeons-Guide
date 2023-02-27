@@ -33,7 +33,7 @@ import net.minecraft.entity.boss.BossStatus;
 
 public class FeatureTerracotaTimer extends TextHUDFeature {
     public FeatureTerracotaTimer() {
-        super("Dungeon.Bossfight.Floor 6", "Display Terracotta phase timer", "Displays Terracotta phase timer", "bossfight.terracota");
+        super("Bossfight Helper.Floor 6", "Display Terracotta phase timer", "Displays Terracotta phase timer", "bossfight.terracota");
         this.setEnabled(true);
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));

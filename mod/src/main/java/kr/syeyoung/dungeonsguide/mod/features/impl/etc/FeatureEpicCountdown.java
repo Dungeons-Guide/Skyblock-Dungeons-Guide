@@ -46,7 +46,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
     int actualSecondsLeft;
 
     public FeatureEpicCountdown() {
-        super("Dungeon.HUDs", "Epic Dungeon Start Countdown", "Shows a cool dungeon start instead of the chat messages", "etc.dungeoncountdown", true);
+        super("Dungeon HUD", "Epic Dungeon Start Countdown", "Shows a cool dungeon start instead of the chat messages", "etc.dungeoncountdown", true);
         addParameter("cleanchat", new FeatureParameter<>("cleanchat", "Clean Dungeon Chat", "^^^", true, TCBoolean.INSTANCE, nval -> cleanChat = nval));
         addParameter("sounds", new FeatureParameter<>("sounds", "Countdown SFX", "^^^", true, TCBoolean.INSTANCE, nval -> sfxenabled = nval));
 

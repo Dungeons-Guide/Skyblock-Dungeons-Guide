@@ -33,7 +33,7 @@ import net.minecraftforge.client.event.GuiOpenEvent;
 
 public class FeatureCooldownCounter extends TextHUDFeature {
     public FeatureCooldownCounter() {
-        super("Dungeon", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown");
+        super("Misc.HUD", "Dungeon Cooldown Counter", "Counts 10 seconds after leaving dungeon", "qol.cooldown");
         registerDefaultStyle("title", DefaultingDelegatingTextStyle.derive("Feature Default - Title", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
         registerDefaultStyle("separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive("Feature Default - Number", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));

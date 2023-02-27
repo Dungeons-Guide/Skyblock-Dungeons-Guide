@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
 public class FeaturePathfindToAll extends SimpleFeature {
     public FeaturePathfindToAll(){
-        super("Dungeon.Secrets.Pathfind To All", "Start pathfind to all secrets upon entering a room", "Auto browse to all secrets in the room", "secret.secretpathfind.allbrowse", false);
+        super("Pathfinding & Secrets.Display All", "Start pathfind to all secrets upon entering a room", "Auto browse to all secrets in the room", "secret.secretpathfind.allbrowse", false);
         addParameter("bat", new FeatureParameter<Boolean>("bat", "Trigger pathfind to Bat", "This feature will trigger pathfind to all bats in this room when entering a room", true, TCBoolean.INSTANCE));
         addParameter("chest", new FeatureParameter<Boolean>("chest", "Trigger pathfind to Chest", "This feature will trigger pathfind to all chests in this room when entering a room", true, TCBoolean.INSTANCE));
         addParameter("essence", new FeatureParameter<Boolean>("essence", "Trigger pathfind to Essence", "This feature will trigger pathfind to all essences in this room when entering a room", true, TCBoolean.INSTANCE));

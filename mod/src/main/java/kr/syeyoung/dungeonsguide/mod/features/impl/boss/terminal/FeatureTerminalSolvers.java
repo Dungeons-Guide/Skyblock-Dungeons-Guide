@@ -39,7 +39,7 @@ import java.util.List;
 
 public class FeatureTerminalSolvers extends SimpleFeature {
     public FeatureTerminalSolvers() {
-        super("Dungeon.Bossfight.Floor 7+","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, starts with, order, navigate, correct panes)", "bossfight.terminals");
+        super("Bossfight Helper.Floor 7","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, starts with, order, navigate, correct panes)", "bossfight.terminals");
     }
 
     public static final List<TerminalSolutionProvider> solutionProviders = new ArrayList<TerminalSolutionProvider>();

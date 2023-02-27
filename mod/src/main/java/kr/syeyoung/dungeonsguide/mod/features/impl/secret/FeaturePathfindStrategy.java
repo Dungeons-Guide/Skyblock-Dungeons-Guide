@@ -26,7 +26,7 @@ import lombok.RequiredArgsConstructor;
 
 public class FeaturePathfindStrategy extends SimpleFeature {
     public FeaturePathfindStrategy() {
-        super("Dungeon.Secrets.Preferences", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
+        super("Pathfinding & Secrets", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
         addParameter("strategy", new FeatureParameter<PathfindStrategy>("strategy", "Pathfind Strategy", "Pathfind Strategy", PathfindStrategy.THETA_STAR, new TCEnum<>(PathfindStrategy.values()), neu -> {
             if (this.parameters.containsKey("strategy")) this.<PathfindStrategy>getParameter("strategy").setDescription(neu.getDescription());
         }));

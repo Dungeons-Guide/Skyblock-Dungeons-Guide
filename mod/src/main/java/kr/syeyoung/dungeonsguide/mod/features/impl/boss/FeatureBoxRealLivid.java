@@ -35,7 +35,7 @@ import net.minecraftforge.client.event.RenderWorldLastEvent;
 
 public class FeatureBoxRealLivid extends SimpleFeature {
     public FeatureBoxRealLivid() {
-        super("Dungeon.Bossfight.Floor 5", "Box Real Livid", "Box Real Livid in bossfight", "Dungeon.Bossfight.realLividBox", true);
+        super("Bossfight Helper.Floor 5", "Box Real Livid", "Box Real Livid in bossfight", "Dungeon.Bossfight.realLividBox", true);
         addParameter("color", new FeatureParameter<AColor>("color", "Highlight Color", "Highlight Color of Livid", new AColor(0,255,0,150), TCAColor.INSTANCE, nval -> color = nval));
     }
 

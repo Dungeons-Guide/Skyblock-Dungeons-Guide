@@ -28,7 +28,10 @@
                     <slot bind:child="actualPV" slot="pv"/>
                     <slot slot="apiKeyInvalid">
                             <col mainAlign="CENTER" crossAlign="CENTER">
-                                <Text text="API key is invalid or missing" color="#FFFFFFFF"/>
+                                <Text text="API key is inv/dalid or missing" color="#FFFFFFFF"/>
+                                <Text text="Please set API key at" color="#FFFFFFFF"/>
+                                <Text text="/dg -> Dungeon Party -> API KEY" color="#FFFFFFFF"/>
+                                <Text text="or type /api new" color="#FFFFFFFF"/>
                                 <size width="50" height="27">
                                     <ColorButton on:click="refresh" hPadding="1"
                                                  backgroundColor="#FF7289DA"          textColor="#FFFFFFFF"
