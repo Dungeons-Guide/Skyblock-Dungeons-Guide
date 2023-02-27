@@ -343,7 +343,7 @@ public class DungeonsGuide implements DGInterface {
         if (packetInjector != null) packetInjector.cleanup();
 
         try {
-            EntityPlayerSP ep = (EntityPlayerSP) Minecraft.getMinecraft().getRenderManager().livingPlayer;
+            AbstractClientPlayer ep = (AbstractClientPlayer) Minecraft.getMinecraft().getRenderManager().livingPlayer;
             transform(ep);
         } catch (Exception e) {
             e.printStackTrace();
