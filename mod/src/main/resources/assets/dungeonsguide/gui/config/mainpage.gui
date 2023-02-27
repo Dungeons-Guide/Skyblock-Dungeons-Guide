@@ -34,9 +34,15 @@
             <size height="20"/>
             <line color="#FF747474"/>
             <size height="5"/>
-            <WrapGrid minimumWidth="160" gap="5" bind:_="categories"/>
+            <padding left="3" top="3" right="3" bottom="3">
+                <WrapGrid minimumWidth="160" gap="5" bind:_="categories"/>
+            </padding>
             <size height="5"/>
             <line color="#FF747474"/>
+            <size height="5"/>
+            <size width="80" height="30">
+                <RoundButton text="GUI Config" on:click="guiconfig"/>
+            </size>
             <size height="20"/>
             <row mainAlign="CENTER">
                 <size height="32" width="32">

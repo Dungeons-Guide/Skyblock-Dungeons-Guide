@@ -47,6 +47,9 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "version")
     public final BindableAttribute<String> version = new BindableAttribute<>(String.class, VersionInfo.VERSION);
 
+    @Bind(variableName = "sidebar")
+    public final BindableAttribute<String> sidebar = new BindableAttribute<>(String.class, "hide");
+
     @Bind(variableName = "mainpage")
     public final BindableAttribute<Widget> mainPage = new BindableAttribute<>(Widget.class, new MainPageWidget());
     public MainConfigWidget() {
@@ -67,5 +70,14 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget {
     public void back() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).goBack();
+    }
+
+    @On(functionName = "toggleSidebar")
+    public void toggle() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        if ("show".equals(this.sidebar.getValue()))
+            this.sidebar.setValue("hide");
+        else
+            this.sidebar.setValue("show");
     }
 }

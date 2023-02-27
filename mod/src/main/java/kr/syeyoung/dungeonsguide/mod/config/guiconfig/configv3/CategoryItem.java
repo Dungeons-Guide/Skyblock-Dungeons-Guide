@@ -29,6 +29,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 
+import java.io.IOException;
 import java.util.function.Supplier;
 
 public class CategoryItem extends AnnotatedImportOnlyWidget {
@@ -37,6 +38,8 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> name = new BindableAttribute<>(String.class);
     @Bind(variableName = "description")
     public final BindableAttribute<String> description = new BindableAttribute<>(String.class);
+    @Bind(variableName = "icon")
+    public final BindableAttribute<String> icon = new BindableAttribute<>(String.class, "dungeonsguide:textures/dglogox128.png");
     private Supplier<Widget> pageCreator;
 
     public CategoryItem(Supplier<Widget> pageCreator, String category, String description) {
@@ -45,6 +48,14 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
 
         this.name.setValue(category);
         this.description.setValue(description);
+        try {
+            String target = "dungeonsguide:textures/config/categoryIcon/"+category.toLowerCase()
+                    .replace("&","").replace(" ","_")+".png";
+            if (Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation(target)) != null)
+                icon.setValue(target);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 
     @On(functionName = "click")

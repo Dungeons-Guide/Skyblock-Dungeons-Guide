@@ -25,6 +25,15 @@
                     <bgcolor backgroundColor="0xFF1E4684">
                         <row>
                             <aspectRatio width="1" height="1">
+                                <ColorButton on:click="toggleSidebar" hPadding="1"
+                                             backgroundColor="#FF1C376E"          textColor="#FFFFFFFF"
+                                             hoveredBackgroundColor="#FF1C5692"   hoveredTextColor="#FFFFFFFF"
+                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                             pressedBackgroundColor="#FF1D5F9C"   pressedTextColor="#FFFFFFFF"
+                                             text="☰"
+                                />
+                            </aspectRatio>
+                            <aspectRatio width="1" height="1">
                                 <ColorButton on:click="back" hPadding="1"
                                              backgroundColor="#FF1C376E"          textColor="#FFFFFFFF"
                                              hoveredBackgroundColor="#FF1C5692"   hoveredTextColor="#FFFFFFFF"
@@ -65,21 +74,26 @@
                 <line color="#FFFFFFFF"/>
                 <flexible>
                     <row>
-                        <ConstrainedBox maxWidth="150">
-                            <bgcolor backgroundColor="0xFF000000">
-                                <padding left="0" top="5" bottom="5" right="5">
-                                    <col>
-                                        <col bind:_="menu">
-                                        </col>
-                                        <padding top="4" bottom="4">
-                                            <line color="#FFFFFFFF"/>
+                        <SelectiveContainer bind:visible="sidebar">
+                            <row slot="show">
+                                <size width="150">
+                                    <bgcolor backgroundColor="0xFF000000">
+                                        <padding left="0" top="5" bottom="5" right="5">
+                                            <col>
+                                                <col bind:_="menu">
+                                                </col>
+                                                <padding top="4" bottom="4">
+                                                    <line color="#FFFFFFFF"/>
+                                                </padding>
+                                                <slot bind:_="relocate"/>
+                                            </col>
                                         </padding>
-                                        <slot bind:_="relocate"/>
-                                    </col>
-                                </padding>
-                            </bgcolor>
-                        </ConstrainedBox>
-                        <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                    </bgcolor>
+                                </size>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                            </row>
+                            <size width="0" height="0" slot="hide"/>
+                        </SelectiveContainer>
                         <flexible>
                             <Navigator>
                                 <!-- default page-->

@@ -25,7 +25,9 @@
                         <padding top="5" left="5" right="5">
                             <Text text="Categories" size="16" color="#FFFFFFFF"/>
                         </padding>
-                        <WrapGrid minimumWidth="160" gap="5" bind:_="categories"/>
+                        <padding top="3" left="3" right="3">
+                            <WrapGrid minimumWidth="160" gap="5" bind:_="categories"/>
+                        </padding>
                         <size width="0" height="5"/>
                     </col>
                     <size width="0" height="0" slot="hide"/>

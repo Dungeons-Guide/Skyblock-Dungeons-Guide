@@ -30,7 +30,8 @@ public class SingleChildPassingLayouter implements Layouter {
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
         if (buildContext.getChildren().isEmpty()) {
-            return new Size(constraintBox.getMaxWidth(), constraintBox.getMaxHeight());
+            return new Size(constraintBox.getMaxWidth() == Double.POSITIVE_INFINITY ? 0  : constraintBox.getMaxWidth(),
+                    constraintBox.getMaxHeight() == Double.POSITIVE_INFINITY ? 0 : constraintBox.getMaxHeight());
         }
 
         DomElement childCtx = buildContext.getChildren().get(0);

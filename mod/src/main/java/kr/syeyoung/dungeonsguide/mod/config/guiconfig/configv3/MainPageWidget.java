@@ -18,9 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -54,6 +57,11 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
                 .collect(Collectors.toList());
     }
 
+    @On(functionName = "guiconfig")
+    public void guiConfig() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new GlobalHUDScale(new HUDLocationConfig(null)), Minecraft.getMinecraft().currentScreen));
+    }
     @On(functionName = "discord")
     public void discord() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));

@@ -16,27 +16,31 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<padding left="5" right="5" top="5" bottom="5">
+<!--<padding left="5" right="5" top="5" bottom="5">-->
 
     <AbstractButton on:click="click" disabled="false">
         <RoundRect radius="5" backgroundColor="#FF11294d">
             <col mainAlign="START" crossAlign="STRETCH">
-                <padding left="5" right="5" top="5" bottom="5">
+                <padding left="3" right="5" top="3">
                     <IntrinsicHeight>
                         <row mainAlign="START" crossAlign="CENTER">
                             <aspectRatio width="1" height="1">
                                 <Stencil>
-                                    <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                    <ResourceImage bind:location="icon" width="128" height="128" textureWidth="128" textureHeight="128"/>
                                     <RoundRect radius="3" slot="stencil"/>
                                 </Stencil>
                             </aspectRatio>
                             <size width="5" height="0"/>
-                            <flexible><Text bind:text="name" color="#FFFFFFFF" size="12"/></flexible>
+                            <flexible>
+                                <padding top="2" bottom="2">
+                                    <Text bind:text="name" color="#FFFFFFFF" size="12"/>
+                                </padding>
+                            </flexible>
                         </row>
                     </IntrinsicHeight>
                 </padding>
                 <flexible>
-                    <padding left="5" bottom="5" right="5" top="3">
+                    <padding left="5" bottom="5" right="5" top="5">
                         <Text bind:text="description" color="#FFAAAAAA"/>
                     </padding>
                 </flexible>
@@ -44,23 +48,26 @@
         </RoundRect>
         <RoundRect radius="5" backgroundColor="#FF1d4481" slot="hovered">
             <col mainAlign="START" crossAlign="STRETCH">
-                <padding left="5" right="5" top="5" bottom="5">
+                <padding left="3" right="5" top="3">
                     <IntrinsicHeight>
                         <row mainAlign="START" crossAlign="CENTER">
-
                             <aspectRatio width="1" height="1">
                                 <Stencil>
-                                    <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                    <ResourceImage bind:location="icon" width="128" height="128" textureWidth="128" textureHeight="128"/>
                                     <RoundRect radius="3" slot="stencil"/>
                                 </Stencil>
                             </aspectRatio>
                             <size width="5" height="0"/>
-                            <flexible><Text bind:text="name" color="#FFFFFFFF" size="12"/></flexible>
+                            <flexible>
+                                <padding top="2" bottom="2">
+                                    <Text bind:text="name" color="#FFFFFFFF" size="12"/>
+                                </padding>
+                            </flexible>
                         </row>
                     </IntrinsicHeight>
                 </padding>
                 <flexible>
-                    <padding left="5" bottom="5" right="5" top="3">
+                    <padding left="5" bottom="5" right="5" top="5">
                         <Text bind:text="description" color="#FFAAAAAA"/>
                     </padding>
                 </flexible>
@@ -68,23 +75,26 @@
         </RoundRect>
         <RoundRect radius="5" backgroundColor="#FF34578e" slot="pressed">
             <col mainAlign="START" crossAlign="STRETCH">
-                <padding left="5" right="5" top="5" bottom="5">
+                <padding left="3" right="5" top="3">
                     <IntrinsicHeight>
                         <row mainAlign="START" crossAlign="CENTER">
-
                             <aspectRatio width="1" height="1">
                                 <Stencil>
-                                    <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                                    <ResourceImage bind:location="icon" width="128" height="128" textureWidth="128" textureHeight="128"/>
                                     <RoundRect radius="3" slot="stencil"/>
                                 </Stencil>
                             </aspectRatio>
                             <size width="5" height="0"/>
-                            <flexible><Text bind:text="name" color="#FFFFFFFF" size="12"/></flexible>
+                            <flexible>
+                                <padding top="2" bottom="2">
+                                    <Text bind:text="name" color="#FFFFFFFF" size="12"/>
+                                </padding>
+                            </flexible>
                         </row>
                     </IntrinsicHeight>
                 </padding>
                 <flexible>
-                    <padding left="5" bottom="5" right="5" top="3">
+                    <padding left="5" bottom="5" right="5" top="5">
                         <Text bind:text="description" color="#FFAAAAAA"/>
                     </padding>
                 </flexible>
@@ -92,4 +102,4 @@
         </RoundRect>
         <size slot="disabled" width="0" height="0"/>
     </AbstractButton>
-</padding>
+<!--</padding>-->

@@ -42,6 +42,17 @@ public class DomElement {
     @Getter
     @Setter(AccessLevel.PACKAGE)
     private Renderer renderer = DrawNothingRenderer.INSTANCE; // renders element itself.
+
+    public Renderer getRenderer() {
+        if (layoutReq) {
+            layoutReq = false;
+            layouter.layout(this, new ConstraintBox(
+                    size.getWidth(), size.getWidth(), size.getHeight(), size.getHeight()
+            ));
+        }
+        return renderer;
+    }
+
     @Getter
     @Setter(AccessLevel.PACKAGE)
     private Layouter layouter = NullLayouter.INSTANCE; // layouts subelements
@@ -104,11 +115,11 @@ public class DomElement {
         if (parent != null)
             parent.requestRelayout();
     }
+
+    private boolean layoutReq = false;
     public void requestRelayout() {
         if (layouter.canCutRequest() && size != null) {
-            layouter.layout(this, new ConstraintBox(
-                    size.getWidth(), size.getWidth(), size.getHeight(), size.getHeight()
-            ));
+            layoutReq = true;
             return;
         }
         if (parent != null)

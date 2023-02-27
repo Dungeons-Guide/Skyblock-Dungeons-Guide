@@ -18,48 +18,54 @@
 
 
 <AbstractButton on:click="click" disabled="false">
-    <padding left="10" right="5" top="5" bottom="5">
+    <padding left="10" right="5" top="3" bottom="3">
         <IntrinsicHeight>
             <row mainAlign="START" crossAlign="CENTER">
                 <aspectRatio width="1" height="1">
                     <Stencil>
-                        <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                        <ResourceImage bind:location="image" width="128" height="128" textureWidth="128" textureHeight="128"/>
                         <RoundRect radius="3" slot="stencil"/>
                     </Stencil>
                 </aspectRatio>
                 <size width="5" height="0"/>
-                <Text bind:text="category" color="#FFFFFFFF"/>
+                <padding top="2" bottom="2">
+                    <Text bind:text="category" color="#FFFFFFFF"/>
+                </padding>
             </row>
         </IntrinsicHeight>
     </padding>
     <bgcolor backgroundColor="#FF356091" slot="hovered">
-        <padding left="10" right="5" top="5" bottom="5">
+        <padding left="10" right="5" top="3" bottom="3">
             <IntrinsicHeight>
                 <row mainAlign="START" crossAlign="CENTER">
                     <aspectRatio width="1" height="1">
                         <Stencil>
-                            <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                            <ResourceImage bind:location="image" width="128" height="128" textureWidth="128" textureHeight="128"/>
                             <RoundRect radius="3" slot="stencil"/>
                         </Stencil>
                     </aspectRatio>
                     <size width="5" height="0"/>
-                    <Text bind:text="category" color="#FFFFFFFF"/>
+                    <padding top="2" bottom="2">
+                        <Text bind:text="category" color="#FFFFFFFF"/>
+                    </padding>
                 </row>
             </IntrinsicHeight>
         </padding>
     </bgcolor>
     <bgcolor backgroundColor="#FF50799E" slot="pressed">
-        <padding left="10" right="5" top="5" bottom="5">
+        <padding left="10" right="5" top="3" bottom="3">
             <IntrinsicHeight>
                 <row mainAlign="START" crossAlign="CENTER">
                     <aspectRatio width="1" height="1">
                         <Stencil>
-                            <ResourceImage location="dungeonsguide:textures/dglogox128.png" width="128" height="128" textureWidth="128" textureHeight="128"/>
+                            <ResourceImage bind:location="image" width="128" height="128" textureWidth="128" textureHeight="128"/>
                             <RoundRect radius="3" slot="stencil"/>
                         </Stencil>
                     </aspectRatio>
                     <size width="5" height="0"/>
-                    <Text bind:text="category" color="#FFFFFFFF"/>
+                    <padding top="2" bottom="2">
+                        <Text bind:text="category" color="#FFFFFFFF"/>
+                    </padding>
                 </row>
             </IntrinsicHeight>
         </padding>
