@@ -20,8 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 
 
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
@@ -40,7 +42,11 @@ import java.util.List;
 public class FeatureTerminalSolvers extends SimpleFeature {
     public FeatureTerminalSolvers() {
         super("Bossfight.Floor 7","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, starts with, order, navigate, correct panes)", "bossfight.terminals");
+
+        addParameter("cancelwrongclick", new FeatureParameter<>("cancelwrongclick", "Block invalid clicks", "", true, TCBoolean.INSTANCE, nval -> block = nval));
     }
+
+    private boolean block = true;
 
     public static final List<TerminalSolutionProvider> solutionProviders = new ArrayList<TerminalSolutionProvider>();
 
@@ -142,7 +148,9 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         Slot s = ((GuiChest) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
         if (solution.getCurrSlots().contains(s)) {
             clicked.add(s);
-            return;
+        } else {
+            if (block)
+                mouseInputEvent.setCanceled(true);
         }
     }
 
