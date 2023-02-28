@@ -42,7 +42,7 @@ public class FeatureHideNameTags extends SimpleFeature  {
 
         if (renderPlayerEvent.entity instanceof EntityArmorStand) {
             EntityArmorStand armorStand = (EntityArmorStand) renderPlayerEvent.entity;
-            if (armorStand.getAlwaysRenderNameTag())
+            if (armorStand.getAlwaysRenderNameTag() && armorStand.getName().contains("❤"))
                 renderPlayerEvent.setCanceled(true);
         }
     }
