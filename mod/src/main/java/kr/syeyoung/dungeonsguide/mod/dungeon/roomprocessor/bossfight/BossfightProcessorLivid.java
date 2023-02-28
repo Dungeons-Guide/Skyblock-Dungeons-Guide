@@ -50,28 +50,28 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
         this.isMasterMode = isMasterMode;
     }
     private static final Map<String, String> lividColorPrefix = new HashMap<String, String>() {{
-            put("Vendetta", "§f");
-            put("Crossed", "§d");
-            put("Hockey", "§c");
-            put("Doctor", "§7");
-            put("Frog", "§2");
-            put("Smile", "§a");
-            put("Scream", "§1");
-            put("Purple", "§5");
-            put("Arcade", "§e");
+            put("Vendetta", "§f"); // white
+            put("Crossed", "§d"); // light purple
+            put("Hockey", "§c"); // red
+            put("Doctor", "§7"); // gray
+            put("Frog", "§2"); // green
+            put("Smile", "§a"); // light green
+            put("Scream", "§1"); // blue
+            put("Purple", "§5"); // dark purple
+            put("Arcade", "§e"); // yellow
     }};
     private static final Map<Integer, String> lividMetadata = new HashMap<Integer, String>() {{
-        put(0, "Vendetta");
-        put(2, "Crossed");
-        put(4, "Arcade");
-        put(5, "Smile");
-        put(6, "Crossed");
-        put(7, "Doctor");
-        put(8, "Doctor");
-        put(10, "Purple");
-        put(11, "Frog");
-        put(13, "Scream");
-        put(14, "Hockey");
+        put(0, "Vendetta"); // white
+        put(2, "Crossed"); // magenta
+        put(4, "Arcade"); // yellow
+        put(5, "Smile"); // light green
+        put(6, "Crossed"); // pink
+        put(7, "Doctor"); // gray
+        put(8, "Doctor"); // gray
+        put(10, "Purple"); // dark purple
+        put(11, "Scream"); // blue
+        put(13, "Frog"); // green
+        put(14, "Hockey"); // red
     }};
 
     private int correctLivid = 14;
