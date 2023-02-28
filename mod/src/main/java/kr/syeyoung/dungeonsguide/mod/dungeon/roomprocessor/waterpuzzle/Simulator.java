@@ -22,9 +22,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
 import java.util.Scanner;
 
 public class Simulator {
@@ -40,6 +37,7 @@ public class Simulator {
     public static class Node {
         private int waterLevel;
         private NodeType nodeType;
+        private boolean update;
     }
     @Getter @AllArgsConstructor
     public static class Pt {
@@ -56,87 +54,130 @@ public class Simulator {
 
         public Node get(Node[][] nodes) {
             if (check(nodes[0].length, nodes.length)) {
-                return new Node(0, NodeType.BLOCK);
+                return new Node(0, NodeType.BLOCK, false);
             }
             return nodes[y][x];
         }
 
+        public void set(Node[][] nodes, NodeType nodeType) {
+            get(nodes).nodeType = nodeType;
+            get(nodes).waterLevel = 0;
+            get(nodes).update = true;
+        }
+
+        public int getFlowDirection(Node[][] nodes) {
+            int right = 0;
+            Pt rightPt = this.right();
+            while (true) {
+                right++;
+                if (right == 8) {
+                    right = 999; break;
+                }
+                if (rightPt.get(nodes).nodeType == NodeType.BLOCK) {
+                    right = 999; break;
+                }
+                if (rightPt.down().get(nodes).nodeType != NodeType.BLOCK) {
+                    break;
+                }
+
+                rightPt = rightPt.right();
+            }
+            int left = 0;
+
+            Pt leftPt = this.left();
+            while (true) {
+                left++;
+                if (left == 8) {
+                    left = 999; break;
+                }
+                if (leftPt.get(nodes).nodeType == NodeType.BLOCK) {
+                    left = 999; break;
+                }
+                if (leftPt.down().get(nodes).nodeType != NodeType.BLOCK) {
+                    break;
+                }
+
+                leftPt = leftPt.left();
+            }
+
+            if (left == right) return 0;
+            if (left > right) return 1;
+            return -1;
+        }
+
+        public boolean shouldUpdate(Node[][] nodes) {
+            return get(nodes).update || right().get(nodes).update
+                    || left().get(nodes).update
+                    || up().get(nodes).update
+                    || down().get(nodes).update;
+        }
     }
     // if there is waterLevel bigger coming nearby, make water
     // if there is waterLevel bigger coming nearby, delete water
     //
-    public static void simulateTicks(Node[][] nodes, List<Pt> startingPt) {
-        Queue<Pt> list = new LinkedList<>();
-        list.addAll(startingPt);
-
-        while (!list.isEmpty()) {
-            Pt pt = list.poll();
-            if (pt.check(nodes[0].length, nodes.length)) continue;
-            Node n = pt.get(nodes);
-            if (n.nodeType == NodeType.BLOCK) continue;
-
-            int maxWaterLv = 0;
-            if (pt.up().get(nodes).nodeType.isWater()) {
-                maxWaterLv = Math.max(maxWaterLv, 8);
-            }
-            if (pt.left().get(nodes).nodeType.isWater()) {
-                if (n.nodeType == NodeType.WATER || pt.left().down().get(nodes).nodeType == NodeType.BLOCK)
-                    maxWaterLv = Math.max(maxWaterLv, pt.left().get(nodes).waterLevel-1);
-            }
-            if (pt.right().get(nodes).nodeType.isWater()) {
-                if (n.nodeType == NodeType.WATER || pt.left().down().get(nodes).nodeType == NodeType.BLOCK)
-                    maxWaterLv = Math.max(maxWaterLv, pt.right().get(nodes).waterLevel-1);
-            }
-            if (maxWaterLv < n.waterLevel) maxWaterLv = 0;
-
-
-            if (maxWaterLv > 0) {
-                n.waterLevel = maxWaterLv;
-                n.nodeType = NodeType.WATER;
-            } else {
-                n.waterLevel = 0;
-                n.nodeType = NodeType.AIR;
-            }
-
-            list.add(pt.down());
-            list.add(pt.left());
-            list.add(pt.right());
-        }
+    public static void simulateTicks(Node[][] nodes) {
+        while(simulateSingleTick(nodes));
     }
 
+    public static boolean doTick(Node[][] nodes, Node[][] nodesNew, Pt pt) {
+        int y = pt.y, x = pt.x;
+        Node prev = pt.get(nodes);
+        int maxWaterLv = Math.max(0, prev.nodeType == NodeType.SOURCE ? 8 : prev.waterLevel - 1);
+        if (prev.nodeType == NodeType.AIR || prev.nodeType == NodeType.WATER) {
+            if (pt.up().get(nodes).nodeType.isWater()) {
+                maxWaterLv = 8;
+            }
+            if (pt.left().get(nodes).nodeType.isWater()) {
+                boolean isSource = pt.left().get(nodes).nodeType == NodeType.SOURCE;
+                NodeType bottomLeft = pt.left().down().get(nodes).nodeType;
+                if (prev.nodeType == NodeType.WATER  // if was water
+                        || (pt.left().shouldUpdate(nodes) && (bottomLeft == NodeType.BLOCK || (isSource && bottomLeft != NodeType.AIR)) && pt.left().getFlowDirection(nodes) >= 0)) {
+                    maxWaterLv = Math.max(maxWaterLv, pt.left().get(nodes).waterLevel - 1);
+                }
+            }
+            if (pt.right().get(nodes).nodeType.isWater()) {
+                boolean isSource = pt.right().get(nodes).nodeType == NodeType.SOURCE;
+                NodeType bottomRight = pt.right().down().get(nodes).nodeType;
+                if (prev.nodeType == NodeType.WATER
+                        || (pt.right().shouldUpdate(nodes) && (bottomRight == NodeType.BLOCK || (isSource && bottomRight != NodeType.AIR)) && pt.right().getFlowDirection(nodes) <= 0))
+                    maxWaterLv = Math.max(maxWaterLv, pt.right().get(nodes).waterLevel - 1);
+            }
+        }
 
+        nodesNew[y][x] = new Node(prev.waterLevel, prev.nodeType, false);
+        nodesNew[y][x].setWaterLevel(maxWaterLv);
+        if (maxWaterLv == 0 && nodesNew[y][x].nodeType == NodeType.WATER)
+            nodesNew[y][x].setNodeType(NodeType.AIR);
+        else if (maxWaterLv > 0 && nodesNew[y][x].nodeType == NodeType.AIR)
+            nodesNew[y][x].setNodeType(NodeType.WATER);
+
+        if (prev.nodeType != nodesNew[y][x].nodeType || prev.waterLevel != nodesNew[y][x].waterLevel) {
+            nodesNew[y][x].update = true;
+        }
+        return nodesNew[y][x].update;
+    }
     public static boolean simulateSingleTick(Node[][] nodes) {
         Node[][] nodesNew = new Node[nodes.length][nodes[0].length];
-
         boolean update = false;
         for (int y = 0; y < nodes.length; y++) {
             for (int x = 0; x < nodes[y].length; x++) {
-                Node prev = nodes[y][x];
-
                 Pt pt = new Pt(x,y);
 
-                int maxWaterLv = Math.max(0, prev.waterLevel - 1);
-                if (pt.up().get(nodes).nodeType.isWater()) {
-                    maxWaterLv = 8;
-                }
-                if (pt.left().get(nodes).nodeType.isWater()) {
-                    if (prev.nodeType == NodeType.WATER || pt.left().down().get(nodes).nodeType == NodeType.BLOCK)
-                        maxWaterLv = Math.max(maxWaterLv, pt.left().get(nodes).waterLevel-1);
-                }
-                if (pt.right().get(nodes).nodeType.isWater()) {
-                    if (prev.nodeType == NodeType.WATER || pt.left().down().get(nodes).nodeType == NodeType.BLOCK)
-                        maxWaterLv = Math.max(maxWaterLv, pt.right().get(nodes).waterLevel-1);
-                }
 
-                nodesNew[y][x] = new Node(prev.waterLevel, prev.nodeType);
-                nodesNew[y][x].setWaterLevel(maxWaterLv);
-                if (maxWaterLv == 0 && nodesNew[y][x].nodeType == NodeType.WATER)
-                    nodesNew[y][x].setNodeType(NodeType.AIR);
-                else if (maxWaterLv > 0 && nodesNew[y][x].nodeType == NodeType.AIR)
-                    nodesNew[y][x].setNodeType(NodeType.WATER);
+                if (doTick(nodes, nodesNew, pt)) update =true;
 
-                if (prev.nodeType != nodesNew[y][x].nodeType) update = true;
-                if (prev.waterLevel != nodesNew[y][x].waterLevel) update = true;
+                if ( pt.get(nodesNew).waterLevel - pt.get(nodes).waterLevel > 0 && pt.get(nodes).nodeType == NodeType.WATER && pt.get(nodesNew).nodeType == NodeType.WATER) {
+                    Node prev = pt.get(nodes);
+
+                    nodes[y][x] = nodesNew[y][x];
+
+                    if (!pt.left().check(nodes[0].length, nodes.length))
+                        doTick(nodes, nodesNew, pt.left());
+                    if (!pt.right().check(nodes[0].length, nodes.length))
+                        doTick(nodes, nodesNew, pt.right());
+
+                    nodes[y][x] = prev;
+                }
             }
         }
 
@@ -171,7 +212,7 @@ public class Simulator {
     // New waterboard simulator pog
     public static void main(String[] args) {
         NodeType[][] nodeTypes = {
-                {NodeType.SOURCE, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK},
+                {NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.AIR, NodeType.SOURCE, NodeType.BLOCK},
                 {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
                 {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
                 {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
@@ -181,21 +222,24 @@ public class Simulator {
         Node[][] nodes = new Node[nodeTypes.length][nodeTypes[0].length];
         for (int y = 0; y < nodes.length; y++) {
             for (int x = 0; x < nodes[y].length; x++) {
-                nodes[y][x] = new Node(0, nodeTypes[y][x]);
+                nodes[y][x] = new Node(0, nodeTypes[y][x], false);
+                if (nodeTypes[y][x] == NodeType.SOURCE) {
+                    nodes[y][x].update = true;
+                    nodes[y][x].waterLevel = 8;
+                }
             }
         }
         Scanner scanner = new Scanner(System.in);
         while(true) {
             print(nodes);
-            while (simulateSingleTick(nodes)) {
+            while(simulateSingleTick(nodes))
                 print(nodes);
-            }
 
             int x = scanner.nextInt();
             int y= scanner.nextInt();
             nodes[y][x] = new Node(0,
                     nodes[y][x].nodeType == NodeType.BLOCK ?
-                        NodeType.AIR : NodeType.BLOCK);
+                        NodeType.AIR : NodeType.BLOCK, true);
         }
     }
 }
