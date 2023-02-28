@@ -217,7 +217,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
 //                    bossroomIncomplete = false;
 //                if (dungeonRoom.getColor() == 62 && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
 //                    traproomIncomplete = false;
-                if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED)
+                if (dungeonRoom.getCurrentState() != DungeonRoom.RoomState.DISCOVERED && dungeonRoom.getCurrentState() != DungeonRoom.RoomState.FAILED)
                     totalCompRooms += dungeonRoom.getUnitPoints().size();
                 if (dungeonRoom.getColor() == 66 && (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED || dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED)) // INCOMPLETE PUZZLE ON MAP
                     incompletePuzzles++;
