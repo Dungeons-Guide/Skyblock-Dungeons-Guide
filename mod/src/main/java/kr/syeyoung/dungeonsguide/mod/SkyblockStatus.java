@@ -98,6 +98,7 @@ public class SkyblockStatus {
         Minecraft mc = Minecraft.getMinecraft();
         if (mc == null || mc.thePlayer == null) return false;
         String clientBrand = mc.thePlayer.getClientBrand();
+        if (clientBrand == null) return false;
         if (!mc.isSingleplayer() && mc.loadingScreen != null) {
             return clientBrand.startsWith("Hypixel BungeeCord");
         }
