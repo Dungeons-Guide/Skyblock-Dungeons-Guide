@@ -153,14 +153,6 @@ public class AuthManager {
                         .build()));
             } else {
                 currentToken = new FailedAuthToken(e);
-                NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
-                        .title("Auth Error")
-                        .description("Authentication Error Occurred\n"+e.getMessage())
-                        .titleColor(0xFFFF0000)
-                        .onClick(() -> {
-                            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
-                        })
-                        .build()));
             }
             logger.error("Re-auth failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
             throw new AuthFailedException(e);
@@ -206,14 +198,6 @@ public class AuthManager {
                             .build()));
                 } else {
                     currentToken = new FailedAuthToken(e);
-                    NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
-                            .title("Auth Error")
-                            .description("Authentication Error Occurred\n"+e.getMessage())
-                            .titleColor(0xFFFF0000)
-                            .onClick(() -> {
-                                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
-                            })
-                            .build()));
                 }
                 logger.error("Accepting the Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
                 throw new AuthFailedException(e);
