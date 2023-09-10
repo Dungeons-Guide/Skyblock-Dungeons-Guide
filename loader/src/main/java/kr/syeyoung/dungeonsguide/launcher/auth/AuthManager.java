@@ -157,7 +157,7 @@ public class AuthManager {
                 if (!LoaderConfig.authErrorsDisabled) {
                     NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
                             .title("Auth Error")
-                            .description("Authentication Error Occurred\n"+e.getMessage())
+                            .description("Authentication Error Occurred\n"+e.getMessage()+"\nThis error can be disabled in the Loader Config")
                             .titleColor(0xFFFF0000)
                             .onClick(() -> {
                                 GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
@@ -212,7 +212,7 @@ public class AuthManager {
                     if (!LoaderConfig.authErrorsDisabled) {
                         NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
                                 .title("Auth Error")
-                                .description("Authentication Error Occurred\n"+e.getMessage())
+                                .description("Authentication Error Occurred\n"+e.getMessage()+"\nThis error can be disabled in the Loader Config")
                                 .titleColor(0xFFFF0000)
                                 .onClick(() -> {
                                     GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
