@@ -74,7 +74,7 @@ dependencies {
 
 
     compileOnly "org.projectlombok:lombok:1.18.20"
-    compileOnly files("../jars/Hychat-1.12.1-BETA.jar")
+    implementation files("../jars/Hychat-1.12.1-BETA.jar")
     annotationProcessor "org.projectlombok:lombok:1.18.16"
 
     testCompileOnly "org.projectlombok:lombok:1.18.20"

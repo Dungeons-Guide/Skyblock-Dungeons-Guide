@@ -197,6 +197,8 @@ public class FeatureRegistry {
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());
     public static final FeatureDebugTrap ADVANCED_BAT = register(new FeatureDebugTrap());
 
+    public static final FeatureAuthHide AUTH_HIDE = register(new FeatureAuthHide());
+
     public static final SimpleFeature DEBUG_BLOCK_CACHING = register(new SimpleFeature("Debug","Enable block getBlockCaching", "Cache all world.getBlockState callls", "debug.blockcache"));
 
     // Dungeon Party

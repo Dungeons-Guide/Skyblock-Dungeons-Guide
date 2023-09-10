@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.launcher.auth;
 
 import com.google.common.base.Throwables;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.JsonObject;
+import com.google.gson.JsonParser;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.token.*;
 import kr.syeyoung.dungeonsguide.launcher.events.AuthChangedEvent;
@@ -39,6 +41,9 @@ import net.minecraftforge.common.MinecraftForge;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.InputStreamReader;
 import java.util.UUID;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ScheduledExecutorService;
@@ -47,6 +52,7 @@ import java.util.concurrent.TimeUnit;
 
 public class AuthManager {
     Logger logger = LogManager.getLogger("AuthManger");
+    JsonObject configuration;
 
     private static AuthManager INSTANCE;
 
@@ -152,7 +158,29 @@ public class AuthManager {
                         })
                         .build()));
             } else {
+                File configFile = new File(Main.getConfigDir(), "config.json");
+                if (configFile.exists()) {
+                    try {
+                        configuration = (JsonObject) new JsonParser().parse(new InputStreamReader(new FileInputStream(configFile)));
+                    } catch (Exception e2) {
+                        configuration = new JsonObject();
+                    }
+                }
+
                 currentToken = new FailedAuthToken(e);
+
+                if (configuration != null && configuration.get("auth").toString().contains("true")) {
+                    // Error Hidden
+                } else {
+                    NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
+                        .title("Auth Error")
+                        .description("Authentication Error Occurred\n"+e.getMessage()+"\nDisable in Debug Config")
+                        .titleColor(0xFFFF0000)
+                        .onClick(() -> {
+                            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
+                        })
+                        .build()));
+                }
             }
             logger.error("Re-auth failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
             throw new AuthFailedException(e);
@@ -197,7 +225,31 @@ public class AuthManager {
                             })
                             .build()));
                 } else {
+                    File configFile = new File(Main.getConfigDir(), "config.json");
+                    if (configFile.exists()) {
+                        try {
+                            configuration = (JsonObject) new JsonParser().parse(new InputStreamReader(new FileInputStream(configFile)));
+                        } catch (Exception e2) {
+                            configuration = new JsonObject();
+                        }
+                    }
+
                     currentToken = new FailedAuthToken(e);
+
+                    System.out.println(configuration.get("auth"));
+
+                    if (configuration != null && configuration.get("auth").toString().contains("true")) {
+                        // Error Hidden
+                    } else {
+                        NotificationManager.getInstance().updateNotification(authenticationFailure, new WidgetNotification(authenticationFailure, Notification.builder()
+                                .title("Auth Error")
+                                .description("Authentication Error Occurred\n"+e.getMessage()+"\nDisable in Debug Config")
+                                .titleColor(0xFFFF0000)
+                                .onClick(() -> {
+                                    GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
+                                })
+                                .build()));
+                    }
                 }
                 logger.error("Accepting the Privacy Policy failed with message {}, trying again in a 2 seconds", String.valueOf(Throwables.getRootCause(e)));
                 throw new AuthFailedException(e);
