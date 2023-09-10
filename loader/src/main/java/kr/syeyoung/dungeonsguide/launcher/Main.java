@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.launcher;
 
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
+import kr.syeyoung.dungeonsguide.launcher.config.LoaderConfig;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetError;
@@ -39,6 +40,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.common.config.Configuration;
+import net.minecraftforge.common.config.Property;
 import net.minecraftforge.fml.client.SplashProgress;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.common.Mod.EventHandler;
@@ -320,10 +322,7 @@ public class Main
             e.printStackTrace();
         }
 
-        File f = new File(preInitializationEvent.getModConfigurationDirectory(), "loader.cfg");
-        Configuration configuration = new Configuration(f);
-        // Save config because... well to generate it
-        configuration.save();
+        LoaderConfig.init(preInitializationEvent);
 
         while(bar.getStep() < bar.getSteps()) bar.step("");
         ProgressManager.pop(bar);
