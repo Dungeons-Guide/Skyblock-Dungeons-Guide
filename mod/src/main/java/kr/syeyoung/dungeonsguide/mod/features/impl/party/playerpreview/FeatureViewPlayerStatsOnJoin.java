@@ -110,7 +110,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                     }
 
 
-                    ApiFetcher.fetchMostRecentProfileAsync(a.get(), FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey());
+                    ApiFetcher.fetchMostRecentProfileAsync(a.get());
 
                     IChatComponent comp = new ChatComponentText("§eDungeons Guide §7:: §e" + username + "§f's Profile ")
                             .appendSibling(new ChatComponentText("§7view").setChatStyle(new ChatStyle().setChatHoverEvent(new HoverEventRenderPlayer(
@@ -141,7 +141,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
             double width = 220 * scaledResolution.getScaleFactor();
             double height = 220 * scaledResolution.getScaleFactor();
             widget = new OverlayWidget(
-                    new WidgetProfileViewer(gameProfile, FeatureRegistry.PARTYKICKER_APIKEY.getAPIKey(), () -> {
+                    new WidgetProfileViewer(gameProfile, () -> {
                         if (widget != null) {
                             OverlayManager.getInstance().removeOverlay(widget);
                             widget = null;

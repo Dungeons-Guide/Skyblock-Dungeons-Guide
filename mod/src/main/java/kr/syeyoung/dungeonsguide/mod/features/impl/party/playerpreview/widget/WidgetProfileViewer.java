@@ -38,16 +38,10 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     @Bind(variableName = "visible")
     public final BindableAttribute<String> visiblePage = new BindableAttribute<>(String.class, "fetching");
     private GameProfile gameProfile;
-    private String apiKey;
     private Runnable close;
-    public WidgetProfileViewer(GameProfile gameProfile, String apiKey, Runnable close) {
+    public WidgetProfileViewer(GameProfile gameProfile, Runnable close) {
         super(new ResourceLocation("dungeonsguide:gui/features/profileViewer/pv.gui"));
-        if (apiKey.isEmpty()) {
-            visiblePage.setValue("apiKeyInvalid");
-            return;
-        }
         this.gameProfile = gameProfile;
-        this.apiKey = apiKey;
         this.close = close;
         refresh();
     }
@@ -55,12 +49,9 @@ public class WidgetProfileViewer extends AnnotatedWidget {
     @On(functionName = "refresh")
     public void refresh() {
         actualPV.setValue(null);
-        if (apiKey.isEmpty()) {
-            visiblePage.setValue("apiKeyInvalid");
-            return;
-        }
+
         visiblePage.setValue("fetching");
-        ApiFetcher.fetchMostRecentProfileAsync(gameProfile.getId().toString(), apiKey)
+        ApiFetcher.fetchMostRecentProfileAsync(gameProfile.getId().toString())
                 .whenComplete((a,e) -> {
                     if (e != null) {
                         e.printStackTrace();

@@ -35,7 +35,6 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm.PlayingDG
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability.FeatureAbilityCooldown;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.APIKey;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyList;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyReady;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.FeatureCustomPartyFinder;
@@ -200,7 +199,6 @@ public class FeatureRegistry {
     public static final SimpleFeature DEBUG_BLOCK_CACHING = register(new SimpleFeature("Debug","Enable block getBlockCaching", "Cache all world.getBlockState callls", "debug.blockcache"));
 
     // Dungeon Party
-    public static final APIKey PARTYKICKER_APIKEY = register(new APIKey()); // Decide where to go
     public static final FeatureAutoReparty BOSSFIGHT_AUTOREPARTY = register(new FeatureAutoReparty());
     public static final FeatureViewPlayerStatsOnJoin PARTYKICKER_VIEWPLAYER = register(new FeatureViewPlayerStatsOnJoin());
     public static final FeatureCustomPartyFinder PARTYKICKER_CUSTOM = register(new FeatureCustomPartyFinder());

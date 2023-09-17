@@ -24,6 +24,9 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.mojang.authlib.GameProfile;
+import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.launcher.auth.DgAuthUtil;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
@@ -57,7 +60,6 @@ public class ApiFetcher {
             .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
             .setNameFormat("DG-APIFetcher-%d").build()));
 
-    private static final Set<String> invalidKeys = new HashSet<>();
 
     public static void purgeCache() {
         playerProfileCache.clear();
@@ -69,7 +71,6 @@ public class ApiFetcher {
         completableFutureMap2.clear();
         completableFutureMap3.clear();
         completableFutureMap4.clear();
-        invalidKeys.clear();
         PlayerProfileParser.constants = null;
 
         ex.submit(PlayerProfileParser::getLilyWeightConstants);
@@ -82,6 +83,16 @@ public class ApiFetcher {
     public static JsonObject getJson(String url) throws IOException {
         URLConnection connection = new URL(url).openConnection();
         connection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
+        connection.setConnectTimeout(10000);
+        connection.setReadTimeout(10000);
+        InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+        String servers = IOUtils.toString(inputStreamReader);
+        return gson.fromJson(servers, JsonObject.class);
+    }
+    public static JsonObject getJsonWithAuth(String url, String token) throws IOException {
+        URLConnection connection = new URL(url).openConnection();
+        connection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
+        connection.addRequestProperty("Authorization", "Bearer "+token);
         connection.setConnectTimeout(10000);
         connection.setReadTimeout(10000);
         InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
@@ -142,7 +153,7 @@ public class ApiFetcher {
 
     private static final Map<String, CompletableFuture<Optional<PlayerSkyblockData>>> completableFutureMap = new ConcurrentHashMap<>();
 
-    public static CompletableFuture<Optional<PlayerSkyblockData>> fetchMostRecentProfileAsync(String uid, String apiKey) {
+    public static CompletableFuture<Optional<PlayerSkyblockData>> fetchMostRecentProfileAsync(String uid) {
         if (playerProfileCache.containsKey(uid)) {
             CachedData<PlayerSkyblockData> cachedData = playerProfileCache.get(uid);
             if (cachedData.getExpire() > System.currentTimeMillis()) {
@@ -153,15 +164,10 @@ public class ApiFetcher {
         if (completableFutureMap.containsKey(uid)) {
             return completableFutureMap.get(uid);
         }
-        if (invalidKeys.contains(apiKey)) {
-            CompletableFuture cf = new CompletableFuture();
-            cf.completeExceptionally(new IOException("403 for url"));
-            return cf;
-        }
         CompletableFuture<Optional<PlayerSkyblockData>> completableFuture = new CompletableFuture<>();
         ex.submit(() -> {
             try {
-                Optional<PlayerSkyblockData> playerProfile = fetchPlayerProfiles(uid, apiKey);
+                Optional<PlayerSkyblockData> playerProfile = fetchPlayerProfiles(uid);
                 playerProfileCache.put(uid, new CachedData<>(System.currentTimeMillis() + 1000 * 60 * 30, playerProfile.orElse(null)));
                 completableFuture.complete(playerProfile);
                 completableFutureMap.remove(uid);
@@ -169,7 +175,6 @@ public class ApiFetcher {
                 if (e.getMessage().contains("403 for URL")) {
                     completableFuture.completeExceptionally(e);
                     completableFutureMap.remove(uid);
-                    invalidKeys.add(apiKey);
                 } else {
                     completableFuture.completeExceptionally(e);
                     completableFutureMap.remove(uid);
@@ -268,21 +273,6 @@ public class ApiFetcher {
     }
 
 
-    public static Optional<Integer> getNumberOfSecretsFromAchievement(String uid, String apiKey) throws IOException {
-        JsonObject response = getJson("https://api.hypixel.net/player?uuid=" + uid + "&key=" + apiKey);
-        if (response.has("player")) {
-            JsonObject treasures = response.getAsJsonObject("player");
-            if (treasures.has("achievements")) {
-                treasures = treasures.getAsJsonObject("achievements");
-                if (treasures.has("skyblock_treasure_hunter")) {
-                    return Optional.of(treasures.get("skyblock_treasure_hunter").getAsInt());
-                }
-            }
-        }
-        return Optional.empty();
-    }
-
-
     public static int getArrayIndex(Object[] arr,Object value) {
         int k=0;
         for(int i=0;i<arr.length;i++){
@@ -294,10 +284,14 @@ public class ApiFetcher {
         return k;
     }
 
-    public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid, String apiKey) throws IOException {
+    public static Optional<PlayerSkyblockData> fetchPlayerProfiles(String uid) throws IOException {
+        String dgAPIToken = AuthManager.getInstance().getWorkingTokenOrThrow();
+
         System.out.println("Fetching player profiles");
-        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
-        if (!json.get("success").getAsBoolean()) return Optional.empty();
+        JsonObject json = getJsonWithAuth(Main.DOMAIN+"/skyblock/player/"+uid, dgAPIToken);
+
+        int secrets = json.get("secrets").getAsInt();
+
         System.out.println("Downloaded data from api");
         JsonArray profiles = json.getAsJsonArray("profiles");
         String dashTrimmed = uid.replace("-", "");
@@ -321,10 +315,7 @@ public class ApiFetcher {
             System.out.println("Finished Parsing Profile");
 
 
-            System.out.println("Getting nm of secrets from achievement");
-            getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(e::setTotalSecrets);
-            System.out.println("finished getting secrets from achievement");
-
+            e.setTotalSecrets(secrets);
 
             System.out.println("Getting selected profile");
             if (e.isSelected()) {
@@ -339,49 +330,5 @@ public class ApiFetcher {
         return Optional.of(pp);
     }
 
-    public static Optional<PlayerProfile> fetchMostRecentProfile(String uid, String apiKey) throws IOException {
-        JsonObject json = getJson("https://api.hypixel.net/skyblock/profiles?uuid=" + uid + "&key=" + apiKey);
-        if (!json.get("success").getAsBoolean()) return Optional.empty();
-        JsonArray profiles = json.getAsJsonArray("profiles");
-        String dashTrimmed = uid.replace("-", "");
-
-        JsonObject profile = null;
-        float lastSave = Long.MIN_VALUE;
-        for (JsonElement jsonElement : profiles) {
-            JsonObject semiProfile = jsonElement.getAsJsonObject();
-            if (!semiProfile.getAsJsonObject("members").has(dashTrimmed)) {
-                continue;
-            }
-            JsonElement last_save = semiProfile.get("last_save");
-
-            JsonElement cute_name = semiProfile.get("cute_name");
-            if (cute_name != null) {
-                System.out.println(cute_name.getAsString());
-            } else {
-                System.out.println("THIS SHOULD NOT HAPPEN");
-            }
-
-            if (last_save == null) {
-                return Optional.empty();
-            }
-            float lastSave2 = last_save.getAsLong();
-            if (lastSave2 > lastSave) {
-
-                profile = semiProfile;
-                lastSave = lastSave2;
-            }
-        }
-
-
-        if (profile == null) {
-            return Optional.empty();
-        }
-
-        PlayerProfile pp = PlayerProfileParser.parseProfile(profile, dashTrimmed);
-
-        getNumberOfSecretsFromAchievement(uid, apiKey).ifPresent(pp::setTotalSecrets);
-
-        return Optional.of(pp);
-    }
 
 }
