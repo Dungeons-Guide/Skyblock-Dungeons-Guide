@@ -128,10 +128,11 @@ public class GuiDungeonValueEdit extends MGui {
         getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
 
 
+        Rectangle referenceBounds = getMainPanel().getChildComponents().get(0).getBounds();
         for (int i = 0; i < addons.size(); i++) {
-            addons.get(i).setBounds(new Rectangle(0, getMainPanel().getBounds().height - (i+1) * 20 - 20, getMainPanel().getBounds().width, 20));
+            addons.get(i).setBounds(new Rectangle(0, 300 - (i+1) * 20 - 20, 200, 20));
         }
-        save.setBounds(new Rectangle(0 ,getMainPanel().getBounds().height - 20, getMainPanel().getBounds().width, 20));
+        save.setBounds(new Rectangle(0 ,300- 20,200, 20));
     }
 
 }
