@@ -50,10 +50,7 @@ import net.minecraftforge.client.model.obj.OBJLoader;
 import net.minecraftforge.client.model.obj.OBJModel;
 
 import java.io.IOException;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
-import java.util.UUID;
+import java.util.*;
 
 
 public class FeaturePenguins extends SimpleFeature {
@@ -62,56 +59,66 @@ public class FeaturePenguins extends SimpleFeature {
         OBJLoader.instance.addDomain("dungeonsguide");
 
     }
+
+    private void tryLoading(String modelName, String location, TextureStitchEvent.Pre event) {
+        ResourceLocation modelResourceLocation = new ResourceLocation(location);
+        try {
+            OBJModel objModel = (OBJModel) OBJLoader.instance.loadModel(modelResourceLocation);
+            objModel = (OBJModel) objModel.process(new ImmutableMap.Builder<String, String>().put("flip-v", "true").build());
+            for (String obj : objModel.getMatLib().getMaterialNames()) {
+                ResourceLocation resourceLocation = objModel.getMatLib().getMaterial(obj).getTexture().getTextureLocation();
+                event.map.registerSprite(resourceLocation);
+            }
+            objModels.put(modelName, objModel);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitch(TextureStitchEvent.Pre event) {
         if (event instanceof TextureStitchEvent.Pre) {
-            objModel = null;
-            ResourceLocation modelResourceLocation = new ResourceLocation("dungeonsguide:models/penguin.obj");
-            try {
-                objModel = (OBJModel) OBJLoader.instance.loadModel(modelResourceLocation);
-                objModel = (OBJModel) objModel.process(new ImmutableMap.Builder<String, String>().put("flip-v", "true").build());
-                for (String obj : objModel.getMatLib().getMaterialNames()) {
-                    ResourceLocation resourceLocation = objModel.getMatLib().getMaterial(obj).getTexture().getTextureLocation();
-                    event.map.registerSprite(resourceLocation);
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
+            objModels.clear();
+            tryLoading("crownpenguin", "dungeonsguide:models/crownpenguin.obj", event);
+            tryLoading("penguin", "dungeonsguide:models/penguin.obj", event);
         }
     }
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onTextureStitchPost(TextureStitchEvent.Post event) {
-        if (objModel != null && event instanceof TextureStitchEvent.Post) {
-            model = objModel.bake(objModel.getDefaultState(), DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter());
+        for (Map.Entry<String, OBJModel> value : objModels.entrySet()) {
+            models.put(value.getKey(), value.getValue().bake(value.getValue().getDefaultState(),  DefaultVertexFormats.ITEM, ModelLoader.defaultTextureGetter()));
         }
     }
 
 
-    private OBJModel objModel;
+    private Map<String, OBJModel> objModels = new HashMap<>();
     private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-    private IBakedModel model;
+    private Map<String, IBakedModel> models = new HashMap<>();
 
     @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {
         if (renderPlayerEvent.entityPlayer.isInvisible()) return;
 
-        boolean isCanceled = !isEnabled();
-
-        if (isCanceled && renderPlayerEvent.entityPlayer.getGameProfile() != null) {
+        String modelName = isEnabled() ? "penguin" : null;
+        if (renderPlayerEvent.entityPlayer.getGameProfile() != null) {
             CosmeticsManager cosmeticsManager = DungeonsGuide.getDungeonsGuide().getCosmeticsManager();
             List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().get(renderPlayerEvent.entityPlayer.getGameProfile().getId());
             if (activeCosmeticList != null) {
                 for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                     CosmeticData cosmeticData = cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
                     if (cosmeticData.getCosmeticType().equals("model")) {
-                        isCanceled = false;
+                        modelName = cosmeticData.getData();
                         break;
                     }
                 }
             }
         }
 
-        if (isCanceled) return;
+        if (modelName == null) return;
+
+        if (!models.containsKey(modelName)) {
+            modelName = "penguin";
+        }
+
 
 
 
@@ -127,8 +134,9 @@ public class FeaturePenguins extends SimpleFeature {
         GlStateManager.rotate(f1+180,0,-1,0);
         Minecraft.getMinecraft().getTextureManager().bindTexture(TextureMap.locationBlocksTexture);
 
+        GlStateManager.scale(1.5,1.5,1.5);
         Minecraft.getMinecraft().getBlockRendererDispatcher().getBlockModelRenderer().renderModelBrightnessColor(
-                model, 1,1,1,1
+                models.get(modelName), 1,1,1,1
         );
         GlStateManager.popMatrix();
 
