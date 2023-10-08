@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 
@@ -50,8 +51,13 @@ public class GuiDungeonParameterEdit extends MGui {
     private ValueEdit valueEdit;
 
     public GuiDungeonParameterEdit(final MParameter parameter2, final DynamicEditor processorParameterEditPane) {
+        MPanelScaledGUI scaledGUI = new MPanelScaledGUI();
+        scaledGUI.setScale(new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+        getMainPanel().add(scaledGUI);
+
+
         dungeonRoom = EditingContext.getEditingContext().getRoom();
-        getMainPanel().setBackgroundColor(new Color(17, 17, 17, 179));
+        scaledGUI.setBackgroundColor(new Color(17, 17, 17, 179));
         this.parameter = parameter2.getParameter();
         {
             MTextField mTextField = new MTextField() {
@@ -64,7 +70,7 @@ public class GuiDungeonParameterEdit extends MGui {
 
             mTextField.setText(parameter.getName());
             mLabelAndElement.setBounds(new Rectangle(0,0,200, 20));
-            getMainPanel().add(mLabelAndElement);
+            scaledGUI.add(mLabelAndElement);
         }
         {
             classSelection = parameter.getNewData() == null ?"null" : parameter.getNewData().getClass().getName();
@@ -89,7 +95,7 @@ public class GuiDungeonParameterEdit extends MGui {
                 }
             });
             mStringSelectionButton.setBounds(new Rectangle(0,20,150,20));
-            getMainPanel().add(mStringSelectionButton);
+            scaledGUI.add(mStringSelectionButton);
         }
         {
             currentValueEdit = new MPanel(){
@@ -98,7 +104,7 @@ public class GuiDungeonParameterEdit extends MGui {
                     setBounds(new Rectangle(0, 40, parentWidth,parentHeight - 60));
                 }
             };
-            getMainPanel().add(currentValueEdit);
+            scaledGUI.add(currentValueEdit);
         }
         {
             delete = new MButton() {
@@ -131,8 +137,8 @@ public class GuiDungeonParameterEdit extends MGui {
                     EditingContext.getEditingContext().goBack();
                 }
             });
-            getMainPanel().add(delete);
-            getMainPanel().add(save);
+            scaledGUI.add(delete);
+            scaledGUI.add(save);
         }
         updateClassSelection();
     }
@@ -169,6 +175,9 @@ public class GuiDungeonParameterEdit extends MGui {
     public void initGui() {
         super.initGui();
         // update bounds
-        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
+
+        int w = 200 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor(),
+                h = 300 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
     }
 }

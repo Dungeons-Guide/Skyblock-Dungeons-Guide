@@ -23,10 +23,12 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.gui.MGui;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MPanelScaledGUI;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MValue;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -78,8 +80,13 @@ public class GuiDungeonAddSet extends MGui {
     }
 
     public GuiDungeonAddSet(final ValueEditOffsetPointSet processorParameterEditPane) {
+        MPanelScaledGUI scaledGUI = new MPanelScaledGUI();
+        scaledGUI.setScale(new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+        getMainPanel().add(scaledGUI);
+
+
         this.valueEditOffsetPointSet = processorParameterEditPane;
-        getMainPanel().setBackgroundColor(new Color(17, 17, 17, 179));
+        scaledGUI.setBackgroundColor(new Color(17, 17, 17, 179));
         {
             start = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
             end = new OffsetPoint(EditingContext.getEditingContext().getRoom(), Minecraft.getMinecraft().thePlayer.getPosition());
@@ -87,10 +94,10 @@ public class GuiDungeonAddSet extends MGui {
         {
             MValue mValue = new MValue(start, Collections.emptyList());
             mValue.setBounds(new Rectangle(0,0,150,20));
-            getMainPanel().add(mValue);
+            scaledGUI.add(mValue);
             MValue mValue2 = new MValue(end,Collections.emptyList());
             mValue2.setBounds(new Rectangle(0,20,150,20));
-            getMainPanel().add(mValue2);
+            scaledGUI.add(mValue2);
         }
         {
             add = new MButton() {
@@ -123,8 +130,8 @@ public class GuiDungeonAddSet extends MGui {
                     EditingContext.getEditingContext().goBack();
                 }
             });
-            getMainPanel().add(add);
-            getMainPanel().add(back);
+            scaledGUI.add(add);
+            scaledGUI.add(back);
         }
     }
 
@@ -132,6 +139,8 @@ public class GuiDungeonAddSet extends MGui {
     public void initGui() {
         super.initGui();
         // update bounds
-        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
+        int w = 200 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor(),
+                h = 300 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
     }
 }

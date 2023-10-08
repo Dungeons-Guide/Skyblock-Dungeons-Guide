@@ -29,8 +29,10 @@ import kr.syeyoung.dungeonsguide.mod.gui.MGui;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MPanelScaledGUI;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 import java.util.List;
@@ -52,10 +54,14 @@ public class GuiDungeonValueEdit extends MGui {
 
     public GuiDungeonValueEdit(final Object object, final List<MPanel> addons) {
         try {
+            MPanelScaledGUI scaledGUI = new MPanelScaledGUI();
+            scaledGUI.setScale(new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            getMainPanel().add(scaledGUI);
+
             dungeonRoom = EditingContext.getEditingContext().getRoom();
             this.addons = addons;
             this.editingObj = object;
-            getMainPanel().setBackgroundColor(new Color(17, 17, 17, 179));
+            scaledGUI.setBackgroundColor(new Color(17, 17, 17, 179));
             {
                 currentValueEdit = new MPanel() {
                     @Override
@@ -63,11 +69,11 @@ public class GuiDungeonValueEdit extends MGui {
                         setBounds(new Rectangle(0, 0, parentWidth, parentHeight - 20 - addons.size() * 20));
                     }
                 };
-                getMainPanel().add(currentValueEdit);
+                scaledGUI.add(currentValueEdit);
             }
 
             for (MPanel addon : addons) {
-                getMainPanel().add(addon);
+                scaledGUI.add(addon);
             }
             {
                 save = new MButton() {
@@ -84,7 +90,7 @@ public class GuiDungeonValueEdit extends MGui {
                         EditingContext.getEditingContext().goBack();
                     }
                 });
-                getMainPanel().add(save);
+                scaledGUI.add(save);
             }
             updateClassSelection();
         } catch (Exception e){}
@@ -117,7 +123,9 @@ public class GuiDungeonValueEdit extends MGui {
     public void initGui() {
         super.initGui();
         // update bounds
-        getMainPanel().setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),200,300));
+        int w = 200 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor(),
+                h = 300 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(10, Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
 
 
         for (int i = 0; i < addons.size(); i++) {
