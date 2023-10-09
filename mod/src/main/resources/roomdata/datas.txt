@@ -116,3 +116,8 @@ roomdata/c2ea0a41-d495-437f-86cc-235a71c49f22.roomdata
 roomdata/9650cb39-5f22-45f4-86cd-5d197a4266e5.roomdata
 roomdata/4b5f4983-0453-4402-821c-804f092d1ecd.roomdata
 roomdata/34639497-d991-4137-83c4-db0a25542b71.roomdata
+roomdata/cd735e4d-d728-4432-9d31-ac1c0b4e578e.roomdata
+roomdata/570ae82b-2051-496a-a731-af8d11bf1565.roomdata
+roomdata/9fea6e90-994d-4792-a742-05853b376f2c.roomdata
+roomdata/6c074b40-4aa9-4271-9ea7-936823fa5415.roomdata
+roomdata/e96feab1-39a0-4bd6-8d18-08807b7b0668.roomdata
