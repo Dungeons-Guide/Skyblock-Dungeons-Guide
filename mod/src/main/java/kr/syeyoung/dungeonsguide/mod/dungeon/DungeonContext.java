@@ -190,8 +190,7 @@ public class DungeonContext {
     }
     private int mapId = -1;
     public void onMapUpdate(MapUpdateEvent mapUpdateEvent) {
-        if (mapUpdateEvent.getMapId() > 10000) return; // tictactoe
-        if (mapId == -1) {
+        if (mapId == -1 && mapUpdateEvent.getMapData().colors[0] == 0) { // dungeon map top left is ALWAYS 0.
             mapId = mapUpdateEvent.getMapId();
         }
         if (mapId != mapUpdateEvent.getMapId()) return;
