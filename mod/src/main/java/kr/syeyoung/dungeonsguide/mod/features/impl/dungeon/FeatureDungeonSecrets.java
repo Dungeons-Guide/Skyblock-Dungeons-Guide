@@ -47,7 +47,6 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
                 .setTextShader(new AColor(0xFF, 0xFF,0x55,255)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     public int getSecretsFound() {
         for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
             String name = tabListEntry.getEffectiveName();
@@ -111,7 +110,7 @@ public class FeatureDungeonSecrets extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null;
+        return SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null;
     }
 
     @Override

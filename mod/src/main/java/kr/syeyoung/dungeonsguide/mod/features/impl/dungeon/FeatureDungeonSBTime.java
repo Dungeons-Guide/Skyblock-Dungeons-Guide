@@ -37,7 +37,6 @@ import java.util.Collection;
 
 public class FeatureDungeonSBTime extends TextHUDFeature {
 
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public FeatureDungeonSBTime() {
         super("Dungeon HUD.In Dungeon HUD", "Display Ingame Dungeon Time", "Display how much time skyblock thinks has passed since dungeon run started", "dungeon.stats.igtime");
@@ -74,7 +73,7 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon();
+        return SkyblockStatus.isOnDungeon();
     }
 
 

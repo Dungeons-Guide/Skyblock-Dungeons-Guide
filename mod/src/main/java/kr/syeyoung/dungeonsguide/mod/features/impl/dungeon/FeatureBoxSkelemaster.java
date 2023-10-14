@@ -45,12 +45,11 @@ public class FeatureBoxSkelemaster extends SimpleFeature  {
     }
 
 
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
         float partialTicks = event.partialTicks;
         
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         final BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
         int val = this.<Integer>getParameter("radius").getValue();

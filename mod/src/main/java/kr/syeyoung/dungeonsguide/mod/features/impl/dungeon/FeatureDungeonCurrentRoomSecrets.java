@@ -41,11 +41,10 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
         registerDefaultStyle("totalSecrets", DefaultingDelegatingTextStyle.derive("Feature Default - TotalSecrets", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.TOTAL)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon();
+        return SkyblockStatus.isOnDungeon();
     }
 
     @Override

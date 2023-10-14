@@ -51,12 +51,11 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive("Feature Default - Number", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon();
+        return SkyblockStatus.isOnDungeon();
     }
 
     @Override
@@ -96,7 +95,7 @@ public class FeatureDungeonMilestone extends TextHUDFeature {
     @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
         String txt = clientChatReceivedEvent.message.getFormattedText();

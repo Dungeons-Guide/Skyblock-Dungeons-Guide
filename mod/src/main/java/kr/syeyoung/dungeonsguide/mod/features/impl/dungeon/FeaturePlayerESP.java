@@ -40,8 +40,6 @@ public class FeaturePlayerESP extends SimpleFeature {
     }
 
 
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
     private boolean preCalled = false;
     @DGEventHandler
     public void onEntityRenderPre(RenderPlayerEvent.Pre renderPlayerEvent) {

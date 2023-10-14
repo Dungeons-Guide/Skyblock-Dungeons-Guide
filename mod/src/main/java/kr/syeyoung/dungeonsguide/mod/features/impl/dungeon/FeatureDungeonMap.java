@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 import com.google.common.collect.ComparisonChain;
 import com.google.common.collect.Ordering;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
@@ -128,7 +129,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     @Override
     public void drawHUD(float partialTicks) {
         if (!on) return;
-        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null || context.getScaffoldParser() == null) return;
@@ -153,7 +154,7 @@ public class FeatureDungeonMap extends RawRenderingGuiFeature {
     @Override
     public void drawDemo(float partialTicks) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon() && context != null && context.getScaffoldParser() != null && on) {
+        if (SkyblockStatus.isOnDungeon() && context != null && context.getScaffoldParser() != null && on) {
             drawHUD(partialTicks);
             return;
         }

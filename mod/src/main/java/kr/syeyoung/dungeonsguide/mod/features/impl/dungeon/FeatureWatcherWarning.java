@@ -42,10 +42,9 @@ public class FeatureWatcherWarning extends TextHUDFeature {
         setEnabled(false);
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public boolean isHUDViewable() {
-        return warning > System.currentTimeMillis();
+        return warning > System.currentTimeMillis() && SkyblockStatus.isOnDungeon();
     }
 
     private final UUID lastRoomUID = UUID.randomUUID();
@@ -70,7 +69,7 @@ public class FeatureWatcherWarning extends TextHUDFeature {
         }
     }
 
-    @DGEventHandler(ignoreDisabled = true)
+    @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
     public void onDungeonEnd(DungeonLeftEvent event) {
         warning = 0;
     }

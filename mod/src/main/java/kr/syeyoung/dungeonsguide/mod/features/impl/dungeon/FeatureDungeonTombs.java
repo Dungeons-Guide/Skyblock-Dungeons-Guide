@@ -40,7 +40,6 @@ public class FeatureDungeonTombs extends TextHUDFeature {
         registerDefaultStyle("number", DefaultingDelegatingTextStyle.derive("Feature Default - Number", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public int getTombsFound() {
         for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
@@ -55,7 +54,7 @@ public class FeatureDungeonTombs extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon();
+        return SkyblockStatus.isOnDungeon();
     }
 
     @Override

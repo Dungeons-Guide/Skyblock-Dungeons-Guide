@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
@@ -50,7 +51,7 @@ public class FeatureChestPrice extends SimpleFeature {
     @DGEventHandler
     public void onGuiBGRender(GuiScreenEvent.BackgroundDrawnEvent rendered) {
         if (!(rendered.gui instanceof GuiChest)) return;
-        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         GlStateManager.disableLighting();
 

@@ -33,12 +33,11 @@ public class FeatureHideNameTags extends SimpleFeature  {
     }
 
 
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @DGEventHandler
     public void onEntityRenderPre(RenderLivingEvent.Pre renderPlayerEvent) {
         
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         if (renderPlayerEvent.entity instanceof EntityArmorStand) {
             EntityArmorStand armorStand = (EntityArmorStand) renderPlayerEvent.entity;

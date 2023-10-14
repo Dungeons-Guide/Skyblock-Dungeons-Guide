@@ -91,7 +91,6 @@ public class FeaturePenguins extends SimpleFeature {
 
 
     private Map<String, OBJModel> objModels = new HashMap<>();
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private Map<String, IBakedModel> models = new HashMap<>();
 
     @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)

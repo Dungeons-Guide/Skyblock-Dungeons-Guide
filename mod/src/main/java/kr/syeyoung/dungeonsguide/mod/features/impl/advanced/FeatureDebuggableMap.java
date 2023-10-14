@@ -44,7 +44,6 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature {
     DynamicTexture dynamicTexture = new DynamicTexture(128, 128);
     ResourceLocation location = Minecraft.getMinecraft().renderEngine.getDynamicTextureLocation("dungeons/map/", dynamicTexture);
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public void drawHUD(float partialTicks) {
 //        if (!skyblockStatus.isOnDungeon()) return;

@@ -60,10 +60,9 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
                 .setWidgetGenerator(RoomConfiguration::new));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public boolean isHUDViewable() {
-        return warning > System.currentTimeMillis();
+        return warning > System.currentTimeMillis() && SkyblockStatus.isOnDungeon();
     }
 
 
@@ -79,7 +78,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
     @DGEventHandler
     public void onTick(DGTickEvent event) {
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
