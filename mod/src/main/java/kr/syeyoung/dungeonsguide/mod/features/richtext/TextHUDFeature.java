@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCRTextStyleMap;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.config.WidgetTextStyleConfig;
@@ -77,6 +78,13 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
         } catch (Exception e) {
             e.printStackTrace();
         }
+    }
+
+    @DGEventHandler(triggerOutOfSkyblock = true)
+    public void onSkyblockExit(SkyblockLeftEvent skyblockLeftEvent) {
+        try {
+            checkVisibility();
+        } catch (Exception e) {}
     }
 
     public static FontRenderer getFontRenderer() {
