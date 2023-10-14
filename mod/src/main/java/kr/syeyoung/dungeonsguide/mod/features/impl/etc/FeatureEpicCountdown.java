@@ -111,8 +111,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
                     if (time.contains(":")) {
                         secondsLeft = Integer.parseInt(time.split(":")[0]) * 60 + Integer.parseInt(time.split(":")[1]);
                         updatedAt = System.currentTimeMillis();
-                    }
-                    if(!time.isEmpty()){
+                    } else if(!time.isEmpty()){
                         secondsLeft = Integer.parseInt(time);
                         updatedAt = System.currentTimeMillis();
                     }
