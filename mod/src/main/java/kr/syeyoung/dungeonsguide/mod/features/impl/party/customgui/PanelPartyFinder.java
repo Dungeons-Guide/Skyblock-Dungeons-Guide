@@ -119,7 +119,7 @@ public class PanelPartyFinder extends MPanel {
             Minecraft.getMinecraft().displayGuiScreen(adapter);
 
             Navigator.getNavigator(mainConfigWidget.getDomElement()).openPage(
-                    new CategoryPageWidget("Party")
+                    new CategoryPageWidget("Dungeon Party")
             );
         });
         discordInvite = new MButton();
