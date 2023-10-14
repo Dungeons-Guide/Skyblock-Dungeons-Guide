@@ -74,7 +74,7 @@ public class AStarCornerCut  implements IPathfinder {
     public boolean doOneStep() {
         if (found) return true;
         Node n = open.poll();
-        if (n == null) return false;
+        if (n == null) return true;
         if (n.lastVisited == pfindIdx) return false;
         n.lastVisited = pfindIdx;
 

@@ -57,6 +57,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
 import java.util.concurrent.*;
@@ -136,11 +137,17 @@ public class DungeonRoom {
         this.currentState = currentState;
     }
 
-    private final Map<BlockPos, PathfinderExecutor> activePathfind = new HashMap<>();
+    private final Map<BlockPos, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
 
     public PathfinderExecutor createEntityPathTo(BlockPos pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-        if (activePathfind.containsKey(pos)) return  activePathfind.get(pos);
+        if (activePathfind.containsKey(pos)) {
+            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos);
+            PathfinderExecutor executor = executorWeakReference.get();
+            if (executor != null) {
+                return executor;
+            }
+        }
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID) {
             executor = new PathfinderExecutor(new AStarFineGrid(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
@@ -151,8 +158,8 @@ public class DungeonRoom {
         } else {
             return  null;
         }
-        activePathfind.put(pos, executor);
-        context.getExecutors().add(executor);
+        activePathfind.put(pos, new WeakReference<>(executor));
+        context.getExecutors().add(new WeakReference<>(executor));
         return executor;
     }
     private static final ExecutorService roomMatcherThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newSingleThreadExecutor(
@@ -295,8 +302,8 @@ public class DungeonRoom {
     }
 
     public BlockPos getRelativeBlockPosAt(int x, int y, int z) {
-            BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
-            return pos;
+        BlockPos pos = new BlockPos(x,y,z).add(min.getX(),min.getY(),min.getZ());
+        return pos;
     }
 
     public int getRelativeBlockDataAt(int x, int y, int z) {
@@ -342,14 +349,9 @@ public class DungeonRoom {
     private final int maxz;
     private final int lenx, leny, lenz;
     private static final float playerWidth = 0.3f;
-    public boolean isBlocked(int x,int y, int z) {
-        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return true;
-        int dx = x - minx, dy = y - miny, dz = z - minz;
-        int bitIdx = dx * leny * lenz + dy * lenz + dz;
-        int location = bitIdx / 4;
-        int bitStart = (2 * (bitIdx % 4));
-        long theBit = arr[location];
-        if (((theBit >> bitStart) & 0x2) > 0) return ((theBit >> bitStart) & 1) > 0;
+
+    private int calculateIsBlocked(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return 3;
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
 
@@ -374,30 +376,38 @@ public class DungeonRoom {
                     if (b.isFullCube() && i2 == k-1) continue;
                     if (iBlockState1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
                     if (b.isFullCube()) {
-                        theBit |= (3L << bitStart);
-                        arr[location] = theBit;
-                        return true;
+                        return 3;
                     }
                     try {
                         b.addCollisionBoxesToList(getCachedWorld(), blockPos, iBlockState1, bb, list, null);
                     } catch (Exception e) {
-                        return true;
+                        return 3;
                     }
                     if (list.size() > 0) {
-                        theBit |= (3L << bitStart);
-                        arr[location] = theBit;
-                        return true;
+                        return 3;
                     }
                 }
             }
         }
-        theBit |= 2L << bitStart;
+        return 2;
+    }
+    public boolean isBlocked(int x,int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return true;
+        int dx = x - minx, dy = y - miny, dz = z - minz;
+        int bitIdx = dx * leny * lenz + dy * lenz + dz;
+        int location = bitIdx / 4;
+        int bitStart = (2 * (bitIdx % 4));
+        long theBit = arr[location];
+        if (((theBit >> bitStart) & 0x2) > 0) return ((theBit >> bitStart) & 1) > 0;
+
+        long val = calculateIsBlocked(x, y, z);
+        theBit |= val << bitStart;
         arr[location] = theBit;
-        return false;
+        return val == 3;
     }
 
 
-    public void resetBlock(BlockPos pos) {
+    public void resetBlock(BlockPos pos) { // I think it can be optimize due to how it is saved in arr
         for (int x = -1; x <= 1; x++) {
             for (int y = -1; y <= 1; y++) {
                 for (int z = -1; z <= 1; z++) {
@@ -411,6 +421,6 @@ public class DungeonRoom {
         int dx = x - minx, dy = y - miny, dz = z - minz;
         int bitIdx = dx * leny * lenz + dy * lenz + dz;
         int location = bitIdx / 4;
-        arr[location] = 0;
+        arr[location] = (arr[location] & ~(3L << (2 * (bitIdx % 4)))) | (long) calculateIsBlocked(x, y, z) << (2 * (bitIdx % 4));
     }
 }
