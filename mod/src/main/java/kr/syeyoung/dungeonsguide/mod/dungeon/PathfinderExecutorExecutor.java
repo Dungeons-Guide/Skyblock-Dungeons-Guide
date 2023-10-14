@@ -22,8 +22,13 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.BlockPos;
+import scala.reflect.internal.util.WeakHashSet;
 
 import java.awt.*;
+import java.lang.ref.WeakReference;
+import java.util.ArrayList;
+import java.util.List;
 
 public class PathfinderExecutorExecutor extends Thread{
     public PathfinderExecutorExecutor(DungeonContext context) {
@@ -31,18 +36,39 @@ public class PathfinderExecutorExecutor extends Thread{
         this.context =context;
     }
     private DungeonContext context;
+    private DungeonRoom target;
+
+    public void setRoomIn(DungeonRoom target) {
+        this.target = target;
+    }
+
     @Override
     public void run() {
+        List<WeakReference<PathfinderExecutor>> toRemove = new ArrayList<>();
+        WeakReference<PathfinderExecutor>[] weakReferences = new WeakReference[200]; // shoulllld be enough
         while(!isInterrupted()) {
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition());
-
-                DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 try {
-                    for (PathfinderExecutor executor : context.getExecutors()) {
-                        if (executor.getDungeonRoom() == dungeonRoom)
-                            executor.doStep();
+                    boolean flag = false;
+                    context.getExecutors().toArray(weakReferences);
+                    for (int i = 0; i < weakReferences.length; i++) {
+                        WeakReference<PathfinderExecutor> executor = weakReferences[i];
+                        if (executor == null) break;
+
+                        PathfinderExecutor executor1 = executor.get();
+                        if (executor1 != null) {
+                            if (executor1.getDungeonRoom() == target)
+                                executor1.doStep();
+                        } else {
+                            flag = true;
+                            toRemove.add(executor);
+                        }
                     }
+                    if (flag) {
+                        context.getExecutors().removeAll(toRemove);
+                        toRemove.clear();
+                    }
+//                    Thread.yield();
                 } catch (Exception e) {
                     e.printStackTrace(); // wtf?
                     try {

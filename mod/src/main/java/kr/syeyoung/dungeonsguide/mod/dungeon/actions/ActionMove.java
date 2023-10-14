@@ -105,6 +105,10 @@ public class ActionMove extends AbstractAction {
         }
     }
 
+    @Override
+    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
+        executor = null;
+    }
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
         if (executor == null) executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));

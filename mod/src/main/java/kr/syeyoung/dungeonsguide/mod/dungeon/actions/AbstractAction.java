@@ -51,6 +51,10 @@ public abstract class AbstractAction {
 
     }
 
+    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
+
+    }
+
     public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
         return null;
     }

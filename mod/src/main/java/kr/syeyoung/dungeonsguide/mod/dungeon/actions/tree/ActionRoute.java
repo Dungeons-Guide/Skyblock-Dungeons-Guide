@@ -60,6 +60,10 @@ public class ActionRoute {
     }
 
     public AbstractAction next() {
+        if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))
+            getCurrentAction().cleanup(dungeonRoom, actionRouteProperties);
+        if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir))
+            actions.get(this.current-1).cleanup(dungeonRoom, actionRouteProperties);
         current ++;
         if (current >= actions.size()) {
             current = actions.size() - 1;
