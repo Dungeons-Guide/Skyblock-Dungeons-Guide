@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
@@ -67,6 +68,7 @@ import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.*;
+import java.util.function.Consumer;
 
 public class CommandDgDebug extends CommandBase {
     @Override
@@ -106,7 +108,8 @@ public class CommandDgDebug extends CommandBase {
             "clearprofile",
             "fullbright",
             "gimmebright",
-            "pfall"
+            "pfall",
+            "partycollection"
     };
 
     @Override
@@ -201,6 +204,9 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "reloadshader":
                 ShaderManager.onResourceReload();
+                break;
+            case "partycollection":
+                partyCollectionCommand(args[1], args[2], args[3]);
                 break;
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("ain't gonna find much anything here"));
@@ -684,5 +690,183 @@ public class CommandDgDebug extends CommandBase {
         } catch (Throwable t) {
             t.printStackTrace();
         }
+    }
+
+    private void partyCollectionCommand(String otherPlayerName, String fragbot, String offline) {
+
+        String sourcePlayer = Minecraft.getMinecraft().thePlayer.getName();
+        String targetPlayer = otherPlayerName;
+        String thirdPlayer = fragbot;
+        String offlinePlayer = offline;
+            StringBuilder sb = new StringBuilder();
+            Consumer writer = (obj) -> {
+                sb.append("\n***************************\n");
+                if (obj instanceof List) {
+                    for (Object obj2: (List) obj) {
+                        sb.append("\n> ");
+                        sb.append(obj2);
+                    }
+                } else {
+                    sb.append("\n> ");
+                    sb.append(obj);
+                }
+                sb.append("\n");
+            };
+
+            new ChatRoutine() {
+                @Override
+                public void run() {
+                    String langs = "ENGLISH, GERMAN, FRENCH, DUTCH, SPANISH, ITALIAN, CHINESE_SIMPLIFIED, CHINESE_TRADITIONAL, PORTUGUESE_BR, RUSSIAN, KOREAN, POLISH, JAPANESE, PIRATE, NORWEGIAN, PORTUGUESE_PT, SWEDISH, TURKISH, DANISH, CZECH, FINNISH, GREEK, UKRAINIAN, ROMANIAN, HUNGARIAN";
+                    for (String s : langs.split(",")) {
+                        say("/lang "+s.trim());
+                        waitForSingleMessageMatching(a -> a.startsWith("§r§a"), (a) -> {});
+                        justWait(500);
+                        justRun(() -> writer.accept("\n\n$$LANGUAGE$$: "+s+"\n\n"));
+                        rejoinHypickle();
+
+                        say("/p leave");
+                        say("/chat a");
+
+                        say("/p "+targetPlayer);
+                        waitForPartyMessage((a) -> {});
+                        justWait(500);
+                        otherSay("/p accept "+sourcePlayer);
+                        waitForPartyMessage((a) -> {});
+                        say("/p disband");
+                        //~ §ehas disbanded the party!§r
+                        waitForPartyMessage(writer);
+
+
+                        say("/p settings allinvite");
+                        // §cYou are not currently in a party.§r
+                        waitForPartyMessage(writer);
+                        say("/p mute");
+                        // §cYou are not in a party!§r
+                        waitForPartyMessage(writer);
+                        say("/p disband");
+                        // §cYou are not in a party right now.§r
+                        waitForPartyMessage(writer);
+                        say("/chat p");
+                        // §cYou must be in a party to join the party channel!§r
+                        waitForPartyMessage(writer);
+
+
+
+                        say("/p "+targetPlayer);
+                        // §b[MVP§r§a+§r§b] syeyoung §r§einvited §r§b[MVP§r§0+§r§b] Azael_Nya §r§eto the party! They have §r§c60 §r§eseconds to accept.§r
+                        waitForPartyMessage(writer);
+                        justWait(500);
+
+                        otherSay("/p accept syeyoung");
+                        // §b[MVP§r§0+§r§b] Azael_Nya §r§ejoined the party.§r
+                        waitForPartyMessage(writer);
+
+                        say("/chat p");
+                        // §aYou are now in the §r§6PARTY§r§a channel§r
+                        waitForSingleMessageMatching((a) -> a.startsWith("§a") || a.startsWith("§6"), writer);
+
+
+                        say("/p settings allinvite");
+                        // §b[MVP§r§a+§r§b] syeyoung §r§aenabled All Invite§r
+                        waitForPartyMessage(writer);
+                        say("/p settings allinvite");
+                        // §b[MVP§r§a+§r§b] syeyoung §r§cdisabled All Invite§r
+                        waitForPartyMessage(writer);
+
+                        say("/p 99999999999999999");
+                        // §cCouldn't find a player with that name!§r
+                        waitForPartyMessage(writer);
+                        say("/p "+thirdPlayer);
+                        // §cYou cannot invite that player since they're not online.
+                        waitForPartyMessage(writer);
+
+
+                        say("/p promote "+targetPlayer);
+                        // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r
+                        waitForPartyMessage(writer);
+                        say("/p promote "+targetPlayer);
+                        // §a[VIP§r§6+§r§a] syeyoung§r§e has promoted §r§b[MVP§r§f+§r§b] apotato321 §r§eto Party Leader§r
+                        waitForPartyMessage(writer);
+                        otherSay("/p demote "+sourcePlayer);
+                        // §b[MVP§r§a+§r§b] syeyoung§r§e has demoted §r§b[MVP§r§0+§r§b] Azael_Nya §r§eto Party Member§r
+                        waitForPartyMessage(writer);
+                        otherSay("/p transfer "+sourcePlayer);
+                        // §eThe party was transferred to §r§b[MVP§r§f+§r§b] apotato321 §r§eby §r§a[VIP§r§6+§r§a] syeyoung§r
+                        waitForPartyMessage(writer);
+
+                        // leaves
+                        otherSay("/p leave");
+                        // §b[MVP§r§0+§r§b] Azael_Nya §r§ehas left the party.§r
+                        waitForPartyMessage(writer);
+
+                        otherSay("/p "+thirdPlayer);
+                        // §cThe party was disbanded because all invites expired and the party was empty.§r
+                        waitForPartyMessage(writer);
+
+                        say("smth");
+                        // §cYou are not in a party and were moved to the ALL channel.§r
+                        waitForPartyMessage(writer);
+
+                        otherSay("/p "+sourcePlayer);
+                        // §r§b[MVP§r§0+§r§b] Azael_Nya §r§ehas invited you to join their party!
+                        // §r§eYou have §r§c60 §r§eseconds to accept. §r§6Click here to join!§r§9
+                        waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------§r§9"), writer);
+
+                        justWait(1000);
+
+                        say("/p "+targetPlayer);
+                        // §eYou have joined §r§b[MVP§r§0+§r§b] Azael_Nya's §r§eparty!§r
+                        waitForPartyMessage(writer);
+
+                        say("/p "+offlinePlayer);
+                        // §cYou are not allowed to invite players.§r
+                        waitForPartyMessage(writer);
+
+                        otherSay("/p kick "+thirdPlayer);
+                        // §ehas been removed from the party.§r
+                        waitForPartyMessage(writer);
+                        otherSay("/p kick "+sourcePlayer);
+                        // §eYou have been kicked from the party by
+                        waitForPartyMessage(writer);
+
+                        // invite
+                        say("/p "+targetPlayer);
+                        waitForPartyMessage((a) -> {});
+                        justWait(500);
+                        otherSay("/p accept "+sourcePlayer);
+                        waitForPartyMessage((a) -> {});
+
+                        say("/pl");
+                        // §6Party Members
+                        waitForPartyMessage(writer);
+                        say("/p leave");
+                        // §eYou left the party.§r
+                        waitForPartyMessage(writer);
+                        // --disbanded--
+                        waitForPartyMessage((a) -> {});
+
+                        justRun(() -> {
+
+                            try {
+                                String total = sb.toString();
+                                FileOutputStream fos = new FileOutputStream("partymessages.txt");
+                                fos.write(total.getBytes());
+                                fos.flush();
+                                fos.close();
+                            } catch (Exception e) {
+                                e.printStackTrace();
+                            }
+
+                        });
+
+                    }
+
+                    say("/lang ENGLISH");
+
+                }
+            }.execute();
+
+
+
     }
 }

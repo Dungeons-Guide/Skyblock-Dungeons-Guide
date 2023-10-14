@@ -75,7 +75,7 @@ public class ChatProcessor {
                     Minecraft.getMinecraft().thePlayer.sendChatMessage(tuple.getFirst());
                     if (tuple.getSecond() != null)
                         tuple.getSecond().run();
-                    minimumNext = System.currentTimeMillis() + 200;
+                    minimumNext = System.currentTimeMillis() + 2000;
                     ChatTransmitter.sendDebugChat(new ChatComponentText("Sending " + tuple.getFirst() + " Secretly"));
                 }
 
