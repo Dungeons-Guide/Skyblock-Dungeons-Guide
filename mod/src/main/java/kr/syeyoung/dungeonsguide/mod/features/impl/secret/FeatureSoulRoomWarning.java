@@ -62,7 +62,7 @@ public class FeatureSoulRoomWarning extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return warning > System.currentTimeMillis();
+        return warning > System.currentTimeMillis() && SkyblockStatus.isOnDungeon();
     }
 
 
