@@ -65,10 +65,9 @@ public class FeatureDungeonScore extends TextHUDFeature {
         registerDefaultStyle("required", DefaultingDelegatingTextStyle.derive("Feature Default - Required", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon();
+        return SkyblockStatus.isOnDungeon();
     }
 
     @Override
@@ -196,7 +195,7 @@ public class FeatureDungeonScore extends TextHUDFeature {
     }
 
     public ScoreCalculation calculateScore() {
-        if (!skyblockStatus.isOnDungeon()) return null;
+        if (!SkyblockStatus.isOnDungeon()) return null;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return null;
         if (context.getScaffoldParser() == null) return null;

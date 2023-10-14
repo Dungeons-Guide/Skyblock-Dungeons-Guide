@@ -41,7 +41,6 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
         registerDefaultStyle("roomname", DefaultingDelegatingTextStyle.derive("Feature Default - Roomname", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     public int getTotalSecretsInt() {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
@@ -55,7 +54,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() != null;
+        return SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() != null;
     }
 
 

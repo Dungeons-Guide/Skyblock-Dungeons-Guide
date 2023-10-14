@@ -102,7 +102,6 @@ public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextP
         return dummyText;
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public List<StyledText> getText() {
         ArrayList<StyledText> texts = new ArrayList<StyledText>();

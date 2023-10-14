@@ -31,9 +31,6 @@ public class FeatureAutoAcceptReparty extends SimpleFeature {
     public FeatureAutoAcceptReparty() {
         super("Dungeon Party.Reparty", "Auto accept reparty", "Automatically accept reparty", "qol.autoacceptreparty", true);
     }
-
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
     private String lastDisband;
 
     @DGEventHandler(triggerOutOfSkyblock = true)

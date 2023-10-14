@@ -45,12 +45,11 @@ public class FeatureBoxBats extends SimpleFeature  {
     }
 
 
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @DGEventHandler
     public void drawWorld(RenderWorldLastEvent event) {
         float partialTicks = event.partialTicks;
         
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
 
         final BlockPos player = Minecraft.getMinecraft().thePlayer.getPosition();
         int val = this.<Integer>getParameter("radius").getValue();
@@ -66,7 +65,7 @@ public class FeatureBoxBats extends SimpleFeature  {
         AColor c = this.<AColor>getParameter("color").getValue();
         for (EntityBat entitySkeleton : skeletonList) {
             if (!entitySkeleton.isInvisible())
-            RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
+                RenderUtils.highlightBox(entitySkeleton, c, partialTicks, true);
         }
     }
 }
