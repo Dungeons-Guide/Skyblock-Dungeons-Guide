@@ -727,11 +727,17 @@ public class CommandDgDebug extends CommandBase {
                         say("/p leave");
                         say("/chat a");
 
-                        say("/p "+targetPlayer);
+                        otherSay("/p "+sourcePlayer);
+                        waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------§r§9"), (a) -> {});
+                        say("/p accept "+targetPlayer);
+
+                        otherSay("/p "+thirdPlayer);
                         waitForPartyMessage((a) -> {});
-                        justWait(500);
-                        otherSay("/p accept "+sourcePlayer);
                         waitForPartyMessage((a) -> {});
+
+                        otherSay("/p leave");
+                        waitForPartyMessage(writer);
+
                         say("/p disband");
                         //~ §ehas disbanded the party!§r
                         waitForPartyMessage(writer);

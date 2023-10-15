@@ -68,7 +68,7 @@ groups = {
     'not_in_party': ['not_in_party_1', 'not_in_party_2', 'not_in_party_3', 'not_in_party_4_channel', 'not_in_party_5_channel_moved', 'disband_intentional', 'disband_noone', 'self_kick', 'self_left'],
     'party_channel': ['party_channel'],
     'all_invite_on': ['all_invite_on'],
-    'all_invite_off': ['all_invite_off'],
+    'all_invite_off': ['all_invite_off', 'invite_noperms'],
     'party_join': ['someone_join'],
     'party_leave': ['someone_kick', 'someone_left'],
     'invited': ['invite'],
@@ -101,7 +101,7 @@ def transform(patternStr):
             regex = regex.replace(player, f'PPPPPPPPPPP{idx}')
         regex = re.escape(regex)
         for player, idx in occurances:
-            regex = regex.replace(f'PPPPPPPPPPP{idx}', f'(?<{idx}>.+)')
+            regex = regex.replace(f'PPPPPPPPPPP{idx}', f'(?<p{idx}>.+)',1).replace(f'PPPPPPPPPPP{idx}', f'\\k<p{idx}>')
         return 'R'+regex
 #     if any(patternStr.startsWith(player) for player in players):
 
@@ -115,5 +115,5 @@ for lang in dict.values():
             dict2[reverse_group[k]].append(transform(patternStr))
 
 
-with open('process2.json', 'w') as f:
+with open('party_languages.json', 'w') as f:
     json.dump(dict2, f, indent=4, ensure_ascii=False)

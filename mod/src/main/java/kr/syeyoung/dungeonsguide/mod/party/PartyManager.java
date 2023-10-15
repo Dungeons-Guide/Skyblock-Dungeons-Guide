@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.party;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessResult;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatSubscriber;
@@ -34,12 +35,15 @@ import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+import org.apache.commons.io.IOUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.IOException;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class PartyManager {
     public static final PartyManager INSTANCE = new PartyManager();
@@ -65,21 +69,67 @@ public class PartyManager {
 
     private Set<Consumer<PartyContext>> partyBuiltCallback = new HashSet<>();
 
+
+    private final MessageMatcher NOT_IN_PARTY;
+    private final MessageMatcher PARTY_CHANNEL;
+    private final MessageMatcher ALL_INVITE_ON;
+    private final MessageMatcher ALL_INVITE_OFF;
+    private final MessageMatcher PARTY_JOIN;
+    private final MessageMatcher PARTY_LEAVE;
+    private final MessageMatcher INVITED;
+    private final MessageMatcher INVITE_PERM;
+    private final MessageMatcher TRANSFER;
+    private final MessageMatcher PROMOTE_LEADER;
+    private final MessageMatcher PROMOTE_MODERATOR;
+    private final MessageMatcher MEMBER;
+    private final MessageMatcher ACCEPT_INVITE_LEADER;
+    private final MessageMatcher ACCEPT_INVITE_MEMBERS;
+
+    private MessageMatcher createMatcher(JSONObject object, String key) {
+        return new MessageMatcher(object.getJSONArray(key).toList().stream()
+                .filter(a -> a instanceof String)
+                .map(a -> (String) a)
+                .collect(Collectors.toList()));
+    }
+
+    private String processName(String name) {
+        String username = null;
+        for (String s : TextUtils.stripColor(name).split(" ")) {
+            if (s.startsWith("[")) continue;
+            username = s;
+            break;
+        }
+        return username;
+    }
+
     public PartyManager() {
+        try {
+            JSONObject jsonObject = new JSONObject(IOUtils.toString(Objects.requireNonNull(DungeonsGuide.class.getResourceAsStream("/party_languages.json"))));
+            NOT_IN_PARTY = createMatcher(jsonObject, "not_in_party");
+            PARTY_CHANNEL = createMatcher(jsonObject, "party_channel");
+            ALL_INVITE_ON = createMatcher(jsonObject, "all_invite_on");
+            ALL_INVITE_OFF = createMatcher(jsonObject, "all_invite_off");
+            PARTY_JOIN = createMatcher(jsonObject, "party_join");
+            PARTY_LEAVE = createMatcher(jsonObject, "party_leave");
+            INVITED = createMatcher(jsonObject, "invited");
+            INVITE_PERM = createMatcher(jsonObject, "invite_perm");
+            TRANSFER = createMatcher(jsonObject, "transfer");
+            PROMOTE_LEADER = createMatcher(jsonObject, "promote_leader");
+            PROMOTE_MODERATOR = createMatcher(jsonObject, "promote_moderator");
+            MEMBER = createMatcher(jsonObject, "member");
+            ACCEPT_INVITE_LEADER = createMatcher(jsonObject, "accept_invite_leader");
+            ACCEPT_INVITE_MEMBERS = createMatcher(jsonObject, "accept_invite_members");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+
         ChatProcessor cp = ChatProcessor.INSTANCE;
         // Not in Party
         cp.subscribe(new ChatSubscriber() {
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
-                if (str.equals("§cYou are not currently in a party.§r")
-                        || str.equals("§eYou left the party.§r")
-                        || str.equals("§cYou must be in a party to join the party channel!§r")
-                        || str.equals("§cThe party was disbanded because all invites expired and the party was empty§r")
-                        || str.equals("§cYou are not in a party and were moved to the ALL channel.§r")
-                        || str.startsWith("§cThe party was disbanded")
-                        || str.endsWith("§ehas disbanded the party!§r")
-                        || str.startsWith("§cYou are not in a party")
-                        || str.startsWith("§eYou have been kicked from the party by ")) {
+                if (NOT_IN_PARTY.match(str, null)) {
                     PartyManager.this.leaveParty();
 
                     for (Consumer<PartyContext> partyContextConsumer : partyBuiltCallback) {
@@ -99,11 +149,10 @@ public class PartyManager {
         cp.subscribe(new ChatSubscriber() {
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
-                if (str.endsWith("§aenabled All Invite§r")) {
+                if (ALL_INVITE_ON.match(str, null)) {
                     PartyManager.this.getPartyContext(true).setAllInvite(true);
                     a.put("type", "allinvite_on");
-                } else if (str.endsWith("§cdisabled All Invite§r")
-                        || str.equals("§cYou are not allowed to invite players.§r")) {
+                } else if (ALL_INVITE_OFF.match(str, null)) {
                     PartyManager.this.getPartyContext(true).setAllInvite(false);
                     a.put("type", "allinvite_off");
                     PartyManager.this.potentialInvitenessChange();
@@ -183,39 +232,23 @@ public class PartyManager {
         });
         // Player party join / leave
         cp.subscribe(new ChatSubscriber() {
+            Map<String, String> matches = new HashMap<>();
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
-                if (str.endsWith("§ejoined the party.§r")) {
-                    String username = null;
-                    for (String s : TextUtils.stripColor(str).split(" ")) {
-                        if (s.startsWith("[")) continue;
-                        username = s;
-                        break;
-                    }
+                if (PARTY_JOIN.match(str, matches)) {
+                    String username = processName(matches.get("1"));
                     if (username != null) {
                         PartyManager.this.getPartyContext(true).addPartyMember(username);
                     }
                     a.put("type", "party_join");
-                } else if (str.endsWith("§ehas been removed from the party.§r")
-                        || str.endsWith("§ehas left the party.§r")) {
-                    String username = null;
-                    for (String s : TextUtils.stripColor(str).split(" ")) {
-                        if (s.startsWith("[")) continue;
-                        username = s;
-                        break;
-                    }
+                } else if (PARTY_LEAVE.match(str, matches)) {
+                    String username = processName(matches.getOrDefault("1", matches.get("2")));
                     if (username != null && partyContext != null) {
                         PartyManager.this.getPartyContext().removeFromParty(username);
                     }
                     a.put("type", "party_leave");
-                } else if (str.endsWith(" They have §r§c60 §r§eseconds to accept.§r")) {
-                    String[] messageSplit = TextUtils.stripColor(str).split(" ");
-                    String inviter = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        inviter = s;
-                        break;
-                    }
+                } else if (INVITED.match(str, matches)) {
+                    String inviter = processName(matches.get("0"));
                     if (inviter != null && partyContext != null) {
                         if (PartyManager.this.getPartyContext().hasMember(inviter)) {
                             PartyManager.this.getPartyContext().setAllInvite(true);
@@ -223,7 +256,7 @@ public class PartyManager {
                     }
                     PartyManager.this.getPartyContext(true).setPartyExistHypixel(true);
                     a.put("type", "party_invite_exist");
-                } else if (str.equals("§cCouldn't find a player with that name!§r") || str.equals("§cYou cannot invite that player since they're not online.")) {
+                } else if (INVITE_PERM.match(str, null)) {
                     a.put("type", "party_invite_noexist");
                     String username = Minecraft.getMinecraft().getSession().getUsername();
                     if (partyContext != null && PartyManager.this.getPartyContext().hasMember(username)) {
@@ -235,10 +268,10 @@ public class PartyManager {
         });
         // Promotion
         cp.subscribe(new ChatSubscriber() {
+            Map<String, String> matches = new HashMap<>();
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
-                if (str.startsWith("§eThe party was transferred to ")) {
-                    // §eThe party was transferred to §r§b[MVP§r§f+§r§b] apotato321 §r§eby §r§a[VIP§r§6+§r§a] syeyoung§r
+                if (TRANSFER.match(str, matches)) {
                     String[] messageSplit = TextUtils.stripColor(str.substring(31)).split(" ");
                     String newLeader = null;
                     for (String s : messageSplit) {
@@ -264,22 +297,9 @@ public class PartyManager {
                     }
                     a.put("type", "party_transfer");
                     PartyManager.this.potentialInvitenessChange();
-                } else if (str.endsWith("§eto Party Leader§r")) {
-                    // §a[VIP§r§6+§r§a] syeyoung§r§e has promoted §r§b[MVP§r§f+§r§b] apotato321 §r§eto Party Leader§r
-                    String[] messageSplit = TextUtils.stripColor(str).split(" ");
-                    String oldLeader = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        oldLeader = s;
-                        break;
-                    }
-                    messageSplit = TextUtils.stripColor(str.substring(str.indexOf("has promoted") + 13)).split(" ");
-                    String newLeader = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        newLeader = s;
-                        break;
-                    }
+                } else if (PROMOTE_LEADER.match(str, matches)) {
+                    String oldLeader = processName(matches.get("0"));
+                    String newLeader = processName(matches.get("1"));
 
                     if (oldLeader != null && newLeader != null) {
                         PartyManager.this.getPartyContext(true).setPartyOwner(newLeader);
@@ -287,22 +307,9 @@ public class PartyManager {
                     }
                     a.put("type", "party_transfer");
                     PartyManager.this.potentialInvitenessChange();
-                } else if (str.endsWith("§r§eto Party Moderator§r")) {
-                    // §b[MVP§r§f+§r§b] apotato321§r§e has promoted §r§a[VIP§r§6+§r§a] syeyoung §r§eto Party Moderator§r
-                    String[] messageSplit = TextUtils.stripColor(str).split(" ");
-                    String oldLeader = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        oldLeader = s;
-                        break;
-                    }
-                    messageSplit = TextUtils.stripColor(str.substring(str.indexOf("has promoted") + 13)).split(" ");
-                    String newModerator = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        newModerator = s;
-                        break;
-                    }
+                } else if (PROMOTE_MODERATOR.match(str, matches)) {
+                    String oldLeader = processName(matches.get("0"));
+                    String newModerator = processName(matches.get("1"));
 
                     if (oldLeader != null && newModerator != null) {
                         PartyManager.this.getPartyContext(true).setPartyOwner(oldLeader);
@@ -310,21 +317,9 @@ public class PartyManager {
                     }
                     a.put("type", "party_promotion");
                     PartyManager.this.potentialInvitenessChange();
-                } else if (str.endsWith("§r§eto Party Member§r")) {
-                    String[] messageSplit = TextUtils.stripColor(str).split(" ");
-                    String oldLeader = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        oldLeader = s;
-                        break;
-                    }
-                    messageSplit = TextUtils.stripColor(str.substring(str.indexOf("has demoted") + 12)).split(" ");
-                    String newMember = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        newMember = s;
-                        break;
-                    }
+                } else if (MEMBER.match(str, matches)) {
+                    String oldLeader = processName(matches.get("1"));
+                    String newMember = processName(matches.get("0"));
 
                     if (oldLeader != null && newMember != null) {
                         PartyManager.this.getPartyContext(true).setPartyOwner(oldLeader);
@@ -339,24 +334,20 @@ public class PartyManager {
         // Player Join
         cp.subscribe(new ChatSubscriber() {
             boolean joined;
+            Map<String, String> matches = new HashMap<>();
             @Override
             public ChatProcessResult process(String str, Map<String, Object> context) {
-                if (str.startsWith("§eYou have joined ")) {
-                    String[] messageSplit = TextUtils.stripColor(str.substring(18)).split(" ");
-                    String leader = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        leader = s;
-                        break;
-                    }
+                if (ACCEPT_INVITE_LEADER.match(str, matches)) {
+                    String leader = processName(matches.get("1"));
+
                     leader = leader.substring(0, leader.length()-2); // remove 's
                     partyContext = new PartyContext();
                     getPartyContext().setPartyOwner(leader);
                     getPartyContext().addPartyMember(Minecraft.getMinecraft().getSession().getUsername());
                     context.put("type", "party_selfjoin_leader");
                     joined=  true;
-                } else if (str.startsWith("§eYou'll be partying with: ")) {
-                    String[] players = TextUtils.stripColor(str.substring(27)).split(" ");
+                } else if (ACCEPT_INVITE_MEMBERS.match(str, matches)) {
+                    String[] players = TextUtils.stripColor(matches.get("2")).split(" ");
                     for (String player : players) {
                         if (player.startsWith("[")) continue;
                         getPartyContext().addRawMember(player);

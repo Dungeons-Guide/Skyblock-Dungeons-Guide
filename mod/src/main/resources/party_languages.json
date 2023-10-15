@@ -413,7 +413,7 @@
     ],
     "invited": [
         "R(?<p0>.+)\\ §r§einvited\\ §r(?<p1>.+)\\ §r§eto\\ the\\ party!\\ They\\ have\\ §r§c60\\ §r§eseconds\\ to\\ accept\\.§r",
-        "R(?<p0>.+)\\ §r§ehat\\ §r(?<p1>.+)\\ §r§ein\\ die\\ Party\\ eingeladen!\\ §r(?<p1>.+)§r§e\\ hat\\ §r§c60\\ §r§eSekunden,\\ um\\ zu\\ akzeptieren\\.§r",
+        "R(?<p0>.+)\\ §r§ehat\\ §r(?<p1>.+)\\ §r§ein\\ die\\ Party\\ eingeladen!\\ §r\\k<p1>§r§e\\ hat\\ §r§c60\\ §r§eSekunden,\\ um\\ zu\\ akzeptieren\\.§r",
         "R(?<p0>.+)\\ §r§ea\\ invité\\ §r(?<p1>.+)\\ §r§edans\\ la\\ party!\\ Cette\\ personne\\ a\\ §r§c60\\ §r§esecondes\\ pour\\ accepter\\.§r",
         "R(?<p0>.+)\\ §r§eheeft\\ §r(?<p1>.+)\\ §r§euitgenodigd\\ voor\\ de\\ party!\\ Deze\\ speler\\ heeft\\ §r§c60\\ §r§eseconden\\ om\\ te\\ accepteren\\.§r",
         "R§e¡§r(?<p0>.+)\\ §r§einvitó\\ a\\ §r(?<p1>.+)\\ §r§ea\\ la\\ party!\\ Tiene\\ §r§c60\\ §r§esegundos\\ para\\ aceptar\\.§r",
@@ -524,7 +524,7 @@
         "R(?<p0>.+)§r§e\\ heeft\\ §r(?<p1>.+)\\ §r§etot\\ partyleider\\ gepromoveerd§r",
         "R(?<p0>.+)§r§e\\ ha\\ promovido\\ a\\ §r(?<p1>.+)\\ §r§ea\\ Líder\\ de\\ Party§r",
         "R(?<p0>.+)§r§e\\ ha\\ promosso\\ §r(?<p1>.+)\\ §r§ea\\ Capo\\ del\\ Party§r",
-        "R(?<p0>.+)§r§e已将§r(?<p1>.+)§r§e提拔为组队队长，§r(?<p0>.+)§r§e现在为组队管理员§r",
+        "R(?<p0>.+)§r§e已将§r(?<p1>.+)§r§e提拔为组队队长，§r\\k<p0>§r§e现在为组队管理员§r",
         "R(?<p0>.+)\\ §r§e已將\\ §r(?<p1>.+)§r§e\\ 提拔為組隊隊長§r",
         "R(?<p0>.+)§r§e\\ promoveu\\ §r(?<p1>.+)\\ §r§epara\\ líder\\ da\\ party§r",
         "R(?<p0>.+)§r§e\\ повысил\\ §r(?<p1>.+)\\ §r§eдо\\ лидера\\ компании§r",
