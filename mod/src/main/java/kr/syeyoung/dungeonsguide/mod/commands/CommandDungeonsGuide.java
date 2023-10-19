@@ -64,6 +64,11 @@ public class CommandDungeonsGuide extends CommandBase {
         return "dg";
     }
 
+    @Override
+    public List<String> getCommandAliases() {
+        return new List<String>("dungeonsguide");
+    }
+
     //List of subcommands for tab support
     private static final String[] SUBCOMMANDS = {
             "reparty",
