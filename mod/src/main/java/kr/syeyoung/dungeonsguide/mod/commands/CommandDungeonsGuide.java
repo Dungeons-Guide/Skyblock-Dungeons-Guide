@@ -49,6 +49,7 @@ import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -66,7 +67,9 @@ public class CommandDungeonsGuide extends CommandBase {
 
     @Override
     public List<String> getCommandAliases() {
-        return new List<String>("dungeonsguide");
+        ArrayList<String> aliases = new ArrayList<String>();
+        aliases.add("dungeonsguide");
+        return aliases;
     }
 
     //List of subcommands for tab support
