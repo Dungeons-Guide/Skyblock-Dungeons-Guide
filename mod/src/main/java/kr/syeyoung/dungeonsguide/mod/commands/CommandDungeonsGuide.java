@@ -48,7 +48,6 @@ import net.minecraft.util.ChatStyle;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
-import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
 import java.util.Collections;
