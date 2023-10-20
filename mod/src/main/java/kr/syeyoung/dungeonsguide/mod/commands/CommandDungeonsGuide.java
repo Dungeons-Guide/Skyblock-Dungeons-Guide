@@ -57,18 +57,18 @@ public class CommandDungeonsGuide extends CommandBase {
 
     @Override
     public String getCommandName() {
-        return "dg";
+        return "dungeonsguide";
     }
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "dg";
+        return "dungeonsguide";
     }
 
     @Override
     public List<String> getCommandAliases() {
         return new ArrayList<String>() {{
-            add("dungeonsguide"); //per issue #400
+            add("dg"); //per issue #400
             add("dungeonguide"); //because people keep saying "dungeon guide" the singular
             add("deegee"); //in case another mod/server somehow uses a command "/dg" and no one wants to type out the entire name "dungeonsguide"
             add("던전가이드"); //easter egg
@@ -90,7 +90,8 @@ public class CommandDungeonsGuide extends CommandBase {
             "purge",
             "pbroadcast",
             "partymax",
-            "unload"
+            "unload",
+            "aliases"
     };
 
     @Override
@@ -145,6 +146,14 @@ public class CommandDungeonsGuide extends CommandBase {
 
             case "unload":
                 unloadCommand();
+                break;
+
+
+            case "aliases":
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
+                ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonsguide"));
+                ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonguide"));
+                ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/deegee"));
                 break;
 
             default:
