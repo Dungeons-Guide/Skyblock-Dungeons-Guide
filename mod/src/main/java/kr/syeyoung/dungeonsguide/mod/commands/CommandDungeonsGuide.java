@@ -62,13 +62,13 @@ public class CommandDungeonsGuide extends CommandBase {
 
     @Override
     public String getCommandUsage(ICommandSender sender) {
-        return "dungeonsguide"; //per #400
+        return "dg";
     }
 
     @Override
     public List<String> getCommandAliases() {
         return new ArrayList<String>() {{
-            add("dg"); //swap "dg" with "dungeonsguide"
+            add("dungeonsguide"); //per issue #400
             add("dungeonguide"); //because people keep saying "dungeon guide" the singular
             add("deegee"); //in case another mod/server somehow uses a command "/dg" and no one wants to type out the entire name "dungeonsguide"
             add("던전가이드"); //easter egg
