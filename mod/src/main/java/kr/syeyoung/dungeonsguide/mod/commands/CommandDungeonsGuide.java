@@ -48,6 +48,7 @@ import net.minecraft.util.ChatStyle;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 import net.minecraftforge.fml.common.gameevent.TickEvent;
 import org.json.JSONObject;
+import scala.actors.threadpool.Arrays;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -67,10 +68,12 @@ public class CommandDungeonsGuide extends CommandBase {
 
     @Override
     public List<String> getCommandAliases() {
-        ArrayList<String> aliases = new ArrayList<String>();
-        aliases.add("dungeonsguide");
-        aliases.add("dungeonguide");
-        return aliases;
+        return new ArrayList<String>() {{
+            add("dungeonsguide");
+            add("dungeonguide");
+            // for each new alias, make a new line, then: add("[INSERT YOUR ALIAS HERE]");
+            // Shoutout to coobird for the anonymous inner class idea: stackoverflow.com/a/1005083
+        }};
     }
 
     //List of subcommands for tab support
