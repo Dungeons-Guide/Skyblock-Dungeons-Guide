@@ -167,7 +167,7 @@ public class CommandDungeonsGuide extends CommandBase {
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (You must disable Minecraft default HUD scale first.)"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
