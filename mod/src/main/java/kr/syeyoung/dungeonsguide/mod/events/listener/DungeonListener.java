@@ -346,16 +346,15 @@ public class DungeonListener {
                     BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
                     try {
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                            boolean blocked = dungeonRoom.isBlocked(allInBox.getX(), allInBox.getY(), allInBox.getZ());
-
+                            DungeonRoom.NodeState blocked = dungeonRoom.getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
                                     AxisAlignedBB.fromBounds(
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                             allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
-                                    ), blocked ? new Color(0x55FF0000, true) : new Color(0x3300FF00, true), renderWorldLastEvent.partialTicks, false);
+                                    ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
 
                         }
-                    } catch (Exception ignored) {}
+                    } catch (Exception ignored) {ignored.printStackTrace();}
                 }
             }
 

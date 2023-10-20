@@ -90,7 +90,7 @@ public class ThetaStar implements IPathfinder {
             if (!((destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
                     destinationBB.minY <= neighbor.coordinate.y && neighbor.coordinate.y <= destinationBB.maxY &&
                     destinationBB.minZ <= neighbor.coordinate.z && neighbor.coordinate.z <= destinationBB.maxZ) // near destination
-                    || !dungeonRoom.isBlocked(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z))) { // not blocked
+                    || !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isBlocked())) { // not blocked
                 continue;
             }
             if (neighbor.lastVisited == pfindIdx) continue;
@@ -136,7 +136,7 @@ public class ThetaStar implements IPathfinder {
         } else {
             return;
         }
-        if (dungeonRoom.isBlocked(tobeX, tobeY, tobeZ)) return;
+        if (dungeonRoom.getBlock(tobeX, tobeY, tobeZ).isBlocked()) return;
 
         this.lastSx = tobeX;
         this.lastSy = tobeY;
@@ -187,11 +187,11 @@ public class ThetaStar implements IPathfinder {
         dx /= len; dy /= len; dz /= len;
 
         for (int d = 0; d <= len; d += 1) {
-            if (dungeonRoom.isBlocked(Math.round(sx), (int) Math.ceil(sy), Math.round(sz))) return false;
-            if (dungeonRoom.isBlocked(Math.round(sx)+1, (int) Math.ceil(sy), Math.round(sz)+1)) return false;
-            if (dungeonRoom.isBlocked(Math.round(sx)-1, (int) Math.ceil(sy), Math.round(sz)-1)) return false;
-            if (dungeonRoom.isBlocked(Math.round(sx)+1, (int) Math.ceil(sy), Math.round(sz)-1)) return false;
-            if (dungeonRoom.isBlocked(Math.round(sx)-1, (int) Math.ceil(sy), Math.round(sz)+1)) return false;
+            if (dungeonRoom.getBlock(Math.round(sx), (int) Math.ceil(sy), Math.round(sz)).isBlocked()) return false;
+            if (dungeonRoom.getBlock(Math.round(sx)+1, (int) Math.ceil(sy), Math.round(sz)+1).isBlocked()) return false;
+            if (dungeonRoom.getBlock(Math.round(sx)-1, (int) Math.ceil(sy), Math.round(sz)-1).isBlocked()) return false;
+            if (dungeonRoom.getBlock(Math.round(sx)+1, (int) Math.ceil(sy), Math.round(sz)-1).isBlocked()) return false;
+            if (dungeonRoom.getBlock(Math.round(sx)-1, (int) Math.ceil(sy), Math.round(sz)+1).isBlocked()) return false;
             sx += dx; sy += dy; sz += dz;
         }
         return true;

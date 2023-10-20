@@ -48,7 +48,6 @@ import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -205,7 +204,7 @@ public class DungeonRoom {
         lenx = maxx - minx;
         leny = maxy - miny;
         lenz = maxz - minz;
-        arr = new long[lenx *leny * lenz * 2 / 8];;
+        arr = new long[lenx *leny * lenz / NodeState.COUNT_PER_LONG + 1]; // plus 1 , because I don't wanna do floating point op for dividing and ceiling
 
         this.doorsAndStates = doorsAndStates;
         tryRematch();
@@ -339,6 +338,7 @@ public class DungeonRoom {
 
 
 
+
     long[] arr;
     // These values are doubled
     private final int minx;
@@ -350,8 +350,8 @@ public class DungeonRoom {
     private final int lenx, leny, lenz;
     private static final float playerWidth = 0.3f;
 
-    private int calculateIsBlocked(int x, int y, int z) {
-        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return 3;
+    private NodeState calculateIsBlocked(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return NodeState.OUT_OF_DUNGEON;
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
 
@@ -376,34 +376,57 @@ public class DungeonRoom {
                     if (b.isFullCube() && i2 == k-1) continue;
                     if (iBlockState1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
                     if (b.isFullCube()) {
-                        return 3;
+                        return NodeState.BLOCKED;
                     }
                     try {
                         b.addCollisionBoxesToList(getCachedWorld(), blockPos, iBlockState1, bb, list, null);
                     } catch (Exception e) {
-                        return 3;
+                        return NodeState.BLOCKED;
                     }
                     if (list.size() > 0) {
-                        return 3;
+                        return NodeState.BLOCKED;
                     }
                 }
             }
         }
-        return 2;
+        return NodeState.OPEN;
     }
-    public boolean isBlocked(int x,int y, int z) {
-        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return true;
+
+    @AllArgsConstructor
+    public enum NodeState {
+        UNCACHED(true, new Color(0x550000FF, true)),
+        OPEN(false, new Color(0x5500FF00, true)),
+        BLOCKED(true, new Color(0x55FF0000, true)),
+        ENTRANCE_BLOCKED(true, new Color(0x55FF7700, true)),
+        ENTRANCE_ETHERWARPONLY(true, new Color(0x55FF00FF, true)),
+        OUT_OF_DUNGEON(true, new Color(0x550000FF, true)); // always last
+
+        public static final int BITS = (int) Math.ceil(Math.log(NodeState.values().length - 1) / Math.log(2));
+        public static final int MASK = (1 << BITS) - 1;
+
+        public static final int COUNT_PER_LONG = (int) Math.floor(64.0 / BITS);
+        public static final NodeState[] VALUES = NodeState.values();
+
+        @Getter
+        private boolean isBlocked;
+
+        @Getter
+        private Color color;
+    }
+
+    public NodeState getBlock(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return NodeState.OUT_OF_DUNGEON;
         int dx = x - minx, dy = y - miny, dz = z - minz;
         int bitIdx = dx * leny * lenz + dy * lenz + dz;
-        int location = bitIdx / 4;
-        int bitStart = (2 * (bitIdx % 4));
+        int location = bitIdx / NodeState.COUNT_PER_LONG;
+        int bitStart = (NodeState.BITS * (bitIdx % NodeState.COUNT_PER_LONG));
         long theBit = arr[location];
-        if (((theBit >> bitStart) & 0x2) > 0) return ((theBit >> bitStart) & 1) > 0;
+        if (((theBit >>> bitStart) & NodeState.MASK) != 0) return NodeState.VALUES[(int) ((theBit >>> bitStart) & NodeState.MASK)];
 
-        long val = calculateIsBlocked(x, y, z);
-        theBit |= val << bitStart;
+        NodeState val = calculateIsBlocked(x, y, z);
+        theBit |=((long) val.ordinal()) << bitStart;
         arr[location] = theBit;
-        return val == 3;
+        return NodeState.VALUES[ (val.ordinal() & NodeState.MASK)];
     }
 
 
@@ -420,7 +443,8 @@ public class DungeonRoom {
         if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return;
         int dx = x - minx, dy = y - miny, dz = z - minz;
         int bitIdx = dx * leny * lenz + dy * lenz + dz;
-        int location = bitIdx / 4;
-        arr[location] = (arr[location] & ~(3L << (2 * (bitIdx % 4)))) | (long) calculateIsBlocked(x, y, z) << (2 * (bitIdx % 4));
+        int location = bitIdx / NodeState.COUNT_PER_LONG;
+        arr[location] = (arr[location] & ~((long) NodeState.MASK << (NodeState.BITS * (bitIdx % NodeState.COUNT_PER_LONG))))
+                | (long) calculateIsBlocked(x, y, z).ordinal() << (NodeState.BITS * (bitIdx % NodeState.COUNT_PER_LONG));
     }
 }

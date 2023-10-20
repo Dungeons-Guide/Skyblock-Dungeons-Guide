@@ -91,7 +91,7 @@ public class AStarFineGrid implements IPathfinder {
             if (!((destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
                     destinationBB.minY <= neighbor.coordinate.y && neighbor.coordinate.y <= destinationBB.maxY &&
                     destinationBB.minZ <= neighbor.coordinate.z && neighbor.coordinate.z <= destinationBB.maxZ) // near destination
-                    || !dungeonRoom.isBlocked(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z))) { // not blocked
+                    || !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isBlocked())) { // not blocked
                 continue;
             }
 
@@ -118,7 +118,7 @@ public class AStarFineGrid implements IPathfinder {
         } else {
             return;
         }
-        if (dungeonRoom.isBlocked(tobeX, tobeY, tobeZ)) return;
+        if (dungeonRoom.getBlock(tobeX, tobeY, tobeZ).isBlocked()) return;
 
         this.lastSx = tobeX;
         this.lastSy = tobeY;
