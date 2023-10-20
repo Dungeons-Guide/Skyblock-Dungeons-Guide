@@ -152,19 +152,18 @@ public class CommandDungeonsGuide extends CommandBase {
                 unloadCommand();
                 break;
 
+            case "setuiscale":
+            case "setscale":
+            case "uiscale":
+            case "scale":
+                setUIScale(args);
+                break;
 
             case "aliases":
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
                 ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonsguide"));
                 ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/dungeonguide"));
                 ChatTransmitter.addToQueue(new ChatComponentText(" §7- §e/deegee"));
-                break;
-
-            case "setuiscale":
-            case "setscale":
-            case "uiscale":
-            case "scale":
-                setUIScale(args);
                 break;
 
             default:
@@ -192,6 +191,7 @@ public class CommandDungeonsGuide extends CommandBase {
             Double.parseDouble(args[1]);
         } catch ( NumberFormatException e ) {
             if (args[1] instanceof String && (args[1].toLowerCase().equals("reset") || args[1].toLowerCase().equals("r"))) {
+                FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(1d);
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eGlobal HUD scale successfully reset to 1."));
             } else {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but " + args[1] + " is not a valid GUI scale. Try again."));
