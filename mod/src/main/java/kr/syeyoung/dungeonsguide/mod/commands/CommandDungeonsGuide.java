@@ -68,8 +68,11 @@ public class CommandDungeonsGuide extends CommandBase {
     @Override
     public List<String> getCommandAliases() {
         return new ArrayList<String>() {{
-            add("dungeonsguide");
-            add("dungeonguide");
+            add("dungeonsguide"); //per issue #400
+            add("dungeonguide"); //because people keep saying "dungeon guide" the singular
+            add("deegee"); //in case another mod/server somehow uses a command "/dg" and no one wants to type out the entire name "dungeonsguide"
+            add("던전가이드"); //easter egg
+            add("던전안내"); //easter egg
             // for each new alias, make a new line, then: add("[INSERT YOUR ALIAS HERE]");
             // Shoutout to coobird for the anonymous inner class idea: stackoverflow.com/a/1005083
         }};
