@@ -730,7 +730,10 @@ public class CommandDgDebug extends CommandBase {
                         otherSay("/p "+sourcePlayer);
                         waitForSingleMessageMatching(a -> a.startsWith("§9§m-----------------------------------------------------§r§9"), (a) -> {});
                         say("/p accept "+targetPlayer);
+                        waitForPartyMessage((a) -> {});
 
+                        otherSay("/p promote "+sourcePlayer);
+                        waitForPartyMessage((a) -> {});
                         otherSay("/p "+thirdPlayer);
                         waitForPartyMessage((a) -> {});
                         waitForPartyMessage((a) -> {});
@@ -782,7 +785,7 @@ public class CommandDgDebug extends CommandBase {
                         say("/p 99999999999999999");
                         // §cCouldn't find a player with that name!§r
                         waitForPartyMessage(writer);
-                        say("/p "+thirdPlayer);
+                        say("/p "+offlinePlayer);
                         // §cYou cannot invite that player since they're not online.
                         waitForPartyMessage(writer);
 

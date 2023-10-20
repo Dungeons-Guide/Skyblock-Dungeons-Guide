@@ -1,5 +1,8 @@
 {
     "ENGLISH": {
+        "transfer_left": [
+            "§eThe party was transferred to §r§b[MVP§r§a+§r§b] syeyoung §r§ebecause §r§b[MVP§r§0+§r§b] Azael_Nya §r§eleft§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehas disbanded the party!§r"
         ],
@@ -83,6 +86,9 @@
         ]
     },
     "GERMAN": {
+        "transfer_left": [
+            "§eDie Party wurde §r§b[MVP§r§a+§r§b] syeyoung§r§e übergeben, weil §r§b[MVP§r§0+§r§b] Azael_Nya §r§egegangen ist§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehat die Party aufgelöst!§r"
         ],
@@ -166,6 +172,9 @@
         ]
     },
     "FRENCH": {
+        "transfer_left": [
+            "§eLa party a été transférée à §r§b[MVP§r§a+§r§b] syeyoung §r§ecar §r§b[MVP§r§0+§r§b] Azael_Nya §r§eest parti§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ea dissout la party!§r"
         ],
@@ -249,6 +258,9 @@
         ]
     },
     "DUTCH": {
+        "transfer_left": [
+            "§eDe party is overgezet naar §r§b[MVP§r§a+§r§b] syeyoung §r§eomdat §r§b[MVP§r§0+§r§b] Azael_Nya §r§eis weggegaan§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§eheeft de party ontbonden!§r"
         ],
@@ -299,10 +311,10 @@
             "§eDe party is overgebracht naar §r§b[MVP§r§a+§r§b] syeyoung §r§edoor §r§b[MVP§r§0+§r§b] Azael_Nya§r"
         ],
         "someone_left": [
-            "§b[MVP§r§0+§r§b] Azael_Nya §r§everliet de party.§r"
+            "§cThe party was disbanded because all invites expired and the party was empty.§r"
         ],
         "disband_noone": [
-            "§cThe party was disbanded because all invites expired and the party was empty.§r"
+            "§b[MVP§r§0+§r§b] Azael_Nya §r§everliet de party.§r"
         ],
         "not_in_party_5_channel_moved": [
             "§cJe zit niet in een party en bent verplaatst naar het openbare kanaal.§r"
@@ -332,6 +344,9 @@
         ]
     },
     "SPANISH": {
+        "transfer_left": [
+            "§eLa party fue transferida a §r§b[MVP§r§a+§r§b] syeyoung §r§eporque §r§b[MVP§r§0+§r§b] Azael_Nya §r§ese fue§r"
+        ],
         "disband_intentional": [
             "§e¡§r§b[MVP§r§a+§r§b] syeyoung §r§eha disuelto la party!§r"
         ],
@@ -415,6 +430,9 @@
         ]
     },
     "ITALIAN": {
+        "transfer_left": [
+            "§eIl party è stato trasferito a §r§b[MVP§r§a+§r§b] syeyoung §r§eperché §r§b[MVP§r§0+§r§b] Azael_Nya §r§eè uscito§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§eha sciolto il party!§r"
         ],
@@ -498,6 +516,9 @@
         ]
     },
     "CHINESE_SIMPLIFIED": {
+        "transfer_left": [
+            "§e由于§r§b[MVP§r§0+§r§b] Azael_Nya§r§e离开了组队，组队被移交给了§r§b[MVP§r§a+§r§b] syeyoung§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung§r§e解散了组队！§r"
         ],
@@ -520,7 +541,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya§r§e加入了组队。§r"
         ],
         "party_channel": [
-            "§a你正处于§r§6组队§r§a频道中§r"
+            "§aYou are now in the §r§6组队§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung§r§a启用了All Invite§r"
@@ -547,10 +568,10 @@
             "§b[MVP§r§0+§r§b] Azael_Nya§r§e将组队移交给了§r§b[MVP§r§a+§r§b] syeyoung§r"
         ],
         "someone_left": [
-            "§b[MVP§r§0+§r§b] Azael_Nya§r§e离开了组队。§r"
+            "§c因组队中没有成员， 且所有邀请均已过期， 组队已被解散。§r"
         ],
         "disband_noone": [
-            "§c因组队中没有成员， 且所有邀请均已过期， 组队已被解散。§r"
+            "§b[MVP§r§0+§r§b] Azael_Nya§r§e离开了组队。§r"
         ],
         "not_in_party_5_channel_moved": [
             "§c你不在任何组队中，故被移至公共频道。§r"
@@ -580,6 +601,9 @@
         ]
     },
     "CHINESE_TRADITIONAL": {
+        "transfer_left": [
+            "§e由於 §r§b[MVP§r§0+§r§b] Azael_Nya§r§e 離開了組隊，組隊隊長一職移交給了 §r§b[MVP§r§a+§r§b] syeyoung§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung§r§e 解散了組隊！§r"
         ],
@@ -602,7 +626,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§e加入了組隊。§r"
         ],
         "party_channel": [
-            "§a已切換聊天頻道至§r§6組隊§r§a頻道§r"
+            "§aYou are now in the §r§6組隊§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§a啟用了 All Invite§r"
@@ -663,6 +687,9 @@
         ]
     },
     "PORTUGUESE_BR": {
+        "transfer_left": [
+            "§eA party foi transferida para §r§b[MVP§r§a+§r§b] syeyoung §r§epois §r§b[MVP§r§0+§r§b] Azael_Nya §r§edesconectou§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§edesfez a party!§r"
         ],
@@ -685,7 +712,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§eentrou na party.§r"
         ],
         "party_channel": [
-            "§aVocê está no canal §r§6PARTY§r§a§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aativou a opção All Invite§r"
@@ -746,6 +773,9 @@
         ]
     },
     "RUSSIAN": {
+        "transfer_left": [
+            "§eКомпания была передана игроку §r§b[MVP§r§a+§r§b] syeyoung§r§e, потому что §r§b[MVP§r§0+§r§b] Azael_Nya§r§e покинул ее§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§eраспустил компанию!§r"
         ],
@@ -768,7 +798,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§eприсоединился к компании.§r"
         ],
         "party_channel": [
-            "§aТеперь вы находитесь в канале \"§r§6КОМПАНИЯ§r§a\"§r"
+            "§aYou are now in the §r§6КОМПАНИЯ§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aвключил All Invite§r"
@@ -829,6 +859,9 @@
         ]
     },
     "KOREAN": {
+        "transfer_left": [
+            "§b[MVP§r§0+§r§b] Azael_Nya§r§e 님이 떠났기 때문에 Party가 §r§b[MVP§r§a+§r§b] syeyoung§r§e에게 양도되었습니다§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung§r§e이(가) Party를 해산했습니다!§r"
         ],
@@ -851,7 +884,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya§r§e 님이 Party에 참여했습니다.§r"
         ],
         "party_channel": [
-            "§6PARTY§r§a 채널에 입장했습니다§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung§r§a 님이 All Invite§r§a을(를) 활성화했습니다§r"
@@ -912,6 +945,9 @@
         ]
     },
     "POLISH": {
+        "transfer_left": [
+            "§eParty zostało przeniesione do §r§b[MVP§r§a+§r§b] syeyoung§r§e, ponieważ §r§b[MVP§r§0+§r§b] Azael_Nya §r§ewyszedł§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§erozwiązuje party!§r"
         ],
@@ -934,7 +970,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§edołącza do party.§r"
         ],
         "party_channel": [
-            "§aJesteś teraz na kanale „§r§6PARTY§r§a”§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§awłącza All Invite§r"
@@ -995,6 +1031,9 @@
         ]
     },
     "JAPANESE": {
+        "transfer_left": [
+            "§b[MVP§r§0+§r§b] Azael_Nya §r§eが退出したため、この Party は §r§b[MVP§r§a+§r§b] syeyoung §r§eに譲渡されました§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§eが Party を解散させました！§r"
         ],
@@ -1017,7 +1056,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§ejoined the party.§r"
         ],
         "party_channel": [
-            "§aあなたは現在 §r§6PARTY§r§a チャンネルにいます§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung§r§a が All Invite を有効にしました§r"
@@ -1078,6 +1117,9 @@
         ]
     },
     "PIRATE": {
+        "transfer_left": [
+            "§eTh' party be transferred t' §r§b[MVP§r§a+§r§b] syeyoung §r§ebecause §r§b[MVP§r§0+§r§b] Azael_Nya §r§ebe gone§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehas disbanded th' party!§r"
         ],
@@ -1100,7 +1142,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§eboarded th' party.§r"
         ],
         "party_channel": [
-            "§aYe now be in th' §r§6PARTY§r§a channel§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aenabled All Invite§r"
@@ -1161,6 +1203,9 @@
         ]
     },
     "NORWEGIAN": {
+        "transfer_left": [
+            "§ePartyet ble overført til §r§b[MVP§r§a+§r§b] syeyoung §r§efordi §r§b[MVP§r§0+§r§b] Azael_Nya §r§eforlot det§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehar oppløst partyet!§r"
         ],
@@ -1183,7 +1228,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§eble med i partyet.§r"
         ],
         "party_channel": [
-            "§aDu er nå i §r§6PARTY§r§a-kanalen§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aaktiverte All Invite§r"
@@ -1244,6 +1289,9 @@
         ]
     },
     "PORTUGUESE_PT": {
+        "transfer_left": [
+            "§eA party foi transferida para §r§b[MVP§r§a+§r§b] syeyoung §r§eporque §r§b[MVP§r§0+§r§b] Azael_Nya §r§esaiu do servidor§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§edesfez a party!§r"
         ],
@@ -1266,7 +1314,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§eentrou na party.§r"
         ],
         "party_channel": [
-            "§aFoste para o canal §r§6PARTY§r§a§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aativou All Invite§r"
@@ -1327,6 +1375,9 @@
         ]
     },
     "SWEDISH": {
+        "transfer_left": [
+            "§ePartyt överfördes till §r§b[MVP§r§a+§r§b] syeyoung §r§eeftersom §r§b[MVP§r§0+§r§b] Azael_Nya §r§elämnade§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehar upplöst partyt!§r"
         ],
@@ -1349,7 +1400,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§egick med i party.§r"
         ],
         "party_channel": [
-            "§aDu är nu i §r§6PARTY§r§a-kanalen§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aaktiverade All Invite§r"
@@ -1410,6 +1461,9 @@
         ]
     },
     "TURKISH": {
+        "transfer_left": [
+            "§eParti §r§b[MVP§r§a+§r§b] syeyoungoyuncusuna §r§etransfer edildi çünkü §r§b[MVP§r§0+§r§b] Azael_Nya §r§e ayrıldı.§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§epartiyi dağıttı!§r"
         ],
@@ -1432,7 +1486,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§epartiye katıldı.§r"
         ],
         "party_channel": [
-            "§aŞimdi §r§6PARTİ§r§a kanalındasın§r"
+            "§aYou are now in the §r§6PARTİ§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung§r§a, All Invite ayarını aktifleştirdi§r"
@@ -1495,6 +1549,9 @@
         ]
     },
     "DANISH": {
+        "transfer_left": [
+            "§ePartyet blev givet til §r§b[MVP§r§a+§r§b] syeyoung §r§efordi §r§b[MVP§r§0+§r§b] Azael_Nya §r§egik§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehar opløst partyet!§r"
         ],
@@ -1517,7 +1574,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§etilsluttede sig partyet.§r"
         ],
         "party_channel": [
-            "§aDu er nu i §r§6PARTY§r§a kanalen§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aaktiverede All Invite§r"
@@ -1578,6 +1635,9 @@
         ]
     },
     "CZECH": {
+        "transfer_left": [
+            "§eParty byla předána hráči §r§b[MVP§r§a+§r§b] syeyoung§r§e, protože hráč §r§b[MVP§r§0+§r§b] Azael_Nya §r§eodešel§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§erozpustil party!§r"
         ],
@@ -1600,7 +1660,7 @@
             "§eHráč §r§b[MVP§r§0+§r§b] Azael_Nya §r§ese připojil do party.§r"
         ],
         "party_channel": [
-            "§aNyní jsi v kanálu §r§6PARTY§r§a§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§aHráč §r§b[MVP§r§a+§r§b] syeyoung §r§apovolil All Invite§r"
@@ -1661,6 +1721,9 @@
         ]
     },
     "FINNISH": {
+        "transfer_left": [
+            "§eParty siirrettiin pelaajalle §r§b[MVP§r§a+§r§b] syeyoung §r§ekoska §r§b[MVP§r§0+§r§b] Azael_Nya §r§epoistui§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ehajotti partyn!§r"
         ],
@@ -1683,7 +1746,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§eliittyi partyyn.§r"
         ],
         "party_channel": [
-            "§aOlet nyt kanavalla §r§6PARTY§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aasetti vaihtoehdon All Invite päälle.§r"
@@ -1744,6 +1807,9 @@
         ]
     },
     "GREEK": {
+        "transfer_left": [
+            "§eΤο party μεταφέρθηκε στον §r§b[MVP§r§a+§r§b] syeyoung §r§eεπειδή ο §r§b[MVP§r§0+§r§b] Azael_Nya §r§eέφυγε§r"
+        ],
         "disband_intentional": [
             "§eΟ §r§b[MVP§r§a+§r§b] syeyoung §r§eδιέλυσε το party!§r"
         ],
@@ -1766,7 +1832,7 @@
             "§eΟ §r§b[MVP§r§0+§r§b] Azael_Nya §r§eμπήκε στο party.§r"
         ],
         "party_channel": [
-            "§aΕίσαι τώρα στο §r§6PARTY§r§a κανάλι§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§aΟ §r§b[MVP§r§a+§r§b] syeyoung §r§aενεργοποίησε All Invite§r"
@@ -1794,10 +1860,10 @@
             "§eΤο party μεταφέρθηκε στον §r§b[MVP§r§a+§r§b] syeyoung §r§eαπό τον §r§b[MVP§r§0+§r§b] Azael_Nya§r"
         ],
         "someone_left": [
-            "§eΟ §r§b[MVP§r§0+§r§b] Azael_Nya §r§eβγήκε από το party.§r"
+            "§cΤο party διαλύθηκε επειδή όλες οι προσκλήσεις έληξαν και το party ήταν άδειο.§r"
         ],
         "disband_noone": [
-            "§cΤο party διαλύθηκε επειδή όλες οι προσκλήσεις έληξαν και το party ήταν άδειο.§r"
+            "§eΟ §r§b[MVP§r§0+§r§b] Azael_Nya §r§eβγήκε από το party.§r"
         ],
         "not_in_party_5_channel_moved": [
             "§cΔεν είσαι σε party οπότε μετακινήθηκες στο κανάλι ΟΛΑ.§r"
@@ -1827,6 +1893,9 @@
         ]
     },
     "UKRAINIAN": {
+        "transfer_left": [
+            "§eГрупа була передана гравцю §r§b[MVP§r§a+§r§b] syeyoung §r§e, тому що §r§b[MVP§r§0+§r§b] Azael_Nya §r§eзалишив її§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§eрозпустив групу!§r"
         ],
@@ -1877,10 +1946,10 @@
             "§eГрупу було передано користувачу §r§b[MVP§r§a+§r§b] syeyoung §r§eгравцем §r§b[MVP§r§0+§r§b] Azael_Nya§r"
         ],
         "someone_left": [
-            "§b[MVP§r§0+§r§b] Azael_Nya §r§eзалишив групу.§r"
+            "§cThe party was disbanded because all invites expired and the party was empty.§r"
         ],
         "disband_noone": [
-            "§cThe party was disbanded because all invites expired and the party was empty.§r"
+            "§b[MVP§r§0+§r§b] Azael_Nya §r§eзалишив групу.§r"
         ],
         "not_in_party_5_channel_moved": [
             "§cВи не в групі і були переміщені до ЗАГАЛЬНОГО каналу.§r"
@@ -1910,6 +1979,9 @@
         ]
     },
     "ROMANIAN": {
+        "transfer_left": [
+            "§eParty-ul a fost transferat către §r§b[MVP§r§a+§r§b] syeyoung §r§edeoarece §r§b[MVP§r§0+§r§b] Azael_Nya §r§ea ieșit§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§ea destrămat party-ul!§r"
         ],
@@ -1932,7 +2004,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§es-a alăturat party-ului.§r"
         ],
         "party_channel": [
-            "§aAcum ești în canalul §r§6PARTY§r§a§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§aa activat All Invite§r"
@@ -1993,6 +2065,9 @@
         ]
     },
     "HUNGARIAN": {
+        "transfer_left": [
+            "§eA party át lett adva §r§b[MVP§r§a+§r§b] syeyoung§r§e-nak/nek mert §r§b[MVP§r§0+§r§b] Azael_Nya §r§ekilépett§r"
+        ],
         "disband_intentional": [
             "§b[MVP§r§a+§r§b] syeyoung §r§efeloszlatta a partyt!§r"
         ],
@@ -2015,7 +2090,7 @@
             "§b[MVP§r§0+§r§b] Azael_Nya §r§ecsatlakozott a partyhoz.§r"
         ],
         "party_channel": [
-            "§aMost már a(z) §r§6PARTY§r§a csatornában vagy§r"
+            "§aYou are now in the §r§6PARTY§r§a channel§r"
         ],
         "all_invite_on": [
             "§b[MVP§r§a+§r§b] syeyoung §r§abekapcsolta ezt: All Invite§r"

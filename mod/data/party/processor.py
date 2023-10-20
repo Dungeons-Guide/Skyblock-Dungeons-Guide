@@ -11,6 +11,7 @@ splitted = str.split('***************************')
 dict = {}
 
 mapping = [
+    'transfer_left',
     'disband_intentional',
     'not_in_party_1',
     'not_in_party_2',
@@ -74,6 +75,7 @@ groups = {
     'invited': ['invite'],
     'invite_perm': ['invite_no_player', 'invite_offline_player'],
     'transfer': ['transfer'],
+    'transfer_left': ['transfer_left'],
     'promote_leader': ['promote_leader'],
     'promote_moderator': ['promote_moderator'],
     'member': ['demote_moderator'],

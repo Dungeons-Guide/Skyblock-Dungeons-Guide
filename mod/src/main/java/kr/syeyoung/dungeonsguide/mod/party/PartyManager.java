@@ -72,6 +72,7 @@ public class PartyManager {
 
     private final MessageMatcher NOT_IN_PARTY;
     private final MessageMatcher PARTY_CHANNEL;
+    private final MessageMatcher TRANSFER_LEFT;
     private final MessageMatcher ALL_INVITE_ON;
     private final MessageMatcher ALL_INVITE_OFF;
     private final MessageMatcher PARTY_JOIN;
@@ -114,6 +115,7 @@ public class PartyManager {
             INVITED = createMatcher(jsonObject, "invited");
             INVITE_PERM = createMatcher(jsonObject, "invite_perm");
             TRANSFER = createMatcher(jsonObject, "transfer");
+            TRANSFER_LEFT = createMatcher(jsonObject, "transfer_left");
             PROMOTE_LEADER = createMatcher(jsonObject, "promote_leader");
             PROMOTE_MODERATOR = createMatcher(jsonObject, "promote_moderator");
             MEMBER = createMatcher(jsonObject, "member");
@@ -272,28 +274,22 @@ public class PartyManager {
             @Override
             public ChatProcessResult process(String str, Map<String, Object> a) {
                 if (TRANSFER.match(str, matches)) {
-                    String[] messageSplit = TextUtils.stripColor(str.substring(31)).split(" ");
-                    String newLeader = null;
-                    for (String s : messageSplit) {
-                        if (s.startsWith("[")) continue;
-                        newLeader = s;
-                        break;
-                    }
-                    String oldLeader;
-                    boolean left = false;
-                    if (str.endsWith("§r§eleft§r")) {
-                        oldLeader = messageSplit[messageSplit.length - 2];
-                        left = true;
-                    } else {
-                        oldLeader = messageSplit[messageSplit.length - 1];
-                    }
+                    String newLeader = processName(matches.get("0"));
+                    String oldLeader = processName(matches.get("1"));
 
                     if (oldLeader != null && newLeader != null) {
                         PartyManager.this.getPartyContext(true).setPartyOwner(newLeader);
-                        if (left)
-                            PartyManager.this.getPartyContext(true).removeFromParty(oldLeader);
-                        else
-                            PartyManager.this.getPartyContext(true).addPartyModerator(oldLeader);
+                        PartyManager.this.getPartyContext(true).addPartyModerator(oldLeader);
+                    }
+                    a.put("type", "party_transfer");
+                    PartyManager.this.potentialInvitenessChange();
+                } else if (TRANSFER_LEFT.match(str, matches)) {
+                    String newLeader = processName(matches.get("0"));
+                    String oldLeader = processName(matches.get("1"));
+
+                    if (oldLeader != null && newLeader != null) {
+                        PartyManager.this.getPartyContext(true).setPartyOwner(newLeader);
+                        PartyManager.this.getPartyContext(true).removeFromParty(oldLeader);
                     }
                     a.put("type", "party_transfer");
                     PartyManager.this.potentialInvitenessChange();
