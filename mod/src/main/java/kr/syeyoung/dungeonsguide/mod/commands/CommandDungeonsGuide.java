@@ -69,6 +69,7 @@ public class CommandDungeonsGuide extends CommandBase {
     public List<String> getCommandAliases() {
         ArrayList<String> aliases = new ArrayList<String>();
         aliases.add("dungeonsguide");
+        aliases.add("dungeonguide");
         return aliases;
     }
 
