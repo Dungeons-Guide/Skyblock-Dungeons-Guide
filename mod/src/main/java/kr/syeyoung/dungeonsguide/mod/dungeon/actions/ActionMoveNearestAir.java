@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -54,11 +55,11 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses);
+        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses.getNodeList());
     }
 
     private int tick = -1;
-    private List<Vec3> poses;
+    private PathfindResult poses;
     private PathfinderExecutor executor;
     @Override
     public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {

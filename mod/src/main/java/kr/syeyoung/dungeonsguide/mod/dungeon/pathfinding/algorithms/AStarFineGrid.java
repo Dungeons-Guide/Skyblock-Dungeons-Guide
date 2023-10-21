@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -91,9 +92,11 @@ public class AStarFineGrid implements IPathfinder {
             if (!((destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
                     destinationBB.minY <= neighbor.coordinate.y && neighbor.coordinate.y <= destinationBB.maxY &&
                     destinationBB.minZ <= neighbor.coordinate.z && neighbor.coordinate.z <= destinationBB.maxZ) // near destination
-                    || !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isBlocked())) { // not blocked
+                    || !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isBlockedNonStonk())) { // not blocked
                 continue;
             }
+            // !(neardest || !blocked)
+            // !neardest && blocked
 
             float gScore = n.g + 1; // altho it's sq, it should be fine
             if (gScore < neighbor.g) {
@@ -118,7 +121,7 @@ public class AStarFineGrid implements IPathfinder {
         } else {
             return;
         }
-        if (dungeonRoom.getBlock(tobeX, tobeY, tobeZ).isBlocked()) return;
+        if (dungeonRoom.getBlock(tobeX, tobeY, tobeZ).isBlockedNonStonk()) return;
 
         this.lastSx = tobeX;
         this.lastSy = tobeY;
@@ -147,22 +150,22 @@ public class AStarFineGrid implements IPathfinder {
     }
 
     @Override
-    public List<Vec3> getRoute(Vec3 from) {
+    public PathfindResult getRoute(Vec3 from) {
         int lastSx = (int) Math.round(from.xCoord * 2);
         int lastSy = (int) Math.round(from.yCoord * 2);
         int lastSz = (int) Math.round(from.zCoord * 2);
 
         Node goalNode = openNode(lastSx, lastSy, lastSz);
 
-        LinkedList<Vec3> route = new LinkedList<>();
+        LinkedList<PathfindResult.PathfindNode> route = new LinkedList<>();
         Node curr =goalNode;
         if (curr.parent == null) return null;
         while(curr.parent != null) {
-            route.addLast(new Vec3(curr.coordinate.x / 2.0, curr.coordinate.y / 2.0 + 0.1, curr.coordinate.z/ 2.0));
+            route.addLast(new PathfindResult.PathfindNode(curr.coordinate.x / 2.0, curr.coordinate.y / 2.0 + 0.1, curr.coordinate.z/ 2.0, PathfindResult.PathfindNode.NodeType.WALK));
             curr = curr.parent;
         }
-        route.addLast(new Vec3(curr.coordinate.x / 2.0, curr.coordinate.y / 2.0 + 0.1, curr.coordinate.z/ 2.0));
-        return route;
+        route.addLast(new PathfindResult.PathfindNode(curr.coordinate.x / 2.0, curr.coordinate.y / 2.0 + 0.1, curr.coordinate.z/ 2.0, PathfindResult.PathfindNode.NodeType.WALK));
+        return new PathfindResult(route, goalNode.g);
     }
 
 

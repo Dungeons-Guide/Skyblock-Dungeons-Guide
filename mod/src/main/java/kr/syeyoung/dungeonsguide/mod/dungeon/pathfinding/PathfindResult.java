@@ -16,19 +16,40 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
+package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import net.minecraft.util.Vec3;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.List;
 
-public interface IPathfinder {
-    void init(DungeonRoom dungeonRoom, Vec3 destination);
-    boolean doOneStep();
+@AllArgsConstructor
+@Getter
+public class PathfindResult {
 
-    void setTarget(Vec3 from);
-    Vec3 getTarget();
-    PathfindResult getRoute(Vec3 from);
+    private List<PathfindNode> nodeList;
+    private double cost;
+
+
+    @AllArgsConstructor
+    @Getter
+    @Data
+    public static class PathfindNode {
+        private float x, y, z;
+
+        public PathfindNode(double x, double y, double z, NodeType type) {
+            this.x = (float) x;
+            this.y = (float) y;
+            this.z = (float) z;
+            this.type = type;
+        }
+
+        private NodeType type;
+
+        public enum NodeType {
+            WALK, ETHERWARP, DIG_DOWN, DIG_UP, TELEPORT_INTO;
+        }
+    }
 }
+

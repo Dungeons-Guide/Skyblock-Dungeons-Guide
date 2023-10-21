@@ -18,11 +18,13 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 public class PathfinderExecutor {
@@ -36,7 +38,7 @@ public class PathfinderExecutor {
     private IPathfinder pathfinder;
     @Getter
     private boolean isComplete = false;
-    private List<Vec3> lastRoute = new ArrayList<>();
+    private PathfindResult lastRoute = new PathfindResult(Collections.emptyList(), 0);
 
     public PathfinderExecutor(IPathfinder pathfinder, Vec3 target, DungeonRoom dungeonRoom) {
         this.pathfinder = pathfinder;
@@ -56,9 +58,9 @@ public class PathfinderExecutor {
         this.target = target;
     }
 
-    public List<Vec3> getRoute(Vec3 target) {
+    public PathfindResult getRoute(Vec3 target) {
         if (!isComplete) return lastRoute;
-        List<Vec3> route = pathfinder.getRoute(target);
+        PathfindResult route = pathfinder.getRoute(target);
         if (route == null) return lastRoute = pathfinder.getRoute(pathfinder.getTarget());
         else return lastRoute = route;
     }
