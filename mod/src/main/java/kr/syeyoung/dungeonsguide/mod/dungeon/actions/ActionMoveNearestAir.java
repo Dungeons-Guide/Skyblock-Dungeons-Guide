@@ -55,7 +55,7 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses.getNodeList());
+        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses);
     }
 
     private int tick = -1;

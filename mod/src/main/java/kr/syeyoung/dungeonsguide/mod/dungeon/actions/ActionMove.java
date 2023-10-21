@@ -66,10 +66,10 @@ public class ActionMove extends AbstractAction {
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses.getNodeList());
+        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses);
     }
 
-    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, OffsetPoint target, List<PathfindResult.PathfindNode> poses) {
+    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, OffsetPoint target, PathfindResult poses) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
 
         float distance = MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
@@ -87,11 +87,11 @@ public class ActionMove extends AbstractAction {
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                ActionMove.drawLinesPathfindNode(poses, actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks,  true);
+                ActionMove.drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks,  true);
 
-                for (PathfindResult.PathfindNode pose : poses) {
+                for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     if (pose.getType() != PathfindResult.PathfindNode.NodeType.WALK) {
-                        RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 2f, false, true, partialTicks);
+                        RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                 }
             }
