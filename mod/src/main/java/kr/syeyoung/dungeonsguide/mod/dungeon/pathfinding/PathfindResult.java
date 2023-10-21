@@ -21,6 +21,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
+import net.minecraft.util.Vec3i;
 
 import java.util.List;
 
@@ -47,8 +50,15 @@ public class PathfindResult {
 
         private NodeType type;
 
+        public double distanceSq(Vec3 position) {
+            return position.squareDistanceTo(new Vec3(x,y,z));
+        }
+        public double distanceSq(Vec3i position) {
+            return position.distanceSq(x,y,z);
+        }
+
         public enum NodeType {
-            WALK, ETHERWARP, DIG_DOWN, ECHEST, DIG_UP, TELEPORT_INTO;
+            STONK_EXIT, STONK_WALK, WALK, ETHERWARP, DIG_DOWN, ECHEST, DIG_UP, TELEPORT_INTO;
         }
     }
 }

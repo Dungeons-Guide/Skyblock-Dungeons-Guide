@@ -97,70 +97,72 @@ public class AStarFineGridStonking implements IPathfinder {
             return true;
         }
 
-        for (EnumFacing value : EnumFacing.VALUES) {
-            Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX(), n.coordinate.y + value.getFrontOffsetY(), n.coordinate.z + value.getFrontOffsetZ(), n.coordinate.stonk);
+        if (!n.coordinate.stonk || n.stonkLength <= algorithmSettings.getMaxStonk()) {
+            for (EnumFacing value : EnumFacing.VALUES) {
+                Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX(), n.coordinate.y + value.getFrontOffsetY(), n.coordinate.z + value.getFrontOffsetZ(), n.coordinate.stonk);
 
-            DungeonRoom.NodeState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                DungeonRoom.NodeState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
 
-            // although this says up, it's actually going down for player. remember, we're pathfinding from the chest to the player.
-            int up = 0;
-            if (neighbor.coordinate.stonk) {
-                if (nodeState.isFall() && value.getFrontOffsetY() == 0) continue; // can not go into fall
-                boolean originalGrid = (n.coordinate.x % 2 == 0) == (n.coordinate.z == 0);
-                boolean newGrid = (neighbor.coordinate.x % 2 == 0) == (neighbor.coordinate.z % 2 == 0);
-                if (!originalGrid && !newGrid) {
-                    continue; // push out to new position
+                // although this says up, it's actually going down for player. remember, we're pathfinding from the chest to the player.
+                int up = 0;
+                if (neighbor.coordinate.stonk) {
+                    if (nodeState.isFall() && value.getFrontOffsetY() == 0) continue; // can not go into fall
+                    boolean originalGrid = (n.coordinate.x % 2 == 0) == (n.coordinate.z % 2 == 0);
+                    boolean newGrid = (neighbor.coordinate.x % 2 == 0) == (neighbor.coordinate.z % 2 == 0);
+                    if (!originalGrid && !newGrid) {
+                        continue; // push out to new position
+                    }
+
+                    while (nodeState.isFall()) {
+                        up++;
+                        neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y + 1, neighbor.coordinate.z, neighbor.coordinate.stonk);
+                        nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                    }
+
+                    if (!dungeonRoom.getLayer(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isInstabreak()) {
+                        continue; // can't dig down non-instabreak
+                    }
                 }
 
-                while (nodeState.isFall()) {
-                    up++;
-                    neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y + 1, neighbor.coordinate.z, neighbor.coordinate.stonk);
-                    nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                boolean isFlying = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y - 1, neighbor.coordinate.z).isBlockedNonStonk();
+                boolean isFlying2 = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y - 2, neighbor.coordinate.z).isBlockedNonStonk();
+
+                // check blocked.
+                if (destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
+                        destinationBB.minY <= neighbor.coordinate.y && neighbor.coordinate.y <= destinationBB.maxY &&
+                        destinationBB.minZ <= neighbor.coordinate.z && neighbor.coordinate.z <= destinationBB.maxZ && !neighbor.coordinate.stonk) { // not blocked
+                } else {
+                    if (!n.coordinate.stonk && nodeState.isBlockedNonStonk()) {
+                        continue;
+                    }
+
+                    if (n.coordinate.stonk && nodeState.isBlockedStonk()) {
+                        continue;
+                    } else if (n.coordinate.stonk && !nodeState.isBlockedNonStonk()) {
+                        continue;
+                    }
                 }
 
-                if (!dungeonRoom.getLayer(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isInstabreak()) {
-                    continue; // can't dig down non-instabreak
-                }
-            }
-
-            boolean isFlying = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y-1, neighbor.coordinate.z).isBlockedNonStonk();
-            boolean isFlying2 = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y-2, neighbor.coordinate.z).isBlockedNonStonk();
-
-            // check blocked.
-            if (destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
-                    destinationBB.minY <= neighbor.coordinate.y && neighbor.coordinate.y <= destinationBB.maxY &&
-                    destinationBB.minZ <= neighbor.coordinate.z && neighbor.coordinate.z <= destinationBB.maxZ && !neighbor.coordinate.stonk) { // not blocked
-            } else {
-                if (!n.coordinate.stonk && nodeState.isBlockedNonStonk()) {
-                    continue;
+                if (n.coordinate.stonk && neighbor.coordinate.x % 2 == 0 && neighbor.coordinate.z % 2 == 0) {
+                    continue; // we do not visit corners.
                 }
 
-                if (n.coordinate.stonk && nodeState.isBlockedStonk()) {
-                    continue;
-                } else if (n.coordinate.stonk && !nodeState.isBlockedNonStonk()) {
-                    continue;
+                // going up with stonk costs you 50 blocks.
+                float gScore = n.g + (n.coordinate.stonk ? 7 : isFlying && isFlying2 ? 4 : isFlying ? 3 : 1) * (up + 1); // altho it's sq, it should be fine
+                if (gScore < neighbor.g) {
+                    neighbor.parent = n;
+                    if (n.coordinate.stonk)
+                        neighbor.stonkLength = (byte) (n.stonkLength + 1);
+                    else
+                        neighbor.stonkLength = 0;
+                    neighbor.connectionType = n.coordinate.stonk ? PathfindResult.PathfindNode.NodeType.STONK_WALK : PathfindResult.PathfindNode.NodeType.WALK;
+                    neighbor.g = gScore;
+                    neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                    open.add(neighbor);
+                } else if (neighbor.lastVisited != pfindIdx) {
+                    neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                    open.add(neighbor);
                 }
-            }
-
-            if (n.coordinate.stonk && neighbor.coordinate.x % 2 == 0 && neighbor.coordinate.z % 2 == 0) {
-                continue; // we do not visit corners.
-            }
-
-            // going up with stonk costs you 50 blocks.
-            float gScore = n.g + (n.coordinate.stonk ? 7 : isFlying && isFlying2 ? 4 : isFlying ? 3 : 1) * (up+1); // altho it's sq, it should be fine
-            if (gScore < neighbor.g) {
-                neighbor.parent = n;
-                if (n.coordinate.stonk)
-                    neighbor.stonkLength = (byte) (n.stonkLength + 1);
-                else
-                    neighbor.stonkLength = 0;
-                neighbor.connectionType = PathfindResult.PathfindNode.NodeType.WALK;
-                neighbor.g = gScore;
-                neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
-                open.add(neighbor);
-            } else if (neighbor.lastVisited != pfindIdx) {
-                neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
-                open.add(neighbor);
             }
         }
 
@@ -258,7 +260,7 @@ public class AStarFineGridStonking implements IPathfinder {
                 if (gScore < neighbor.g) {
                     neighbor.parent = n;
 
-                    neighbor.connectionType = !n.coordinate.stonk ? PathfindResult.PathfindNode.NodeType.WALK :
+                    neighbor.connectionType = !n.coordinate.stonk ? PathfindResult.PathfindNode.NodeType.STONK_EXIT :
                             originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_UP ? PathfindResult.PathfindNode.NodeType.DIG_UP :
                                     originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN || originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_FALLING ? PathfindResult.PathfindNode.NodeType.DIG_DOWN :
                                             originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_ECHEST ? PathfindResult.PathfindNode.NodeType.ECHEST :
@@ -319,7 +321,6 @@ public class AStarFineGridStonking implements IPathfinder {
 
 
         Node goalNode = openNode(lastSx, lastSy, lastSz, dungeonRoom.getBlock(lastSx, lastSy, lastSz).isBlockedNonStonk());
-
         LinkedList<PathfindResult.PathfindNode> route = new LinkedList<>();
         Node curr =goalNode;
         if (curr.parent == null) return null;

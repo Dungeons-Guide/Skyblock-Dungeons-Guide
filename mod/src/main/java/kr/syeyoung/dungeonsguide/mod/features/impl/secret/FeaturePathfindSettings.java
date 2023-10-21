@@ -53,6 +53,7 @@ public class FeaturePathfindSettings extends SimpleFeature {
         addParameter("etherwarp_ent", new FeatureParameter<Boolean>("etherwarp_ent", "Stonk Entrance: Use Etherwarp", "Whether to consider using etherwarp on fence/stonewall to enter stonking mode.", true, new TCBoolean()));
         addParameter("enderchest", new FeatureParameter<Boolean>("enderchest", "Stonk Entrance: Use Enderchest", "Whether to consider using enderchest on top of stair/fullblock combination to enter stonking mode.", false, new TCBoolean()));
 
+        addParameter("max_stonk", new FeatureParameter<Integer>("max_stonk", "Maximum Length of Stonk path", "this is in dg-blocks, which means 1 block is 2", 12, new TCInteger()));
 
         addParameter("etherwarp", new FeatureParameter<Boolean>("etherwarp", "Routing: Use Etherwarp", "Whether to use etherwarp in normal pathfinding.", true, new TCBoolean()));
     }
@@ -68,7 +69,8 @@ public class FeaturePathfindSettings extends SimpleFeature {
                 isStonkEtherwarp(),
                 isStonkTeleport(),
                 isStonkEChest(),
-                isEtherwarp()
+                isEtherwarp(),
+                this.<Integer>getParameter("max_stonk").getValue()
         );
     }
     @AllArgsConstructor @Getter
@@ -85,6 +87,8 @@ public class FeaturePathfindSettings extends SimpleFeature {
         private final boolean stonkEChest;
 
         private final boolean routeEtherwarp;
+
+        private final int maxStonk;
     }
 
     public Item getPickaxe() {

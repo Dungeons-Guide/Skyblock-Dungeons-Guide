@@ -87,10 +87,10 @@ public class ActionMove extends AbstractAction {
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
-                ActionMove.drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks,  true);
+                ActionMove.drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks);
 
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
-                    if (pose.getType() != PathfindResult.PathfindNode.NodeType.WALK) {
+                    if (pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
                 }
@@ -98,7 +98,8 @@ public class ActionMove extends AbstractAction {
         }
     }
 
-    private static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks, boolean depth) {
+    private static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
+        if (poses.size() == 0) return;
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
 
@@ -114,16 +115,20 @@ public class ActionMove extends AbstractAction {
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GL11.glLineWidth(thickness);
-        if (!depth) {
+        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+
+        if (poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
-        GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
+
 
 //        GlStateManager.color(colour.getRed() / 255f, colour.getGreen() / 255f, colour.getBlue()/ 255f, colour.getAlpha() / 255f);
         GlStateManager.color(1,1,1,1);
         worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
         int num = 0;
+
+        PathfindResult.PathfindNode lastNode = null;
         for (PathfindResult.PathfindNode pos:poses) {
             int i = RenderUtils.getColorAt(num++ * 10,0, colour);
             worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
@@ -132,6 +137,29 @@ public class ActionMove extends AbstractAction {
                     (i &0xFF)/255.0f,
                     ((i >> 24) &0xFF)/255.0f
             ).endVertex();
+
+            if (lastNode != null && lastNode.getType() != pos.getType()) {
+                Tessellator.getInstance().draw();
+                worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+
+
+                if (pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK && pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                    GlStateManager.disableDepth();
+                    GlStateManager.depthMask(false);
+                } else {
+                    GlStateManager.enableDepth();
+                    GlStateManager.depthMask(true);
+                }
+
+                worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
+                        ((i >> 16) &0xFF)/255.0f,
+                        ((i >> 8) &0xFF)/255.0f,
+                        (i &0xFF)/255.0f,
+                        ((i >> 24) &0xFF)/255.0f
+                ).endVertex();
+            }
+            lastNode = pos;
+
         }
         Tessellator.getInstance().draw();
 
@@ -139,10 +167,8 @@ public class ActionMove extends AbstractAction {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        if (!depth) {
-            GlStateManager.enableDepth();
-            GlStateManager.depthMask(true);
-        }
+        GlStateManager.enableDepth();
+        GlStateManager.depthMask(true);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
         GL11.glLineWidth(1);
