@@ -431,13 +431,16 @@ public class PartyManager {
     }
 
     private void leaveParty() {
+
+
         if (partyContext != null) {
             getPartyContext().setPartyExistHypixel(false);
             if (getPartyContext().isSelfSolo()) return;
             if (getPartyContext().getPartyID() != null) {
                 JSONObject object = new JSONObject();
                 object.put("partyid", getPartyContext().getPartyID());
-                StompManager.getInstance().send(new StompPayload().payload(object.toString()).destination( "/app/party.leave"));
+                if (StompManager.getInstance().isStompConnected())
+                    StompManager.getInstance().send(new StompPayload().payload(object.toString()).destination( "/app/party.leave"));
             }
         }
 
@@ -450,6 +453,7 @@ public class PartyManager {
         getPartyContext().setPartyMember(new TreeSet<>(String.CASE_INSENSITIVE_ORDER)); getPartyContext().setModeratorComplete(true);
         getPartyContext().setAllInvite(false);
         joinedParty();
+
     }
     private void joinedParty() {
         JSONArray jsonArray = new JSONArray();
