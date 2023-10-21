@@ -110,7 +110,9 @@ public class CommandDungeonsGuide extends CommandBase {
             return;
         }
 
-        switch (args[0].toLowerCase()) {
+        String subcommand = args[0].toLowerCase();
+
+        switch (subcommand) {
             case "reparty":
                 repartyCommand();
                 break;
@@ -148,6 +150,12 @@ public class CommandDungeonsGuide extends CommandBase {
                 unloadCommand();
                 break;
 
+            case "setuiscale":
+            case "setscale":
+            case "uiscale":
+            case "scale":
+                setUIScale(args);
+                break;
 
             case "aliases":
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide aliases§7::"));
@@ -159,6 +167,7 @@ public class CommandDungeonsGuide extends CommandBase {
             default:
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg §7-§fOpens configuration gui"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg gui §7-§fOpens configuration gui"));
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg scale [scale] §7-§fSets the Global HUD scale (Also disables Minecraft default HUD scale for you as well if you haven't already.)"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg help §7-§fShows command help"));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg reparty §7-§f Reparty."));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg asktojoin or /dg atj §7-§f Toggle ask to join §cRequires Discord Rich Presence enabled. (/dg -> Advanced)"));
@@ -169,6 +178,32 @@ public class CommandDungeonsGuide extends CommandBase {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg unload §7-§f Unload Current Version of Dungeons Guide, to load the new version"));
                 break;
         }
+    }
+
+    private void setUIScale(String[] args) {
+        if (args.length != 2) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cUsage: /dg " + args[0] + " [scale]"));
+            return;
+        }
+        try {
+            Double.parseDouble(args[1]);
+        } catch ( NumberFormatException e ) {
+            if (args[1] instanceof String && (args[1].toLowerCase().equals("reset") || args[1].toLowerCase().equals("r"))) {
+                FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(1d);
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §eGlobal HUD scale successfully reset to 1."));
+            } else {
+                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but " + args[1] + " is not a valid GUI scale. Try again."));
+            }
+            return;
+        }
+        Double theScale = Double.parseDouble(args[1]);
+        if (theScale < 0.01 || theScale > (Math.PI + Math.E)) {
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cSorry, but while " + args[1] + " is a valid number, it is not a suitable GUI scale. Try again, §eor reset your Global HUD scale with §6/dg " + args[0] + " reset§e."));
+            return;
+        }
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §aSuccessfully set your Global HUD scale to " + args[1] + ". §eTo reset your Global HUD scale, run §6/dg " + args[0] + " reset§e."));
+        FeatureRegistry.GLOBAL_HUD_SCALE.<Boolean>getParameter("mc").setValue(false);
+        FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(theScale);
     }
 
     private GuiScreen target;
