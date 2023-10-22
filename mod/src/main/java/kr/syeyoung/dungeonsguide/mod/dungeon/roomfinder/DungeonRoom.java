@@ -39,15 +39,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindStrategy;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
@@ -157,8 +156,8 @@ public class DungeonRoom {
             executor = new PathfinderExecutor(new AStarCornerCut(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
         } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.THETA_STAR) {
             executor = new PathfinderExecutor(new ThetaStar(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
-        } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_STONK) {
-            executor = new PathfinderExecutor(new AStarFineGridStonking(), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
+        } else if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
+            executor = new PathfinderExecutor(new AStarFineGridStonking(algorithmSettings), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
         } else {
             return  null;
         }
@@ -215,6 +214,8 @@ public class DungeonRoom {
 
         this.doorsAndStates = doorsAndStates;
         tryRematch();
+
+        algorithmSettings = context.getAlgorithmSettings();
     }
     private volatile boolean matched = false;
     private volatile boolean matching = false;
@@ -357,13 +358,16 @@ public class DungeonRoom {
     private final int lenx, leny, lenz;
     private static final float playerWidth = 0.3f;
 
+    private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
 
-    private boolean isInstaBreak(IBlockState iBlockState, BlockPos.MutableBlockPos pos) {
+
+    private boolean isNoInstaBreak(IBlockState iBlockState, BlockPos.MutableBlockPos pos) {
         Block b = iBlockState.getBlock();
         if (b.getBlockHardness(getCachedWorld(), pos) < 0) {
             return true;
-        } else if (Items.golden_pickaxe.canHarvestBlock(b) && b.getBlockHardness(getCachedWorld(), pos) <= 1.96) {
-        } else if (b.isToolEffective("shovel", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= 1.96) {
+        } else if (algorithmSettings.getPickaxeSpeed() > 0 && algorithmSettings.getPickaxe().canHarvestBlock(b) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed()) {
+        } else if (algorithmSettings.getShovelSpeed() > 0 && b.isToolEffective("shovel", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getShovelSpeed()) {
+        } else if (algorithmSettings.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getAxeSpeed()) {
         } else {
             return true;
         }
@@ -391,6 +395,7 @@ public class DungeonRoom {
 
         int stairValid = 0;
         int fence = 0;
+        boolean missedStair = false;
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
                 for (int i2 = minY-1; i2 < maxY; ++i2) {
@@ -427,12 +432,18 @@ public class DungeonRoom {
                         if (list.size() - prev > 0) {
                             blocked2 = true;
                         }
+
+                        if (b instanceof BlockStairs && !blocked2) {
+                            missedStair = true;
+                        } else if (b instanceof BlockStairs) {
+                            missedStair = false;
+                        }
                     } catch (Exception e) {
                         blocked2 = true;
                     }
 
 
-                    if (blocked2 && isInstaBreak(iBlockState1, blockPos) && i2 != minY -1) {
+                    if (blocked2 && isNoInstaBreak(iBlockState1, blockPos) && i2 != minY -1) {
                         nonInstamineCount++;
                     }
                     if (blocked2) {
@@ -459,9 +470,15 @@ public class DungeonRoom {
             }
 
             if (nonInstamineCount == 1){
-                return LayerNodeState.BLOCKED_ONE_STONK;
+                if (missedStair)
+                    return LayerNodeState.BLOCKED_ONE_STONK_STAIR_MID;
+                else
+                    return LayerNodeState.BLOCKED_ONE_STONK;
             } else if (nonInstamineCount == 0) {
-                return LayerNodeState.STONKABLE;
+                if (missedStair)
+                    return LayerNodeState.STONKABLE_STAIR_MID;
+                else
+                    return LayerNodeState.STONKABLE;
             }
         }
 
@@ -482,7 +499,6 @@ public class DungeonRoom {
         int stonkCount = 0;
         int openCount = 0;
 
-        if (!topMid.isInstabreak()) return NodeState.BLOCKED; // if top mid is blocked, then player can't go anywhere
 
         if (y%2 == 0) {
             if (!bottom.isInstabreak() || !bottomMid.isInstabreak()) barelyStonkCount++;
@@ -492,14 +508,18 @@ public class DungeonRoom {
             if (!top.isInstabreak() || !bottomMid.isInstabreak()) barelyStonkCount++;
         }
 
-        if (bottom == LayerNodeState.STONKABLE) stonkCount++;
+        if (bottom.isInstabreak()) stonkCount++;
         if (bottom == LayerNodeState.OPEN) openCount++;
-        if (bottomMid == LayerNodeState.STONKABLE) stonkCount++;
+        if (bottomMid.isInstabreak()) stonkCount++;
         if (bottomMid == LayerNodeState.OPEN) openCount++;
-        if (top == LayerNodeState.STONKABLE) stonkCount++;
+        if (top.isInstabreak()) stonkCount++;
         if (top == LayerNodeState.OPEN) openCount++;
-        if (topMid == LayerNodeState.STONKABLE) stonkCount++;
+        if (topMid.isInstabreak()) stonkCount++;
         if (topMid == LayerNodeState.OPEN) openCount++;
+
+        boolean falls = getLayer(x, y-1, z) == LayerNodeState.OPEN;
+        boolean highCeiling = getLayer(x, y+4, z) == LayerNodeState.OPEN;
+
 
         if (openCount == 4) {
             return NodeState.OPEN;
@@ -507,17 +527,26 @@ public class DungeonRoom {
         if (bottom == LayerNodeState.FORBIDDEN || bottomMid == LayerNodeState.FORBIDDEN || top == LayerNodeState.FORBIDDEN || topMid == LayerNodeState.FORBIDDEN) {
             return NodeState.BLOCKED;
         }
+        if (!topMid.isInstabreak()) {
+            // if top mid is blocked, then player can't go anywhere, unless, falling...
+            if (falls)
+                return NodeState.BLOCKED_STONKABLE_FALLING;
+            else
+                return NodeState.BLOCKED;
+        }
+
         if (barelyStonkCount > 1) {
             return NodeState.BLOCKED;
         }
-
-        boolean falls = getLayer(x, y-1, z) == LayerNodeState.OPEN;
-        boolean highCeiling = getLayer(x, y+4, z) == LayerNodeState.OPEN;
 
 
         if (y % 2 == 0 && bottom.isStair() && openCount == 3 && highCeiling) {
             if (falls) return NodeState.ENTRANCE_STONK_DOWN_FALLING;
             return NodeState.ENTRANCE_STONK_DOWN;
+        }
+        if (((x % 2 == 0) != (z % 2 == 0)) && y % 2 == 1 && getLayer(x, y-1, z).isStair() &&
+                (bottom == LayerNodeState.BLOCKED_ONE_STONK_STAIR_MID || bottom == LayerNodeState.STONKABLE_STAIR_MID) && openCount == 3 && highCeiling) {
+            return NodeState.ENTRANCE_STONK_DOWN_ECHEST;
         }
 
         if (y % 2 != 0 && topMid.isStair() && openCount == 3 && falls) {
@@ -544,13 +573,27 @@ public class DungeonRoom {
                 iBlockState1 = getCachedWorld().getBlockState(new BlockPos(x/2.0, y/2+1, z/2.0));
                 b = iBlockState1.getBlock();
                 if (!b.getMaterial().blocksMovement()) {
-                    return NodeState.ENTRANCE_ETHERWARP;
+                    iBlockState1 = getCachedWorld().getBlockState(new BlockPos(x/2.0, y/2+2, z/2.0));
+                    b = iBlockState1.getBlock();
+                    if (!b.getMaterial().blocksMovement()) {
+                        if (falls) return NodeState.ENTRANCE_ETHERWARP_FALL;
+                        return NodeState.ENTRANCE_ETHERWARP;
+                    }
                 }
             }
         }
 
         if (x%2 == 0 && z%2 == 0) {
             return NodeState.BLOCKED; // never go corners while stonking..
+        }
+
+
+        if (x % 2 != 0 && z % 2 != 0 && y % 2 == 0) {
+            IBlockState iBlockState1 = getCachedWorld().getBlockState(new BlockPos(x/2.0, y/2-1, z/2.0));
+            Block b = iBlockState1.getBlock();
+            if (b instanceof BlockWall || b instanceof BlockFence || b instanceof BlockFenceGate) {
+                falls = true;
+            }
         }
 
         if (y % 2 == 0 && falls) return NodeState.BLOCKED_STONKABLE_FALLING;
@@ -565,6 +608,8 @@ public class DungeonRoom {
         FORBIDDEN(true, false, false),
         BLOCKED_ONE_STONK(true, false, false),
         STONKABLE(true, false, true),
+        BLOCKED_ONE_STONK_STAIR_MID(true, false, false),
+        STONKABLE_STAIR_MID(true, false, true),
         ENTRANCE_STAIR_STONK(true, true, true),
         ENTRANCE_STAIR_BLOCK(true, true, false),
         OUT_OF_DUNGEON(true, false, false);
@@ -593,15 +638,19 @@ public class DungeonRoom {
         BLOCKED_STONKABLE_FALLING(true, false, false, false, true, new Color(0x55002200, true)),
         // downward stonk entrance
         ENTRANCE_STONK_DOWN(true,false, true, false,false,  new Color(0x55FF7700, true)),
+
+        // this weird thing that I learned from val
+        ENTRANCE_STONK_DOWN_ECHEST(true, false, true, false, false, new Color(0x55FF7777, true)),
+
         // downward stonk entrance but falling
         ENTRANCE_STONK_DOWN_FALLING(true,false, true, false, true, new Color(0x55FF7700, true)),
         // upward stonk entrance
         ENTRANCE_STONK_UP(true,false, true, false,false,  new Color(0x55FF3000, true)),
         // downward teleport stonk entrance
-        ENTRANCE_TELEPORT_DOWN(true, false, true, false, false, new Color(0x55FF00FF, true)),
+        ENTRANCE_TELEPORT_DOWN(true, false, true, false, true, new Color(0x55FF00FF, true)),
         // eterwarp entrance
         ENTRANCE_ETHERWARP(true, false, true, false,false,  new Color(0x55FF0099, true)),
-
+        ENTRANCE_ETHERWARP_FALL(true, false, true, false,true,  new Color(0x55FF5599, true)),
 
         OUT_OF_DUNGEON(true, true, false, false,false,  new Color(0x550000FF, true)); // always last
 
@@ -624,7 +673,7 @@ public class DungeonRoom {
         private Color color;
     }
 
-    private LayerNodeState getLayer(int x, int y, int z) {
+    public LayerNodeState getLayer(int x, int y, int z) {
         if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return LayerNodeState.OUT_OF_DUNGEON;
         int dx = x - minx, dy = y - miny, dz = z - minz;
         int data = oneLayer.read(dx, dy, dz);
@@ -645,16 +694,16 @@ public class DungeonRoom {
 
 
     public void resetBlock(BlockPos pos) { // I think it can be optimize due to how it is saved in arr
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -5; y <= 3; y++) {
-                for (int z = -1; z <= 1; z++) {
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -5; y <= 5; y++) {
+                for (int z = -2; z <= 2; z++) {
                     resetBlock(pos.getX()*2 + x, pos.getY()*2 + y, pos.getZ()*2 + z);
                 }
             }
         }
-        for (int x = -1; x <= 1; x++) {
-            for (int y = -5; y <= 1; y++) {
-                for (int z = -1; z <= 1; z++) {
+        for (int x = -2; x <= 2; x++) {
+            for (int y = -5; y <= 5; y++) {
+                for (int z = -2; z <= 2; z++) {
                     resetBlock2(pos.getX()*2 + x, pos.getY()*2 + y, pos.getZ()*2 + z);
                 }
             }

@@ -137,6 +137,7 @@ public class FeatureRegistry {
     public static final FeatureFreezePathfind SECRET_FREEZE_LINES = register(new FeatureFreezePathfind());
     public static final FeatureTogglePathfind SECRET_TOGGLE_KEY = register(new FeatureTogglePathfind());
     public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY = register(new FeaturePathfindStrategy());
+    public static final FeaturePathfindSettings SECRET_PATHFIND_SETTINGS = register(new FeaturePathfindSettings());
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
 
 

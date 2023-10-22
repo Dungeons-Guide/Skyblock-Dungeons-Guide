@@ -42,7 +42,7 @@ public class FeaturePathfindStrategy extends SimpleFeature {
         THETA_STAR("The default pathfinding algorithm. It will generate sub-optimal path quickly."),
         A_STAR_DIAGONAL("New pathfinding algorithm. It will generate path that looks like the one JPS generates"),
         A_STAR_FINE_GRID("New pathfinding algorithm. It will generate path that kind of looks like stair"),
-        A_STAR_FINE_GRID_STONK("A Star Fine grid, but with STONKING SUPPORT!");
+        A_STAR_FINE_GRID_SMART("A Star Fine grid, but with stonking/etherwarp support");
         private final String description;
     }
 

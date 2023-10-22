@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -43,6 +44,11 @@ public class AStarFineGridStonking implements IPathfinder {
 
     @Getter
     private AxisAlignedBB destinationBB;
+    private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
+
+    public AStarFineGridStonking(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
+        this.algorithmSettings = algorithmSettings;
+    }
     @Override
     public void init(DungeonRoom dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
@@ -94,18 +100,31 @@ public class AStarFineGridStonking implements IPathfinder {
         for (EnumFacing value : EnumFacing.VALUES) {
             Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX(), n.coordinate.y + value.getFrontOffsetY(), n.coordinate.z + value.getFrontOffsetZ(), n.coordinate.stonk);
 
-
             DungeonRoom.NodeState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+
+            // although this says up, it's actually going down for player. remember, we're pathfinding from the chest to the player.
             int up = 0;
             if (neighbor.coordinate.stonk) {
+                if (nodeState.isFall() && value.getFrontOffsetY() == 0) continue; // can not go into fall
+                boolean originalGrid = (n.coordinate.x % 2 == 0) == (n.coordinate.z == 0);
+                boolean newGrid = (neighbor.coordinate.x % 2 == 0) == (neighbor.coordinate.z % 2 == 0);
+                if (!originalGrid && !newGrid) {
+                    continue; // push out to new position
+                }
+
                 while (nodeState.isFall()) {
-                    // remember, we're going target to source.
                     up++;
                     neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y + 1, neighbor.coordinate.z, neighbor.coordinate.stonk);
                     nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                 }
+
+                if (!dungeonRoom.getLayer(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z).isInstabreak()) {
+                    continue; // can't dig down non-instabreak
+                }
             }
 
+            boolean isFlying = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y-1, neighbor.coordinate.z).isBlockedNonStonk();
+            boolean isFlying2 = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y-2, neighbor.coordinate.z).isBlockedNonStonk();
 
             // check blocked.
             if (destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
@@ -127,9 +146,15 @@ public class AStarFineGridStonking implements IPathfinder {
                 continue; // we do not visit corners.
             }
 
-            float gScore = n.g + (n.coordinate.stonk ? 3 : 1) * (up+1); // altho it's sq, it should be fine
+            // going up with stonk costs you 50 blocks.
+            float gScore = n.g + (n.coordinate.stonk ? 7 : isFlying && isFlying2 ? 4 : isFlying ? 3 : 1) * (up+1); // altho it's sq, it should be fine
             if (gScore < neighbor.g) {
                 neighbor.parent = n;
+                if (n.coordinate.stonk)
+                    neighbor.stonkLength = (byte) (n.stonkLength + 1);
+                else
+                    neighbor.stonkLength = 0;
+                neighbor.connectionType = PathfindResult.PathfindNode.NodeType.WALK;
                 neighbor.g = gScore;
                 neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
                 open.add(neighbor);
@@ -140,14 +165,67 @@ public class AStarFineGridStonking implements IPathfinder {
         }
 
         DungeonRoom.NodeState originNodeState = dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y, n.coordinate.z);
+
+        // etherwarps.
+        if (!n.coordinate.stonk && algorithmSettings.isRouteEtherwarp()) {
+            if (n.coordinate.y % 2 == 0 && n.coordinate.x % 2 != 0 && n.coordinate.z % 2 != 0 && !originNodeState.isBlockedNonStonk()) {
+                if (dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y-2, n.coordinate.z).isBlockedNonStonk()
+                || dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y-1, n.coordinate.z).isBlockedNonStonk()) {
+                    Node neighbor = openNode(n.coordinate.x, n.coordinate.y - 6, n.coordinate.z, false);
+                    DungeonRoom.NodeState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                    while (!nodeState.isBlockedNonStonk()) {
+                        neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y - 1, neighbor.coordinate.z, false);
+                        nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                    }
+                    neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y + 1, neighbor.coordinate.z, false);
+                    nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+
+                    if (!nodeState.isBlockedNonStonk()) {
+                        float gScore = n.g + 100; // don't use etherwarp unelss it saves like 50 blocks
+
+                        if (gScore < neighbor.g) {
+                            neighbor.parent = n;
+                            neighbor.stonkLength = 0;
+                            neighbor.g = gScore;
+                            neighbor.connectionType = PathfindResult.PathfindNode.NodeType.ETHERWARP;
+                            neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                            open.add(neighbor);
+                        } else if (neighbor.lastVisited != pfindIdx) {
+                            neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                            open.add(neighbor);
+                        }
+                    }
+                }
+            }
+        }
+
+
         if (originNodeState.isStonkEntrance() || originNodeState.isStonkExit()) {
+           processStonks(n, originNodeState);
+        }
+        return false;
+    }
+
+    private void processStonks(Node n, DungeonRoom.NodeState originNodeState) {
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_UP && !algorithmSettings.isStonkUp()) return;
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN && !algorithmSettings.isStonkDown()) return;
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_FALLING && !algorithmSettings.isStonkDown()) return;
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_TELEPORT_DOWN && !algorithmSettings.isStonkTeleport()) return;
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_ETHERWARP && !algorithmSettings.isStonkEtherwarp()) return;
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_ETHERWARP_FALL && !algorithmSettings.isStonkEtherwarp()) return;
+        if (originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_ECHEST && !algorithmSettings.isStonkEChest()) return;
+
             for (EnumFacing value : EnumFacing.VALUES) {
                 int factor = originNodeState == DungeonRoom.NodeState.ENTRANCE_ETHERWARP ? 2 : 1;
+                if (value.getFrontOffsetY() == -1 && !n.coordinate.stonk) factor = 2;
+
                 Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * factor, n.coordinate.y + value.getFrontOffsetY() * factor, n.coordinate.z + value.getFrontOffsetZ() * factor, !n.coordinate.stonk);
                 DungeonRoom.NodeState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
 
                 int up = 0;
                 if (neighbor.coordinate.stonk) {
+                    if (nodeState.isFall() && value.getFrontOffsetY() == 0) continue; // can not go into fall
+
                     while (nodeState.isFall()) {
                         up++;
                         // remember, we're going target to source.
@@ -168,18 +246,24 @@ public class AStarFineGridStonking implements IPathfinder {
                 if ((originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN || originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_FALLING) && value != EnumFacing.UP && up == 0) {
                     continue;
                 }
+                if ((originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_ECHEST) && value != EnumFacing.UP && up == 0) {
+                    continue;
+                }
                 if (originNodeState == DungeonRoom.NodeState.ENTRANCE_TELEPORT_DOWN && value != EnumFacing.UP && up == 0) {
                     continue;
                 }
 
 
-                float gScore = n.g + 5 + 3 * up; // altho it's sq, it should be fine
+                float gScore = n.g + 15 + 4 * up; // altho it's sq, it should be fine
                 if (gScore < neighbor.g) {
                     neighbor.parent = n;
+
                     neighbor.connectionType = !n.coordinate.stonk ? PathfindResult.PathfindNode.NodeType.WALK :
                             originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_UP ? PathfindResult.PathfindNode.NodeType.DIG_UP :
-                            originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN || originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_FALLING ? PathfindResult.PathfindNode.NodeType.DIG_DOWN :
-                                    originNodeState == DungeonRoom.NodeState.ENTRANCE_TELEPORT_DOWN ? PathfindResult.PathfindNode.NodeType.TELEPORT_INTO : PathfindResult.PathfindNode.NodeType.ETHERWARP;
+                                    originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN || originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_FALLING ? PathfindResult.PathfindNode.NodeType.DIG_DOWN :
+                                            originNodeState == DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_ECHEST ? PathfindResult.PathfindNode.NodeType.ECHEST :
+                                                    originNodeState == DungeonRoom.NodeState.ENTRANCE_TELEPORT_DOWN ? PathfindResult.PathfindNode.NodeType.TELEPORT_INTO :
+                                                            PathfindResult.PathfindNode.NodeType.ETHERWARP;
                     neighbor.g = gScore;
                     neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
                     open.add(neighbor);
@@ -188,8 +272,6 @@ public class AStarFineGridStonking implements IPathfinder {
                     open.add(neighbor);
                 }
             }
-        }
-        return false;
     }
 
     @Override
@@ -211,7 +293,6 @@ public class AStarFineGridStonking implements IPathfinder {
         found = false;
 
         goalNode = openNode(lastSx, lastSy, lastSz, blocked);
-
         startNode.g = 0;
         startNode.f = 0;
         goalNode.g = Integer.MAX_VALUE; goalNode.f = Integer.MAX_VALUE;
@@ -222,6 +303,7 @@ public class AStarFineGridStonking implements IPathfinder {
         if (goalNode.parent != null) {
             found = true;
         }
+
     }
 
     @Override
@@ -235,13 +317,16 @@ public class AStarFineGridStonking implements IPathfinder {
         int lastSy = (int) Math.round(from.yCoord * 2);
         int lastSz = (int) Math.round(from.zCoord * 2);
 
-        Node goalNode = openNode(lastSx, lastSy, lastSz, false);
+
+        Node goalNode = openNode(lastSx, lastSy, lastSz, dungeonRoom.getBlock(lastSx, lastSy, lastSz).isBlockedNonStonk());
 
         LinkedList<PathfindResult.PathfindNode> route = new LinkedList<>();
         Node curr =goalNode;
         if (curr.parent == null) return null;
-        while(curr.parent != null && curr.lastVisited >= goalNode.lastVisited) {
+        Set<Node> visited = new HashSet<>();
+        while(curr.parent != null && !visited.contains(curr)) {
             route.addLast(new PathfindResult.PathfindNode(curr.coordinate.x / 2.0f, curr.coordinate.y / 2.0f + 0.1f, curr.coordinate.z/ 2.0f, curr.connectionType));
+            visited.add(curr);
             curr = curr.parent;
         }
         route.addLast(new PathfindResult.PathfindNode(curr.coordinate.x / 2.0f, curr.coordinate.y / 2.0f + 0.1f, curr.coordinate.z/ 2.0f, curr.connectionType));

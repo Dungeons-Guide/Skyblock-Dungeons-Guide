@@ -44,39 +44,44 @@ public class PathfinderExecutorExecutor extends Thread{
 
     @Override
     public void run() {
-        List<WeakReference<PathfinderExecutor>> toRemove = new ArrayList<>();
-        WeakReference<PathfinderExecutor>[] weakReferences = new WeakReference[200]; // shoulllld be enough
-        while(!isInterrupted()) {
-            if (context.getScaffoldParser() != null) {
-                try {
-                    boolean flag = false;
-                    context.getExecutors().toArray(weakReferences);
-                    for (int i = 0; i < weakReferences.length; i++) {
-                        WeakReference<PathfinderExecutor> executor = weakReferences[i];
-                        if (executor == null) break;
-
-                        PathfinderExecutor executor1 = executor.get();
-                        if (executor1 != null) {
-                            if (executor1.getDungeonRoom() == target)
-                                executor1.doStep();
-                        } else {
-                            flag = true;
-                            toRemove.add(executor);
-                        }
-                    }
-                    if (flag) {
-                        context.getExecutors().removeAll(toRemove);
-                        toRemove.clear();
-                    }
-//                    Thread.yield();
-                } catch (Exception e) {
-                    e.printStackTrace(); // wtf?
+        try {
+            List<WeakReference<PathfinderExecutor>> toRemove = new ArrayList<>();
+            WeakReference<PathfinderExecutor>[] weakReferences = new WeakReference[200]; // shoulllld be enough
+            while (!isInterrupted()) {
+                if (context.getScaffoldParser() != null) {
                     try {
-                        Thread.sleep(1000);
-                    } catch (InterruptedException ex) {
+                        boolean flag = false;
+                        context.getExecutors().toArray(weakReferences);
+                        for (int i = 0; i < weakReferences.length; i++) {
+                            WeakReference<PathfinderExecutor> executor = weakReferences[i];
+                            if (executor == null) break;
+
+                            PathfinderExecutor executor1 = executor.get();
+                            if (executor1 != null) {
+                                if (executor1.getDungeonRoom() == target)
+                                    executor1.doStep();
+                            } else {
+                                flag = true;
+                                toRemove.add(executor);
+                            }
+                        }
+                        if (flag) {
+                            context.getExecutors().removeAll(toRemove);
+                            toRemove.clear();
+                        }
+//                    Thread.yield();
+                    } catch (Exception e) {
+                        e.printStackTrace(); // wtf?
+                        try {
+                            Thread.sleep(1000);
+                        } catch (InterruptedException ex) {
+                        }
                     }
                 }
             }
+        } catch (Throwable t) {
+            t.printStackTrace();
+            throw t;
         }
     }
 }

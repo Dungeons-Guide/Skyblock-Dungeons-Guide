@@ -48,7 +48,7 @@ public class PathfindResult {
         private NodeType type;
 
         public enum NodeType {
-            WALK, ETHERWARP, DIG_DOWN, DIG_UP, TELEPORT_INTO;
+            WALK, ETHERWARP, DIG_DOWN, ECHEST, DIG_UP, TELEPORT_INTO;
         }
     }
 }

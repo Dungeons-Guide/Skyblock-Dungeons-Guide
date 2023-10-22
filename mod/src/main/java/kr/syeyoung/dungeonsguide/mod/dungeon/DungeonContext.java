@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightPr
 import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.MapUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -69,6 +70,9 @@ public class DungeonContext {
     private DungeonRoomScaffoldParser scaffoldParser;
     @Getter
     private DungeonEventRecorder recorder = new DungeonEventRecorder();
+
+    @Getter
+    private final FeaturePathfindSettings.AlgorithmSettings algorithmSettings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
 
     @Getter
     private List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
