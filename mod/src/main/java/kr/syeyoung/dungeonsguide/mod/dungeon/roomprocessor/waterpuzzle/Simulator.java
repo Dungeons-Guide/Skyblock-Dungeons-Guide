@@ -120,6 +120,17 @@ public class Simulator {
         while(simulateSingleTick(nodes));
     }
 
+    public static Node[][] clone(Node[][] nodes) {
+        Node[][] newNodes = new Node[nodes.length][nodes[0].length];
+
+        for (int y = 0; y < nodes.length; y++) {
+            for (int x = 0; x < nodes[y].length; x++) {
+                newNodes[y][x] = new Node(nodes[y][x].waterLevel, nodes[y][x].nodeType, nodes[y][x].update);
+            }
+        }
+        return newNodes;
+    }
+
     public static boolean doTick(Node[][] nodes, Node[][] nodesNew, Pt pt) {
         int y = pt.y, x = pt.x;
         Node prev = pt.get(nodes);

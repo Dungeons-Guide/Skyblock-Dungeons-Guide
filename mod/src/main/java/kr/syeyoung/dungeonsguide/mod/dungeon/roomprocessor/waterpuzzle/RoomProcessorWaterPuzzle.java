@@ -27,16 +27,16 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
+import net.minecraft.block.BlockLiquid;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
 import net.minecraft.world.World;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
@@ -58,6 +58,11 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
     private Map<Simulator.Pt, BlockPos> ptMapping = new HashMap<>();
 
+    private Thread t;
+    private List<WaterPathfinder.NodeNode> solutionList = new ArrayList<>();
+    private long lastStable;
+    private long lastUnstable;
+
     public RoomProcessorWaterPuzzle(DungeonRoom dungeonRoom) {
         super(dungeonRoom);
         frontBoard = (OffsetPointSet) dungeonRoom.getDungeonRoomInfo().getProperties().get("front");
@@ -72,8 +77,12 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             argumentsFulfilled = true;
 
             buildLeverStates();
-            buildNodes();
+            buildNodes(true);
+            targetDoors();
+
         }
+
+
 
     }
 
@@ -98,12 +107,12 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         switchFlips.put("mainStream", new ArrayList<>());
     }
 
-    private void buildNodes() {
+    private void buildNodes(boolean switchfips) {
         List<OffsetPoint> frontPoints = frontBoard.getOffsetPointList();
         List<OffsetPoint> backPoints = backBoard.getOffsetPointList();
 
         nodes = new Simulator.Node[25][19];
-        waterNodeStart = new Simulator.Pt(9, 2);
+        waterNodeStart = new Simulator.Pt(9, 0);
         for (int x = 0; x < 19; x++) {
             for (int y = 0; y < 25; y++) {
                 OffsetPoint front = frontPoints.get(x *25 +y);
@@ -115,9 +124,12 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 int frontData = front.getData(getDungeonRoom());
                 int backData = back.getData(getDungeonRoom());
 
-                String switchD;
-                if (switchFlips.containsKey(switchD = (backId+":"+backData)) || switchFlips.containsKey(switchD = (frontId+":"+frontData))) {
-                    switchFlips.get(switchD).add(new Simulator.Pt(x,y));
+                if (switchfips) {
+                    String switchD;
+
+                    if (switchFlips.containsKey(switchD = (backId + ":" + backData)) || switchFlips.containsKey(switchD = (frontId + ":" + frontData))) {
+                        switchFlips.get(switchD).add(new Simulator.Pt(x, y));
+                    }
                 }
 
                 if (frontId == 0 || frontId == 8  /*flowing*/|| frontId == 9) {
@@ -134,8 +146,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                         waterNodeEnds.put(id+":"+data, new Simulator.Pt(x,y));
                     }
 
-
-                    nodes[y][x] = new Simulator.Node(frontData,
+                    nodes[y][x] = new Simulator.Node(frontId != 0 ? frontData >= 8 ? 8 : 8-frontData : 0,
                             frontId == 0 ? Simulator.NodeType.AIR :
                             y == 0 ? Simulator.NodeType.SOURCE :
                                     Simulator.NodeType.WATER, false);
@@ -144,7 +155,9 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 }
             }
         }
-        switchFlips.get("mainStream").add(waterNodeStart);
+        if (switchfips) {
+            switchFlips.get("mainStream").add(waterNodeStart);
+        }
     }
     private void targetDoors() {
         targetDoors.clear();
@@ -155,17 +168,63 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         }
     }
 
+    Simulator.Node[][] lastCopy = null;
 
+    private int idx = 0;
     @Override
     public void tick() {
         super.tick();
         if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
         if (!argumentsFulfilled) return;
         try {
-            buildNodes();
+            buildNodes(false);
             targetDoors();
-            Simulator.simulateTicks(nodes);
 
+            Simulator.Node[][] copy = Simulator.clone(nodes);
+            boolean changed = !Arrays.deepEquals(lastCopy, copy);
+            lastCopy = copy;
+            if (!changed) {
+                if ((System.currentTimeMillis() - lastUnstable) > 500)
+                    lastStable = System.currentTimeMillis();
+            } else {
+                lastUnstable = System.currentTimeMillis();
+            }
+            Simulator.simulateTicks(nodes);
+            if ((System.currentTimeMillis() - lastUnstable) > 500) {
+                if (t == null || !t.isAlive()) {
+                    t = new Thread(() -> {
+                        try {
+                            List<Simulator.Pt> targets = targetDoors.stream().map(waterNodeEnds::get).collect(Collectors.toList());
+                            List<Simulator.Pt> nonTargets = waterNodeEnds.values().stream().filter(a -> !targets.contains(a)).collect(Collectors.toList());
+
+                            WaterPathfinder waterPathfinder = new WaterPathfinder(copy, targets, nonTargets, switchFlips);
+                            WaterPathfinder.NodeNode nodeNode = waterPathfinder.pathfind();
+                            LinkedList<WaterPathfinder.NodeNode> solution = new LinkedList<>();
+                            if (nodeNode.getParentToMeAction() != null)
+                                solution.addFirst(nodeNode);
+                            while (nodeNode.getParent() != null) {
+                                nodeNode = nodeNode.getParent();
+                                if (nodeNode.getParentToMeAction() != null)
+                                    solution.addFirst(nodeNode);
+                            }
+                            this.solutionList = solution;
+                            idx = 0;
+                            lastStable = System.currentTimeMillis();
+                        } catch (Exception e) {
+                            lastCopy = null;
+                        }
+                    });
+                    t.start();
+                }
+            }
+
+
+
+            if (solutionList != null && solutionList.size() > 0) {
+                while (System.currentTimeMillis() - lastStable > (long) (idx) * 2500 + 250) { // water flows 5 ticks/s
+                    idx ++;
+                }
+            }
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -189,34 +248,23 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 }
             }
         }
-//        if (waterBoard == null) return;
-//
-//        Route route = waterBoard.getCurrentRoute();
-//        if (route != null) {
-//            int j = 1;
-//            for (int i = 0; i < route.getConditionList().size(); i++) {
-//                LeverState condition = route.getConditionList().get(i);
-//                if (condition == null) continue;
-//                SwitchData switchData = waterBoard.getValidSwitches().get(condition.getBlockId());
-//                if (switchData.getCurrentState(getDungeonRoom().getContext().getWorld()) != condition.isRequiredState()) {
-//
-//                    RenderUtils.highlightBlock(switchData.getSwitchLoc(), new Color(0,255,0,50), partialTicks, true);
-//                    RenderUtils.drawTextAtWorld("#"+j,switchData.getSwitchLoc().getX(), switchData.getSwitchLoc().getY()+1, switchData.getSwitchLoc().getZ(),  0xFF000000,0.1f, false, false, partialTicks);
-//                    RenderUtils.drawTextAtWorld(condition.isRequiredState() ? "on":"off",switchData.getSwitchLoc().getX(), switchData.getSwitchLoc().getY(), switchData.getSwitchLoc().getZ(),  0xFF000000,0.1f, false, false, partialTicks);
-//                    j++;
-//                }
-//            }
-//            for (WaterNode node : route.getNodes()) {
-//                RenderUtils.highlightBlock(node.getBlockPos(), new Color(0,255,255,50), partialTicks, true);
-//            }
-//        }
-//        List<BlockPos> targets = waterBoard.getTarget();
-//        if (targets != null) {
-//            for (BlockPos target : targets) {
-//                RenderUtils.highlightBlock(target, new Color(0,255,255,100), partialTicks, true);
-//            }
-//            RenderUtils.highlightBlock(waterBoard.getToggleableMap().get("mainStream").getBlockPos(), new Color(0,255,0,255), partialTicks, true);
-//        }
+
+        if (solutionList.size() > 0) {
+            for (int i = idx; i < solutionList.size(); i++) {
+
+                String key = solutionList.get(i).getParentToMeAction().getKey();
+                if (!key.equals("nothing")) {
+                    BlockPos pos = switchLoc.get(key);
+                    // target:
+                    long target = lastStable + 2500L * i;
+
+                    double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
+                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i-idx)*0.5f - 0.5f, pos.getZ()+0.5f,
+                            time < 0.5 ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
+                }
+            }
+
+        }
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorWaterPuzzle> {
