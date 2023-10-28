@@ -184,13 +184,13 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             boolean changed = !Arrays.deepEquals(lastCopy, copy);
             lastCopy = copy;
             if (!changed) {
-                if ((System.currentTimeMillis() - lastUnstable) > 500)
+                if ((System.currentTimeMillis() - lastUnstable) > 1000)
                     lastStable = System.currentTimeMillis();
             } else {
                 lastUnstable = System.currentTimeMillis();
             }
             Simulator.simulateTicks(nodes);
-            if ((System.currentTimeMillis() - lastUnstable) > 500) {
+            if ((System.currentTimeMillis() - lastUnstable) > 1000) {
                 if (t == null || !t.isAlive()) {
                     t = new Thread(() -> {
                         try {
