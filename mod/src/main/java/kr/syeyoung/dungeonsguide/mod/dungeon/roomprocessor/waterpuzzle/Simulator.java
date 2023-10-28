@@ -22,6 +22,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 
+import java.util.List;
 import java.util.Scanner;
 
 public class Simulator {
@@ -39,7 +40,7 @@ public class Simulator {
         private NodeType nodeType;
         private boolean update;
     }
-    @Getter @AllArgsConstructor
+    @Getter @AllArgsConstructor @Data
     public static class Pt {
         private final int x, y;
 
