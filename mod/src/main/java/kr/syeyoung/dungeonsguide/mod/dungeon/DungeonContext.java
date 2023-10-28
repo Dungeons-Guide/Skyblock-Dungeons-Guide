@@ -51,6 +51,7 @@ import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.lang.ref.WeakReference;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -70,7 +71,7 @@ public class DungeonContext {
     private DungeonEventRecorder recorder = new DungeonEventRecorder();
 
     @Getter
-    private List<PathfinderExecutor> executors = new CopyOnWriteArrayList<>();
+    private List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
 
 
     @Getter
@@ -165,7 +166,9 @@ public class DungeonContext {
                     dungeonRoom.tryRematch();
                 }
             }
+            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition())));
         }
+
 
         players.clear();
         players.addAll(TabListUtil.getPlayersInDungeon());
@@ -190,8 +193,7 @@ public class DungeonContext {
     }
     private int mapId = -1;
     public void onMapUpdate(MapUpdateEvent mapUpdateEvent) {
-        if (mapUpdateEvent.getMapId() > 10000) return; // tictactoe
-        if (mapId == -1) {
+        if (mapId == -1 && mapUpdateEvent.getMapData().colors[0] == 0) { // dungeon map top left is ALWAYS 0.
             mapId = mapUpdateEvent.getMapId();
         }
         if (mapId != mapUpdateEvent.getMapId()) return;

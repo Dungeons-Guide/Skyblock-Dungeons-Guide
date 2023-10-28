@@ -45,8 +45,6 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
                 .setTextShader(new AColor(Color.yellow.getRGB(),true)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
 
     @Override
     public TextSpan getDummyText() {
@@ -57,7 +55,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        if (!skyblockStatus.isOnDungeon()) return false;
+        if (!SkyblockStatus.isOnDungeon()) return false;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return false;
 
@@ -73,7 +71,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
     @Override
     public TextSpan getText() {
-        if (!skyblockStatus.isOnDungeon()) return new TextSpan(new NullTextStyle(), "");
+        if (!SkyblockStatus.isOnDungeon()) return new TextSpan(new NullTextStyle(), "");
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return new TextSpan(new NullTextStyle(), "");
 

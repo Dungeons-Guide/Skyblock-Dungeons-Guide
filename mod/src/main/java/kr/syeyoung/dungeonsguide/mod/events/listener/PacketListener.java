@@ -40,13 +40,12 @@ import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
 
 public class PacketListener {
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
     @SubscribeEvent
     public void onPacketReceive(RawPacketReceivedEvent event) {
         try {
             Packet packet = event.packet;
-            if (skyblockStatus.isOnSkyblock()
+            if (SkyblockStatus.isOnSkyblock()
                     && packet instanceof S04PacketEntityEquipment
                     && FeatureRegistry.FIX_SPIRIT_BOOTS.isEnabled()) { // Inventory packet name
                 S04PacketEntityEquipment packet2 = (S04PacketEntityEquipment) packet;

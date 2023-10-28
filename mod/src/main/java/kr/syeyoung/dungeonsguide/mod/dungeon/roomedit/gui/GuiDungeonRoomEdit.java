@@ -22,9 +22,11 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.gui.MGui;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.MPanelScaledGUI;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MTabbedPane;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
 
@@ -38,9 +40,12 @@ public class GuiDungeonRoomEdit extends MGui {
 
     public GuiDungeonRoomEdit(DungeonRoom room) {
         this.room = room;
+        MPanelScaledGUI scaledGUI = new MPanelScaledGUI();
+        scaledGUI.setScale(new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+        getMainPanel().add(scaledGUI);
 
         MTabbedPane tabbedPane = new MTabbedPane();
-        getMainPanel().add(tabbedPane);
+        scaledGUI.add(tabbedPane);
         tabbedPane.setBackground2(new Color(17, 17, 17, 179));
 
 
@@ -63,7 +68,8 @@ public class GuiDungeonRoomEdit extends MGui {
     @Override
     public void initGui() {
         super.initGui();
-        // update bounds
-        getMainPanel().setBounds(new Rectangle(Math.min((Minecraft.getMinecraft().displayWidth - 500) / 2, Minecraft.getMinecraft().displayWidth), Math.min((Minecraft.getMinecraft().displayHeight - 300) / 2, Minecraft.getMinecraft().displayHeight),500,300));
+        int w = 500 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        int h = 300 * new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor();
+        getMainPanel().getChildComponents().get(0).setBounds(new Rectangle(Math.min((Minecraft.getMinecraft().displayWidth - w) / 2, Minecraft.getMinecraft().displayWidth), Math.min((Minecraft.getMinecraft().displayHeight - h) / 2, Minecraft.getMinecraft().displayHeight),w,h));
     }
 }

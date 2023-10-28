@@ -187,8 +187,6 @@ public class DiscordIntegrationManager implements IPCListener {
         } catch (Throwable e) {e.printStackTrace();}
     }
 
-    private final SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
     private void sendRichPresence(RichPresence presence) {
         ipcClient.send(new JSONObject()
                 .put("cmd","SET_ACTIVITY")
@@ -197,11 +195,11 @@ public class DiscordIntegrationManager implements IPCListener {
                 .put("activity",presence == null ? null : presence.toJson())), new Callback(success ->{}, fail -> {System.out.println(fail);}));
     }
     private void updatePresence() {
-        if (!skyblockStatus.isOnHypixel() || !FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled() || (!skyblockStatus.isOnSkyblock() && FeatureRegistry.DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
+        if (!SkyblockStatus.isOnHypixel() || !FeatureRegistry.DISCORD_RICHPRESENCE.isEnabled() || (!SkyblockStatus.isOnSkyblock() && FeatureRegistry.DISCORD_RICHPRESENCE.<Boolean>getParameter("disablenotskyblock").getValue())) {
             sendRichPresence(null);
         } else {
             String name = SkyblockStatus.locationName == null ? "" : SkyblockStatus.locationName;
-            if (!skyblockStatus.isOnSkyblock()) name ="Somewhere on Hypixel";
+            if (!SkyblockStatus.isOnSkyblock()) name ="Somewhere on Hypixel";
             if (name.trim().equals("Your Island")) name = "Private Island";
 
             RichPresence.Builder presence = new RichPresence.Builder();

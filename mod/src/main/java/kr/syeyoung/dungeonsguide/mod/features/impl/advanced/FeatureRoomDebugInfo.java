@@ -44,8 +44,6 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
                 .setTextShader(new AColor(Color.white.getRGB(),true)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
     @Override
     public TextSpan getDummyText() {
         return new TextSpan(getStyle("info"), "Line 1\nLine 2\nLine 3\nLine 4\nLine 5");
@@ -53,7 +51,7 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        if (!skyblockStatus.isOnDungeon()) return false;
+        if (!SkyblockStatus.isOnDungeon()) return false;
         if (!FeatureRegistry.DEBUG.isEnabled()) return false;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return false;
@@ -62,7 +60,7 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
 
     @Override
     public TextSpan getText() {
-        if (!skyblockStatus.isOnDungeon()) return new TextSpan(new NullTextStyle(), "");
+        if (!SkyblockStatus.isOnDungeon()) return new TextSpan(new NullTextStyle(), "");
         if (!FeatureRegistry.DEBUG.isEnabled()) return new TextSpan(new NullTextStyle(), "");
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return new TextSpan(new NullTextStyle(), "");

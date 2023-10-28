@@ -44,7 +44,6 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         super("Bossfight.Floor 7","Simon Says Solver","Solver for Simon says puzzle", "Dungeon.Bossfight.simonsays2");
     }
 
-    private final SkyblockStatus ss = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     private final List<BlockPos> orderBuild = new ArrayList<BlockPos>();
     private final LinkedList<BlockPos> orderClick = new LinkedList<BlockPos>();
 

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon;
 
 
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
@@ -49,7 +50,7 @@ public class FeatureDungeonRealTime extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return started != -1;
+        return started != -1 && SkyblockStatus.isOnDungeon();
     }
 
 
@@ -78,7 +79,7 @@ public class FeatureDungeonRealTime extends TextHUDFeature {
         started= System.currentTimeMillis();
     }
 
-    @DGEventHandler(ignoreDisabled = true)
+    @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
     public void onDungeonQuit(DungeonLeftEvent event) {
         started = -1;
     }

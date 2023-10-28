@@ -531,7 +531,7 @@ public class DungeonListener {
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade() != null) {
+        if (context != null) {
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
             if (context.getBossfightProcessor() != null) {

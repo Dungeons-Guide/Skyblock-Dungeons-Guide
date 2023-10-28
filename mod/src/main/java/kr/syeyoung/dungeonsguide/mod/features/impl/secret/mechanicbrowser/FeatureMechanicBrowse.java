@@ -102,8 +102,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
 
     @Override
     public void drawHUD(float partialTicks) {
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
@@ -141,8 +140,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     public void drawWorld(RenderWorldLastEvent event) {
         float partialTicks = event.partialTicks;
         
-        SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null || DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser() == null) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 

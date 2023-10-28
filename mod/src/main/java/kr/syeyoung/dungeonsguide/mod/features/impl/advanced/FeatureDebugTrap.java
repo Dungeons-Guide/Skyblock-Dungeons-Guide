@@ -40,8 +40,6 @@ public class FeatureDebugTrap extends TextHUDFeature {
         registerDefaultStyle("batsamm", DefaultingDelegatingTextStyle.derive("Feature Default - Batsamm", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
-
     static List<Long> avgStorage = new ArrayList<>();
 
     public static void updateVal(long timeItTookForThePacketToProcess){
@@ -60,7 +58,7 @@ public class FeatureDebugTrap extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return skyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null;
+        return SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null;
     }
 
     @Override

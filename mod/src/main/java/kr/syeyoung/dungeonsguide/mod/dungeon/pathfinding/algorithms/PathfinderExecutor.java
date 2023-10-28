@@ -28,7 +28,7 @@ import java.util.List;
 public class PathfinderExecutor {
     private boolean invalidate = false;
     @Getter
-    private Vec3 target;
+    private volatile Vec3 target;
 
     @Getter
     private DungeonRoom dungeonRoom;

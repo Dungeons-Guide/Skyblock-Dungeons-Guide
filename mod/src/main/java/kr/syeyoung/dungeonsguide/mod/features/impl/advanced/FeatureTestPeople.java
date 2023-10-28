@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.mojang.authlib.GameProfile;
 import com.mojang.authlib.minecraft.MinecraftProfileTexture;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -450,7 +451,7 @@ public class FeatureTestPeople extends RawRenderingGuiFeature {
 
     String genPlayerText(String username) {
 
-        if (DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) {
+        if (SkyblockStatus.isOnDungeon()) {
             if (Objects.equals(username, Minecraft.getMinecraft().getSession().getUsername())) {
                 return ": In Dungeon";
             } else if (isPlayerInDungeon(username)) {

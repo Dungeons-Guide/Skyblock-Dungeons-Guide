@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -248,7 +249,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
     private long secrets2 = 0;
     @Override
     public void actionbarReceived(IChatComponent chat) {
-        if (!DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
         if (dungeonRoom.getTotalSecrets() == -1) {
             ChatTransmitter.sendDebugChat(new ChatComponentText(chat.getFormattedText().replace('§', '&') + " - received"));
         }

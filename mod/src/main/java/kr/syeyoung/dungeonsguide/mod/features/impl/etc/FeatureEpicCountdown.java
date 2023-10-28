@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
@@ -99,7 +100,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
 
     @DGEventHandler
     public void onTick(DGTickEvent event){
-        if(!isEnabled() || !DungeonsGuide.getDungeonsGuide().getSkyblockStatus().isOnDungeon()) return;
+        if(!isEnabled() || !SkyblockStatus.isOnDungeon()) return;
 
 
         Objective objective = ScoreboardManager.INSTANCE.getSidebarObjective();
@@ -111,8 +112,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
                     if (time.contains(":")) {
                         secondsLeft = Integer.parseInt(time.split(":")[0]) * 60 + Integer.parseInt(time.split(":")[1]);
                         updatedAt = System.currentTimeMillis();
-                    }
-                    if(!time.isEmpty()){
+                    } else if(!time.isEmpty()){
                         secondsLeft = Integer.parseInt(time);
                         updatedAt = System.currentTimeMillis();
                     }

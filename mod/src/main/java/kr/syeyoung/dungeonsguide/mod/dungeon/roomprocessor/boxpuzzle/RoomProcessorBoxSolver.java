@@ -319,10 +319,10 @@ public class RoomProcessorBoxSolver extends GeneralRoomProcessor {
         if (chat.getFormattedText().toLowerCase().contains("recalc")) {
             if (calcDone) {
                 calcReq = true;
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Recalculating Route..."));
             } else {
                 calcReq = true;
-                ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
+                Minecraft.getMinecraft().thePlayer.addChatMessage(new ChatComponentText("§eDungeons Guide :::: Currently Calculating Route..."));
             }
         }
     }

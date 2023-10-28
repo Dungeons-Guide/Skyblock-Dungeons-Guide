@@ -73,7 +73,7 @@ public class ThetaStar implements IPathfinder {
     public boolean doOneStep() {
         if (found) return true;
         Node n = open.poll();
-        if (n == null) return false;
+        if (n == null) return true; // nothing more to search. this means no route.
         if (n.lastVisited == pfindIdx) return false;
         n.lastVisited = pfindIdx;
 

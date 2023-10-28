@@ -56,10 +56,9 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
         registerDefaultStyle("totalDeaths", DefaultingDelegatingTextStyle.derive("Feature Default - TotalDeaths", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
     }
 
-    SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
     @Override
     public boolean isHUDViewable() {
-        if (!skyblockStatus.isOnDungeon()) return false;
+        if (!SkyblockStatus.isOnDungeon()) return false;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         return context != null;
     }
@@ -113,7 +112,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
     }
 
     public int getTotalDeaths() {
-        if (!skyblockStatus.isOnDungeon()) return 0;
+        if (!SkyblockStatus.isOnDungeon()) return 0;
         for (TabListEntry tabListEntry : TabList.INSTANCE.getTabListEntries()) {
             String name = tabListEntry.getEffectiveName();
             if (name.contains("Deaths")) {
@@ -141,7 +140,7 @@ public class FeatureDungeonDeaths extends TextHUDFeature {
     @DGEventHandler()
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         if (clientChatReceivedEvent.type == 2) return;
-        if (!skyblockStatus.isOnDungeon()) return;
+        if (!SkyblockStatus.isOnDungeon()) return;
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return;
 
