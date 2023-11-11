@@ -63,7 +63,7 @@ public class PacketInjector extends ChannelDuplexHandler {
                 MinecraftForge.EVENT_BUS.post(receivedEvent);
                 packet = receivedEvent.packet;
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             t.printStackTrace();
         }
 

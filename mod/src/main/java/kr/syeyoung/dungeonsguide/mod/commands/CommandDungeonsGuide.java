@@ -215,7 +215,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 Minecraft.getMinecraft().displayGuiScreen(target);
                 target = null;
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
             t.printStackTrace();
         }
     }

@@ -80,7 +80,7 @@ public class ChatProcessor {
                 }
 
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

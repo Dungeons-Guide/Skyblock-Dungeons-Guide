@@ -139,8 +139,8 @@ public class NotificationManager {
     private void keyTyped(char typedChar, int keyCode) throws IOException {
         try {
             view.keyPressed0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -148,8 +148,8 @@ public class NotificationManager {
     private void keyHeld(int keyCode, char typedChar) throws IOException {
         try {
             view.keyHeld0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -157,8 +157,8 @@ public class NotificationManager {
     private void keyReleased(int keyCode, char typedChar) throws IOException {
         try {
             view.keyReleased0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -167,8 +167,8 @@ public class NotificationManager {
         try {
             return view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
         return false;
@@ -178,8 +178,8 @@ public class NotificationManager {
         try {
             view.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -188,8 +188,8 @@ public class NotificationManager {
         try {
             view.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -198,8 +198,8 @@ public class NotificationManager {
         try {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -215,7 +215,6 @@ public class NotificationManager {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void handleMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) throws IOException {
-        try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -241,14 +240,14 @@ public class NotificationManager {
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
             if (lastX != i || lastY != j) {
-                try {
                     EnumCursor prevCursor = view.getCurrentCursor();
                     view.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = view.getCurrentCursor();
+                try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                   
                         e.printStackTrace();
                 }
             }
@@ -256,14 +255,15 @@ public class NotificationManager {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
-                if (cancel) mouseInputEvent.setCanceled(true);
+                try {
+                    boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
+                    if (cancel) mouseInputEvent.setCanceled(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             lastX = i;
             lastY = j;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

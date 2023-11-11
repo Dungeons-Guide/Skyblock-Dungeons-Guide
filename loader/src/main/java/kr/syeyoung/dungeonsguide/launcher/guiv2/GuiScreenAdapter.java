@@ -137,8 +137,8 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.keyPressed0(typedChar, keyCode);
             super.keyTyped(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -146,8 +146,8 @@ public class GuiScreenAdapter extends GuiScreen {
     public void keyHeld(int keyCode, char typedChar) throws IOException {
         try {
             view.keyHeld0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -155,8 +155,8 @@ public class GuiScreenAdapter extends GuiScreen {
     public void keyReleased(int keyCode, char typedChar) throws IOException {
         try {
             view.keyReleased0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -167,8 +167,8 @@ public class GuiScreenAdapter extends GuiScreen {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -192,8 +192,8 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -203,8 +203,8 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -213,8 +213,8 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -231,7 +231,6 @@ public class GuiScreenAdapter extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         if (!isOpen) return;
-        try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -256,15 +255,14 @@ public class GuiScreenAdapter extends GuiScreen {
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
             if (lastX != i || lastY != j) {
-                try {
                     EnumCursor prevCursor = view.getCurrentCursor();
                     view.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = view.getCurrentCursor();
+                try {
                     if (prevCursor != newCursor)
                         Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                         e.printStackTrace();
                 }
             }
@@ -272,13 +270,14 @@ public class GuiScreenAdapter extends GuiScreen {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                view.mouseScrolled0(i, j, i, j, wheel);
+                try {
+                    view.mouseScrolled0(i, j, i, j, wheel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             lastX = i;
             lastY = j;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     public void handleKeyboardInput() throws IOException {

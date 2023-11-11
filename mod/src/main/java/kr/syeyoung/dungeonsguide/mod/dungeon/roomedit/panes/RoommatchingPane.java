@@ -62,7 +62,7 @@ public class RoommatchingPane extends MPanel {
                         displayPane = new RoomMatchDisplayPane(dungeonRoom, uid, rotation);
                         displayPane.setBounds(new Rectangle(0,25,getBounds().width,getBounds().height-25));
                         add(displayPane);
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         t.printStackTrace();
                     }
                 }

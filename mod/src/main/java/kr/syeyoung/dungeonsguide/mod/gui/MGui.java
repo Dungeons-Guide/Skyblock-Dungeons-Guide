@@ -81,8 +81,8 @@ public class MGui extends GuiScreen {
         try {
             mainPanel.keyPressed0(typedChar, keyCode);
             super.keyTyped(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -90,8 +90,8 @@ public class MGui extends GuiScreen {
     public void keyHeld(int keyCode, char typedChar) throws IOException {
         try {
             mainPanel.keyHeld0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -99,8 +99,8 @@ public class MGui extends GuiScreen {
     public void keyReleased(int keyCode, char typedChar) throws IOException {
         try {
             mainPanel.keyReleased0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -111,8 +111,8 @@ public class MGui extends GuiScreen {
             super.mouseClicked(mouseX, mouseY, mouseButton);
             mainPanel.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -136,8 +136,8 @@ public class MGui extends GuiScreen {
         try {
             mainPanel.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -147,8 +147,8 @@ public class MGui extends GuiScreen {
         try {
             mainPanel.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -157,8 +157,8 @@ public class MGui extends GuiScreen {
         try {
             mainPanel.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -175,7 +175,6 @@ public class MGui extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         if (!isOpen) return;
-        try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -200,14 +199,13 @@ public class MGui extends GuiScreen {
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
             if (lastX != i || lastY != j) {
-                try {
                     EnumCursor prevCursor = mainPanel.getCurrentCursor();
                     mainPanel.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = mainPanel.getCurrentCursor();
+                try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                         e.printStackTrace();
                 }
             }
@@ -215,13 +213,14 @@ public class MGui extends GuiScreen {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                mainPanel.mouseScrolled0(i, j, i, j, wheel);
+                try {
+                    mainPanel.mouseScrolled0(i, j, i, j, wheel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             lastX = i;
             lastY = j;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     public void handleKeyboardInput() throws IOException {

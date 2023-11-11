@@ -75,7 +75,7 @@ public class FeaturePlayerESP extends SimpleFeature {
         float f = entity.prevRotationYaw + (entity.rotationYaw - entity.prevRotationYaw) * renderPlayerEvent.partialRenderTick;
         try {
             renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, renderPlayerEvent.x, renderPlayerEvent.y, renderPlayerEvent.z, f, renderPlayerEvent.partialRenderTick);
-        } catch (Throwable t) {}
+        } catch (Exception t) {}
 
         GL11.glStencilOp(GL11.GL_KEEP, GL11.GL_KEEP, GL11.GL_KEEP);
         GL11.glStencilFunc(GL11.GL_NOTEQUAL, 1, 0xff);
@@ -88,7 +88,7 @@ public class FeaturePlayerESP extends SimpleFeature {
         renderPlayerEvent.renderer.setRenderOutlines(true);
         try {
             renderPlayerEvent.renderer.doRender((AbstractClientPlayer) renderPlayerEvent.entityPlayer, 0,-0.9,0, f, renderPlayerEvent.partialRenderTick);
-        } catch (Throwable t) {}
+        } catch (Exception t) {}
 
         renderPlayerEvent.renderer.setRenderOutlines(false);
         GL11.glDepthFunc(GL11.GL_LEQUAL);
