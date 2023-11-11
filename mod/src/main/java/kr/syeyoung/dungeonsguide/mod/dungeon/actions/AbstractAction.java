@@ -62,4 +62,6 @@ public abstract class AbstractAction {
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return false;
     }
+
+    public double evalulateCost() { return 0; }
 }

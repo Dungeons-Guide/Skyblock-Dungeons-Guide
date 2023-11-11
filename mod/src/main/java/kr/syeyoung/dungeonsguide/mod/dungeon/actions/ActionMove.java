@@ -208,4 +208,12 @@ public class ActionMove extends AbstractAction {
     public String toString() {
         return "Move\n- target: "+target.toString();
     }
+
+    @Override
+    public double evalulateCost() {
+        if (poses != null) {
+            return poses.getCost();
+        }
+        return 0.0;
+    }
 }
