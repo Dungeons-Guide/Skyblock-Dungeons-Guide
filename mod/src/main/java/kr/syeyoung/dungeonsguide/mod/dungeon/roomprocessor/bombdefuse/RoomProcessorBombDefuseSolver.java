@@ -205,7 +205,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                     if (ch.getRight() != null && ch.getRight().getProcessor() != null)
                         ch.getRight().getProcessor().onDataReceive(compound);
                 }
-            } catch (Throwable t) {
+            } catch (Exception t) {
                 t.printStackTrace();
                 ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to analyze Bomb Defuse Chat"));
             }

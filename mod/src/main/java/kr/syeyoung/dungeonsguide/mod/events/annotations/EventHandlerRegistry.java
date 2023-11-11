@@ -126,8 +126,10 @@ public class EventHandlerRegistry {
                             if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
                                 target.invokeSite.invoke(event);
                             }
-                        } catch (Throwable e) {
+                        } catch (Exception e) {
                             logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
+                        } catch (Throwable t) {
+                            throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                         }
                         profiler.endSection();
                     }

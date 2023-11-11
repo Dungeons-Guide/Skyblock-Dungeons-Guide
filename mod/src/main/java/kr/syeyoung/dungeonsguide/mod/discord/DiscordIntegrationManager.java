@@ -126,7 +126,7 @@ public class DiscordIntegrationManager implements IPCListener {
             ipcClient.setListener(this);
             System.out.println("Connecting");
         } catch (NoDiscordClientException ignored) {
-        } catch (Throwable t) {
+        } catch (Exception t) {
             t.printStackTrace();
         }
     }
@@ -184,7 +184,7 @@ public class DiscordIntegrationManager implements IPCListener {
                 JDiscordRelation relation = JDiscordRelation.parse(obj);
                 relationMap.put(relation.getDiscordUser().getIdLong(), relation);
             }
-        } catch (Throwable e) {e.printStackTrace();}
+        } catch (Exception e) {e.printStackTrace();}
     }
 
     private void sendRichPresence(RichPresence presence) {
@@ -240,8 +240,8 @@ public class DiscordIntegrationManager implements IPCListener {
                 else {
                     updatePresence();
                 }
-            } catch (Throwable t) {
-                t.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace(); // let thread just die if catastrophic failure occurs.
             }
             try {
                 Thread.sleep(32);

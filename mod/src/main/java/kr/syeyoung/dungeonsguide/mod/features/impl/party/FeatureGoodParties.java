@@ -112,7 +112,7 @@ public class FeatureGoodParties extends SimpleFeature {
 
 
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
         GlStateManager.colorMask(true, true, true, true);

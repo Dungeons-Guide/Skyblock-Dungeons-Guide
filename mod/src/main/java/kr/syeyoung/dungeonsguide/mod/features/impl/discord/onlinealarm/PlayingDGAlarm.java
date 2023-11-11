@@ -47,9 +47,8 @@ public class PlayingDGAlarm extends AbstractGuiFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onTick(DGTickEvent event) {
-        try {
+        if (onlinePeopleViewer != null)
             onlinePeopleViewer.tick();
-        } catch (Throwable e) {e.printStackTrace();}
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onDiscordUserUpdate(DiscordUserUpdateEvent event) {

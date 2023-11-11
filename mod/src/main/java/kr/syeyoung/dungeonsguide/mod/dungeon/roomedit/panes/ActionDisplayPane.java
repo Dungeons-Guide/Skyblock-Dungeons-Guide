@@ -62,7 +62,7 @@ public class ActionDisplayPane extends MPanel {
                         displayPane = new ActionTreeDisplayPane(dungeonRoom, tree);
                         displayPane.setBounds(new Rectangle(0,25,getBounds().width,getBounds().height-25));
                         add(displayPane);
-                    } catch (Throwable t) {
+                    } catch (Exception t) {
                         t.printStackTrace();
                     }
                 }

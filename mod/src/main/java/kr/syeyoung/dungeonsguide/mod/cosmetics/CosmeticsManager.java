@@ -252,7 +252,7 @@ public class CosmeticsManager {
                 }
             }
             contextThreadLocal.set(total);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             System.out.println(clientChatReceivedEvent.message);
             t.printStackTrace();
         }
@@ -367,7 +367,7 @@ public class CosmeticsManager {
                             startingSearch, 0);
             }
             clientChatReceivedEvent.message = SurgicalReplacer.combine(chatComponents);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             System.out.println(clientChatReceivedEvent.message);
             t.printStackTrace();
         }
