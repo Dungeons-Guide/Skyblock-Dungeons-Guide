@@ -156,8 +156,8 @@ public class OverlayManager {
     private void keyTyped(char typedChar, int keyCode) throws IOException {
         try {
             view.keyPressed0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -165,8 +165,8 @@ public class OverlayManager {
     private void keyHeld(int keyCode, char typedChar) throws IOException {
         try {
             view.keyHeld0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -174,8 +174,8 @@ public class OverlayManager {
     private void keyReleased(int keyCode, char typedChar) throws IOException {
         try {
             view.keyReleased0(typedChar, keyCode);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -184,8 +184,8 @@ public class OverlayManager {
         try {
             return view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
         return false;
@@ -195,8 +195,8 @@ public class OverlayManager {
         try {
             view.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -205,8 +205,8 @@ public class OverlayManager {
         try {
             view.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -215,8 +215,8 @@ public class OverlayManager {
         try {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
-        } catch (Throwable e) {
-            if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+        } catch (Exception e) {
+           
                 e.printStackTrace();
         }
     }
@@ -265,7 +265,7 @@ public class OverlayManager {
                     EnumCursor newCursor = view.getCurrentCursor();
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
+                   
                         e.printStackTrace();
                 }
             }
