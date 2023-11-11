@@ -245,7 +245,6 @@ public class GuiScreenAdapter extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         if (!isOpen) return;
-        try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -270,11 +269,11 @@ public class GuiScreenAdapter extends GuiScreen {
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
             if (lastX != i || lastY != j) {
-                try {
                     EnumCursor prevCursor = view.getCurrentCursor();
                     view.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = view.getCurrentCursor();
+                try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
                    
@@ -285,13 +284,14 @@ public class GuiScreenAdapter extends GuiScreen {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                view.mouseScrolled0(i, j, i, j, wheel);
+                try {
+                    view.mouseScrolled0(i, j, i, j, wheel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             lastX = i;
             lastY = j;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     public void handleKeyboardInput() throws IOException {

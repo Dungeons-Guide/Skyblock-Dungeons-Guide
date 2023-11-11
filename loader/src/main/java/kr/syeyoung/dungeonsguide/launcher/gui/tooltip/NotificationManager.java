@@ -215,7 +215,6 @@ public class NotificationManager {
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void handleMouseInput(GuiScreenEvent.MouseInputEvent.Pre mouseInputEvent) throws IOException {
-        try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -241,11 +240,11 @@ public class NotificationManager {
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
             if (lastX != i || lastY != j) {
-                try {
                     EnumCursor prevCursor = view.getCurrentCursor();
                     view.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = view.getCurrentCursor();
+                try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
                    
@@ -256,14 +255,15 @@ public class NotificationManager {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
-                if (cancel) mouseInputEvent.setCanceled(true);
+                try {
+                    boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
+                    if (cancel) mouseInputEvent.setCanceled(true);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             lastX = i;
             lastY = j;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     @SubscribeEvent(priority = EventPriority.HIGHEST)

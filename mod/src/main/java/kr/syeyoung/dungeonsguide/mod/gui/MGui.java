@@ -175,7 +175,6 @@ public class MGui extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         if (!isOpen) return;
-        try {
             int i = Mouse.getEventX();
             int j = this.mc.displayHeight - Mouse.getEventY();
             int k = Mouse.getEventButton();
@@ -200,14 +199,13 @@ public class MGui extends GuiScreen {
                 this.mouseClickMove(i, j, this.eventButton, l);
             }
             if (lastX != i || lastY != j) {
-                try {
                     EnumCursor prevCursor = mainPanel.getCurrentCursor();
                     mainPanel.setCursor(EnumCursor.DEFAULT);
                     this.mouseMove(i, j);
                     EnumCursor newCursor = mainPanel.getCurrentCursor();
+                try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                   
                         e.printStackTrace();
                 }
             }
@@ -215,13 +213,14 @@ public class MGui extends GuiScreen {
 
             int wheel = Mouse.getEventDWheel();
             if (wheel != 0) {
-                mainPanel.mouseScrolled0(i, j, i, j, wheel);
+                try {
+                    mainPanel.mouseScrolled0(i, j, i, j, wheel);
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
             }
             lastX = i;
             lastY = j;
-        } catch (Throwable e) {
-            e.printStackTrace();
-        }
     }
 
     public void handleKeyboardInput() throws IOException {
