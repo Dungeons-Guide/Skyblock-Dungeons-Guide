@@ -35,6 +35,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
@@ -83,6 +84,7 @@ public class DungeonListener {
         try {
             Config.saveConfig();
         } catch (IOException e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
         DungeonActionContext.getSpawnLocation().clear();
@@ -173,6 +175,7 @@ public class DungeonListener {
                         MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     if (! "?".equals(e.getMessage())) {
                         e.printStackTrace();
                     }
@@ -376,6 +379,7 @@ public class DungeonListener {
                 }
             }
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }

@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.config.WidgetTextStyleConfig;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -76,6 +77,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
                 richText.setRootSpan(asd);
             }
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -84,7 +86,8 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
     public void onSkyblockExit(SkyblockLeftEvent skyblockLeftEvent) {
         try {
             checkVisibility();
-        } catch (Exception e) {}
+        } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);}
     }
 
     public static FontRenderer getFontRenderer() {

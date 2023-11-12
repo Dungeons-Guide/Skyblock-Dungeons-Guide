@@ -247,6 +247,8 @@ public class FeatureRegistry {
 
     // Misc
 
+    public static final FeatureCollectDiagnostics COLLECT_ERRORS = register(new FeatureCollectDiagnostics());
+
     // HUD
     public static final FeatureAbilityCooldown ETC_ABILITY_COOLDOWN = register(new FeatureAbilityCooldown());
     public static final FeatureCooldownCounter ETC_COOLDOWN = register(new FeatureCooldownCounter());

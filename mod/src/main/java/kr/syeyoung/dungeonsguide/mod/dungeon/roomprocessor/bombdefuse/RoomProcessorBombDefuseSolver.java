@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bombdefuse.chambers.n
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
@@ -206,6 +207,7 @@ public class RoomProcessorBombDefuseSolver extends GeneralRoomProcessor {
                         ch.getRight().getProcessor().onDataReceive(compound);
                 }
             } catch (Exception t) {
+                FeatureCollectDiagnostics.queueSendLogAsync(t);
                 t.printStackTrace();
                 ChatTransmitter.sendDebugChat(new ChatComponentText("Failed to analyze Bomb Defuse Chat"));
             }

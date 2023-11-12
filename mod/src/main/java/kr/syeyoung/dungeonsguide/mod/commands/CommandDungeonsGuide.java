@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfi
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.HoverEventRenderPlayer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
@@ -216,6 +217,7 @@ public class CommandDungeonsGuide extends CommandBase {
                 target = null;
             }
         } catch (Exception t) {
+            FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
     }
@@ -272,6 +274,7 @@ public class CommandDungeonsGuide extends CommandBase {
                                 )))));
                     });
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -299,6 +302,7 @@ public class CommandDungeonsGuide extends CommandBase {
                             .put("payload", actualPayload).toString()
             ));
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
 

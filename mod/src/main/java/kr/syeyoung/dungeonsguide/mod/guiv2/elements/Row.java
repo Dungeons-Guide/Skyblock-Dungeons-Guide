@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -206,7 +207,8 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
             if (circuitBreaker > 1000) {
                 try {
                     throw new RuntimeException("Caught in infinite loop welp");
-                } catch (Exception e) { e.printStackTrace(); }
+                } catch (Exception e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);e.printStackTrace(); }
                 break;
             }
             prevHeight = startingHeight;

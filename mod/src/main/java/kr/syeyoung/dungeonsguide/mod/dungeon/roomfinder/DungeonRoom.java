@@ -42,6 +42,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindStrategy;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
@@ -222,8 +223,10 @@ public class DungeonRoom {
                 matchRoomAndSetupRoomProcessor();
                 matched = true;
             } catch (Exception e) {
-                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded"))
+                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
+                }
             } finally {
                 matching = false;
             }

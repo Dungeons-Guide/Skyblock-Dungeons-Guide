@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.gui;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MRootPanel;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
@@ -82,6 +83,7 @@ public class MGui extends GuiScreen {
             mainPanel.keyPressed0(typedChar, keyCode);
             super.keyTyped(typedChar, keyCode);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
            
                 e.printStackTrace();
         }
@@ -91,7 +93,8 @@ public class MGui extends GuiScreen {
         try {
             mainPanel.keyHeld0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -100,7 +103,8 @@ public class MGui extends GuiScreen {
         try {
             mainPanel.keyReleased0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -112,7 +116,8 @@ public class MGui extends GuiScreen {
             mainPanel.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -137,7 +142,8 @@ public class MGui extends GuiScreen {
             mainPanel.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -148,7 +154,8 @@ public class MGui extends GuiScreen {
             mainPanel.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -158,6 +165,7 @@ public class MGui extends GuiScreen {
             mainPanel.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
            
                 e.printStackTrace();
         }
@@ -216,6 +224,7 @@ public class MGui extends GuiScreen {
                 try {
                     mainPanel.mouseScrolled0(i, j, i, j, wheel);
                 } catch (Exception e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
             }

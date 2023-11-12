@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureTestPeople;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -138,6 +139,7 @@ public class PartyManager {
                         try {
                             partyContextConsumer.accept(null);
                         } catch (Exception e) {
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
                             e.printStackTrace();
                         }
                     }
@@ -218,6 +220,7 @@ public class PartyManager {
                             try {
                                 partyContextConsumer.accept(partyContext);
                             } catch (Exception e) {
+                                FeatureCollectDiagnostics.queueSendLogAsync(e);
                                 e.printStackTrace();
                             }
                         }

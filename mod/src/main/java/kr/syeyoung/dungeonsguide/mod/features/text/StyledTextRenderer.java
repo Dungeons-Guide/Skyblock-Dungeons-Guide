@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.text;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -74,6 +75,7 @@ public class StyledTextRenderer {
                     d = drawFragmentText(fr, str, ts, currX, currY, false);
                     Minecraft.getMinecraft().mcProfiler.endSection();
                 } catch (InvocationTargetException | IllegalAccessException e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
                 associateds.add(new StyleTextAssociated(st, new Rectangle(currX, currY, d.width, d.height)));
@@ -113,6 +115,7 @@ public class StyledTextRenderer {
                 try {
                     d = drawFragmentText(fr, str, ts, currX, currY, true);
                 } catch (InvocationTargetException | IllegalAccessException e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
                 associateds.add(new StyleTextAssociated(st, new Rectangle(currX, currY, d.width, d.height)));
