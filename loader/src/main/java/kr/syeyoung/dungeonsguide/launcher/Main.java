@@ -23,6 +23,8 @@ import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.exceptions.*;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetError;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicy;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.WidgetPrivacyPolicyLocal;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.version.WidgetChooseVersion;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.Notification;
 import kr.syeyoung.dungeonsguide.launcher.gui.tooltip.NotificationManager;
@@ -332,6 +334,15 @@ public class Main
             if (dgInterface != null) dgInterface.onResourceReload(a);
             DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         });
+//        UUID uid = UUID.randomUUID();
+//        NotificationManager.getInstance().updateNotification(uid, new WidgetNotification(uid, Notification.builder()
+//                .title("Privacy Policy")
+//                .description("Please accept Dungeons Guide\nPrivacy Policy to enjoy server based\nfeatures of Dungeons Guide\n\n(Including Auto-Update/Remote-Jar)")
+//                .titleColor(0xFFFF0000)
+//                .onClick(() -> {
+//                    GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetPrivacyPolicyLocal())));
+//                })
+//                .build()));
     }
 
     public static Main getMain() {
