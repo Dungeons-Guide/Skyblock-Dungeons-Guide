@@ -20,12 +20,14 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
 import java.io.PrintStream;
 import java.io.PrintWriter;
@@ -35,14 +37,16 @@ import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
 import java.nio.charset.StandardCharsets;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class FeatureCollectDiagnostics extends SimpleFeature {
-
+    private final Map<String, Long> lastSent = new HashMap<>();
     public FeatureCollectDiagnostics() {
-        super("Misc", "Collect Error Logs", "Enable to allow sending mod errors to developers server\n\nThis option sends Stacktraces to developers server", "misc.diagnostics_logcollection", true);
+        super("Misc", "Collect Error Logs", "Enable to allow sending mod errors to developers server\n\nThis option sends Stacktraces to developers server\n\nDisable to opt out of it", "misc.diagnostics_logcollection", true);
     }
 
     public static final Executor executorService = Executors
@@ -54,7 +58,7 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         executorService.execute(() -> {
             try {
                 FeatureRegistry.COLLECT_ERRORS.sendLogActually(t);
-            } catch (Exception ignored) {}
+            } catch (Exception ignored) {ignored.printStackTrace();}
         });
     }
 
@@ -69,11 +73,18 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
 
         String trace = sw.toString();
 
-        HttpURLConnection urlConnection = (HttpURLConnection) new URL("http://localhost:8080/report").openConnection();
+        if (lastSent.getOrDefault(trace, 0L) + 60*1000 > System.currentTimeMillis()) { // don't send same thing for 1m
+            return;
+        }
+        lastSent.put(trace, System.currentTimeMillis());
+
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN+"/logging/stacktrace").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setDoOutput(true);
+        urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
         urlConnection.setRequestProperty("Authorization", "Bearer "+token);
         urlConnection.getOutputStream().write(trace.getBytes(StandardCharsets.UTF_8));
+        urlConnection.getResponseCode(); // make sure to send req actually
     }
 
 
