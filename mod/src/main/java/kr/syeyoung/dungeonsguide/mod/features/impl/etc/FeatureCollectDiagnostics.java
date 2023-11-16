@@ -20,13 +20,26 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
+import kr.syeyoung.dungeonsguide.mod.WidgetUpdateLog;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.gui.ScaledResolution;
+import net.minecraft.util.ResourceLocation;
 import org.apache.commons.io.IOUtils;
 
 import javax.net.ssl.HttpsURLConnection;
@@ -48,7 +61,41 @@ import java.util.concurrent.Executors;
 public class FeatureCollectDiagnostics extends SimpleFeature {
     private final Map<String, Long> lastSent = new HashMap<>();
     public FeatureCollectDiagnostics() {
-        super("Misc", "Collect Error Logs", "Enable to allow sending mod errors to developers server\n\nThis option sends Stacktraces to developers server\n\nDisable to opt out of it", "misc.diagnostics_logcollection", true);
+        super("Misc", "Collect Error Logs", "Enable to allow sending mod errors to developers server\n\nThis option sends Stacktraces to developers server\n\nDisable to opt out of it", "misc.diagnostics_logcollection", false);
+        addParameter("prompted", new FeatureParameter<Boolean>("prompted", "Was this prompted?", "Did this feature prompt for user apporval yet?", false, TCBoolean.INSTANCE));
+    }
+
+    public class WidgetUserApproval extends AnnotatedImportOnlyWidget {
+        public WidgetUserApproval() {
+            super(new ResourceLocation("dungeonsguide:gui/collect_diagnostic_approval.gui"));
+        }
+
+        @On(functionName = "approve")
+        public void onApprove() {
+            FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
+            FeatureCollectDiagnostics.this.setEnabled(true);
+            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        }
+
+        @On(functionName = "deny")
+        public void onDeny() {
+            FeatureCollectDiagnostics.this.<Boolean>getParameter("prompted").setValue(true);
+            FeatureCollectDiagnostics.this.setEnabled(false);
+            Minecraft.getMinecraft().displayGuiScreen(null);
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        }
+    }
+
+    @Override
+    public void loadConfig(JsonObject jsonObject) {
+        super.loadConfig(jsonObject);
+
+        Scaler scaler = new Scaler();
+        scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+        scaler.child.setValue(new WidgetUserApproval());
+        GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
+
     }
 
     public static final Executor executorService = Executors
