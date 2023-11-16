@@ -161,7 +161,7 @@ public class GuiScreenAdapter extends GuiScreen {
             view.keyPressed0(typedChar, keyCode);
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
-           
+
                 e.printStackTrace();
         }
     }
@@ -290,7 +290,7 @@ public class GuiScreenAdapter extends GuiScreen {
                 try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                   
+                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                         e.printStackTrace();
                 }
             }
