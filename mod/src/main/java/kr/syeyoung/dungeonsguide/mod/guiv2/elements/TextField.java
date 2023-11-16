@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -304,8 +305,10 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
                         cursor += theText.toString().length();
                     } catch (UnsupportedFlavorException e) {
+                        FeatureCollectDiagnostics.queueSendLogAsync(e);
                         e.printStackTrace();
                     } catch (IOException e) {
+                        FeatureCollectDiagnostics.queueSendLogAsync(e);
                         e.printStackTrace();
                     }
                 }

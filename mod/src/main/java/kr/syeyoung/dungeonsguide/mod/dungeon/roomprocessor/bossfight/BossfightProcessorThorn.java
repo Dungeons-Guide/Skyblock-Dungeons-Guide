@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.entity.boss.BossStatus;
@@ -99,6 +100,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
                             new Color(0, 255, 0, 50) : new Color(255,0,0, 50), partialTicks, false);
             }
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }

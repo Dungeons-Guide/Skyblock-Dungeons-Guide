@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -113,6 +114,7 @@ public class FeatureGoodParties extends SimpleFeature {
 
             }
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
         GlStateManager.colorMask(true, true, true, true);

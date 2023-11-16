@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.events.annotations;
 
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.features.IFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -127,8 +128,10 @@ public class EventHandlerRegistry {
                                 target.invokeSite.invoke(event);
                             }
                         } catch (Exception e) {
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
                             logger.error("An error occurred while handling event: \nFeature = " + target.getFeature().getClass().getName(), e);
                         } catch (Throwable t) {
+                            FeatureCollectDiagnostics.queueSendLogAsync(t);
                             throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                         }
                         profiler.endSection();

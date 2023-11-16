@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticsManager;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -178,6 +179,7 @@ public class PrefixSelectorGUI extends MPanel {
                         selected = value;
                     }
                 } catch (Exception e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
 

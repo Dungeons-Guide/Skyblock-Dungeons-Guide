@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
@@ -93,6 +94,7 @@ public class OverlayManager {
                     Minecraft.getMinecraft().displayHeight
             ));
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -105,6 +107,7 @@ public class OverlayManager {
             view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
             drawScreen(postRender.partialTicks);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -118,6 +121,7 @@ public class OverlayManager {
                 view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_ANY);
             drawScreen(postRender.renderPartialTicks);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -157,7 +161,8 @@ public class OverlayManager {
         try {
             view.keyPressed0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -166,7 +171,8 @@ public class OverlayManager {
         try {
             view.keyHeld0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -175,7 +181,8 @@ public class OverlayManager {
         try {
             view.keyReleased0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -185,7 +192,8 @@ public class OverlayManager {
             return view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
         return false;
@@ -196,6 +204,7 @@ public class OverlayManager {
             view.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
            
                 e.printStackTrace();
         }
@@ -206,6 +215,7 @@ public class OverlayManager {
             view.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
            
                 e.printStackTrace();
         }
@@ -216,7 +226,8 @@ public class OverlayManager {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -276,6 +287,7 @@ public class OverlayManager {
                     boolean cancel = view.mouseScrolled0(i, j, i, j, wheel);
                     if (cancel) mouseInputEvent.setCanceled(true);
                 } catch (Exception e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
             }

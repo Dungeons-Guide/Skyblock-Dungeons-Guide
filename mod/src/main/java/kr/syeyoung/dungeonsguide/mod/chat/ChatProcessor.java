@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.chat;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiNewChat;
 import net.minecraft.util.ChatComponentText;
@@ -81,6 +82,7 @@ public class ChatProcessor {
 
             }
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -108,6 +110,7 @@ public class ChatProcessor {
                 if (chatProcessResult.isRemoveChat()) chatReceivedEvent.setResult(Event.Result.DENY);
                 if (chatProcessResult.isRemoveListener()) it.remove();
             } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
             }
         }

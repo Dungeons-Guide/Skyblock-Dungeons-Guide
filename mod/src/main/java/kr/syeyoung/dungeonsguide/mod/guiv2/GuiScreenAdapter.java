@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.guiv2;
 
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
@@ -39,6 +40,7 @@ import java.io.IOException;
 import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.GL_GREATER;
+import static org.lwjgl.opengl.GL11.glCallList;
 
 public class GuiScreenAdapter extends GuiScreen {
 
@@ -49,11 +51,16 @@ public class GuiScreenAdapter extends GuiScreen {
     private Stack<RootDom> domStack = new Stack<>();
 
     private GuiScreen parent;
+    private boolean allowEsc;
     public GuiScreenAdapter(Widget widget) {
-        this(widget, null);
+        this(widget, null, true);
     }
     public GuiScreenAdapter(Widget widget, GuiScreen parent) {
+        this(widget, parent, true);
+    }
+    public GuiScreenAdapter(Widget widget, GuiScreen parent, boolean allowEsc) {
         this.parent = parent;
+        this.allowEsc = allowEsc;
         view = new RootDom(widget);
         view.getContext().CONTEXT.put("screenAdapter", this);
 
@@ -97,6 +104,7 @@ public class GuiScreenAdapter extends GuiScreen {
             ));
             view.setMounted(true);
         }catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
@@ -134,13 +142,14 @@ public class GuiScreenAdapter extends GuiScreen {
             GlStateManager.enableDepth();
             GL11.glDisable(GL11.GL_SCISSOR_TEST);
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
-        if (keyCode == 1) {
+        if (keyCode == 1 && allowEsc) {
             this.mc.displayGuiScreen((GuiScreen)parent);
             if (this.mc.currentScreen == null) {
                 this.mc.setIngameFocus();
@@ -150,9 +159,9 @@ public class GuiScreenAdapter extends GuiScreen {
 
         try {
             view.keyPressed0(typedChar, keyCode);
-            super.keyTyped(typedChar, keyCode);
         } catch (Exception e) {
-           
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
+
                 e.printStackTrace();
         }
     }
@@ -161,7 +170,8 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.keyHeld0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -170,7 +180,8 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.keyReleased0(typedChar, keyCode);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -182,7 +193,8 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -207,7 +219,7 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
         } catch (Exception e) {
-           
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -218,7 +230,8 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -228,7 +241,8 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
         } catch (Exception e) {
-           
+
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
         }
     }
@@ -276,7 +290,7 @@ public class GuiScreenAdapter extends GuiScreen {
                 try {
                     if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
                 } catch (Throwable e) {
-                   
+                    if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                         e.printStackTrace();
                 }
             }
@@ -287,6 +301,7 @@ public class GuiScreenAdapter extends GuiScreen {
                 try {
                     view.mouseScrolled0(i, j, i, j, wheel);
                 } catch (Exception e) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
                     e.printStackTrace();
                 }
             }
