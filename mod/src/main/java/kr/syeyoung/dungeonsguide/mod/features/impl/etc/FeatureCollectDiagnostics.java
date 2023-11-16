@@ -24,8 +24,10 @@ import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import org.apache.commons.io.IOUtils;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.io.IOException;
@@ -81,10 +83,14 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
         HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN+"/logging/stacktrace").openConnection();
         urlConnection.setRequestMethod("POST");
         urlConnection.setDoOutput(true);
+        urlConnection.setDoInput(true);
         urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
+        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
+        urlConnection.setConnectTimeout(10000);
+        urlConnection.setReadTimeout(10000);
         urlConnection.setRequestProperty("Authorization", "Bearer "+token);
         urlConnection.getOutputStream().write(trace.getBytes(StandardCharsets.UTF_8));
-        urlConnection.getResponseCode(); // make sure to send req actually
+        int code = urlConnection.getResponseCode(); // make sure to send req actually
     }
 
 
