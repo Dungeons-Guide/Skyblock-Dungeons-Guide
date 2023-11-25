@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import kr.syeyoung.dungeonsguide.mod.utils.PartyFinderParty;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -244,46 +245,27 @@ public class PanelPartyFinderSettings extends MPanelScaledGUI {
     }
 
     public boolean filter(ItemStack itemStack) {
-        NBTTagCompound stackTagCompound = itemStack.getTagCompound();
-        String note = "";
-        int dLV = 0;
+        PartyFinderParty party = PartyFinderParty.fromItemStack(itemStack);
+        
         Set<String> invalidClasses = new HashSet<>();
         for (String s : blacklistClassTxt.getText().split(",")) {
-            invalidClasses.add(s.toLowerCase());
+            invalidClasses.add(s.toLowerCase().trim());
         }
-        if (stackTagCompound.hasKey("display", 10)) {
-            NBTTagCompound nbttagcompound = stackTagCompound.getCompoundTag("display");
-
-            if (nbttagcompound.getTagId("Lore") == 9) {
-                NBTTagList nbttaglist1 = nbttagcompound.getTagList("Lore", 8);
-
-                for (int i = 0; i < nbttaglist1.tagCount(); i++) {
-                    String str = nbttaglist1.getStringTagAt(i);
-                    if (str.startsWith("§cRequires ") && filterCantjoinButton.isEnabled()) return false;
-                    if (str.startsWith("§7§7Note:")) {
-                        note = str.substring(12);
-                    }
-                    if (str.startsWith("§7Dungeon Level Required: §b")) {
-                        dLV =  Integer.parseInt(str.substring(28));
-                    }
-                    if (str.startsWith(" ") && str.contains(":")) {
-                        String clazz = TextUtils.stripColor(str).trim().split(" ")[1];
-                        if (invalidClasses.contains(clazz.toLowerCase())) return false;
-                    }
-                }
-            }
+        for(String badClass : invalidClasses) {
+            if(party.classes.contains(badClass))return false;
         }
-        if (integerSelection.getData() >dLV) return false;
+        if (!party.canJoin && filterCantjoinButton.isEnabled()) return false;
+        if (integerSelection.getData() > party.requiredDungeonLevel) return false;
 
         if (!filterBlacklist.getText().isEmpty()) {
             for (String s1 : filterBlacklist.getText().split(",")) {
-                if (note.toLowerCase().contains(s1.toLowerCase())) return false;
+                if (party.note.toLowerCase().contains(s1.toLowerCase())) return false;
             }
         }
         if (!filterWhitelist.getText().isEmpty()) {
             boolean s = false;
             for (String s1 : filterWhitelist.getText().split(",")) {
-                if (note.toLowerCase().contains(s1.toLowerCase())) {
+                if (party.note.toLowerCase().contains(s1.toLowerCase())) {
                     s = true; break;
                 }
             }
