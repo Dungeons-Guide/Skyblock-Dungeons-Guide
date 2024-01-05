@@ -19,12 +19,17 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.gui.MGui;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.network.play.client.C0DPacketCloseWindow;
+import net.minecraft.network.play.server.S2EPacketCloseWindow;
 
 import java.awt.*;
+import java.io.IOException;
 
 public class GuiCustomPartyFinder extends MGui {
     @Getter
@@ -65,6 +70,24 @@ public class GuiCustomPartyFinder extends MGui {
         super.drawScreen(mouseX, mouseY, partialTicks);
 
     }
+
+
+    @Override
+    public void keyTyped(char typedChar, int keyCode) throws IOException {
+        try {
+            this.getMainPanel().keyPressed0(typedChar, keyCode);
+
+            if (keyCode == 1) {
+                this.mc.thePlayer.closeScreen();
+            }
+
+        } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
+
+            e.printStackTrace();
+        }
+    }
+
 
     @Override
     public void onGuiClosed() {
