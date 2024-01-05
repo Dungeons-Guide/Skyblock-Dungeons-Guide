@@ -90,12 +90,12 @@ public class FeatureCollectDiagnostics extends SimpleFeature {
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
-
-        Scaler scaler = new Scaler();
-        scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
-        scaler.child.setValue(new WidgetUserApproval());
-        GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
-
+        if (!this.<Boolean>getParameter("prompted").getValue()) {
+            Scaler scaler = new Scaler();
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.child.setValue(new WidgetUserApproval());
+            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(scaler, null, false));
+        }
     }
 
     public static final Executor executorService = Executors
