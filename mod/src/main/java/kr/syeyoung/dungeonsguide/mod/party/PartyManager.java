@@ -41,6 +41,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
@@ -106,7 +108,7 @@ public class PartyManager {
 
     public PartyManager() {
         try {
-            JSONObject jsonObject = new JSONObject(IOUtils.toString(Objects.requireNonNull(DungeonsGuide.class.getResourceAsStream("/party_languages.json"))));
+            JSONObject jsonObject = new JSONObject(IOUtils.toString(Objects.requireNonNull(DungeonsGuide.class.getResourceAsStream("/party_languages.json")), StandardCharsets.UTF_8));
             NOT_IN_PARTY = createMatcher(jsonObject, "not_in_party");
             PARTY_CHANNEL = createMatcher(jsonObject, "party_channel");
             ALL_INVITE_ON = createMatcher(jsonObject, "all_invite_on");
