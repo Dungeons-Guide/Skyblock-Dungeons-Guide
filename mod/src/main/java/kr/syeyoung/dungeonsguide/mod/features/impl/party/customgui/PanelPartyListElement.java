@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MTooltip;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MTooltipText;
+import kr.syeyoung.dungeonsguide.mod.utils.PartyFinderParty;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
@@ -76,44 +77,15 @@ public class PanelPartyListElement extends MPanel {
             itemStack = lastStack;
         int color = RenderUtils.blendAlpha(0x141414, 0.0f);
 
-        String note = "";
+        PartyFinderParty party = PartyFinderParty.fromItemStack(itemStack);
+        String note = party.note;
         boolean notFound = false;
-        boolean cantJoin = false;
+        boolean cantJoin = !party.canJoin;
         if (itemStack.getItem() == Item.getItemFromBlock(Blocks.bedrock)) {
             cantJoin = true;
             notFound = true;
         }
-        int minClass = -1, minDungeon = -1;
-        int pplIn = 0;
-        Set<String> dungeonClasses = new HashSet<>();
-        {
-            NBTTagCompound stackTagCompound = itemStack.getTagCompound();
-            if (stackTagCompound.hasKey("display", 10)) {
-                NBTTagCompound nbtTagCompound = stackTagCompound.getCompoundTag("display");
-
-                if (nbtTagCompound.getTagId("Lore") == 9) {
-                    NBTTagList nbtTagList1 = nbtTagCompound.getTagList("Lore", 8);
-
-                    for (int i = 0; i < nbtTagList1.tagCount(); i++) {
-                        String str = nbtTagList1.getStringTagAt(i);
-                        if (str.startsWith("§7§7Note:")) {
-                            note = str.substring(12);
-                        } else if (str.startsWith("§7Class Level Required: §b")) {
-                            minClass = Integer.parseInt(str.substring(26));
-                        } else if (str.startsWith("§7Dungeon Level Required: §b")) {
-                            minDungeon = Integer.parseInt(str.substring(28));
-                        } else if (str.startsWith("§cRequires ")) cantJoin = true;
-                        if (str.endsWith("§b)")) pplIn ++;
-
-                        if (str.startsWith(" ") && str.contains(":")) {
-                            String clazz = TextUtils.stripColor(str).trim().split(" ")[1];
-                            dungeonClasses.add(clazz);
-                        }
-                    }
-                }
-            }
-        }
-
+        int minClass = party.requiredClassLevel, minDungeon = party.requiredDungeonLevel;
         boolean nodupe = note.toLowerCase().contains("nodupe") || note.toLowerCase().contains("no dupe") || (note.toLowerCase().contains("nd") && (note.toLowerCase().indexOf("nd") == 0 || note.charAt(note.toLowerCase().indexOf("nd")-1) == ' '));
 
         note = note.replaceAll("(?i)(S\\+)", "§6$1§r");
@@ -140,7 +112,7 @@ public class PanelPartyListElement extends MPanel {
             color = RenderUtils.blendTwoColors(color, 0x44FFAA00);
         }
 
-        if (nodupe && dungeonClasses.contains(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass())) {
+        if (nodupe && party.classes.contains(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass())) {
             color = RenderUtils.blendTwoColors(color, 0x44FF0000);
             note = note.replace("nodupe", "§cnodupe§r").replace("no dupe", "§cno dupe§r").replace("nd", "§cnd§r");
         }
@@ -165,13 +137,13 @@ public class PanelPartyListElement extends MPanel {
         fr.drawString(name, 0,0,-1);
 
         if (!notFound)
-            note = "§7("+pplIn+") §f"+note;
+            note = "§7("+party.classes.size()+") §f"+note;
         fr.drawString(note, fr.getStringWidth("AAAAAAAAAAAAAAAA")+5, 0,-1);
         GlStateManager.popMatrix();
         GlStateManager.pushMatrix();
         String sideNote = "";
-        if (minClass != -1) sideNote += "§7CLv ≥§b"+minClass+" ";
-        if (minDungeon != -1) sideNote += "§7DLv ≥§b"+minDungeon+" ";
+        if (minClass > 0) sideNote += "§7CLv ≥§b"+minClass+" ";
+        if (minDungeon > 0) sideNote += "§7DLv ≥§b"+minDungeon+" ";
         if (cantJoin && !notFound) sideNote = "§cCan't join";
         sideNote = sideNote.trim();
 
@@ -197,7 +169,7 @@ public class PanelPartyListElement extends MPanel {
             mTooltip.open(this);
         } else if (!lastAbsClip.contains(absMousex, absMousey)){
             if (mTooltip != null)
-            mTooltip.close();
+                mTooltip.close();
             mTooltip = null;
         }
     }

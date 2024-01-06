@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
@@ -84,6 +85,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                     solution.add(poses);
                 }).start();
             } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();
             }
         }

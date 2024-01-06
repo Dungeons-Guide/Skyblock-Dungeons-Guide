@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -47,6 +48,7 @@ public class DungeonFacade {
             DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
         } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |
                  IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
     }

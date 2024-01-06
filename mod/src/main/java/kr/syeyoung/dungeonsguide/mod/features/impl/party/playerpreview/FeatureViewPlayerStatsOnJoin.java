@@ -172,7 +172,7 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                 int x = guiChatBox.getX(scaledResolution);
                 int y = guiChatBox.getY(scaledResolution);
                 ichatcomponent = guiChatBox.chatArray.getHoveredComponent(guiChatBox.getSelectedTab().getChatLines(), Mouse.getX(), Mouse.getY(), x, y);
-            } catch (Throwable t) {
+            } catch (Exception t) {
             }
         }
         if (ichatcomponent == null) {

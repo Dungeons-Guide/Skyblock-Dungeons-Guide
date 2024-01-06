@@ -56,9 +56,8 @@ public class PartyInviteViewer extends AbstractGuiFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onTick(DGTickEvent tickEvent) {
-        try {
+        if (partyInviteViewer != null)
             partyInviteViewer.tick();
-        } catch (Throwable e) {e.printStackTrace();}
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true)

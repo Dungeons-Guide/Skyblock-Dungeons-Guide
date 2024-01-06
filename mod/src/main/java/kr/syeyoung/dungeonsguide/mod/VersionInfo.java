@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.launcher.branch.UpdateBranch;
 import kr.syeyoung.dungeonsguide.launcher.branch.UpdateRetrieverUtil;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.launcher.loader.*;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
@@ -53,6 +54,7 @@ public class VersionInfo {
             VERSION1 = properties.getProperty("VERSION");
             MANDATORY_VERSION1 = Integer.parseInt(properties.getProperty("MANDATORY_VERSION", "0"));
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             VERSION1 = "unknown";
             MANDATORY_VERSION1 = 0;
             e.printStackTrace();
@@ -133,6 +135,7 @@ public class VersionInfo {
                 logger.error("Failed to check version: Unknown Loader: " + VersionInfo.getLoaderInfo() + " / " + VersionInfo.getCurrentLoader().getClass().getName());
             }
         } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             logger.error("Error while checking for updates: ",e);
         }
     }

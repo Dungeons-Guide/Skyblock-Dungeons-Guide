@@ -22,6 +22,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party;
 
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.utils.PartyFinderParty;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -73,22 +75,12 @@ public class FeatureGoodParties extends SimpleFeature {
                 if (nbt == null || nbt.hasNoTags()) continue;
                 NBTTagCompound display = nbt.getCompoundTag("display");
                 if (display.hasNoTags()) return;
-                NBTTagList lore = display.getTagList("Lore", 8);
-                int classLvReq = 0;
-                int cataLvReq = 0;
-                boolean Req = false;
-                String note = "";
-                for (int n = 0; n < lore.tagCount(); n++) {
-                    String str = lore.getStringTagAt(n);
-                    if (str.startsWith("§7Dungeon Level Required: §b")) cataLvReq = Integer.parseInt(str.substring(28));
-                    if (str.startsWith("§7Class Level Required: §b")) classLvReq = Integer.parseInt(str.substring(26));
-                    if (str.startsWith("§7§7Note:")) note = TextUtils.stripColor(str.substring(10));
-                    if (str.startsWith("§cRequires")) Req = true;
-                }
+
+                PartyFinderParty party = PartyFinderParty.fromItemStack(s.getStack());
 
                 int x = s.xDisplayPosition;
                 int y = s.yDisplayPosition;
-                if (Req) {
+                if (!party.canJoin) {
                     Gui.drawRect(x, y, x + 16, y + 16, 0x77AA0000);
                 } else {
 
@@ -96,23 +88,24 @@ public class FeatureGoodParties extends SimpleFeature {
                     GlStateManager.enableBlend();
                     GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
                     GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
-                    if (note.toLowerCase().contains("car")) {
+                    if (party.note.toLowerCase().contains("car")) {
                         fr.drawStringWithShadow("C", x + 1, y + 1, 0xFFFF0000);
-                    } else if (note.toLowerCase().replace(" ", "").contains("s/s+")) {
+                    } else if (party.note.toLowerCase().replace(" ", "").contains("s/s+")) {
                         fr.drawStringWithShadow("S+", x + 1, y + 1, 0xFFFFFF00);
-                    } else if (note.toLowerCase().contains("s+")) {
+                    } else if (party.note.toLowerCase().contains("s+")) {
                         fr.drawStringWithShadow("S+", x + 1, y + 1, 0xFF00FF00);
-                    } else if (note.toLowerCase().contains(" s") || note.toLowerCase().contains(" s ")) {
+                    } else if (party.note.toLowerCase().contains(" s") || party.note.toLowerCase().contains(" s ")) {
                         fr.drawStringWithShadow("S", x + 1, y + 1, 0xFFFFFF00);
-                    } else if (note.toLowerCase().contains("rush")) {
+                    } else if (party.note.toLowerCase().contains("rush")) {
                         fr.drawStringWithShadow("R", x + 1, y + 1, 0xFFFF0000);
                     }
-                    fr.drawStringWithShadow("§e"+Integer.max(classLvReq, cataLvReq), x + 1, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
+                    fr.drawStringWithShadow("§e"+Integer.max(party.requiredClassLevel, party.requiredDungeonLevel), x + 1, y + fr.FONT_HEIGHT, 0xFFFFFFFF);
                 }
 
 
             }
-        } catch (Throwable e) {
+        } catch (Exception e) {
+            FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
         GlStateManager.colorMask(true, true, true, true);

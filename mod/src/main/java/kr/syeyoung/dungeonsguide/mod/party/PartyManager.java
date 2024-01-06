@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureTestPeople;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -40,6 +41,8 @@ import org.json.JSONArray;
 import org.json.JSONObject;
 
 import java.io.IOException;
+import java.nio.charset.Charset;
+import java.nio.charset.StandardCharsets;
 import java.security.SecureRandom;
 import java.util.*;
 import java.util.function.Consumer;
@@ -105,7 +108,7 @@ public class PartyManager {
 
     public PartyManager() {
         try {
-            JSONObject jsonObject = new JSONObject(IOUtils.toString(Objects.requireNonNull(DungeonsGuide.class.getResourceAsStream("/party_languages.json"))));
+            JSONObject jsonObject = new JSONObject(IOUtils.toString(Objects.requireNonNull(DungeonsGuide.class.getResourceAsStream("/party_languages.json")), StandardCharsets.UTF_8));
             NOT_IN_PARTY = createMatcher(jsonObject, "not_in_party");
             PARTY_CHANNEL = createMatcher(jsonObject, "party_channel");
             ALL_INVITE_ON = createMatcher(jsonObject, "all_invite_on");
@@ -138,6 +141,7 @@ public class PartyManager {
                         try {
                             partyContextConsumer.accept(null);
                         } catch (Exception e) {
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
                             e.printStackTrace();
                         }
                     }
@@ -218,6 +222,7 @@ public class PartyManager {
                             try {
                                 partyContextConsumer.accept(partyContext);
                             } catch (Exception e) {
+                                FeatureCollectDiagnostics.queueSendLogAsync(e);
                                 e.printStackTrace();
                             }
                         }

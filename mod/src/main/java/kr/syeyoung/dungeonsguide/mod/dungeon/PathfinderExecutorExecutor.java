@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import scala.reflect.internal.util.WeakHashSet;
@@ -71,6 +72,7 @@ public class PathfinderExecutorExecutor extends Thread{
                         }
 //                    Thread.yield();
                     } catch (Exception e) {
+                        FeatureCollectDiagnostics.queueSendLogAsync(e);
                         e.printStackTrace(); // wtf?
                         try {
                             Thread.sleep(1000);

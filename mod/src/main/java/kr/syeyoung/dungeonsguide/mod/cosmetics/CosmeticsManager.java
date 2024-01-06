@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -166,7 +167,9 @@ public class CosmeticsManager {
                     EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(activeCosmetic.getPlayerUID());
                     if (entityPlayer != null) entityPlayer.refreshDisplayName();
                 }
-            } catch (Exception exception) {exception.printStackTrace();}
+            } catch (Exception exception) {
+                FeatureCollectDiagnostics.queueSendLogAsync(exception);
+                exception.printStackTrace();}
         });
 
 
@@ -199,7 +202,8 @@ public class CosmeticsManager {
                         EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(cosmeticData.getPlayerUID());
                         if (entityPlayer != null) entityPlayer.refreshDisplayName();
                     }
-                } catch (Exception exception) {exception.printStackTrace();}
+                } catch (Exception exception) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(exception);exception.printStackTrace();}
             }
             rebuildCaches();
         });
@@ -252,8 +256,9 @@ public class CosmeticsManager {
                 }
             }
             contextThreadLocal.set(total);
-        } catch (Throwable t) {
+        } catch (Exception t) {
             System.out.println(clientChatReceivedEvent.message);
+            FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
     }
@@ -367,7 +372,8 @@ public class CosmeticsManager {
                             startingSearch, 0);
             }
             clientChatReceivedEvent.message = SurgicalReplacer.combine(chatComponents);
-        } catch (Throwable t) {
+        } catch (Exception t) {
+            FeatureCollectDiagnostics.queueSendLogAsync(t);
             System.out.println(clientChatReceivedEvent.message);
             t.printStackTrace();
         }

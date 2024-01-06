@@ -1,0 +1,43 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="10" top="10" right="10" bottom="10">
+    <col crossAlign="STRETCH">
+        <PolicyVersion version="2" bind:policyVersion="policyVersion"/>
+        <Text text="Dungeons Guide Privacy Policy" size="16" align="CENTER"/>
+        <size width="0" height="5"/>
+        <Text text="Last updated 12, Nov, 2023" align="RIGHT"/>
+        <size width="0" height="10"/>
+        <Text text="Privacy Policy Summary" size="16" align="LEFT"/>
+        <size width="0" height="10"/>
+        <Text text="§lWhat data we collect" size="12" align="LEFT"/>
+        <size width="0" height="10"/>
+        <Text text="Dungeons Guide collects the following information from users who accept our Privacy Policy and Terms of Service through their continued use of the platform, products, and services:" size="8" align="LEFT"/>
+        <size width="0" height="5"/>
+        <Text text="- Minecraft username and UUID" size="8" align="LEFT"/>
+        <Text text="- users' Hypixel party members" size="8" align="LEFT"/>
+        <Text text="- The time users last contacted Dungeons Guide backend" size="8" align="LEFT"/>
+        <Text text="- Dungeon Scores users get (This is anonymized, and it is to reverse engineer the time score formula)" size="8" align="LEFT"/>
+        <Text text="- Dungeons Guide Error Stacktraces (This is anonymized, Opt out at /dg -> Misc -> Collect Error Logs) Only Applicable to users using 4.0.0-beta8.4 or later." size="8" align="LEFT"/>
+        <size width="0" height="20"/>
+        <Text text="Privacy Policy" size="16" align="LEFT"/>
+        <Text text="There still isn't anything here currently" align="LEFT"/>
+        <Text text="You will be prompted to accept to the privacy policy again when it actually gets added" align="LEFT"/>
+        <Text text="The above section exists for the purpose to inform users about the data we collect currently" align="LEFT"/>
+    </col>
+</padding>

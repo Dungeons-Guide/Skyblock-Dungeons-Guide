@@ -22,6 +22,7 @@ import io.netty.channel.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.client.C02PacketUseEntity;
@@ -63,7 +64,8 @@ public class PacketInjector extends ChannelDuplexHandler {
                 MinecraftForge.EVENT_BUS.post(receivedEvent);
                 packet = receivedEvent.packet;
             }
-        } catch (Throwable t) {
+        } catch (Exception t) {
+            FeatureCollectDiagnostics.queueSendLogAsync(t);
             t.printStackTrace();
         }
 

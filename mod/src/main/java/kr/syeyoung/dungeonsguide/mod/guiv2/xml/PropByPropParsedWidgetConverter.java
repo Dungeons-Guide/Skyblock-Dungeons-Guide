@@ -81,6 +81,8 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                                 .getTarget()
                                 .invoke(rootWidget);
                         exported.setValue(obj);
+                    } catch (Error error) {
+                        throw error;
                     } catch (Throwable e) {
                         throw new RuntimeException(e);
                     }
