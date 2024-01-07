@@ -60,6 +60,12 @@ public class Modal extends AnnotatedImportOnlyWidget {
     public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
         return true;
     }
+
+    @Override
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        return true;
+    }
+
     @On(functionName = "close")
     public void close() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
