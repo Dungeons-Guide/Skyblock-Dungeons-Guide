@@ -58,7 +58,7 @@ public class FeatureAbilityCooldown extends TextHUDFeature {
 
     @Override
     public boolean isHUDViewable() {
-        return SkyblockStatus.isOnSkyblock() && (!this.<Boolean>getParameter("disable").getValue() || (this.<Boolean>getParameter("disable").getValue() && SkyblockStatus.isOnSkyblock()));
+        return SkyblockStatus.isOnSkyblock() && (!this.<Boolean>getParameter("disable").getValue() || (this.<Boolean>getParameter("disable").getValue() && SkyblockStatus.isOnDungeon()));
     }
 
 
