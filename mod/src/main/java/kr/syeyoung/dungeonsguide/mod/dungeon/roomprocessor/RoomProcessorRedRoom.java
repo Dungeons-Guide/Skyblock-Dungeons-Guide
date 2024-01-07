@@ -23,7 +23,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.FeatureWarningOnPortal;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledTextRenderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.BreakWord;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.RichText;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.styles.ParentDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
@@ -44,6 +51,12 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
 
     Vec3 basePt;
     int dir = 0;
+
+    private final RichText richText = new RichText(new TextSpan(
+            ParentDelegatingTextStyle.ofDefault(),
+            ""
+    ), BreakWord.WORD, false, RichText.TextAlign.LEFT);
+
 
     @Override
     public void tick() {
@@ -101,7 +114,19 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 
 
-            StyledTextRenderer.drawTextWithStylesAssociated(featureWarningOnPortal.getText(), 0, 0,0, featureWarningOnPortal.getStylesMap(), StyledTextRenderer.Alignment.LEFT);
+            richText.setRootSpan(featureWarningOnPortal.getText());
+            richText.layout(null, new ConstraintBox(0, Double.POSITIVE_INFINITY, 0, Double.POSITIVE_INFINITY));
+            richText.doRender(partialTicks, null, new DomElement() {
+                @Override
+                public Size getSize() {
+                    return new Size(999,999);
+                }
+
+                @Override
+                public Rect getAbsBounds() {
+                    return new Rect(0,0,999,999);
+                }
+            });
 
             GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
             GlStateManager.depthMask(true);
