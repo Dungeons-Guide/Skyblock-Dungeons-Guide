@@ -49,18 +49,23 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 
     @Override
     public JsonObject saveConfig() {
-//        JsonObject jsonObject = super.saveConfig();
-//        jsonObject.addProperty("whitelist", whitelist);
-//        jsonObject.addProperty("blacklist", blacklist);
-//        jsonObject.addProperty("highlight", highlight);
-//        jsonObject.addProperty("blacklistClass", blacklistClass);
-//        jsonObject.addProperty("highl");
+        JsonObject jsonObject = super.saveConfig();
+        jsonObject.addProperty("whitelist", whitelist);
+        jsonObject.addProperty("blacklist", blacklist);
+        jsonObject.addProperty("highlight", highlight);
+        jsonObject.addProperty("blacklistClass", blacklistClass);
+        jsonObject.addProperty("highlightClass", highlightClass);
         return super.saveConfig();
     }
 
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
+        this.whitelist = jsonObject.has("whitelist") ? jsonObject.get("whitelist").getAsString() : "";
+        this.blacklist = jsonObject.has("blacklist") ? jsonObject.get("blacklist").getAsString() : "";
+        this.highlight = jsonObject.has("highlight") ? jsonObject.get("highlight").getAsString() : "";
+        this.blacklistClass = jsonObject.has("blacklistClass") ? jsonObject.get("blacklistClass").getAsString() : "";
+        this.highlightClass = jsonObject.has("highlightClass") ? jsonObject.get("highlightClass").getAsString() : "";
     }
 
     @Getter @Setter
