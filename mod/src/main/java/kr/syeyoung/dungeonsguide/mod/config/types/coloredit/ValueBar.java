@@ -34,7 +34,6 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL11;
 import org.lwjgl.opengl.GL20;
 
@@ -64,7 +63,7 @@ public class ValueBar extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         ShaderProgram shaderProgram = ShaderManager.getShader("shaders/roundrect");
         shaderProgram.useShader();
         shaderProgram.uploadUniform("radius", (float)(5.0f * buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth()));
@@ -105,7 +104,8 @@ public class ValueBar extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
 
         double value = 1 - relMouseY / getDomElement().getSize().getHeight();

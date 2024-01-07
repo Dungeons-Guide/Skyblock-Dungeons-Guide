@@ -20,14 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.features.richtext.config;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.coloredit.ColorEditPopup;
-import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
@@ -36,7 +33,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
@@ -177,7 +173,7 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
         }
 
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
             int color = RenderUtils.getColorAt(getDomElement().getAbsBounds().getX(), getDomElement().getAbsBounds().getY(), aColorBindableAttribute.getValue());
 
             this.color.setValue(color);
@@ -202,9 +198,8 @@ public class WidgetEditableStyleGroupStyleLine extends AnnotatedImportOnlyWidget
             );
             value.setAbsBounds(elementABSBound);
 
-            value.getRenderer().doRender(absMouseX, absMouseY,
-                    relMouseX - original.getX(),
-                    relMouseY - original.getY(), partialTicks, context, value);
+            value.getRenderer().doRender(
+                    partialTicks, context, value);
         }
     }
 

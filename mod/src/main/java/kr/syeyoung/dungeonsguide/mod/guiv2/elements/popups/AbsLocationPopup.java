@@ -25,9 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.util.ResourceLocation;
 
 public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
@@ -86,17 +84,18 @@ public class AbsLocationPopup extends AnnotatedImportOnlyWidget {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         if (!ref.getValue().getAbsBounds().contains(absMouseX, absMouseY) && autoclose) {
             PopupMgr.getPopupMgr(getDomElement()).closePopup(this,null);
         }
         return false;
     }
 
-    protected boolean cursorPassthrough = true;
+    public boolean cursorPassthrough = true;
 
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         return cursorPassthrough;
     }
 }

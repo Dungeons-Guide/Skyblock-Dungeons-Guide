@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
@@ -29,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -99,7 +97,7 @@ public class GlobalHUDScale extends Widget implements Layouter, Renderer {
 
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
@@ -117,8 +115,7 @@ public class GlobalHUDScale extends Widget implements Layouter, Renderer {
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                (relMouseX - original.getX())  / scale,
-                (relMouseY - original.getY()) / scale, partialTicks, context, value);
+        value.getRenderer().doRender(
+                partialTicks, context, value);
     }
 }

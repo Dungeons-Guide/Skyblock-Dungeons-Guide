@@ -50,7 +50,7 @@ public class Stencil extends AnnotatedExportOnlyWidget implements Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         DomElement theThingToDraw = buildContext.getChildren().get(0);
         DomElement stencil = buildContext.getChildren().get(1);
 
@@ -78,9 +78,8 @@ public class Stencil extends AnnotatedExportOnlyWidget implements Renderer {
         );
         stencil.setAbsBounds(elementABSBound);
 
-        stencil.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks,context, stencil);
+        stencil.getRenderer().doRender(
+                partialTicks,context, stencil);
         GlStateManager.popMatrix();
 
 
@@ -103,9 +102,8 @@ public class Stencil extends AnnotatedExportOnlyWidget implements Renderer {
         );
         theThingToDraw.setAbsBounds(elementABSBound);
 
-        theThingToDraw.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks,context, theThingToDraw);
+        theThingToDraw.getRenderer().doRender(
+                partialTicks,context, theThingToDraw);
 
         GL11.glDisable(GL11.GL_STENCIL_TEST);
     }

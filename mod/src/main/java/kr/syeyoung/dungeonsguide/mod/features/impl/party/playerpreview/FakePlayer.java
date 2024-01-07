@@ -48,8 +48,11 @@ public class FakePlayer extends EntityOtherPlayerMP {
         armor = skyblockProfile.getCurrentArmor();
         if (skyblockProfile.getCurrentArmor() != null)
             this.inventory.armorInventory = skyblockProfile.getCurrentArmor().getArmorSlots();
+        else
+            this.inventory.armorInventory = new ItemStack[4];
 
         int highestDungeonScore = Integer.MIN_VALUE;
+        this.inventory.mainInventory[0] = null;
         if (skyblockProfile.getInventory() != null) {
             ItemStack highestItem = null;
             for (ItemStack itemStack : skyblockProfile.getInventory()) {

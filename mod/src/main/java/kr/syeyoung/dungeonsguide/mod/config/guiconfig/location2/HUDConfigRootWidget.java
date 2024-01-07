@@ -107,7 +107,7 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         for (int i = buildContext.getChildren().size() - 1; i >= 0; i --) {
             DomElement value = buildContext.getChildren().get(i);
             Rect original = value.getRelativeBound();
@@ -126,9 +126,8 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
             );
             value.setAbsBounds(elementABSBound);
 
-            value.getRenderer().doRender(absMouseX, absMouseY,
-                    relMouseX - original.getX(),
-                    relMouseY - original.getY(), partialTicks, context, value);
+            value.getRenderer().doRender(
+                    partialTicks, context, value);
             GlStateManager.popMatrix();
         }
         if (xSnap != -1) {
@@ -155,7 +154,8 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
         }
 
         @Override
-        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+            if (childHandled) return false;
             if (mouseButton != 0) return false;
             this.sx = relMouseX; this.sy = relMouseY;
             for (HUDWidgetWrapper widgetWrapper : widgets2) {
@@ -181,7 +181,7 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
         }
 
         @Override
-        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
             return false;
         }
 
@@ -270,7 +270,7 @@ public class HUDConfigRootWidget extends Widget implements Layouter, Renderer {
         }
 
         @Override
-        public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+        public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount, boolean childHandled) {
             return true;
         }
     }

@@ -23,7 +23,6 @@ import kr.syeyoung.dungeonsguide.mod.config.types.coloredit.ColorEditPopup;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
@@ -33,11 +32,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.ResourceLocation;
-import org.lwjgl.input.Keyboard;
 
 import java.util.Optional;
 import java.util.function.Consumer;
@@ -148,7 +144,7 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
         }
 
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
             int color = RenderUtils.getColorAt(getDomElement().getAbsBounds().getX(), getDomElement().getAbsBounds().getY(), aColorBindableAttribute2.getValue() == null ? derived.get() : aColorBindableAttribute2.getValue());
 
             this.color.setValue(color);
@@ -173,9 +169,8 @@ public class WidgetEditableStyleGroupStyleLineDerivedColor extends AnnotatedImpo
             );
             value.setAbsBounds(elementABSBound);
 
-            value.getRenderer().doRender(absMouseX, absMouseY,
-                    relMouseX - original.getX(),
-                    relMouseY - original.getY(), partialTicks, context, value);
+            value.getRenderer().doRender(
+                    partialTicks, context, value);
         }
     }
 

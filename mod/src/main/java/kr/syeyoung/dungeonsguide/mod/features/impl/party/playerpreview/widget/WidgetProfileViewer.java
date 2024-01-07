@@ -22,6 +22,7 @@ import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -69,11 +70,12 @@ public class WidgetProfileViewer extends AnnotatedWidget {
 
     @Override
     public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+        if (PopupMgr.getPopupMgr(getDomElement()).getPopups().size() >= 2) return;
         close.run();
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
         return true;
     }
 }

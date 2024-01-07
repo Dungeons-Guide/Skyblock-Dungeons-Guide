@@ -34,7 +34,7 @@ import java.util.List;
 public class Clip extends AnnotatedExportOnlyWidget implements Renderer {
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (buildContext.getChildren().isEmpty()) return;
         if (buildContext.getSize().getWidth() <= 0 || buildContext.getSize().getHeight() <= 0)
             return;
@@ -56,9 +56,8 @@ public class Clip extends AnnotatedExportOnlyWidget implements Renderer {
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks, context, value);
+        value.getRenderer().doRender(
+                partialTicks, context, value);
         context.popClip();
     }
 

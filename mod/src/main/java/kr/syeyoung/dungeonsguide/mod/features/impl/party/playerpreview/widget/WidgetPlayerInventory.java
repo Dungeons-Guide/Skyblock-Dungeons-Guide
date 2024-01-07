@@ -60,7 +60,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         Gui.drawRect(0, 0, 164, 74, 0xFF000000);
         GlStateManager.disableLighting();
 
@@ -88,7 +88,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();
     private MouseTooltip tooltip = null;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         List<String> toHover = null;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY) && playerProfile.getInventory() != null) {
             ItemStack toHoverStack = null;
@@ -120,7 +120,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
 
         if (toHover == null && this.tooltip != null) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip);
+                    .closePopup(this.tooltip, null);
             this.tooltip = null;
         } else if (toHover != null && this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())

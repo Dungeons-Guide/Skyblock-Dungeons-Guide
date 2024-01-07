@@ -219,6 +219,7 @@
         "R(?<p0>.+)\\ §r§efeloszlatta\\ a\\ partyt!§r",
         "=§cJelenleg nem vagy egy party tagja.§r",
         "=§cYou are not in a party!§r",
+        "=§cYou are not in a party.§r",
         "=§cJelenleg nem vagy partyban.§r",
         "=§cEgy partyban kell lenned hogy csatlakozhass a party csatornához!§r",
         "=§cA party fel lett oszlatva mert az összes meghívás lejárt és a party üres volt.§r",

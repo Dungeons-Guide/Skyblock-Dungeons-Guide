@@ -123,7 +123,7 @@ public class DiscordIntegrationManager implements IPCListener {
             ipcClient.subscribe("ACTIVITY_JOIN_REQUEST", this::onActivityJoinRequest);
             ipcClient.subscribe("ACTIVITY_INVITE", this::onActivityInvite);
             ipcClient.subscribe("RELATIONSHIP_UPDATE", this::onRelationshipUpdate);
-            ipcClient.send(new JSONObject().put("cmd", "GET_RELATIONSHIPS"), new Callback(this::onRelationshipLoad));
+            ipcClient.send(new JSONObject().put("cmd", "GET_RELATIONSHIPS"), new Callback(this::onRelationshipLoad, System.out::println));
             ipcClient.setListener(this);
             System.out.println("Connecting");
         } catch (NoDiscordClientException ignored) {
@@ -132,6 +132,7 @@ public class DiscordIntegrationManager implements IPCListener {
             t.printStackTrace();
         }
     }
+
 
     private void onRelationshipUpdate(Packet packet){
         JSONObject data = packet.getJson().getJSONObject("data");

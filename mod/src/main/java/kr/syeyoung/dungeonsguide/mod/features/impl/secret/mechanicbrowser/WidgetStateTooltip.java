@@ -40,7 +40,7 @@ public class WidgetStateTooltip extends AnnotatedWidget {
     public final BindableAttribute<Double> scale = new BindableAttribute<>(Double.class);
     private DungeonMechanic mechanic;
     public WidgetStateTooltip(DungeonRoom dungeonRoom, DungeonMechanic mechanic, String mechanicId) {
-        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/tooltip.gui"));
+        super(new ResourceLocation("dungeonsguide:gui/features/mechanicBrowser/modal.gui"));
         scale.setValue(FeatureRegistry.SECRET_BROWSE.getScale());
         this.mechanic = mechanic;
 

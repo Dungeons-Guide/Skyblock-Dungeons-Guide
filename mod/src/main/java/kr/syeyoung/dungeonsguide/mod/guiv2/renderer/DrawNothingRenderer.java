@@ -24,6 +24,6 @@ public class DrawNothingRenderer implements Renderer{
     public static DrawNothingRenderer INSTANCE = new DrawNothingRenderer();
     private DrawNothingRenderer() {}
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
     }
 }

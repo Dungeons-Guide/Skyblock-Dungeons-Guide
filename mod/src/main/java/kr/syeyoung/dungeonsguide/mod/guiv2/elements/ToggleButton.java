@@ -62,8 +62,7 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
-        boolean isHover = buildContext.getSize().contains(relMouseX, relMouseY);
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         DomElement value;
         if (enabled.getValue()) {
             value = isHover ? hoverOn.getValue() : on.getValue();
@@ -84,21 +83,29 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks, context, value);
+        value.getRenderer().doRender(
+                partialTicks, context, value);
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
         enabled.setValue(!enabled.getValue());
         return true;
     }
 
+    private boolean isHover = false;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().setCursor(EnumCursor.POINTING_HAND);
+        isHover = true;
         return true;
+    }
+
+    @Override
+    public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+        isHover = false;
     }
 }

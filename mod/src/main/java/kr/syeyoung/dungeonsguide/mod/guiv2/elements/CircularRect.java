@@ -55,7 +55,7 @@ public class CircularRect extends AnnotatedExportOnlyWidget {
 
     public class BRender extends SingleChildRenderer {
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             Size size = buildContext.getSize();
             double radius = Math.min(size.getWidth(), size.getHeight()) / 2;
 
@@ -69,7 +69,7 @@ public class CircularRect extends AnnotatedExportOnlyWidget {
             shaderProgram.uploadUniform("smoothness", 1.0f);
             renderingContext.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), color.getValue());
             GL20.glUseProgram(0);
-            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
+            super.doRender(partialTicks, renderingContext, buildContext);
         }
     }
 }

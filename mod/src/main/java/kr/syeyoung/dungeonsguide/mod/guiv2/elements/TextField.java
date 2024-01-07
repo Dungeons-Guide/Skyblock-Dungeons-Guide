@@ -98,7 +98,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         Size bounds = getDomElement().getSize();
 
         context.drawRect(0,0,bounds.getWidth(), bounds.getHeight(), getDomElement().isFocused() ? Color.white.getRGB() : Color.gray.getRGB());
@@ -151,7 +151,8 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
         Rect actualField = new Rect(1, 3,
                 getDomElement().getSize().getWidth() - 2,
@@ -210,7 +211,8 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount, boolean childHandled) {
+        if (childHandled) return false; // how tho
         if (!getDomElement().isFocused()) return false;
         double lastOffset = xOffset;
         if (scrollAmount > 0) {
@@ -235,11 +237,13 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
     @Override
     public void keyHeld(char typedChar, int keyCode) {
+        if (!getDomElement().isFocused()) return;
         this.keyPressed(typedChar, keyCode);
     }
 
     @Override
     public void keyPressed(char typedChar, int keycode) {
+        if (!getDomElement().isFocused()) return;
         if (selectionStart == -1) {
             if (keycode == 199) { // home
                 setCursor0(0);
@@ -436,11 +440,13 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         return (!Character.isISOControl(c)) &&
                 c != KeyEvent.CHAR_UNDEFINED &&
                 block != null &&
-                block != Character.UnicodeBlock.SPECIALS;
+                block != Character.UnicodeBlock.SPECIALS &&
+                block != Character.UnicodeBlock.PRIVATE_USE_AREA;
     }
 
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        if (childHandled) return false;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY))
             getDomElement().setCursor(EnumCursor.BEAM_CURSOR);
         return true;

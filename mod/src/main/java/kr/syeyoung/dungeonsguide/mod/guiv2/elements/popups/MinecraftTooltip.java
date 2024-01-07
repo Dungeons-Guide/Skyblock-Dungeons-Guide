@@ -50,7 +50,7 @@ public class MinecraftTooltip extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         GuiUtils.drawHoveringText(tooltip,0,0,
                 (int) buildContext.getRelativeBound().getWidth(),
                 (int) buildContext.getRelativeBound().getHeight(), -1, Minecraft.getMinecraft().fontRendererObj);

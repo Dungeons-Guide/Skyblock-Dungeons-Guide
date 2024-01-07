@@ -131,30 +131,39 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
 
     public class HoverThingyRenderer extends OnlyChildrenRenderer {
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             if (enable)
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x40000000);
             GlStateManager.pushMatrix();
-            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
+            super.doRender(partialTicks, renderingContext, buildContext);
             GlStateManager.popMatrix();
             if (!enable) return;
-            if (buildContext.getAbsBounds().contains(absMouseX, absMouseY))
+            if (((HUDWidgetWrapper)buildContext.getWidget()).isHover)
                 renderingContext.drawRect(0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), 0x33FFFFFF);
         }
     }
 
+    private boolean isHover = false;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        if (childHandled) return false;
         if (!enable) return false;
         if (Mouse.isButtonDown(0))
             getDomElement().setCursor(EnumCursor.CLOSED_HAND);
         else
             getDomElement().setCursor(EnumCursor.OPEN_HAND);
+        isHover = true;
         return true;
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+        isHover = false;
+    }
+
+    @Override
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         if (mouseButton == 0) return false;
         if (!enable) return false;
 
@@ -180,7 +189,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         }
 
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
             double thingHeight = Math.min(15, buildContext.getSize().getHeight());
             context.drawRect(1,(buildContext.getSize().getHeight()-thingHeight)/2,2, (buildContext.getSize().getHeight()+thingHeight)/2, 0xFF888888);
             context.drawRect(3,(buildContext.getSize().getHeight()-thingHeight)/2,4, (buildContext.getSize().getHeight()+thingHeight)/2, 0xFF888888);
@@ -189,7 +198,8 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         private double sx = -1;
         private double sw = 0;
         @Override
-        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+            if (childHandled) return false;
             this.sx = absMouseX;
             this.sw = abstractHUDFeature.getFeatureRect().getWidth();
             getDomElement().obtainFocus();
@@ -235,7 +245,8 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         }
 
         @Override
-        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+            if (childHandled) return false;
             getDomElement().setCursor(EnumCursor.RESIZE_LEFT_RIGHT);
             return true;
         }
@@ -255,7 +266,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         }
 
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
             double thingWidth = Math.min(15, buildContext.getSize().getWidth());
             context.drawRect((buildContext.getSize().getWidth()-thingWidth)/2,1, (buildContext.getSize().getWidth()+thingWidth)/2,2, 0xFF888888);
             context.drawRect((buildContext.getSize().getWidth()-thingWidth)/2,3,  (buildContext.getSize().getWidth()+thingWidth)/2, 4,0xFF888888);
@@ -264,7 +275,8 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         private double sy = -1;
         private double sh = 0;
         @Override
-        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+            if (childHandled) return false;
             this.sy = absMouseY;
             this.sh = abstractHUDFeature.getFeatureRect().getHeight();
             getDomElement().obtainFocus();
@@ -310,7 +322,8 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         }
 
         @Override
-        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+            if (childHandled) return false;
             getDomElement().setCursor(EnumCursor.RESIZE_UP_DOWN);
             return true;
         }
@@ -330,7 +343,7 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         }
 
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
             context.drawRect(3,1,4,2, 0xFF888888);
             context.drawRect(1,3,2,4, 0xFF888888);
             context.drawRect(3,3,4,4, 0xFF888888);
@@ -341,7 +354,8 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         private double sx = -1;
         private double sw = 0;
         @Override
-        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+        public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+            if (childHandled) return false;
             this.sy = absMouseY;
             this.sh = abstractHUDFeature.getFeatureRect().getHeight();
             this.sx = absMouseX;
@@ -394,7 +408,8 @@ public class HUDWidgetWrapper extends Widget implements Layouter {
         }
 
         @Override
-        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+            if (childHandled) return false;
             getDomElement().setCursor(EnumCursor.RESIZE_TLDR);
             return true;
         }

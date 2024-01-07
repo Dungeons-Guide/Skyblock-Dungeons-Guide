@@ -85,7 +85,8 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
 
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
         double scale = getDomElement().getAbsBounds().getWidth() / getDomElement().getSize().getWidth();
         return panel.mouseClicked0( (int)(absMouseX / scale), (int)(absMouseY / scale), (int)relMouseX,(int) relMouseY, mouseButton);
@@ -103,15 +104,21 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
         panel.mouseReleased0( (int)(absMouseX / scale), (int)(absMouseY / scale), (int)relMouseX,(int) relMouseY, state);
     }
 
+    private int absMouseX, absMouseY, relMouseX, relMouseY;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        if (childHandled) return false;
         double scale = getDomElement().getAbsBounds().getWidth() / getDomElement().getSize().getWidth();
         panel.mouseMoved0( (int)(absMouseX / scale), (int)(absMouseY / scale), (int)relMouseX0, (int)relMouseY0);
+        this.absMouseX = absMouseX;
+        this.absMouseY = absMouseY;
+        this.relMouseX = (int) relMouseX0;
+        this.relMouseY = (int) relMouseY0;
         return true;
     }
 
     @Override
-    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount, boolean childHandled) {
         double scale = getDomElement().getAbsBounds().getWidth() / getDomElement().getSize().getWidth();
         panel.mouseScrolled0( (int)(absMouseX / scale), (int)(absMouseY / scale), (int)relMouseX0, (int)relMouseY0, scrollAmount);
         return true;
@@ -119,16 +126,19 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
 
     @Override
     public void keyPressed(char typedChar, int keyCode) {
+        if (!getDomElement().isFocused()) return;
         panel.keyPressed0(typedChar, keyCode);
     }
 
     @Override
     public void keyReleased(char typedChar, int keyCode) {
+        if (!getDomElement().isFocused()) return;
         panel.keyReleased0(typedChar, keyCode);
     }
 
     @Override
     public void keyHeld(char typedChar, int keyCode) {
+        if (!getDomElement().isFocused()) return;
         panel.keyHeld0(typedChar, keyCode);
     }
 
@@ -143,7 +153,7 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double scale = getDomElement().getAbsBounds().getWidth() / getDomElement().getSize().getWidth();
 
         Rectangle originalRect = context.currentClip();

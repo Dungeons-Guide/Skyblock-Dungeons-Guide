@@ -37,7 +37,7 @@ public class WidgetPopupMenu extends AnnotatedImportOnlyWidget {
     }
 
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         return true;
     }
 }

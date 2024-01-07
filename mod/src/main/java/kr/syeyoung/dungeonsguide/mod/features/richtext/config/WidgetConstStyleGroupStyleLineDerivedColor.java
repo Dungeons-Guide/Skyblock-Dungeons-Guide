@@ -21,7 +21,6 @@ package kr.syeyoung.dungeonsguide.mod.features.richtext.config;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
@@ -63,7 +62,8 @@ public class WidgetConstStyleGroupStyleLineDerivedColor extends AnnotatedImportO
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();
     private MouseTooltip tooltip = null;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
+        if (childHandled) return false;
         if (hover == null) return false;
         getDomElement().setCursor(EnumCursor.NOT_ALLOWED);
         List<String> toHover = hover;
