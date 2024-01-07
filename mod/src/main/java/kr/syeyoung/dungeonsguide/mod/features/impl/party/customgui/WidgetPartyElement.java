@@ -175,6 +175,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     @On(functionName = "click")
     public void onClick() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        GuiScreenAdapterChestOverride.getAdapter(getDomElement()).emulateClick(slot, 0, 0);
     }
 
 
