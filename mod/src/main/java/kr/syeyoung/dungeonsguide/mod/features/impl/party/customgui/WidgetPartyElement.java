@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
@@ -73,6 +74,7 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "tooltip")
     public final BindableAttribute<Widget> tooltip = new BindableAttribute<>(Widget.class);
 
+    @Getter
     private PartyFinderParty party;
 
     public WidgetPartyElement(WidgetPartyFinder widgetPartyFinder, int slot) {

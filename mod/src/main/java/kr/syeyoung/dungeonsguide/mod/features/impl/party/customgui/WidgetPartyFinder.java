@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetI
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Column;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
@@ -54,6 +55,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.*;
+import java.util.stream.Stream;
 
 public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public WidgetPartyFinder() {
@@ -427,7 +429,12 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public void addItems() {
         isEmpty.setValue(partyElementMap.size() == 0 ? "true" : "false");
         column.getValue().removeAllWidget();
-        partyElementMap.values().forEach(column.getValue()::addWidget);
+        Stream<WidgetPartyElement> widgets = partyElementMap.values().stream().sorted(
+                Comparator
+                        .<WidgetPartyElement>comparingInt(a -> Math.max(a.getParty().requiredDungeonLevel, a.getParty().requiredClassLevel))
+                        .reversed()
+        );
+        widgets.forEach(column.getValue()::addWidget);
     }
 
     public void updateUnjoinable(Object prev, Object neu) {
