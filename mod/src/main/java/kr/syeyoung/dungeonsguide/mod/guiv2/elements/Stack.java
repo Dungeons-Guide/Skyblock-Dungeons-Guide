@@ -56,12 +56,7 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
                     (original.getHeight() * absYScale)
             );
             value.setAbsBounds(elementABSBound);
-
-            if (i > 0 && !passthrough.getValue())
-             value.getRenderer().doRender(partialTicks, context, value);
-            if (i == 0 || passthrough.getValue())
-                value.getRenderer().doRender(
-                        partialTicks, context, value);
+            value.getRenderer().doRender(partialTicks, context, value);
             GlStateManager.popMatrix();
         }
     }
