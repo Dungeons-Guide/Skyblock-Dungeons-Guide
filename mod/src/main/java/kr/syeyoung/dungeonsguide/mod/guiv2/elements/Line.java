@@ -103,7 +103,7 @@ public class Line extends AnnotatedExportOnlyWidget implements Layouter, Rendere
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
 
         GlStateManager.color(r,g,b,a);

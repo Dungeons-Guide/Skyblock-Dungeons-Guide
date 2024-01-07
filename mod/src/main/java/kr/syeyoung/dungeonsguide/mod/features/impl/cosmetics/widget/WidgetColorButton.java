@@ -90,7 +90,7 @@ public class WidgetColorButton extends AnnotatedImportOnlyWidget implements Rend
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (chroma) {
             int color =RenderUtils.getChromaColorAt(0, 0, 0.3f, 1, 1, 1.0f);
             normal.setValue(color);
@@ -98,6 +98,6 @@ public class WidgetColorButton extends AnnotatedImportOnlyWidget implements Rend
             press.setValue(RenderUtils.blendAlpha(color, 0.4f));
         }
 
-        SingleChildRenderer.INSTANCE.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, context, buildContext);
+        SingleChildRenderer.INSTANCE.doRender(partialTicks, context, buildContext);
     }
 }

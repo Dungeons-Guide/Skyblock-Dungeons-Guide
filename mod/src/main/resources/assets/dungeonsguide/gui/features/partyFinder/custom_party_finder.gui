@@ -1,0 +1,280 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<PopupManager>
+    <bgcolor  backgroundColor="#C0101010">
+        <align vAlign="CENTER" hAlign="CENTER">
+            <size width="600" height="400">
+                <col>
+                    <size height="19">
+                        <bgcolor backgroundColor="#FF1F1F1F">
+                            <row>
+                                <aspectRatio width="1" height="1">
+                                    <ColorButton hPadding="1" on:click="goBack"
+                                                 backgroundColor="#FF1F1F1F"          textColor="#FFFFFFFF"
+                                                 hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                                 disabledBackgroundColor="0"  disabledTextColor="0"
+                                                 pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                                 text="&lt;"
+                                    />
+                                </aspectRatio>
+                                <size width="5"/>
+                                <flexible>
+                                    <align vAlign="CENTER" hAlign="START">
+                                        <Text text="Party Finder" color="#FFFFFFFF"/>
+                                    </align>
+                                </flexible>
+
+                                <ColorButton hPadding="5" on:click="invite"
+                                             backgroundColor="#FF00838F"          textColor="#FFFFFFFF"
+                                             hoveredBackgroundColor="#FF00ACC1"   hoveredTextColor="#FFFFFFFF"
+                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                             pressedBackgroundColor="#FF0097A7"   pressedTextColor="#FFFFFFFF"
+                                             text="Invite Discord Friends"
+                                />
+                                <ColorButton hPadding="5" on:click="settings"
+                                             backgroundColor="#FF1F1F1F"          textColor="#FFFFFFFF"
+                                             hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                             pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                             text="Settings"
+                                />
+                            </row>
+                        </bgcolor>
+                    </size>
+                    <line color="#FFFFFFFF"/>
+                    <flexible>
+                        <bgcolor backgroundColor="0xFF141414">
+                            <row>
+                                <flexible>
+                                    <col>
+                                        <size height="19">
+                                            <bgcolor backgroundColor="0xFF262626">
+                                                <row>
+                                                    <size width="50">
+                                                        <SelectiveContainer bind:visible="prevVisible">
+                                                            <slot slot="true">
+                                                                <ColorButton hPadding="5" on:click="prev"
+                                                                             backgroundColor="#FF262626"          textColor="#FFFFFFFF"
+                                                                             hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                             pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                                                             text="Prev"
+                                                                />
+                                                            </slot>
+                                                            <slot slot="false"/>
+                                                        </SelectiveContainer>
+                                                    </size>
+                                                    <flexible>
+                                                        <align>
+                                                            <Text bind:text="pageNumber" color="0xFFFFFFFF" align="CENTER"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <size width="50">
+                                                        <SelectiveContainer bind:visible="nextVisible">
+                                                            <slot slot="true">
+                                                                <ColorButton hPadding="5" on:click="next"
+                                                                             backgroundColor="#FF262626"          textColor="#FFFFFFFF"
+                                                                             hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                             pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                                                             text="Next"
+                                                                />
+                                                            </slot>
+                                                            <slot slot="false"/>
+                                                        </SelectiveContainer>
+                                                    </size>
+                                                </row>
+                                            </bgcolor>
+                                        </size>
+                                        <flexible>
+                                            <SelectiveContainer bind:visible="isEmpty">
+                                                <slot slot="false">
+                                                    <ScrollablePanel direction="VERTICAL">
+                                                        <col bind:api="partyList"/>
+                                                    </ScrollablePanel>
+                                                </slot>
+                                                <slot slot="true">
+                                                    <align>
+                                                        <Text text="Such a empty place :D" color="#FFFFFFFF"/>
+                                                    </align>
+                                                </slot>
+                                            </SelectiveContainer>
+                                        </flexible>
+                                    </col>
+                                </flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <size width="200">
+                                    <padding left="5" right="5" top="5" bottom="5">
+                                        <col crossAlign="START">
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <ColorButton hPadding="5" on:click="refresh"
+                                                                     backgroundColor="#FF262626"          textColor="#FFFFFFFF"
+                                                                     hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                                                     disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                     pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                                                     text="Refresh"
+                                                        />
+                                                    </flexible>
+                                                    <flexible>
+                                                        <SelectiveContainer bind:visible="partyButtons">
+                                                            <slot slot="leave">
+                                                                <ColorButton hPadding="5" on:click="leave"
+                                                                             backgroundColor="#FF00838F"          textColor="#FFFFFFFF"
+                                                                             hoveredBackgroundColor="#FF00ACC1"   hoveredTextColor="#FFFFFFFF"
+                                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                             pressedBackgroundColor="#FF0097A7"   pressedTextColor="#FFFFFFFF"
+                                                                             text="Leave Party"
+                                                                />
+                                                            </slot>
+                                                            <slot slot="create">
+                                                                <ColorButton hPadding="5" on:click="create"
+                                                                             backgroundColor="#FF00838F"          textColor="#FFFFFFFF"
+                                                                             hoveredBackgroundColor="#FF00ACC1"   hoveredTextColor="#FFFFFFFF"
+                                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                             pressedBackgroundColor="#FF0097A7"   pressedTextColor="#FFFFFFFF"
+                                                                             text="Create New"
+                                                                />
+                                                            </slot>
+                                                            <slot slot="delist">
+                                                                <ColorButton hPadding="5" on:click="delist"
+                                                                             backgroundColor="#FF00838F"          textColor="#FFFFFFFF"
+                                                                             hoveredBackgroundColor="#FF00ACC1"   hoveredTextColor="#FFFFFFFF"
+                                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                                             pressedBackgroundColor="#FF0097A7"   pressedTextColor="#FFFFFFFF"
+                                                                             text="De-list"
+                                                                />
+                                                            </slot>
+                                                        </SelectiveContainer>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Filter Unjoinable" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="END">
+                                                            <size width="50">
+                                                                <SimpleToggleButton bind:enabled="filterUnjoinable"/>
+                                                            </size>
+                                                        </align>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Whitelist Note" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <TextField bind:value="whitelist"/>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Blacklist Note" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <TextField bind:value="blacklist"/>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Highlight Note" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <TextField bind:value="highlight"/>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Highlight Class" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <TextField bind:value="highlightClass"/>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Blacklist Class" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <TextField bind:value="blacklistClass"/>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <ColorButton hPadding="5" on:click="searchSettings"
+                                                             backgroundColor="#FF262626"          textColor="#FFFFFFFF"
+                                                             hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                             pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                                             text="Search Settings"
+                                                />
+                                            </size>
+                                            <size height="3"/>
+                                            <Text bind:text="searching" color="#FFFFFFFF"/>
+                                            <size height="3"/>
+                                            <Text bind:text="searchtext" color="#FFFFFFFF"/>
+                                            <size height="3"/>
+                                            <Text bind:text="classdungeonlv" color="#FFFFFFFF"/>
+                                            <size height="3"/>
+                                            <Text bind:text="sort" color="#FFFFFFFF"/>
+                                            <size height="3"/>
+                                            <line color="#FFFFFFFF"/>
+                                        </col>
+                                    </padding>
+                                </size>
+                            </row>
+                        </bgcolor>
+                    </flexible>
+                </col>
+            </size>
+        </align>
+    </bgcolor>
+</PopupManager>

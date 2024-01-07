@@ -32,7 +32,6 @@ import net.minecraft.client.renderer.GlStateManager;
 
 import java.util.Collections;
 import java.util.List;
-import java.util.function.Supplier;
 
 @AllArgsConstructor
 public class OverlayWidget extends Widget implements Renderer, Layouter {
@@ -46,7 +45,7 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (buildContext.getChildren().isEmpty()) return;
         OverlayType type = buildContext.getContext().getValue(OverlayType.class, OverlayManager.OVERLAY_TYPE_KEY);
         if (this.overlayType.ordinal() < type.ordinal()) return;
@@ -68,9 +67,8 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks, context, value);
+        value.getRenderer().doRender(
+                partialTicks, context, value);
     }
 
     @Override

@@ -28,14 +28,10 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
-import net.minecraft.client.Minecraft;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.Arrays;
 import java.util.List;
-import java.util.Optional;
 import java.util.function.Supplier;
 
 public class WidgetConstStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
@@ -73,7 +69,8 @@ public class WidgetConstStyleGroupStyleLine extends AnnotatedImportOnlyWidget {
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();
     private MouseTooltip tooltip = null;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
+        if (childHandled) return false;
         if (hover == null) return false;
         getDomElement().setCursor(EnumCursor.NOT_ALLOWED);
         List<String> toHover = hover;

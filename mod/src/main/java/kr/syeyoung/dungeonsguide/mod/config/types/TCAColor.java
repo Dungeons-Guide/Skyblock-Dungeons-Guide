@@ -29,7 +29,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.AbsLocationPopup;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
@@ -114,7 +113,7 @@ public class TCAColor implements FeatureTypeHandler<AColor> {
         }
 
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
             int color = RenderUtils.getColorAt(getDomElement().getAbsBounds().getX(), getDomElement().getAbsBounds().getY(), aColorBindableAttribute.getValue());
 
             this.color.setValue(color);
@@ -139,9 +138,8 @@ public class TCAColor implements FeatureTypeHandler<AColor> {
             );
             value.setAbsBounds(elementABSBound);
 
-            value.getRenderer().doRender(absMouseX, absMouseY,
-                    relMouseX - original.getX(),
-                    relMouseY - original.getY(), partialTicks, context, value);
+            value.getRenderer().doRender(
+                    partialTicks, context, value);
         }
     }
 

@@ -26,7 +26,7 @@ public class SingleChildRenderer implements Renderer {
     public static final SingleChildRenderer INSTANCE = new SingleChildRenderer();
     protected SingleChildRenderer() {}
 
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
         if (buildContext.getChildren().isEmpty()) return;
         DomElement value = buildContext.getChildren().get(0);
 
@@ -45,8 +45,7 @@ public class SingleChildRenderer implements Renderer {
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks,renderingContext, value);
+        value.getRenderer().doRender(
+                partialTicks,renderingContext, value);
     }
 }

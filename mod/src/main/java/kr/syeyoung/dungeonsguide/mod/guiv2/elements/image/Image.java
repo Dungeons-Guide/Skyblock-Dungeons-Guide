@@ -45,7 +45,7 @@ public class Image extends Widget implements Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(location);
         context.drawScaledCustomSizeModalRect(0, 0, 
                 uvX, 

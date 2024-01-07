@@ -35,8 +35,10 @@ import net.minecraft.client.renderer.GlStateManager;
 import java.util.List;
 
 public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
+    @Export(attributeName = "passthrough")
+    public final BindableAttribute<Boolean> passthrough = new BindableAttribute<>(Boolean.class, false);
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         for (int i = buildContext.getChildren().size() - 1; i >= 0; i --) {
             DomElement value = buildContext.getChildren().get(i);
             Rect original = value.getRelativeBound();
@@ -54,13 +56,7 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
                     (original.getHeight() * absYScale)
             );
             value.setAbsBounds(elementABSBound);
-
-            if (i > 0)
-             value.getRenderer().doRender(-1, -1, -1, -1, partialTicks, context, value);
-            if (i == 0)
-                value.getRenderer().doRender(absMouseX, absMouseY,
-                        relMouseX - original.getX(),
-                        relMouseY - original.getY(), partialTicks, context, value);
+            value.getRenderer().doRender(partialTicks, context, value);
             GlStateManager.popMatrix();
         }
     }

@@ -112,6 +112,7 @@ public class WidgetProfileViewerData extends AnnotatedWidget {
             ), true), (a) -> {
                 this.popup = null;
             });
+            popup.cursorPassthrough = false;
         }
     }
 

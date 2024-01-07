@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
@@ -40,18 +39,17 @@ import java.io.IOException;
 import java.util.Stack;
 
 import static org.lwjgl.opengl.GL11.GL_GREATER;
-import static org.lwjgl.opengl.GL11.glCallList;
 
 public class GuiScreenAdapter extends GuiScreen {
 
     @Getter
-    private RootDom view;
-    private boolean isOpen = false;
+    protected RootDom view;
+    protected boolean isOpen = false;
 
-    private Stack<RootDom> domStack = new Stack<>();
+    protected Stack<RootDom> domStack = new Stack<>();
 
-    private GuiScreen parent;
-    private boolean allowEsc;
+    protected GuiScreen parent;
+    protected boolean allowEsc;
     public GuiScreenAdapter(Widget widget) {
         this(widget, null, true);
     }
@@ -136,7 +134,7 @@ public class GuiScreenAdapter extends GuiScreen {
             GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
             GlStateManager.color(1, 1, 1, 1);
             GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-            view.getRenderer().doRender(i, j, i, j, partialTicks, new RenderingContext(), view);
+            view.getRenderer().doRender(partialTicks, new RenderingContext(), view);
             GlStateManager.alphaFunc(GL_GREATER, 0.1f);
             GlStateManager.popMatrix();
             GlStateManager.enableDepth();

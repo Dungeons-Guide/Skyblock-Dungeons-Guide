@@ -122,7 +122,8 @@ public class Scrollbar extends AnnotatedWidget {
     private double startCurr;
     private boolean moving = false;
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
         if (orientation.getValue() == Line.Orientation.VERTICAL) movingDir = relMouseY;
         else movingDir = relMouseX;
@@ -151,7 +152,8 @@ public class Scrollbar extends AnnotatedWidget {
     }
 
     @Override
-    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount, boolean childHandled) {
+        if (childHandled) return false; // how tho
         if (moving) return false;
 
 //        double old = this.current.getValue();

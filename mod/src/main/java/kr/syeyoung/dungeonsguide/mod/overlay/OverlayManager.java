@@ -18,17 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.overlay;
 
-import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.guiv2.RootDom;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
-import kr.syeyoung.dungeonsguide.mod.utils.GlStateUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.GLCursors;
 import lombok.Getter;
@@ -45,7 +42,6 @@ import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
 import java.io.IOException;
-import java.util.Map;
 
 import static org.lwjgl.opengl.GL11.GL_GREATER;
 
@@ -150,7 +146,7 @@ public class OverlayManager {
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
         GlStateManager.color(1, 1, 1, 1);
         GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-        view.getRenderer().doRender(i, j, i, j, partialTicks, new RenderingContext(), view);
+        view.getRenderer().doRender(partialTicks, new RenderingContext(), view);
         GlStateManager.alphaFunc(GL_GREATER, 0.1f);
         GlStateManager.popMatrix();
         GlStateManager.enableDepth();

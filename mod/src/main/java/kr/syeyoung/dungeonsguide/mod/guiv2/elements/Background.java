@@ -53,11 +53,11 @@ public class Background extends AnnotatedExportOnlyWidget {
 
     public class BRender extends SingleChildRenderer {
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             renderingContext.drawRect(0,0,buildContext.getSize().getWidth(),buildContext.getSize().getHeight(),
                     color.getValue()
             );
-            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
+            super.doRender(partialTicks, renderingContext, buildContext);
         }
     }
 }

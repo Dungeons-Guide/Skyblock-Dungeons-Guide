@@ -1,0 +1,44 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" top="5" right="5" bottom="5">
+    <col>
+        <Text text="You need to have Ask To Join Enabled to use this feature." color="#FFFFFFFF"/>
+        <flexible>
+            <size height="0"/>
+        </flexible>
+        <row>
+            <flexible>
+                <size height="15">
+                    <RoundButton text="Enable" on:click="enable"
+
+                                 backgroundColor="#FF00838F"          textColor="#FFFFFFFF"
+                                 hoveredBackgroundColor="#FF00ACC1"   hoveredTextColor="#FFFFFFFF"
+                                 disabledBackgroundColor="0"  disabledTextColor="0"
+                                 pressedBackgroundColor="#FF0097A7"   pressedTextColor="#FFFFFFFF"/>
+                </size>
+            </flexible>
+            <size width="5"/>
+            <flexible>
+                <size height="15">
+                    <RoundButton text="Cancel" on:click="cancel" backgroundColor="#FF373737" hoveredBackgroundColor="#FF3B3B3B" pressedBackgroundColor="#FF383838"/>
+                </size>
+            </flexible>
+        </row>
+    </col>
+</padding>

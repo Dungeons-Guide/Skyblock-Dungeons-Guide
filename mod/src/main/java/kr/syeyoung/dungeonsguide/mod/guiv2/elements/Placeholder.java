@@ -39,7 +39,7 @@ public class Placeholder extends AnnotatedExportOnlyWidget implements Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double w = buildContext.getSize().getWidth(), h = buildContext.getSize().getHeight();
         context.drawRect(0,0,w,h, 0xFFFFFFFF);
         GlStateManager.color(0,0,0,1);

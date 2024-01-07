@@ -96,6 +96,7 @@ public class DomElementRegistry {
         register("ResourceImage", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/ratioResourceImage.gui")));
         register("UrlImage", new ExportedWidgetConverter(URLImage::new));
         register("SelectiveContainer", new ExportedWidgetConverter(SelectiveContainer::new));
+        register("ItemStack", new ExportedWidgetConverter(ItemStackRender::new));
     }
 
     public static Parser obtainParser(ResourceLocation resourceLocation) {

@@ -1,0 +1,63 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#C0101010">
+    <align>
+        <size bind:width="width" bind:height="height">
+            <Stencil>
+                <col>
+                    <size height="15">
+                        <bgcolor backgroundColor="#FF434343">
+                            <padding left="5">
+                                <row>
+                                    <flexible>
+                                        <align vAlign="CENTER" hAlign="START">
+                                            <Text bind:text="title" color="#FFFFFFFF"/>
+                                        </align>
+                                    </flexible>
+                                    <aspectRatio width="1" height="1">
+
+                                        <SelectiveContainer bind:visible="closeVisible">
+                                            <slot slot="true">
+                                                <ColorButton hPadding="1" on:click="close"
+                                                             backgroundColor="#FF434343"          textColor="#FFFFFFFF"
+                                                             hoveredBackgroundColor="#FF4E4E4E"   hoveredTextColor="#FFFFFFFF"
+                                                             disabledBackgroundColor="0"  disabledTextColor="0"
+                                                             pressedBackgroundColor="#FF4C4C4C"   pressedTextColor="#FFFFFFFF"
+                                                             text="X"
+                                                />
+                                            </slot>
+                                            <slot slot="false"/>
+                                        </SelectiveContainer>
+                                    </aspectRatio>
+                                </row>
+                            </padding>
+                        </bgcolor>
+                    </size>
+                    <line color="#FF02EE67"/>
+                    <flexible>
+                        <bgcolor backgroundColor="#FF2B2B2B">
+                            <slot bind:child="child"/>
+                        </bgcolor>
+                    </flexible>
+                </col>
+                <RoundRect radius="3" slot="stencil"/>
+            </Stencil>
+        </size>
+    </align>
+</bgcolor>
