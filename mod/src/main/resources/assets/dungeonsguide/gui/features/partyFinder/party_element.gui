@@ -16,30 +16,44 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <size height="20">
-    <col>
-        <size height="19">
-            <row crossAlign="CENTER">
-                <size width="3"/>
-                <align hAlign="CENTER">
-                    <size width="18" height="18">
-                        <ItemStack bind:itemstack="item"/>
-                    </size>
-                </align>
-                <size width="3"/>
-                <size width="100">
-                    <align vAlign="CENTER" hAlign="START">
-                        <Text bind:text="name" color="#FFFFFFFF"/>
-                    </align>
+    <stack passthrough="true">
+        <slot bind:child="tooltip"/>
+            <col>
+                <size height="19">
+                    <row crossAlign="CENTER">
+                        <size width="3"/>
+                        <align hAlign="CENTER">
+                            <size width="18" height="18">
+                                <ItemStack bind:itemstack="item"/>
+                            </size>
+                        </align>
+                        <size width="3"/>
+                        <size width="100">
+                            <align vAlign="CENTER" hAlign="START">
+                                <Text bind:text="name" color="#FFFFFFFF"/>
+                            </align>
+                        </size>
+                        <Text bind:text="note" color="#FFFFFFFF"/>
+                        <flexible>
+                            <align vAlign="CENTER" hAlign="END">
+                                <Text bind:text="sidenote" color="#FFFFFFFF"/>
+                            </align>
+                        </flexible>
+                        <size width="5"/>
+                    </row>
                 </size>
-                <Text bind:text="note" color="#FFFFFFFF"/>
-                <flexible>
-                    <align vAlign="CENTER" hAlign="END">
-                        <Text bind:text="sidenote" color="#FFFFFFFF"/>
-                    </align>
-                </flexible>
-                <size width="5"/>
-            </row>
-        </size>
-        <line color="#FFFFFFFF"/>
-    </col>
+                <line color="#FFFFFFFF"/>
+            </col>
+
+        <AbstractButton bind:disabled="disabled" on:click="click">
+            <bgcolor bind:backgroundColor="backgroundColor">
+            </bgcolor>
+            <bgcolor slot="hovered" bind:backgroundColor="hoverColor">
+            </bgcolor>
+            <slot slot="disabled">
+            </slot>
+            <bgcolor slot="pressed" bind:backgroundColor="pressColor">
+            </bgcolor>
+        </AbstractButton>
+    </stack>
 </size>

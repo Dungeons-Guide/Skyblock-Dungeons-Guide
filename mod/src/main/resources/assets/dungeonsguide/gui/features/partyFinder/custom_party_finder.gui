@@ -40,10 +40,10 @@
                                 </flexible>
 
                                 <ColorButton hPadding="5" on:click="invite"
-                                             backgroundColor="#FF1F1F1F"          textColor="#FFFFFFFF"
-                                             hoveredBackgroundColor="#FF343434"   hoveredTextColor="#FFFFFFFF"
+                                             backgroundColor="#FF00838F"          textColor="#FFFFFFFF"
+                                             hoveredBackgroundColor="#FF00ACC1"   hoveredTextColor="#FFFFFFFF"
                                              disabledBackgroundColor="0"  disabledTextColor="0"
-                                             pressedBackgroundColor="#FF383838"   pressedTextColor="#FFFFFFFF"
+                                             pressedBackgroundColor="#FF0097A7"   pressedTextColor="#FFFFFFFF"
                                              text="Invite Discord Friends"
                                 />
                                 <ColorButton hPadding="5" on:click="settings"

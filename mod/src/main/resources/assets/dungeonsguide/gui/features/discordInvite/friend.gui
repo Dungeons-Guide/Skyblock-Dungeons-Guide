@@ -17,7 +17,7 @@
   -->
 
 <size height="21">
-    <RoundRect backgroundColor="#ff3b3b3b" radius="3">
+<!--    <RoundRect backgroundColor="#ff3b3b3b" radius="3">-->
         <col>
             <size height="20">
                 <padding left="3" right="3">
@@ -54,5 +54,5 @@
             </size>
             <line color="#FFFFFFFF"/>
         </col>
-    </RoundRect>
+<!--    </RoundRect>-->
 </size>

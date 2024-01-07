@@ -21,10 +21,17 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -34,7 +41,10 @@ import net.minecraft.init.Blocks;
 import net.minecraft.inventory.Slot;
 import net.minecraft.item.Item;
 import net.minecraft.item.ItemStack;
+import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.ResourceLocation;
+
+import java.util.List;
 
 public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     private final int slot;
@@ -50,12 +60,27 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "sidenote")
     public final BindableAttribute<String> sidenote = new BindableAttribute<>(String.class, "");
 
+    @Bind(variableName = "backgroundColor")
+    public final BindableAttribute<Integer> backgroundColor = new BindableAttribute<>(Integer.class, 0);
+    @Bind(variableName = "hoverColor")
+    public final BindableAttribute<Integer> hoverColor = new BindableAttribute<>(Integer.class, 0);
+    @Bind(variableName = "pressColor")
+    public final BindableAttribute<Integer> pressColor = new BindableAttribute<>(Integer.class, 0);
+    @Bind(variableName = "disabled")
+    public final BindableAttribute<Boolean> disabled = new BindableAttribute<>(Boolean.class, false);
+
+
+    @Bind(variableName = "tooltip")
+    public final BindableAttribute<Widget> tooltip = new BindableAttribute<>(Widget.class);
+
     private PartyFinderParty party;
 
     public WidgetPartyElement(WidgetPartyFinder widgetPartyFinder, int slot) {
         super(new ResourceLocation("dungeonsguide:gui/features/partyFinder/party_element.gui"));
         this.slot = slot;
         this.widgetPartyFinder = widgetPartyFinder;
+        WidgetHoverTooltip hoverTooltip;
+        this.tooltip.setValue(hoverTooltip = new WidgetHoverTooltip(this::createTooltip));
     }
 
     public void update(PartyFinderParty party) {
@@ -101,5 +126,47 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
         this.sidenote.setValue(sideNote);
         this.note.setValue(note);
+        this.disabled.setValue(!party.canJoin);
+
+
+        boolean nodupechk = nodupe && party.members.stream().anyMatch(a -> a.getClazz().equalsIgnoreCase(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass()));
+        int mixColor = 0;
+        if (cantJoin) {}
+        else if (nodupechk) {
+            mixColor = 0x44FF0000;
+        } else if (note.contains("§e")) {
+            mixColor = 0x44FFFF00;
+        } else if (note.contains("§6")){
+            mixColor = 0x44FFAA00;
+        }
+
+        this.backgroundColor.setValue(RenderUtils.blendTwoColors(0xff141414, mixColor));
+        this.hoverColor.setValue(RenderUtils.blendTwoColors(0xff2f2f2f, mixColor));
+        this.pressColor.setValue(RenderUtils.blendTwoColors(0xff2b2b2b, mixColor));
+        this.party = party;
     }
+
+    public MinecraftTooltip createTooltip() {
+        if (party == null) return new MinecraftTooltip();
+        List<String> toHover = party.itemStack.getTooltip(Minecraft.getMinecraft().thePlayer, Minecraft.getMinecraft().gameSettings.advancedItemTooltips);
+        for (int i = 0; i < toHover.size(); ++i) {
+            if (i == 0) {
+                toHover.set(i, party.itemStack.getRarity().rarityColor + toHover.get(i));
+            } else {
+                toHover.set(i, EnumChatFormatting.GRAY + toHover.get(i));
+            }
+        }
+
+        MinecraftTooltip minecraftTooltip =  new MinecraftTooltip();
+        minecraftTooltip.setTooltip(toHover);
+        return minecraftTooltip;
+    }
+
+    @On(functionName = "click")
+    public void onClick() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+    }
+
+
+
 }

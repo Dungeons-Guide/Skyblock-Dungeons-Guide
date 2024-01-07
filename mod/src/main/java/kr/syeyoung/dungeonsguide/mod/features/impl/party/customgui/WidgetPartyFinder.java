@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.discord.DiscordIntegrationManager;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetEnableAskToJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetInvite;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
@@ -185,8 +186,11 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
             WidgetInvite modalMessage = new WidgetInvite();
             PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Invite Discord Friend", modalMessage, true), (a) -> {});
         } else {
-            ModalMessage modalMessage = new ModalMessage("You need to have Ask To Join Enabled to use this feature. Run /dg atj to enable ask to join");
-            PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Error", modalMessage, true), (a) -> {});
+            WidgetEnableAskToJoin modalMessage = new WidgetEnableAskToJoin();
+            PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Error", modalMessage, true), (a) -> {
+                if (a != null)
+                    openInviteDialog();
+            });
         }
     }
     @On(functionName = "settings")
@@ -235,10 +239,10 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
 
                     Slot prev = guiChest.inventorySlots.getSlot(9 * 2 + 0);
                     if (prev.getStack() != null && prev.getStack().getItem() == Items.arrow) {
-                        nextVisible.setValue("true");
+                        prevVisible.setValue("true");
                         extractPage(prev.getStack());
                     } else {
-                        nextVisible.setValue("false");
+                        prevVisible.setValue("false");
                     }
 
                     Slot delist = guiChest.inventorySlots.getSlot(9 * 5 + 7);
