@@ -443,6 +443,8 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
 
     @Override
     public void keyPressed(char typedChar, int keyCode) {
-        System.out.println(keyCode);
+        if (keyCode == 63) {
+            refresh();
+        }
     }
 }

@@ -153,7 +153,7 @@ public class DomElement {
             if (widget instanceof Stack) break;
         }
 
-        if (isFocused())
+//        if (isFocused())
             widget.keyPressed(typedChar, keyCode);
     }
     public void keyHeld0(char typedChar, int keyCode) {
@@ -162,7 +162,7 @@ public class DomElement {
             if (widget instanceof Stack) break;
         }
 
-        if (isFocused())
+//        if (isFocused())
             widget.keyHeld(typedChar, keyCode);
     }
     public void keyReleased0(char typedChar, int keyCode) {
@@ -170,7 +170,7 @@ public class DomElement {
             childComponent.keyReleased0(typedChar, keyCode);
             if (widget instanceof Stack) break;
         }
-        if (isFocused())
+//        if (isFocused())
             widget.keyReleased(typedChar, keyCode);
     }
 

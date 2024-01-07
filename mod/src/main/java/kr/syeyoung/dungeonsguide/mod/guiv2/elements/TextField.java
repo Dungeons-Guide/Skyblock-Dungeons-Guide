@@ -440,7 +440,8 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
         return (!Character.isISOControl(c)) &&
                 c != KeyEvent.CHAR_UNDEFINED &&
                 block != null &&
-                block != Character.UnicodeBlock.SPECIALS;
+                block != Character.UnicodeBlock.SPECIALS &&
+                block != Character.UnicodeBlock.PRIVATE_USE_AREA;
     }
 
     @Override
