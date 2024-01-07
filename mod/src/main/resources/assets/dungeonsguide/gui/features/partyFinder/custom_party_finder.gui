@@ -267,6 +267,8 @@
                                             <Text bind:text="sort" color="#FFFFFFFF"/>
                                             <size height="3"/>
                                             <line color="#FFFFFFFF"/>
+                                            <size height="3"/>
+                                            <Text bind:text="party" color="#FFFFFFFF"/>
                                         </col>
                                     </padding>
                                 </size>
