@@ -33,7 +33,7 @@
                 <row mainAlign="CENTER">
                     <size width="80" height="20">
                         <RoundButton text="Allow" on:click="approve"/>
-                    </size>aa
+                    </size>
                     <size width="10" height="0"/>
                     <size width="80" height="20">
                         <RoundButton text="Deny" on:click="deny"/>

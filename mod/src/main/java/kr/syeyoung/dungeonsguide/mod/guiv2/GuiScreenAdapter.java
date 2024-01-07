@@ -45,13 +45,13 @@ import static org.lwjgl.opengl.GL11.glCallList;
 public class GuiScreenAdapter extends GuiScreen {
 
     @Getter
-    private RootDom view;
-    private boolean isOpen = false;
+    protected RootDom view;
+    protected boolean isOpen = false;
 
-    private Stack<RootDom> domStack = new Stack<>();
+    protected Stack<RootDom> domStack = new Stack<>();
 
-    private GuiScreen parent;
-    private boolean allowEsc;
+    protected GuiScreen parent;
+    protected boolean allowEsc;
     public GuiScreenAdapter(Widget widget) {
         this(widget, null, true);
     }

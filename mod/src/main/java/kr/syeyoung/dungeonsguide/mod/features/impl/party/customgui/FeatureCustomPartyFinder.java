@@ -23,9 +23,14 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.legacy.GuiCustomPartyFinder;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
 import net.minecraft.inventory.IInventory;
@@ -42,37 +47,49 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
     @Getter
     @Setter
     private String whitelist = "", blacklist = "", highlight ="", blacklistClass = "";
-    @Getter
-    @Setter
-    private int minimumCata;
 
     @Getter @Setter
     private String lastClass = "";
 
-    GuiCustomPartyFinder guiCustomPartyFinder;
+//    GuiCustomPartyFinder guiCustomPartyFinder;
+    private WidgetPartyFinder widgetPartyFinder;
+    private GuiScreenAdapterChestOverride guiScreenAdapter;
     @DGEventHandler
     public void onGuiOpen(GuiOpenEvent event) {
-        if (event.gui == null) guiCustomPartyFinder = null;
+        if (event.gui == null) {
+            widgetPartyFinder = null;
+            guiScreenAdapter = null;
+        }
         
         if (!(event.gui instanceof GuiChest)) return;
         GuiChest chest = (GuiChest) event.gui;
         if (!(chest.inventorySlots instanceof ContainerChest)) return;
         ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
         IInventory lower = containerChest.getLowerChestInventory();
-        if (lower == null || !lower.getName().equals("Party Finder")) return;
-
-        if (guiCustomPartyFinder == null) {
-            guiCustomPartyFinder = new GuiCustomPartyFinder();
+        if (lower == null || !lower.getName().equals("Party Finder")) {
+            if (guiScreenAdapter != null) {
+                guiScreenAdapter.setCanExitWithoutClosing(true);
+            }
+            return;
         }
-        guiCustomPartyFinder.setGuiChest(chest);
 
-        event.gui = guiCustomPartyFinder;
+        if (widgetPartyFinder == null || guiScreenAdapter == null) {
+            widgetPartyFinder = new WidgetPartyFinder();
+
+            Scaler scaler = new Scaler();
+            scaler.scale.setValue((double) new ScaledResolution(Minecraft.getMinecraft()).getScaleFactor());
+            scaler.child.setValue(widgetPartyFinder);
+            guiScreenAdapter = new GuiScreenAdapterChestOverride(scaler);
+        }
+        guiScreenAdapter.setGuiChest((GuiChest) event.gui);
+
+        event.gui = guiScreenAdapter;
     }
 
     @DGEventHandler
     public void onGuiUpdate(WindowUpdateEvent windowUpdateEvent) {
-        if (guiCustomPartyFinder != null) {
-            guiCustomPartyFinder.onChestUpdate(windowUpdateEvent);
+        if (widgetPartyFinder != null) {
+            widgetPartyFinder.onChestUpdate(windowUpdateEvent);
         }
 
         if (Minecraft.getMinecraft().currentScreen instanceof GuiChest) {
