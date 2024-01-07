@@ -85,6 +85,8 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
         this.tooltip.setValue(hoverTooltip = new WidgetHoverTooltip(this::createTooltip));
     }
 
+    @Getter
+    private boolean highlighted = false;
     public void update(PartyFinderParty party) {
 
         itemstack.setValue(party.itemStack);
@@ -109,8 +111,12 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
                 }
             } catch (Exception e) {}
 
-            if (nodupe && party.members.stream().anyMatch(a -> a.getClazz().equals(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass()))) {
+            if (nodupe && party.members.stream().anyMatch(a -> a.getClazz().equalsIgnoreCase(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass()))) {
                 note = note.replace("nodupe", "§cnodupe§r").replace("no dupe", "§cno dupe§r").replace("nd", "§cnd§r");
+            }
+
+            if (party.members.stream().anyMatch(a -> a.getClazz().equalsIgnoreCase(FeatureRegistry.PARTYKICKER_CUSTOM.getHighlightClass()))) {
+                note = note+"§e";
             }
 
             this.name.setValue(party.leader);
@@ -133,11 +139,13 @@ public class WidgetPartyElement extends AnnotatedImportOnlyWidget {
 
         boolean nodupechk = nodupe && party.members.stream().anyMatch(a -> a.getClazz().equalsIgnoreCase(FeatureRegistry.PARTYKICKER_CUSTOM.getLastClass()));
         int mixColor = 0;
+        highlighted = false;
         if (cantJoin) {}
         else if (nodupechk) {
             mixColor = 0x44FF0000;
         } else if (note.contains("§e")) {
             mixColor = 0x44FFFF00;
+            highlighted = true;
         } else if (note.contains("§6")){
             mixColor = 0x44FFAA00;
         }

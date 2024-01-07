@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 
 
+import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -44,7 +45,23 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 
     @Getter
     @Setter
-    private String whitelist = "", blacklist = "", highlight ="", blacklistClass = "";
+    private String whitelist = "", blacklist = "", highlight ="", blacklistClass = "", highlightClass = "";
+
+    @Override
+    public JsonObject saveConfig() {
+//        JsonObject jsonObject = super.saveConfig();
+//        jsonObject.addProperty("whitelist", whitelist);
+//        jsonObject.addProperty("blacklist", blacklist);
+//        jsonObject.addProperty("highlight", highlight);
+//        jsonObject.addProperty("blacklistClass", blacklistClass);
+//        jsonObject.addProperty("highl");
+        return super.saveConfig();
+    }
+
+    @Override
+    public void loadConfig(JsonObject jsonObject) {
+        super.loadConfig(jsonObject);
+    }
 
     @Getter @Setter
     private String lastClass = "";

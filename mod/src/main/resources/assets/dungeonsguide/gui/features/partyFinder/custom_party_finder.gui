@@ -226,6 +226,19 @@
                                                 <row>
                                                     <flexible>
                                                         <align vAlign="CENTER" hAlign="START">
+                                                            <Text text="Highlight Class" color="#FFFFFFFF"/>
+                                                        </align>
+                                                    </flexible>
+                                                    <flexible>
+                                                        <TextField bind:value="highlightClass"/>
+                                                    </flexible>
+                                                </row>
+                                            </size>
+                                            <size height="3"/>
+                                            <size height="20">
+                                                <row>
+                                                    <flexible>
+                                                        <align vAlign="CENTER" hAlign="START">
                                                             <Text text="Blacklist Class" color="#FFFFFFFF"/>
                                                         </align>
                                                     </flexible>

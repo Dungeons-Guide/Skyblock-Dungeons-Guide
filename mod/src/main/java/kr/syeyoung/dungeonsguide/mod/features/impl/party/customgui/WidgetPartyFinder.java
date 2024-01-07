@@ -64,14 +64,16 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         filterUnjoinable.addOnUpdate((old,neu) -> {
             Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         });
-        whitelist.addOnUpdate(this::updateUnjoinable);
-        blacklist.addOnUpdate(this::updateUnjoinable);
-        highlight.addOnUpdate(this::updateUnjoinable);
-        blacklistClass.addOnUpdate(this::updateUnjoinable);
         whitelist.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setWhitelist(neu));
         blacklist.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklist(neu));
         highlight.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setHighlight(neu));
         blacklistClass.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setBlacklistClass(neu));
+        highlightClass.addOnUpdate((old, neu) -> FeatureRegistry.PARTYKICKER_CUSTOM.setHighlightClass(neu));
+        whitelist.addOnUpdate(this::updateUnjoinable);
+        blacklist.addOnUpdate(this::updateUnjoinable);
+        highlight.addOnUpdate(this::updateUnjoinable);
+        blacklistClass.addOnUpdate(this::updateUnjoinable);
+        highlightClass.addOnUpdate(this::updateUnjoinable);
     }
 
     @Bind(variableName = "prevVisible")
@@ -101,6 +103,8 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<String> highlight = new BindableAttribute<>(String.class, FeatureRegistry.PARTYKICKER_CUSTOM.getHighlight());
     @Bind(variableName = "blacklistClass")
     public final BindableAttribute<String> blacklistClass = new BindableAttribute<>(String.class, FeatureRegistry.PARTYKICKER_CUSTOM.getBlacklistClass());
+    @Bind(variableName = "highlightClass")
+    public final BindableAttribute<String> highlightClass = new BindableAttribute<>(String.class, FeatureRegistry.PARTYKICKER_CUSTOM.getHighlightClass());
 
 
     @Bind(variableName = "searching")
@@ -431,7 +435,8 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
         column.getValue().removeAllWidget();
         Stream<WidgetPartyElement> widgets = partyElementMap.values().stream().sorted(
                 Comparator
-                        .<WidgetPartyElement>comparingInt(a -> Math.max(a.getParty().requiredDungeonLevel, a.getParty().requiredClassLevel))
+                        .<WidgetPartyElement>comparingInt(a -> a.isHighlighted() ? 1 : 0)
+                        .<WidgetPartyElement>thenComparingInt(a -> Math.max(a.getParty().requiredDungeonLevel, a.getParty().requiredClassLevel))
                         .reversed()
         );
         widgets.forEach(column.getValue()::addWidget);
