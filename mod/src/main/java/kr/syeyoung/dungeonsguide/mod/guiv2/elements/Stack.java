@@ -28,7 +28,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import net.minecraft.client.renderer.GlStateManager;
@@ -39,7 +38,7 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
     @Export(attributeName = "passthrough")
     public final BindableAttribute<Boolean> passthrough = new BindableAttribute<>(Boolean.class, false);
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         for (int i = buildContext.getChildren().size() - 1; i >= 0; i --) {
             DomElement value = buildContext.getChildren().get(i);
             Rect original = value.getRelativeBound();
@@ -59,11 +58,10 @@ public class Stack extends AnnotatedExportOnlyWidget implements Renderer {
             value.setAbsBounds(elementABSBound);
 
             if (i > 0 && !passthrough.getValue())
-             value.getRenderer().doRender(-1, -1, -1, -1, partialTicks, context, value);
+             value.getRenderer().doRender(partialTicks, context, value);
             if (i == 0 || passthrough.getValue())
-                value.getRenderer().doRender(absMouseX, absMouseY,
-                        relMouseX - original.getX(),
-                        relMouseY - original.getY(), partialTicks, context, value);
+                value.getRenderer().doRender(
+                        partialTicks, context, value);
             GlStateManager.popMatrix();
         }
     }

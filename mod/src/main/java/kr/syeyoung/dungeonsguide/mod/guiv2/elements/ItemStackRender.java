@@ -54,7 +54,7 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (itemstack.getValue() == null) return;
 
         double min = Math.min(getDomElement().getSize().getWidth(),

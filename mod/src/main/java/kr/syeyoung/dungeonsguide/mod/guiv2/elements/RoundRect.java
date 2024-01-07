@@ -21,20 +21,14 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.elements;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.ExportedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.gui.Gui;
-import net.minecraft.client.renderer.GlStateManager;
 import org.lwjgl.opengl.GL20;
 
 import java.util.Collections;
@@ -62,7 +56,7 @@ public class RoundRect extends AnnotatedExportOnlyWidget {
 
     public class BRender extends SingleChildRenderer {
         @Override
-        public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+        public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
             ShaderProgram shaderProgram = ShaderManager.getShader("shaders/roundrect");
             shaderProgram.useShader();
             shaderProgram.uploadUniform("radius", (float)(radius.getValue() * buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth()));
@@ -73,7 +67,7 @@ public class RoundRect extends AnnotatedExportOnlyWidget {
             shaderProgram.uploadUniform("smoothness", 0.0f);
             renderingContext.drawRect(0,0,buildContext.getSize().getWidth(), buildContext.getSize().getHeight(), color.getValue());
             GL20.glUseProgram(0);
-            super.doRender(absMouseX, absMouseY, relMouseX, relMouseY, partialTicks, renderingContext, buildContext);
+            super.doRender(partialTicks, renderingContext, buildContext);
         }
     }
 }

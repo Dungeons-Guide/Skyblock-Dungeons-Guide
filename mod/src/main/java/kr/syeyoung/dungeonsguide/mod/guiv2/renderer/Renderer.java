@@ -22,7 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 
 public interface Renderer {
-    void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext);
+    void doRender(float partialTicks, RenderingContext context, DomElement buildContext);
 
     /**
      * Transform point so that it's in child's coordinate system.

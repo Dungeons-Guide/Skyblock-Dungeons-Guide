@@ -74,7 +74,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         GlStateManager.enableDepth();
         GlStateManager.color(1, 1, 1, 1.0F);
         GuiInventory.drawEntityOnScreen(45, 150, 60, (float) -relMouseX+75, 0, fakePlayer);
@@ -123,9 +123,11 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
 
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();
     private MouseTooltip tooltip = null;
+    private double relMouseX;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
         ItemStack toHover = null;
+        this.relMouseX = relMouseX0;
         if (relMouseX0 > 20 && relMouseX0 < 70) {
             if (33 <= relMouseY0 && relMouseY0 <= 66) {
                 toHover = fakePlayer.getInventory()[3];
@@ -174,6 +176,7 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
             this.tooltip = null;
         }
     }
+
 
     @Override
     public void onUnmount() {

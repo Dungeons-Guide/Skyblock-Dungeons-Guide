@@ -30,7 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderProgram;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.MathHelper;
 import org.lwjgl.opengl.GL20;
 
 import java.awt.*;
@@ -59,7 +58,7 @@ public class ColorWheel extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double rad = buildContext.getAbsBounds().getWidth() / 2.0;
         ShaderProgram shaderProgram = ShaderManager.getShader("shaders/chromacircle");
         shaderProgram.useShader();

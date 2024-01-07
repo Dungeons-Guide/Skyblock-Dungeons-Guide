@@ -88,7 +88,7 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
 
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
@@ -106,8 +106,7 @@ public class Scaler extends AnnotatedExportOnlyWidget implements Layouter, Rende
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                (relMouseX - original.getX())  / scale.getValue(),
-                (relMouseY - original.getY()) / scale.getValue(), partialTicks, context, value);
+        value.getRenderer().doRender(
+                partialTicks, context, value);
     }
 }

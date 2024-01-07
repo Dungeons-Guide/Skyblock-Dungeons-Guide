@@ -20,13 +20,11 @@ package kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3;
 
 import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.location2.HUDLocationConfig;
-import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Text;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.SingleChildRenderer;
@@ -40,7 +38,6 @@ import net.minecraft.util.ResourceLocation;
 
 import java.util.List;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Renderer {
     @Bind(variableName = "menu")
@@ -94,7 +91,7 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         if (doSearch < System.currentTimeMillis()) {
             doSearch = Long.MAX_VALUE;
 
@@ -110,6 +107,6 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
             }
         }
 
-        SingleChildRenderer.INSTANCE.doRender(absMouseX,absMouseY,relMouseX,relMouseY,partialTicks,context,buildContext);
+        SingleChildRenderer.INSTANCE.doRender(partialTicks,context,buildContext);
     }
 }

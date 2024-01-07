@@ -103,10 +103,15 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
         panel.mouseReleased0( (int)(absMouseX / scale), (int)(absMouseY / scale), (int)relMouseX,(int) relMouseY, state);
     }
 
+    private int absMouseX, absMouseY, relMouseX, relMouseY;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
         double scale = getDomElement().getAbsBounds().getWidth() / getDomElement().getSize().getWidth();
         panel.mouseMoved0( (int)(absMouseX / scale), (int)(absMouseY / scale), (int)relMouseX0, (int)relMouseY0);
+        this.absMouseX = absMouseX;
+        this.absMouseY = absMouseY;
+        this.relMouseX = (int) relMouseX0;
+        this.relMouseY = (int) relMouseY0;
         return true;
     }
 
@@ -143,7 +148,7 @@ public class CompatLayer extends Widget implements Layouter, Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double scale = getDomElement().getAbsBounds().getWidth() / getDomElement().getSize().getWidth();
 
         Rectangle originalRect = context.currentClip();

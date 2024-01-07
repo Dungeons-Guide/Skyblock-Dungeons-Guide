@@ -62,8 +62,7 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
-        boolean isHover = buildContext.getSize().contains(relMouseX, relMouseY);
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         DomElement value;
         if (enabled.getValue()) {
             value = isHover ? hoverOn.getValue() : on.getValue();
@@ -84,9 +83,8 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
         );
         value.setAbsBounds(elementABSBound);
 
-        value.getRenderer().doRender(absMouseX, absMouseY,
-                relMouseX - original.getX(),
-                relMouseY - original.getY(), partialTicks, context, value);
+        value.getRenderer().doRender(
+                partialTicks, context, value);
     }
 
     @Override
@@ -96,9 +94,16 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
         return true;
     }
 
+    private boolean isHover = false;
     @Override
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
         getDomElement().setCursor(EnumCursor.POINTING_HAND);
+        isHover = true;
         return true;
+    }
+
+    @Override
+    public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+        isHover = false;
     }
 }

@@ -200,7 +200,7 @@ public class RichText extends Widget implements Layouter, Renderer {
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         double x = 0;
         double y = 0;
         double width = buildContext.getSize().getWidth();

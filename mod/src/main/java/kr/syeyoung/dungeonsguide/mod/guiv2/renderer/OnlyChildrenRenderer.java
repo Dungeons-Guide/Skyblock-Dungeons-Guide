@@ -25,7 +25,7 @@ import net.minecraft.client.renderer.GlStateManager;
 public class OnlyChildrenRenderer implements Renderer {
     public static OnlyChildrenRenderer INSTANCE = new OnlyChildrenRenderer();
     protected OnlyChildrenRenderer() {}
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext renderingContext, DomElement buildContext) {
         for (DomElement value : buildContext.getChildren()) {
             Rect original = value.getRelativeBound();
             if (original == null) continue;
@@ -43,9 +43,8 @@ public class OnlyChildrenRenderer implements Renderer {
             );
             value.setAbsBounds(elementABSBound);
 
-            value.getRenderer().doRender(absMouseX, absMouseY,
-                    relMouseX - original.getX(),
-                    relMouseY - original.getY(), partialTicks,renderingContext, value);
+            value.getRenderer().doRender(
+                    partialTicks,renderingContext, value);
             GlStateManager.popMatrix();
         }
     }

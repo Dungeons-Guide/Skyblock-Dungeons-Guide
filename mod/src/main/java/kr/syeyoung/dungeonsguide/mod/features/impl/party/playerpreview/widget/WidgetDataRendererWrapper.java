@@ -62,7 +62,7 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         dataRenderer.renderData(profile);
     }
 

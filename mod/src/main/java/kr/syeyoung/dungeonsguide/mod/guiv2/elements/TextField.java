@@ -98,7 +98,7 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         Size bounds = getDomElement().getSize();
 
         context.drawRect(0,0,bounds.getWidth(), bounds.getHeight(), getDomElement().isFocused() ? Color.white.getRGB() : Color.gray.getRGB());

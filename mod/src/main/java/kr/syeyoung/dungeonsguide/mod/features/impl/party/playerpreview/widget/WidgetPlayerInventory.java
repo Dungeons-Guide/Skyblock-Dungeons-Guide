@@ -60,7 +60,7 @@ public class WidgetPlayerInventory extends Widget implements Renderer, Layouter 
     }
 
     @Override
-    public void doRender(int absMouseX, int absMouseY, double relMouseX, double relMouseY, float partialTicks, RenderingContext context, DomElement buildContext) {
+    public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
         Gui.drawRect(0, 0, 164, 74, 0xFF000000);
         GlStateManager.disableLighting();
 
