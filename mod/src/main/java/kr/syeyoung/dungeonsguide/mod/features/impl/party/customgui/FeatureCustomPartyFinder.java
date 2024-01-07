@@ -55,7 +55,7 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
         jsonObject.addProperty("highlight", highlight);
         jsonObject.addProperty("blacklistClass", blacklistClass);
         jsonObject.addProperty("highlightClass", highlightClass);
-        return super.saveConfig();
+        return jsonObject;
     }
 
     @Override
