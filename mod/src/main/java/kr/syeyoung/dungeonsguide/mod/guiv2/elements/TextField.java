@@ -151,7 +151,8 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
         Rect actualField = new Rect(1, 3,
                 getDomElement().getSize().getWidth() - 2,
@@ -210,7 +211,8 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount, boolean childHandled) {
+        if (childHandled) return false; // how tho
         if (!getDomElement().isFocused()) return false;
         double lastOffset = xOffset;
         if (scrollAmount > 0) {
@@ -440,7 +442,8 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
     }
 
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        if (childHandled) return false;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY))
             getDomElement().setCursor(EnumCursor.BEAM_CURSOR);
         return true;

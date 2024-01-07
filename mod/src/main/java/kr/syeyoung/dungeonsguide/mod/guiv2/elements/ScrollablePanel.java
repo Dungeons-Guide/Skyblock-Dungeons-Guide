@@ -112,12 +112,8 @@ public class ScrollablePanel extends AnnotatedWidget {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
-        return false;
-    }
-
-    @Override
-    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
+    public boolean mouseScrolled(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount, boolean childHandled) {
+        if (childHandled) return false;
         if (direction.getValue().vertical) {
             double old = this.y.getValue(), neu;
             this.y.setValue(

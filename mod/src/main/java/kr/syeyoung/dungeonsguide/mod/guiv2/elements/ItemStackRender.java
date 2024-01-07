@@ -96,7 +96,7 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();
     private MouseTooltip tooltip = null;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
         if (hover.getValue() == null || !hover.getValue()) return true;
 
         List<String> toHover = null;

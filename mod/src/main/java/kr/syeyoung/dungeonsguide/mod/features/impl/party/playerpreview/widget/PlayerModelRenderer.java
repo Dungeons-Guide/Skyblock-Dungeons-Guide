@@ -125,7 +125,8 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
     private MouseTooltip tooltip = null;
     private double relMouseX;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        // yes, we don't care if child handled
         ItemStack toHover = null;
         this.relMouseX = relMouseX0;
         if (relMouseX0 > 20 && relMouseX0 < 70) {

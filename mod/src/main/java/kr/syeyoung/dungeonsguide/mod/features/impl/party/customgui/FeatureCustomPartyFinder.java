@@ -23,8 +23,6 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.legacy.GuiCustomPartyFinder;
-import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import lombok.Getter;

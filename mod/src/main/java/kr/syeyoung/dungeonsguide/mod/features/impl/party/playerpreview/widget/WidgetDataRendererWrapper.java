@@ -70,7 +70,7 @@ public class WidgetDataRendererWrapper extends Widget implements Layouter, Rende
     private MinecraftTooltip actualTooltip = new MinecraftTooltip();
     private MouseTooltip tooltip = null;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         List<String> toHover = null;
         if (getDomElement().getAbsBounds().contains(absMouseX, absMouseY))
             toHover = dataRenderer.onHover(profile);

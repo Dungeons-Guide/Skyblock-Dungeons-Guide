@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Export;
 import net.minecraft.util.ResourceLocation;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
 
@@ -69,6 +70,10 @@ public class PopupMgr extends AnnotatedWidget {
         DomElement domElement = element.createDomElement(getDomElement());
         domElementBindableAttribute.getValue().addElementFirst(domElement);
         callbacks.put(domElement, callback);
+    }
+
+    public List<DomElement> getPopups() {
+        return domElementBindableAttribute.getValue().getChildren();
     }
 
     public void closePopup(Object value) {

@@ -88,7 +88,8 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
         enabled.setValue(!enabled.getValue());
         return true;
@@ -96,7 +97,8 @@ public class ToggleButton extends AnnotatedWidget implements Renderer {
 
     private boolean isHover = false;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().setCursor(EnumCursor.POINTING_HAND);
         isHover = true;
         return true;

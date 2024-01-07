@@ -188,15 +188,16 @@ public class DomElement {
             return false;
         }
 
+        boolean handled = false;
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
             if (childComponent.mouseClicked0(absMouseX, absMouseY, transformed.x, transformed.y, mouseButton)) {
-                return true;
+                handled = true;
             }
         }
 
-        return widget.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton);
+        return widget.mouseClicked(absMouseX, absMouseY, relMouseX0, relMouseY0, mouseButton, handled) | handled;
     }
 
 
@@ -225,15 +226,16 @@ public class DomElement {
     public boolean mouseScrolled0(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, int scrollAmount) {
         if (absBounds == null) return false;
 
+        boolean handled = false;
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
             if (childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount)) {
-                return true;
+                handled = true;
             }
         }
-        if (!absBounds.contains(absMouseX, absMouseY) && !isFocused()) return false;
-        return widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount);
+        if (!absBounds.contains(absMouseX, absMouseY) && !isFocused()) return handled;
+        return widget.mouseScrolled(absMouseX, absMouseY, relMouseX0, relMouseY0, scrollAmount, handled) | handled;
     }
 
 
@@ -248,16 +250,17 @@ public class DomElement {
         }
         wasMouseIn = isIn;
 
+        boolean handled = false;
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            if (childComponent.mouseMoved0(absMouseX, absMouseY,  transformed.x, transformed.getY(), isIn)) {
-                return true;
+            if (childComponent.mouseMoved0(absMouseX, absMouseY,  transformed.x, transformed.getY(), isIn && !handled)) {
+                handled = true;
             }
         }
         if (isIn)
-            return widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0);
-        return false;
+            return widget.mouseMoved(absMouseX, absMouseY, relMouseX0, relMouseY0, handled) | handled;
+        return handled;
     }
 
     public void setCursor(EnumCursor enumCursor) {

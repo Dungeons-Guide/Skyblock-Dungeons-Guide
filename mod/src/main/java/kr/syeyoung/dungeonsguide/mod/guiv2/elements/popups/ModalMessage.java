@@ -19,8 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
-import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
-import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -35,16 +33,6 @@ public class ModalMessage extends AnnotatedImportOnlyWidget {
     public ModalMessage(String text) {
         super(new ResourceLocation("dungeonsguide:gui/elements/modal_content_message.gui"));
         this.text.setValue(text);
-    }
-
-    @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0) {
-        return true;
-    }
-
-    @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
-        return true;
     }
 
     @On(functionName = "ok")

@@ -20,13 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
-import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
-import net.minecraft.client.Minecraft;
-import net.minecraft.util.EnumChatFormatting;
 
 import java.util.Collections;
 import java.util.List;
@@ -45,7 +40,8 @@ public class WidgetHoverTooltip extends Widget {
 
     private MouseTooltip tooltip = null;
     @Override
-    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX, double relMouseY, boolean childHandled) {
+        if (childHandled) return false;
         if (this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
                     .openPopup(this.tooltip = new MouseTooltip(popupSupplier.get()), (a) -> {

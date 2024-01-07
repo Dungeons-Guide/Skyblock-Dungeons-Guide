@@ -88,7 +88,8 @@ public class ColorWheel extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
 
         double radius = getDomElement().getSize().getWidth()/2;
         double dx = relMouseX - radius;

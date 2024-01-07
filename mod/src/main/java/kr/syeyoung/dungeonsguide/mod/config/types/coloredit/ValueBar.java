@@ -104,7 +104,8 @@ public class ValueBar extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
 
         double value = 1 - relMouseY / getDomElement().getSize().getHeight();

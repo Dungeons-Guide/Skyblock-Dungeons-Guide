@@ -104,7 +104,8 @@ public class ChromaBar extends Widget implements Renderer, Layouter {
     }
 
     @Override
-    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton) {
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+        if (childHandled) return false;
         getDomElement().obtainFocus();
 
         float alpha = (float) (relMouseY / getDomElement().getSize().getHeight());
