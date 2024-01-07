@@ -192,7 +192,7 @@ public class DomElement {
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            if (childComponent.mouseClicked0(absMouseX, absMouseY, transformed.x, transformed.y, mouseButton)) {
+            if (!handled && childComponent.mouseClicked0(absMouseX, absMouseY, transformed.x, transformed.y, mouseButton)) {
                 handled = true;
             }
         }
@@ -230,7 +230,7 @@ public class DomElement {
         for (DomElement childComponent  : children) {
             Position transformed = renderer.transformPoint(childComponent, new Position(relMouseX0, relMouseY0));
 
-            if (childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount)) {
+            if (!handled && childComponent.mouseScrolled0(absMouseX, absMouseY, transformed.x, transformed.y, scrollAmount)) {
                 handled = true;
             }
         }
