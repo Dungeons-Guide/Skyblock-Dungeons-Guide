@@ -237,11 +237,13 @@ public class TextField extends AnnotatedExportOnlyWidget implements Renderer, La
 
     @Override
     public void keyHeld(char typedChar, int keyCode) {
+        if (!getDomElement().isFocused()) return;
         this.keyPressed(typedChar, keyCode);
     }
 
     @Override
     public void keyPressed(char typedChar, int keycode) {
+        if (!getDomElement().isFocused()) return;
         if (selectionStart == -1) {
             if (keycode == 199) { // home
                 setCursor0(0);

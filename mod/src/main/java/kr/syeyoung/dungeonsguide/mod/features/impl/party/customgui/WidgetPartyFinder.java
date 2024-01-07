@@ -440,4 +440,9 @@ public class WidgetPartyFinder extends AnnotatedImportOnlyWidget {
     public void updateUnjoinable(Object prev, Object neu) {
         onChestUpdate(null);
     }
+
+    @Override
+    public void keyPressed(char typedChar, int keyCode) {
+        System.out.println(keyCode);
+    }
 }
