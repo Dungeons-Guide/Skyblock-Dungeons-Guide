@@ -186,6 +186,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
 
         private Map<Integer, EntityData> entityData = new HashMap<>();
+        private LinkedList<EntityData.EntityTrajectory> playerTrajactory = new LinkedList<>();
         private int minX, minZ;
     }
 
@@ -289,6 +290,17 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
             roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), new ChatComponentText("SECRET UPDATE: "+secret+"/"+total)));
         }
+
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (dungeonContext == null) return;
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition());
+        DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
+        if (dungeonRoom == null) return;
+        RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
+        if (roomInfo == null) return;
+        if (roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) > 0.1f) {
+            roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getMinecraft().thePlayer.getPositionVector(), System.currentTimeMillis()));
+        }
     }
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
@@ -310,7 +322,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AxisAlignedBB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
         Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);
 
-        if (theEntity != null && entityData.armorstand != null)
+        if (theEntity != null && entityData.armorstand == null)
             entityData.armorstand = theEntity.getDisplayName();
 
         entityData.metadata = event.entityLiving.getDataWatcher().getAllWatched();
@@ -472,6 +484,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 jsonObject.addProperty("secrets", dungeonRoomRoomInfoEntry.getKey().getTotalSecrets());
                 jsonObject.add("entities", gson.toJsonTree(roomInfo.entityData));
                 jsonObject.add("blockupdates", gson.toJsonTree(roomInfo.blockUpdates));
+                jsonObject.add("chats", gson.toJsonTree(roomInfo.systemMessages));
+                jsonObject.add("interactions", gson.toJsonTree(roomInfo.interactions));
+                jsonObject.add("player", gson.toJsonTree(roomInfo.playerTrajactory));
 
 
 
