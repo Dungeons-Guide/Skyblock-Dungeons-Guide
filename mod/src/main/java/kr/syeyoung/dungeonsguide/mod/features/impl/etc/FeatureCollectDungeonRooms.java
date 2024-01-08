@@ -135,7 +135,6 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         private IChatComponent armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
-        private List<DataWatcher.WatchableObject> metadata;
 
         private String type;
 
@@ -298,7 +297,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
         if (roomInfo == null) return;
-        if (roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) > 0.1f) {
+        if (roomInfo.playerTrajactory.getLast() == null || roomInfo.playerTrajactory.getLast().getPos() == null || roomInfo.playerTrajactory.getLast().getPos().squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) > 0.1f) {
             roomInfo.playerTrajactory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, Minecraft.getMinecraft().thePlayer.getPositionVector(), System.currentTimeMillis()));
         }
     }
@@ -325,7 +324,6 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (theEntity != null && entityData.armorstand == null)
             entityData.armorstand = theEntity.getDisplayName();
 
-        entityData.metadata = event.entityLiving.getDataWatcher().getAllWatched();
         entityData.name = event.entityLiving.getName();
 
         if (event.entityLiving.getHeldItem() != null)
@@ -338,7 +336,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             entityData.armoritems[2] = event.entityLiving.getCurrentArmor(2);
         if (event.entityLiving.getCurrentArmor(3) != null)
             entityData.armoritems[3] = event.entityLiving.getCurrentArmor(3);
-        if (entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().squareDistanceTo(event.entity.getPositionVector()) > 0.1f) {
+        if (entityData.trajectory.getLast() == null || entityData.trajectory.getLast().getPos() == null || entityData.trajectory.getLast().getPos().squareDistanceTo(event.entity.getPositionVector()) > 0.1f) {
             entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.MOVE, event.entity.getPositionVector(), System.currentTimeMillis()));
         }
     }
@@ -466,7 +464,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                         public RoomInfo.BlockUpdate.BlockUpdateData read(JsonReader in) throws IOException {
                             return null;
                         }
-                    }).registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
+                    })
+                    .registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
                     .create();
             for (Map.Entry<DungeonRoom, RoomInfo> dungeonRoomRoomInfoEntry : roomInfoMap.entrySet()) {
                 JsonObject jsonObject = new JsonObject();
