@@ -146,7 +146,7 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
     }
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onGuiClose(GuiOpenEvent event) {
-        if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null) {
+        if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null && widgetFeatureWrapper.tooltip != null) {
             PopupMgr.getPopupMgr(widgetFeatureWrapper.getDomElement()).closePopup(widgetFeatureWrapper.mouseTooltip, null);
             widgetFeatureWrapper.mouseTooltip = null;
             widgetFeatureWrapper.tooltip = null;
