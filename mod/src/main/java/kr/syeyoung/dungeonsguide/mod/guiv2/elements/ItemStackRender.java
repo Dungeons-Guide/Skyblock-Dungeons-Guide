@@ -122,7 +122,7 @@ public class ItemStackRender extends AnnotatedExportOnlyWidget implements Render
 
         if (toHover == null && this.tooltip != null) {
             PopupMgr.getPopupMgr(getDomElement())
-                    .closePopup(this.tooltip);
+                    .closePopup(this.tooltip, null);
             this.tooltip = null;
         } else if (toHover != null && this.tooltip == null)
             PopupMgr.getPopupMgr(getDomElement())
