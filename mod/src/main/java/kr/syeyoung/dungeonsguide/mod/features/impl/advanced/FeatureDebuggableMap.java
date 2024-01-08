@@ -139,7 +139,8 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
 
         @Override
         public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
-            PopupMgr.getPopupMgr(getDomElement()).closePopup(mouseTooltip, null);
+            if (mouseTooltip != null)
+                PopupMgr.getPopupMgr(getDomElement()).closePopup(mouseTooltip, null);
             mouseTooltip = null;
             tooltip = null;
         }

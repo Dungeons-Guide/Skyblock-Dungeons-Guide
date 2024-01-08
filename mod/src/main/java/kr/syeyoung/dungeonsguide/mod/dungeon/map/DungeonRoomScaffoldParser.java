@@ -27,11 +27,13 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomDiscoverEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonRoomDiscoveredEvent;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import lombok.Getter;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.storage.MapData;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -131,6 +133,8 @@ public class DungeonRoomScaffoldParser {
                     if (room.getRoomProcessor() != null && room.getRoomProcessor().readGlobalChat()) {
                         context.getGlobalRoomProcessors().add(room.getRoomProcessor());
                     }
+
+                    MinecraftForge.EVENT_BUS.post(new DungeonRoomDiscoveredEvent(room));
                 } else if (color == 85) {
                     undiscoveredRoom++;
                 }
