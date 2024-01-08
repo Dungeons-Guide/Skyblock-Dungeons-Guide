@@ -38,6 +38,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
@@ -65,11 +66,13 @@ import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
 import java.awt.*;
@@ -129,13 +132,12 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public static class EntityData {
         private int id;
         public String name;
-        private String armorstand;
+        private IChatComponent armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
         private List<DataWatcher.WatchableObject> metadata;
 
         private String type;
-        private boolean isSelf;
 
         @AllArgsConstructor @Data
         public static class EntityTrajectory {
@@ -168,6 +170,21 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             private long time;
         }
         private List<BlockUpdate> blockUpdates = new ArrayList<>();
+
+        private List<Interaction> interactions = new ArrayList<>();
+        @Data @AllArgsConstructor
+        public static class Interaction {
+            private long time;
+            private BlockPos pos;
+        }
+        private List<ChatMessage> systemMessages = new ArrayList<>();
+        @Data @AllArgsConstructor
+        public static class ChatMessage {
+            private long time;
+            private IChatComponent chat;
+        }
+
+
         private Map<Integer, EntityData> entityData = new HashMap<>();
         private int minX, minZ;
     }
@@ -214,6 +231,66 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
 
+    @DGEventHandler(ignoreDisabled = true)
+    public void playerInteract(PlayerInteractEvent event) {
+        if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
+        IBlockState blockState = Minecraft.getMinecraft().theWorld.getBlockState(event.pos);
+        if (blockState == null) return;
+        if (!(blockState.getBlock() == Blocks.lever || blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest || blockState.getBlock() == Blocks.skull)) {
+            return;
+        }
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (dungeonContext == null) return;
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(event.pos);
+        DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
+        if (dungeonRoom == null) return;
+        RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
+        if (roomInfo == null) return;
+
+        roomInfo.interactions.add(new RoomInfo.Interaction(System.currentTimeMillis(), event.pos));
+    }
+
+    @DGEventHandler(ignoreDisabled = true)
+    public void onChat(ClientChatReceivedEvent event) {
+        if (event.type == 2) return;
+        if (!event.message.getFormattedText().contains(":")) {
+            // this is not user message.
+            BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+
+            DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            if (dungeonContext == null) return;
+            Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos);
+            DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
+            if (dungeonRoom == null) return;
+            RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
+            if (roomInfo == null) return;
+
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), event.message));
+        }
+    }
+    private int lastNo = 0;
+    private int totalSecret = 0;
+    @DGEventHandler(ignoreDisabled = true)
+    public void onTick(DGTickEvent tickEvent) {
+        int secret = FeatureRegistry.DUNGEON_SECRETS_ROOM.getLatestCurrSecrets();
+        int total = FeatureRegistry.DUNGEON_SECRETS_ROOM.getLatestTotalSecrets();
+        if (secret != lastNo || total != totalSecret) {
+            lastNo = secret;
+            totalSecret = total;
+            BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+
+            DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            if (dungeonContext == null) return;
+            Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos);
+            DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
+            if (dungeonRoom == null) return;
+            RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);
+            if (roomInfo == null) return;
+
+            roomInfo.systemMessages.add(new RoomInfo.ChatMessage(System.currentTimeMillis(), new ChatComponentText("SECRET UPDATE: "+secret+"/"+total)));
+        }
+    }
+
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onEntityAttributeUpdate(LivingEvent.LivingUpdateEvent event) {
         if (event.entityLiving instanceof EntityArmorStand) {
@@ -232,9 +309,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AxisAlignedBB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
         Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);
-//EntityPigZombie
-        if (theEntity != null)
-            entityData.armorstand = theEntity.getDisplayName().getFormattedText();
+
+        if (theEntity != null && entityData.armorstand != null)
+            entityData.armorstand = theEntity.getDisplayName();
 
         entityData.metadata = event.entityLiving.getDataWatcher().getAllWatched();
         entityData.name = event.entityLiving.getName();
@@ -377,7 +454,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                         public RoomInfo.BlockUpdate.BlockUpdateData read(JsonReader in) throws IOException {
                             return null;
                         }
-                    })
+                    }).registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
                     .create();
             for (Map.Entry<DungeonRoom, RoomInfo> dungeonRoomRoomInfoEntry : roomInfoMap.entrySet()) {
                 JsonObject jsonObject = new JsonObject();
@@ -390,6 +467,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 RoomInfo roomInfo = dungeonRoomRoomInfoEntry.getValue();
                 jsonObject.addProperty("minX", roomInfo.minX);
                 jsonObject.addProperty("minZ", roomInfo.minZ);
+                jsonObject.addProperty("shape", dungeonRoomRoomInfoEntry.getKey().getShape());
+                jsonObject.addProperty("color", dungeonRoomRoomInfoEntry.getKey().getColor());
+                jsonObject.addProperty("secrets", dungeonRoomRoomInfoEntry.getKey().getTotalSecrets());
                 jsonObject.add("entities", gson.toJsonTree(roomInfo.entityData));
                 jsonObject.add("blockupdates", gson.toJsonTree(roomInfo.blockUpdates));
 
@@ -524,7 +604,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             RenderUtils.drawTextAtWorld("??Unknown??", (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
         } else {
             if (entityData.getArmorstand() != null)
-                RenderUtils.drawTextAtWorld(entityData.getArmorstand(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
+                RenderUtils.drawTextAtWorld(entityData.getArmorstand().getFormattedText(), (float) hovered.posX, (float) hovered.posY+3, (float) hovered.posZ, 0xFF000000, 0.02f, false, true, event.partialTicks);
             RenderUtils.drawTextAtWorld(entityData.getType(), (float) hovered.posX, (float) hovered.posY+3.2f, (float) hovered.posZ, 0xFF00FF00, 0.02f, false, true, event.partialTicks);
             Vec3 pos = entityData.getTrajectory().getFirst().getPos();
             RenderUtils.renderBeaconBeam(
