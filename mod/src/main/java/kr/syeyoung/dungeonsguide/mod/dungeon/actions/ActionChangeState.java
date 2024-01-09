@@ -64,7 +64,7 @@ public class ActionChangeState extends AbstractAction {
         if (mechanic == null) {
             return false;
         }
-        if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() != DungeonSecret.SecretType.CHEST) {
+        if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() == DungeonSecret.SecretType.BAT) {
             return true;
         }
         if (mechanic instanceof DungeonDummy) {
