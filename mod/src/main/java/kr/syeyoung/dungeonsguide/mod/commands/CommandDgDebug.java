@@ -29,6 +29,11 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditRedstoneKey;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditRedstoneKeySlot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditWizard;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditWizardCrystal;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -63,6 +68,7 @@ import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.*;
+import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -158,6 +164,9 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "process":
                 processCommand1();
+                break;
+            case "process2":
+                process2();
                 break;
             case "check":
                 checkCommand();
@@ -279,13 +288,34 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void saveRoomsCommand() {
-        DungeonRoomInfoRegistry.saveAll(Main.getConfigDir());
+        DungeonRoomInfoRegistry.saveAll(new File(Main.getConfigDir(), "roomdatas"));
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
+    }
+
+    private void process2() {
+        try {
+            Field f=  ValueEditRegistry.class.getDeclaredField("valueEditMap");
+            f.setAccessible(true);
+            Map map = (Map) f.get(null);
+            map.put(DungeonWizard.class.getName(), new ValueEditWizard.Generator());
+
+        } catch (Throwable e) {
+            throw new RuntimeException(e);
+        }
+
+//        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+//            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
+//                if (entry.getKey().contains("redstone")) {
+//                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
+//                    System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
+//                }
+//            }
+//        }
     }
 
     private void loadRoomsCommand() {
         try {
-            DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
+            DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
             ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded roomdatas"));
             return;
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
