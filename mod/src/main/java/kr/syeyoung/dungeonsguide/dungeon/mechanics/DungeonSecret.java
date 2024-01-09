@@ -79,6 +79,13 @@ public class DungeonSecret implements DungeonMechanic {
             }
         } else if (secretType == SecretType.ITEM_DROP) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
+            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 2) {
+                List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(),pos.getZ()));
+                if (items.size() == 0) {
+                    dungeonRoom.getRoomContext().put("i-"+pos.toString(), true); // was there, but gone!
+                    ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+"found.");
+                }
+            }
             if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 100) {
                 List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(),pos.getZ()));
                 if (items.size() != 0 && !dungeonRoom.getRoomContext().containsKey("i-"+pos.toString())) {
@@ -89,6 +96,7 @@ public class DungeonSecret implements DungeonMechanic {
                     ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+"found? "+items.size());
                 }
             }
+
         }
     }
 
@@ -150,7 +158,7 @@ public class DungeonSecret implements DungeonMechanic {
                 }
             }
 
-            return SecretStatus.NOT_SURE;
+            return Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+bpos.toString())) ? SecretStatus.DEFINITELY_NOT : SecretStatus.NOT_SURE;
         }
     }
 
