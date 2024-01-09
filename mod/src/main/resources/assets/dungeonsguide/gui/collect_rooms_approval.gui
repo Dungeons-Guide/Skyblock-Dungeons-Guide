@@ -23,12 +23,18 @@
                 <size width="0" height="10"/>
                 <Text text="Allow Dungeons Guide to send Dungeon run data to remote server?" color="#FFFFFFFF" size="16" align="CENTER"/>
                 <size width="0" height="15"/>
-                <Text text="You can change this setting at /dg -> Misc -> Collect Dungeon Data" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <Text text="This will only collect anything that happens inside a Skyblock Dungeon." color="#FFFFFFFF" size="8" align="CENTER"/>
-                <Text text="Examples include following but not limited to blahblah" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="Scope of data collection is as follows" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- Room Schematic (where blocks are)" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- Mob spawn locations, nametags, armor items, weapon items, and movements" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- Block Updates" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- Player interaction (click blocks) and positions" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- System Chat Messages e.g. You hear the sound of a door opening... (Does not include player messages)" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- Dungeons Guide Party ID for correlation" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <size width="0" height="15"/>
                 <Text text="The data is anonymized, and by allowing this you help Dungeons Guide implement smarter pathfinding features" color="#FFFFFF00" size="8" align="CENTER"/>
                 <Text text="This option is optional and there is no penalty for denying" color="#FFFFFF00" size="8" align="CENTER"/>
+                <Text text="You can enable/disable this option later at /dg -> Misc -> Collect Dungeon Data" color="#FFFFFF00" size="8" align="CENTER"/>
                 <size width="0" height="15"/>
                 <row mainAlign="CENTER">
                     <size width="80" height="20">
