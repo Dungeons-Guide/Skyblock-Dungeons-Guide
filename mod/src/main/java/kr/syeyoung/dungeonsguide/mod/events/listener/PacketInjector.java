@@ -56,6 +56,7 @@ public class PacketInjector extends ChannelDuplexHandler {
         targetedPackets.add(S21PacketChunkData.class);
         targetedPackets.add(S26PacketMapChunkBulk.class);
         targetedPackets.add(S13PacketDestroyEntities.class);
+        targetedPackets.add(S0DPacketCollectItem.class);
     }
     @Override
     public void channelRead(ChannelHandlerContext ctx, Object msg) throws Exception {

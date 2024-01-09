@@ -32,4 +32,6 @@ public class DungeonActionContext {
 
     @Getter
     private static final List<Integer> killeds = new ArrayList<>();
+    @Getter
+    private static final List<Integer> pickedups = new ArrayList<>();
 }
