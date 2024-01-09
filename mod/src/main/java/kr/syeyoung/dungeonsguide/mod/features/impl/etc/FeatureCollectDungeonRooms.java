@@ -252,7 +252,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             return;
         }
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (dungeonContext == null) return;
+        if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
         Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(event.pos);
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
@@ -270,7 +270,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            if (dungeonContext == null) return;
+            if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
             Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos);
             DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
             if (dungeonRoom == null) return;
@@ -292,7 +292,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-            if (dungeonContext == null) return;
+            if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
             Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(pos);
             DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
             if (dungeonRoom == null) return;
@@ -303,7 +303,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (dungeonContext == null) return;
+        if (dungeonContext == null || dungeonContext.getScaffoldParser() == null) return;
         Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition());
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
@@ -380,8 +380,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onBlockUpdate(BlockUpdateEvent.Pre blockUpdateEvent) {
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
-        if (dungeonContext == null) return;
-        if (dungeonContext.getScaffoldParser() == null) return;
+        if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
         Map<DungeonRoom, List<Tuple<BlockPos, IBlockState>>> updatePerRoom = blockUpdateEvent.getUpdatedBlocks().stream()
                 .filter(a -> {
                     Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(a.getFirst());
