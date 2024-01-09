@@ -46,6 +46,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
@@ -525,6 +526,14 @@ public class DungeonListener {
         DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 
+    @SubscribeEvent
+    public void onEntityDespawn2(EntityExitWorldEvent worldEvent) {
+        for (int entityId : worldEvent.getEntityIds()) {
+            Entity en = Minecraft.getMinecraft().theWorld.getEntityByID(entityId);
+            if (en instanceof EntityBat && en.getDistanceSqToEntity(Minecraft.getMinecraft().thePlayer) < 3025)
+                DungeonActionContext.getKilleds().add(entityId);
+        }
+    }
 
     @SubscribeEvent
     public void onEntityDeSpawn(LivingDeathEvent deathEvent) {
