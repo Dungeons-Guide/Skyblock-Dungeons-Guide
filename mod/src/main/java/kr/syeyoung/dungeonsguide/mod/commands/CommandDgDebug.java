@@ -293,24 +293,26 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void process2() {
-        try {
-            Field f=  ValueEditRegistry.class.getDeclaredField("valueEditMap");
-            f.setAccessible(true);
-            Map map = (Map) f.get(null);
-            map.put(DungeonWizard.class.getName(), new ValueEditWizard.Generator());
-
-        } catch (Throwable e) {
-            throw new RuntimeException(e);
-        }
-
-//        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-//            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
-//                if (entry.getKey().contains("redstone")) {
-//                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
-//                    System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
-//                }
-//            }
+//        try {
+//            Field f=  ValueEditRegistry.class.getDeclaredField("valueEditMap");
+//            f.setAccessible(true);
+//            Map map = (Map) f.get(null);
+//            map.put(DungeonWizard.class.getName(), new ValueEditWizard.Generator());
+//
+//        } catch (Throwable e) {
+//            throw new RuntimeException(e);
 //        }
+
+        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
+                if (entry.getKey().contains("redstone")) {
+                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
+                    System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
+                } else if (entry.getKey().contains("key-slot")) {
+
+                }
+            }
+        }
     }
 
     private void loadRoomsCommand() {
