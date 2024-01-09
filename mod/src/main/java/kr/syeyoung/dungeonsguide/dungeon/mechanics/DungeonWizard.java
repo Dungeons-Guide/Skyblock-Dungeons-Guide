@@ -110,7 +110,7 @@ public class DungeonWizard implements DungeonMechanic {
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         if (crystal != null) {
-            DungeonWizardCrystal crystal1 = (DungeonWizardCrystal) dungeonRoom.getMechanics().get(crystal);
+            DungeonMechanic crystal1 = dungeonRoom.getMechanics().get(crystal);
             String crystalState = crystal1.getCurrentState(dungeonRoom);
             if (crystalState.equalsIgnoreCase("obtained-other")) {
                 return Sets.newHashSet("navigate", "click");
