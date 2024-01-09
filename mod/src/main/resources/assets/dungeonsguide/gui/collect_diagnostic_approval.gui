@@ -23,12 +23,12 @@
                 <size width="0" height="10"/>
                 <Text text="Allow Dungeons Guide to send errors to remote server?" color="#FFFFFFFF" size="16" align="CENTER"/>
                 <size width="0" height="15"/>
-                <Text text="You can change this setting at /dg -> Misc -> Collect Error Logs" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <Text text="This will only collect errors within dg, and it will not send your latest.log" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <Text text="It will only send stacktraces, a piece of text that tells where in dg what error occured" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <size width="0" height="15"/>
                 <Text text="The data is anonymized, and by allowing this you help Dungeons Guide fix problems that went unnoticed" color="#FFFFFF00" size="8" align="CENTER"/>
                 <Text text="This option is optional and there is no penalty for denying" color="#FFFFFF00" size="8" align="CENTER"/>
+                <Text text="You can enable/disable this option later at /dg -> Misc -> Collect Error Logs" color="#FFFFFF00" size="8" align="CENTER"/>
                 <size width="0" height="15"/>
                 <row mainAlign="CENTER">
                     <size width="80" height="20">
