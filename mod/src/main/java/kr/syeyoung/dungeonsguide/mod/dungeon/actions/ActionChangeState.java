@@ -61,6 +61,9 @@ public class ActionChangeState extends AbstractAction {
         if (state.equalsIgnoreCase("navigate")) {
             return true;
         }
+        if (state.equalsIgnoreCase("click")) {
+            return true;
+        }
         if (mechanic == null) {
             return false;
         }
