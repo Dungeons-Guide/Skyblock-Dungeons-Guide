@@ -21,20 +21,45 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
+import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget.WidgetProfileViewer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Clip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MinecraftTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.MouseTooltip;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
+import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.ConstraintBox;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Rect;
+import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
+import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
+import kr.syeyoung.dungeonsguide.mod.overlay.*;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.GuiScreen;
+import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.texture.DynamicTexture;
 import net.minecraft.util.ResourceLocation;
+import net.minecraftforge.client.event.GuiOpenEvent;
+import net.minecraftforge.client.event.GuiScreenEvent;
+import org.lwjgl.input.Mouse;
 import org.lwjgl.opengl.GL11;
 
-public class FeatureDebuggableMap extends RawRenderingGuiFeature {
+import java.awt.*;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+
+public class FeatureDebuggableMap extends RawRenderingGuiFeature  {
     public FeatureDebuggableMap() {
         super("Debug", "Display Debug Info included map", "ONLY WORKS WITH SECRET SETTING", "advanced.debug.map", true, 128, 128);
         this.setEnabled(false);
@@ -64,14 +89,6 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature {
 
 
         if (!(Minecraft.getMinecraft().currentScreen instanceof GuiChat)) return;
-        // TODO: rewrite hover logic
-//        Rectangle featureRect = this.getFeatureRect().getRectangleNoScale();
-//
-//        int i = (int) ((int) (Mouse.getEventX() - featureRect.getX()) / factor);
-//        int j = (int) ((int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY())/ factor);
-//        if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
-//            GuiUtils.drawHoveringText(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors()[j * 128 + i]),(int)(Mouse.getEventX() - featureRect.getX()), (int) (Minecraft.getMinecraft().displayHeight - Mouse.getEventY() - featureRect.getY()), Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight, -1, Minecraft.getMinecraft().fontRendererObj);
-//        }
     }
 
     @Override
@@ -81,5 +98,71 @@ public class FeatureDebuggableMap extends RawRenderingGuiFeature {
 
         GL11.glLineWidth(2);
         RenderUtils.drawUnfilledBox(0,0, (int) width, (int) width, 0xff000000, false);
+    }
+
+    public class WidgetFeatureWrapper extends Widget implements Renderer, Layouter {
+        private MouseTooltip mouseTooltip;
+        private MinecraftTooltip tooltip;
+
+        @Override
+        public List<Widget> build(DomElement buildContext) {
+            return Collections.emptyList();
+        }
+
+        @Override
+        public void doRender(float partialTicks, RenderingContext context, DomElement buildContext) {
+            drawScreen(partialTicks);
+        }
+
+        @Override
+        public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
+            return new Size(getFeatureRect().getWidth(), getFeatureRect().getWidth());
+        }
+
+        @Override
+        public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+            double factor = getFeatureRect().getWidth() / 128;
+            int i = (int) (relMouseX0/factor);
+            int j = (int) (relMouseY0/factor);
+            if (i >= 0 && j>= 0 && i <= 128 && j <= 128 && MapUtils.getColors() != null) {
+                if (mouseTooltip == null) {
+                    PopupMgr.getPopupMgr(getDomElement()).openPopup(mouseTooltip = new MouseTooltip(tooltip = new MinecraftTooltip()), a -> {});
+                }
+                tooltip.setTooltip(Arrays.asList(i+","+j,"Color: "+MapUtils.getColors()[j * 128 + i]));
+            } else if (mouseTooltip != null){
+                PopupMgr.getPopupMgr(getDomElement()).closePopup(mouseTooltip, null);
+                mouseTooltip = null;
+                tooltip = null;
+            }
+            return true;
+        }
+
+        @Override
+        public void mouseExited(int absMouseX, int absMouseY, double relMouseX, double relMouseY) {
+            if (mouseTooltip != null)
+                PopupMgr.getPopupMgr(getDomElement()).closePopup(mouseTooltip, null);
+            mouseTooltip = null;
+            tooltip = null;
+        }
+    }
+    @DGEventHandler(triggerOutOfSkyblock = true)
+    public void onGuiClose(GuiOpenEvent event) {
+        if (!(event.gui instanceof GuiChat) && widgetFeatureWrapper != null && widgetFeatureWrapper.tooltip != null) {
+            PopupMgr.getPopupMgr(widgetFeatureWrapper.getDomElement()).closePopup(widgetFeatureWrapper.mouseTooltip, null);
+            widgetFeatureWrapper.mouseTooltip = null;
+            widgetFeatureWrapper.tooltip = null;
+        }
+    }
+    private WidgetFeatureWrapper widgetFeatureWrapper;
+
+
+    public OverlayWidget instantiateWidget() {
+        Clip clip = new Clip();
+        clip.widget.setValue(widgetFeatureWrapper = new WidgetFeatureWrapper());
+        return new OverlayWidget(
+                clip,
+                OverlayType.UNDER_CHAT,
+                new GUIRectPositioner(this::getFeatureRect)
+        );
     }
 }

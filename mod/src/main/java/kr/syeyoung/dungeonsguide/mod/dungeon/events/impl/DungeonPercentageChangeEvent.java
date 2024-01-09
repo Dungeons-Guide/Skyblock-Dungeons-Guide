@@ -16,15 +16,18 @@
  *     along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.text;
+package kr.syeyoung.dungeonsguide.mod.dungeon.events.impl;
 
-import java.util.List;
-import java.util.Map;
+import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventData;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 
-public interface StyledTextProvider {
-    List<StyledText> getDummyText();
-    List<StyledText> getText();
-
-    List<TextStyle> getStyles();
-    Map<String, TextStyle> getStylesMap();
+@Data
+@AllArgsConstructor
+public class DungeonPercentageChangeEvent implements DungeonEventData {;
+    private int percentage;
+    @Override
+    public String getEventName() {
+        return "PERCENTAGE_CHANGE";
+    }
 }

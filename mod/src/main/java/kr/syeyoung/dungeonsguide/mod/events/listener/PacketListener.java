@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.events.listener;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.CachedWorld;
 import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
@@ -32,13 +33,20 @@ import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.NameTagVisibility;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.Team;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.teams.TeamManager;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.multiplayer.WorldClient;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.*;
 import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Tuple;
+import net.minecraft.world.ChunkCache;
+import net.minecraft.world.World;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.MapData;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.fml.common.eventhandler.SubscribeEvent;
+
+import java.util.*;
 
 public class PacketListener {
 
@@ -80,7 +88,7 @@ public class PacketListener {
                 blockUpdateEvent.getUpdatedBlocks().add(new Tuple<>(changedBlock.getPos(), changedBlock.getBlockState()));
             }
             MinecraftForge.EVENT_BUS.post(blockUpdateEvent);
-        }else if (packet instanceof S45PacketTitle) {
+        } else if (packet instanceof S45PacketTitle) {
             MinecraftForge.EVENT_BUS.post(new TitleEvent((S45PacketTitle) packet));
         } else if (packet instanceof S38PacketPlayerListItem) {
             MinecraftForge.EVENT_BUS.post(new PlayerListItemPacketEvent((S38PacketPlayerListItem) packet));
@@ -217,6 +225,31 @@ public class PacketListener {
                     TabList.INSTANCE.updateEntry(neu);
                 }
             }
+        } else if (packet instanceof S21PacketChunkData) {
+            try {
+                if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
+                Chunk c = new Chunk(new CachedWorld(null), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
+                c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
+                ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(Collections.singletonList(c));
+                MinecraftForge.EVENT_BUS.post(chunkUpdateEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (packet instanceof S26PacketMapChunkBulk) {
+            try {
+                List<Chunk> set = new ArrayList<>();
+                for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
+                    Chunk c = new Chunk(new CachedWorld(null), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
+                    c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
+                    set.add(c);
+                }
+                ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(set);
+                MinecraftForge.EVENT_BUS.post(chunkUpdateEvent);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else if (packet instanceof S13PacketDestroyEntities) {
+            MinecraftForge.EVENT_BUS.post(new EntityExitWorldEvent(((S13PacketDestroyEntities) packet).getEntityIDs()));
         }
     }
 

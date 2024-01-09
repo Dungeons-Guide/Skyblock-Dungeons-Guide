@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProvi
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventRecorder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonNodataEvent;
+import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonPercentageChangeEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonPuzzleFailureEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapConstantRetriever;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
@@ -46,6 +47,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.world.ChunkCoordIntPair;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 import net.minecraftforge.common.MinecraftForge;
@@ -53,10 +55,8 @@ import net.minecraftforge.common.MinecraftForge;
 import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.lang.ref.WeakReference;
-import java.util.ArrayList;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
 
 public class DungeonContext {
@@ -69,14 +69,13 @@ public class DungeonContext {
     @Getter
     private DungeonRoomScaffoldParser scaffoldParser;
     @Getter
-    private DungeonEventRecorder recorder = new DungeonEventRecorder();
+    private final DungeonEventRecorder recorder = new DungeonEventRecorder();
 
     @Getter
     private final FeaturePathfindSettings.AlgorithmSettings algorithmSettings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
 
     @Getter
-    private List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
-
+    private final List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
 
     @Getter
     private final List<RoomProcessor> globalRoomProcessors = new ArrayList<>();
@@ -93,16 +92,21 @@ public class DungeonContext {
 
 
     // general info
-    @Getter @Setter
-    private boolean trapRoomGen = false;
+    @Getter
+    private final boolean trapRoomGen;
 
-    @Getter private int maxSpeed = 600;
-    @Getter private double secretPercentage = 1.0;
+    @Getter private final int maxSpeed;
+    @Getter private final double secretPercentage;
 
-    @Getter @Setter
+    @Getter
     public int percentage;
 
-    private PathfinderExecutorExecutor executor = new PathfinderExecutorExecutor(this);
+    public void setPercentage(int percentage) {
+        this.percentage = percentage;
+        recorder.createEvent(new DungeonPercentageChangeEvent(percentage));
+    }
+
+    private final PathfinderExecutorExecutor executor = new PathfinderExecutorExecutor(this);
 
 
     public void setGotMimic(boolean gotMimic) {
@@ -118,8 +122,8 @@ public class DungeonContext {
     private final Set<String> players = new HashSet<>();
 
 
-    private Vector2d doorOffset;
-    private BlockPos door;
+    private final Vector2d doorOffset;
+    private final BlockPos door;
 
     public DungeonContext(String dungeonName, World world) {
         this.dungeonName = dungeonName;

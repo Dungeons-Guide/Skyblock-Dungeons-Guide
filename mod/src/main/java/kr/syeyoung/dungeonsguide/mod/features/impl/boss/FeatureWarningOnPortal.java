@@ -19,168 +19,171 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.boss;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
-import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
-import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
-import kr.syeyoung.dungeonsguide.mod.config.types.TCTextStyleList;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCRTextStyleMap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.FeatureDungeonScore;
-import kr.syeyoung.dungeonsguide.mod.features.text.PanelTextParameterConfig;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledText;
-import kr.syeyoung.dungeonsguide.mod.features.text.StyledTextProvider;
-import kr.syeyoung.dungeonsguide.mod.features.text.TextStyle;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.CompatLayer;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
+import kr.syeyoung.dungeonsguide.mod.features.richtext.config.WidgetTextStyleConfig;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
-public class FeatureWarningOnPortal extends SimpleFeature implements StyledTextProvider {
+public class FeatureWarningOnPortal extends SimpleFeature {
     public FeatureWarningOnPortal() {
         super("Dungeon HUD", "Score Warning on Watcher portal", "Display warnings such as\n- 'NOT ALL ROOMS DISCOVERED'\n- 'NOT ALL ROOMS COMPLETED'\n- 'Expected Score: 304'\n- 'MISSING 3 CRYPTS'\non portal", "bossfight.warningonportal");
-        addParameter("textStyles", new FeatureParameter<List<TextStyle>>("textStyles", "", "", new ArrayList<TextStyle>(), TCTextStyleList.INSTANCE)
-                .setWidgetGenerator(param -> new CompatLayer(new PanelTextParameterConfig(FeatureWarningOnPortal.this))));
-        getStyles().add(new TextStyle("warning", new AColor(255, 0,0,255), new AColor(255, 255,255,255), false));
-        getStyles().add(new TextStyle("field_name", new AColor(255, 72,255,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("field_separator", new AColor(204, 204,204,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("field_value", new AColor(255, 255,0,255), new AColor(0, 0,0,0), false));
-        getStyles().add(new TextStyle("field_etc", new AColor(204, 204,204,255), new AColor(0, 0,0,0), false));
+        addParameter("newstyle", new FeatureParameter<>("newstyle", "TextStyle", "", styleMap, new TCRTextStyleMap(), this::updateStyle)
+                .setWidgetGenerator((param) -> new WidgetTextStyleConfig(getDummyText(), styleMap)));
+
+        registerDefaultStyle("warning", DefaultingDelegatingTextStyle.derive("Feature Default - Warning", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.WARNING)));
+        registerDefaultStyle("field_name", DefaultingDelegatingTextStyle.derive("Feature Default - Name", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.NAME)));
+        registerDefaultStyle("field_separator", DefaultingDelegatingTextStyle.derive("Feature Default - Separator", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.SEPARATOR)));
+        registerDefaultStyle("field_value", DefaultingDelegatingTextStyle.derive("Feature Default - Value", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.VALUE)));
+        registerDefaultStyle("field_etc", DefaultingDelegatingTextStyle.derive("Feature Default - ETC", () -> FeatureRegistry.DEFAULT_STYLE.getStyle(DefaultTextHUDFeatureStyleFeature.Styles.EXTRA_INFO)));
+
     }
 
+    public TextSpan getDummyText() {
+        TextSpan root = new TextSpan(new NullTextStyle(), "");
+        root.addChild(new TextSpan(getStyle( "warning"),"!!!WARNING!!! <- text changes in boss-room\n"));
 
-    private static final List<StyledText> dummyText = new ArrayList<StyledText>();
-    static {
-        dummyText.add(new StyledText("!!!WARNING!!! <- text changes in boss-room\n", "warning"));
-
-        dummyText.add(new StyledText("Total Secrets","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("103/100 of 50","field_value"));
-        dummyText.add(new StyledText("(103% 41.2 Explorer)","field_etc"));
-
-
-        dummyText.add(new StyledText("Crypts","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("5/5\n","field_value"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Total Secrets"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"103/100 of 50 "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"(103% 41.2 Explorer)"));
 
 
-        dummyText.add(new StyledText("Deaths","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("0\n","field_value"));
-
-        dummyText.add(new StyledText("Score Estimate","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("1000 ","field_value"));
-        dummyText.add(new StyledText("(S++++)\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Crypts"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"5/5\n"));
 
 
-        dummyText.add(new StyledText("Skill","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("100 ","field_value"));
-        dummyText.add(new StyledText("(0 Deaths: 0 pts)\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Deaths"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"0\n"));
 
-        dummyText.add(new StyledText("Explorer","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("100 ","field_value"));
-        dummyText.add(new StyledText("(100% + secrets)\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Score Estimate"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"1000 "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"(S++++)\n"));
 
-        dummyText.add(new StyledText("Time","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("100 ","field_value"));
-        dummyText.add(new StyledText("(-30m 29s)\n","field_etc"));
 
-        dummyText.add(new StyledText("Bonus","field_name"));
-        dummyText.add(new StyledText(": ","field_separator"));
-        dummyText.add(new StyledText("5\n","field_value"));
-    }
-    @Override
-    public List<StyledText> getDummyText() {
-        return dummyText;
+        root.addChild(new TextSpan(getStyle("field_name"),"Skill"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"100 "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"(0 Deaths: 0 pts)\n"));
+
+        root.addChild(new TextSpan(getStyle("field_name"),"Explorer"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"100 "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"(100% + secrets)\n"));
+
+        root.addChild(new TextSpan(getStyle("field_name"),"Time"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"100 "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"(-30m 29s)\n"));
+
+        root.addChild(new TextSpan(getStyle("field_name"),"Bonus"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),"5\n"));
+        return root;
     }
 
-    @Override
-    public List<StyledText> getText() {
-        ArrayList<StyledText> texts = new ArrayList<StyledText>();
+    public TextSpan getText() {
+        TextSpan root = new TextSpan(new NullTextStyle(), "");
+
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         FeatureDungeonScore.ScoreCalculation scoreCalculation = FeatureRegistry.DUNGEON_SCORE.calculateScore();
 
         boolean failed = context.getScaffoldParser().getDungeonRoomList().stream().anyMatch(a -> a.getCurrentState() == DungeonRoom.RoomState.FAILED);
         if (context.getScaffoldParser().getUndiscoveredRoom() > 0) {
-            texts.add(new StyledText("There are at least "+context.getScaffoldParser().getUndiscoveredRoom()+" undiscovered rooms!\n", "warning"));
+            root.addChild(new TextSpan(getStyle( "warning"),"There are at least "+context.getScaffoldParser().getUndiscoveredRoom()+" undiscovered rooms!\n"));
         } else if (failed) {
-            texts.add(new StyledText("There is a failed puzzle room! Yikes!\n", "warning"));
+            root.addChild(new TextSpan(getStyle( "warning"),"There is a failed puzzle room! Yikes!\n"));
         } else if (!scoreCalculation.isFullyCleared()) {
-            texts.add(new StyledText("Some rooms are not fully cleared!\n", "warning"));
+            root.addChild(new TextSpan(getStyle( "warning"),"Some rooms are not fully cleared!\n"));
         } else if (scoreCalculation.getTombs() < 5) {
-            texts.add(new StyledText("Only less than 5 crypts are blown up!\n", "warning"));
+            root.addChild(new TextSpan(getStyle( "warning"),"Only less than 5 crypts are blown up!\n"));
         } else {
-            texts.add(new StyledText("\n", "warning"));
+            root.addChild(new TextSpan(getStyle( "warning"),"\n"));
         }
 
-        texts.add(new StyledText("Total Secrets","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getSecrets() +"/" + scoreCalculation.getEffectiveTotalSecrets()+" of "+scoreCalculation.getTotalSecrets(),"field_value"));
-        texts.add(new StyledText(" ("+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 100.0f)+"% "+(int)Math.ceil(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 40.0f)+" Explorer)\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Total Secrets"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getSecrets() +"/" + scoreCalculation.getEffectiveTotalSecrets()+" of "+scoreCalculation.getTotalSecrets()));
+        root.addChild(new TextSpan(getStyle("field_etc")," ("+(int)(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 100.0f)+"% "+(int)Math.ceil(scoreCalculation.getSecrets() / (float)scoreCalculation.getEffectiveTotalSecrets() * 40.0f)+" Explorer)\n"));
 
 
-        texts.add(new StyledText("Crypts","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getTombs() +"/5\n","field_value"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Crypts"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getTombs() +"/5\n"));
 
 
-        texts.add(new StyledText("Deaths","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getDeaths() + "\n","field_value"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Deaths"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getDeaths() + "\n"));
 
         int sum = scoreCalculation.getTime() + scoreCalculation.getExplorer() + scoreCalculation.getSkill() + scoreCalculation.getBonus();
-        texts.add(new StyledText("Score Estimate","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(sum+" ","field_value"));
-        texts.add(new StyledText("("+FeatureRegistry.DUNGEON_SCORE.getLetter(sum)+")\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Score Estimate"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),sum+" "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"("+FeatureRegistry.DUNGEON_SCORE.getLetter(sum)+")\n"));
 
 
-        texts.add(new StyledText("Skill","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getSkill()+" ","field_value"));
-        texts.add(new StyledText("("+scoreCalculation.getDeaths()+" Deaths: "+(scoreCalculation.getDeaths() * -2)+" pts)\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Skill"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getSkill()+" "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"("+scoreCalculation.getDeaths()+" Deaths: "+(scoreCalculation.getDeaths() * -2)+" pts)\n"));
 
-        texts.add(new StyledText("Explorer","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getExplorer()+" ","field_value"));
-        texts.add(new StyledText("("+ DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() +"% + secrets)\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Explorer"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getExplorer()+" "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"("+ DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getPercentage() +"% + secrets)\n"));
 
-        texts.add(new StyledText("Time","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getTime()+" ","field_value"));
-        texts.add(new StyledText("("+ TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())+")\n","field_etc"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Time"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getTime()+" "));
+        root.addChild(new TextSpan(getStyle("field_etc"),"("+ TextUtils.formatTime(FeatureRegistry.DUNGEON_SBTIME.getTimeElapsed())+")\n"));
 
-        texts.add(new StyledText("Bonus","field_name"));
-        texts.add(new StyledText(": ","field_separator"));
-        texts.add(new StyledText(scoreCalculation.getBonus()+"\n","field_value"));
+        root.addChild(new TextSpan(getStyle("field_name"),"Bonus"));
+        root.addChild(new TextSpan(getStyle("field_separator"),": "));
+        root.addChild(new TextSpan(getStyle("field_value"),scoreCalculation.getBonus()+"\n"));
 
-
-        return texts;
+        return root;
     }
 
-    public List<TextStyle> getStyles() {
-        return this.<List<TextStyle>>getParameter("textStyles").getValue();
+
+    private Map<String, DefaultingDelegatingTextStyle> defaultStyleMap = new HashMap<>();
+    private Map<String, DefaultingDelegatingTextStyle> styleMap = new HashMap<>();
+    public void registerDefaultStyle(String name, DefaultingDelegatingTextStyle style) {
+        defaultStyleMap.put(name, style);
+        styleMap.put(name, DefaultingDelegatingTextStyle.derive("User Setting of "+name, () -> defaultStyleMap.get(name)));
     }
-    private Map<String, TextStyle> stylesMap;
-    public Map<String, TextStyle> getStylesMap() {
-        if (stylesMap == null) {
-            List<TextStyle> styles = getStyles();
-            Map<String, TextStyle> res = new HashMap<String, TextStyle>();
-            for (TextStyle ts : styles) {
-                res.put(ts.getGroupName(), ts);
-            }
-            stylesMap = res;
+    public DefaultingDelegatingTextStyle getStyle(String name) {
+        return styleMap.get(name);
+    }
+
+    public void updateStyle(Map<String, DefaultingDelegatingTextStyle> map) {
+        styleMap.clear();
+        Set<String> wasIn = new HashSet<>(map.keySet());
+        Set<String> needsToBeIn = new HashSet<>(defaultStyleMap.keySet());
+        needsToBeIn.removeAll(wasIn);
+        for (Map.Entry<String, DefaultingDelegatingTextStyle> stringDefaultingDelegatingTextStyleEntry : map.entrySet()) {
+            if (!defaultStyleMap.containsKey(stringDefaultingDelegatingTextStyleEntry.getKey())) continue;
+            DefaultingDelegatingTextStyle newStyle = stringDefaultingDelegatingTextStyleEntry.getValue();
+            newStyle.setName("User Setting of "+defaultStyleMap.get(stringDefaultingDelegatingTextStyleEntry.getKey()).name);
+            newStyle.setParent(() -> defaultStyleMap.get(stringDefaultingDelegatingTextStyleEntry.getKey()));
+            styleMap.put(stringDefaultingDelegatingTextStyleEntry.getKey(), newStyle);
         }
-        return stylesMap;
+        for (String s : needsToBeIn) {
+            styleMap.put(s, DefaultingDelegatingTextStyle.derive("User Setting of "+defaultStyleMap.get(s).name, () -> defaultStyleMap.get(s)));
+            map.put(s, styleMap.get(s));
+        }
     }
-
-
 }

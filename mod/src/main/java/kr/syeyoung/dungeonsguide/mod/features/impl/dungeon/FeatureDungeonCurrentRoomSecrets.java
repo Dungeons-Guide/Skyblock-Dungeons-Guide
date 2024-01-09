@@ -28,6 +28,7 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import lombok.Getter;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
@@ -58,7 +59,9 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
         return actualBit;
     }
 
+    @Getter
     private int latestCurrSecrets = 0;
+    @Getter
     private int latestTotalSecrets = 0;
 
 
