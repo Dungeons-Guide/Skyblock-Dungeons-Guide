@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.JsonObject;
@@ -26,9 +27,12 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
 import jdk.nashorn.internal.ir.debug.JSONWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.launcher.gui.screen.GuiDisplayer;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
@@ -44,6 +48,8 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.party.PartyContext;
+import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -75,14 +81,20 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
 
+import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
 import java.io.*;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
 import java.util.stream.Collectors;
 import java.util.zip.GZIPOutputStream;
+import java.util.zip.ZipOutputStream;
 
 public class FeatureCollectDungeonRooms extends SimpleFeature {
     public FeatureCollectDungeonRooms() {
@@ -467,6 +479,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                     })
                     .registerTypeAdapter(IChatComponent.class, new IChatComponent.Serializer())
                     .create();
+            String correlationId = Optional.ofNullable(PartyManager.INSTANCE.getPartyContext())
+                    .map(PartyContext::getPartyID)
+                    .orElse(UUID.randomUUID().toString());
             for (Map.Entry<DungeonRoom, RoomInfo> dungeonRoomRoomInfoEntry : roomInfoMap.entrySet()) {
                 JsonObject jsonObject = new JsonObject();
                 DungeonRoomInfo dri = dungeonRoomRoomInfoEntry.getKey().getDungeonRoomInfo();
@@ -476,6 +491,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 }
                 jsonObject.addProperty("rot", dungeonRoomRoomInfoEntry.getKey().getRoomMatcher().getRotation());
                 RoomInfo roomInfo = dungeonRoomRoomInfoEntry.getValue();
+                jsonObject.addProperty("dungeon", dungeonRoomRoomInfoEntry.getKey().getContext().getDungeonName());
+                jsonObject.addProperty("correlation", correlationId);
                 jsonObject.addProperty("minX", roomInfo.minX);
                 jsonObject.addProperty("minZ", roomInfo.minZ);
                 jsonObject.addProperty("shape", dungeonRoomRoomInfoEntry.getKey().getShape());
@@ -493,6 +510,10 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 jsonObject.addProperty("schematic", nbttostring("Schematic", nbtTagCompound2));
 
                 try {
+                    String str = gson.toJson(jsonObject);
+                    queueSendLogAsync(str);
+
+                    // if is dev
                     FileOutputStream fos = new FileOutputStream(new File(Main.getConfigDir(), "runs/"+UUID.randomUUID()+".dgroom"));
                     JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(fos));
                     gson.toJson(jsonObject, jsonWriter);
@@ -500,7 +521,6 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
-
             }
         } finally {
             entityDataMap.clear();
@@ -508,6 +528,39 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             initialChunkDataMap.clear();
         }
     }
+
+
+    public static final Executor executorService = Executors
+            .newSingleThreadExecutor(new ThreadFactoryBuilder()
+                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-Error-Reporter-%d").build());
+
+    public void queueSendLogAsync(String t) {
+        executorService.execute(() -> {
+            try {
+                sendLogActually(t);
+            } catch (Exception ignored) {ignored.printStackTrace();} // not ignored at all lol
+        });
+    }
+
+    private void sendLogActually(String t) throws IOException {
+        if (!isEnabled()) return;
+        String token = AuthManager.getInstance().getWorkingTokenOrThrow(); // this require privacy policy.
+
+        HttpsURLConnection urlConnection = (HttpsURLConnection) new URL(Main.DOMAIN+"/logging/dgrun").openConnection();
+        urlConnection.setRequestMethod("POST");
+        urlConnection.setDoOutput(true);
+        urlConnection.setDoInput(true);
+        urlConnection.setSSLSocketFactory(LetsEncrypt.LETS_ENCRYPT);
+        urlConnection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
+        urlConnection.setConnectTimeout(10000);
+        urlConnection.setReadTimeout(10000);
+        urlConnection.setRequestProperty("Authorization", "Bearer "+token);
+        urlConnection.getOutputStream().write(t.getBytes(StandardCharsets.UTF_8));
+        int code = urlConnection.getResponseCode(); // make sure to send req actually
+        System.out.println(code);
+    }
+
 
     private String nbttostring(String name, NBTTagCompound compound) {
 

@@ -73,9 +73,6 @@ public class DungeonContext {
     @Getter
     private final List<WeakReference<PathfinderExecutor>> executors = new CopyOnWriteArrayList<>();
 
-
-    private final Map<ChunkCoordIntPair, List<Object>> chunkEvents = new HashMap<>();
-
     @Getter
     private final List<RoomProcessor> globalRoomProcessors = new ArrayList<>();
 
