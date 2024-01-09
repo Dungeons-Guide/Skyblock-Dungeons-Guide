@@ -324,7 +324,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
         EntityData entityData = entityDataMap.get(event.entity.getEntityId());
         if (entityData == null) {
-            System.out.println("WTFF??? it's not on map?? "+event.entity);
+//            System.out.println("WTFF??? it's not on map?? "+event.entity);
             return;
         }
         entityData.id = event.entity.getEntityId();
@@ -355,7 +355,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     @DGEventHandler
     public void onEntityDespawn(LivingDeathEvent event) {
-        System.out.println("Entity died!!:" +event.entity);
+//        System.out.println("Entity died!!:" +event.entity);
         EntityData entityData = entityDataMap.get(event.entity.getEntityId());
         if (entityData != null) {
             entityData.trajectory.add(new EntityData.EntityTrajectory(EntityData.EntityTrajectory.Type.DEATH, event.entity.getPositionVector(), System.currentTimeMillis()));
@@ -366,7 +366,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
         for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
             if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
-                System.out.println("got it again??");
+//                System.out.println("got it again??");
 //                return;
             }
             ChunkData chunkData = new ChunkData();
@@ -558,7 +558,6 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         urlConnection.setRequestProperty("Authorization", "Bearer "+token);
         urlConnection.getOutputStream().write(t.getBytes(StandardCharsets.UTF_8));
         int code = urlConnection.getResponseCode(); // make sure to send req actually
-        System.out.println(code);
     }
 
 
