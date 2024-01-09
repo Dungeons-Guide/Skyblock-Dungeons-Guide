@@ -250,6 +250,8 @@ public class PacketListener {
             }
         } else if (packet instanceof S13PacketDestroyEntities) {
             MinecraftForge.EVENT_BUS.post(new EntityExitWorldEvent(((S13PacketDestroyEntities) packet).getEntityIDs()));
+        } else if (packet instanceof S0DPacketCollectItem) {
+            MinecraftForge.EVENT_BUS.post(new ItemPickupEvent(((S0DPacketCollectItem) packet).getCollectedItemEntityID(), ((S0DPacketCollectItem) packet).getEntityID()));
         }
     }
 
