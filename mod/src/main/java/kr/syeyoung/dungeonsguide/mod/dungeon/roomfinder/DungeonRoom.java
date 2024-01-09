@@ -284,6 +284,10 @@ public class DungeonRoom {
         RoomProcessorGenerator roomProcessorGenerator = ProcessorFactory.getRoomProcessorGenerator(dungeonRoomInfo.getProcessorId());
         if (roomProcessorGenerator == null) this.roomProcessor = null;
         else this.roomProcessor = roomProcessorGenerator.createNew(this);
+
+        if (this.roomProcessor != null && this.roomProcessor.readGlobalChat()) {
+            context.getGlobalRoomProcessors().add(this.roomProcessor);
+        }
     }
 
     public Block getAbsoluteBlockAt(int x, int y, int z) {
