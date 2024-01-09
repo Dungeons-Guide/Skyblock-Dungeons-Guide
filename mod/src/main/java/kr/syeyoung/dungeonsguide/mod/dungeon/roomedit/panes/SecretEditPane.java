@@ -48,6 +48,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
         buildElements();
 
         for (String clazz : ValueEditRegistry.getClassesSupported()) {
+            System.out.println(clazz);
             if (clazz.contains("mechanics") || clazz.equals("null")) {
                 allowedClasses.add(clazz);
             }

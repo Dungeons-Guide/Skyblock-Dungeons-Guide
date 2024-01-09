@@ -243,6 +243,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
             getDungeonRoom().getRoomContext().put("c-"+lastChest.toString(), 2);
             lastChest = null;
         }
+        if (chat.getFormattedText().equals("§r§aYou found a Secret Redstone Key!§r")) {
+            getDungeonRoom().getRoomContext().put("redstonekey", true);
+        }
+        if (chat.getFormattedText().equals("§e[NPC] Wizard§f: §rOh my lovely crystal ball, mi so happy§r")) {
+            getDungeonRoom().getRoomContext().put("wizardcrystal", true);
+        }
     }
 
     private int stack = 0;

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -94,7 +95,7 @@ public class RoomProcessorTeleportMazeSolver extends GeneralRoomProcessor {
                 return;
             }
             for (BlockPos allInBox : BlockPos.getAllInBox(lastPlayerLocation, pos2)) {
-                if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox) == Blocks.iron_bars) {
+                if (w.getChunkFromBlockCoords(allInBox).getBlock(allInBox.add(0,1,0)) == Blocks.iron_bars) {
                     teleport = true;
                     break;
                 }

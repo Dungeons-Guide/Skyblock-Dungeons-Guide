@@ -60,21 +60,25 @@ public class MGui extends GuiScreen {
 
     @Override
     public void drawScreen(int mouseX, int mouseY, float partialTicks) {
-        int i = Mouse.getEventX();
-        int j = this.mc.displayHeight - Mouse.getEventY();
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        GlStateManager.pushMatrix();
-        GlStateManager.disableDepth();
-        GlStateManager.enableBlend();
-        GlStateManager.enableAlpha();
-        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
-        GlStateManager.color(1, 1, 1, 1);
-        GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
-        mainPanel.render0(1, new Point(0, 0), new Rectangle(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
-        GlStateManager.popMatrix();
-        GlStateManager.enableBlend();
-        GlStateManager.enableDepth();
-        GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        try {
+            int i = Mouse.getEventX();
+            int j = this.mc.displayHeight - Mouse.getEventY();
+            ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
+            GlStateManager.pushMatrix();
+            GlStateManager.disableDepth();
+            GlStateManager.enableBlend();
+            GlStateManager.enableAlpha();
+            GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, 1, 0);
+            GlStateManager.color(1, 1, 1, 1);
+            GlStateManager.scale(1.0 / scaledResolution.getScaleFactor(), 1.0 / scaledResolution.getScaleFactor(), 1.0d);
+            mainPanel.render0(1, new Point(0, 0), new Rectangle(0, 0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight), i, j, i, j, partialTicks);
+            GlStateManager.popMatrix();
+            GlStateManager.enableBlend();
+            GlStateManager.enableDepth();
+            GL11.glDisable(GL11.GL_SCISSOR_TEST);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

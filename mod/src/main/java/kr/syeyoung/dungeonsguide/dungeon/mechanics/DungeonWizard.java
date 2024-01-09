@@ -41,20 +41,21 @@ import java.util.Set;
 import java.util.function.Predicate;
 
 @Data
-public class DungeonNPC implements DungeonMechanic {
+public class DungeonWizard implements DungeonMechanic {
     private static final long serialVersionUID = -89487601113028763L;
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
     private List<String> preRequisite = new ArrayList<String>();
+    private String crystal = "";
 
 
     @Override
     public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"navigate".equalsIgnoreCase(state) && !"click".equalsIgnoreCase(state))
+        if (!"navigate".equalsIgnoreCase(state) && !"quest".equalsIgnoreCase(state) && !"click".equalsIgnoreCase(state))
             throw new IllegalArgumentException(state + " is not a valid state for secret");
 
         Set<AbstractAction> base;
         Set<AbstractAction> realbase = base = new HashSet<>();
-        if ("click".equalsIgnoreCase(state)) {
+        if ("click".equalsIgnoreCase(state) || "quest".equalsIgnoreCase(state)) {
             ActionInteract actionClick = new ActionInteract(secretPoint);
             actionClick.setPredicate(a -> a instanceof EntityOtherPlayerMP);
             actionClick.setRadius(3);
@@ -72,6 +73,11 @@ public class DungeonNPC implements DungeonMechanic {
                 base.add(new ActionChangeState(split[0], split[1]));
             }
         }
+
+        if ("quest".equalsIgnoreCase(state)) {
+            base.add(new ActionChangeState(crystal, "obtained-self"));
+        }
+        System.out.println(realbase);
         return realbase;
     }
 
@@ -79,14 +85,15 @@ public class DungeonNPC implements DungeonMechanic {
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, color, partialTicks);
-        RenderUtils.drawTextAtWorld("F-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+        RenderUtils.drawTextAtWorld("W-" + name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }
 
 
-    public DungeonNPC clone() throws CloneNotSupportedException {
-        DungeonNPC dungeonSecret = new DungeonNPC();
+    public DungeonWizard clone() throws CloneNotSupportedException {
+        DungeonWizard dungeonSecret = new DungeonWizard();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
+        dungeonSecret.crystal = crystal;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }
@@ -94,17 +101,29 @@ public class DungeonNPC implements DungeonMechanic {
 
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
+        if (dungeonRoom.getRoomContext().containsKey("wizardcrystal")) {
+            return "quest";
+        }
         return "no-state";
     }
 
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("navigate", "click");
+        if (crystal != null) {
+            DungeonMechanic crystal1 = dungeonRoom.getMechanics().get(crystal);
+            String crystalState = crystal1.getCurrentState(dungeonRoom);
+            if (crystalState.equalsIgnoreCase("obtained-other")) {
+                return Sets.newHashSet("navigate", "click");
+            }
+        }
+
+        return getCurrentState(dungeonRoom).equalsIgnoreCase("quest") ?
+                Sets.newHashSet("navigate", "click") : Sets.newHashSet("navigate", "click", "quest");
     }
 
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state", "navigate", "click");
+        return Sets.newHashSet("no-state", "click", "quest", "interact");
     }
 
     @Override

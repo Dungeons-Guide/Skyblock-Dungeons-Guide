@@ -27,6 +27,7 @@ import lombok.Setter;
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
+import java.io.File;
 import java.io.IOException;
 import java.security.InvalidAlgorithmParameterException;
 import java.security.InvalidKeyException;
@@ -45,7 +46,8 @@ public class DungeonFacade {
 
     public void init() {
         try {
-            DungeonRoomInfoRegistry.loadAll(Main.getConfigDir());
+            new File(Main.getConfigDir(), "roomdatas").mkdirs();
+            DungeonRoomInfoRegistry.loadAll(new File(Main.getConfigDir(), "roomdatas"));
         } catch (BadPaddingException | InvalidKeyException | NoSuchPaddingException | IllegalBlockSizeException |
                  IOException | NoSuchAlgorithmException | InvalidAlgorithmParameterException e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);

@@ -88,10 +88,10 @@ public class DungeonSecret implements DungeonMechanic {
             }
             if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 100) {
                 List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(),pos.getZ()));
-                if (items.size() != 0 && !dungeonRoom.getRoomContext().containsKey("i-"+pos.toString())) {
+                if (items.size() != 0) {
                     dungeonRoom.getRoomContext().put("i-"+pos.toString(), false);
                     ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+" not found? "+items.size());
-                } else if (items.size() == 0 && Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+pos.toString()))) {
+                } else if (Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+pos.toString()))) {
                     dungeonRoom.getRoomContext().put("i-"+pos.toString(), true); // was there, but gone!
                     ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+"found? "+items.size());
                 }

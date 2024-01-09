@@ -56,7 +56,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
     private String selectedId;
 
     private static final List<String> order = Arrays.asList(
-            "Fairy Soul", "Secrets", "Crypts", "NPC", "Journals", "Gates", "ETC", "Dummy"
+            "Wizard", "Redstone Key", "Fairy Soul", "Secrets", "Crypts", "NPC", "Journals", "Gates", "ETC", "Dummy"
     );
     private String map(Class t) {
         if (t == DungeonFairySoul.class) return "Fairy Soul";
@@ -66,6 +66,10 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
         if (t == DungeonJournal.class) return "Journals";
         if (t == DungeonRoomDoor.class) return "Gates";
         if (t == DungeonDummy.class) return "Dummy";
+        if (t == DungeonWizard.class) return "Wizard";
+        if (t == DungeonRedstoneKey.class) return "Redstone Key";
+        if (t == DungeonRedstoneKeySlot.class) return "ETC";
+        if (t == DungeonWizardCrystal.class) return "Wizard";
         return "ETC";
     }
 

@@ -300,6 +300,7 @@ public class DungeonListener {
                 if (clientChatReceivedEvent.type == 2) {
                     return;
                 }
+
                 for (RoomProcessor globalRoomProcessor : context.getGlobalRoomProcessors()) {
                     if (globalRoomProcessor != roomProcessor) {
                         globalRoomProcessor.chatReceived(clientChatReceivedEvent.message);

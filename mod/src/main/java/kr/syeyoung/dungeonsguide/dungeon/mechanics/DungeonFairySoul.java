@@ -51,7 +51,8 @@ public class DungeonFairySoul implements DungeonMechanic {
         if (!"navigate".equalsIgnoreCase(state))
             throw new IllegalArgumentException(state + " is not valid state for secret");
 
-        Set<AbstractAction> base = new HashSet<>();
+        Set<AbstractAction> base;
+        Set<AbstractAction> realbase = base = new HashSet<>();
         ActionInteract actionClick = new ActionInteract(secretPoint);
         actionClick.setPredicate(PredicateArmorStand.INSTANCE);
         actionClick.setRadius(3);
@@ -68,7 +69,7 @@ public class DungeonFairySoul implements DungeonMechanic {
                 base.add(new ActionChangeState(split[0], split[1]));
             }
         }
-        return base;
+        return realbase;
     }
 
     @Override
