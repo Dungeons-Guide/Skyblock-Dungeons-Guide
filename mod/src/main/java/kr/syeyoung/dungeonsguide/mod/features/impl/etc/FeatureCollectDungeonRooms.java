@@ -661,6 +661,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     @DGEventHandler
     public void onRender(RenderWorldLastEvent event) {
+        if (!FeatureRegistry.DEBUG.isEnabled()) return;
         if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
 
         Entity hovered = Minecraft.getMinecraft().pointedEntity;
@@ -691,11 +692,5 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
             }
             RenderUtils.drawLinesVec3(lines, new AColor(0,255,0,255), 1.0f, event.partialTicks, false);
         }
-    }
-
-    @DGEventHandler
-    public void onRender(RenderGameOverlayEvent.Post postRender) {
-        if (DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() == null) return;
-
     }
 }
