@@ -306,7 +306,7 @@ public class CommandDgDebug extends CommandBase {
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
                 if (entry.getKey().contains("redstone")) {
-                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
+//                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
                     System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
                 } else if (entry.getKey().contains("key-slot")) {
 
