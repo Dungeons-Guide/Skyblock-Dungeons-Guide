@@ -52,7 +52,7 @@ public class DungeonMapLayout {
 
     public Point worldPointToRoomPoint(BlockPos worldPoint) {
         if (worldMin == null) return null;
-        return new Point((worldPoint.getX() - worldMin.getX()) / 32, (worldPoint.getZ() - worldMin.getZ()) / 32);
+        return new Point((int) Math.floor((worldPoint.getX() - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.getZ() - worldMin.getZ()) / 32.0));
     }
 
     public Point worldPointToMapPoint(Vec3 worldPoint) {

@@ -165,7 +165,7 @@ public class DungeonListener {
         if (ev.side == Side.SERVER || ev.phase != TickEvent.Phase.START) return;
         MinecraftForge.EVENT_BUS.post(new DGTickEvent());
 
-        if (SkyblockStatus.isOnSkyblock()) {
+        if (SkyblockStatus.isOnSkyblock() || SkyblockStatus.isOnDungeon()) {
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context != null) {
                 context.getMapPlayerMarkerProcessor().tick();
@@ -362,7 +362,7 @@ public class DungeonListener {
                                     ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
 
                         }
-                    } catch (Exception ignored) {ignored.printStackTrace();}
+                    } catch (Exception ignored) {}
                 }
             }
 

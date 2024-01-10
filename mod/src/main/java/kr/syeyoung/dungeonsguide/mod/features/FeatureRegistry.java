@@ -187,11 +187,7 @@ public class FeatureRegistry {
 
     // Debug
     public static final FeatureDebug DEBUG = register(new FeatureDebug());
-    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new SimpleFeature("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is for advanced users only", "advanced.roomedit", false) {
-        {
-            addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", Keyboard.KEY_R, TCKeybind.INSTANCE));
-        }
-    });
+    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());

@@ -107,11 +107,16 @@ public class DungeonRoom {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
                     throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
+                boolean nonNull = false;
                 for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
-                    if (extendedBlockStorage == null) {
-                        ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
-                        throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
+                    if (extendedBlockStorage != null) {
+                        nonNull = true;
+                        break;
                     }
+                }
+                if (!nonNull) {
+                    ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
+                    throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
             }
         }

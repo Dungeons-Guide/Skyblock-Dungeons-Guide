@@ -304,12 +304,12 @@ public class CommandDgDebug extends CommandBase {
 //        }
 
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            System.out.println(dungeonRoomInfo.getName()+"-------");
             for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
-                if (entry.getKey().contains("redstone")) {
-//                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
-                    System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
-                } else if (entry.getKey().contains("key-slot")) {
-
+                if (entry.getValue() instanceof DungeonDoor) {
+                    System.out.println(entry.getKey()+"/"+((DungeonDoor) entry.getValue()).getOpenPreRequisite()+"/"+((DungeonDoor) entry.getValue()).getClosePreRequisite()+"/"+((DungeonDoor) entry.getValue()).getMovePreRequisite());
+                } else if (entry.getValue() instanceof DungeonOnewayDoor){
+                    System.out.println(entry.getKey()+"/"+((DungeonOnewayDoor) entry.getValue()).getPreRequisite() +"/"+((DungeonOnewayDoor) entry.getValue()).getMovePreRequisite());
                 }
             }
         }

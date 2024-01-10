@@ -75,7 +75,7 @@ public class SkyblockStatus {
     public static boolean isOnSkyblock(){
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
 
-        return skyblockStatus != null && skyblockStatus.isOnSkyblock;
+        return skyblockStatus != null && (skyblockStatus.isOnSkyblock || skyblockStatus.forceIsOnDungeon);
     }
 
     public static boolean isOnDungeon() {

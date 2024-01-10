@@ -66,7 +66,7 @@ public class DungeonContext {
     private final World world;
     @Getter
     private final MapPlayerProcessor mapPlayerMarkerProcessor;
-    @Getter
+    @Getter @Setter
     private DungeonRoomScaffoldParser scaffoldParser;
     @Getter
     private final DungeonEventRecorder recorder = new DungeonEventRecorder();
