@@ -23,10 +23,8 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionBreakWithSuperBoom;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -74,35 +72,32 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-        {
-            ActionBreakWithSuperBoom actionClick;
-            preRequisites.add(actionClick = new ActionBreakWithSuperBoom(getRepresentingPoint(dungeonRoom)));
-            preRequisites = actionClick.getPreRequisite();
-        }
-        {
 
-            int leastY = Integer.MAX_VALUE;
-            OffsetPoint thatPt = null;
-            for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
-                if (offsetPoint.getY() < leastY) {
-                    thatPt = offsetPoint;
-                    leastY = offsetPoint.getY();
-                }
-            }
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(thatPt);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
+        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                .requiresDo(new ActionBuilder(dungeonRoom)
+                            .requiresDo(new ActionBreakWithSuperBoom(getRepresentingPoint(dungeonRoom)))
+                            .requiresDo(() -> {
+                                int leastY = Integer.MAX_VALUE;
+                                OffsetPoint thatPt = null;
+                                for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
+                                    if (offsetPoint.getY() < leastY) {
+                                        thatPt = offsetPoint;
+                                        leastY = offsetPoint.getY();
+                                    }
+                                }
+                                ActionMoveNearestAir actionMove = new ActionMoveNearestAir(thatPt);
+                                return actionMove;
+                            }).toAtomicAction("GoAndBreakWall")
+                );
+
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return base;
+        System.out.println(actionBuilder.getPreRequisites());
+        return actionBuilder.getPreRequisites();
     }
 
     @Override

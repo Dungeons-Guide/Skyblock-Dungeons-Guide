@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AtomicAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -116,17 +117,40 @@ public class FeatureActions extends TextHUDFeature {
                 actualBit.addChild(new TextSpan(getStyle("number"), i+""));
                 actualBit.addChild(new TextSpan(getStyle("dot"), ". "));
                 AbstractAction action = path.getActions().get(i);
-                String[] str = action.toString().split("\n");
-                actualBit.addChild(new TextSpan(getStyle("action"), str[0] + " "));
-                actualBit.addChild(new TextSpan(getStyle("afterline"), "("));
-                for (int i1 = 1; i1 < str.length; i1++) {
-                    String base = str[i1].trim();
-                    if (base.startsWith("-"))
-                        base = base.substring(1);
-                    base = base.trim();
-                    actualBit.addChild(new TextSpan(getStyle("afterline"), base+" "));
+                if (action instanceof AtomicAction)  {
+                    AtomicAction atomicAction = (AtomicAction) action;
+                    actualBit.addChild(new TextSpan(getStyle("action"), atomicAction.toString().split("\n")[0]));
+                    actualBit.addChild(new TextSpan(getStyle("afterline"), " ("+atomicAction.getActions().size()+")\n"));
+                    for (int j = 0; j < atomicAction.getActions().size(); j++) {
+                        actualBit.addChild(new TextSpan(getStyle("current"), "    "+(j == atomicAction.getCurrent() ? ">" : " ") +" "));
+                        actualBit.addChild(new TextSpan(getStyle("number"), j+""));
+                        actualBit.addChild(new TextSpan(getStyle("dot"), ". "));
+                        AbstractAction action2 = atomicAction.getActions().get(j);
+                        String[] str = action2.toString().split("\n");
+                        actualBit.addChild(new TextSpan(getStyle("action"), str[0] + " "));
+                        actualBit.addChild(new TextSpan(getStyle("afterline"), "("));
+                        for (int i1 = 1; i1 < str.length; i1++) {
+                            String base = str[i1].trim();
+                            if (base.startsWith("-"))
+                                base = base.substring(1);
+                            base = base.trim();
+                            actualBit.addChild(new TextSpan(getStyle("afterline"), base+" "));
+                        }
+                        actualBit.addChild(new TextSpan(getStyle("afterline"), ")\n"));
+                    }
+                } else {
+                    String[] str = action.toString().split("\n");
+                    actualBit.addChild(new TextSpan(getStyle("action"), str[0] + " "));
+                    actualBit.addChild(new TextSpan(getStyle("afterline"), "("));
+                    for (int i1 = 1; i1 < str.length; i1++) {
+                        String base = str[i1].trim();
+                        if (base.startsWith("-"))
+                            base = base.substring(1);
+                        base = base.trim();
+                        actualBit.addChild(new TextSpan(getStyle("afterline"), base+" "));
+                    }
+                    actualBit.addChild(new TextSpan(getStyle("afterline"), ")\n"));
                 }
-                actualBit.addChild(new TextSpan(getStyle("afterline"), ")\n"));
             }
         }
         return actualBit;

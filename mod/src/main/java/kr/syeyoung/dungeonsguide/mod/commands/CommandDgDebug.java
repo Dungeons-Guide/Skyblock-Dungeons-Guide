@@ -392,7 +392,7 @@ public class CommandDgDebug extends CommandBase {
     }
 
     private void checkCommand() {
-        File fileroot = Main.getConfigDir();
+        File fileroot = new File(Main.getConfigDir(), "processorinput");
         for (File f : fileroot.listFiles()) {
             if (!f.getName().endsWith(".roomdata")) {
                 continue;
