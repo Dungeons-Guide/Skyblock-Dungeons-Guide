@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -38,43 +39,36 @@ public class DungeonLever implements DungeonMechanic {
     private String triggering = "";
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
         if (state.equalsIgnoreCase("navigate")) {
-            Set<AbstractAction> base;
-            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
+            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return base;
+            return actionBuilder.getPreRequisites();
         }
 
-        if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for secret");
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-        if (!state.equalsIgnoreCase(getCurrentState(dungeonRoom))){
-            ActionClick actionClick;
-            preRequisites.add(actionClick = new ActionClick(leverPoint));
-            preRequisites = actionClick.getPreRequisite();
-        }
-        {
-            ActionMove actionMove = new ActionMove(leverPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
+        if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for secret");
+
+        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
+
+        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                .requiresDo(new ActionBuilder(dungeonRoom)
+                    .requiresDo(new ActionClick(leverPoint))
+                    .requiresDo(new ActionMoveNearestAir(leverPoint))
+                    .toAtomicAction("MoveAndClick")
+                );
+
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return base;
+        return actionBuilder.getPreRequisites();
     }
 
     @Override

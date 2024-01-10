@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -57,9 +58,9 @@ public class DungeonRoomDoor implements DungeonMechanic {
     }
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(state))
-            throw new IllegalArgumentException(state + " is not valid state for secret");
+            throw new PathfindImpossibleException(state + " is not valid state for secret");
         Set<AbstractAction> preRequisites = new HashSet<>();
         preRequisites.add(new ActionMove(offsetPoint));
         return preRequisites;

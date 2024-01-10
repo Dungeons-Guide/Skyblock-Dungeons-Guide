@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -46,7 +47,11 @@ public class WidgetState extends AnnotatedWidget {
 
     @On(functionName = "navigate")
     public void navigate() {
-        if (dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)
-            ((GeneralRoomProcessor)dungeonRoom.getRoomProcessor()).pathfind("MECH-BROWSER", mechanic, s, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER.getRouteProperties());
+        try {
+            if (dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)
+                ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).pathfind("MECH-BROWSER", mechanic, s, FeatureRegistry.SECRET_LINE_PROPERTIES_SECRET_BROWSER.getRouteProperties());
+        } catch (Exception e) {
+            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+mechanic+":"+state+" failed due to "+e.getMessage());
+        }
     }
 }

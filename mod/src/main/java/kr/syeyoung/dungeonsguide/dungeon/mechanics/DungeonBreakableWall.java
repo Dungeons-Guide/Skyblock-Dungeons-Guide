@@ -44,31 +44,31 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<AbstractAction> base;
-            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                    .requiresDo(() -> {
+                        int leastY = Integer.MAX_VALUE;
+                        OffsetPoint thatPt = null;
+                        for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
+                            if (offsetPoint.getY() < leastY) {
+                                thatPt = offsetPoint;
+                                leastY = offsetPoint.getY();
+                            }
+                        }
+                        return new ActionMoveNearestAir(thatPt);
+                    });
 
-            int leastY = Integer.MAX_VALUE;
-            OffsetPoint thatPt = null;
-            for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
-                if (offsetPoint.getY() < leastY) {
-                    thatPt = offsetPoint;
-                    leastY = offsetPoint.getY();
-                }
-            }
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(thatPt);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
+
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return base;
+
+            return actionBuilder.getPreRequisites();
         }
 
-        if (!"open".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for breakable wall");
+        if (!"open".equalsIgnoreCase(state)) throw new PathfindImpossibleException(state+" is not valid state for breakable wall");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
@@ -85,18 +85,16 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
                                         leastY = offsetPoint.getY();
                                     }
                                 }
-                                ActionMoveNearestAir actionMove = new ActionMoveNearestAir(thatPt);
-                                return actionMove;
+                                return new ActionMoveNearestAir(thatPt);
                             }).toAtomicAction("GoAndBreakWall")
                 );
 
-        {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-            }
+
+        for (String str : preRequisite) {
+            if (str.isEmpty()) continue;
+            actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
-        System.out.println(actionBuilder.getPreRequisites());
+
         return actionBuilder.getPreRequisites();
     }
 

@@ -24,6 +24,8 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -43,23 +45,17 @@ public class DungeonJournal implements DungeonMechanic {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not valid state for secret");
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-        {
-            ActionMove actionMove = new ActionMove(secretPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-        }
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+        if (!"navigate".equalsIgnoreCase(state)) throw new PathfindImpossibleException(state+" is not valid state for secret");
+        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                .requiresDo(new ActionMove(secretPoint));
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return base;
+        return actionBuilder.getPreRequisites();
     }
 
     @Override

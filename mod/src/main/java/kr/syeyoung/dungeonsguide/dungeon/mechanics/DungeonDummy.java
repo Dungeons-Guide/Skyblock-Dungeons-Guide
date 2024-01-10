@@ -21,10 +21,8 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionClick;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -44,32 +42,26 @@ public class DungeonDummy implements DungeonMechanic {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-//        if (!"navigate".equalsIgnoreCase(state)) throw new IllegalArgumentException(state+" is not a valid state for secret");
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+        ActionBuilder actionBuilder;
         if (state.equalsIgnoreCase("navigate")){
-            ActionMove actionMove = new ActionMove(secretPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
+            actionBuilder = new ActionBuilder(dungeonRoom).requiresDo(new ActionMove(secretPoint));
         } else if (state.equalsIgnoreCase("click")) {
-            ActionClick actionClick = new ActionClick(secretPoint);
-            preRequisites.add(actionClick);
-            preRequisites = actionClick.getPreRequisite();
-
-            ActionMove actionMove = new ActionMove(secretPoint);
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-
+            actionBuilder = new ActionBuilder(dungeonRoom).requiresDo(
+                    new ActionBuilder(dungeonRoom)
+                            .requiresDo(new ActionClick(secretPoint))
+                            .requiresDo(new ActionMove(secretPoint))
+                            .toAtomicAction("MoveAndClick"));
+        } else {
+            actionBuilder = new ActionBuilder(dungeonRoom);
         }
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and( new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return base;
+        return actionBuilder.getPreRequisites();
     }
 
     @Override

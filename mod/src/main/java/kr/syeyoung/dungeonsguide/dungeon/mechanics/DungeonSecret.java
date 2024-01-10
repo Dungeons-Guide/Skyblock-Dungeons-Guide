@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
@@ -163,48 +164,44 @@ public class DungeonSecret implements DungeonMechanic {
     }
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<AbstractAction> base;
-            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
+            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return base;
+            return actionBuilder.getPreRequisites();
         }
         if (!"found".equalsIgnoreCase(state))
-            throw new IllegalArgumentException(state + " is not valid state for secret");
+            throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return new HashSet<>();
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
         if (secretType == SecretType.CHEST || secretType == SecretType.ESSENCE) {
-            ActionClick actionClick;
-            preRequisites.add(actionClick = new ActionClick(secretPoint));
-            preRequisites = actionClick.getPreRequisite();
+            actionBuilder = actionBuilder.requiresDo(new ActionBuilder(dungeonRoom)
+                    .requiresDo(new ActionClick(secretPoint))
+                    .requiresDo(new ActionMove(secretPoint))
+                    .toAtomicAction("MoveAndClick"));
         } else if (secretType == SecretType.BAT) {
-            ActionKill actionKill = new ActionKill(secretPoint);
-            preRequisites.add(actionKill);
-            actionKill.setPredicate(EntityBat.class::isInstance);
-            actionKill.setRadius(10);
-            preRequisites = actionKill.getPreRequisite();
+            actionBuilder = actionBuilder.requiresDo(new ActionBuilder(dungeonRoom)
+                    .requiresDo(() -> {
+                        ActionKill actionKill = new ActionKill(secretPoint);
+                        actionKill.setRadius(10);
+                        actionKill.setPredicate(EntityBat.class::isInstance);
+                        return actionKill;
+                    }).requiresDo(new ActionMove(secretPoint))
+                    .toAtomicAction("MoveAndKill"));
+        } else {
+            actionBuilder = actionBuilder.requiresDo(new ActionMove(secretPoint));
         }
-
-        ActionMove actionMove = new ActionMove(secretPoint);
-        preRequisites.add(actionMove);
-        preRequisites = actionMove.getPreRequisite();
 
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-            preRequisites.add(actionChangeState);
+            actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
 
-        return base;
+        return actionBuilder.getPreRequisites();
     }
 
     @Override

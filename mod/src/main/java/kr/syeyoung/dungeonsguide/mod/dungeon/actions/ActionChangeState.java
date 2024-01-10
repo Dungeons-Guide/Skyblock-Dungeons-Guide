@@ -43,7 +43,7 @@ public class ActionChangeState extends AbstractAction {
     }
 
     @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         Set<AbstractAction> set = new HashSet<>(preRequisite2);
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (mechanic!= null)

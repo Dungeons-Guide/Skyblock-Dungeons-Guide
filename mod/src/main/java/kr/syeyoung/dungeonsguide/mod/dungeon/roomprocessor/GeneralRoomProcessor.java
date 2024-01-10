@@ -31,6 +31,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionComplete;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
@@ -87,14 +88,18 @@ public class GeneralRoomProcessor implements RoomProcessor {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
                     DungeonSecret dungeonSecret = (DungeonSecret) value.getValue();
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isBat() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.BAT)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_BAT.getRouteProperties());
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isChest() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.CHEST)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST.getRouteProperties());
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isEssence() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ESSENCE)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
-                    if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP)
-                        pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
+                    try {
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isBat() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.BAT)
+                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_BAT.getRouteProperties());
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isChest() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.CHEST)
+                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST.getRouteProperties());
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isEssence() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ESSENCE)
+                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP)
+                            pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
+                    } catch (Exception e) {
+                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                    }
                 }
             }
         }
@@ -103,7 +108,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 if (value.getValue() instanceof DungeonRoomDoor) {
                     DungeonRoomDoor dungeonDoor = (DungeonRoomDoor) value.getValue();
                     if (dungeonDoor.getDoorfinder().getType().isHeadToBlood()) {
-                        pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                        try {
+                            pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                        } catch (Exception e) {
+                            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                        }
                     }
                 }
             }
@@ -162,7 +171,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         if (lowestWeightMechanic != null) {
             visited.add(lowestWeightMechanic.getKey());
-            pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+            try {
+                pathfind("AUTO-BROWSE", lowestWeightMechanic.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_AUTOPATHFIND.getRouteProperties());
+            } catch (Exception e) {
+                ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+lowestWeightMechanic.getKey()+":found failed due to "+e.getMessage());
+                e.printStackTrace();
+            }
         } else {
             visited.clear();
         }
@@ -312,12 +326,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
         return path.get(id);
     }
 
-    public String pathfind(String mechanic, String state, ActionRouteProperties actionRouteProperties) {
+    public String pathfind(String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException  {
         String str = UUID.randomUUID().toString();
         pathfind(str, mechanic, state, actionRouteProperties);
         return str;
     }
-    public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties) {
+    public void pathfind(String id, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException {
         path.put(id, new ActionRoute(getDungeonRoom(), mechanic, state, actionRouteProperties));
     }
     public void cancelAll() {

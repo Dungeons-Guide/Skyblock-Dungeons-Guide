@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionRoot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -45,9 +46,10 @@ public class ActionTree implements Cloneable {
         return Objects.equals(parent, that.parent) && Objects.equals(current, that.current) && Objects.equals(children, that.children);
     }
 
-    public static ActionTree buildActionTree(Set<AbstractAction> actions, DungeonRoom dungeonRoom) {
+    public static ActionTree buildActionTree(Set<AbstractAction> actions, DungeonRoom dungeonRoom)throws PathfindImpossibleException  {
         ActionRoot root = new ActionRoot();
         root.setPreRequisite(actions);
+
         ActionTree tree = new ActionTree();
         tree.setParent(new HashSet<>());
         tree.setCurrent(root);
@@ -58,13 +60,13 @@ public class ActionTree implements Cloneable {
         tree.setChildren(set);
         return tree;
     }
-    public static ActionTree buildActionTree(AbstractAction actions, DungeonRoom dungeonRoom) {
+    public static ActionTree buildActionTree(AbstractAction actions, DungeonRoom dungeonRoom)throws PathfindImpossibleException  {
         return buildActionTree(null, actions, dungeonRoom, new HashMap<>());
     }
 
 
 
-    private static ActionTree buildActionTree(ActionTree parent, @NotNull AbstractAction action,@NotNull DungeonRoom dungeonRoom, @NotNull Map<AbstractAction, ActionTree> alreadyBuilt) {
+    private static ActionTree buildActionTree(ActionTree parent, @NotNull AbstractAction action,@NotNull DungeonRoom dungeonRoom, @NotNull Map<AbstractAction, ActionTree> alreadyBuilt) throws PathfindImpossibleException {
         if (alreadyBuilt.containsKey(action))  {
             ActionTree tree = alreadyBuilt.get(action);
             tree.getParent().add(parent);

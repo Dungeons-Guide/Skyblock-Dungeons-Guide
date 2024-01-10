@@ -25,6 +25,9 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -41,30 +44,50 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> openPreRequisite = new ArrayList<String>();
     private List<String> closePreRequisite = new ArrayList<String>();
+    private List<String> movePreRequisite = new ArrayList<String>();
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
-        if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not valid state for door");
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+        if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state) || "navigate".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for door");
         if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+        if ("navigate".equalsIgnoreCase(state)) {
+            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                    .requiresDo(() -> {
+                        int leastY = Integer.MAX_VALUE;
+                        OffsetPoint thatPt = null;
+                        for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
+                            if (offsetPoint.getY() < leastY) {
+                                thatPt = offsetPoint;
+                                leastY = offsetPoint.getY();
+                            }
+                        }
+                        return new ActionMoveNearestAir(thatPt);
+                    });;
+            for (String s : movePreRequisite) {
+                if (s.isEmpty()) continue;
+                actionBuilder.and(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
+            }
+            return actionBuilder.getPreRequisites();
+        }
+
+        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
         {
             if (state.equalsIgnoreCase("open")) {
                 for (String str : openPreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    preRequisites.add(actionChangeState);
+                    actionBuilder.and(actionChangeState);
                 }
             } else {
                 for (String str : closePreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    preRequisites.add(actionChangeState);
+                    actionBuilder.and(actionChangeState);
                 }
             }
         }
-        return base;
+        return actionBuilder.getPreRequisites();
     }
 
     @Override
@@ -106,10 +129,10 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
         String currentStatus = getCurrentState(dungeonRoom);
         if (currentStatus.equalsIgnoreCase("closed"))
-            return Collections.singleton("open");
+            return Sets.newHashSet("navigate", "open");
         else if (currentStatus.equalsIgnoreCase("open"))
-            return Collections.singleton("closed");
-        return Collections.emptySet();
+            return Sets.newHashSet("navigate", "closed");
+        return Collections.singleton("navigate");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {

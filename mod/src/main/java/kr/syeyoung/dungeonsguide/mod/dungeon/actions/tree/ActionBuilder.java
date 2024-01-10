@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AtomicAction;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
 import java.util.HashSet;
@@ -40,13 +41,13 @@ public class ActionBuilder {
     private Set<AbstractAction> preRequisite;
     private ActionBuilder parent;
 
-    public ActionBuilder requiresDo(Supplier<AbstractAction> abstractActionSupplier) {
+    public ActionBuilder requiresDo(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException  {
         AbstractAction abstractAction = abstractActionSupplier.get();
         preRequisite.add(abstractAction);
         return new ActionBuilder(dungeonRoom, this, abstractAction.getPreRequisites(dungeonRoom));
     }
 
-    public ActionBuilder requiresDo(AbstractAction abstractAction) {
+    public ActionBuilder requiresDo(AbstractAction abstractAction) throws PathfindImpossibleException  {
         preRequisite.add(abstractAction);
         return new ActionBuilder(dungeonRoom, this, abstractAction.getPreRequisites(dungeonRoom));
     }
@@ -69,7 +70,7 @@ public class ActionBuilder {
         if (parent != null) return parent.getPreRequisites();
         return preRequisite;
     }
-    public AtomicAction toAtomicAction(String name) {
+    public AtomicAction toAtomicAction(String name)throws PathfindImpossibleException {
         if (parent != null) {
             return parent.toAtomicAction(name);
         }

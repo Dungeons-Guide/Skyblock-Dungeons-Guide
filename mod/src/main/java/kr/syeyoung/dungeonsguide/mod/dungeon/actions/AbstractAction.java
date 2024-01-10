@@ -55,7 +55,7 @@ public abstract class AbstractAction {
 
     }
 
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         return null;
     }
 

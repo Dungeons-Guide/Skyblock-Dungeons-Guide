@@ -26,6 +26,8 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -41,37 +43,33 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
     private static final long serialVersionUID = -1810891721127873330L;
     private OffsetPointSet secretPoint = new OffsetPointSet();
     private List<String> preRequisite = new ArrayList<String>();
+    private List<String> movePreRequisite = new ArrayList<String>();
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) {
+    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")) {
-            Set<AbstractAction> base;
-            Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
-            ActionMoveNearestAir actionMove = new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom));
-            preRequisites.add(actionMove);
-            preRequisites = actionMove.getPreRequisite();
-            for (String str : preRequisite) {
+            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
+                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+
+            for (String str : movePreRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return base;
+            return actionBuilder.getPreRequisites();
         }
-        if (!("open".equalsIgnoreCase(state))) throw new IllegalArgumentException(state+" is not a valid state for door");
+        if (!("open".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not a valid state for door");
         if (!isBlocking(dungeonRoom)) {
             return Collections.emptySet();
         }
-        Set<AbstractAction> base;
-        Set<AbstractAction> preRequisites = base = new HashSet<AbstractAction>();
+        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                preRequisites.add(actionChangeState);
+                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return base;
+        return actionBuilder.getPreRequisites();
     }
 
     @Override

@@ -44,7 +44,7 @@ public class ActionRoute {
     @Getter
     private final ActionRouteProperties actionRouteProperties;
 
-    public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties) {
+    public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException  {
         this.mechanic = mechanic;
         this.state = state;
         this.actionRouteProperties = actionRouteProperties;
