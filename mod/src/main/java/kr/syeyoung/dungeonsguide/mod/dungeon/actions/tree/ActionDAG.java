@@ -16,9 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2;
+package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 

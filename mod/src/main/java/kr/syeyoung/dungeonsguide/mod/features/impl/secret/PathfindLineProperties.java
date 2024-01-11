@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 

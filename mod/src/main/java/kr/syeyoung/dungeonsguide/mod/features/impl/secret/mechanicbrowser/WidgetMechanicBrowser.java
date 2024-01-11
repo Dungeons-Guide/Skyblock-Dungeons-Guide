@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;

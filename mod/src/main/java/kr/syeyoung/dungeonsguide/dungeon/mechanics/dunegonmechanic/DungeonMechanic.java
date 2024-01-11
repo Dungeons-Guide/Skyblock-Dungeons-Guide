@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
 import java.awt.*;

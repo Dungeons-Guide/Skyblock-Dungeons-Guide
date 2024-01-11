@@ -21,7 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -32,8 +32,6 @@ import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 
 import java.awt.*;
-import java.util.HashSet;
-import java.util.Set;
 import java.util.function.Predicate;
 
 @Data

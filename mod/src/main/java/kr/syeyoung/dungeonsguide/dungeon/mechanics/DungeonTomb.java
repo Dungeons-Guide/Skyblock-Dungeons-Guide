@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;

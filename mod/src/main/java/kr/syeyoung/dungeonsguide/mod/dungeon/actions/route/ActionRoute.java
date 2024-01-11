@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
+package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAG;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGNode;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;

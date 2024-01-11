@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AtomicAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;

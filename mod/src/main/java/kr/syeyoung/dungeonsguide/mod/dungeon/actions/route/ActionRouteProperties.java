@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
+package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import lombok.Data;

@@ -25,7 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.ParameterItem;
 import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRoute;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;

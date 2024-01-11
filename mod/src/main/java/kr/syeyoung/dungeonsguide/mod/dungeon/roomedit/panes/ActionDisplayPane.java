@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAG;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MButton;

@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
