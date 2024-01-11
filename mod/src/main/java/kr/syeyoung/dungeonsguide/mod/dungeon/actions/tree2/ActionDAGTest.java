@@ -62,9 +62,8 @@ public class ActionDAGTest {
         ActionDAG dag = actionDAGBuilder.build();
 
         for (int i = 0; i < dag.getCount(); i++) {
-            Iterator<List<ActionDAGNode>> sorted = dag.topologicalSort(i);
-            while (sorted.hasNext()) {
-                System.out.println(sorted.next().stream().map(a -> a.getAction().toString()).collect(Collectors.toList()));
+            for (List<ActionDAGNode> sorted : dag.topologicalSort(i)) {
+                System.out.println(sorted.stream().map(a -> a.getAction().toString()).collect(Collectors.toList()));
             }
         }
 

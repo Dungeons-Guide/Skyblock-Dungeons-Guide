@@ -56,7 +56,7 @@ public class ActionRoute {
         ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
         actionDAGBuilder.requires(new ActionChangeState(mechanic, state));
         ActionDAG dag = actionDAGBuilder.build();
-        List<ActionDAGNode> dagNodes = dag.topologicalSort(dag.getCount() - 1).next();
+        List<ActionDAGNode> dagNodes = dag.topologicalSortIterator(dag.getCount() - 1).next();
 
         actions = dagNodes.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         actions.add(new ActionComplete());

@@ -51,7 +51,7 @@ public class ActionTreeDisplayPane extends MPanel {
         this.dungeonRoom = dungeonRoom;
         this.tree = tree;
         try {
-            List<ActionDAGNode> dagNodes = tree.topologicalSort(tree.getCount() - 1).next();
+            List<ActionDAGNode> dagNodes = tree.topologicalSortIterator(tree.getCount() - 1).next();
 
             this.linearified = dagNodes.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         } catch (Exception e) {
