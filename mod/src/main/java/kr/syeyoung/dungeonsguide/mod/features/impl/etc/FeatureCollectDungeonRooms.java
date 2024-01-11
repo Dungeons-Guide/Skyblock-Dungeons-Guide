@@ -67,6 +67,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -80,6 +81,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -563,9 +565,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     private String nbttostring(String name, NBTTagCompound compound) {
 
         try {
-            Method method = null;
-            method = NBTTagCompound.class.getDeclaredMethod("write", DataOutput.class);
-            method.setAccessible(true);
+            Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062", "a"}, DataOutput.class);
+
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(byteArrayOutputStream)));
