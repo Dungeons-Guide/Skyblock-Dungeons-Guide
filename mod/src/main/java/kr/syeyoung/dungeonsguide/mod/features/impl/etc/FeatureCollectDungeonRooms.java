@@ -45,6 +45,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.*;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.FeatureDebug;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
@@ -67,6 +68,7 @@ import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.projectile.EntityArrow;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
+import net.minecraft.launchwrapper.Launch;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
 import net.minecraft.nbt.NBTUtil;
@@ -572,11 +574,15 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                     String str = gson.toJson(jsonObject);
                     queueSendLogAsync(str);
 
-                    // if is dev
-                    FileOutputStream fos = new FileOutputStream(new File(Main.getConfigDir(), "runs/"+UUID.randomUUID()+".dgroom"));
-                    JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(fos));
-                    gson.toJson(jsonObject, jsonWriter);
-                    jsonWriter.flush(); jsonWriter.close();
+                    // if debug
+                    if (FeatureRegistry.DEBUG.isEnabled()) {
+                        new File(Main.getConfigDir(), "runs").mkdirs();
+                        FileOutputStream fos = new FileOutputStream(new File(Main.getConfigDir(), "runs/" + UUID.randomUUID() + ".dgroom"));
+                        JsonWriter jsonWriter = new JsonWriter(new OutputStreamWriter(fos));
+                        gson.toJson(jsonObject, jsonWriter);
+                        jsonWriter.flush();
+                        jsonWriter.close();
+                    }
                 } catch (IOException e) {
                     throw new RuntimeException(e);
                 }
@@ -623,7 +629,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     private String nbttostring(String name, NBTTagCompound compound) {
 
         try {
-            Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062", "a"}, DataOutput.class);
+            Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062","func_74734_a", "a"}, DataOutput.class);
 
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
