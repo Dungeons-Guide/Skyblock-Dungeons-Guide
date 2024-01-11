@@ -146,6 +146,8 @@ public class DungeonsGuide implements DGInterface {
 
     @Getter
     CommandReparty commandReparty;
+    @Getter
+    CommandDungeonsGuide commandDungeonsGuide;
 
 
     private List<Object> registeredListeners = new ArrayList<>();
@@ -222,7 +224,7 @@ public class DungeonsGuide implements DGInterface {
         dungeonFacade.init();
 
 
-        CommandDungeonsGuide commandDungeonsGuide = new CommandDungeonsGuide();
+        commandDungeonsGuide = new CommandDungeonsGuide();
         CommandDgDebug command = new CommandDgDebug();
 
         registerCommands(commandDungeonsGuide);

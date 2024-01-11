@@ -187,7 +187,8 @@ public class FeatureRegistry {
 
     // Debug
     public static final FeatureDebug DEBUG = register(new FeatureDebug());
-    public static final SimpleFeature ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
+    public static final FeatureCompareRoom COMPARE_ROOM = register(new FeatureCompareRoom());
+    public static final FeatureRoomEdit ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());
     public static final FeatureDebuggableMap ADVANCED_DEBUGGABLE_MAP = register(new FeatureDebuggableMap());
     public static final FeatureRoomCoordDisplay ADVANCED_COORDS = register(new FeatureRoomCoordDisplay());

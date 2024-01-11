@@ -39,6 +39,7 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.command.CommandBase;
@@ -207,6 +208,7 @@ public class CommandDungeonsGuide extends CommandBase {
         FeatureRegistry.GLOBAL_HUD_SCALE.<Double>getParameter("scale").setValue(theScale);
     }
 
+    @Setter
     private GuiScreen target;
 
     @SubscribeEvent

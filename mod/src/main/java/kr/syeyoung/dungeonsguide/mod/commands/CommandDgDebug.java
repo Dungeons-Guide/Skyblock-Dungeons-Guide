@@ -27,6 +27,8 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.CategoryPageWidget;
+import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditRedstoneKey;
@@ -41,6 +43,8 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -52,6 +56,8 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
@@ -186,11 +192,20 @@ public class CommandDgDebug extends CommandBase {
             case "requeststaticresource":
                 requestStaticResource(args);
                 break;
-            case "createfakeroom": // load schematic
-                createFakeRoomCommand();
+            case "transferschematic": // load schematic
+                transferSchematic(Boolean.parseBoolean(args.length == 1 ? "true" : args[1]));
                 break;
             case "closecontext":
                 closeContextCommand();
+                break;
+            case "re":
+                MainConfigWidget mainConfigWidget = new MainConfigWidget();
+                GuiScreenAdapter adapter = new GuiScreenAdapter(new GlobalHUDScale(
+                        FeatureRegistry.ADVANCED_ROOMEDIT.getConfigureWidget()
+                ));
+
+                DungeonsGuide.getDungeonsGuide().getCommandDungeonsGuide().setTarget(adapter);
+
                 break;
             case "dumpsettings":
                 dumpSettingsCommand();
@@ -302,7 +317,6 @@ public class CommandDgDebug extends CommandBase {
 //        } catch (Throwable e) {
 //            throw new RuntimeException(e);
 //        }
-
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             System.out.println(dungeonRoomInfo.getName()+"-------");
             for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
@@ -512,81 +526,8 @@ public class CommandDgDebug extends CommandBase {
         });
     }
 
-    private void createFakeRoomCommand() {
-/*        File f = new File(Main.getConfigDir(), "schematics/new roonm-b2df250c-4af2-4201-963c-0ee1cb6bd3de-5efb1f0c-c05f-4064-bde7-cad0874fdf39.schematic");
-            NBTTagCompound compound;
-            try {
-                compound = CompressedStreamTools.readCompressed(new FileInputStream(f));
-            } catch (IOException e) {
-                e.printStackTrace();
-                return;
-            }
-
-            byte[] blocks = compound.getByteArray("Blocks");
-            byte[] meta = compound.getByteArray("Data");
-            for (int x = 0; x < compound.getShort("Width"); x++) {
-                for (int y = 0; y < compound.getShort("Height"); y++) {
-                    for (int z = 0; z < compound.getShort("Length"); z++) {
-                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                        BlockPos pos = new BlockPos(x, y, z);
-                        World w = MinecraftServer.getServer().getEntityWorld();
-                        w.setBlockState(pos, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF), 2);
-                    }
-                }
-            }
-
-
-            DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
-                @Override
-                public BlockPos findDoor(World w, String dungeonName) {
-                    return new BlockPos(0, 0, 0);
-                }
-
-                @Override
-                public Vector2d findDoorOffset(World w, String dungeonName) {
-                    return null;
-                }
-
-                @Override
-                public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
-                    return null;
-                }
-
-                @Override
-                public boolean isTrapSpawn(String dungeonName) {
-                    return false;
-                }
-
-                @Override
-                public double secretPercentage(String dungeonName) {
-                    return 0;
-                }
-
-                @Override
-                public int speedSecond(String dungeonName) {
-                    return 0;
-                }
-            });
-            DungeonContext.setDungeonName("TEST DG");
-            DungeonContext fakeContext = new DungeonContext(Minecraft.getMinecraft().theWorld);
-            DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
-            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
-            MapPlayerProcessor mapProcessor = fakeContext.getp();
-            mapProcessor.setUnitRoomDimension(new Dimension(16, 16));
-            mapProcessor.setBugged(false);
-            mapProcessor.setDoorDimensions(new Dimension(4, 4));
-            mapProcessor.setTopLeftMapPoint(new Point(0, 0));
-            fakeContext.setDungeonMin(new BlockPos(0, 70, 0));
-
-            DungeonRoom dungeonRoom = new DungeonRoom(Arrays.asList(new Point(0, 0)), ShortUtils.topLeftifyInt((short) 1), (byte) 63, new BlockPos(0, 70, 0), new BlockPos(31, 70, 31), fakeContext, Collections.emptySet());
-
-            fakeContext.getDungeonRoomList().add(dungeonRoom);
-            for (Point p : Arrays.asList(new Point(0, 0))) {
-                fakeContext.getRoomMapper().put(p, dungeonRoom);
-            }
-
-            EditingContext.createEditingContext(dungeonRoom);
-            EditingContext.getEditingContext().openGui(new GuiDungeonRoomEdit(dungeonRoom));*/
+    private void transferSchematic(boolean ignoreAir) {
+        FeatureRegistry.ADVANCED_ROOMEDIT.overwrite(ignoreAir);
     }
 
     private void closeContextCommand() {

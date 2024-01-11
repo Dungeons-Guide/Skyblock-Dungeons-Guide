@@ -24,6 +24,7 @@ import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFairySoul;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.launcher.Main;
@@ -53,10 +54,14 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
+import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.MapColor;
+import net.minecraft.block.properties.IProperty;
+import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
@@ -76,11 +81,14 @@ import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.realms.RealmsBridge;
 import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.EnumDifficulty;
 import net.minecraft.world.World;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.WorldType;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraft.world.storage.ISaveFormat;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.EntityJoinWorldEvent;
@@ -112,6 +120,64 @@ public class FeatureRoomEdit  extends SimpleFeature {
     public void setupConfigureWidget(List<Widget> widgets) {
         super.setupConfigureWidget(widgets);
         widgets.add(new RoomConfiguration());
+    }
+
+    public void overwrite(boolean ignoreAir) {
+        if (!flag) return;
+        if (schematic == null) return;
+
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        DungeonRoom dungeonRoom = context.getScaffoldParser().getDungeonRoomList().get(0);
+        DungeonRoomInfo info = dungeonRoom.getDungeonRoomInfo();
+
+        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos(0,0,0));
+
+        NBTTagCompound compound = schematic;
+        int w = compound.getShort("Width");
+        int l = compound.getShort("Length");
+        if (dungeonRoom.getRoomMatcher().getRotation() % 2 == 1) {
+            int temp = l;
+            l = w;
+            w = temp;
+        }
+        if (!info.hasSchematic())
+            info.setSize(w,l,256);
+
+        byte[] blocks = compound.getByteArray("Blocks");
+        byte[] meta = compound.getByteArray("Data");
+        BlockPos.MutableBlockPos mpos = new BlockPos.MutableBlockPos();
+        for (int x = 1; x < compound.getShort("Width"); x++) {
+            for (int y = 0; y < compound.getShort("Height"); y++) {
+                for (int z = 1; z < compound.getShort("Length"); z++) {
+                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                    mpos.set(x,y,z);
+                    offsetPoint.setPosInWorld(dungeonRoom, mpos);
+
+                    Block b = Block.getBlockById(blocks[index] & 0xFF);
+                    Optional<PropertyDirection> propertyDirection = b.getDefaultState().getPropertyNames().stream()
+                            .filter(a -> a instanceof PropertyDirection)
+                            .map(PropertyDirection.class::cast).findFirst();
+
+                    if (!dungeonRoom.canAccessRelative(x,z)) {
+                        continue;
+                    }
+
+
+                    IBlockState blockState = b.getStateFromMeta(meta[index] & 0xFF);
+                    if (propertyDirection.isPresent()) {
+                        EnumFacing enumFacing = blockState.getValue(propertyDirection.get());
+                        if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+                            for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++)
+                                enumFacing = enumFacing.rotateY();
+                            blockState = blockState.withProperty(propertyDirection.get(), enumFacing);
+                        }
+                    }
+
+                    if ((blocks[index] & 0xFF) != 0 || !ignoreAir)
+                        info.setBlock(offsetPoint, blockState);
+                }
+            }
+        }
     }
 
     public class RoomConfiguration extends AnnotatedImportOnlyWidget {
@@ -153,25 +219,46 @@ public class FeatureRoomEdit  extends SimpleFeature {
                 throw new RuntimeException(e);
             }
 
-            if (Minecraft.getMinecraft().theWorld != null) {
-                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
-                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
-                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+                NBTTagCompound compound = schematic;
+                for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
+                    for (int y = 0; y < compound.getShort("Height"); y++) {
+                        for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
+                            BlockPos pos = new BlockPos(x, 0, z);
+                            World w = MinecraftServer.getServer().getEntityWorld();
+                            if (x % 16 == 0 && z % 16 == 0 && y == 0) {
+                                for (int i = 0; i < w.getChunkFromBlockCoords(pos).getBlockStorageArray().length; i++) {
+                                    w.getChunkFromBlockCoords(pos).getBlockStorageArray()[i] = null;
+                                }
+                            }
+                            w.markBlockForUpdate(pos);
+                        }
+                    }
+                }
+                onWorldUnload(null);
+            } else {
+                if (Minecraft.getMinecraft().theWorld != null) {
+                    boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
+                    boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
+                    Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
+                    Minecraft.getMinecraft().loadWorld((WorldClient) null);
+                }
+
+
+                ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+                isaveformat.flushCache();
+                isaveformat.deleteWorldDirectory("dungeonsguide");
+
+
+
+                WorldType.FLAT.onGUICreateWorldPress();
+                WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
+                WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+                worldsettings.setWorldName("3;minecraft:air");
+                worldsettings.enableCommands();
+
+                Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
             }
-
-
-            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
-            isaveformat.flushCache();
-            isaveformat.deleteWorldDirectory("dungeonsguide");
-
-
-
-            WorldType.FLAT.onGUICreateWorldPress();
-            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
-            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
-            worldsettings.setWorldName("3;minecraft:air");
-            worldsettings.enableCommands();
             blockUpdates = new ArrayList<>();
             int minX = jsonObject.get("minX").getAsInt(), minZ = jsonObject.get("minZ").getAsInt();
             for (JsonElement updates : jsonObject.get("blockupdates").getAsJsonArray()) {
@@ -189,8 +276,6 @@ public class FeatureRoomEdit  extends SimpleFeature {
 
                 blockUpdates.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate(list, time));
             }
-
-            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
             try {
                 Thread.sleep(1000);
             } catch (InterruptedException e) {
@@ -214,15 +299,30 @@ public class FeatureRoomEdit  extends SimpleFeature {
                 return;
             }
 
+            schematic = compound;
             byte[] blocks = compound.getByteArray("Blocks");
             byte[] meta = compound.getByteArray("Data");
             for (int x = 0; x < compound.getShort("Width"); x++) {
                 for (int y = 0; y < compound.getShort("Height"); y++) {
                     for (int z = 0; z < compound.getShort("Length"); z++) {
+                        if (!( (shape >>((z/32) *4 +(x/32)) & 0x1) > 0)) {
+                            continue;
+                        }
+
                         int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
                         BlockPos pos = new BlockPos(x, y, z);
                         World w = MinecraftServer.getServer().getEntityWorld();
-                        w.setBlockState(pos, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF), 2);
+                        Chunk c = w.getChunkFromBlockCoords(pos);
+                        w.markBlockForUpdate(pos);
+                        ExtendedBlockStorage[] storage= c.getBlockStorageArray();
+                        ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
+                        if (extendedblockstorage == null) {
+                            if ((blocks[index] & 0xFF) == 0) {
+                                continue;
+                            }
+                            extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
+                        }
+                        extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
                     }
                 }
             }
@@ -238,6 +338,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     private byte color;
     private int xWid, zWid;
     private boolean setup = false;
+    private NBTTagCompound schematic;
 
     private List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate> blockUpdates;
 
@@ -252,7 +353,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
 //                    GlStateManager.enableCull();
                     if (Minecraft.getMinecraft().thePlayer.getDistanceSq(updatedBlock.getPos()) > 100)
                         RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x77FFFF00, true), event.partialTicks, false);
-                    if (updatedBlock.getBlock().getBlock() != Blocks.air) {
+                    if (updatedBlock.getBlock().getBlock() != Blocks.air && updatedBlock.getBlock().getBlock() != Blocks.barrier) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                         float partialTicks = event.partialTicks;
                         Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
@@ -282,7 +383,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         GlStateManager.enableLighting();
                         GlStateManager.popMatrix();
                     } else {
-                        RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x50AA0000, true), event.partialTicks, true);
+                        RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x50FF00FF, true), event.partialTicks, true);
                     }
                 }
             }

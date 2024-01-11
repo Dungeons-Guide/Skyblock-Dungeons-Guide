@@ -102,6 +102,9 @@ public class DungeonRoom {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
+                if (!canAccessRelative(x * 16+8, z*16+8)) {
+                    continue;
+                }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);

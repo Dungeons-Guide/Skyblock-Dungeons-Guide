@@ -21,10 +21,17 @@ package kr.syeyoung.dungeonsguide.dungeon.data;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import lombok.Getter;
 import lombok.Setter;
+import net.minecraft.block.Block;
+import net.minecraft.block.properties.PropertyDirection;
+import net.minecraft.block.state.IBlockState;
+import net.minecraft.init.Blocks;
+import net.minecraft.util.EnumFacing;
+import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Optional;
 import java.util.UUID;
 
 @Getter
@@ -57,4 +64,44 @@ public class DungeonRoomInfo implements Serializable {
 
     private Map<String, DungeonMechanic> mechanics = new HashMap<>();
     private int totalSecrets = -1;
+
+    private char[] world;
+    private int width, length;
+
+    public void setSize(int width, int length, int height) {
+        this.width = width;
+        this.length = length;
+        this.world = new char[width * length * 256];
+    }
+    public void setBlock(OffsetPoint offsetPoint, IBlockState iBlockState) {
+        int index = offsetPoint.getX() + ((offsetPoint.getY()+70) * length + offsetPoint.getZ()) * width;
+        world[index] = (char) Block.BLOCK_STATE_IDS.get(iBlockState);
+    }
+
+    public IBlockState getBlock(OffsetPoint offsetPoint, int rot) {
+        if (offsetPoint.getY() < -70 || offsetPoint.getY() >= 186) return Blocks.air.getDefaultState();
+        if (offsetPoint.getX() < 0 || offsetPoint.getX() >= width) return Blocks.air.getDefaultState();
+        if (offsetPoint.getZ() < 0 || offsetPoint.getZ() >= length) return Blocks.air.getDefaultState();
+
+        int index = offsetPoint.getX() + ((offsetPoint.getY()+70) * length + offsetPoint.getZ()) * width;
+        IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
+
+        Optional<PropertyDirection> propertyDirection = blockState.getPropertyNames().stream()
+                .filter(a -> a instanceof PropertyDirection)
+                .map(PropertyDirection.class::cast).findFirst();
+
+        if (propertyDirection.isPresent()) {
+            EnumFacing enumFacing = blockState.getValue(propertyDirection.get());
+            if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+                for (int i = 0; i < 4- rot; i++)
+                    enumFacing = enumFacing.rotateY();
+                blockState = blockState.withProperty(propertyDirection.get(), enumFacing);
+            }
+        }
+
+        return blockState == null ? Blocks.air.getDefaultState() : blockState;
+    }
+    public boolean hasSchematic() {
+        return world != null;
+    }
 }
