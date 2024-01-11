@@ -368,9 +368,10 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
         for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
             if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
-//                System.out.println("got it again??");
-//                return;
+                System.out.println("got it again??");
+                return;
             }
+            if (updatedChunk.isEmpty()) return;
             ChunkData chunkData = new ChunkData();
             chunkData.x = updatedChunk.xPosition;
             chunkData.z = updatedChunk.zPosition;
@@ -504,6 +505,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 jsonObject.add("chats", gson.toJsonTree(roomInfo.systemMessages));
                 jsonObject.add("interactions", gson.toJsonTree(roomInfo.interactions));
                 jsonObject.add("player", gson.toJsonTree(roomInfo.playerTrajactory));
+                jsonObject.addProperty("version", "2");
 
 
 
