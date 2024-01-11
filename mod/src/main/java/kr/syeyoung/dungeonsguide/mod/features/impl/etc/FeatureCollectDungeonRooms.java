@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.mojang.authlib.properties.Property;
 import jdk.nashorn.internal.ir.debug.JSONWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
@@ -58,6 +59,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
@@ -146,6 +148,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public static class EntityData {
         private int id;
         public String name;
+        private String playerSkin;
         private IChatComponent armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
@@ -331,6 +334,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
         entityData.id = event.entity.getEntityId();
 
+        if (event.entity instanceof EntityOtherPlayerMP && entityData.playerSkin == null) {
+            entityData.playerSkin = ((EntityOtherPlayerMP) event.entity).getGameProfile().getProperties().get("textures").stream().findFirst().map(Property::getValue).orElse(null);
+        }
 
         List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AxisAlignedBB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
         Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);

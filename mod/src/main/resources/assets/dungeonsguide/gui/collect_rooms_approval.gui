@@ -29,10 +29,10 @@
                 <Text text="- Mob spawn locations, nametags, armor items, weapon items, and movements" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <Text text="- Block Updates" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <Text text="- Player interaction (click blocks) and positions" color="#FFFFFFFF" size="8" align="CENTER"/>
-                <Text text="- System Chat Messages e.g. You hear the sound of a door opening... (Does not include player messages)" color="#FFFFFFFF" size="8" align="CENTER"/>
+                <Text text="- System Chat Messages e.g. You hear the sound of a door opening... (Does not include messages containing ':')" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <Text text="- Dungeons Guide Party ID for correlation" color="#FFFFFFFF" size="8" align="CENTER"/>
                 <size width="0" height="15"/>
-                <Text text="The data is anonymized, and by allowing this you help Dungeons Guide implement smarter pathfinding features" color="#FFFFFF00" size="8" align="CENTER"/>
+                <Text text="By allowing this you help Dungeons Guide implement smarter pathfinding features" color="#FFFFFF00" size="8" align="CENTER"/>
                 <Text text="This option is optional and there is no penalty for denying" color="#FFFFFF00" size="8" align="CENTER"/>
                 <Text text="You can enable/disable this option later at /dg -> Misc -> Collect Dungeon Data" color="#FFFFFF00" size="8" align="CENTER"/>
                 <size width="0" height="15"/>
