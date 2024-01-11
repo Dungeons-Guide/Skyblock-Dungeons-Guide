@@ -138,6 +138,10 @@ tasks.named("remapJar") {
 task standaloneConsumerJar(type: Jar) {
     archiveClassifier = "standalone"
     from(zipTree(tasks.remapJar.archiveFile))
+    archiveFileName = configurations.remappedMod.files.name.get(0).replace("-mapped.jar", "")+"-standalone.jar"
+
+//    print(configurations.remappedMod.version)
+
     from(configurations.remappedMod.files) {
         rename ".+\\.jar", "mod.jar"
     }
@@ -148,6 +152,7 @@ task standaloneConsumerJar(type: Jar) {
 task standaloneDevJar(type: Jar) {
     archiveClassifier = "devStandalone"
     from(zipTree(tasks.shadowJar.archiveFile))
+    archiveFileName = configurations.unmappedMod.files.name.get(0).replace(".jar", "")+"-devStandalone.jar"
     from(configurations.unmappedMod.files) {
         rename ".+\\.jar", "mod.jar"
     }
