@@ -55,6 +55,7 @@ import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
+import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -89,6 +90,7 @@ public class DungeonRoom {
     private Map<String, DungeonMechanic> cached = null;
 
     private World cachedWorld;
+    private EditableChunkCache chunkCache;
 
     public World getCachedWorld() {
         if (this.cachedWorld != null) return cachedWorld;
@@ -101,6 +103,9 @@ public class DungeonRoom {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
+                if (!canAccessRelative(x * 16+8, z*16+8)) {
+                    continue;
+                }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
@@ -115,9 +120,8 @@ public class DungeonRoom {
             }
         }
 
-        ChunkCache chunkCache = new ChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
+        this.chunkCache = new EditableChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
         CachedWorld cachedWorld =  new CachedWorld(chunkCache);
-
 
         return this.cachedWorld = cachedWorld;
     }
@@ -337,6 +341,7 @@ public class DungeonRoom {
         DungeonRoomScaffoldParser mapProcessor = this.context.getScaffoldParser();
         Point roomPt = mapProcessor.getDungeonMapLayout().worldPointToRoomPoint(pos);
         roomPt.translate(-minRoomPt.x, -minRoomPt.y);
+        if (roomPt.x < 0 || roomPt.y < 0 || roomPt.x >= 4 || roomPt.y >= 4) return false;
 
         return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
     }
@@ -429,5 +434,13 @@ public class DungeonRoom {
         int bitIdx = dx * leny * lenz + dy * lenz + dz;
         int location = bitIdx / 4;
         arr[location] = (arr[location] & ~(3L << (2 * (bitIdx % 4)))) | (long) calculateIsBlocked(x, y, z) << (2 * (bitIdx % 4));
+    }
+
+    public void chunkUpdate(int cx, int cz) {
+        if (!canAccessAbsolute(new BlockPos(cx * 16+8,0, cz*16+8))) {
+            return;
+        }
+        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
+        chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
     }
 }
