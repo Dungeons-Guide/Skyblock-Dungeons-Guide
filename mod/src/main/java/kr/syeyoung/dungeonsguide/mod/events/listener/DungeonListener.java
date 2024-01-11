@@ -49,6 +49,8 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.item.EntityItem;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
+import net.minecraft.network.Packet;
+import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -544,6 +546,23 @@ public class DungeonListener {
         }
     }
 
+    @SubscribeEvent
+    public void onChunkUpdate(PacketProcessedEvent.Post post) {
+        if (!SkyblockStatus.isOnDungeon()) return;
+        if (!(post.packet instanceof S21PacketChunkData)) return;
+        S21PacketChunkData p = (S21PacketChunkData) post.packet;
+        if (p.func_149274_i() && p.getExtractedSize() == 0) return;
+
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+
+        if (context != null) {
+            if (context.getScaffoldParser() != null) {
+                for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
+                    dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+                }
+            }
+        }
+    }
     @SubscribeEvent
     public void onEntityDeSpawn(LivingDeathEvent deathEvent) {
         if (deathEvent.entityLiving instanceof EntityBat)

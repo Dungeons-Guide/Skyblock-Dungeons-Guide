@@ -35,6 +35,7 @@ import net.minecraft.nbt.NBTTagList;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.awt.*;
 import java.io.*;
@@ -155,14 +156,8 @@ public class GeneralEditPane extends MPanel {
                         File f=new File(Main.getConfigDir(), "schematics/"+
                                 dungeonRoom.getDungeonRoomInfo().getName()+"-"+dungeonRoom.getDungeonRoomInfo().getUuid().toString()+"-"+ UUID.randomUUID()+".schematic");
 
-                        Method method = null;
-                        try {
-                            method = NBTTagCompound.class.getDeclaredMethod("write", DataOutput.class);
-                            method.setAccessible(true);
-                        } catch (NoSuchMethodException e) {
-                            e.printStackTrace();
-                            return;
-                        }
+                        Method method = ReflectionHelper.findMethod(NBTTagCompound.class, nbtTagCompound2, new String[] {"write", "method_5062", "a"}, DataOutput.class);
+
                         FileOutputStream fos = new FileOutputStream(f);
                         DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(fos)));
 

@@ -25,6 +25,7 @@ import com.google.gson.JsonObject;
 import com.google.gson.TypeAdapter;
 import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonWriter;
+import com.mojang.authlib.properties.Property;
 import jdk.nashorn.internal.ir.debug.JSONWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.launcher.LetsEncrypt;
@@ -58,6 +59,7 @@ import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.entity.DataWatcher;
 import net.minecraft.entity.Entity;
@@ -67,6 +69,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.nbt.NBTTagList;
+import net.minecraft.nbt.NBTUtil;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCoordIntPair;
@@ -80,6 +83,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 import net.minecraftforge.event.world.WorldEvent;
+import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import javax.net.ssl.HttpsURLConnection;
 import java.awt.*;
@@ -144,6 +148,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     public static class EntityData {
         private int id;
         public String name;
+        private String playerSkin;
         private IChatComponent armorstand;
         private transient ItemStack[] armoritems = new ItemStack[5];
         private Map<String, Double> attributes = new HashMap<>();
@@ -329,6 +334,9 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         }
         entityData.id = event.entity.getEntityId();
 
+        if (event.entity instanceof EntityOtherPlayerMP && entityData.playerSkin == null) {
+            entityData.playerSkin = ((EntityOtherPlayerMP) event.entity).getGameProfile().getProperties().get("textures").stream().findFirst().map(Property::getValue).orElse(null);
+        }
 
         List<Entity> entityList = event.entity.worldObj.getEntitiesInAABBexcluding(event.entity, new AxisAlignedBB(-0.2,-0.2,-0.2,0.2,0.2,0.2).offset(event.entity.posX, event.entity.posY+event.entity.height, event.entity.posZ), e -> e instanceof EntityArmorStand);
         Entity theEntity =entityList.stream().min(Comparator.comparingDouble(a -> Math.abs(a.posX - event.entityLiving.posX) + Math.abs(a.posZ - event.entityLiving.posZ))).orElse(null);
@@ -364,16 +372,67 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
     public void onChunkLoad(ChunkUpdateEvent chunkUpdateEvent) {
+        Set<Tuple<BlockPos, IBlockState>> updates = new HashSet<>();
         for (Chunk updatedChunk : chunkUpdateEvent.getUpdatedChunks()) {
+            if (updatedChunk.isEmpty()) continue;
             if (initialChunkDataMap.containsKey(updatedChunk.getChunkCoordIntPair())) {
-//                System.out.println("got it again??");
-//                return;
+                // that's block update!
+
+                ChunkData prevChunk = initialChunkDataMap.get(updatedChunk.getChunkCoordIntPair());
+                ExtendedBlockStorage[] prev = prevChunk.getInitialBlockStorages();
+                ExtendedBlockStorage[] neu = updatedChunk.getBlockStorageArray();
+                for (int i = 0; i < prev.length; i++) {
+                    ExtendedBlockStorage prevSt = prev[i];
+                    ExtendedBlockStorage neuSt = neu[i];
+                    if (prevSt == null && neuSt != null) {
+                        for (int x = 0; x < 16; x++) {
+                            for (int y = 0; y < 16; y++) {
+                                for (int z = 0; z < 16; z++) {
+                                    IBlockState blockState = neuSt.get(x,y,z);
+                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x,  i * 16 + y, prevChunk.z * 16 + z);
+                                    updates.add(new Tuple<>(pos, blockState));
+                                }
+                            }
+                        }
+                    } else if (prevSt != null && neuSt == null) {
+                        IBlockState air = Blocks.air.getDefaultState();
+                        for (int x = 0; x < 16; x++) {
+                            for (int y = 0; y < 16; y++) {
+                                for (int z = 0; z < 16; z++) {
+                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+                                    updates.add(new Tuple<>(pos, air));
+                                }
+                            }
+                        }
+                    } else if (prevSt == null && neuSt == null) {
+                    } else {
+                        for (int x = 0; x < 16; x++) {
+                            for (int y = 0; y < 16; y++) {
+                                for (int z = 0; z < 16; z++) {
+                                    BlockPos pos = new BlockPos(prevChunk.x * 16 + x, i * 16 + y, prevChunk.z * 16 + z);
+                                    IBlockState prevState = prevSt.get(x,y,z);
+                                    IBlockState neuState = neuSt.get(x,y,z);
+                                    if (!neuState.equals(prevState)) {
+                                        updates.add(new Tuple<>(pos, neuState));
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+
+                continue;
             }
             ChunkData chunkData = new ChunkData();
             chunkData.x = updatedChunk.xPosition;
             chunkData.z = updatedChunk.zPosition;
             chunkData.initialBlockStorages = updatedChunk.getBlockStorageArray();
             initialChunkDataMap.put(new ChunkCoordIntPair(chunkData.x, chunkData.z), chunkData);
+        }
+        if (!updates.isEmpty()) {
+            BlockUpdateEvent.Pre pre = new BlockUpdateEvent.Pre();
+            pre.setUpdatedBlocks(updates);
+            onBlockUpdate(pre);
         }
     }
 
@@ -502,6 +561,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 jsonObject.add("chats", gson.toJsonTree(roomInfo.systemMessages));
                 jsonObject.add("interactions", gson.toJsonTree(roomInfo.interactions));
                 jsonObject.add("player", gson.toJsonTree(roomInfo.playerTrajactory));
+                jsonObject.addProperty("version", "2");
 
 
 
@@ -563,9 +623,8 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     private String nbttostring(String name, NBTTagCompound compound) {
 
         try {
-            Method method = null;
-            method = NBTTagCompound.class.getDeclaredMethod("write", DataOutput.class);
-            method.setAccessible(true);
+            Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062", "a"}, DataOutput.class);
+
 
             ByteArrayOutputStream byteArrayOutputStream = new ByteArrayOutputStream();
             DataOutputStream dataoutputstream = new DataOutputStream(new BufferedOutputStream(new GZIPOutputStream(byteArrayOutputStream)));
