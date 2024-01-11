@@ -20,8 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.panes;
 
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionTree;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionTreeUtil;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAG;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import net.minecraft.client.Minecraft;
@@ -35,6 +35,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ActionTreeDisplayPane extends MPanel {
 
@@ -44,13 +45,15 @@ public class ActionTreeDisplayPane extends MPanel {
     private float scale;
 
     private final DungeonRoom dungeonRoom;
-    private final ActionTree tree;
+    private final ActionDAG tree;
     private List<AbstractAction> linearified;
-    public ActionTreeDisplayPane(DungeonRoom dungeonRoom, ActionTree tree) {
+    public ActionTreeDisplayPane(DungeonRoom dungeonRoom, ActionDAG tree) {
         this.dungeonRoom = dungeonRoom;
         this.tree = tree;
         try {
-            this.linearified = ActionTreeUtil.linearifyActionTree(tree);
+            List<ActionDAGNode> dagNodes = tree.topologicalSort(tree.getCount() - 1).next();
+
+            this.linearified = dagNodes.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         } catch (Exception e) {
             linearified = new ArrayList<AbstractAction>();
             e.printStackTrace();
@@ -67,12 +70,12 @@ public class ActionTreeDisplayPane extends MPanel {
         GlStateManager.pushMatrix();
         GlStateManager.translate(offsetX, offsetY, 0);
         GlStateManager.scale(scale,scale,1);
-        int x = renderTree(tree, 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionTree, Point>());
+        int x = renderTree(tree.getActionDAGNode(), 5, 5, Minecraft.getMinecraft().fontRendererObj, null, new HashMap<ActionDAGNode, Point>());
         renderLinearified(linearified, x, 5, fr);
         GlStateManager.popMatrix();
     }
 
-    public int renderTree(ActionTree actionTree, int x, int y, FontRenderer fr, Point drawLineFrom, HashMap<ActionTree, Point> drawnPoints) {
+    public int renderTree(ActionDAGNode actionTree, int x, int y, FontRenderer fr, Point drawLineFrom, HashMap<ActionDAGNode, Point> drawnPoints) {
         if (drawnPoints.containsKey(actionTree)) {
             // recursive, fu
             Point pt = drawnPoints.get(actionTree);
@@ -99,7 +102,7 @@ public class ActionTreeDisplayPane extends MPanel {
             return 0;
         }
 
-        Dimension dim = renderAction(actionTree.getCurrent(), x, y, fr);
+        Dimension dim = renderAction(actionTree.getAction(), x, y, fr);
         if (drawLineFrom != null) {
             GlStateManager.pushMatrix();
 
@@ -126,7 +129,7 @@ public class ActionTreeDisplayPane extends MPanel {
 
         drawnPoints.put(actionTree, new Point(x + dim.width / 2, y + dim.height / 2));
         int xOff = 0;
-        for (ActionTree tree:actionTree.getChildren()) {
+        for (ActionDAGNode tree:actionTree.getPotentialRequires()) {
             xOff += renderTree(tree, x + xOff, y + dim.height + 10, fr, pt, drawnPoints) + 10;
         }
         return Math.max(xOff, dim.width);

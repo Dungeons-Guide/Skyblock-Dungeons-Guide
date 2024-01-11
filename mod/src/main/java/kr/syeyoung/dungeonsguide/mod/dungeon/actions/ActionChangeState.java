@@ -21,18 +21,14 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 
-import java.util.HashSet;
-import java.util.Set;
-
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionChangeState extends AbstractAction {
-    @EqualsAndHashCode.Exclude
-    private Set<AbstractAction> preRequisite2 = new HashSet<AbstractAction>();
 
     private String mechanicName;
     private String state;
@@ -42,14 +38,6 @@ public class ActionChangeState extends AbstractAction {
         this.state = state;
     }
 
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        Set<AbstractAction> set = new HashSet<>(preRequisite2);
-        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
-        if (mechanic!= null)
-            set.addAll(mechanic.getAction(state, dungeonRoom));
-        return set;
-    }
     @Override
     public String toString() {
         return "ChangeState\n- target: "+mechanicName+"\n- state: "+state;
@@ -74,5 +62,18 @@ public class ActionChangeState extends AbstractAction {
             return true;
         }
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
+    }
+
+    @Override
+    public boolean isIdempotent() {
+        return true;
+    }
+
+    @Override
+    public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+        DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
+        if (mechanic!= null)
+            mechanic.buildAction(state, dungeonRoom, builder);
+        return new ActionDAGBuilder.ActionDAGBuilderNoMore(builder);
     }
 }

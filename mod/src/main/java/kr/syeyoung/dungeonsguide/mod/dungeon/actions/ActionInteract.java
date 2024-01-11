@@ -39,18 +39,12 @@ import java.util.function.Predicate;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionInteract extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPoint target;
     private Predicate<Entity> predicate = entity -> false;
     private int radius;
 
     public ActionInteract(OffsetPoint target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

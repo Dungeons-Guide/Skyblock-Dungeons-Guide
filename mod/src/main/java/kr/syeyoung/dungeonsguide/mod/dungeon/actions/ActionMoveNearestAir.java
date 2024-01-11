@@ -28,25 +28,17 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
-import net.minecraft.util.Vec3;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionMoveNearestAir extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPoint target;
 
     public ActionMoveNearestAir(OffsetPoint target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

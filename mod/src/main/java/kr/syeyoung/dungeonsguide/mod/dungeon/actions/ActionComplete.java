@@ -20,14 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
-import java.util.Collections;
-import java.util.Set;
-
 public class ActionComplete extends AbstractAction {
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return Collections.emptySet();
-    }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {

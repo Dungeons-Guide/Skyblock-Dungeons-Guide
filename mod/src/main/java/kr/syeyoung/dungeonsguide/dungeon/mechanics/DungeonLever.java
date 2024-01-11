@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -39,36 +39,36 @@ public class DungeonLever implements DungeonMechanic {
     private String triggering = "";
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (state.equals(getCurrentState(dungeonRoom))) return ;
         if (state.equalsIgnoreCase("navigate")) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+            builder = builder
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            return;
         }
 
         if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for secret");
 
-        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
+        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return;
 
-        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                .requiresDo(new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionClick(leverPoint))
-                    .requiresDo(new ActionMoveNearestAir(leverPoint))
-                    .toAtomicAction("MoveAndClick")
+        builder = builder
+                .requires(new AtomicAction.Builder()
+                    .requires(new ActionClick(leverPoint))
+                    .requires(new ActionMoveNearestAir(leverPoint))
+                    .build("MoveAndClick")
                 );
 
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return actionBuilder.getPreRequisites();
+        return;
     }
 
     @Override

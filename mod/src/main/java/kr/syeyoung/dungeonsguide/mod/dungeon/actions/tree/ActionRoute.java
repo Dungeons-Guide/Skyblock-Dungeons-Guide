@@ -19,6 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAG;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;
@@ -27,6 +30,7 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ActionRoute {
     @Getter
@@ -49,9 +53,12 @@ public class ActionRoute {
         this.state = state;
         this.actionRouteProperties = actionRouteProperties;
 
-        ActionChangeState actionChangeState = new ActionChangeState(mechanic, state);
-        ActionTree tree= ActionTree.buildActionTree(actionChangeState, dungeonRoom);
-        actions = ActionTreeUtil.linearifyActionTree(tree);
+        ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
+        actionDAGBuilder.requires(new ActionChangeState(mechanic, state));
+        ActionDAG dag = actionDAGBuilder.build();
+        List<ActionDAGNode> dagNodes = dag.topologicalSort(dag.getCount() - 1).next();
+
+        actions = dagNodes.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         actions.add(new ActionComplete());
 
 

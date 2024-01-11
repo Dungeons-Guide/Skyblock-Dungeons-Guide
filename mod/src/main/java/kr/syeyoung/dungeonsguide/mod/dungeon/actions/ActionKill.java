@@ -39,18 +39,12 @@ import java.util.function.Predicate;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionKill extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
     private Predicate<Entity> predicate = entity -> false;
     private int radius;
 
     public ActionKill(OffsetPoint target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

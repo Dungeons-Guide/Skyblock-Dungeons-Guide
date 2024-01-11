@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -30,7 +30,6 @@ import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
@@ -42,26 +41,22 @@ public class DungeonDummy implements DungeonMechanic {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        ActionBuilder actionBuilder;
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")){
-            actionBuilder = new ActionBuilder(dungeonRoom).requiresDo(new ActionMove(secretPoint));
+            builder = builder.requires(new ActionMove(secretPoint));
         } else if (state.equalsIgnoreCase("click")) {
-            actionBuilder = new ActionBuilder(dungeonRoom).requiresDo(
-                    new ActionBuilder(dungeonRoom)
-                            .requiresDo(new ActionClick(secretPoint))
-                            .requiresDo(new ActionMove(secretPoint))
-                            .toAtomicAction("MoveAndClick"));
-        } else {
-            actionBuilder = new ActionBuilder(dungeonRoom);
+            builder = builder.requires(
+                    new AtomicAction.Builder()
+                            .requires(new ActionClick(secretPoint))
+                            .requires(new ActionMove(secretPoint))
+                            .build("MoveAndClick"));
         }
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and( new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires( new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return actionBuilder.getPreRequisites();
     }
 
     @Override

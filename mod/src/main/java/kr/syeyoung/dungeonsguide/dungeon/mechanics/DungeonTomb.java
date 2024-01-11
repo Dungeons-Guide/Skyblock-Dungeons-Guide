@@ -24,7 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -44,35 +44,33 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+            builder = builder
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.requiresDo(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            return;
         }
         if (!"open".equalsIgnoreCase(state)) {
             throw new PathfindImpossibleException(state + " is not valid state for tomb");
         }
         if (!isBlocking(dungeonRoom)) {
-            return Collections.emptySet();
+            return;
         }
 
-        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                .requiresDo(new ActionBuilder(dungeonRoom)
-                        .requiresDo(new ActionBreakWithSuperBoom(secretPoint.getOffsetPointList().get(0)))
-                        .requiresDo(new ActionMoveNearestAir(secretPoint.getOffsetPointList().get(0)))
-                        .toAtomicAction("MoveAndBreakSuperboom"));
+        builder = builder
+                .requires(new AtomicAction.Builder()
+                        .requires(new ActionBreakWithSuperBoom(secretPoint.getOffsetPointList().get(0)))
+                        .requires(new ActionMoveNearestAir(secretPoint.getOffsetPointList().get(0)))
+                        .build("MoveAndBreakSuperboom"));
 
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
-
-        return actionBuilder.getPreRequisites();
     }
 
     @Override

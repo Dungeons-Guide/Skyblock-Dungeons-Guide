@@ -21,22 +21,18 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateArmorStand;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
-import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-import java.util.function.Predicate;
 
 @Data
 public class DungeonWizard implements DungeonMechanic {
@@ -47,36 +43,34 @@ public class DungeonWizard implements DungeonMechanic {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(state) && !"quest".equalsIgnoreCase(state) && !"click".equalsIgnoreCase(state))
             throw new PathfindImpossibleException(state + " is not a valid state for secret");
 
-        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
         if ("click".equalsIgnoreCase(state) || "quest".equalsIgnoreCase(state)) {
-            actionBuilder = actionBuilder.requiresDo(new ActionBuilder(dungeonRoom)
-                    .requiresDo(() -> {
+            builder = builder.requires(new AtomicAction.Builder()
+                    .requires(() -> {
                         ActionInteract actionClick = new ActionInteract(secretPoint);
                         actionClick.setPredicate(a -> a instanceof EntityOtherPlayerMP);
                         actionClick.setRadius(3);
                         return actionClick;
                     })
-                    .requiresDo(new ActionMove(secretPoint))
-                    .toAtomicAction("MoveAndInteract"));
+                    .requires(new ActionMove(secretPoint))
+                    .build("MoveAndInteract"));
         } else {
-            actionBuilder = actionBuilder.requiresDo(new ActionMove(secretPoint));
+            builder = builder.requires(new ActionMove(secretPoint));
         }
 
         for (String str : preRequisite) {
             if (!str.isEmpty()) {
                 String[] split = str.split(":");
-                actionBuilder.and(new ActionChangeState(split[0], split[1]));
+                builder.requires(new ActionChangeState(split[0], split[1]));
             }
         }
 
         if ("quest".equalsIgnoreCase(state)) {
-            actionBuilder.and(new ActionChangeState(crystal, "obtained-self"));
+            builder.requires(new ActionChangeState(crystal, "obtained-self"));
         }
-        return actionBuilder.getPreRequisites();
     }
 
     @Override

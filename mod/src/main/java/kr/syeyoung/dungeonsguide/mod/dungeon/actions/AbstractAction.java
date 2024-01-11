@@ -19,12 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
-
-import java.util.Set;
 
 public abstract class AbstractAction {
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties){
@@ -55,13 +54,13 @@ public abstract class AbstractAction {
 
     }
 
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        return null;
-    }
-
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return false;
     }
 
     public double evalulateCost() { return 0; }
+
+    public boolean isIdempotent() { return false; }
+
+    public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException { return builder; }
 }

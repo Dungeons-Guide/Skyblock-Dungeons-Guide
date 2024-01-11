@@ -28,12 +28,6 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionRoot extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<>();
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
-    }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {

@@ -23,11 +23,10 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -48,12 +47,11 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (!("open".equalsIgnoreCase(state) || "closed".equalsIgnoreCase(state) || "navigate".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for door");
-        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return Collections.emptySet();
+        if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return;
         if ("navigate".equalsIgnoreCase(state)) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(() -> {
+            builder = builder.requires(() -> {
                         int leastY = Integer.MAX_VALUE;
                         OffsetPoint thatPt = null;
                         for (OffsetPoint offsetPoint : secretPoint.getOffsetPointList()) {
@@ -66,28 +64,27 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
                     });;
             for (String s : movePreRequisite) {
                 if (s.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
+                builder.requires(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            return;
         }
 
-        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
         {
             if (state.equalsIgnoreCase("open")) {
                 for (String str : openPreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    actionBuilder.and(actionChangeState);
+                    builder.requires(actionChangeState);
                 }
             } else {
                 for (String str : closePreRequisite) {
                     if (str.isEmpty()) continue;
                     ActionChangeState actionChangeState = new ActionChangeState(str.split(":")[0], str.split(":")[1]);
-                    actionBuilder.and(actionChangeState);
+                    builder.requires(actionChangeState);
                 }
             }
         }
-        return actionBuilder.getPreRequisites();
+        return;
     }
 
     @Override

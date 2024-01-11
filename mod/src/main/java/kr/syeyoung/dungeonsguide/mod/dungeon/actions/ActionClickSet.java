@@ -37,17 +37,11 @@ import java.util.function.Predicate;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionClickSet extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPointSet target;
     private Predicate<ItemStack> predicate = stack -> true;
 
     public ActionClickSet(OffsetPointSet target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

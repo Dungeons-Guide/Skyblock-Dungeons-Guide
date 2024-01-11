@@ -37,7 +37,6 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
-import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.util.HashSet;
@@ -47,16 +46,10 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionMove extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPoint target;
 
     public ActionMove(OffsetPoint target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

@@ -19,20 +19,16 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionTree;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionTreeUtil;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;
-import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
+import java.util.function.Supplier;
 import java.util.stream.Collectors;
 
 public class AtomicAction extends AbstractAction {
@@ -42,8 +38,6 @@ public class AtomicAction extends AbstractAction {
     private int current;
     @Getter
     private final List<AbstractAction> actions;
-
-    private final Set<AbstractAction> preRequisites = new HashSet<>();
 
 
     public AtomicAction(List<AbstractAction> orderedActions, String name) {
@@ -125,11 +119,6 @@ public class AtomicAction extends AbstractAction {
     }
 
     @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisites;
-    }
-
-    @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return getCurrentAction() == null;
     }
@@ -148,5 +137,21 @@ public class AtomicAction extends AbstractAction {
     @Override
     public String toString() {
         return name+"\n"+ getActions().stream().map(AbstractAction::toString).collect(Collectors.joining("\n"));
+    }
+
+    public static class Builder {
+        private List<AbstractAction> actions = new ArrayList<>();
+        public Builder requires(AbstractAction abstractAction) {
+            actions.add(0, abstractAction);
+            return this;
+        }
+
+        public Builder requires(Supplier<AbstractAction> abstractActionSupplier) {
+            return requires(abstractActionSupplier.get());
+        }
+
+        public AtomicAction build(String name) {
+            return new AtomicAction(actions, name);
+        }
     }
 }

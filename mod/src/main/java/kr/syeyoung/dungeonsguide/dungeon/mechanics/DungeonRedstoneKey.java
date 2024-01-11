@@ -20,10 +20,9 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -41,16 +40,16 @@ public class DungeonRedstoneKey implements DungeonMechanic {
     private String triggering = "";
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (state.equals(getCurrentState(dungeonRoom))) return;
         if (state.equalsIgnoreCase("navigate")) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+            builder = builder
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            ;
         }
 
         if (!("obtained-self".equalsIgnoreCase(state) || "placed".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for secret");
@@ -59,23 +58,22 @@ public class DungeonRedstoneKey implements DungeonMechanic {
             if (! getCurrentState(dungeonRoom).equalsIgnoreCase("unobtained")) {
                 throw new PathfindImpossibleException(state+" is not valid state for secret");
             }
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionBuilder(dungeonRoom)
-                            .requiresDo(new ActionClick(secretPoint))
-                            .requiresDo(new ActionMove(secretPoint))
-                            .toAtomicAction("MoveAndClick"));
+            builder = builder
+                    .requires(new AtomicAction.Builder()
+                            .requires(new ActionClick(secretPoint))
+                            .requires(new ActionMove(secretPoint))
+                            .build("MoveAndClick"));
             {
                 for (String str : preRequisite) {
                     if (str.isEmpty()) continue;
-                    actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                    builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
                 }
             }
-            return actionBuilder.getPreRequisites();
         } else { // placed
             if (! getCurrentState(dungeonRoom).equalsIgnoreCase("obtained-self")) {
                 throw new PathfindImpossibleException(state+" is not valid state for secret");
             }
-            return Collections.singleton(new ActionChangeState(triggering, "triggered"));
+            builder.requires(new ActionChangeState(triggering, "triggered"));
         }
     }
 

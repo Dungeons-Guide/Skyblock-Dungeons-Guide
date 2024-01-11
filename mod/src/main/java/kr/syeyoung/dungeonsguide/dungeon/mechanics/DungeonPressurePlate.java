@@ -22,7 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -40,38 +40,37 @@ public class DungeonPressurePlate implements DungeonMechanic {
     private String triggering = "";
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
-        if (state.equals(getCurrentState(dungeonRoom))) return Collections.emptySet();
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
+        if (state.equals(getCurrentState(dungeonRoom))) return;
         if (state.equalsIgnoreCase("navigate")) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+            builder = builder
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            return;
         }
         if (!("triggered".equalsIgnoreCase(state) || "untriggered".equalsIgnoreCase(state)))
             throw new PathfindImpossibleException(state + " is not valid state for secret");
 
 
-        ActionBuilder actionBuilder;
         if ("triggered".equalsIgnoreCase(state)) {
-            actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionBuilder(dungeonRoom)
-                            .requiresDo(new ActionDropItem(platePoint))
-                            .requiresDo(new ActionMove(platePoint))
-                            .toAtomicAction("MoveAndDropItem"));
+            builder = builder
+                    .requires(new AtomicAction.Builder()
+                            .requires(new ActionDropItem(platePoint))
+                            .requires(new ActionMove(platePoint))
+                            .build("MoveAndDropItem"));
         } else {
-            actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMove(platePoint));
+            builder = builder
+                    .requires(new ActionMove(platePoint));
         }
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
 
-        return actionBuilder.getPreRequisites();
+        return;
     }
 
     @Override

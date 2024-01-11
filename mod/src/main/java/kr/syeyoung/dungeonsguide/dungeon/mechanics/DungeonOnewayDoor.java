@@ -23,11 +23,10 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -47,29 +46,27 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
 
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+            builder = builder
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
 
             for (String str : movePreRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            return;
         }
         if (!("open".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not a valid state for door");
         if (!isBlocking(dungeonRoom)) {
-            return Collections.emptySet();
+            return;
         }
-        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
-        return actionBuilder.getPreRequisites();
     }
 
     @Override

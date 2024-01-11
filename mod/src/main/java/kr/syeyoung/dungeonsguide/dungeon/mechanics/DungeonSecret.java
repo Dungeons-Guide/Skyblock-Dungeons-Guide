@@ -25,8 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionBuilder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
@@ -164,44 +163,41 @@ public class DungeonSecret implements DungeonMechanic {
     }
 
     @Override
-    public Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
+    public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")) {
-            ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
+            builder = builder
+                    .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-            return actionBuilder.getPreRequisites();
+            return;
         }
         if (!"found".equalsIgnoreCase(state))
             throw new PathfindImpossibleException(state + " is not valid state for secret");
-        if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return new HashSet<>();
-        ActionBuilder actionBuilder = new ActionBuilder(dungeonRoom);
+        if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
         if (secretType == SecretType.CHEST || secretType == SecretType.ESSENCE) {
-            actionBuilder = actionBuilder.requiresDo(new ActionBuilder(dungeonRoom)
-                    .requiresDo(new ActionClick(secretPoint))
-                    .requiresDo(new ActionMove(secretPoint))
-                    .toAtomicAction("MoveAndClick"));
+            builder = builder.requires(new AtomicAction.Builder()
+                    .requires(new ActionClick(secretPoint))
+                    .requires(new ActionMove(secretPoint))
+                    .build("MoveAndClick"));
         } else if (secretType == SecretType.BAT) {
-            actionBuilder = actionBuilder.requiresDo(new ActionBuilder(dungeonRoom)
-                    .requiresDo(() -> {
+            builder = builder.requires(new AtomicAction.Builder()
+                    .requires(() -> {
                         ActionKill actionKill = new ActionKill(secretPoint);
                         actionKill.setRadius(10);
                         actionKill.setPredicate(EntityBat.class::isInstance);
                         return actionKill;
-                    }).requiresDo(new ActionMove(secretPoint))
-                    .toAtomicAction("MoveAndKill"));
+                    }).requires(new ActionMove(secretPoint))
+                    .build("MoveAndKill"));
         } else {
-            actionBuilder = actionBuilder.requiresDo(new ActionMove(secretPoint));
+            builder = builder.requires(new ActionMove(secretPoint));
         }
 
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            actionBuilder.and(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
-
-        return actionBuilder.getPreRequisites();
     }
 
     @Override

@@ -38,17 +38,11 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper = false)
 public class ActionDropItem extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<>();
     private OffsetPoint target;
     private Predicate<EntityItem> predicate = Predicates.alwaysTrue();
 
     public ActionDropItem(OffsetPoint target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

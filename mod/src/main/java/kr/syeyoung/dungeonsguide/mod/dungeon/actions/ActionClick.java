@@ -37,7 +37,6 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionClick extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
     private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
 
@@ -45,11 +44,6 @@ public class ActionClick extends AbstractAction {
 
     public ActionClick(OffsetPoint target) {
         this.target = target;
-    }
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
     }
 
     @Override

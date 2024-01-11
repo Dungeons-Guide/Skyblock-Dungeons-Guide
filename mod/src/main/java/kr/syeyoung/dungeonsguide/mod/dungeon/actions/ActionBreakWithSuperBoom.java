@@ -42,13 +42,7 @@ import java.util.Set;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionBreakWithSuperBoom extends AbstractAction {
-    private Set<AbstractAction> preRequisite = new HashSet<AbstractAction>();
     private OffsetPoint target;
-
-    @Override
-    public Set<AbstractAction> getPreRequisites(DungeonRoom dungeonRoom) {
-        return preRequisite;
-    }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {

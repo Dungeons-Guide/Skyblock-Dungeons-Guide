@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree2.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
 import java.awt.*;
@@ -28,7 +28,7 @@ import java.io.Serializable;
 import java.util.Set;
 
 public interface DungeonMechanic extends Serializable {
-    Set<AbstractAction> getAction(String state, DungeonRoom dungeonRoom) throws PathfindImpossibleException;
+    void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException;
 
     void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks);
 
