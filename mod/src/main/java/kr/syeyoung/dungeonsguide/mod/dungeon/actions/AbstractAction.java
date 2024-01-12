@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
@@ -58,7 +59,7 @@ public abstract class AbstractAction {
         return false;
     }
 
-    public double evalulateCost() { return 0; }
+    public double evalulateCost(RoomState state, DungeonRoom room) { return 0; }
 
     public boolean isIdempotent() { return false; }
     public boolean isSanityCheck() { return false; }

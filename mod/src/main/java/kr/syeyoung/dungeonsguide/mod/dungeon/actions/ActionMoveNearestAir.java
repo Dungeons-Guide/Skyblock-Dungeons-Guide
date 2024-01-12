@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -28,6 +29,8 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -80,5 +83,13 @@ public class ActionMoveNearestAir extends AbstractAction {
     @Override
     public String toString() {
         return "MoveNearestAir\n- target: "+target.toString();
+    }
+
+    @Override
+    public double evalulateCost(RoomState state, DungeonRoom room) {
+        BlockPos bpos = target.getBlockPos(room);
+        double cost = state.getPlayerPos().distanceTo(new Vec3(bpos.getX(), bpos.getY(), bpos.getZ()));
+        state.setPlayerPos(new Vec3(bpos.getX(), bpos.getY(), bpos.getZ()));
+        return cost;
     }
 }

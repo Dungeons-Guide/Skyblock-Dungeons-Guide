@@ -22,6 +22,7 @@ import com.google.common.base.Predicate;
 import com.google.common.base.Predicates;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
@@ -73,7 +74,7 @@ public class ActionDropItem extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost() {
+    public double evalulateCost(RoomState state, DungeonRoom room) {
         return 10;
     }
 }

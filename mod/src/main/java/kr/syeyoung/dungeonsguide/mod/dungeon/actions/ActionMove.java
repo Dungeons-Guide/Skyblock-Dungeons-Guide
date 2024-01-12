@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -37,6 +38,7 @@ import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
+import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.util.List;
@@ -201,10 +203,14 @@ public class ActionMove extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost() {
-        if (poses != null) {
-            return poses.getCost();
-        }
-        return 0.0;
+    public double evalulateCost(RoomState state, DungeonRoom room) {
+        BlockPos bpos = target.getBlockPos(room);
+        double cost = state.getPlayerPos().distanceTo(new Vec3(bpos.getX(), bpos.getY(), bpos.getZ()));
+        state.setPlayerPos(new Vec3(bpos.getX(), bpos.getY(), bpos.getZ()));
+        return cost;
+//        if (poses != null) {
+//            return poses.getCost();
+//        }
+//        return 0.0;
     }
 }

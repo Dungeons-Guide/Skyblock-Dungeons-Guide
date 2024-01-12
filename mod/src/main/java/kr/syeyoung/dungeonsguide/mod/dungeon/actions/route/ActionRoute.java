@@ -30,6 +30,8 @@ import net.minecraft.client.Minecraft;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -79,21 +81,35 @@ public class ActionRoute {
     private void recalculatePath() {
         int cnt = 0;
         ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
-        List<ActionDAGNode> node = null;
+        List<ActionDAGNode> minCostRoute = null;
+        double minCost = Double.POSITIVE_INFINITY;
+
         this.nodeStatus = dag.getNodeStatus(dag.getCount() - 1);
         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
             cnt ++;
-            node = actionDAGNodes;
+
+            RoomState roomState = new RoomState();
+            roomState.setPlayerPos(Minecraft.getMinecraft().thePlayer.getPositionVector());
+            double cost = 0;
+            for (ActionDAGNode actionDAGNode : actionDAGNodes) {
+                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom);
+            }
+            if (cost < minCost) {
+                minCost = cost;
+                minCostRoute = actionDAGNodes;
+            }
+
             if (cnt > 100000) break;
         }
-        if (node == null) {
-            System.out.println(node);
+        if (minCostRoute == null) {
+            System.out.println(minCostRoute);
+            minCostRoute = new ArrayList<>();
         }
         this.dagId = dag.getCount() - 1;
-        order = node;
-        ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
+        order = minCostRoute;
+        ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost");
 
-        actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
+        actions = minCostRoute.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         actions.add(new ActionComplete());
         current = 0;
     }
@@ -161,19 +177,24 @@ public class ActionRoute {
             this.current = actions.size() - 1;
         }
 
+
+        while (currentAction.isComplete(dungeonRoom)) {
+            next();
+            currentAction = getCurrentAction();
+        }
+
         boolean recalc = false;
-        for (int i = current+2; i < actions.size(); i++) {
+        for (int i = current; i < actions.size(); i++) {
             if (actions.get(i).isIdempotent() && actions.get(i).isComplete(dungeonRoom)) {
                 recalc = true;
             }
         }
         if (recalc) {
             recalculatePath();
-        }
-
-        while (currentAction.isComplete(dungeonRoom)) {
-            next();
-            currentAction = getCurrentAction();
+            while (currentAction.isComplete(dungeonRoom)) {
+                next();
+                currentAction = getCurrentAction();
+            }
         }
     }
 

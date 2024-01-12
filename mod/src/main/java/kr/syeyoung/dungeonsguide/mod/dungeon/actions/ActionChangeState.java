@@ -18,9 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
@@ -60,6 +60,17 @@ public class ActionChangeState extends AbstractAction {
             return true;
         }
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
+    }
+
+    @Override
+    public double evalulateCost(RoomState state, DungeonRoom room) {
+        DungeonMechanic mechanic = room.getMechanics().get(mechanicName);
+        if (mechanic instanceof DungeonTomb || mechanic instanceof DungeonOnewayDoor || mechanic instanceof DungeonDoor || mechanic instanceof DungeonBreakableWall) {
+            if (this.state.equals("open")) {
+                state.getOpenMechanics().add(mechanicName);
+            }
+        }
+        return 0;
     }
 
     @Override
