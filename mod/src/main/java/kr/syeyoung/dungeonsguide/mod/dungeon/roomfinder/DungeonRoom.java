@@ -104,7 +104,7 @@ public class DungeonRoom {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-                if (!canAccessRelative(x * 16+8, z*16+8)) {
+                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
                     continue;
                 }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
