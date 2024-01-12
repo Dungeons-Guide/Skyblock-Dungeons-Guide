@@ -92,4 +92,9 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
     public String toString() {
         return "BreakWithSuperboom\n- target: "+target.toString();
     }
+
+    @Override
+    public double evalulateCost() {
+        return 10;
+    }
 }

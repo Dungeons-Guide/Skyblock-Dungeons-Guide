@@ -71,4 +71,9 @@ public class ActionDropItem extends AbstractAction {
     public String toString() {
         return "DropItem\n- target: " + target.toString() + "\n- predicate: " + predicate.getClass().getSimpleName();
     }
+
+    @Override
+    public double evalulateCost() {
+        return 10;
+    }
 }
