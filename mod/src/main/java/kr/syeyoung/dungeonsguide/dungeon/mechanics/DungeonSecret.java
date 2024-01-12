@@ -58,7 +58,7 @@ public class DungeonSecret implements DungeonMechanic {
     public void tick(DungeonRoom dungeonRoom) {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
+            IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if(chest != null){
@@ -73,7 +73,7 @@ public class DungeonSecret implements DungeonMechanic {
             }
         } else if (secretType == SecretType.ESSENCE) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
+            IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
                 dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
             }
@@ -103,7 +103,7 @@ public class DungeonSecret implements DungeonMechanic {
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
+            IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (dungeonRoom.getRoomContext().containsKey("c-" + pos.toString()))
                 return ((int) dungeonRoom.getRoomContext().get("c-" + pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
@@ -121,7 +121,7 @@ public class DungeonSecret implements DungeonMechanic {
             }
         } else if (secretType == SecretType.ESSENCE) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(pos);
+            IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
                 dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
                 return SecretStatus.DEFINITELY_NOT;
