@@ -53,6 +53,9 @@ public class ActionRoute {
     private int dagId;
     @Getter
     private List<ActionDAGNode> order;
+
+    @Getter
+    private int[] nodeStatus;
     private final DungeonRoom dungeonRoom;
 
     @Getter
@@ -77,6 +80,7 @@ public class ActionRoute {
         int cnt = 0;
         ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
         List<ActionDAGNode> node = null;
+        this.nodeStatus = dag.getNodeStatus(dag.getCount() - 1);
         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
             cnt ++;
             node = actionDAGNodes;

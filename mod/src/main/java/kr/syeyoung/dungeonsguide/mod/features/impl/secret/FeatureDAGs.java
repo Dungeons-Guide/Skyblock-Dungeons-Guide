@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -147,16 +148,32 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
 
 
             WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
+            int nodestatus[] = value.getDag().getNodeStatus(value.getDagId());
             for (ActionDAGNode allNode : value.getDag().getAllNodes()) {
                 Point p = locations.get(allNode);
                 if (p == null) continue;
 
-                int color = allNode.isEnabled(value.getDagId()) ? 0xFF00FF00 : 0xFF333333;
-                if (allNode.getAction().isComplete(dungeonRoom)) {
-                    color = 0xFF0000FF;
-                }
+                int status = nodestatus[allNode.getId()];
+                // 0: disabled
+                // 1: ocmplted
+                // 2: completed due to parent
+                // 3: online
+
+                int color =
+                        value.getCurrentAction() == allNode.getAction() ? 0xFFFF00FF :
+                        status == 0 ? 0xFF000000 : status == 1 ? 0xFF00DD00 : status == 2 ? 0xFF007700 : status == 3 ? 0xFF777777 : -1;
                 RenderUtils.drawRect(p.x, p.y, p.x+25, p.y+25, new AColor(color, true));
-                fr.drawString(allNode.getAction().toString().split("\n")[0], p.x, p.y, 0xFFFFFFFF);
+
+                String name = allNode.getAction().toString().split("\n")[0];
+                if (allNode.getAction() instanceof ActionChangeState) {
+                    ActionChangeState state = (ActionChangeState) allNode.getAction();
+                    if (state.getState().equalsIgnoreCase("found")) {
+                        name = state.getMechanicName();
+                    } else {
+                        name = state.getMechanicName()+":"+state.getState();
+                    }
+                }
+                fr.drawString(name, p.x, p.y, 0xFFFFFFFF);
 
 
                 GlStateManager.color(1,1,1,1);
