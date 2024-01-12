@@ -57,6 +57,7 @@ public class ActionDAG {
         private int dagId;
         private boolean[] visited = new boolean[allNodes.size()];
         private  int[] degree = new int[allNodes.size()];
+        private boolean[] sanityCheck = new boolean[allNodes.size()];
         private Stack<Integer> path = new Stack<>();
         private List<ActionDAGNode> nextSolution;
         private int solutionSize;
@@ -68,10 +69,11 @@ public class ActionDAG {
             for (int i = 0; i < allNodes.size(); i++) {
                 degree[i] = allNodes.get(i).getPotentialRequires(dagId).size();
                 visited[i] = !allNodes.get(i).isEnabled(dagId);
+                sanityCheck[i] = allNodes.get(i).getAction().isSanityCheck();
                 if (!visited[i]) solutionSize++;
             }
             path.add(0);
-            nextSolution = findNext();
+            nextSolution = findNext(true);
         }
         @Override
         public boolean hasNext() {
@@ -81,22 +83,32 @@ public class ActionDAG {
         @Override
         public List<ActionDAGNode> next() {
             List<ActionDAGNode> solution = nextSolution;
-            nextSolution = findNext();
+            nextSolution = findNext(false);
             return solution;
         }
 
-        public List<ActionDAGNode> findNext() {
-            if (path.size() == solutionSize) {
+        public List<ActionDAGNode> findNext(boolean first) {
+            if (!first) {
                 int current = path.pop();
                 ActionDAGNode currentNode = allNodes.get(current);
                 for (ActionDAGNode dagNode : currentNode.getRequiredBy()) {
                     degree[dagNode.getId()]++;
                 }
                 visited[currentNode.getId()] = false;
-                path.push(current + 1);
+                if (sanityCheck[current])
+                    path.push(allNodes.size());
+                else
+                    path.push(current + 1);
             }
             while(true) {
                 boolean found = false;
+                for (int i = path.peek(); i < allNodes.size(); i++) {
+                    if (!visited[i] && degree[i] == 0 && sanityCheck[i]) {
+                        path.pop();
+                        path.push(i);
+                        break;
+                    }
+                }
                 for (int i = path.peek(); i < allNodes.size(); i++) {
                     if (!visited[i] && degree[i] == 0) {
                         ActionDAGNode currentNode = allNodes.get(i);
@@ -130,7 +142,10 @@ public class ActionDAG {
                     degree[dagNode.getId()]++;
                 }
                 visited[currentNode.getId()] = false;
-                path.push(current + 1);
+                if (sanityCheck[current])
+                    path.push(allNodes.size());
+                else
+                    path.push(current + 1);
             }
         }
     }

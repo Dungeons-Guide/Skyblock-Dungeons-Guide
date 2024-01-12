@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
@@ -30,13 +31,16 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.List;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class ActionRoute {
-    @Getter
-    private final String mechanic;
-    @Getter
-    private final String state;
+
+    private String name;
+    @Override
+    public String toString() {
+        return name;
+    }
 
     @Getter
     private int current;
@@ -49,16 +53,24 @@ public class ActionRoute {
     private final ActionRouteProperties actionRouteProperties;
 
     public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException  {
-        this.mechanic = mechanic;
-        this.state = state;
+
+        this.name = mechanic+" -> "+state;
         this.actionRouteProperties = actionRouteProperties;
+        this.checkCanCancel = (dg) -> dg.getMechanics().get(mechanic).getCurrentState(dungeonRoom).equalsIgnoreCase(state);
 
         ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
         actionDAGBuilder.requires(new ActionChangeState(mechanic, state));
         ActionDAG dag = actionDAGBuilder.build();
-        List<ActionDAGNode> dagNodes = dag.topologicalSortIterator(dag.getCount() - 1).next();
+        ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
+        int cnt = 0;
+        List<ActionDAGNode> node = null;
+        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
+            cnt ++;
+            node = actionDAGNodes;
+        }
+        ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
 
-        actions = dagNodes.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
+        actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         actions.add(new ActionComplete());
 
 
@@ -66,6 +78,31 @@ public class ActionRoute {
         this.dungeonRoom = dungeonRoom;
     }
 
+    public ActionRoute(DungeonRoom dungeonRoom, ActionDAG dag, ActionRouteProperties actionRouteProperties) throws PathfindImpossibleException  {
+        this.name = "DAG";
+        this.actionRouteProperties = actionRouteProperties;
+        this.checkCanCancel = (dg) -> false;
+
+        ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
+        int cnt = 0;
+        List<ActionDAGNode> node = null;
+        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
+            cnt ++;
+            node = actionDAGNodes;
+            if (cnt > 100000) break;
+        }
+        if (node == null) {
+            System.out.println(node);
+        }
+        ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
+
+        actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
+        actions.add(new ActionComplete());
+
+
+        current = 0;
+        this.dungeonRoom = dungeonRoom;
+    }
     public AbstractAction next() {
         if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))
             getCurrentAction().cleanup(dungeonRoom, actionRouteProperties);
@@ -115,6 +152,7 @@ public class ActionRoute {
         getCurrentAction().onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
     }
 
+    private final Function<DungeonRoom, Boolean> checkCanCancel;
     public void onRenderScreen(float partialTicks) {
         getCurrentAction().onRenderScreen(dungeonRoom, partialTicks, actionRouteProperties);
     }
@@ -125,7 +163,7 @@ public class ActionRoute {
         currentAction.onTick(dungeonRoom, actionRouteProperties);
         if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir)) actions.get(this.current-1).onTick(dungeonRoom, actionRouteProperties );
 
-        if (dungeonRoom.getMechanics().get(mechanic).getCurrentState(dungeonRoom).equals(state)) {
+        if (checkCanCancel != null && checkCanCancel.apply(dungeonRoom)) { // action change state
             this.current = actions.size() - 1;
         }
 

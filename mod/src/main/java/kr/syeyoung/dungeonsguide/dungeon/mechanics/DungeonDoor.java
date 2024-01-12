@@ -64,7 +64,7 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
                     });;
             for (String s : movePreRequisite) {
                 if (s.isEmpty()) continue;
-                builder.requires(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
+                builder.optional(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
             }
             return;
         }

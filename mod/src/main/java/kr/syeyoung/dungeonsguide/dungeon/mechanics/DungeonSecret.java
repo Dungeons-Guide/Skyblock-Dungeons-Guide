@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
@@ -168,7 +169,7 @@ public class DungeonSecret implements DungeonMechanic {
                     .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
             return;
         }
@@ -185,7 +186,7 @@ public class DungeonSecret implements DungeonMechanic {
                     .requires(() -> {
                         ActionKill actionKill = new ActionKill(secretPoint);
                         actionKill.setRadius(10);
-                        actionKill.setPredicate(EntityBat.class::isInstance);
+                        actionKill.setPredicate(PredicateBat.INSTANCE);
                         return actionKill;
                     }).requires(new ActionMove(secretPoint))
                     .build("MoveAndKill"));
@@ -193,9 +194,18 @@ public class DungeonSecret implements DungeonMechanic {
             builder = builder.requires(new ActionMove(secretPoint));
         }
 
+        if (secretType == SecretType.CHEST) {
+            for (String str : preRequisite) {
+                if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) {
+                    builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+            }
+            builder = builder.requires(new ActionRoot());
+        }
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            if (secretType == SecretType.CHEST && dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
+            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
     }
 

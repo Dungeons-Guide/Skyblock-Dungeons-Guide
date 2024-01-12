@@ -38,4 +38,9 @@ public class ActionRoot extends AbstractAction {
     public String toString() {
         return "Action Root";
     }
+
+    @Override
+    public boolean isSanityCheck() {
+        return true;
+    }
 }

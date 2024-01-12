@@ -130,7 +130,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
             fr.drawString("Nothing", fr.getStringWidth("Selected: ") + 2,2, 0xFFAA0000);
         else {
             ActionRoute route = grp.getPath("MECH-BROWSER");
-            fr.drawString(route.getMechanic()+" -> "+route.getState(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
+            fr.drawString(route.toString(), fr.getStringWidth("Selected: ") + 2,2, 0xFFFFFF00);
         }
         fr.drawString("Open Chat to Select Secrets", 2, fr.FONT_HEIGHT + 5, 0xFFAAAAAA);
     }

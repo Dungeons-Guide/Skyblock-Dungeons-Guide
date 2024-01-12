@@ -47,7 +47,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
                     .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
             return;
         }
@@ -67,7 +67,7 @@ public class DungeonPressurePlate implements DungeonMechanic {
         }
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
 
         return;

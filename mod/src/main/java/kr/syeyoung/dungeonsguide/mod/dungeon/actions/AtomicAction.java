@@ -106,7 +106,9 @@ public class AtomicAction extends AbstractAction {
 
         currentAction.onTick(dungeonRoom, actionRouteProperties);
         if (this.current -1 >= 0 && (actions.get(this.current-1) instanceof ActionMove || actions.get(this.current-1) instanceof ActionMoveNearestAir)) actions.get(this.current-1).onTick(dungeonRoom, actionRouteProperties );
-
+        if (this.actions.get(this.actions.size() - 1) instanceof ActionChangeState && this.actions.get(this.actions.size() - 1).isComplete(dungeonRoom)) {
+            this.current = this.actions.size() - 1;
+        }
 
         if (currentAction.isComplete(dungeonRoom)) {
             next(dungeonRoom, actionRouteProperties);

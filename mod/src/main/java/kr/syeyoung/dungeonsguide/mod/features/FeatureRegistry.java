@@ -124,6 +124,10 @@ public class FeatureRegistry {
     public static final SimpleFeature SECRET_AUTO_START = register(new SimpleFeature("Pathfinding & Secrets.Display One", "Auto pathfind to new secret", "Auto browse best secret upon entering the room.", "secret.autouponenter", false));
     public static final SimpleFeature SECRET_AUTO_BROWSE_NEXT = register(new SimpleFeature("Pathfinding & Secrets.Display One", "Auto Pathfind to next secret", "Auto browse best next secret after current one completes.\nthe first pathfinding of first secret needs to be triggered first in order for this option to work", "secret.autobrowse", false));
 
+    // Smart Route
+    public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SMART_ROUTE = register(new PathfindLineProperties("Pathfinding & Secrets.Smart Route", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.smartroute", true, null));
+    public static final SimpleFeature SECRET_SMART_AUTO_START = register(new SimpleFeature("Pathfinding & Secrets.Smart Route", "Auto pathfind to new secret", "Generate smart route going through all secrets upon entering the room.", "secret.smartroute", false));
+
     // Secret Browser
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER = register(new PathfindLineProperties("Pathfinding & Secrets.Secret Browser", "Line Settings", "Line Settings when pathfinding using Secret Browser", "secret.lineproperties.secretbrowser", true, null));
     public static final FeatureMechanicBrowse SECRET_BROWSE = register(new FeatureMechanicBrowse());

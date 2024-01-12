@@ -108,9 +108,7 @@ public class FeatureActions extends TextHUDFeature {
 
         for (ActionRoute path : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {
             actualBit.addChild(new TextSpan(getStyle("pathfinding"), "Pathfinding "));
-            actualBit.addChild(new TextSpan(getStyle("mechanic"), path.getMechanic()+" "));
-            actualBit.addChild(new TextSpan(getStyle("separator"), "-> "));
-            actualBit.addChild(new TextSpan(getStyle("state"), path.getState()+"\n"));
+            actualBit.addChild(new TextSpan(getStyle("mechanic"), path.toString()+"\n"));
 
             for (int i = Math.max(0,path.getCurrent()-2); i < path.getActions().size(); i++) {
                 actualBit.addChild(new TextSpan(getStyle("current"), (i == path.getCurrent() ? ">" : " ") +" "));

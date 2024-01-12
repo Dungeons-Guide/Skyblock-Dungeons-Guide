@@ -70,6 +70,11 @@ public class ActionChangeState extends AbstractAction {
     }
 
     @Override
+    public boolean isSanityCheck() {
+        return true;
+    }
+
+    @Override
     public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (mechanic!= null)

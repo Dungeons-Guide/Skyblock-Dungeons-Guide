@@ -33,6 +33,7 @@ import net.minecraft.util.BlockPos;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Data
 public class DungeonRedstoneKeySlot implements DungeonMechanic {
@@ -50,7 +51,7 @@ public class DungeonRedstoneKeySlot implements DungeonMechanic {
                     .requires(new ActionMoveNearestAir(getRepresentingPoint(dungeonRoom)));
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
             return;
         }
@@ -61,9 +62,14 @@ public class DungeonRedstoneKeySlot implements DungeonMechanic {
                         .requires(new ActionMove(slotPoint))
                         .build("MoveAndClick"));
         {
+            for (String s : preRequisite.stream().filter(a -> a.contains(":obtained-self")).collect(Collectors.toList())) {
+                builder.requires(new ActionChangeState(s.split(":")[0], s.split(":")[1]));
+            }
+            builder = builder.requires(new ActionRoot());
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                if (str.contains(":obtained-self")) continue;
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
     }

@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateNPC;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -51,7 +52,7 @@ public class DungeonWizard implements DungeonMechanic {
             builder = builder.requires(new AtomicAction.Builder()
                     .requires(() -> {
                         ActionInteract actionClick = new ActionInteract(secretPoint);
-                        actionClick.setPredicate(a -> a instanceof EntityOtherPlayerMP);
+                        actionClick.setPredicate(PredicateNPC.INSTANCE);
                         actionClick.setRadius(3);
                         return actionClick;
                     })
@@ -61,16 +62,18 @@ public class DungeonWizard implements DungeonMechanic {
             builder = builder.requires(new ActionMove(secretPoint));
         }
 
+        if ("quest".equalsIgnoreCase(state)) {
+            builder = builder.requires(new ActionChangeState(crystal, "obtained-self")).end()
+                    .requires(new ActionRoot());
+        }
+
         for (String str : preRequisite) {
             if (!str.isEmpty()) {
                 String[] split = str.split(":");
-                builder.requires(new ActionChangeState(split[0], split[1]));
+                builder.optional(new ActionChangeState(split[0], split[1]));
             }
         }
 
-        if ("quest".equalsIgnoreCase(state)) {
-            builder.requires(new ActionChangeState(crystal, "obtained-self"));
-        }
     }
 
     @Override

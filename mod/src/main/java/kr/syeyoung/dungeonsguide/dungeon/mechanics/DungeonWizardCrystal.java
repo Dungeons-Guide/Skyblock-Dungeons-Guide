@@ -51,6 +51,7 @@ public class DungeonWizardCrystal implements DungeonMechanic {
                 if (str.isEmpty()) continue;
                 builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
+            return;
         }
 
         if (!"obtained-self".equalsIgnoreCase(state) || getCurrentState(dungeonRoom).equals("obtained-other")) throw new PathfindImpossibleException(state+" is not valid state for secret");
@@ -63,7 +64,7 @@ public class DungeonWizardCrystal implements DungeonMechanic {
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
         }
     }

@@ -18,21 +18,21 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates;
 
+import net.minecraft.client.entity.EntityOtherPlayerMP;
 import net.minecraft.entity.Entity;
-import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.passive.EntityBat;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.function.Predicate;
 
 
-public class PredicateArmorStand implements Predicate<Entity> {
+public class PredicateNPC implements Predicate<Entity> {
 
-    public static final PredicateArmorStand INSTANCE = new PredicateArmorStand();
-
+    public static final PredicateNPC INSTANCE = new PredicateNPC();
 
     @Override
     public boolean test(@Nullable Entity input) {
-        return input instanceof EntityArmorStand;
+        return input instanceof EntityOtherPlayerMP;
     }
 
     @Override
@@ -42,7 +42,7 @@ public class PredicateArmorStand implements Predicate<Entity> {
 
     @Override
     public String toString() {
-        return "isArmorstand";
+        return "isNPC";
     }
 
     @Override

@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
@@ -28,12 +29,11 @@ import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionComplete;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
@@ -83,6 +83,40 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void tick() {
         if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
             searchForNextTarget();
+        }
+        if (!ticked && FeatureRegistry.SECRET_SMART_AUTO_START.isEnabled()) {
+            ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
+            for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+                if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
+                    try {
+                        actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"));
+                    } catch (PathfindImpossibleException e) {
+                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                        e.printStackTrace();
+                        continue;
+                    }
+                } else if (value.getValue() instanceof DungeonRedstoneKey && ((DungeonRedstoneKey) value.getValue()).getCurrentState(dungeonRoom).equalsIgnoreCase("unobtained")) {
+                    try {
+                        actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
+                    } catch (PathfindImpossibleException e) {
+                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                        e.printStackTrace();
+                        continue;
+                    }
+                }
+            }
+
+            try {
+                ActionDAG dag = actionDAGBuilder.build();
+//                if (dag.getActionDAGNode().getPotentialRequires().size() != 0) {
+                    ActionRoute actionRoute = new ActionRoute(dungeonRoom, dag,
+                            FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties());
+                    path.put(UUID.randomUUID().toString(), actionRoute);
+//                }
+            } catch (PathfindImpossibleException e) {
+                ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to everything failed due to "+e.getMessage());
+                e.printStackTrace();
+            }
         }
         if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {

@@ -22,6 +22,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionRoot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import lombok.Getter;
 
 import java.util.*;
 import java.util.function.Supplier;
@@ -31,6 +32,7 @@ public class ActionDAGBuilder {
     private final Map<AbstractAction, ActionDAGNode> idempotentActions;
 
     protected final DungeonRoom dungeonRoom;
+    @Getter
     protected final ActionDAGNode current;
     protected final ActionDAGBuilder parent;
 

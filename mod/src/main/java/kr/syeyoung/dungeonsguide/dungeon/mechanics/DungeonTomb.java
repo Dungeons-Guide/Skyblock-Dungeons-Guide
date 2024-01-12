@@ -69,7 +69,7 @@ public class DungeonTomb implements DungeonMechanic, RouteBlocker {
 
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
-            builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
         }
     }
 

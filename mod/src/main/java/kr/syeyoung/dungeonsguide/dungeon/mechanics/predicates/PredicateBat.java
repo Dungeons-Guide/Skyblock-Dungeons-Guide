@@ -18,10 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates;
 
-import com.google.common.base.Predicate;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
 import org.jetbrains.annotations.Nullable;
+
+import java.util.function.Predicate;
 
 
 public class PredicateBat implements Predicate<Entity> {
@@ -29,7 +30,7 @@ public class PredicateBat implements Predicate<Entity> {
     public static final PredicateBat INSTANCE = new PredicateBat();
 
     @Override
-    public boolean apply(@Nullable Entity input) {
+    public boolean test(@Nullable Entity input) {
         return input instanceof EntityBat;
     }
 
@@ -37,6 +38,12 @@ public class PredicateBat implements Predicate<Entity> {
     public int hashCode() {
         return 0;
     }
+
+    @Override
+    public String toString() {
+        return "isBat";
+    }
+
     @Override
     public boolean equals(Object o) {
         return o == this || o != null && (o.getClass() == this.getClass());

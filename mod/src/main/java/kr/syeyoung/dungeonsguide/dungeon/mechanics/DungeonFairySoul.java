@@ -60,7 +60,7 @@ public class DungeonFairySoul implements DungeonMechanic {
         for (String str : preRequisite) {
             if (!str.isEmpty()) {
                 String[] split = str.split(":");
-                builder.requires(new ActionChangeState(split[0], split[1]));
+                builder.optional(new ActionChangeState(split[0], split[1]));
             }
         }
         return;

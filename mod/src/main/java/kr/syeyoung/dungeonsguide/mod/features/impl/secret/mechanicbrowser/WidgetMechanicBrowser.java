@@ -84,7 +84,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
             color.setValue(0xFFAA0000);
         } else {
             ActionRoute route = grp.getPath("MECH-BROWSER");
-            current.setValue(route.getMechanic()+" -> "+route.getState());
+            current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }
         Map<String, Map<String, DungeonMechanic>> map = new HashMap<>();
@@ -111,7 +111,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
             color.setValue(0xFFAA0000);
         } else {
             ActionRoute route = grp.getPath("MECH-BROWSER");
-            current.setValue(route.getMechanic()+" -> "+route.getState());
+            current.setValue(route.toString());
             color.setValue(0xFFFFFF00);
         }
     }
