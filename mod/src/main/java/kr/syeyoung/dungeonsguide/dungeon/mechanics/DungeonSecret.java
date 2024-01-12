@@ -195,12 +195,15 @@ public class DungeonSecret implements DungeonMechanic {
         }
 
         if (secretType == SecretType.CHEST) {
+            boolean doneDoor = false;
             for (String str : preRequisite) {
                 if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) {
                     builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                    doneDoor = true;
                 }
             }
-            builder = builder.requires(new ActionRoot());
+            if (doneDoor)
+                builder = builder.requires(new ActionRoot());
         }
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;

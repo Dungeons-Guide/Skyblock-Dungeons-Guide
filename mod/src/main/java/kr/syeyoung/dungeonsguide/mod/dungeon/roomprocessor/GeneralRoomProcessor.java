@@ -109,7 +109,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             try {
                 ActionDAG dag = actionDAGBuilder.build();
 //                if (dag.getActionDAGNode().getPotentialRequires().size() != 0) {
-                    ActionRoute actionRoute = new ActionRoute(dungeonRoom, dag,
+                    ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag,
                             FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties());
                     path.put(UUID.randomUUID().toString(), actionRoute);
 //                }

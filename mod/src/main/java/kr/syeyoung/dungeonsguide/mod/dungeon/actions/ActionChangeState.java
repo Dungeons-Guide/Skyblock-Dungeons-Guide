@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import net.minecraft.client.Minecraft;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -47,16 +48,13 @@ public class ActionChangeState extends AbstractAction {
     public boolean isComplete(DungeonRoom dungeonRoom) {
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
         if (state.equalsIgnoreCase("navigate")) {
-            return true;
+            return Minecraft.getMinecraft().thePlayer.getDistanceSq(mechanic.getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom)) < 36;
         }
         if (state.equalsIgnoreCase("click")) {
             return true;
         }
         if (mechanic == null) {
             return false;
-        }
-        if (mechanic instanceof DungeonSecret && ((DungeonSecret) mechanic).getSecretType() == DungeonSecret.SecretType.BAT) {
-            return true;
         }
         if (mechanic instanceof DungeonDummy) {
             return true;

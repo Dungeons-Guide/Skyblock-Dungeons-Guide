@@ -43,6 +43,7 @@ import org.lwjgl.opengl.GL11;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class FeatureDAGs extends RawRenderingGuiFeature {
     public FeatureDAGs() {
@@ -149,7 +150,12 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
             for (ActionDAGNode allNode : value.getDag().getAllNodes()) {
                 Point p = locations.get(allNode);
                 if (p == null) continue;
-                RenderUtils.drawRect(p.x, p.y, p.x+25, p.y+25, new AColor(0xFFFF0000, true));
+
+                int color = allNode.isEnabled(value.getDagId()) ? 0xFF00FF00 : 0xFF333333;
+                if (allNode.getAction().isComplete(dungeonRoom)) {
+                    color = 0xFF0000FF;
+                }
+                RenderUtils.drawRect(p.x, p.y, p.x+25, p.y+25, new AColor(color, true));
                 fr.drawString(allNode.getAction().toString().split("\n")[0], p.x, p.y, 0xFFFFFFFF);
 
 
@@ -177,8 +183,9 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
             }
 
             GlStateManager.color(1,1,1,1);
-            GlStateManager.disableTexture2D();
             worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+            GlStateManager.enableTexture2D();
+            int cnt = 0;
             for (ActionDAGNode actionDAGNode : value.getOrder()) {
                 Point p = locations.get(actionDAGNode);
                 if (p != null) {
@@ -188,10 +195,20 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                             0.0f,
                             1.0f
                     ).endVertex();
+                    cnt++;
+                    fr.drawString(cnt+"", p.x, p.y+10, 0xFFFFFFFF);
                 }
             }
+            GlStateManager.disableTexture2D();
             Tessellator.getInstance().draw();
             GlStateManager.enableTexture2D();
         }
+        int y=  300;
+        for (String s : dungeonRoom.getRoomContext().entrySet().stream().map(a -> a.getKey() + ":" + a.getValue()).collect(Collectors.toList())) {
+
+            fr.drawString(s, 0 ,y, 0xFFFFFFFF);
+            y += 10;
+        }
+
     }
 }

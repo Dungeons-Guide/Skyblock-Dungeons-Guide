@@ -45,10 +45,12 @@ public class ActionRoute {
     @Getter
     private int current;
     @Getter
-    private final List<AbstractAction> actions;
+    private List<AbstractAction> actions;
 
     @Getter
     private final ActionDAG dag;
+    @Getter
+    private int dagId;
     @Getter
     private List<ActionDAGNode> order;
     private final DungeonRoom dungeonRoom;
@@ -57,40 +59,23 @@ public class ActionRoute {
     private final ActionRouteProperties actionRouteProperties;
 
     public ActionRoute(DungeonRoom dungeonRoom, String mechanic, String state, ActionRouteProperties actionRouteProperties)throws PathfindImpossibleException  {
-
-        this.name = mechanic+" -> "+state;
-        this.actionRouteProperties = actionRouteProperties;
-        this.checkCanCancel = (dg) -> dg.getMechanics().get(mechanic).getCurrentState(dungeonRoom).equalsIgnoreCase(state);
-
-        ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
-        actionDAGBuilder.requires(new ActionChangeState(mechanic, state));
-        dag = actionDAGBuilder.build();
-        ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
-        int cnt = 0;
-        List<ActionDAGNode> node = null;
-        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
-            cnt ++;
-            node = actionDAGNodes;
-        }
-        order = node;
-        ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
-
-        actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
-//        actions.add(new ActionComplete());
-
-
-        current = 0;
-        this.dungeonRoom = dungeonRoom;
+        this(mechanic +" -> "+state, dungeonRoom, new ActionDAGBuilder(dungeonRoom)
+                .requires(new ActionChangeState(mechanic, state)).build(), actionRouteProperties);
     }
 
-    public ActionRoute(DungeonRoom dungeonRoom, ActionDAG dag, ActionRouteProperties actionRouteProperties) throws PathfindImpossibleException  {
-        this.name = "DAG";
+    public ActionRoute(String name, DungeonRoom dungeonRoom, ActionDAG dag, ActionRouteProperties actionRouteProperties) throws PathfindImpossibleException  {
+        this.name = name;
         this.actionRouteProperties = actionRouteProperties;
         this.checkCanCancel = (dg) -> false;
-
-        ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
-        int cnt = 0;
         this.dag = dag;
+        this.dungeonRoom = dungeonRoom;
+
+        recalculatePath();
+    }
+
+    private void recalculatePath() {
+        int cnt = 0;
+        ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
         List<ActionDAGNode> node = null;
         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
             cnt ++;
@@ -100,15 +85,13 @@ public class ActionRoute {
         if (node == null) {
             System.out.println(node);
         }
+        this.dagId = dag.getCount() - 1;
         order = node;
         ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
 
         actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
         actions.add(new ActionComplete());
-
-
         current = 0;
-        this.dungeonRoom = dungeonRoom;
     }
     public AbstractAction next() {
         if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))
@@ -174,8 +157,19 @@ public class ActionRoute {
             this.current = actions.size() - 1;
         }
 
-        if (currentAction.isComplete(dungeonRoom)) {
+        boolean recalc = false;
+        for (int i = current+2; i < actions.size(); i++) {
+            if (actions.get(i).isIdempotent() && actions.get(i).isComplete(dungeonRoom)) {
+                recalc = true;
+            }
+        }
+        if (recalc) {
+            recalculatePath();
+        }
+
+        while (currentAction.isComplete(dungeonRoom)) {
             next();
+            currentAction = getCurrentAction();
         }
     }
 

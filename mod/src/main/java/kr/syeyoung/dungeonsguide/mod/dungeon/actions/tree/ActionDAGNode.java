@@ -64,17 +64,14 @@ public class ActionDAGNode {
         return bitIdx + 1;
     }
 
-    public boolean isComplete(DungeonRoom dungeonRoom) {
-        return action.isComplete(dungeonRoom) && (!action.childComplete() || requiredBy.stream().allMatch(a -> a.isComplete(dungeonRoom)));
-    }
-
     public boolean isEnabled(int dagId) {
-        if (bitIdx == -1) return requiredBy.size() == 0 || requiredBy.stream().anyMatch(a -> a.isEnabled(dagId));
-        return (dagId >> bitIdx  & 0x1) == 1 || requiredBy.stream().anyMatch(a -> a.isEnabled(dagId));
+        if (bitIdx == -1) return true;
+        return (dagId >> bitIdx  & 0x1) == 1;
     }
 
     public List<ActionDAGNode> getPotentialRequires(int dagId) {
-        return potentialRequires.stream().filter(a -> a.isEnabled(dagId)).collect(Collectors.toList());
+        return potentialRequires.stream()
+                .filter(a -> a.isEnabled(dagId)).collect(Collectors.toList());
     }
 
     @Override

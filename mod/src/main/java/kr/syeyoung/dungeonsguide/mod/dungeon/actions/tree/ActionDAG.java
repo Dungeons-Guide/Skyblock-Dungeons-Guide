@@ -61,6 +61,8 @@ public class ActionDAG {
     public class TopologicalSortIterator implements Iterator<List<ActionDAGNode>> {
         private int dagId;
         private boolean[] visited = new boolean[allNodes.size()];
+
+        private boolean[] enabled = new boolean[allNodes.size()];
         private  int[] degree = new int[allNodes.size()];
         private boolean[] sanityCheck = new boolean[allNodes.size()];
         private Stack<Integer> path = new Stack<>();
@@ -71,14 +73,83 @@ public class ActionDAG {
         private TopologicalSortIterator(int dagId) {
             this.dagId = dagId;
 
+            boolean[] visited = new boolean[allNodes.size()];
+            boolean[] complete = new boolean[allNodes.size()];
+            Stack<Integer> stack = new Stack<>();
+            stack.add(allNodes.size() - 1);
+            while (!stack.isEmpty()) {
+                int idx = stack.peek();
+                ActionDAGNode current = allNodes.get(idx);
+                boolean found = false;
+                for (int i = 0; i < current.getPotentialRequires().size(); i++) {
+                    ActionDAGNode next = current.getPotentialRequires().get(i);
+                    if (visited[next.getId()]) continue;
+                    if (!next.isEnabled(dagId)) continue;
+                    stack.push(next.getId());
+                    found = true;
+                    break;
+                }
+                if (found) continue;
+
+                idx = stack.pop();
+                this.enabled[idx] = true;
+                visited[idx] = true;
+
+                if (current.getAction().isComplete(dungeonRoom)) {
+                    if (current.getAction().childComplete()) {
+                        // check if children are complete
+                        boolean smh = false;
+                        for (ActionDAGNode potentialRequire : current.getPotentialRequires(dagId)) {
+                            if (!complete[potentialRequire.getId()]) {
+                                smh = true;
+                                break;
+                            }
+                        }
+                        if (smh) {
+                            complete[idx] = false;
+                        } else {
+                            complete[idx] = true;
+                            this.enabled[idx] = false;
+                        }
+                    } else {
+                        complete[idx] = true;
+                        this.enabled[idx] = false;
+                    }
+                }
+            }
+            Queue<Integer> toVisit = new LinkedList<>();
+            toVisit.add(allNodes.size() - 1);
+            while (!toVisit.isEmpty()) {
+                int node = toVisit.poll();
+                boolean smh = allNodes.get(node).getRequiredBy().size() == 0;
+                for (ActionDAGNode actionDAGNode : allNodes.get(node).getRequiredBy()) {
+                    if (this.enabled[actionDAGNode.getId()]) {
+                        smh = true;
+                        break;
+                    }
+                }
+                if (!smh) {
+                    this.enabled[node] = false;
+                }
+
+                for (ActionDAGNode potentialRequire : allNodes.get(node).getPotentialRequires(dagId)) {
+                    toVisit.add(potentialRequire.getId());
+                }
+            }
+
+
             for (int i = 0; i < allNodes.size(); i++) {
-                degree[i] = allNodes.get(i).getPotentialRequires(dagId).size();
-                visited[i] = !allNodes.get(i).isEnabled(dagId) || allNodes.get(i).isComplete(dungeonRoom);
+                degree[i] = (int) allNodes.get(i).getPotentialRequires(dagId)
+                        .stream().filter(a -> enabled[a.getId()]).count();
+                this.visited[i] = !enabled[i];
                 sanityCheck[i] = allNodes.get(i).getAction().isSanityCheck();
-                if (!visited[i]) solutionSize++;
+                if (!this.visited[i]) solutionSize++;
             }
             path.add(0);
             nextSolution = findNext(true);
+            if (nextSolution == null) {
+                System.out.println("WTF NULL PATH???");
+            }
         }
         @Override
         public boolean hasNext() {
@@ -95,6 +166,8 @@ public class ActionDAG {
         public List<ActionDAGNode> findNext(boolean first) {
             if (solutionSize == 0 && !first) {
                 return null;
+            } else if (solutionSize == 0) {
+                return new ArrayList<>();
             }
             if (!first) {
                 int current = path.pop();
