@@ -143,6 +143,8 @@ public class FeatureRegistry {
     public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY = register(new FeaturePathfindStrategy());
     public static final FeaturePathfindSettings SECRET_PATHFIND_SETTINGS = register(new FeaturePathfindSettings());
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
+    public static final FeatureDAGs SECRET_DAGS = register(new FeatureDAGs());
+
 
 
     static {

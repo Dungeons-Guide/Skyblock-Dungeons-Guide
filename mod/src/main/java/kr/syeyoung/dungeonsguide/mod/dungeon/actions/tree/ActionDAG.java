@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 
@@ -30,9 +31,13 @@ public class ActionDAG {
     @Getter
     private final ActionDAGNode actionDAGNode;
 
+    @Getter
     private List<ActionDAGNode> allNodes;
 
-    public ActionDAG(int count, ActionDAGNode node, List<ActionDAGNode> allNodes) {
+    private DungeonRoom dungeonRoom;
+
+    public ActionDAG(DungeonRoom dungeonRoom, int count, ActionDAGNode node, List<ActionDAGNode> allNodes) {
+        this.dungeonRoom = dungeonRoom;
         this.count = count;
         this.actionDAGNode = node;
         this.allNodes = allNodes;
@@ -68,7 +73,7 @@ public class ActionDAG {
 
             for (int i = 0; i < allNodes.size(); i++) {
                 degree[i] = allNodes.get(i).getPotentialRequires(dagId).size();
-                visited[i] = !allNodes.get(i).isEnabled(dagId);
+                visited[i] = !allNodes.get(i).isEnabled(dagId) || allNodes.get(i).isComplete(dungeonRoom);
                 sanityCheck[i] = allNodes.get(i).getAction().isSanityCheck();
                 if (!visited[i]) solutionSize++;
             }
@@ -88,6 +93,9 @@ public class ActionDAG {
         }
 
         public List<ActionDAGNode> findNext(boolean first) {
+            if (solutionSize == 0 && !first) {
+                return null;
+            }
             if (!first) {
                 int current = path.pop();
                 ActionDAGNode currentNode = allNodes.get(current);

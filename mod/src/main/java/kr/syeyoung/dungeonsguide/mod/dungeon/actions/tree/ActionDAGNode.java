@@ -19,6 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionRoot;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -35,6 +38,8 @@ public class ActionDAGNode {
 
     @Setter @Getter
     private NodeType type;
+    @Getter @Setter
+    private int maximumDepth;
 
     public ActionDAGNode(AbstractAction action, NodeType type) {
         this.action = action;
@@ -59,9 +64,13 @@ public class ActionDAGNode {
         return bitIdx + 1;
     }
 
+    public boolean isComplete(DungeonRoom dungeonRoom) {
+        return action.isComplete(dungeonRoom) && (!action.childComplete() || requiredBy.stream().allMatch(a -> a.isComplete(dungeonRoom)));
+    }
+
     public boolean isEnabled(int dagId) {
         if (bitIdx == -1) return requiredBy.size() == 0 || requiredBy.stream().anyMatch(a -> a.isEnabled(dagId));
-        return (dagId >> bitIdx  & 0x1) == 1;
+        return (dagId >> bitIdx  & 0x1) == 1 || requiredBy.stream().anyMatch(a -> a.isEnabled(dagId));
     }
 
     public List<ActionDAGNode> getPotentialRequires(int dagId) {

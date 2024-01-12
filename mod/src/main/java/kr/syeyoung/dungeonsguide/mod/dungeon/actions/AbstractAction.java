@@ -62,6 +62,7 @@ public abstract class AbstractAction {
 
     public boolean isIdempotent() { return false; }
     public boolean isSanityCheck() { return false; }
+    public boolean childComplete() { return true; }
 
     public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException { return builder; }
 }

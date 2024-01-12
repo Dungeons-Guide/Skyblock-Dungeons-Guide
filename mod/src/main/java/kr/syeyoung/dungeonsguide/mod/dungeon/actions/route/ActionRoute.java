@@ -47,6 +47,10 @@ public class ActionRoute {
     @Getter
     private final List<AbstractAction> actions;
 
+    @Getter
+    private final ActionDAG dag;
+    @Getter
+    private List<ActionDAGNode> order;
     private final DungeonRoom dungeonRoom;
 
     @Getter
@@ -60,7 +64,7 @@ public class ActionRoute {
 
         ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
         actionDAGBuilder.requires(new ActionChangeState(mechanic, state));
-        ActionDAG dag = actionDAGBuilder.build();
+        dag = actionDAGBuilder.build();
         ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
         int cnt = 0;
         List<ActionDAGNode> node = null;
@@ -68,10 +72,11 @@ public class ActionRoute {
             cnt ++;
             node = actionDAGNodes;
         }
+        order = node;
         ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
 
         actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
-        actions.add(new ActionComplete());
+//        actions.add(new ActionComplete());
 
 
         current = 0;
@@ -85,6 +90,7 @@ public class ActionRoute {
 
         ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
         int cnt = 0;
+        this.dag = dag;
         List<ActionDAGNode> node = null;
         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
             cnt ++;
@@ -94,6 +100,7 @@ public class ActionRoute {
         if (node == null) {
             System.out.println(node);
         }
+        order = node;
         ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes");
 
         actions = node.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());

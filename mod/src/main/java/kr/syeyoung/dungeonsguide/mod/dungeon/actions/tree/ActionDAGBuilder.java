@@ -69,6 +69,7 @@ public class ActionDAGBuilder {
         if (abstractAction.isIdempotent() && idempotentActions.containsKey(abstractAction)) {
             ActionDAGNode actionDAGNode1 = idempotentActions.get(abstractAction);
             current.getPotentialRequires().add(actionDAGNode1);
+            actionDAGNode1.setMaximumDepth(Math.max(current.getMaximumDepth() + 1, actionDAGNode1.getMaximumDepth()));
             actionDAGNode1.getRequiredBy().add(current);
             return new ActionDAGBuilderNoMore(this);
         }
@@ -76,6 +77,8 @@ public class ActionDAGBuilder {
         ActionDAGNode child = new ActionDAGNode(abstractAction, ActionDAGNode.NodeType.AND);
         current.getPotentialRequires().add(child);
         child.getRequiredBy().add(current);
+
+        child.setMaximumDepth(current.getMaximumDepth() + 1);
 
         if (abstractAction.isIdempotent()) {
             idempotentActions.put(abstractAction, child);
@@ -127,6 +130,6 @@ public class ActionDAGBuilder {
             if (dfs.contains(next)) throw new IllegalStateException("Cycle detected!");
             dfs.push(next);
         }
-        return new ActionDAG(1 << idx, current, allTheNodes);
+        return new ActionDAG(dungeonRoom, 1 << idx, current, allTheNodes);
     }
 }
