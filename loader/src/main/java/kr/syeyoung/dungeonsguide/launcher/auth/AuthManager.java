@@ -159,8 +159,8 @@ public class AuthManager {
                             .description("Authentication Error Occurred\n"+e.getMessage())
                             .titleColor(0xFFFF0000)
                             .onClick(() -> {
-                                NotificationManager.getInstance().removeNotification(authenticationFailure);
                                 shouldAuthNotif = false;
+                                NotificationManager.getInstance().removeNotification(authenticationFailure);
                                 GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
                             })
                             .build()));
