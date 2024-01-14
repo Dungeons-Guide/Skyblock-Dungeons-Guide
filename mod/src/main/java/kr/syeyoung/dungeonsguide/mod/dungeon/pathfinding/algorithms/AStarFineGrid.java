@@ -32,7 +32,7 @@ public class AStarFineGrid implements IPathfinder {
 
     private int lastSx, lastSy, lastSz;
     private int dx, dy, dz;
-    private DungeonRoom dungeonRoom;
+    private IWorld dungeonRoom;
 
 
     private Node startNode;
@@ -41,7 +41,7 @@ public class AStarFineGrid implements IPathfinder {
     @Getter
     private AxisAlignedBB destinationBB;
     @Override
-    public void init(DungeonRoom dungeonRoom, Vec3 destination) {
+    public void init(IWorld dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
 
         this.dx = (int) (destination.xCoord * 2);
@@ -166,6 +166,20 @@ public class AStarFineGrid implements IPathfinder {
         }
         route.addLast(new PathfindResult.PathfindNode(curr.coordinate.x / 2.0, curr.coordinate.y / 2.0 + 0.1, curr.coordinate.z/ 2.0, PathfindResult.PathfindNode.NodeType.WALK));
         return new PathfindResult(route, goalNode.g);
+    }
+
+
+    @Override
+    public double getCost(Vec3 from) {
+        int lastSx = (int) Math.round(from.xCoord * 2);
+        int lastSy = (int) Math.round(from.yCoord * 2);
+        int lastSz = (int) Math.round(from.zCoord * 2);
+
+
+        Node goalNode = openNode(lastSx, lastSy, lastSz);
+
+        if (goalNode.parent == null) return Double.NaN;
+        return goalNode.g;
     }
 
 

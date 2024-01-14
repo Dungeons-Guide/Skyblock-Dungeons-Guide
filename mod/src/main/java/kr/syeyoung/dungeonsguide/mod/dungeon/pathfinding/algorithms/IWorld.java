@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2023  cyoung06 (syeyoung)
+ * Copyright (C) 2024  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -18,18 +18,18 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import net.minecraft.util.Vec3;
 
-import java.util.List;
+public interface IWorld {
+    public DungeonRoom.LayerNodeState getLayer(int x, int y, int z);
+    public DungeonRoom.NodeState getBlock(int x, int y, int z);
 
-public interface IPathfinder {
-    void init(IWorld dungeonRoom, Vec3 destination);
-    boolean doOneStep();
+    public int getXwidth();
+    public int getYwidth();
+    public int getZwidth();
+    public int getMinX();
+    public int getMinY();
+    public int getMinZ();
 
-    void setTarget(Vec3 from);
-    Vec3 getTarget();
-    PathfindResult getRoute(Vec3 from);
-    double getCost(Vec3 from);
+
 }

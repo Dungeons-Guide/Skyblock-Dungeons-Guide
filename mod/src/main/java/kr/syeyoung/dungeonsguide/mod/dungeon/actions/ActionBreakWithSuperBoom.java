@@ -37,6 +37,7 @@ import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 
 import java.awt.*;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -95,7 +96,7 @@ public class ActionBreakWithSuperBoom extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room) {
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         return 10;
     }
 }

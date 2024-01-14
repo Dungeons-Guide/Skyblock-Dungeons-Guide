@@ -33,6 +33,7 @@ import net.minecraft.util.BlockPos;
 
 import java.awt.*;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper = false)
@@ -74,7 +75,7 @@ public class ActionDropItem extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room) {
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         return 10;
     }
 }

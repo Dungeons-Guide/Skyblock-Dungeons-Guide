@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
+package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -25,12 +25,15 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRoute;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonkingBetter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.gui.FontRenderer;
@@ -38,8 +41,11 @@ import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraftforge.client.event.RenderWorldLastEvent;
 import org.lwjgl.opengl.GL11;
+import sun.misc.Unsafe;
 
 import java.awt.*;
 import java.util.*;
@@ -48,7 +54,7 @@ import java.util.stream.Collectors;
 
 public class FeatureDAGs extends RawRenderingGuiFeature {
     public FeatureDAGs() {
-        super("Pathfinding & Secrets", "DAG Renderer", "View DAG of actions that needs to be taken", "secret.dagview", false, 500, 500);
+        super("Debug", "DAG Renderer", "View DAG of actions that needs to be taken", "secret.dagview", false, 500, 500);
     }
 
     public boolean isHUDViewable() {
@@ -85,6 +91,8 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
         int defaultLvCount = 0;
         for (Map.Entry<String, ActionRoute> stringActionRouteEntry : roomProcessor.getPath().entrySet()) {
+            if (stringActionRouteEntry.getValue().isCalculating()) continue;
+
             ActionDAGNode rootNode = stringActionRouteEntry.getValue().getDag().getActionDAGNode();
             // let's dfs!!!
 
@@ -124,6 +132,34 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         }
     }
 
+    @Getter
+    @Setter
+    private AStarFineGridStonkingBetter better;
+    @Getter @Setter
+    private BlockPos from;
+
+    @DGEventHandler
+    public void renderWorldLast(RenderWorldLastEvent ev) {
+        if (better == null) return;
+        RenderUtils.highlightBox(new AxisAlignedBB(
+                better.getDestinationBB().minX/2, better.getDestinationBB().minY/2, better.getDestinationBB().minZ/2,
+                better.getDestinationBB().maxX/2, better.getDestinationBB().maxY/2, better.getDestinationBB().maxZ/2
+        ), Color.green, ev.partialTicks, false);
+        RenderUtils.highlightBlock(from, Color.red, ev.partialTicks, false);
+//        for (AStarFineGridStonkingBetter.Node value : better.getNodeMap().values()) {
+//            AStarFineGridStonkingBetter.Node.Coordinate allInBox = value.getCoordinate();
+//            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(allInBox.getX() / 2.0, allInBox.getY() / 2.0, allInBox.getZ() / 2.0) > 3) continue;
+//            double offset = value.getCoordinate().isStonk() ? 0.1 : 0;
+//
+//            RenderUtils.highlightBox(
+//                    AxisAlignedBB.fromBounds(
+//                            allInBox.getX() / 2.0 - 0.05, allInBox.getY() / 2.0 - 0.05 + offset, allInBox.getZ() / 2.0 - 0.05,
+//                            allInBox.getX() / 2.0 + 0.05, allInBox.getY() / 2.0 + 0.05 + offset, allInBox.getZ() / 2.0 + 0.05
+//                    ), value.getParent() == null ? Color.pink : value.getCoordinate().isStonk() ? Color.yellow : Color.blue, ev.partialTicks, false);
+////            if (value.getParent() == null) System.out.println(value.getG());
+//        }
+
+    }
 
     @Override
     public void drawHUD(float partialTicks) {
@@ -145,6 +181,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         GL11.glLineWidth(5.0f);
 
         for (ActionRoute value : roomProcessor.getPath().values()) {
+            if (value.isCalculating()) continue;
 
 
             WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();

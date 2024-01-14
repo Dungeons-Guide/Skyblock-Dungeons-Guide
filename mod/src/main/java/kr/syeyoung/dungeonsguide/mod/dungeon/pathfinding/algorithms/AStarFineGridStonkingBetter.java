@@ -32,34 +32,43 @@ import net.minecraft.util.Vec3;
 
 import java.util.*;
 
-public class AStarFineGridStonking implements IPathfinder {
-
-    private int lastSx, lastSy, lastSz;
+public class AStarFineGridStonkingBetter implements IPathfinder {
     private int dx, dy, dz;
     private IWorld dungeonRoom;
 
 
     private Node startNode;
-    private Node goalNode;
 
     @Getter
     private AxisAlignedBB destinationBB;
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
 
-    public AStarFineGridStonking(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
+    public AStarFineGridStonkingBetter(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
         this.algorithmSettings = algorithmSettings;
     }
     @Override
     public void init(IWorld dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
 
+        nodes = new Node[dungeonRoom.getXwidth()+10][dungeonRoom.getZwidth()+10][dungeonRoom.getYwidth()+10][2];
+        this.minX = dungeonRoom.getMinX() - 5;
+        this.minY = dungeonRoom.getMinY() - 5;
+        this.minZ = dungeonRoom.getMinZ() - 5;
+
         this.dx = (int) (destination.xCoord * 2);
         this.dy = (int) (destination.yCoord * 2);
         this.dz = (int) (destination.zCoord * 2);
         destinationBB = AxisAlignedBB.fromBounds(dx-2, dy-2, dz-2, dx+2, dy+2, dz+2);
         startNode = openNode(dx, dy, dz, false);
+        startNode.g = 0;
+        startNode.f = 0;
+        open.add(startNode);
+
+
     }
-    private Map<Node.Coordinate, Node> nodeMap = new HashMap<>();
+    private int minX, minY, minZ;
+    @Getter
+    private Node[][][][] nodes;
     @Getter
     private PriorityQueue<Node> open = new PriorityQueue<>(Comparator.comparing((Node a) -> a == null ? Float.MAX_VALUE : a.f)
             .thenComparing(a -> a == null ? Float.MAX_VALUE :  a.coordinate.x)
@@ -67,35 +76,30 @@ public class AStarFineGridStonking implements IPathfinder {
             .thenComparing(a -> a == null ? Float.MAX_VALUE :  a.coordinate.z)
             .thenComparing(a -> a == null ? Float.MAX_VALUE : a.coordinate.stonk ? 1 : 0));
 
-    private int pfindIdx = 0;
     private Node openNode(int x, int y, int z, boolean stonking)
     {
-        Node.Coordinate coordinate = new Node.Coordinate(x,y,z, stonking);
-        Node node = this.nodeMap.get(coordinate);
+        Node node = nodes[x-minX][z-minZ][y-minY][stonking ? 1 : 0];
 
         if (node == null)
         {
+            Node.Coordinate coordinate = new Node.Coordinate(x,y,z, stonking);
             node = new Node(coordinate);
-            this.nodeMap.put(coordinate, node);
+            nodes[x-minX][z-minZ][y-minY][stonking ? 1 : 0] = node;
         }
 
         return node;
     }
-    private boolean found = false;
+    private boolean finished = false;
 
     @Override
     public boolean doOneStep() {
-        if (found) return true;
+        if (finished) return true;
         Node n = open.poll();
-        if (n == null) return true;
-        if (n.lastVisited == pfindIdx) return false;
-        n.lastVisited = pfindIdx;
-
-        if (n == goalNode) {
-            // route = reconstructPath(startNode)
-            found = true;
+        if (n == null) {
+            finished = true;
             return true;
         }
+
 
         if (!n.coordinate.stonk || n.stonkLength <= algorithmSettings.getMaxStonk()) {
             for (EnumFacing value : EnumFacing.VALUES) {
@@ -157,10 +161,7 @@ public class AStarFineGridStonking implements IPathfinder {
                         neighbor.stonkLength = 0;
                     neighbor.connectionType = n.coordinate.stonk ? PathfindResult.PathfindNode.NodeType.STONK_WALK : PathfindResult.PathfindNode.NodeType.WALK;
                     neighbor.g = gScore;
-                    neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
-                    open.add(neighbor);
-                } else if (neighbor.lastVisited != pfindIdx) {
-                    neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                    neighbor.f = gScore;
                     open.add(neighbor);
                 }
             }
@@ -190,10 +191,7 @@ public class AStarFineGridStonking implements IPathfinder {
                             neighbor.stonkLength = 0;
                             neighbor.g = gScore;
                             neighbor.connectionType = PathfindResult.PathfindNode.NodeType.ETHERWARP;
-                            neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
-                            open.add(neighbor);
-                        } else if (neighbor.lastVisited != pfindIdx) {
-                            neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                            neighbor.f = gScore;
                             open.add(neighbor);
                         }
                     }
@@ -267,10 +265,7 @@ public class AStarFineGridStonking implements IPathfinder {
                                                     originNodeState == DungeonRoom.NodeState.ENTRANCE_TELEPORT_DOWN ? PathfindResult.PathfindNode.NodeType.TELEPORT_INTO :
                                                             PathfindResult.PathfindNode.NodeType.ETHERWARP;
                     neighbor.g = gScore;
-                    neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
-                    open.add(neighbor);
-                } else if (neighbor.lastVisited != pfindIdx) {
-                    neighbor.f = gScore + manhatten(goalNode.coordinate.x - neighbor.coordinate.x, goalNode.coordinate.y - neighbor.coordinate.y, goalNode.coordinate.z - neighbor.coordinate.z);
+                    neighbor.f = gScore;
                     open.add(neighbor);
                 }
             }
@@ -278,39 +273,12 @@ public class AStarFineGridStonking implements IPathfinder {
 
     @Override
     public void setTarget(Vec3 from) {
-        int tobeX = (int) Math.round(from.xCoord * 2);
-        int tobeY = (int) Math.round(from.yCoord * 2);
-        int tobeZ = (int) Math.round(from.zCoord * 2);
-        if (lastSx != tobeX || lastSy != tobeY || lastSz != tobeZ) {
-        } else {
-            return;
-        }
-        boolean blocked = dungeonRoom.getBlock(tobeX, tobeY, tobeZ).isBlockedNonStonk();
-
-        this.lastSx = tobeX;
-        this.lastSy = tobeY;
-        this.lastSz = tobeZ;
-        open.clear();
-        pfindIdx ++;
-        found = false;
-
-        goalNode = openNode(lastSx, lastSy, lastSz, blocked);
-        startNode.g = 0;
-        startNode.f = 0;
-        goalNode.g = Integer.MAX_VALUE; goalNode.f = Integer.MAX_VALUE;
-
-        open.add(startNode);
-
-
-        if (goalNode.parent != null) {
-            found = true;
-        }
-
     }
 
     @Override
     public Vec3 getTarget() {
-        return new Vec3(lastSx / 2.0, lastSy / 2.0, lastSz / 2.0);
+        return null;
+//        return new Vec3(lastSx / 2.0, lastSy / 2.0, lastSz / 2.0);
     }
 
     @Override
@@ -369,7 +337,6 @@ public class AStarFineGridStonking implements IPathfinder {
 
         private float f = Float.MAX_VALUE, g = Float.MAX_VALUE;
         private byte stonkLength = 0;
-        private int lastVisited;
 
         @EqualsAndHashCode.Exclude
         private Node parent;

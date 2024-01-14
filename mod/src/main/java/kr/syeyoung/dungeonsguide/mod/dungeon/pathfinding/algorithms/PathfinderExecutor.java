@@ -33,14 +33,14 @@ public class PathfinderExecutor {
     private volatile Vec3 target;
 
     @Getter
-    private DungeonRoom dungeonRoom;
+    private IWorld dungeonRoom;
 
     private IPathfinder pathfinder;
     @Getter
     private boolean isComplete = false;
     private PathfindResult lastRoute = new PathfindResult(Collections.emptyList(), 0);
 
-    public PathfinderExecutor(IPathfinder pathfinder, Vec3 target, DungeonRoom dungeonRoom) {
+    public PathfinderExecutor(IPathfinder pathfinder, Vec3 target, IWorld dungeonRoom) {
         this.pathfinder = pathfinder;
         this.target = target;
         this.dungeonRoom = dungeonRoom;
@@ -52,6 +52,12 @@ public class PathfinderExecutor {
         pathfinder.setTarget(target);
         isComplete = pathfinder.doOneStep();
         return isComplete;
+    }
+
+    public double findCost() {
+        pathfinder.setTarget(target);
+        while(!pathfinder.doOneStep());
+        return pathfinder.getCost(target);
     }
 
     public void setTarget(Vec3 target) {

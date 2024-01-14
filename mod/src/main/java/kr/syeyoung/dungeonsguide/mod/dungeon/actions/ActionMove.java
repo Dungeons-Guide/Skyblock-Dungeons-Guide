@@ -23,7 +23,10 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonking;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonkingBetter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -36,12 +39,16 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -203,14 +210,41 @@ public class ActionMove extends AbstractAction {
     }
 
     @Override
-    public double evalulateCost(RoomState state, DungeonRoom room) {
+    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         BlockPos bpos = target.getBlockPos(room);
-        double cost = state.getPlayerPos().distanceTo(new Vec3(bpos.getX(), bpos.getY(), bpos.getZ()));
-        state.setPlayerPos(new Vec3(bpos.getX(), bpos.getY(), bpos.getZ()));
-        return cost;
-//        if (poses != null) {
-//            return poses.getCost();
+//        for (EnumFacing value : EnumFacing.VALUES) {
+//            if (room.getCachedWorld().getBlockState(bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ())).getBlock() == Blocks.air) {
+//                bpos = bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ());
+//                break;
+//            }
 //        }
-//        return 0.0;
+        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
+                state.getOpenMechanics()+"-"+bpos
+        );
+        AStarFineGridStonkingBetter a = null;
+        if (executor == null) {
+            executor = new PathfinderExecutor(a = new AStarFineGridStonkingBetter(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
+                    .addVector(0.5, 0, 0.5), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
+            memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
+            System.out.println("Generating new executor");
+        }
+        executor.setTarget(state.getPlayerPos());
+        state.setPlayerPos(new Vec3(bpos.getX()+0.5, bpos.getY(), bpos.getZ()+0.5));
+        long start = System.currentTimeMillis();
+        double result = executor.findCost();
+        long end= System.currentTimeMillis();
+        if (a != null)
+        {
+            System.out.println("Generation took "+(end-start)+"ms");
+//            System.out.println(a.getNodeMap().size());
+            if (Double.isNaN(result)) {
+                FeatureRegistry.SECRET_DAGS.setBetter(a);
+                FeatureRegistry.SECRET_DAGS.setFrom(new BlockPos(executor.getTarget()));
+            }
+        }
+        System.out.println(executor.getTarget()+"  to "+bpos+" vs "+result);
+
+        if (Double.isNaN(result)) return 999999999;
+        return result;
     }
 }

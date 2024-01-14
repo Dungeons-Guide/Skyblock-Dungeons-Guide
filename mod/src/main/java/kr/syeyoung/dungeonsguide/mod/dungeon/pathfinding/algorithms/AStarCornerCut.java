@@ -33,7 +33,7 @@ import java.util.*;
 public class AStarCornerCut  implements IPathfinder {
     private int lastSx, lastSy, lastSz;
     private int dx, dy, dz;
-    private DungeonRoom dungeonRoom;
+    private IWorld dungeonRoom;
 
 
     private Node startNode;
@@ -42,7 +42,7 @@ public class AStarCornerCut  implements IPathfinder {
     @Getter
     private AxisAlignedBB destinationBB;
     @Override
-    public void init(DungeonRoom dungeonRoom, Vec3 destination) {
+    public void init(IWorld dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
 
         this.dx = (int) (destination.xCoord * 2);
@@ -168,6 +168,20 @@ public class AStarCornerCut  implements IPathfinder {
         return new PathfindResult(route, goalNode.g);
     }
 
+
+
+    @Override
+    public double getCost(Vec3 from) {
+        int lastSx = (int) Math.round(from.xCoord * 2);
+        int lastSy = (int) Math.round(from.yCoord * 2);
+        int lastSz = (int) Math.round(from.zCoord * 2);
+
+
+        Node goalNode = openNode(lastSx, lastSy, lastSz);
+
+        if (goalNode.parent == null) return Double.NaN;
+        return goalNode.g;
+    }
 
     private int manhatten(int x, int y, int z) {return Math.abs(x)+ Math.abs(y)+ Math.abs(z);}
     private float distSq(float x, float y, float z) {

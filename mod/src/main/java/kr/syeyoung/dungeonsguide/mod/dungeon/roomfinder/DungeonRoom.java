@@ -63,7 +63,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Getter
-public class DungeonRoom {
+public class DungeonRoom implements IWorld {
     private final Set<Point> unitPoints;
     private final short shape;
     private final byte color;
@@ -707,6 +707,36 @@ public class DungeonRoom {
         NodeState val = calculateIsBlocked(x, y, z);
         whole.store(dx,dy,dz, val.ordinal());
         return val;
+    }
+
+    @Override
+    public int getXwidth() {
+        return lenx;
+    }
+
+    @Override
+    public int getYwidth() {
+        return leny;
+    }
+
+    @Override
+    public int getZwidth() {
+        return lenz;
+    }
+
+    @Override
+    public int getMinX() {
+        return minx;
+    }
+
+    @Override
+    public int getMinY() {
+        return miny;
+    }
+
+    @Override
+    public int getMinZ() {
+        return minz;
     }
 
 

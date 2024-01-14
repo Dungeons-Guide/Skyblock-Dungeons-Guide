@@ -18,21 +18,22 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.route;
 
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
+import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -45,16 +46,16 @@ public class ActionRoute {
     }
 
     @Getter
-    private int current;
+    private transient int current;
     @Getter
-    private List<AbstractAction> actions;
+    private transient List<AbstractAction> actions;
 
     @Getter
     private final ActionDAG dag;
     @Getter
-    private int dagId;
+    private transient int dagId;
     @Getter
-    private List<ActionDAGNode> order;
+    private transient List<ActionDAGNode> order;
 
     @Getter
     private int[] nodeStatus;
@@ -78,40 +79,55 @@ public class ActionRoute {
         recalculatePath();
     }
 
+    @Getter
+    private boolean calculating = false;
+
     private void recalculatePath() {
-        int cnt = 0;
-        ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
-        List<ActionDAGNode> minCostRoute = null;
-        double minCost = Double.POSITIVE_INFINITY;
-
-        this.nodeStatus = dag.getNodeStatus(dag.getCount() - 1);
-        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
-            cnt ++;
-
-            RoomState roomState = new RoomState();
-            roomState.setPlayerPos(Minecraft.getMinecraft().thePlayer.getPositionVector());
-            double cost = 0;
-            for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom);
-            }
-            if (cost < minCost) {
-                minCost = cost;
-                minCostRoute = actionDAGNodes;
-            }
-
-            if (cnt > 100000) break;
-        }
-        if (minCostRoute == null) {
-            System.out.println(minCostRoute);
-            minCostRoute = new ArrayList<>();
-        }
-        this.dagId = dag.getCount() - 1;
-        order = minCostRoute;
-        ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost");
-
-        actions = minCostRoute.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
-        actions.add(new ActionComplete());
+        calculating = true;
         current = 0;
+        actions = new ArrayList<>();
+        actions.add(new ActionRoot());
+        new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+                    int cnt = 0;
+                    ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
+                    List<ActionDAGNode> minCostRoute = null;
+                    double minCost = Double.POSITIVE_INFINITY;
+
+                    this.nodeStatus = dag.getNodeStatus(dag.getCount() - 1);
+                    Map<String, Object> memoization = new HashMap<>();
+                    Vec3 start = Minecraft.getMinecraft().thePlayer.getPositionVector();
+
+                    for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
+                        cnt ++;
+
+                        RoomState roomState = new RoomState();
+                        roomState.setPlayerPos(start);
+                        double cost = 0;
+                        for (ActionDAGNode actionDAGNode : actionDAGNodes) {
+                            cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
+                        }
+                        System.out.println(cost);
+                        if (cost < minCost) {
+                            minCost = cost;
+                            minCostRoute = actionDAGNodes;
+                        }
+
+                        if (cnt > 10000) break;
+                    }
+                    if (minCostRoute == null) {
+                        System.out.println(minCostRoute);
+                        minCostRoute = new ArrayList<>();
+                    }
+                    this.dagId = dag.getCount() - 1;
+                    order = minCostRoute;
+                    ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost");
+
+                    List<AbstractAction> nodes = minCostRoute.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
+                    nodes.add(new ActionComplete());
+                    actions = nodes;
+                    current = 0;
+                    calculating = false;
+                }).start();
     }
     public AbstractAction next() {
         if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))
@@ -140,12 +156,15 @@ public class ActionRoute {
 
 
     public void onPlayerInteract(PlayerInteractEvent event) {
+        if (calculating) return;
         getCurrentAction().onPlayerInteract(dungeonRoom, event, actionRouteProperties );
     }
     public void onLivingDeath(LivingDeathEvent event) {
+        if (calculating) return;
         getCurrentAction().onLivingDeath(dungeonRoom, event, actionRouteProperties );
     }
     public void onRenderWorld(float partialTicks, boolean flag) {
+        if (calculating) return;
 
 
         if (current -1 >= 0) {
@@ -164,10 +183,12 @@ public class ActionRoute {
 
     private final Function<DungeonRoom, Boolean> checkCanCancel;
     public void onRenderScreen(float partialTicks) {
+        if (calculating) return;
         getCurrentAction().onRenderScreen(dungeonRoom, partialTicks, actionRouteProperties);
     }
 
     public void onTick() {
+        if (calculating) return;
         AbstractAction currentAction = getCurrentAction();
 
         currentAction.onTick(dungeonRoom, actionRouteProperties);
@@ -199,6 +220,7 @@ public class ActionRoute {
     }
 
     public void onLivingInteract(PlayerInteractEntityEvent event) {
+        if (calculating) return;
         getCurrentAction().onLivingInteract(dungeonRoom, event, actionRouteProperties );
     }
 
