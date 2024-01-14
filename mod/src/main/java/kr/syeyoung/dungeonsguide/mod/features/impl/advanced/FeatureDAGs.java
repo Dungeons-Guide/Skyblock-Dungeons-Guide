@@ -123,42 +123,13 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                     lvCount.put(pop.getMaximumDepth(), defaultLvCount);
                 }
                 locations.put(pop, new Point(
-                        lvCount.get(pop.getMaximumDepth())*50, pop.getMaximumDepth() * 50
+                        lvCount.get(pop.getMaximumDepth())*50, pop.getMaximumDepth() * 50 + 20
                 ));
                 lvCount.put(pop.getMaximumDepth(), lvCount.get(pop.getMaximumDepth())+1);
                 if (maxLvCount < lvCount.get(pop.getMaximumDepth())) maxLvCount = lvCount.get(pop.getMaximumDepth());
             }
             defaultLvCount = maxLvCount;
         }
-    }
-
-    @Getter
-    @Setter
-    private AStarFineGridStonkingBetter better;
-    @Getter @Setter
-    private BlockPos from;
-
-    @DGEventHandler
-    public void renderWorldLast(RenderWorldLastEvent ev) {
-        if (better == null) return;
-        RenderUtils.highlightBox(new AxisAlignedBB(
-                better.getDestinationBB().minX/2, better.getDestinationBB().minY/2, better.getDestinationBB().minZ/2,
-                better.getDestinationBB().maxX/2, better.getDestinationBB().maxY/2, better.getDestinationBB().maxZ/2
-        ), Color.green, ev.partialTicks, false);
-        RenderUtils.highlightBlock(from, Color.red, ev.partialTicks, false);
-//        for (AStarFineGridStonkingBetter.Node value : better.getNodeMap().values()) {
-//            AStarFineGridStonkingBetter.Node.Coordinate allInBox = value.getCoordinate();
-//            if (Minecraft.getMinecraft().thePlayer.getDistanceSq(allInBox.getX() / 2.0, allInBox.getY() / 2.0, allInBox.getZ() / 2.0) > 3) continue;
-//            double offset = value.getCoordinate().isStonk() ? 0.1 : 0;
-//
-//            RenderUtils.highlightBox(
-//                    AxisAlignedBB.fromBounds(
-//                            allInBox.getX() / 2.0 - 0.05, allInBox.getY() / 2.0 - 0.05 + offset, allInBox.getZ() / 2.0 - 0.05,
-//                            allInBox.getX() / 2.0 + 0.05, allInBox.getY() / 2.0 + 0.05 + offset, allInBox.getZ() / 2.0 + 0.05
-//                    ), value.getParent() == null ? Color.pink : value.getCoordinate().isStonk() ? Color.yellow : Color.blue, ev.partialTicks, false);
-////            if (value.getParent() == null) System.out.println(value.getG());
-//        }
-
     }
 
     @Override
@@ -178,6 +149,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         // we got all positions in above tick.
 
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
+        fr.drawString("Black=Disabled / Pink=Current / Dark Green=Parent Completed / Green=Completed", 0 ,0, 0xFFFFFF00);
         GL11.glLineWidth(5.0f);
 
         for (ActionRoute value : roomProcessor.getPath().values()) {

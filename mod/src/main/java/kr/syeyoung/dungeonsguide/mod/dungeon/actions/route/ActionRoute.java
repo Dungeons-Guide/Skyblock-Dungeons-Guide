@@ -88,39 +88,61 @@ public class ActionRoute {
         actions = new ArrayList<>();
         actions.add(new ActionRoot());
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-                    int cnt = 0;
-                    ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
-                    List<ActionDAGNode> minCostRoute = null;
-                    double minCost = Double.POSITIVE_INFINITY;
-
-                    this.nodeStatus = dag.getNodeStatus(dag.getCount() - 1);
-                    Map<String, Object> memoization = new HashMap<>();
                     Vec3 start = Minecraft.getMinecraft().thePlayer.getPositionVector();
 
-                    for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dag.getCount() - 1)) {
-                        cnt ++;
 
-                        RoomState roomState = new RoomState();
-                        roomState.setPlayerPos(start);
-                        double cost = 0;
-                        for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                            cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
-                        }
-                        System.out.println(cost);
-                        if (cost < minCost) {
-                            minCost = cost;
-                            minCostRoute = actionDAGNodes;
+                    int cnt = 0;
+                    ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
+
+                    List<ActionDAGNode> minCostRoute = null;
+                    double minCost = Double.POSITIVE_INFINITY;
+                    int minDagId = -1;
+
+                    for (int dagId = 0; dagId < dag.getCount(); dagId ++) {
+                        Map<String, Object> memoization = new HashMap<>();
+
+                        int minCount = 0;
+                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
+                            minCount++;
+                            if (minCount > 4) {
+                                break;
+                            }
                         }
 
-                        if (cnt > 10000) break;
+                        if (minCount > 4) {
+                            memoization.put("stupidheuristic", true);
+                        }
+
+
+                        this.nodeStatus = dag.getNodeStatus(dagId);
+
+
+                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
+                            cnt++;
+
+                            RoomState roomState = new RoomState();
+                            roomState.setPlayerPos(start);
+                            double cost = 0;
+                            for (ActionDAGNode actionDAGNode : actionDAGNodes) {
+                                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
+                            }
+                            System.out.println(cost);
+                            if (cost < minCost) {
+                                minCost = cost;
+                                minCostRoute = actionDAGNodes;
+                                minDagId = dagId;
+                            }
+
+                            if (cnt > 10000) break;
+                        }
+                        if (minCostRoute == null) {
+                            System.out.println(minCostRoute);
+                            minCostRoute = new ArrayList<>();
+                        }
                     }
-                    if (minCostRoute == null) {
-                        System.out.println(minCostRoute);
-                        minCostRoute = new ArrayList<>();
-                    }
-                    this.dagId = dag.getCount() - 1;
+                    this.dagId = minDagId;
                     order = minCostRoute;
-                    ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost");
+                    ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost with Id "+dagId);
 
                     List<AbstractAction> nodes = minCostRoute.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
                     nodes.add(new ActionComplete());

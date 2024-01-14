@@ -218,32 +218,25 @@ public class ActionMove extends AbstractAction {
 //                break;
 //            }
 //        }
+
+        if (memoization.containsKey("stupidheuristic")) {
+            double cost = state.getPlayerPos().distanceTo(new Vec3(bpos));
+            state.setPlayerPos(new Vec3(bpos));
+            return cost;
+        }
+
         PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
                 state.getOpenMechanics()+"-"+bpos
         );
         AStarFineGridStonkingBetter a = null;
         if (executor == null) {
-            executor = new PathfinderExecutor(a = new AStarFineGridStonkingBetter(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
+            executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
                     .addVector(0.5, 0, 0.5), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
-            System.out.println("Generating new executor");
         }
         executor.setTarget(state.getPlayerPos());
         state.setPlayerPos(new Vec3(bpos.getX()+0.5, bpos.getY(), bpos.getZ()+0.5));
-        long start = System.currentTimeMillis();
         double result = executor.findCost();
-        long end= System.currentTimeMillis();
-        if (a != null)
-        {
-            System.out.println("Generation took "+(end-start)+"ms");
-//            System.out.println(a.getNodeMap().size());
-            if (Double.isNaN(result)) {
-                FeatureRegistry.SECRET_DAGS.setBetter(a);
-                FeatureRegistry.SECRET_DAGS.setFrom(new BlockPos(executor.getTarget()));
-            }
-        }
-        System.out.println(executor.getTarget()+"  to "+bpos+" vs "+result);
-
         if (Double.isNaN(result)) return 999999999;
         return result;
     }
