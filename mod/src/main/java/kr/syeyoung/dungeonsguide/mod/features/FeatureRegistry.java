@@ -248,7 +248,7 @@ public class FeatureRegistry {
     // Misc
 
     public static final FeatureCollectDiagnostics COLLECT_ERRORS = register(new FeatureCollectDiagnostics());
-    public static final FeatureCollectDungeonRooms COLLECT_DUNGEON_ROOMS = register(new FeatureCollectDungeonRooms());
+//    public static final FeatureCollectDungeonRooms COLLECT_DUNGEON_ROOMS = register(new FeatureCollectDungeonRooms());
 
     // HUD
     public static final FeatureAbilityCooldown ETC_ABILITY_COOLDOWN = register(new FeatureAbilityCooldown());
