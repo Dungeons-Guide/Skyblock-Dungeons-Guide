@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2021  cyoung06
+ * Copyright (C) 2023  Linnea Gräf
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -21,42 +21,48 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.datarend
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.playerprofile.PlayerProfile;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
-import net.minecraft.client.gui.ScaledResolution;
 
 import java.awt.*;
-import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
-public class DataRendererTalismans extends DataRendererTalismanBase {
+public class DataRendererMagicPower extends DataRendererTalismanBase {
+
+    public int getMagicPower(int[] rarityTallies) {
+        int magicPower = 0;
+        for (Rarity value : Rarity.values()) {
+            magicPower += rarityTallies[value.getIndex()] * value.getMagicPower();
+        }
+        return magicPower;
+    }
+
+    private String renderMagicPower(int magicPower) {
+        return "§eMP §f" + magicPower;
+    }
+
+    private String renderMagicPower(PlayerProfile playerProfile) {
+        return getTalismanRarityTallies(playerProfile)
+                .map(this::getMagicPower)
+                .map(this::renderMagicPower)
+                .orElse("§eMP §cAPI DISABLED");
+    }
 
     @Override
     public Dimension renderData(PlayerProfile playerProfile) {
-        String str = "";
-        int[] rawData = getTalismanRarityTallies(playerProfile).orElse(null);
-        if (rawData != null)
-            for (Rarity r : Rarity.values()) {
-                str = r.getColor() + rawData[r.getIndex()] +" "+ str;
-            }
-
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        if (rawData == null)
-            fr.drawString("§eTalis §cAPI DISABLED", 0,0,-1);
-        else
-            fr.drawString("§eTalis §f"+str, 0,0,-1);
+        fr.drawString(renderMagicPower(playerProfile), 0, 0, -1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
 
     @Override
     public Dimension renderDummy() {
-        String str = "";
-        for (Rarity r : Rarity.values()) {
-            str = r.getColor() + (r.getIndex()+5)*2+" "+str;
-        }
-
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
-        fr.drawString("§eTalis §f" + str, 0,0,-1);
+        fr.drawString(renderMagicPower(699), 0, 0, -1);
         return new Dimension(100, fr.FONT_HEIGHT);
     }
+
     @Override
     public Dimension getDimension() {
         return new Dimension(100, Minecraft.getMinecraft().fontRendererObj.FONT_HEIGHT);
@@ -64,15 +70,7 @@ public class DataRendererTalismans extends DataRendererTalismanBase {
 
     @Override
     public List<String> onHover(PlayerProfile playerProfile) {
-        int[] rawData = getTalismanRarityTallies(playerProfile).orElse(null);
-        if (rawData == null) return null;
-        ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
-        List<String> list = new ArrayList<>();
-
-        for (Rarity r : Rarity.values()) {
-            list.add(r.getColor()+r.name()+"§7: §e"+rawData[r.getIndex()]);
-        }
-        return list;
+        return Collections.singletonList(renderMagicPower(playerProfile));
     }
 
 

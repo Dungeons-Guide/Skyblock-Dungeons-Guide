@@ -167,13 +167,14 @@ tasks.assemble.dependsOn tasks.remapJar
 
 task buildStandaloneJars {}
 
+def shouldSign = project.findProperty("dg.dosign") == "true"
 signing {
     useGpgCmd()
-    if (project.findProperty("dg.dosign") == "true"){
+    if (shouldSign) {
         sign configurations.archives
         sign standaloneDevJar
         sign standaloneConsumerJar
     }
 }
-
-tasks.buildStandaloneJars.dependsOn tasks.signStandaloneConsumerJar, tasks.signStandaloneDevJar
+if (shouldSign)
+    tasks.buildStandaloneJars.dependsOn tasks.signStandaloneConsumerJar, tasks.signStandaloneDevJar
