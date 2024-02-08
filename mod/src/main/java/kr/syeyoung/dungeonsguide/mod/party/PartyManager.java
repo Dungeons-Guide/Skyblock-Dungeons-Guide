@@ -539,7 +539,7 @@ public class PartyManager {
             String token = object.getString("token");
             if (partyContext == null) {
                 requestPartyList((pc) -> {
-                    boolean contains = pc.getPartyRawMembers().contains(playerName);
+                    boolean contains = pc != null && pc.getPartyRawMembers().contains(playerName);
                     if (!contains) {
                         StompManager.getInstance().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
                     } else {
@@ -553,7 +553,7 @@ public class PartyManager {
                     StompManager.getInstance().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
                 } else {
                     requestPartyList((pc) -> {
-                        boolean contains = pc.getPartyRawMembers().contains(playerName);
+                        boolean contains = pc != null && pc.getPartyRawMembers().contains(playerName);
                         if (!contains) {
                             StompManager.getInstance().send(new StompPayload().payload(new JSONObject().put("status", "failure").put("token", token).toString()).destination("/app/party.check.resp"));
                         } else {
