@@ -31,6 +31,8 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.util.ChatComponentText;
+import net.minecraft.util.IChatComponent;
 import net.minecraftforge.client.event.ClientChatReceivedEvent;
 
 public class FeatureThornSpiritBowTimer extends TextHUDFeature {
@@ -93,7 +95,8 @@ public class FeatureThornSpiritBowTimer extends TextHUDFeature {
     @DGEventHandler
     public void onTitle(TitleEvent event) {
         if (!(SkyblockStatus.isOnDungeon() && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext() != null && DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getBossfightProcessor() instanceof BossfightProcessorThorn)) return;
-        if (event.getPacketTitle().getMessage().getFormattedText().contains("picked up")) {
+        IChatComponent text = event.getPacketTitle().getMessage();
+        if (text != null && text.getFormattedText() != null && text.getFormattedText().contains("picked up")) {
             time = System.currentTimeMillis() + 21000;
         }
     }
