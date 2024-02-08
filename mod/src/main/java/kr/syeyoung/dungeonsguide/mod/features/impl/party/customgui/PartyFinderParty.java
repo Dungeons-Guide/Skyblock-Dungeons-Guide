@@ -68,8 +68,9 @@ public class PartyFinderParty {
         PartyFinderParty party = new PartyFinderParty();
         for (int i = 0; i < tagList.tagCount(); i++) {
             String line = tagList.getStringTagAt(i);
-            if (line.startsWith("§7§7Note:")) {
-                party.note = line.substring(12).trim();
+            if (line.startsWith("§7§7Note: ")) {
+                System.out.println(line);
+                party.note = line.substring(10).trim();
                 if (i + 1 < tagList.tagCount()) {
                     String nextLine = tagList.getStringTagAt(i + 1);
                     if (!nextLine.contains("§7") && !nextLine.replaceAll("§.| ", "").isEmpty()) {
