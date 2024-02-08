@@ -234,7 +234,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (roompt == null) return;;
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
-        if (dungeonRoom != null) {
+        if (dungeonRoom != null && roomInfoMap.containsKey(dungeonRoom)) {
             roomInfoMap.get(dungeonRoom).entityData.put(event.entity.getEntityId(), entityData);
         }
     }
@@ -457,6 +457,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
                 System.out.println("WTF!!!");
             }
             RoomInfo roomInfo = roomInfoMap.get(dungeonRoomListEntry.getKey());
+            if (roomInfo  == null) continue;
             roomInfo.blockUpdates.add(new RoomInfo.BlockUpdate(dungeonRoomListEntry.getValue().stream().map(it -> new RoomInfo.BlockUpdate.BlockUpdateData(it.getFirst(), it.getSecond())).collect(Collectors.toList()), System.currentTimeMillis()));
             roomInfo.minX = dungeonRoomListEntry.getKey().getMin().getX();
             roomInfo.minZ = dungeonRoomListEntry.getKey().getMin().getZ();
