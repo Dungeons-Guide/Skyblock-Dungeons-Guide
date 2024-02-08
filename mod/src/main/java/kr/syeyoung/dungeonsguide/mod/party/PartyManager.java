@@ -461,15 +461,20 @@ public class PartyManager {
 
     }
     private void joinedParty() {
-        JSONArray jsonArray = new JSONArray();
-        for (String member : getPartyContext().getPartyRawMembers()) {
-            jsonArray.put(member);
-        }
-        JSONObject object = new JSONObject();
-        object.put("members", jsonArray);
-        StompManager.getInstance().send(new StompPayload().payload(object.toString()).destination("/app/party.join"));
+        // TODO: Figure out what to do if stomp faield
+        if (StompManager.getInstance().isStompConnected()) {
+            JSONArray jsonArray = new JSONArray();
+            for (String member : getPartyContext().getPartyRawMembers()) {
+                jsonArray.put(member);
+            }
+            JSONObject object = new JSONObject();
+            object.put("members", jsonArray);
+            StompManager.getInstance().send(new StompPayload().payload(object.toString()).destination("/app/party.join"));
 
-        getPartyContext().setPartyID("!@#!@#!@#..........FETCHING..........$!@$!@$!@$"+UUID.randomUUID().toString());
+            getPartyContext().setPartyID("!@#!@#!@#..........FETCHING..........$!@$!@$!@$"+UUID.randomUUID().toString());
+        } else {
+            getPartyContext().setPartyID("!@#!@#!@#..........UNABLE TO FETCH..........$!@$!@$!@$"+UUID.randomUUID().toString());
+        }
     }
 
     public boolean isLeader() {
