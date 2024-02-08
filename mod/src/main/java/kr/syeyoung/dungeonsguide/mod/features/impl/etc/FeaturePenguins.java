@@ -117,6 +117,10 @@ public class FeaturePenguins extends SimpleFeature {
         if (!models.containsKey(modelName)) {
             modelName = "penguin";
         }
+        if (!models.containsKey(modelName)) {
+            modelName = null;
+            return;
+        }
 
 
 
