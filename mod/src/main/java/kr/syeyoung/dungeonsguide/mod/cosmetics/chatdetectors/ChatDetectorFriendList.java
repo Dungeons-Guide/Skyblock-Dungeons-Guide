@@ -45,7 +45,7 @@ public class ChatDetectorFriendList implements IChatDetector {
         int len = 0;
         List<ReplacementContext> replacementContexts = new ArrayList<>();
         for (String s : strip.split("\n")) {
-            if (s.charAt(0) == '-' || s.charAt(0) == ' ') {
+            if (s.length() == 0 || s.charAt(0) == '-' || s.charAt(0) == ' ') {
                 len += s.length()+1;
                 continue;
             }
