@@ -1,69 +1,70 @@
 #!/usr/bin/python3
 import json
 import re
+#
+# str = ''
+# with open('partymessages.txt', 'r') as f:
+#     str = f.read()
+#
+# splitted = str.split('***************************')
+#
+# dict = {}
+#
+# mapping = [
+#     'transfer_left',
+#     'disband_intentional',
+#     'not_in_party_1',
+#     'not_in_party_2',
+#     'not_in_party_3',
+#     'not_in_party_4_channel',
+#     'invite',
+#     'someone_join',
+#     'party_channel',
+#     'all_invite_on',
+#     'all_invite_off',
+#     'invite_no_player',
+#     'invite_offline_player',
+#     'promote_moderator',
+#     'promote_leader',
+#     'demote_moderator',
+#     'transfer',
+#     'someone_left',
+#     'disband_noone',
+#     'not_in_party_5_channel_moved',
+#     'self_invite',
+#     [None, 'accept_invite_leader', None, 'accept_invite_members', None],
+#     'invite_noperms',
+#     'someone_kick',
+#     'self_kick',
+#     'members',
+#     'self_left'
+# ]
+#
+# currentLanguage = None
+# currentDict = {}
+# cnt = 0
+# for lines in splitted:
+#     trimmed = lines.strip()
+#     if '$$LANGUAGE$$: ' in trimmed:
+#         currentLanguage = trimmed.split('$$LANGUAGE$$: ')[1].strip()
+#         currentDict = {}
+#         dict[currentLanguage] = currentDict
+#         cnt = 0
+#     else:
+#         print(trimmed)
+#         if isinstance(mapping[cnt], list):
+#             list2 = [str.strip() for str in trimmed.split('> ')[1:]]
+#             for i in range(0, len(list2)):
+#                 if mapping[cnt][i] is not None:
+#                     currentDict[mapping[cnt][i]] = list2[i]
+#
+#         else:
+#             currentDict[mapping[cnt]] = [str.strip() for str in trimmed.split('> ')[1:] if not (str.strip() == '§9§m-----------------------------------------------------§r' or str.strip() == '§9§m-----------------------------§r')]
+#         cnt += 1
 
-str = ''
-with open('partymessages.txt', 'r') as f:
-    str = f.read()
-
-splitted = str.split('***************************')
-
-dict = {}
-
-mapping = [
-    'transfer_left',
-    'disband_intentional',
-    'not_in_party_1',
-    'not_in_party_2',
-    'not_in_party_3',
-    'not_in_party_4_channel',
-    'invite',
-    'someone_join',
-    'party_channel',
-    'all_invite_on',
-    'all_invite_off',
-    'invite_no_player',
-    'invite_offline_player',
-    'promote_moderator',
-    'promote_leader',
-    'demote_moderator',
-    'transfer',
-    'someone_left',
-    'disband_noone',
-    'not_in_party_5_channel_moved',
-    'self_invite',
-    [None, 'accept_invite_leader', None, 'accept_invite_members', None],
-    'invite_noperms',
-    'someone_kick',
-    'self_kick',
-    'members',
-    'self_left'
-]
-
-currentLanguage = None
-currentDict = {}
-cnt = 0
-for lines in splitted:
-    trimmed = lines.strip()
-    if '$$LANGUAGE$$: ' in trimmed:
-        currentLanguage = trimmed.split('$$LANGUAGE$$: ')[1].strip()
-        currentDict = {}
-        dict[currentLanguage] = currentDict
-        cnt = 0
-    else:
-        print(trimmed)
-        if isinstance(mapping[cnt], list):
-            list2 = [str.strip() for str in trimmed.split('> ')[1:]]
-            for i in range(0, len(list2)):
-                if mapping[cnt][i] is not None:
-                    currentDict[mapping[cnt][i]] = list2[i]
-
-        else:
-            currentDict[mapping[cnt]] = [str.strip() for str in trimmed.split('> ')[1:] if not (str.strip() == '§9§m-----------------------------------------------------§r' or str.strip() == '§9§m-----------------------------§r')]
-        cnt += 1
-
-with open('process1.json', 'w') as f:
-    json.dump(dict, f, indent=4, ensure_ascii=False)
+# with open('process1.json', 'w') as f:
+#     json.dump(dict, f, indent=4, ensure_ascii=False)
+dict = json.load(open('process1.json', 'r'))
 
 groups = {
     'not_in_party': ['not_in_party_1', 'not_in_party_2', 'not_in_party_3', 'not_in_party_4_channel', 'not_in_party_5_channel_moved', 'disband_intentional', 'disband_noone', 'self_kick', 'self_left'],

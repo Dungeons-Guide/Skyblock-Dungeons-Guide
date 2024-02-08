@@ -311,10 +311,10 @@
             "§eDe party is overgebracht naar §r§b[MVP§r§a+§r§b] syeyoung §r§edoor §r§b[MVP§r§0+§r§b] Azael_Nya§r"
         ],
         "someone_left": [
-            "§cThe party was disbanded because all invites expired and the party was empty.§r"
+            "§b[MVP§r§0+§r§b] Azael_Nya §r§everliet de party.§r"
         ],
         "disband_noone": [
-            "§b[MVP§r§0+§r§b] Azael_Nya §r§everliet de party.§r"
+            "§cThe party was disbanded because all invites expired and the party was empty.§r"
         ],
         "not_in_party_5_channel_moved": [
             "§cJe zit niet in een party en bent verplaatst naar het openbare kanaal.§r"
@@ -568,10 +568,10 @@
             "§b[MVP§r§0+§r§b] Azael_Nya§r§e将组队移交给了§r§b[MVP§r§a+§r§b] syeyoung§r"
         ],
         "someone_left": [
-            "§c因组队中没有成员， 且所有邀请均已过期， 组队已被解散。§r"
+            "§b[MVP§r§0+§r§b] Azael_Nya§r§e离开了组队。§r"
         ],
         "disband_noone": [
-            "§b[MVP§r§0+§r§b] Azael_Nya§r§e离开了组队。§r"
+            "§c因组队中没有成员， 且所有邀请均已过期， 组队已被解散。§r"
         ],
         "not_in_party_5_channel_moved": [
             "§c你不在任何组队中，故被移至公共频道。§r"
@@ -1860,10 +1860,10 @@
             "§eΤο party μεταφέρθηκε στον §r§b[MVP§r§a+§r§b] syeyoung §r§eαπό τον §r§b[MVP§r§0+§r§b] Azael_Nya§r"
         ],
         "someone_left": [
-            "§cΤο party διαλύθηκε επειδή όλες οι προσκλήσεις έληξαν και το party ήταν άδειο.§r"
+            "§eΟ §r§b[MVP§r§0+§r§b] Azael_Nya §r§eβγήκε από το party.§r"
         ],
         "disband_noone": [
-            "§eΟ §r§b[MVP§r§0+§r§b] Azael_Nya §r§eβγήκε από το party.§r"
+            "§cΤο party διαλύθηκε επειδή όλες οι προσκλήσεις έληξαν και το party ήταν άδειο.§r"
         ],
         "not_in_party_5_channel_moved": [
             "§cΔεν είσαι σε party οπότε μετακινήθηκες στο κανάλι ΟΛΑ.§r"
@@ -1946,10 +1946,10 @@
             "§eГрупу було передано користувачу §r§b[MVP§r§a+§r§b] syeyoung §r§eгравцем §r§b[MVP§r§0+§r§b] Azael_Nya§r"
         ],
         "someone_left": [
-            "§cThe party was disbanded because all invites expired and the party was empty.§r"
+            "§b[MVP§r§0+§r§b] Azael_Nya §r§eзалишив групу.§r"
         ],
         "disband_noone": [
-            "§b[MVP§r§0+§r§b] Azael_Nya §r§eзалишив групу.§r"
+            "§cThe party was disbanded because all invites expired and the party was empty.§r"
         ],
         "not_in_party_5_channel_moved": [
             "§cВи не в групі і були переміщені до ЗАГАЛЬНОГО каналу.§r"
