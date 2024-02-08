@@ -232,7 +232,7 @@ public class FeatureRegistry {
 
 
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
-    public static final FeatureChestPrice BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
+//    public static final FeatureChestPrice BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
     public static final FeatureEpicCountdown EPIC_COUNTDOWN = register(new FeatureEpicCountdown());
 
