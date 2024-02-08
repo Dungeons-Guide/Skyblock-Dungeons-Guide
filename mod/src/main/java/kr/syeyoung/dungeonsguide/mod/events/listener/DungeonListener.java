@@ -51,6 +51,7 @@ import net.minecraft.entity.Entity;
 import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S21PacketChunkData;
+import net.minecraft.network.play.server.S26PacketMapChunkBulk;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -550,16 +551,31 @@ public class DungeonListener {
     @SubscribeEvent
     public void onChunkUpdate(PacketProcessedEvent.Post post) {
         if (!SkyblockStatus.isOnDungeon()) return;
-        if (!(post.packet instanceof S21PacketChunkData)) return;
-        S21PacketChunkData p = (S21PacketChunkData) post.packet;
-        if (p.func_149274_i() && p.getExtractedSize() == 0) return;
+        if (post.packet instanceof S21PacketChunkData) {
+            S21PacketChunkData p = (S21PacketChunkData) post.packet;
+            if (p.func_149274_i() && p.getExtractedSize() == 0) return; // IGNORE unloading chunks. :D
 
-        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
-        if (context != null) {
-            if (context.getScaffoldParser() != null) {
-                for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
-                    dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+            if (context != null) {
+                if (context.getScaffoldParser() != null) {
+                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
+                        dungeonRoom.chunkUpdate(p.getChunkX(), p.getChunkZ());
+                    }
+                }
+            }
+        } else if (post.packet instanceof S26PacketMapChunkBulk) {
+            S26PacketMapChunkBulk p = (S26PacketMapChunkBulk) post.packet;
+
+            DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+
+            if (context != null) {
+                if (context.getScaffoldParser() != null) {
+                    for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
+                        for (int i = 0; i < p.getChunkCount(); i++) {
+                            dungeonRoom.chunkUpdate(p.getChunkX(i), p.getChunkZ(i));
+                        }
+                    }
                 }
             }
         }
