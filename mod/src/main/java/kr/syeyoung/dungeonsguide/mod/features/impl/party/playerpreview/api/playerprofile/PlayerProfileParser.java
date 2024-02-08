@@ -239,6 +239,8 @@ public class PlayerProfileParser {
         }
         try {
             calculateLilyWeight(playerProfile, playerData);
+        } catch (NullPointerException e) {
+            e.printStackTrace();
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
