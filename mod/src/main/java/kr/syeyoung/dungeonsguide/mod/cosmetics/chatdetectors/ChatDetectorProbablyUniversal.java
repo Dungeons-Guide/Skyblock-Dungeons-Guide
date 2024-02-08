@@ -61,7 +61,7 @@ public class ChatDetectorProbablyUniversal implements IChatDetector {
                 }
                 continue label;
             }
-            if (potentialName.equalsIgnoreCase(Minecraft.getMinecraft().thePlayer.getName()))
+            if (potentialName.equalsIgnoreCase(Minecraft.getMinecraft().getSession().getUsername()))
                 return Collections.singletonList(new ReplacementContext(
                         name.length() - backLen, potentialName, null
                 ));
