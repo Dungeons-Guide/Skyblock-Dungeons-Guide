@@ -26,12 +26,10 @@ import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultingDelegatingTextS
 import kr.syeyoung.dungeonsguide.mod.features.richtext.NullTextStyle;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.TextHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.TextSpan;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
-import net.minecraft.scoreboard.Score;
-import net.minecraft.scoreboard.ScoreObjective;
-import net.minecraft.scoreboard.ScorePlayerTeam;
-import net.minecraft.scoreboard.Scoreboard;
 
 import java.util.Collection;
 
@@ -48,13 +46,12 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
     }
 
     public int getTimeElapsed() {
-        Scoreboard scoreboard = Minecraft.getMinecraft().theWorld.getScoreboard();
-        ScoreObjective objective = scoreboard.getObjectiveInDisplaySlot(1);
-        Collection<Score> scores = scoreboard.getSortedScores(objective);
+        ScoreboardManager scoreboardManager = ScoreboardManager.INSTANCE;
+        Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
+
         String time = "idkyet";
         for (Score sc:scores) {
-            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
-            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
+            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
             if (strippedLine.startsWith("Time Elapsed: ")) {
                 time = strippedLine.substring(14);
             }
@@ -93,13 +90,14 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
         actualBit.addChild(new TextSpan(getStyle("title"), "Time"));
         actualBit.addChild(new TextSpan(getStyle("discriminator"), "(Ig)"));
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
-        Scoreboard scoreboard = Minecraft.getMinecraft().theWorld.getScoreboard();
-        ScoreObjective objective = scoreboard.getObjectiveInDisplaySlot(1);
-        Collection<Score> scores = scoreboard.getSortedScores(objective);
+
+        ScoreboardManager scoreboardManager = ScoreboardManager.INSTANCE;
+        Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
+
+
         String time = "unknown";
         for (Score sc:scores) {
-            ScorePlayerTeam scorePlayerTeam = scoreboard.getPlayersTeam(sc.getPlayerName());
-            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(ScorePlayerTeam.formatPlayerName(scorePlayerTeam, sc.getPlayerName()))).trim();
+            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
             if (strippedLine.startsWith("Time Elapsed: ")) {
                 time = strippedLine.substring(14);
             }

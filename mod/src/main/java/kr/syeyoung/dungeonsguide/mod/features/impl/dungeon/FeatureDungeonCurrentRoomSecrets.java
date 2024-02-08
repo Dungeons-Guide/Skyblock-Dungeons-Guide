@@ -84,7 +84,6 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
         String text = chat.message.getFormattedText();
         if (!text.contains("/")) return;
 
-        System.out.println(text);
         int secretsIndex = text.indexOf("Secrets");
         if (secretsIndex != -1) {
             int theIndex = 0;
