@@ -48,19 +48,22 @@ public class Navigator extends AnnotatedExportOnlyWidget {
     public void openPage(Widget widget) {
         if (widget.equals(current)) return;
         widgets.push(current);
-        getDomElement().removeElement(getDomElement().getChildren().get(0));
+        if (getDomElement().getChildren().size() > 0)
+            getDomElement().removeElement(getDomElement().getChildren().get(0));
         getDomElement().addElement(widget.createDomElement(getDomElement()));
         current = widget;
     }
 
     public void setPageWithoutPush(Widget widget) {
-        getDomElement().removeElement(getDomElement().getChildren().get(0));
+        if (getDomElement().getChildren().size() > 0)
+            getDomElement().removeElement(getDomElement().getChildren().get(0));
         getDomElement().addElement(widget.createDomElement(getDomElement()));
         current = widget;
     }
 
     public void goBack() {
-        getDomElement().removeElement(getDomElement().getChildren().get(0));
+        if (getDomElement().getChildren().size() > 0)
+            getDomElement().removeElement(getDomElement().getChildren().get(0));
         Widget page;
         if (widgets.isEmpty())  page = child.getValue();
         else  page = widgets.pop();
