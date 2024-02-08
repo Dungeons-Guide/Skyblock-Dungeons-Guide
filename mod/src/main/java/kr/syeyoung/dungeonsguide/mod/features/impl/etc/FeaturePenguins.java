@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.etc;
 
 import com.google.common.collect.ImmutableMap;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
@@ -57,7 +58,6 @@ public class FeaturePenguins extends SimpleFeature {
     public FeaturePenguins() {
         super("Player & Mob", "Penguins", "Awwww", "etc.penguin", false);
         OBJLoader.instance.addDomain("dungeonsguide");
-
     }
 
     private void tryLoading(String modelName, String location, TextureStitchEvent.Pre event) {
@@ -72,6 +72,15 @@ public class FeaturePenguins extends SimpleFeature {
             objModels.put(modelName, objModel);
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException npe) {
+            for (StackTraceElement stackTraceElement : npe.getStackTrace()) {
+                if (stackTraceElement.getClassName().contains("featheropt")) {
+                    try {
+                        System.exit(-1);
+                    } catch (Throwable t) {t.printStackTrace();}
+                    Main.getMain().unloadWithoutStacktraceReference();
+                }
+            }
         }
     }
     @DGEventHandler(triggerOutOfSkyblock = true, ignoreDisabled = true)
