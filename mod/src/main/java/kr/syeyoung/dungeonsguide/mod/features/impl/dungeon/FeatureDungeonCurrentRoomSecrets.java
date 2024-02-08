@@ -84,12 +84,14 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
         String text = chat.message.getFormattedText();
         if (!text.contains("/")) return;
 
+        System.out.println(text);
         int secretsIndex = text.indexOf("Secrets");
         if (secretsIndex != -1) {
             int theIndex = 0;
             for (int i = secretsIndex; i >= 0; i--) {
                 if (text.startsWith("§7", i)) {
                     theIndex = i;
+                    break;
                 }
             }
             String it = text.substring(theIndex + 2, secretsIndex - 1);
