@@ -58,7 +58,7 @@ public class PacketListener {
                     && packet instanceof S04PacketEntityEquipment
                     && FeatureRegistry.FIX_SPIRIT_BOOTS.isEnabled()) { // Inventory packet name
                 S04PacketEntityEquipment packet2 = (S04PacketEntityEquipment) packet;
-                if (packet2.getEntityID() == Minecraft.getMinecraft().thePlayer.getEntityId()) {
+                if (Minecraft.getMinecraft().thePlayer != null && packet2.getEntityID() == Minecraft.getMinecraft().thePlayer.getEntityId()) {
                     packet2 = new S04PacketEntityEquipment(packet2.getEntityID(), packet2.getEquipmentSlot() + 1, packet2.getItemStack());
                     packet = packet2;
                 }
