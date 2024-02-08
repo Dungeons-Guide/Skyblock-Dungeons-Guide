@@ -84,12 +84,18 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
         int facing = (int) (thePlayer.rotationYaw + 45) % 360;
         if (facing < 0) facing += 360;
-        int real = dungeonRoom.getRoomMatcher() != null ?
-                (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4 : 4;
+        if (dungeonRoom.getRoomMatcher() == null) {
+            BlockPos offsetPoint = new BlockPos((int) thePlayer.posX - dungeonRoom.getMin().getX(),
+                    (int) thePlayer.posY-dungeonRoom.getMin().getY(),
+                    (int) thePlayer.posZ - dungeonRoom.getMin().getZ());
+            return new TextSpan(getStyle("coord"), "X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Room Not Matched");
+        } else {
+            int real = (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4;
 
-        OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos((int)thePlayer.posX, (int)thePlayer.posY, (int)thePlayer.posZ));
+            OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos((int) thePlayer.posX, (int) thePlayer.posY, (int) thePlayer.posZ));
 
-        return new TextSpan(getStyle("coord"), "X: "+offsetPoint.getX()+" Y: "+offsetPoint.getY()+" Z: "+offsetPoint.getZ()+" Facing: "+ FeatureRoomCoordDisplay.facing[real]);
+            return new TextSpan(getStyle("coord"), "X: " + offsetPoint.getX() + " Y: " + offsetPoint.getY() + " Z: " + offsetPoint.getZ() + " Facing: " + FeatureRoomCoordDisplay.facing[real]);
+        }
     }
 
 }
