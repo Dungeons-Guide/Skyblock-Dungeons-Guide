@@ -182,9 +182,9 @@ public class DungeonListener {
                         MinecraftForge.EVENT_BUS.post(new DungeonStartedEvent());
                     }
                 } catch (IllegalStateException e) {
-                    FeatureCollectDiagnostics.queueSendLogAsync(e);
-                    if (! "?".equals(e.getMessage())) {
+                    if (! "?".equals(e.getMessage()) && !"No door finder found".equals(e.getMessage())) {
                         e.printStackTrace();
+                        FeatureCollectDiagnostics.queueSendLogAsync(e);
                     }
                 }
             }
