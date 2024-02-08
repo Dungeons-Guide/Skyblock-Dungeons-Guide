@@ -274,6 +274,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (event.type == 2) return;
         if (!event.message.getFormattedText().contains(":")) {
             // this is not user message.
+            if (Minecraft.getMinecraft().thePlayer == null) return;
             BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
