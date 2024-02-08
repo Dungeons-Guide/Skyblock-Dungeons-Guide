@@ -75,7 +75,7 @@ public class WidgetTextStyleConfig extends AnnotatedImportOnlyWidget {
         List<Widget> list = new ArrayList<>();
         for (Map.Entry<String, DefaultingDelegatingTextStyle> stringDefaultingDelegatingTextStyleEntry : styles.entrySet()) {
             WidgetGroupButton widgetGroupButton = new WidgetGroupButton(this, stringDefaultingDelegatingTextStyleEntry.getKey(),
-                    stringDefaultingDelegatingTextStyleEntry.getValue(), wrapped.get(stringDefaultingDelegatingTextStyleEntry.getValue()));
+                    stringDefaultingDelegatingTextStyleEntry.getValue(), wrapped.getOrDefault(stringDefaultingDelegatingTextStyleEntry.getValue(), stringDefaultingDelegatingTextStyleEntry.getValue()));
             buttons.put(stringDefaultingDelegatingTextStyleEntry.getKey(), widgetGroupButton);
             list.add(widgetGroupButton);
         }
