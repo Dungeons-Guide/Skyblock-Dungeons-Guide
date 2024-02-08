@@ -83,7 +83,7 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
                 str += "phases: "+ StringUtils.join(context.getBossfightProcessor().getPhases(), ",");
             }
         } else {
-            str +="you're in the room... color/shape/rot " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape() + " / "+dungeonRoom.getRoomMatcher().getRotation()+"\n";
+            str +="you're in the room... color/shape/rot " + dungeonRoom.getColor() + " / " + dungeonRoom.getShape() + " / "+(dungeonRoom.getRoomMatcher() == null ? "idk" : dungeonRoom.getRoomMatcher().getRotation())+"\n";
             str +="room uuid: " + dungeonRoom.getDungeonRoomInfo().getUuid() + (dungeonRoom.getDungeonRoomInfo().isRegistered() ? "" : " (not registered)")+"\n";
             str +="room name: " + dungeonRoom.getDungeonRoomInfo().getName()+"\n";
             str +="room state / max secret: " + dungeonRoom.getCurrentState() + " / "+dungeonRoom.getTotalSecrets();
