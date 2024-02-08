@@ -252,7 +252,17 @@ public class DungeonRoom implements IWorld {
         getCachedWorld();
         buildRoom();
         buildDoors(doorsAndStates);
-        updateRoomProcessor();
+
+        Minecraft.getMinecraft().addScheduledTask(() -> {
+            try {
+                this.updateRoomProcessor();
+            } catch (Exception e) {
+                if (e.getMessage() == null || !e.getMessage().contains("Chunk not loaded")) {
+                    FeatureCollectDiagnostics.queueSendLogAsync(e);
+                    e.printStackTrace();
+                }
+            }
+        });
     }
 
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));

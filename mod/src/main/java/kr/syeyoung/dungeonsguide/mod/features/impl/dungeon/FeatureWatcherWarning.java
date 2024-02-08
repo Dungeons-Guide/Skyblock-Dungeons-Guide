@@ -62,6 +62,7 @@ public class FeatureWatcherWarning extends TextHUDFeature {
             warning = System.currentTimeMillis() + 2500;
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context ==null) return;
+            if (context.getScaffoldParser() == null) return;
             for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                 if (dungeonRoom != null && dungeonRoom.getColor() == 18)
                     dungeonRoom.setCurrentState(DungeonRoom.RoomState.DISCOVERED);

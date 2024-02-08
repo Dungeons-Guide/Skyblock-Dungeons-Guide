@@ -68,8 +68,8 @@ public class PartyFinderParty {
         PartyFinderParty party = new PartyFinderParty();
         for (int i = 0; i < tagList.tagCount(); i++) {
             String line = tagList.getStringTagAt(i);
-            if (line.startsWith("§7§7Note:")) {
-                party.note = line.substring(12).trim();
+            if (line.startsWith("§7§7Note: ")) {
+                party.note = line.substring(10).trim();
                 if (i + 1 < tagList.tagCount()) {
                     String nextLine = tagList.getStringTagAt(i + 1);
                     if (!nextLine.contains("§7") && !nextLine.replaceAll("§.| ", "").isEmpty()) {
@@ -88,8 +88,13 @@ public class PartyFinderParty {
                 String playerName = dungeonClass.split(":")[0].trim();
                 String playerClazzData = dungeonClass.split(":")[1].trim();
                 String clazz = playerClazzData.split(" ")[0];
-                String clazzLv = playerClazzData.split(" ")[1];
-                clazzLv = clazzLv.replace("(", "").replace(")", "");
+                String clazzLv;
+                if (!playerClazzData.contains(" ")){
+                    clazzLv = playerClazzData.split(" ")[1];
+                    clazzLv = clazzLv.replace("(", "").replace(")", "");
+                } else {
+                    clazzLv = "0";
+                }
                 party.members.add(new MemberData(playerName, clazz, Integer.parseInt(clazzLv)));
             }
         }

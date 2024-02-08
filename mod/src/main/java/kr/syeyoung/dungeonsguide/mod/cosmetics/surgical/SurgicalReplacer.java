@@ -33,7 +33,7 @@ public class SurgicalReplacer {
         boolean strikethroughStyle = parentStyle.getStrikethrough();
         boolean underlineStyle = parentStyle.getUnderlined();
         boolean italicStyle = parentStyle.getItalic();
-        char possibleLastColorChar = parentStyle.getColor() == null ? 'f' : "0123456789abcdefklmnor".charAt(parentStyle.getColor().getColorIndex());
+        char possibleLastColorChar = parentStyle.getColor() == null ? 'f' : "0123456789abcdefklmnor".charAt(parentStyle.getColor().ordinal());
         boolean isLegalColor = true;
         char[] charArr = str.toCharArray();
 

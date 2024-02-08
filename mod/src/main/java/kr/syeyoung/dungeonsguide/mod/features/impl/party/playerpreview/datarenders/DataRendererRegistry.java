@@ -59,6 +59,7 @@ public class DataRendererRegistry {
         dataRendererMap.put("dummy", new DataRendererSetUrOwn());
 
         dataRendererMap.put("talismans", new DataRendererTalismans());
+        dataRendererMap.put("magic_power", new DataRendererMagicPower());
         dataRendererMap.put("weight", new DataRendererLilyWeight());
     }
 }

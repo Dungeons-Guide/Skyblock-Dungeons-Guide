@@ -138,7 +138,8 @@ public class StompClient extends WebSocketClient {
     @Override
     public void onClose(int code, String reason, boolean remote) {
         if (heartbeat != null) heartbeat.cancel(true);
-        ex.shutdownNow();
+//        ex.shutdownNow(); // OHHHHH
+        stompClientStatus = StompClientStatus.DISCONNECTED;
         MinecraftForge.EVENT_BUS.post(new StompDiedEvent(code, reason, remote));
         StompManager.getInstance().onStompDied(new StompDiedEvent(code, reason, remote));
     }

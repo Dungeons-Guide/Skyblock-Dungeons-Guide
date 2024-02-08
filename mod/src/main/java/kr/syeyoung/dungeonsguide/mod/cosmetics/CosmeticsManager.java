@@ -243,7 +243,7 @@ public class CosmeticsManager {
         iChatDetectors.add(new ChatDetectorJoinLeave());
     }
 
-    private final ThreadLocal<List<ReplacementContext>> contextThreadLocal = new ThreadLocal<>();
+    private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
     @SubscribeEvent(priority = EventPriority.HIGHEST)
     public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
@@ -255,7 +255,9 @@ public class CosmeticsManager {
                     total.addAll(replacementContext);
                 }
             }
-            contextThreadLocal.set(total);
+            if (contextThreadLocal.get() == null)
+                contextThreadLocal.set(new Stack<>());
+            contextThreadLocal.get().push(total);
         } catch (Exception t) {
             System.out.println(clientChatReceivedEvent.message);
             FeatureCollectDiagnostics.queueSendLogAsync(t);
@@ -266,14 +268,15 @@ public class CosmeticsManager {
     @SubscribeEvent(priority = EventPriority.LOWEST, receiveCanceled = true)
     public void onChat(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
+            Stack<List<ReplacementContext>> threadCtx = contextThreadLocal.get();
+            if (threadCtx == null) return;
             if (clientChatReceivedEvent.type == 2) return;
             if (clientChatReceivedEvent.isCanceled()) {
-                contextThreadLocal.set(null);
+                threadCtx.pop();
                 return;
             }
 
-            List<ReplacementContext> replacementContexts = contextThreadLocal.get();
-            contextThreadLocal.set(null);
+            List<ReplacementContext> replacementContexts = threadCtx.pop();
 
             LinkedList<IChatComponent> chatComponents = SurgicalReplacer.linearifyMoveColorCharToStyle(clientChatReceivedEvent.message);
             for (ReplacementContext replacementContext : replacementContexts) {

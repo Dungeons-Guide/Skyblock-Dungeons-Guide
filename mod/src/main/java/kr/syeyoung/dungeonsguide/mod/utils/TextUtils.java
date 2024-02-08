@@ -78,6 +78,7 @@ public class TextUtils {
     }
     public static long reverseFormat(String str2) {
         String str = str2.toLowerCase();
+        if (str.length() == 0) return 0;
         String integerPart = str.substring(0, str.length() - 1);
         long multiplier = 1;
         if (str.endsWith("k")) multiplier = 1000;

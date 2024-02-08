@@ -90,6 +90,7 @@ public class FeatureDungeonCurrentRoomSecrets extends TextHUDFeature {
             for (int i = secretsIndex; i >= 0; i--) {
                 if (text.startsWith("§7", i)) {
                     theIndex = i;
+                    break;
                 }
             }
             String it = text.substring(theIndex + 2, secretsIndex - 1);
