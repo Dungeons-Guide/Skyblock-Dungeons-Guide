@@ -108,7 +108,7 @@ public class FeatureEpicCountdown extends SimpleFeature {
             for (Score score : objective.getScores()) {
                 String line = TextUtils.stripColor(score.getJustTeam());
                 if(line.contains("Starting in:")){
-                    String time = line.replace("Starting in: ", "").replace("§r", "").replace("0:", "");
+                    String time = line.replace("Starting in: ", "").replace("§r", "");
                     if (time.contains(":")) {
                         secondsLeft = Integer.parseInt(time.split(":")[0]) * 60 + Integer.parseInt(time.split(":")[1]);
                         updatedAt = System.currentTimeMillis();
