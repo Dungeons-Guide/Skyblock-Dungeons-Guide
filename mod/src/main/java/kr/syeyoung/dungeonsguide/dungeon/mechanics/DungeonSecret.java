@@ -113,7 +113,7 @@ public class DungeonSecret implements DungeonMechanic {
                 return SecretStatus.ERROR;
             } else {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
-                if (chest.numPlayersUsing > 0) {
+                if (chest != null && chest.numPlayersUsing > 0) {
                     return SecretStatus.FOUND;
                 } else {
                     return SecretStatus.CREATED;
