@@ -29,6 +29,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Scaler;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.gui.inventory.GuiChest;
 import net.minecraft.inventory.ContainerChest;
@@ -74,21 +75,30 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 //    GuiCustomPartyFinder guiCustomPartyFinder;
     private WidgetPartyFinder widgetPartyFinder;
     private GuiScreenAdapterChestOverride guiScreenAdapter;
-    @DGEventHandler
-    public void onGuiOpen(GuiOpenEvent event) {
-        if (event.gui == null) {
-            widgetPartyFinder = null;
-            guiScreenAdapter = null;
-        }
-        
-        if (!(event.gui instanceof GuiChest)) return;
-        GuiChest chest = (GuiChest) event.gui;
-        if (!(chest.inventorySlots instanceof ContainerChest)) return;
+
+    private String conditionCheck(GuiScreen guiScreen) {
+        if (!(guiScreen instanceof GuiChest)) return null;
+        GuiChest chest = (GuiChest) guiScreen;
+        if (!(chest.inventorySlots instanceof ContainerChest)) return null;
         ContainerChest containerChest = (ContainerChest) chest.inventorySlots;
         IInventory lower = containerChest.getLowerChestInventory();
-        if (lower == null || !lower.getName().equals("Party Finder")) {
+        if (lower == null) return null;
+        return lower.getName();
+    }
+
+    @DGEventHandler
+    public void onGuiOpen(GuiOpenEvent event) {
+        String name = conditionCheck(event.gui);
+        if (name == null) {
+            widgetPartyFinder = null;
+            guiScreenAdapter = null;
+            return;
+        }
+        if (!name.equals("Party Finder")) {
             if (guiScreenAdapter != null) {
                 guiScreenAdapter.setCanExitWithoutClosing(true);
+                widgetPartyFinder = null;
+                guiScreenAdapter = null;
             }
             return;
         }
