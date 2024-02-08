@@ -83,7 +83,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
                 }));
             }
         }
-        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().thePlayer.getGameProfile().getId(), (a) -> new ArrayList<>());
+        List<ActiveCosmetic> activeCosmeticList =  cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().getSession().getProfile().getId(), (a) -> new ArrayList<>());
         for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
             CosmeticData cosmeticData =  cosmeticsManager.getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
             if (cosmeticData != null && cosmeticData.getCosmeticType().equals("bracket_color")) {
@@ -147,7 +147,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
 
         if (previouslySelectedColor != null) {
-            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().thePlayer.getGameProfile().getId(), (a) -> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().getSession().getProfile().getId(), (a) -> new ArrayList<>());
             for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                 if (activeCosmetic.getCosmeticData().equals(previouslySelectedColor.getId())) {
                     cosmeticsManager.removeCosmetic(activeCosmetic);
@@ -155,7 +155,7 @@ public class WidgetNicknamePrefix extends AnnotatedImportOnlyWidget {
             }
         }
         if (previouslySelectedPrefix != null) {
-            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().thePlayer.getGameProfile().getId(), (a) -> new ArrayList<>());
+            List<ActiveCosmetic> activeCosmeticList = cosmeticsManager.getActiveCosmeticByPlayer().computeIfAbsent(Minecraft.getMinecraft().getSession().getProfile().getId(), (a) -> new ArrayList<>());
             for (ActiveCosmetic activeCosmetic : activeCosmeticList) {
                 if (activeCosmetic.getCosmeticData().equals(previouslySelectedPrefix.getId())) {
                     cosmeticsManager.removeCosmetic(activeCosmetic);
