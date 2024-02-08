@@ -132,7 +132,9 @@ public class FeatureCustomPartyFinder extends SimpleFeature {
 
             ItemStack item = null;
             if (windowUpdateEvent.getWindowItems() != null) {
+                if (windowUpdateEvent.getWindowItems().getItemStacks().length <= 47) return;
                 item = windowUpdateEvent.getWindowItems().getItemStacks()[47];
+
             } else if (windowUpdateEvent.getPacketSetSlot() != null) {
                 if (windowUpdateEvent.getPacketSetSlot().func_149173_d() != 47) return;
                 item = windowUpdateEvent.getPacketSetSlot().func_149174_e();
