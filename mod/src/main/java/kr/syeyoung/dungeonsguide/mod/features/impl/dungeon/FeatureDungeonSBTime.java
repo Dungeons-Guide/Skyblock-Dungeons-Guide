@@ -47,13 +47,15 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
 
     public int getTimeElapsed() {
         ScoreboardManager scoreboardManager = ScoreboardManager.INSTANCE;
-        Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
-
         String time = "idkyet";
-        for (Score sc:scores) {
-            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
-            if (strippedLine.startsWith("Time Elapsed: ")) {
-                time = strippedLine.substring(14);
+        if (scoreboardManager.getSidebarObjective() != null) {
+            Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
+
+            for (Score sc : scores) {
+                String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
+                if (strippedLine.startsWith("Time Elapsed: ")) {
+                    time = strippedLine.substring(14);
+                }
             }
         }
         time = time.replace(" ", "");
@@ -92,14 +94,16 @@ public class FeatureDungeonSBTime extends TextHUDFeature {
         actualBit.addChild(new TextSpan(getStyle("separator"), ": "));
 
         ScoreboardManager scoreboardManager = ScoreboardManager.INSTANCE;
-        Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
-
-
         String time = "unknown";
-        for (Score sc:scores) {
-            String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
-            if (strippedLine.startsWith("Time Elapsed: ")) {
-                time = strippedLine.substring(14);
+        if (scoreboardManager.getSidebarObjective() != null) {
+            Collection<Score> scores = scoreboardManager.getSidebarObjective().getScores();
+
+
+            for (Score sc : scores) {
+                String strippedLine = TextUtils.keepScoreboardCharacters(TextUtils.stripColor(sc.getVisibleName())).trim();
+                if (strippedLine.startsWith("Time Elapsed: ")) {
+                    time = strippedLine.substring(14);
+                }
             }
         }
         actualBit.addChild(new TextSpan(getStyle("number"), time));
