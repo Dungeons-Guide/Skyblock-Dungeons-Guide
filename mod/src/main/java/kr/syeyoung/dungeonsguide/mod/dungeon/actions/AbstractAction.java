@@ -60,6 +60,9 @@ public abstract class AbstractAction {
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return false;
     }
+    public boolean shouldRecalculatePath(DungeonRoom dungeonRoom) {
+        return false;
+    }
 
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) { return 0; }
 

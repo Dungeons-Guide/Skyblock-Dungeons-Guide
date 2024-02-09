@@ -229,7 +229,7 @@ public class ActionRoute {
 
         boolean recalc = false;
         for (int i = current; i < actions.size(); i++) {
-            if (actions.get(i).isIdempotent() && actions.get(i).isComplete(dungeonRoom)) {
+            if (actions.get(i).shouldRecalculatePath(dungeonRoom)) {
                 recalc = true;
             }
         }

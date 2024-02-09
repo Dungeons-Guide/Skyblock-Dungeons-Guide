@@ -65,6 +65,11 @@ public class ActionChangeState extends AbstractAction {
     }
 
     @Override
+    public boolean shouldRecalculatePath(DungeonRoom dungeonRoom) {
+        return dungeonRoom.getMechanics().get(mechanicName).getCurrentState(dungeonRoom).equalsIgnoreCase(state);
+    }
+
+    @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
         DungeonMechanic mechanic = room.getMechanics().get(mechanicName);
         if (mechanic instanceof DungeonTomb || mechanic instanceof DungeonOnewayDoor || mechanic instanceof DungeonDoor || mechanic instanceof DungeonBreakableWall) {
