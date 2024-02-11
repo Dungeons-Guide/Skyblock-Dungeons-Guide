@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 
-public interface IWorld {
+public interface IPathfindWorld {
     public DungeonRoom.LayerNodeState getLayer(int x, int y, int z);
     public DungeonRoom.NodeState getBlock(int x, int y, int z);
 

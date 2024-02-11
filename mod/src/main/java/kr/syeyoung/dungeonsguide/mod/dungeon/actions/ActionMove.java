@@ -230,7 +230,7 @@ public class ActionMove extends AbstractAction {
         );
         AStarFineGridStonkingBetter a = null;
         if (executor == null) {
-            executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
+            executor = new PathfinderExecutor(new AStarFineGridStonkingBetter(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
                     .addVector(0.5, 0, 0.5), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }

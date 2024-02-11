@@ -19,15 +19,14 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding;
 
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.util.BlockPos;
 
 import java.util.HashSet;
 import java.util.Set;
 
-public class DungeonRoomButOpen implements IWorld {
+public class DungeonRoomButOpen implements IPathfindWorld {
     private DungeonRoom dungeonRoom;
     private Set<String> mechanics = new HashSet<>();
 

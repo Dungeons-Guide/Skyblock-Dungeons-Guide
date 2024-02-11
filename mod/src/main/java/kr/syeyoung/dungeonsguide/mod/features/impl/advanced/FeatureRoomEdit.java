@@ -111,7 +111,7 @@ import java.util.regex.Pattern;
 
 public class FeatureRoomEdit  extends SimpleFeature {
     public FeatureRoomEdit() {
-        super("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is for advanced users only", "advanced.roomedit", false);
+        super("Debug", "Room Edit", "Allow editing dungeon rooms\n\nWarning: using this feature can break or freeze your Minecraft\nThis is for DEVELOPERS WHO KNOW WHAT THEY ARE DOING only", "advanced.roomedit", false);
 
         addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to edit room", Keyboard.KEY_R, TCKeybind.INSTANCE));
     }

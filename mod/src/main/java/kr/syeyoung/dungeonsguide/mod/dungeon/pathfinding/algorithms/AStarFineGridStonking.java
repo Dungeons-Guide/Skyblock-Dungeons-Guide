@@ -36,7 +36,7 @@ public class AStarFineGridStonking implements IPathfinder {
 
     private int lastSx, lastSy, lastSz;
     private int dx, dy, dz;
-    private IWorld dungeonRoom;
+    private IPathfindWorld dungeonRoom;
 
 
     private Node startNode;
@@ -50,7 +50,7 @@ public class AStarFineGridStonking implements IPathfinder {
         this.algorithmSettings = algorithmSettings;
     }
     @Override
-    public void init(IWorld dungeonRoom, Vec3 destination) {
+    public void init(IPathfindWorld dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
 
         this.dx = (int) (destination.xCoord * 2);

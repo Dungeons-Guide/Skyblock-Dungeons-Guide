@@ -19,13 +19,10 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import net.minecraft.util.Vec3;
 
-import java.util.List;
-
 public interface IPathfinder {
-    void init(IWorld dungeonRoom, Vec3 destination);
+    void init(IPathfindWorld dungeonRoom, Vec3 destination);
     boolean doOneStep();
 
     void setTarget(Vec3 from);

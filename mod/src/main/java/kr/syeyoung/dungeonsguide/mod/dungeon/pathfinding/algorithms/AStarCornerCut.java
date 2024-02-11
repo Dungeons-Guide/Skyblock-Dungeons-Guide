@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
@@ -33,7 +32,7 @@ import java.util.*;
 public class AStarCornerCut  implements IPathfinder {
     private int lastSx, lastSy, lastSz;
     private int dx, dy, dz;
-    private IWorld dungeonRoom;
+    private IPathfindWorld dungeonRoom;
 
 
     private Node startNode;
@@ -42,7 +41,7 @@ public class AStarCornerCut  implements IPathfinder {
     @Getter
     private AxisAlignedBB destinationBB;
     @Override
-    public void init(IWorld dungeonRoom, Vec3 destination) {
+    public void init(IPathfindWorld dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
 
         this.dx = (int) (destination.xCoord * 2);

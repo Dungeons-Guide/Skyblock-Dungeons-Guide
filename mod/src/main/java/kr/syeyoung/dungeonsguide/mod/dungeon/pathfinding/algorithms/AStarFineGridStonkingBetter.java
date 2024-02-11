@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
@@ -34,7 +35,7 @@ import java.util.*;
 
 public class AStarFineGridStonkingBetter implements IPathfinder {
     private int dx, dy, dz;
-    private IWorld dungeonRoom;
+    private IPathfindWorld dungeonRoom;
 
 
     private Node startNode;
@@ -42,12 +43,13 @@ public class AStarFineGridStonkingBetter implements IPathfinder {
     @Getter
     private AxisAlignedBB destinationBB;
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
+    private long start;
 
     public AStarFineGridStonkingBetter(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
         this.algorithmSettings = algorithmSettings;
     }
     @Override
-    public void init(IWorld dungeonRoom, Vec3 destination) {
+    public void init(IPathfindWorld dungeonRoom, Vec3 destination) {
         this.dungeonRoom = dungeonRoom;
 
         nodes = new Node[dungeonRoom.getXwidth()+10][dungeonRoom.getZwidth()+10][dungeonRoom.getYwidth()+10][2];
@@ -64,7 +66,7 @@ public class AStarFineGridStonkingBetter implements IPathfinder {
         startNode.f = 0;
         open.add(startNode);
 
-
+        start = System.currentTimeMillis();
     }
     private int minX, minY, minZ;
     @Getter
@@ -97,6 +99,12 @@ public class AStarFineGridStonkingBetter implements IPathfinder {
         Node n = open.poll();
         if (n == null) {
             finished = true;
+            long openNodes = Arrays.stream(nodes).flatMap(a -> Arrays.stream(a))
+                            .flatMap(a -> Arrays.stream(a))
+                                    .flatMap(a -> Arrays.stream(a))
+                                            .filter(a -> a != null).count();
+
+            ChatTransmitter.sendDebugChat("Pathfinding took "+(System.currentTimeMillis() - start)+" ms with "+openNodes);
             return true;
         }
 

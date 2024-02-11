@@ -50,11 +50,9 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
-import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
-import net.minecraftforge.common.MinecraftForge;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
@@ -64,7 +62,7 @@ import java.util.*;
 import java.util.concurrent.*;
 
 @Getter
-public class DungeonRoom implements IWorld {
+public class DungeonRoom implements IPathfindWorld {
     private final Set<Point> unitPoints;
     private final short shape;
     private final byte color;

@@ -26,7 +26,10 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
+import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.ResourceLocation;
+import net.minecraft.world.WorldSettings;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -49,6 +52,13 @@ public class WidgetStateTooltip extends AnnotatedWidget {
         for (String s : state) {
             widgetList.add(new WidgetState(dungeonRoom, mechanicId, s));
         }
+
+        if ((Minecraft.getMinecraft().playerController.getCurrentGameType() == WorldSettings.GameType.CREATIVE
+                || Minecraft.getMinecraft().playerController.getCurrentGameType() == WorldSettings.GameType.SPECTATOR)&&
+                Minecraft.getMinecraft().isIntegratedServerRunning()) {
+            widgetList.add(new WidgetTeleport(dungeonRoom, mechanicId));
+        }
+
         children.setValue(widgetList);
     }
 }
