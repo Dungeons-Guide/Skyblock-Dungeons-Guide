@@ -628,7 +628,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
     }
 
 
-    private String nbttostring(String name, NBTTagCompound compound) {
+    public static String nbttostring(String name, NBTTagCompound compound) {
 
         try {
             Method method = ReflectionHelper.findMethod(NBTTagCompound.class, compound, new String[] {"write", "method_5062","func_74734_a", "a"}, DataOutput.class);

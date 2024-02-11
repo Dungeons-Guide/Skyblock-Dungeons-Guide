@@ -349,6 +349,13 @@ public class FeatureRoomEdit  extends SimpleFeature {
             GlStateManager.enableCull();
             for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : blockUpdates) {
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
+                    int meta1 = updatedBlock.getBlock().getBlock().getMetaFromState(updatedBlock.getBlock());
+                    Block block1 = updatedBlock.getBlock().getBlock();
+                    IBlockState blockstate2 = Minecraft.getMinecraft().theWorld.getBlockState(updatedBlock.getPos());
+                    int meta2 = blockstate2.getBlock().getMetaFromState(blockstate2);
+                    Block block2 = blockstate2.getBlock();
+                    if (block1 == block2 && meta2 == meta1)
+                        continue;
 
 //                    GlStateManager.enableCull();
                     if (Minecraft.getMinecraft().thePlayer.getDistanceSq(updatedBlock.getPos()) > 100)
@@ -383,7 +390,9 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         GlStateManager.enableLighting();
                         GlStateManager.popMatrix();
                     } else {
-                        RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x50FF00FF, true), event.partialTicks, true);
+                        RenderUtils.highlightBlock(updatedBlock.getPos(),
+                                updatedBlock.getBlock().getBlock() == Blocks.air ? new Color(0x50FF00FF, true)
+                                :  new Color(0x500000FF, true), event.partialTicks, true);
                     }
                 }
             }

@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.google.gson.*;
+import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
@@ -27,24 +29,18 @@ import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.CategoryPageWidget;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditRedstoneKey;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditRedstoneKeySlot;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditWizard;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit.ValueEditWizardCrystal;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.GlobalHUDScale;
-import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Navigator;
 import kr.syeyoung.dungeonsguide.mod.guiv2.view.TestView;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.Score;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.scoreboard.ScoreboardManager;
@@ -56,25 +52,25 @@ import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
-import net.minecraft.block.Block;
-import net.minecraft.block.properties.PropertyDirection;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.nbt.CompressedStreamTools;
+import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
-import net.minecraft.util.Tuple;
 import net.minecraftforge.common.MinecraftForge;
+import org.apache.commons.io.FileUtils;
+import org.apache.commons.io.IOUtils;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
 import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.*;
-import java.lang.reflect.Field;
 import java.nio.file.Files;
 import java.security.*;
 import java.security.cert.CertificateException;
@@ -174,6 +170,26 @@ public class CommandDgDebug extends CommandBase {
             case "process2":
                 process2();
                 break;
+            case "groupprocess":
+                try {
+                    groupprocess();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case "nodupeprocess":
+                try {
+                    removedupe();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+                break;
+            case "removedoors":
+                try {
+                    removedoors();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
             case "check":
                 checkCommand();
                 break;
@@ -356,6 +372,406 @@ public class CommandDgDebug extends CommandBase {
     private void brandCommand() {
         String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
+    }
+    private void removedoors() throws Exception {
+        File fileRoot = Main.getConfigDir();
+        File dir = new File(fileRoot, "grouped2");
+        File outdir = new File(fileRoot, "grouped3");
+
+
+        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        while (fileIter.hasNext()) {
+
+            try {
+                File f = fileIter.next();
+                Gson gson = new Gson();
+                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+
+
+                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                        jsonObject.get("schematic").getAsString()
+                )));
+                byte[] blocks = compound.getByteArray("Blocks");
+                byte[] meta = compound.getByteArray("Data");
+                int shape = jsonObject.get("shape").getAsShort();
+                int len = compound.getShort("Length");
+                int wid = compound.getShort("Width");
+                // formula y *len*width + z * width + x
+
+                for (int x = 0; x <= 11; x ++) {
+                    for (int z = 0; z <= 11; z++) {
+                        if ((x % 2 == 1) == (z % 2 == 1)) continue;
+
+                        int rx = x * 16;
+                        int rz = z * 16;
+
+                        if (rx >= wid+6) continue;
+                        if (rz >= len+6) continue;
+
+                        if (x % 2 == 1) {
+                            if (z == 0) {
+                            } else if ((shape >>(((z/2)-1) *4 +(x/2)) & 0x1) > 0 &&
+                                    (shape >>(((z/2)) *4 +(x/2)) & 0x1) > 0) {
+                                continue;
+                            }
+                        } else {
+                            if (x == 0) {
+                            } else if ((shape >>((z/2) *4 +(x/2) - 1) & 0x1) > 0 &&
+                                    (shape >>((z/2) *4 +(x/2)) & 0x1) > 0) {
+                                continue;
+                            }
+                        }
+
+                        int f1 = 13;
+                        // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
+                        for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
+                            for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
+                                for (int y = 69; y <= 72; y++) {
+                                    int i = rrx + rrz * wid + y * wid * len;
+                                    if (rrx >= wid) continue;
+                                    if (rrz >= len) continue;
+                                    if (rrx < 0) continue;
+                                    if (rrz < 0) continue;
+
+                                    if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
+                                    } else {
+                                        f1 = 0;
+                                    }
+                                }
+                            }
+                        }
+
+                        if (f1 < 12) continue;
+
+                        if (x % 2 == 1) {
+                            // going in Z dir
+                            for (int rrx = rx-2; rrx <= rx + 2; rrx ++) {
+                                for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
+                                    for (int y = 66; y <= 73; y++) {
+                                        int i = rrx + rrz * wid + y * wid * len;
+                                        if (rrx >= wid) continue;
+                                        if (rrz >= len) continue;
+                                        if (rrx < 0) continue;
+                                        if (rrz < 0) continue;
+
+                                        if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
+                                            blocks[i] = (byte) 153;
+                                            meta[i] = 0;
+                                        }
+
+                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+                                            blocks[i] = (byte) 19;
+                                            meta[i] = 0;
+                                        }
+                                    }
+                                }
+                            }
+                        } else {
+                            // going in X dir
+                            for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
+                                for (int rrz = rz - 2; rrz <= rz +2; rrz ++) {
+                                    for (int y = 66; y <= 73; y++) {
+                                        int i = rrx + rrz * wid + y * wid * len;
+                                        if (rrx >= wid) continue;
+                                        if (rrz >= len) continue;
+                                        if (rrx < 0) continue;
+                                        if (rrz < 0) continue;
+
+                                        if (Math.abs(rrz - rz) == 2 || y >= 72 || y < 69) {
+                                            blocks[i] = (byte) 153;
+                                            meta[i] = 15;
+                                        }
+
+                                        if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
+                                            blocks[i] = (byte) 19;
+                                            meta[i] = 15;
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                compound.setByteArray("Blocks", blocks);
+                compound.setByteArray("Data", meta);
+
+                String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
+                jsonObject.remove("schematic");
+                jsonObject.addProperty("schematic", schm);
+
+                JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, f.getName()).toPath())));
+                gson.toJson(jsonObject, writer);
+                writer.flush();
+                writer.close();
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    private void removedupe() throws Exception  {
+
+        File fileRoot = Main.getConfigDir();
+        File dir = new File(fileRoot, "grouped");
+        File outdir = new File(fileRoot, "grouped2");
+
+        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        while (fileIter.hasNext()) {
+            try {
+                File f = fileIter.next();
+                Gson gson = new Gson();
+                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+
+
+                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                        jsonObject.get("schematic").getAsString()
+                )));
+                byte[] blocks = compound.getByteArray("Blocks");
+                byte[] meta = compound.getByteArray("Data");
+
+                JsonArray jsonElements = new JsonArray();
+                Set<String> updated = new HashSet<>();
+                for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
+                    JsonObject blockupdates = _blockupdates.getAsJsonObject();
+                    JsonArray realUpdatedBlocks = new JsonArray();
+                    for (JsonElement updatedBlocks : blockupdates.getAsJsonArray("updatedBlocks")) {
+                        JsonArray blockData = updatedBlocks.getAsJsonArray();
+                        int x = blockData.get(0).getAsInt() - jsonObject.get("minX").getAsInt();
+                        int y = blockData.get(1).getAsInt();
+                        int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
+                        String block = blockData.get(3).getAsString().split(":")[0];
+
+                        if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
+                        updated.add(x+":"+y+":"+z+":"+block);
+                        realUpdatedBlocks.add(blockData);
+                    }
+
+                    if (realUpdatedBlocks.size() > 0) {
+                        blockupdates.remove("updatedBlocks");
+                        blockupdates.add("updatedBlocks", realUpdatedBlocks);
+                        jsonElements.add(blockupdates);
+                    }
+                }
+
+                jsonObject.remove("blockupdates");
+                jsonObject.add("blockupdates", jsonElements);
+
+                JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, f.getName()).toPath())));
+                gson.toJson(jsonObject, writer);
+                writer.flush();
+                writer.close();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+    }
+    private void groupprocess() throws Exception {
+        // This take about 7m to complete.  :30:35 to 39:19 -> Around 9min.
+        File fileRoot = Main.getConfigDir();
+        File dir = new File(fileRoot, "compressed");
+        File outdir = new File(fileRoot, "grouped");
+        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        Map<String, JsonObject> roomMapping = new HashMap<>();
+
+        while (fileIter.hasNext()) {
+            try {
+                File f = fileIter.next();
+                Gson gson = new Gson();
+                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+                if (jsonObject == null) continue;
+                System.out.println("Processing: " + f.getCanonicalPath());
+                if (jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
+                    continue;
+                }
+
+
+                NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                        jsonObject.get("schematic").getAsString()
+                )));
+                byte[] blocks = compound.getByteArray("Blocks");
+                byte[] meta = compound.getByteArray("Data");
+                // to get
+
+                JsonArray jsonElements = new JsonArray();
+                Set<String> updated = new HashSet<>();
+                for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
+                    JsonObject blockupdates = _blockupdates.getAsJsonObject();
+                    JsonArray realUpdatedBlocks = new JsonArray();
+                    for (JsonElement updatedBlocks : blockupdates.getAsJsonArray("updatedBlocks")) {
+                        JsonArray blockData = updatedBlocks.getAsJsonArray();
+                        int x = blockData.get(0).getAsInt() - jsonObject.get("minX").getAsInt();
+                        int y = blockData.get(1).getAsInt();
+                        int z = blockData.get(2).getAsInt() - jsonObject.get("minZ").getAsInt();
+                        String block = blockData.get(3).getAsString().split(":")[0];
+
+                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                        if (index >= blocks.length) continue;
+                        if (index < 0) continue;
+                        String worldBlock = (blocks[index] & 0xFF)+"";
+                        if (block.equals(worldBlock)) continue;
+                        if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
+                        if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() < 3) continue;
+                        if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() > 800) continue;
+                        if (block.equals("148")) continue;
+                        if (x == 0 || z == 0 && (y < 66 || y > 73)) continue;
+                        if (x >=  compound.getShort("Width") || z >=  compound.getShort("Length")) continue;
+                        if (block.equals("45")) continue;
+                        updated.add(x+":"+y+":"+z+":"+block);
+                        realUpdatedBlocks.add(blockData);
+                    }
+                    if (realUpdatedBlocks.size() > 0) {
+                        blockupdates.remove("updatedBlocks");
+                        blockupdates.add("updatedBlocks", realUpdatedBlocks);
+                        jsonElements.add(blockupdates);
+                    }
+                }
+                jsonObject.remove("blockupdates");
+                jsonObject.add("blockupdates", jsonElements);
+                DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(UUID.fromString(jsonObject.get("uuid").getAsString()));
+
+                if (!roomMapping.containsKey(jsonObject.get("uuid").getAsString())) {
+                    roomMapping.put(jsonObject.get("uuid").getAsString(), jsonObject);
+                } else {
+                    // MERGE BLOCK UPDATES!
+                    JsonObject originalRoomMapping = roomMapping.get(jsonObject.get("uuid").getAsString());
+                    int originalRot = originalRoomMapping.get("rot").getAsInt();
+                    JsonArray toMergeInto = originalRoomMapping.getAsJsonArray("blockupdates");
+                    int thisRot = jsonObject.get("rot").getAsInt();
+                    for (JsonElement _blockUpdates : jsonElements) {
+                        JsonObject blockUpdate = _blockUpdates.getAsJsonObject();
+                        JsonArray transformedUpdatedBlocks = new JsonArray();
+                        for (JsonElement updatedBlocks : blockUpdate.getAsJsonArray("updatedBlocks")) {
+                            JsonArray blockData = updatedBlocks.getAsJsonArray();
+
+                            int x = blockData.get(0).getAsInt();
+                            int y = blockData.get(1).getAsInt();
+                            int z = blockData.get(2).getAsInt();
+                            String block = blockData.get(3).getAsString();
+
+                            x -= jsonObject.get("minX").getAsInt();
+                            z -= jsonObject.get("minZ").getAsInt();
+                            for (int i = 0; i < (thisRot - originalRot) + 4; i++) {
+                                int tempX = x;
+                                x = -z;
+                                z = tempX;
+                                if (i % 2 == 0) {
+                                    x += dungeonRoomInfo.getBlocks()[0].length - 1; // + Z
+                                } else {
+                                    x += dungeonRoomInfo.getBlocks().length - 1; // + X
+                                }
+                            }
+                            x += originalRoomMapping.get("minX").getAsInt();
+                            z += originalRoomMapping.get("minZ").getAsInt();
+                            JsonArray brueuru = new JsonArray();
+                            brueuru.add(new JsonPrimitive(x));
+                            brueuru.add(new JsonPrimitive(y));
+                            brueuru.add(new JsonPrimitive(z));
+                            brueuru.add(new JsonPrimitive(block));
+
+                            transformedUpdatedBlocks.add(brueuru);
+                        }
+                        blockUpdate.remove("updatedBlocks");
+                        blockUpdate.add("updatedBlocks", transformedUpdatedBlocks);
+                        toMergeInto.add(blockUpdate);
+                    }
+
+                    // PREFER MOAR BLOCKS!!
+
+                    if (originalRot == thisRot) {
+                        NBTTagCompound compound2 = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                                originalRoomMapping.get("schematic").getAsString()
+                        )));
+                        byte[] blocks2 = compound2.getByteArray("Blocks");
+                        byte[] meta2 = compound2.getByteArray("Data");
+                        boolean changed = false;
+
+                        int len = compound.getShort("Length");
+                        int wid = compound.getShort("Width");
+                        // formula y *len*width + z * width + x
+
+                        for (int x = 0; x <= 11; x ++) {
+                            for (int z = 0; z <= 11; z++) {
+                                if ((x % 2 == 1) == (z % 2 == 1)) continue;
+
+                                int rx = x * 16;
+                                int rz = z * 16;
+
+                                if (rx >= wid+6) continue;
+                                if (rz >= len+6) continue;
+
+                                int f1 = 0, s1 = 0, mismatch = 0;
+                                // paste the one with TERRACOTA or COAL or MORE AIR INSIDE
+                                for (int rrx = rx-1; rrx <= rx + 1; rrx ++) {
+                                    for (int rrz = rz - 1; rrz <= rz +1; rrz ++) {
+                                        for (int y = 69; y <= 72; y++) {
+                                            int i = rrx + rrz * wid + y * wid * len;
+                                            if (rrx >= wid) continue;
+                                            if (rrz >= len) continue;
+                                            if (rrx < 0) continue;
+                                            if (rrz < 0) continue;
+
+                                            if (blocks[i] == 0 || blocks[i] == (byte)173 || (blocks[i] == (byte)159 && meta[i] == 14)) {
+                                                f1 ++;
+                                            }
+                                            if (blocks2[i] == 0 || blocks2[i] == (byte)173 || (blocks2[i] == (byte)159 && meta2[i] == 14)) {
+                                                s1 ++;
+                                            }
+                                            if (blocks[i] != blocks2[i]) mismatch++;
+                                        }
+                                    }
+                                }
+
+                                if (mismatch == 0) continue;
+
+                                if (f1 > s1) {
+                                    for (int rrx = rx-3; rrx <= rx + 3; rrx ++) {
+                                        for (int rrz = rz - 3; rrz <= rz +3; rrz ++) {
+                                            for (int y = 66; y <= 73; y++) {
+                                                if (rrx >= wid) continue;
+                                                if (rrz >= len) continue;
+                                                if (rrx < 0) continue;
+                                                if (rrz < 0) continue;
+
+                                                int i = rrx + rrz * wid + y * wid * len;
+                                                blocks2[i] = blocks[i];
+                                                meta2[i] = meta[i];
+                                            }
+                                        }
+                                    }
+                                    changed = true;
+                                }
+                            }
+                        }
+
+                        if (changed) {
+                            compound2.setByteArray("Blocks", blocks2);
+                            compound2.setByteArray("Data", meta2);
+
+                            String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
+                            originalRoomMapping.remove("schematic");
+                            originalRoomMapping.addProperty("schematic", schm);
+                        }
+                    }
+
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+
+
+        for (Map.Entry<String, JsonObject> stringJsonObjectEntry : roomMapping.entrySet()) {
+            Gson gson = new Gson();
+            JsonWriter writer = new JsonWriter(new OutputStreamWriter(Files.newOutputStream(new File(outdir, stringJsonObjectEntry.getKey()+":"+ stringJsonObjectEntry.getValue().get("name").getAsString() +".dgrun").toPath())));
+            gson.toJson(stringJsonObjectEntry.getValue(), writer);
+            writer.flush();
+            writer.close();
+        }
     }
 
     private void pathfindCommand(String[] args) {

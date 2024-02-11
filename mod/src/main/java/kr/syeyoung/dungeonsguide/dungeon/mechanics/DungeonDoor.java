@@ -133,7 +133,7 @@ public class DungeonDoor implements DungeonMechanic, RouteBlocker {
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("open", "closed");
+        return Sets.newHashSet("open", "closed", "nospawn");
     }
 
     @Override
