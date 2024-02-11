@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
 import net.minecraft.client.Minecraft;
+import net.minecraft.server.MinecraftServer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
@@ -48,6 +49,7 @@ public class WidgetTeleport extends AnnotatedWidget {
     @On(functionName = "navigate")
     public void navigate() {
         BlockPos pos = dungeonRoom.getMechanics().get(mechanic).getRepresentingPoint(dungeonRoom).getBlockPos(dungeonRoom);
-        Minecraft.getMinecraft().thePlayer.setPosition(pos.getX(), pos.getY(), pos.getZ());
+//        Minecraft.getMinecraft().thePlayer.setPositionAndUpdate(pos.getX(), pos.getY(), pos.getZ());
+        MinecraftServer.getServer().getEntityWorld().getClosestPlayer(0,0,0,1000000000).setPositionAndUpdate(pos.getX(),pos.getY(),pos.getZ());
     }
 }
