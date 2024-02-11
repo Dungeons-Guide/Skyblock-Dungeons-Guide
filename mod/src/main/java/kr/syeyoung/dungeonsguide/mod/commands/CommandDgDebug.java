@@ -617,10 +617,11 @@ public class CommandDgDebug extends CommandBase {
                         if (updated.contains(x+":"+y+":"+z+":"+block)) continue;
                         if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() < 3) continue;
                         if (block.equals("0") && blockupdates.getAsJsonArray("updatedBlocks").size() > 800) continue;
-                        if (block.equals("148")) continue;
+                        if (block.equals("148")) continue; // trap plate
                         if (x == 0 || z == 0 && (y < 66 || y > 73)) continue;
                         if (x >=  compound.getShort("Width") || z >=  compound.getShort("Length")) continue;
-                        if (block.equals("45")) continue;
+                        if (block.equals("45")) continue; // bricks... mages do be like..
+                        if (block.equals("79")) continue; // ice... apparently some1 uses frostworker
                         updated.add(x+":"+y+":"+z+":"+block);
                         realUpdatedBlocks.add(blockData);
                     }
