@@ -57,6 +57,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
 import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockStairs;
 import net.minecraft.block.material.MapColor;
@@ -340,6 +341,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
     private boolean setup = false;
     private NBTTagCompound schematic;
 
+    @Getter
     private List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate> blockUpdates;
 
     @DGEventHandler()

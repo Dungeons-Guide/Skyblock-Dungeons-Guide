@@ -18,22 +18,25 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabelAndElement;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MTextField;
-import kr.syeyoung.dungeonsguide.mod.gui.elements.MValue;
+import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.init.Blocks;
 
 import java.awt.*;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 
 public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTomb> {
     private Parameter parameter;
@@ -47,6 +50,8 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTomb> {
     private final MValue<OffsetPointSet> value;
     private final MTextField preRequisite;
     private final MLabelAndElement preRequisite2;
+    private final MButton expand;
+    private final MButton updateOnlyAir;
 
     public ValueEditTomb(final Parameter parameter2) {
         this.parameter = parameter2;
@@ -60,6 +65,56 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTomb> {
 
         value = new MValue(dungeonTomb.getSecretPoint(), Collections.emptyList());
         add(value);
+
+        expand = new MButton();
+        expand.setText("Expand");
+        expand.setBackgroundColor(Color.green);
+        expand.setForeground(Color.black);
+        expand.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        add(expand);
+        expand.setOnActionPerformed(new Runnable() {
+            @Override
+            public void run() {
+                for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : FeatureRegistry.ADVANCED_ROOMEDIT.getBlockUpdates()) {
+                    boolean found = false;
+                    for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
+                        if (updatedBlock.getPos().equals(dungeonTomb.getSecretPoint().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
+                                && updatedBlock.getBlock().getBlock() == Blocks.air) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
+                            OffsetPoint pt = new OffsetPoint(EditingContext.getEditingContext().getRoom(), updatedBlock.getPos());
+                            if (!dungeonTomb.getSecretPoint().getOffsetPointList().contains(pt))
+                                dungeonTomb.getSecretPoint().getOffsetPointList().add(pt);
+                        }
+                    }
+                }
+
+            }
+        });
+
+        updateOnlyAir = new MButton();
+        updateOnlyAir.setText("Update Air");
+        updateOnlyAir.setBackgroundColor(Color.green);
+        updateOnlyAir.setForeground(Color.black);
+        updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        add(updateOnlyAir);
+
+        updateOnlyAir.setOnActionPerformed(new Runnable() {
+            @Override
+            public void run() {
+                OffsetPointSet ofs = dungeonTomb.getSecretPoint();
+                List<OffsetPoint> filtered = new ArrayList<OffsetPoint>();
+                for (OffsetPoint offsetPoint : ofs.getOffsetPointList()) {
+                    if (offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()) != Blocks.air) continue;
+                    filtered.add(offsetPoint);
+                }
+                dungeonTomb.getSecretPoint().setOffsetPointList(filtered);
+            }
+        });
 
         preRequisite = new MTextField() {
             @Override
@@ -77,6 +132,8 @@ public class ValueEditTomb extends MPanel implements ValueEdit<DungeonTomb> {
     public void onBoundsUpdate() {
         label.setBounds(new Rectangle(0,0,getBounds().width, 20));
         value.setBounds(new Rectangle(0,20,getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0, 40, getBounds().width, 20));
+        expand.setBounds(new Rectangle(0, 60, getBounds().width, 20));
         preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
     }
 

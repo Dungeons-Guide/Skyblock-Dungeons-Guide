@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.gui.elements.MIntegerSelectionButton;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.MLabelAndElement;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.entity.player.EntityPlayer;
@@ -35,6 +36,7 @@ import net.minecraft.util.BlockPos;
 import java.awt.*;
 
 public class ValueEditOffsetPoint extends MPanel implements ValueEdit<String> {
+    @Getter
     private Parameter parameter;
 
     @Override

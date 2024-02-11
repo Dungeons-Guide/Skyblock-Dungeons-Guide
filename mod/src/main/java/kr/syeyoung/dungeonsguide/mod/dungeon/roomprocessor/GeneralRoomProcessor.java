@@ -38,6 +38,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoo
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonAddSet;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonValueEdit;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditOffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
@@ -445,16 +447,27 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 FeatureRegistry.ADVANCED_ROOMEDIT.isEnabled() &&
                 FeatureRegistry.DEBUG.isEnabled()) {
             EditingContext ec = EditingContext.getEditingContext();
-            if (ec == null) return;
-            if (!(ec.getCurrent() instanceof GuiDungeonAddSet)) return;
-            GuiDungeonAddSet gdas = (GuiDungeonAddSet) ec.getCurrent();
-            if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
-                if (last)
-                    gdas.getEnd().setPosInWorld(getDungeonRoom(), event.pos);
-                else
-                    gdas.getStart().setPosInWorld(getDungeonRoom(), event.pos);
+            if (ec != null && ec.getCurrent() instanceof GuiDungeonAddSet) {
+                GuiDungeonAddSet gdas = (GuiDungeonAddSet) ec.getCurrent();
+                if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+                    if (last)
+                        gdas.getEnd().setPosInWorld(getDungeonRoom(), event.pos);
+                    else
+                        gdas.getStart().setPosInWorld(getDungeonRoom(), event.pos);
 
-                last = !last;
+                    last = !last;
+                }
+            }
+            if (ec != null && ec.getCurrent() instanceof GuiDungeonValueEdit) {
+                GuiDungeonValueEdit gdas = (GuiDungeonValueEdit) ec.getCurrent();
+                if (gdas.getValueEdit() instanceof ValueEditOffsetPoint) {
+                    ValueEditOffsetPoint offsetPoint = (ValueEditOffsetPoint) gdas.getValueEdit();
+
+                    if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+                        OffsetPoint offsetPoint1 = (OffsetPoint) offsetPoint.getParameter().getNewData();
+                        offsetPoint1.setPosInWorld(getDungeonRoom(), event.pos);
+                    }
+                }
             }
         }
     }

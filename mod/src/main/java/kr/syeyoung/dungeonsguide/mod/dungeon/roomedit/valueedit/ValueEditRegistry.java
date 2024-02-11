@@ -71,5 +71,8 @@ public class ValueEditRegistry {
         valueEditMap.put(DungeonRedstoneKeySlot.class.getName(), new ValueEditRedstoneKeySlot.Generator());
         valueEditMap.put(DungeonWizardCrystal.class.getName(), new ValueEditWizardCrystal.Generator());
         valueEditMap.put(DungeonWizard.class.getName(), new ValueEditWizard.Generator());
+        valueEditMap.put(DungeonFloorTrap.class.getName(), new ValueEditFloorTrap.Generator());
+        valueEditMap.put(DungeonTripwireTrap.class.getName(), new ValueEditTripwireTrap.Generator());
+        valueEditMap.put(DungeonArrowTrap.class.getName(), new ValueEditArrowTrap.Generator());
     }
 }

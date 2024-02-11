@@ -25,6 +25,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEditCreator;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.gui.MPanel;
 import kr.syeyoung.dungeonsguide.mod.gui.elements.*;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
@@ -51,6 +53,7 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
     private final MTextField preRequisite2;
     private final MLabelAndElement preRequisite2_par;
     private final MButton updateOnlyAir;
+    private final MButton expand;
 
     public ValueEditDoor(final Parameter parameter2) {
         this.parameter = parameter2;
@@ -83,6 +86,35 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
                 dungeonDoor.getSecretPoint().setOffsetPointList(filtered);
             }
         });
+        expand = new MButton();
+        expand.setText("Expand");
+        expand.setBackgroundColor(Color.green);
+        expand.setForeground(Color.black);
+        expand.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        add(expand);
+        expand.setOnActionPerformed(new Runnable() {
+            @Override
+            public void run() {
+                for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : FeatureRegistry.ADVANCED_ROOMEDIT.getBlockUpdates()) {
+                    boolean found = false;
+                    for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
+                        if (updatedBlock.getPos().equals(dungeonDoor.getSecretPoint().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
+                                && updatedBlock.getBlock().getBlock() == Blocks.air) {
+                            found = true;
+                            break;
+                        }
+                    }
+                    if (found) {
+                        for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
+                            OffsetPoint pt = new OffsetPoint(EditingContext.getEditingContext().getRoom(), updatedBlock.getPos());
+                            if (!dungeonDoor.getSecretPoint().getOffsetPointList().contains(pt))
+                                dungeonDoor.getSecretPoint().getOffsetPointList().add(pt);
+                        }
+                    }
+                }
+
+            }
+        });
 
         preRequisite = new MTextField() {
             @Override
@@ -112,8 +144,9 @@ public class ValueEditDoor extends MPanel implements ValueEdit<DungeonDoor> {
         label.setBounds(new Rectangle(0,0,getBounds().width, 20));
         value.setBounds(new Rectangle(0,20,getBounds().width, 20));
         updateOnlyAir.setBounds(new Rectangle(0,40,getBounds().width, 20));
-        preRequisite_par.setBounds(new Rectangle(0,60,getBounds().width,20));
-        preRequisite2_par.setBounds(new Rectangle(0,80,getBounds().width,20));
+        expand.setBounds(new Rectangle(0,60,getBounds().width, 20));
+        preRequisite_par.setBounds(new Rectangle(0,80,getBounds().width,20));
+        preRequisite2_par.setBounds(new Rectangle(0,100,getBounds().width,20));
     }
 
     @Override
