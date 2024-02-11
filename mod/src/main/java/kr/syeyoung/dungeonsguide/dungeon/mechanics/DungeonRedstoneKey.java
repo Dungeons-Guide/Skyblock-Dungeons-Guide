@@ -35,6 +35,7 @@ import java.util.List;
 
 @Data
 public class DungeonRedstoneKey implements DungeonMechanic {
+    private static final long serialVersionUID = 5154467820268491577L;
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
     private List<String> preRequisite = new ArrayList<String>();
     private String triggering = "";
