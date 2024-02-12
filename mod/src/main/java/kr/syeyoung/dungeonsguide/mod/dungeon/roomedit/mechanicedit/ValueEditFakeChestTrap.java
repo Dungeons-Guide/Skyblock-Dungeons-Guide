@@ -20,7 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFloorTrap;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonFakeChestTrap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -38,30 +38,41 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloorTrap> {
+public class ValueEditFakeChestTrap extends MPanel implements ValueEdit<DungeonFakeChestTrap> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private final DungeonFloorTrap dungeonFloorTrap;
+    private final DungeonFakeChestTrap dungeonFakeChestTrap;
 
     private final MLabel label;
     private final MValue<OffsetPointSet> value;
+    private final MLabel label2;
+    private final MValue<OffsetPoint> value2;
     private final MTextField preRequisite;
     private final MLabelAndElement preRequisite2;
     private final MButton expand;
     private final MButton updateOnlyAir;
 
-    public ValueEditFloorTrap(final Parameter parameter2) {
+    public ValueEditFakeChestTrap(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonFloorTrap = (DungeonFloorTrap) parameter2.getNewData();
+        this.dungeonFakeChestTrap = (DungeonFakeChestTrap) parameter2.getNewData();
 
 
         label = new MLabel();
         label.setText("Trap Points");
         label.setAlignment(MLabel.Alignment.LEFT);
         add(label);
+
+        value = new MValue(dungeonFakeChestTrap.getTnts(), Collections.emptyList());
+        add(value);
+        label2 = new MLabel();
+        label2.setText("Chest");
+        label2.setAlignment(MLabel.Alignment.LEFT);
+        add(label2);
+        value2 = new MValue(dungeonFakeChestTrap.getChest(), Collections.emptyList());
+        add(value2);
 
         updateOnlyAir = new MButton();
         updateOnlyAir.setText("Update Air");
@@ -73,17 +84,15 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
         updateOnlyAir.setOnActionPerformed(new Runnable() {
             @Override
             public void run() {
-                OffsetPointSet ofs = dungeonFloorTrap.getSecretPoint();
+                OffsetPointSet ofs = dungeonFakeChestTrap.getTnts();
                 List<OffsetPoint> filtered = new ArrayList<OffsetPoint>();
                 for (OffsetPoint offsetPoint : ofs.getOffsetPointList()) {
                     if (offsetPoint.getBlock(EditingContext.getEditingContext().getRoom()) != Blocks.air) continue;
                     filtered.add(offsetPoint);
                 }
-                dungeonFloorTrap.getSecretPoint().setOffsetPointList(filtered);
+                dungeonFakeChestTrap.getTnts().setOffsetPointList(filtered);
             }
         });
-        value = new MValue(dungeonFloorTrap.getSecretPoint(), Collections.emptyList());
-        add(value);
         expand = new MButton();
         expand.setText("Expand");
         expand.setBackgroundColor(Color.green);
@@ -96,7 +105,7 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : FeatureRegistry.ADVANCED_ROOMEDIT.getBlockUpdates()) {
                     boolean found = false;
                     for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
-                        if (updatedBlock.getPos().equals(dungeonFloorTrap.getSecretPoint().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
+                        if (updatedBlock.getPos().equals(dungeonFakeChestTrap.getTnts().getOffsetPointList().get(0).getBlockPos(EditingContext.getEditingContext().getRoom()))
                                 && updatedBlock.getBlock().getBlock() == Blocks.air) {
                             found = true;
                             break;
@@ -105,8 +114,8 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
                     if (found) {
                         for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
                             OffsetPoint pt = new OffsetPoint(EditingContext.getEditingContext().getRoom(), updatedBlock.getPos());
-                            if (!dungeonFloorTrap.getSecretPoint().getOffsetPointList().contains(pt))
-                                dungeonFloorTrap.getSecretPoint().getOffsetPointList().add(pt);
+                            if (!dungeonFakeChestTrap.getTnts().getOffsetPointList().contains(pt))
+                                dungeonFakeChestTrap.getTnts().getOffsetPointList().add(pt);
                         }
                     }
                 }
@@ -117,10 +126,10 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
         preRequisite = new MTextField() {
             @Override
             public void edit(String str) {
-                dungeonFloorTrap.setPreRequisite(Arrays.asList(str.split(",")));
+                dungeonFakeChestTrap.setPreRequisite(Arrays.asList(str.split(",")));
             }
         };
-        preRequisite.setText(TextUtils.join(dungeonFloorTrap.getPreRequisite(), ","));
+        preRequisite.setText(TextUtils.join(dungeonFakeChestTrap.getPreRequisite(), ","));
         preRequisite2 = new MLabelAndElement("Req.",preRequisite);
         preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
         add(preRequisite2);
@@ -130,9 +139,11 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
     public void onBoundsUpdate() {
         label.setBounds(new Rectangle(0,0,getBounds().width, 20));
         value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        updateOnlyAir.setBounds(new Rectangle(0, 40, getBounds().width, 20));
-        expand.setBounds(new Rectangle(0, 60, getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,80,getBounds().width,20));
+        label2.setBounds(new Rectangle(0, 40, getBounds().width, 20));
+        value2.setBounds(new Rectangle(0, 60, getBounds().width, 20));
+        updateOnlyAir.setBounds(new Rectangle(0, 80, getBounds().width, 20));
+        expand.setBounds(new Rectangle(0, 100, getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0,120,getBounds().width,20));
     }
 
     @Override
@@ -142,7 +153,7 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonFloorTrap.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dungeonFakeChestTrap.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
     }
 
     @Override
@@ -150,22 +161,22 @@ public class ValueEditFloorTrap extends MPanel implements ValueEdit<DungeonFloor
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditFloorTrap> {
+    public static class Generator implements ValueEditCreator<ValueEditFakeChestTrap> {
 
         @Override
-        public ValueEditFloorTrap createValueEdit(Parameter parameter) {
-            return new ValueEditFloorTrap(parameter);
+        public ValueEditFakeChestTrap createValueEdit(Parameter parameter) {
+            return new ValueEditFakeChestTrap(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonFloorTrap();
+            return new DungeonFakeChestTrap();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonFloorTrap)object).clone();
+                return ((DungeonFakeChestTrap)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

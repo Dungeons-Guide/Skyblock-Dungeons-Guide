@@ -19,7 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonArrowTrap;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonCrusherTrap;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -35,13 +35,13 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrowTrap> {
+public class ValueEditCrusherTrap extends MPanel implements ValueEdit<DungeonCrusherTrap> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private final DungeonArrowTrap DungeonArrowTrap;
+    private final DungeonCrusherTrap DungeonCrusherTrap;
 
     private final MLabel label;
     private final MValue<OffsetPointSet> value;
@@ -51,9 +51,9 @@ public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrow
     private final MTextField preRequisite;
     private final MLabelAndElement preRequisite2;
 
-    public ValueEditArrowTrap(final Parameter parameter2) {
+    public ValueEditCrusherTrap(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.DungeonArrowTrap = (DungeonArrowTrap) parameter2.getNewData();
+        this.DungeonCrusherTrap = (DungeonCrusherTrap) parameter2.getNewData();
 
 
         label = new MLabel();
@@ -61,7 +61,7 @@ public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrow
         label.setAlignment(MLabel.Alignment.LEFT);
         add(label);
 
-        value = new MValue(DungeonArrowTrap.getDangerRegion(), Collections.emptyList());
+        value = new MValue(DungeonCrusherTrap.getDangerRegion(), Collections.emptyList());
         add(value);
 
 
@@ -70,17 +70,17 @@ public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrow
         label2.setAlignment(MLabel.Alignment.LEFT);
         add(label2);
 
-        value2 = new MValue(DungeonArrowTrap.getDispensers(), Collections.emptyList());
+        value2 = new MValue(DungeonCrusherTrap.getStarting(), Collections.emptyList());
         add(value2);
 
 
         preRequisite = new MTextField() {
             @Override
             public void edit(String str) {
-                DungeonArrowTrap.setPreRequisite(Arrays.asList(str.split(",")));
+                DungeonCrusherTrap.setPreRequisite(Arrays.asList(str.split(",")));
             }
         };
-        preRequisite.setText(TextUtils.join(DungeonArrowTrap.getPreRequisite(), ","));
+        preRequisite.setText(TextUtils.join(DungeonCrusherTrap.getPreRequisite(), ","));
         preRequisite2 = new MLabelAndElement("Req.",preRequisite);
         preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
         add(preRequisite2);
@@ -102,7 +102,7 @@ public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrow
 
     @Override
     public void renderWorld(float partialTicks) {
-        DungeonArrowTrap.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        DungeonCrusherTrap.highlight(new Color(0,255,255,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
     }
 
     @Override
@@ -110,22 +110,22 @@ public class ValueEditArrowTrap extends MPanel implements ValueEdit<DungeonArrow
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditArrowTrap> {
+    public static class Generator implements ValueEditCreator<ValueEditCrusherTrap> {
 
         @Override
-        public ValueEditArrowTrap createValueEdit(Parameter parameter) {
-            return new ValueEditArrowTrap(parameter);
+        public ValueEditCrusherTrap createValueEdit(Parameter parameter) {
+            return new ValueEditCrusherTrap(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonArrowTrap();
+            return new DungeonCrusherTrap();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonArrowTrap)object).clone();
+                return ((DungeonCrusherTrap)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

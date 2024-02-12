@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProvider;
@@ -43,13 +44,16 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDungeonRooms;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeatureSoulRoomWarning;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapter;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Placeholder;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
@@ -77,6 +81,8 @@ import net.minecraft.client.renderer.texture.TextureMap;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
 import net.minecraft.init.Blocks;
+import net.minecraft.init.Items;
+import net.minecraft.item.ItemStack;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.realms.RealmsBridge;
@@ -103,12 +109,17 @@ import org.lwjgl.opengl.GL11;
 import javax.swing.*;
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.*;
 import java.util.List;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 public class FeatureRoomEdit  extends SimpleFeature {
     public FeatureRoomEdit() {
@@ -181,6 +192,138 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
     }
 
+
+    private File f;
+    private void load(File f) {
+        this.f = f;
+
+        Gson gson = new Gson();
+        JsonObject jsonObject;
+        try {
+            jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+
+        if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
+            NBTTagCompound compound = schematic;
+            for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
+                for (int y = 0; y < compound.getShort("Height"); y++) {
+                    for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
+                        BlockPos pos = new BlockPos(x, 0, z);
+                        World w = MinecraftServer.getServer().getEntityWorld();
+                        if (x % 16 == 0 && z % 16 == 0 && y == 0) {
+                            for (int i = 0; i < w.getChunkFromBlockCoords(pos).getBlockStorageArray().length; i++) {
+                                w.getChunkFromBlockCoords(pos).getBlockStorageArray()[i] = null;
+                            }
+                        }
+                        w.markBlockForUpdate(pos);
+                    }
+                }
+            }
+            onWorldUnload(null);
+        } else {
+            if (Minecraft.getMinecraft().theWorld != null) {
+                boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
+                boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
+                Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
+                Minecraft.getMinecraft().loadWorld((WorldClient) null);
+            }
+
+
+            ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
+            isaveformat.flushCache();
+            isaveformat.deleteWorldDirectory("dungeonsguide");
+
+
+
+            WorldType.FLAT.onGUICreateWorldPress();
+            WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
+            WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
+            worldsettings.setWorldName("3;minecraft:air");
+            worldsettings.enableCommands();
+
+            Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
+        }
+        blockUpdates = new ArrayList<>();
+        int minX = jsonObject.get("minX").getAsInt(), minZ = jsonObject.get("minZ").getAsInt();
+        for (JsonElement updates : jsonObject.get("blockupdates").getAsJsonArray()) {
+            List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> list = new ArrayList<>();
+            for (JsonElement updatedBlocks : updates.getAsJsonObject().get("updatedBlocks").getAsJsonArray()) {
+                JsonArray pos = updatedBlocks.getAsJsonArray();
+                BlockPos bPos = new BlockPos(pos.get(0).getAsInt()-minX, pos.get(1).getAsInt(), pos.get(2).getAsInt()-minZ);
+                String[] block = pos.get(3).getAsString().split(":");
+                Block b = Block.getBlockById(Integer.parseInt(block[0]));
+                IBlockState blockState = b.getStateFromMeta(Integer.parseInt(block[1]));
+                FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData data = new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(bPos, blockState);
+                list.add(data);
+            }
+            long time = updates.getAsJsonObject().get("time").getAsLong();
+
+            blockUpdates.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate(list, time));
+        }
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            throw new RuntimeException(e);
+        }
+        MinecraftServer.getServer().getEntityWorld().setSpawnPoint(new BlockPos(0, 100, 0));
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doMobSpawning", "false");
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
+        MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("randomTickSpeed", "0");
+
+        shape = jsonObject.get("shape").getAsShort();
+        color = jsonObject.get("color").getAsByte();
+
+        NBTTagCompound compound;
+        try {
+            compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                    jsonObject.get("schematic").getAsString()
+            )));
+        } catch (IOException e) {
+            e.printStackTrace();
+            return;
+        }
+
+        schematic = compound;
+        byte[] blocks = compound.getByteArray("Blocks");
+        byte[] meta = compound.getByteArray("Data");
+        List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> datas = new ArrayList<>();
+        for (int x = 0; x < compound.getShort("Width"); x++) {
+            for (int y = 0; y < compound.getShort("Height"); y++) {
+                for (int z = 0; z < compound.getShort("Length"); z++) {
+                    if (!( (shape >>((z/32) *4 +(x/32)) & 0x1) > 0)) {
+                        continue;
+                    }
+
+                    int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
+                    BlockPos pos = new BlockPos(x, y, z);
+                    World w = MinecraftServer.getServer().getEntityWorld();
+                    Chunk c = w.getChunkFromBlockCoords(pos);
+                    w.markBlockForUpdate(pos);
+                    ExtendedBlockStorage[] storage= c.getBlockStorageArray();
+                    ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
+                    if (extendedblockstorage == null) {
+                        if ((blocks[index] & 0xFF) == 0) {
+                            continue;
+                        }
+                        extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
+                    }
+                    extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
+                    if ((blocks[index] & 0xFF) == 23) {
+                        datas.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(new BlockPos(x, y, z),  Blocks.dropper.getStateFromMeta(meta[index] & 0xFF)));
+                    }
+                }
+            }
+        }
+        blockUpdates.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate(datas, System.currentTimeMillis()));
+        xWid = (compound.getShort("Width") + 5) / 32;
+        zWid = (compound.getShort("Length") + 5) / 32;
+
+        FeatureRoomEdit.this.flag = true;
+        FeatureRoomEdit.this.setup = false;
+    }
+
     public class RoomConfiguration extends AnnotatedImportOnlyWidget {
 
         @Bind(
@@ -205,133 +348,48 @@ public class FeatureRoomEdit  extends SimpleFeature {
             return switches1;
         }
 
+        @On(functionName = "next")
+        public void next() {
+
+            try {
+                List<Path> files = Files.list(Paths.get(f.getParent()))
+                        .sorted()
+                        .collect(Collectors.toList());
+                System.out.println(files);
+                int nextFile = files.indexOf(Paths.get(f.toURI())) + 1;
+                ChatTransmitter.sendDebugChat("Loading " + files.get(nextFile));
+                load(new File(files.get(nextFile).toUri()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
+
+        @On(functionName = "prev")
+        public void prev() {
+
+            try {
+                List<Path> files = Files.list(Paths.get(f.getParent()))
+                        .sorted()
+                        .collect(Collectors.toList());
+                System.out.println(files);
+                int nextFile = files.indexOf(Paths.get(f.toURI())) - 1;
+                ChatTransmitter.sendDebugChat("Loading " + files.get(nextFile));
+                load(new File(files.get(nextFile).toUri()));
+            } catch (IOException e) {
+                throw new RuntimeException(e);
+            }
+        }
         @On(functionName = "loaddgrun")
         public void loadDGRun() {
             JFileChooser chooser = new JFileChooser();
             chooser.setCurrentDirectory(new File(Main.getConfigDir(), "grouped3"));
             int returnValue = chooser.showOpenDialog( null ) ;
             File f = chooser.getSelectedFile();
-
-            Gson gson = new Gson();
-            JsonObject jsonObject;
             try {
-                jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
-            } catch (IOException e) {
-                throw new RuntimeException(e);
-            }
-
-            if (Minecraft.getMinecraft().isSingleplayer() && MinecraftServer.getServer().getFolderName().equals("dungeonsguide") && schematic != null) {
-                NBTTagCompound compound = schematic;
-                for (int x = 0; x < compound.getShort("Width") + 16; x+= 1) {
-                    for (int y = 0; y < compound.getShort("Height"); y++) {
-                        for (int z = 0; z < compound.getShort("Length") + 16; z+=1) {
-                            BlockPos pos = new BlockPos(x, 0, z);
-                            World w = MinecraftServer.getServer().getEntityWorld();
-                            if (x % 16 == 0 && z % 16 == 0 && y == 0) {
-                                for (int i = 0; i < w.getChunkFromBlockCoords(pos).getBlockStorageArray().length; i++) {
-                                    w.getChunkFromBlockCoords(pos).getBlockStorageArray()[i] = null;
-                                }
-                            }
-                            w.markBlockForUpdate(pos);
-                        }
-                    }
-                }
-                onWorldUnload(null);
-            } else {
-                if (Minecraft.getMinecraft().theWorld != null) {
-                    boolean flag = Minecraft.getMinecraft().isIntegratedServerRunning();
-                    boolean flag1 = Minecraft.getMinecraft().isConnectedToRealms();
-                    Minecraft.getMinecraft().theWorld.sendQuittingDisconnectingPacket();
-                    Minecraft.getMinecraft().loadWorld((WorldClient) null);
-                }
-
-
-                ISaveFormat isaveformat = Minecraft.getMinecraft().getSaveLoader();
-                isaveformat.flushCache();
-                isaveformat.deleteWorldDirectory("dungeonsguide");
-
-
-
-                WorldType.FLAT.onGUICreateWorldPress();
-                WorldSettings.GameType worldsettings$gametype = WorldSettings.GameType.CREATIVE;
-                WorldSettings worldsettings = new WorldSettings(0, worldsettings$gametype, false, false, WorldType.FLAT);
-                worldsettings.setWorldName("3;minecraft:air");
-                worldsettings.enableCommands();
-
-                Minecraft.getMinecraft().launchIntegratedServer("dungeonsguide", "dungeonsguide", worldsettings);
-            }
-            blockUpdates = new ArrayList<>();
-            int minX = jsonObject.get("minX").getAsInt(), minZ = jsonObject.get("minZ").getAsInt();
-            for (JsonElement updates : jsonObject.get("blockupdates").getAsJsonArray()) {
-                List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData> list = new ArrayList<>();
-                for (JsonElement updatedBlocks : updates.getAsJsonObject().get("updatedBlocks").getAsJsonArray()) {
-                    JsonArray pos = updatedBlocks.getAsJsonArray();
-                    BlockPos bPos = new BlockPos(pos.get(0).getAsInt()-minX, pos.get(1).getAsInt(), pos.get(2).getAsInt()-minZ);
-                    String[] block = pos.get(3).getAsString().split(":");
-                    Block b = Block.getBlockById(Integer.parseInt(block[0]));
-                    IBlockState blockState = b.getStateFromMeta(Integer.parseInt(block[1]));
-                    FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData data = new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData(bPos, blockState);
-                    list.add(data);
-                }
-                long time = updates.getAsJsonObject().get("time").getAsLong();
-
-                blockUpdates.add(new FeatureCollectDungeonRooms.RoomInfo.BlockUpdate(list, time));
-            }
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
-            }
-            MinecraftServer.getServer().getEntityWorld().setSpawnPoint(new BlockPos(0, 100, 0));
-            MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doMobSpawning", "false");
-            MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("doDaylightCycle", "false");
-            MinecraftServer.getServer().getEntityWorld().getGameRules().setOrCreateGameRule("randomTickSpeed", "0");
-
-            shape = jsonObject.get("shape").getAsShort();
-            color = jsonObject.get("color").getAsByte();
-
-            NBTTagCompound compound;
-            try {
-                compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                        jsonObject.get("schematic").getAsString()
-                )));
-            } catch (IOException e) {
+                load(f);
+            } catch (Exception e) {
                 e.printStackTrace();
-                return;
             }
-
-            schematic = compound;
-            byte[] blocks = compound.getByteArray("Blocks");
-            byte[] meta = compound.getByteArray("Data");
-            for (int x = 0; x < compound.getShort("Width"); x++) {
-                for (int y = 0; y < compound.getShort("Height"); y++) {
-                    for (int z = 0; z < compound.getShort("Length"); z++) {
-                        if (!( (shape >>((z/32) *4 +(x/32)) & 0x1) > 0)) {
-                            continue;
-                        }
-
-                        int index = x + (y * compound.getShort("Length") + z) * compound.getShort("Width");
-                        BlockPos pos = new BlockPos(x, y, z);
-                        World w = MinecraftServer.getServer().getEntityWorld();
-                        Chunk c = w.getChunkFromBlockCoords(pos);
-                        w.markBlockForUpdate(pos);
-                        ExtendedBlockStorage[] storage= c.getBlockStorageArray();
-                        ExtendedBlockStorage extendedblockstorage = storage[y >> 4];
-                        if (extendedblockstorage == null) {
-                            if ((blocks[index] & 0xFF) == 0) {
-                                continue;
-                            }
-                            extendedblockstorage = storage[y >> 4] = new ExtendedBlockStorage(y >> 4 << 4, true);
-                        }
-                        extendedblockstorage.set(x & 0xF, y & 15, z & 0xF, Block.getBlockById(blocks[index] & 0xFF).getStateFromMeta(meta[index] & 0xFF));
-                    }
-                }
-            }
-            xWid = (compound.getShort("Width") + 5) / 32;
-            zWid = (compound.getShort("Length") + 5) / 32;
-
-            FeatureRoomEdit.this.flag = true;
-            FeatureRoomEdit.this.setup = false;
         }
     }
     private boolean flag;
@@ -344,6 +402,12 @@ public class FeatureRoomEdit  extends SimpleFeature {
     @Getter
     private List<FeatureCollectDungeonRooms.RoomInfo.BlockUpdate> blockUpdates;
 
+    @DGEventHandler
+    public void onKey(KeyBindPressedEvent event) {
+        if (event.getKey() == 68) {
+            Minecraft.getMinecraft().displayGuiScreen(new GuiScreenAdapter(new RoomConfiguration()));
+        }
+    }
     @DGEventHandler()
     public void showBlockUpdates(RenderWorldLastEvent event) {
         if (blockUpdates != null) {
@@ -351,6 +415,8 @@ public class FeatureRoomEdit  extends SimpleFeature {
             GlStateManager.enableCull();
             for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate blockUpdate : blockUpdates) {
                 for (FeatureCollectDungeonRooms.RoomInfo.BlockUpdate.BlockUpdateData updatedBlock : blockUpdate.getUpdatedBlocks()) {
+                    if (Minecraft.getMinecraft().thePlayer.getDistanceSq(updatedBlock.getPos()) > 100)
+                        RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x33FFFF00, true), event.partialTicks, false);
                     int meta1 = updatedBlock.getBlock().getBlock().getMetaFromState(updatedBlock.getBlock());
                     Block block1 = updatedBlock.getBlock().getBlock();
                     IBlockState blockstate2 = Minecraft.getMinecraft().theWorld.getBlockState(updatedBlock.getPos());
@@ -360,8 +426,6 @@ public class FeatureRoomEdit  extends SimpleFeature {
                         continue;
 
 //                    GlStateManager.enableCull();
-                    if (Minecraft.getMinecraft().thePlayer.getDistanceSq(updatedBlock.getPos()) > 100)
-                        RenderUtils.highlightBlock(updatedBlock.getPos(), new Color(0x77FFFF00, true), event.partialTicks, false);
                     if (updatedBlock.getBlock().getBlock() != Blocks.air && updatedBlock.getBlock().getBlock() != Blocks.barrier) {
                         Minecraft.getMinecraft().renderEngine.bindTexture(TextureMap.locationBlocksTexture);
                         float partialTicks = event.partialTicks;
@@ -407,6 +471,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
             setup = true;
             System.out.println(Minecraft.getMinecraft().theWorld);
             Minecraft.getMinecraft().thePlayer.setPosition(0, 70, 0);
+            Minecraft.getMinecraft().thePlayer.inventory.mainInventory[0] = new ItemStack(Items.stick);
             DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
                 @Override
                 public BlockPos findDoor(World w, String dungeonName) {

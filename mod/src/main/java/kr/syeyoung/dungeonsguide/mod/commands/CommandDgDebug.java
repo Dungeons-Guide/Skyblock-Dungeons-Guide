@@ -58,6 +58,7 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;
 import net.minecraft.util.BlockPos;
@@ -600,6 +601,7 @@ public class CommandDgDebug extends CommandBase {
 
                 JsonArray jsonElements = new JsonArray();
                 Set<String> updated = new HashSet<>();
+                boolean chestpopulated = false;
                 for (JsonElement _blockupdates : jsonObject.getAsJsonArray("blockupdates")) {
                     JsonObject blockupdates = _blockupdates.getAsJsonObject();
                     JsonArray realUpdatedBlocks = new JsonArray();
@@ -625,6 +627,12 @@ public class CommandDgDebug extends CommandBase {
                         if (block.equals("79")) continue; // ice... apparently some1 uses frostworker
                         updated.add(x+":"+y+":"+z+":"+block);
                         realUpdatedBlocks.add(blockData);
+                        // redstone bloc / chest  / lever / tripwire / tripwire hook / button / trapped chest
+                        if (block.equals("152") || block.equals("54") || block.equals("69") || block.equals("132") || block.equals("131") || block.equals("77") || block.equals("146")) {
+                            blocks[index] = (byte) Integer.parseInt(block);
+                            meta[index] = (byte) Integer.parseInt(blockData.get(3).getAsString().split(":")[1]);
+                            chestpopulated = true;
+                        }
                     }
                     if (realUpdatedBlocks.size() > 0) {
                         blockupdates.remove("updatedBlocks");
@@ -634,6 +642,17 @@ public class CommandDgDebug extends CommandBase {
                 }
                 jsonObject.remove("blockupdates");
                 jsonObject.add("blockupdates", jsonElements);
+
+
+                if (chestpopulated) {
+                    compound.setByteArray("Blocks", blocks);
+                    compound.setByteArray("Data", meta);
+
+                    String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound);
+                    jsonObject.remove("schematic");
+                    jsonObject.addProperty("schematic", schm);
+                }
+
                 DungeonRoomInfo dungeonRoomInfo = DungeonRoomInfoRegistry.getByUUID(UUID.fromString(jsonObject.get("uuid").getAsString()));
 
                 if (!roomMapping.containsKey(jsonObject.get("uuid").getAsString())) {
@@ -644,6 +663,18 @@ public class CommandDgDebug extends CommandBase {
                     int originalRot = originalRoomMapping.get("rot").getAsInt();
                     JsonArray toMergeInto = originalRoomMapping.getAsJsonArray("blockupdates");
                     int thisRot = jsonObject.get("rot").getAsInt();
+
+
+                    NBTTagCompound compound2 = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                            originalRoomMapping.get("schematic").getAsString()
+                    )));
+                    byte[] blocks2 = compound2.getByteArray("Blocks");
+                    byte[] meta2 = compound2.getByteArray("Data");
+                    int len = compound.getShort("Length");
+                    int wid = compound.getShort("Width");
+
+                    boolean changed = false;
+
                     for (JsonElement _blockUpdates : jsonElements) {
                         JsonObject blockUpdate = _blockUpdates.getAsJsonObject();
                         JsonArray transformedUpdatedBlocks = new JsonArray();
@@ -676,6 +707,15 @@ public class CommandDgDebug extends CommandBase {
                             brueuru.add(new JsonPrimitive(block));
 
                             transformedUpdatedBlocks.add(brueuru);
+
+                            if (block.startsWith("152:") || block.startsWith("54:") || block.startsWith("69:") || block.startsWith("132:") || block.startsWith("131:") || block.startsWith("77:") || block.startsWith("146:")) {
+                                int i = x - originalRoomMapping.get("minX").getAsInt() + (z - originalRoomMapping.get("minZ").getAsInt()) * wid + y * wid * len;
+                                if (x - originalRoomMapping.get("minX").getAsInt() < 0 || z - originalRoomMapping.get("minZ").getAsInt() < 0 || y < 0 || x - originalRoomMapping.get("minX").getAsInt() >= wid || z - originalRoomMapping.get("minZ").getAsInt() >= len || y >= 256) continue;
+
+                                blocks2[i] = (byte) Integer.parseInt(block.split(":")[0]);
+                                meta2[i] = (byte) Integer.parseInt(block.split(":")[1]);
+                                changed = true;
+                            }
                         }
                         blockUpdate.remove("updatedBlocks");
                         blockUpdate.add("updatedBlocks", transformedUpdatedBlocks);
@@ -685,15 +725,7 @@ public class CommandDgDebug extends CommandBase {
                     // PREFER MOAR BLOCKS!!
 
                     if (originalRot == thisRot) {
-                        NBTTagCompound compound2 = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
-                                originalRoomMapping.get("schematic").getAsString()
-                        )));
-                        byte[] blocks2 = compound2.getByteArray("Blocks");
-                        byte[] meta2 = compound2.getByteArray("Data");
-                        boolean changed = false;
 
-                        int len = compound.getShort("Length");
-                        int wid = compound.getShort("Width");
                         // formula y *len*width + z * width + x
 
                         for (int x = 0; x <= 11; x ++) {
@@ -749,15 +781,14 @@ public class CommandDgDebug extends CommandBase {
                                 }
                             }
                         }
+                    }
+                    if (changed) {
+                        compound2.setByteArray("Blocks", blocks2);
+                        compound2.setByteArray("Data", meta2);
 
-                        if (changed) {
-                            compound2.setByteArray("Blocks", blocks2);
-                            compound2.setByteArray("Data", meta2);
-
-                            String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
-                            originalRoomMapping.remove("schematic");
-                            originalRoomMapping.addProperty("schematic", schm);
-                        }
+                        String schm = FeatureCollectDungeonRooms.nbttostring("Schematic", compound2);
+                        originalRoomMapping.remove("schematic");
+                        originalRoomMapping.addProperty("schematic", schm);
                     }
 
                 }
