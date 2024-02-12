@@ -190,6 +190,7 @@ public class CommandDgDebug extends CommandBase {
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
+                break;
             case "check":
                 checkCommand();
                 break;
