@@ -457,12 +457,12 @@ public class CommandDgDebug extends CommandBase {
 
                                         if (Math.abs(rrx - rx) == 2 || y >= 72 || y < 69) {
                                             blocks[i] = (byte) 153;
-                                            meta[i] = 0;
+                                            meta[i] = 14;
                                         }
 
                                         if (Math.abs(rrz - rz) <= 1 && Math.abs(rrx - rx) <= 1 && (y >= 69 && y <= 72)) {
                                             blocks[i] = (byte) 19;
-                                            meta[i] = 0;
+                                            meta[i] = 14;
                                         }
                                     }
                                 }

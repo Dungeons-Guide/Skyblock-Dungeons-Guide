@@ -208,7 +208,7 @@ public class FeatureRoomEdit  extends SimpleFeature {
         @On(functionName = "loaddgrun")
         public void loadDGRun() {
             JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(Main.getConfigDir());
+            chooser.setCurrentDirectory(new File(Main.getConfigDir(), "grouped3"));
             int returnValue = chooser.showOpenDialog( null ) ;
             File f = chooser.getSelectedFile();
 
