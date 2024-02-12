@@ -364,6 +364,11 @@ public class FeatureRoomEdit  extends SimpleFeature {
             }
         }
 
+        @On(functionName = "reload")
+        public void reload() {
+            setup = false;
+        }
+
         @On(functionName = "prev")
         public void prev() {
 

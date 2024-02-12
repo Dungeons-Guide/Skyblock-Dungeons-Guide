@@ -977,6 +977,7 @@ public class CommandDgDebug extends CommandBase {
 
     private void transferSchematic(boolean ignoreAir) {
         FeatureRegistry.ADVANCED_ROOMEDIT.overwrite(ignoreAir);
+        ChatTransmitter.sendDebugChat("TRANSFERRED SCHEMATIC");
     }
 
     private void closeContextCommand() {

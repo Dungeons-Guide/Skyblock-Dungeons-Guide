@@ -34,6 +34,7 @@
                             <RoundButton text="Load .schematic" disabled="true"/>
                         </size>
                     </row>
+                    <size height="5" width="0"/>
                     <row>
                         <flexible><size width="0" height="0"/></flexible>
                         <size height="20" width="100">
@@ -42,6 +43,10 @@
                         <size width="5"/>
                         <size height="20" width="100">
                             <RoundButton text="Next" on:click="next"/>
+                        </size>
+                        <size width="5"/>
+                        <size height="20" width="100">
+                            <RoundButton text="Reload" on:click="reload"/>
                         </size>
                     </row>
                     <size width="0" height="5"/>
