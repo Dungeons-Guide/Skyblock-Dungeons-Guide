@@ -193,9 +193,6 @@ public class CommandDgDebug extends CommandBase {
                     throw new RuntimeException(e);
                 }
                 break;
-            case "migratesecrets":
-                migrateSecrets();
-                break;
             case "removedoors":
                 try {
                     removedoors();
@@ -387,40 +384,6 @@ public class CommandDgDebug extends CommandBase {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
     }
 
-    private void migrateSecrets() {
-        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            for (Map.Entry<String, DungeonMechanic> mechanic : dungeonRoomInfo.getMechanics().entrySet()) {
-                String name = mechanic.getKey();
-                DungeonMechanic _mech = mechanic.getValue();
-                if (!(_mech instanceof  DungeonSecret)) continue;
-                DungeonSecret secret = (DungeonSecret) _mech;
-
-                DungeonMechanic _replacement;
-                if (secret.getSecretType() == DungeonSecret.SecretType.CHEST) {
-                    DungeonSecretChest replacement = new DungeonSecretChest();
-                    replacement.setSecretPoint(secret.getSecretPoint());
-                    _replacement = replacement;
-                } else if (secret.getSecretType() == DungeonSecret.SecretType.BAT) {
-                    DungeonSecretBat replacement = new DungeonSecretBat();
-                    replacement.setSecretPoint(secret.getSecretPoint());
-                    _replacement = replacement;
-                } else if (secret.getSecretType() == DungeonSecret.SecretType.ESSENCE) {
-                    DungeonSecretEssence replacement = new DungeonSecretEssence();
-                    replacement.setSecretPoint(secret.getSecretPoint());
-                    _replacement = replacement;
-                } else if (secret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP) {
-                    DungeonSecretItemDrop replacement = new DungeonSecretItemDrop();
-                    replacement.setSecretPoint(secret.getSecretPoint());
-                    _replacement = replacement;
-                } else {
-                    System.out.println("How tho");
-                    continue;
-                }
-
-                dungeonRoomInfo.getMechanics().put(name, _replacement);
-            }
-        }
-    }
     private void removedoors() throws Exception {
         File fileRoot = Main.getConfigDir();
         File dir = new File(fileRoot, "grouped2");
@@ -1005,14 +968,11 @@ public class CommandDgDebug extends CommandBase {
                 System.out.println("Starting at " + dri.getName() + " - " + dri.getUuid());
                 for (Map.Entry<String, DungeonMechanic> value2 : dri.getMechanics().entrySet()) {
                     DungeonMechanic value = value2.getValue();
-                    if (value instanceof DungeonSecret &&
-                            (((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.BAT
-                                    || ((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.CHEST)
-                            && ((DungeonSecret) value).getSecretPoint().getY() == 0) {
-                        OffsetPoint offsetPoint = ((DungeonSecret) value).getSecretPoint();
+                    if ((value instanceof DungeonSecretEssence || value instanceof DungeonSecretChest) && ((ISecret) value).getSecretPoint().getY() == 0) {
+                        OffsetPoint offsetPoint = ((ISecret) value).getSecretPoint();
                         if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
                             dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                            System.out.println("Fixing " + value2.getKey() + " - as secret " + ((DungeonSecret) value).getSecretType() + " - at " + ((DungeonSecret) value).getSecretPoint());
+                            System.out.println("Fixing " + value2.getKey() + " - as secret " + value.getClass().getSimpleName() + " - at " + ((ISecret) value).getSecretPoint());
                         }
                     } else if (value instanceof DungeonOnewayDoor) {
                         for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {

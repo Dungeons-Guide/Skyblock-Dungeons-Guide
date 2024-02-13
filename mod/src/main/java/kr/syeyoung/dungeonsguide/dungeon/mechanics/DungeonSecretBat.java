@@ -22,7 +22,6 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
-import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonActionContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
@@ -31,12 +30,6 @@ import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
-import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
-import net.minecraft.entity.item.EntityItem;
-import net.minecraft.init.Blocks;
-import net.minecraft.tileentity.TileEntityChest;
-import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
@@ -46,7 +39,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DungeonSecretBat implements DungeonMechanic {
+public class DungeonSecretBat implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
@@ -66,6 +59,16 @@ public class DungeonSecretBat implements DungeonMechanic {
                 }
             }
             return SecretStatus.NOT_SURE;
+    }
+
+    @Override
+    public boolean isFound(DungeonRoom dungeonRoom) {
+        return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
+    }
+
+    @Override
+    public void tick(DungeonRoom dungeonRoom) {
+        // nothin
     }
 
     @Override

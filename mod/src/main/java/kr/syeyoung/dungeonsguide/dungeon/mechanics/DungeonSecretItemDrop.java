@@ -46,12 +46,16 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DungeonSecretItemDrop implements DungeonMechanic {
+public class DungeonSecretItemDrop implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
     private List<String> preRequisite = new ArrayList<String>();
 
+    @Override
+    public boolean isFound(DungeonRoom dungeonRoom) {
+        return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
+    }
     public void tick(DungeonRoom dungeonRoom) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 2) {

@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DungeonSecretEssence implements DungeonMechanic {
+public class DungeonSecretEssence implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
@@ -59,6 +59,10 @@ public class DungeonSecretEssence implements DungeonMechanic {
                 dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
             }
 
+    }
+    @Override
+    public boolean isFound(DungeonRoom dungeonRoom) {
+        return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
     }
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {

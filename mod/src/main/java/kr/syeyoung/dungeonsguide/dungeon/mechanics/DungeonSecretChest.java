@@ -46,7 +46,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DungeonSecretChest implements DungeonMechanic {
+public class DungeonSecretChest implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
@@ -69,6 +69,10 @@ public class DungeonSecretChest implements DungeonMechanic {
             }
     }
 
+    @Override
+    public boolean isFound(DungeonRoom dungeonRoom) {
+        return getSecretStatus(dungeonRoom) == SecretStatus.FOUND;
+    }
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);

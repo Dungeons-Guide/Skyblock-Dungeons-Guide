@@ -20,10 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -90,7 +87,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
         if (!ticked && FeatureRegistry.SECRET_SMART_AUTO_START.isEnabled()) {
             ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
-                if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
+                if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
                     try {
                         actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"));
                     } catch (PathfindImpossibleException e) {
@@ -123,16 +120,16 @@ public class GeneralRoomProcessor implements RoomProcessor {
         }
         if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
-                if (value.getValue() instanceof DungeonSecret && ((DungeonSecret) value.getValue()).getSecretStatus(dungeonRoom) != DungeonSecret.SecretStatus.FOUND) {
-                    DungeonSecret dungeonSecret = (DungeonSecret) value.getValue();
+                if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
+                    ISecret secret = (ISecret) value.getValue();
                     try {
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isBat() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.BAT)
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isBat() && secret instanceof DungeonSecretBat)
                             pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_BAT.getRouteProperties());
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isChest() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.CHEST)
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isChest() && secret instanceof DungeonSecretChest)
                             pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_CHEST.getRouteProperties());
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isEssence() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ESSENCE)
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isEssence() && secret instanceof DungeonSecretEssence)
                             pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ESSENCE.getRouteProperties());
-                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && dungeonSecret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP)
+                        if (FeatureRegistry.SECRET_PATHFIND_ALL.isItemdrop() && secret instanceof DungeonSecretItemDrop)
                             pathfind(value.getKey(), "found", FeatureRegistry.SECRET_LINE_PROPERTIES_PATHFINDALL_ITEM_DROP.getRouteProperties());
                     } catch (Exception e) {
                         ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
@@ -166,7 +163,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
 
         for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
-            if (value instanceof DungeonSecret) ((DungeonSecret) value).tick(dungeonRoom);
+            if (value instanceof ISecret) ((ISecret) value).tick(dungeonRoom);
         }
 
         if (toRemove.contains("AUTO-BROWSE") && FeatureRegistry.SECRET_AUTO_BROWSE_NEXT.isEnabled()) {
@@ -186,19 +183,19 @@ public class GeneralRoomProcessor implements RoomProcessor {
         double lowestCost = 99999999999999.0;
         Map.Entry<String, DungeonMechanic> lowestWeightMechanic = null;
         for (Map.Entry<String, DungeonMechanic> mech: dungeonRoom.getMechanics().entrySet()) {
-            if (!(mech.getValue() instanceof DungeonSecret)) continue;
+            if (!(mech.getValue() instanceof ISecret)) continue;
             if (visited.contains(mech.getKey())) continue;
-            if (((DungeonSecret) mech.getValue()).getSecretStatus(getDungeonRoom()) != DungeonSecret.SecretStatus.FOUND) {
+            if (!((ISecret) mech.getValue()).isFound(getDungeonRoom())) {
                 double cost = 0;
-                if (((DungeonSecret) mech.getValue()).getSecretType() == DungeonSecret.SecretType.BAT &&
-                        ((DungeonSecret) mech.getValue()).getPreRequisite().size() == 0) {
+                if (mech.getValue() instanceof DungeonSecretBat &&
+                        ((ISecret)mech.getValue()).getPreRequisite().size() == 0) {
                     cost += -100000000;
                 }
                 if (mech.getValue().getRepresentingPoint(getDungeonRoom()) == null) continue;
                 BlockPos blockpos = mech.getValue().getRepresentingPoint(getDungeonRoom()).getBlockPos(getDungeonRoom());
 
                 cost += blockpos.distanceSq(pos);
-                cost += ((DungeonSecret) mech.getValue()).getPreRequisite().size() * 100;
+                cost += ((ISecret) mech.getValue()).getPreRequisite().size() * 100;
 
                 if (cost < lowestCost) {
                     lowestCost = cost;
@@ -504,8 +501,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             if (deathEvent.entity instanceof EntityBat) {
                 for (GuiScreen screen : EditingContext.getEditingContext().getGuiStack()) {
                     if (screen instanceof GuiDungeonRoomEdit) {
-                        DungeonSecret secret = new DungeonSecret();
-                        secret.setSecretType(DungeonSecret.SecretType.BAT);
+                        DungeonSecretBat secret = new DungeonSecretBat();
                         secret.setSecretPoint(new OffsetPoint(dungeonRoom,
                                 DungeonActionContext.getSpawnLocation().get(deathEvent.entity.getEntityId())
                         ));
@@ -515,8 +511,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     }
                 }
                 if (EditingContext.getEditingContext().getCurrent() instanceof GuiDungeonRoomEdit) {
-                    DungeonSecret secret = new DungeonSecret();
-                    secret.setSecretType(DungeonSecret.SecretType.BAT);
+                    DungeonSecretBat secret = new DungeonSecretBat();
                     secret.setSecretPoint(new OffsetPoint(dungeonRoom,
                             DungeonActionContext.getSpawnLocation().get(deathEvent.entity.getEntityId())
                     ));

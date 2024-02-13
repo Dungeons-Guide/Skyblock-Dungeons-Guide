@@ -60,7 +60,10 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
     );
     private String map(Class t) {
         if (t == DungeonFairySoul.class) return "Fairy Soul";
-        if (t == DungeonSecret.class) return "Secrets";
+        if (t == DungeonSecretBat.class) return "Secrets";
+        if (t == DungeonSecretChest.class) return "Secrets";
+        if (t == DungeonSecretItemDrop.class) return "Secrets";
+        if (t == DungeonSecretEssence.class) return "Secrets";
         if (t == DungeonTomb.class) return "Crypts";
         if (t == DungeonNPC.class) return "NPC";
         if (t == DungeonJournal.class) return "Journals";
