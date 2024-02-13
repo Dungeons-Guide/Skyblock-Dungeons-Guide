@@ -36,6 +36,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.entity.RenderManager;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.EnumFacing;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
@@ -85,6 +86,26 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
         } else {
             dir = Integer.MIN_VALUE;
         }
+
+        if (getDungeonRoom().getDungeonRoomInfo().getProperties().containsKey("warning-pos")) {
+            OffsetPoint offsetPoint = (OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-pos");
+            Vec3 pos = new Vec3(offsetPoint.getBlockPos(getDungeonRoom()));
+            pos = pos.addVector(0.5, 0, 0.5);
+            String dirStr = (String) getDungeonRoom().getDungeonRoomInfo().getProperties().get("warning-dir");
+            EnumFacing dirFacing = EnumFacing.byName(dirStr);
+            if (dirFacing != null) {
+                int rot = getDungeonRoom().getRoomMatcher().getRotation();
+                for (int i = 0; i < 4-rot; i++)
+                    dirFacing = dirFacing.rotateY();
+                pos = pos.addVector(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
+                dir = (2-dirFacing.getHorizontalIndex())* 90; // don't ask me why
+                dirFacing = dirFacing.rotateY();
+                pos = pos.addVector(dirFacing.getFrontOffsetX() * 0.5, dirFacing.getFrontOffsetY() * 0.5, dirFacing.getFrontOffsetZ() * 0.5);
+
+            }
+
+            this.basePt = pos;
+        }
     }
 
     @Override
@@ -98,6 +119,8 @@ public class RoomProcessorRedRoom extends GeneralRoomProcessor {
             RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
 
             Vector3f renderPos = RenderUtils.getRenderPos((float)basePt.xCoord,(float) basePt.yCoord, (float)basePt.zCoord, partialTicks);
+
+
 
             GlStateManager.color(1f, 1f, 1f, 0.5f);
             GlStateManager.pushMatrix();

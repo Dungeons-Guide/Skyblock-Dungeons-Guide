@@ -73,6 +73,7 @@ import javax.crypto.NoSuchPaddingException;
 import java.awt.*;
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.StandardCopyOption;
 import java.security.*;
 import java.security.cert.CertificateException;
 import java.util.List;
@@ -170,6 +171,13 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "process2":
                 process2();
+                break;
+            case "groupunknowns":
+                try {
+                    groupunknowns();
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
                 break;
             case "groupprocess":
                 try {
@@ -570,6 +578,58 @@ public class CommandDgDebug extends CommandBase {
             }
         }
 
+    }
+
+    private void groupunknowns() throws Exception {
+
+        File fileRoot = Main.getConfigDir();
+        File dir = new File(fileRoot, "compressed");
+        File outdir = new File(fileRoot, "unk_grouped");
+        Iterator<File> fileIter = FileUtils.iterateFiles(dir, new String[] {"dgrun"}, true);
+
+        while (fileIter.hasNext()) {
+            try {
+                File f = fileIter.next();
+                if (!f.getParentFile().getName().startsWith("The")) continue;
+                Gson gson = new Gson();
+                JsonObject jsonObject = gson.fromJson(IOUtils.toString(f.toURI()), JsonObject.class);
+                if (jsonObject == null) continue;
+                if (!jsonObject.get("uuid").getAsString().equalsIgnoreCase(jsonObject.get("name").getAsString())) {
+                    continue;
+                }
+                System.out.println("Processing: " + f.getCanonicalPath());
+                int color = jsonObject.get("color").getAsInt();
+                int size = jsonObject.get("shape").getAsInt();
+                if (size != 1) continue;
+                if (color == 18) {
+                    // red
+                    File target = new File(outdir, "blood/"+jsonObject.get("dungeon").getAsString());
+                    target.mkdirs();
+                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                } else if (color == 30) {
+                    // ent
+                    File target = new File(outdir, "entrance/"+jsonObject.get("dungeon").getAsString());
+                    target.mkdirs();
+                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                } else if (color == 74) {
+                    // miniboss
+                    File target = new File(outdir, "miniboss/"+jsonObject.get("dungeon").getAsString());
+                    target.mkdirs();
+                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                } else if (color == 63) {
+                    // smth i haven't visited yeet
+                    File target = new File(outdir, "rare/"+jsonObject.get("dungeon").getAsString());
+                    target.mkdirs();
+                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                } else {
+                    File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
+                    target.mkdirs();
+                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                }
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
     }
     private void groupprocess() throws Exception {
         // This take about 7m to complete.  :30:35 to 39:19 -> Around 9min.
