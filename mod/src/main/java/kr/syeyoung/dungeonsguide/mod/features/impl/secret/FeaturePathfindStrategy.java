@@ -27,7 +27,7 @@ import lombok.RequiredArgsConstructor;
 public class FeaturePathfindStrategy extends SimpleFeature {
     public FeaturePathfindStrategy() {
         super("Pathfinding & Secrets", "Pathfind Algorithm", "Select pathfind algorithm used by paths", "secret.secretpathfind.algorithm", true);
-        addParameter("strategy", new FeatureParameter<PathfindStrategy>("strategy", "Pathfind Strategy", "Pathfind Strategy", PathfindStrategy.THETA_STAR, new TCEnum<>(PathfindStrategy.values()), neu -> {
+        addParameter("strategy", new FeatureParameter<PathfindStrategy>("strategy", "Pathfind Strategy", "Pathfind Strategy", PathfindStrategy.A_STAR_FINE_GRID_SMART, new TCEnum<>(PathfindStrategy.values()), neu -> {
             if (this.parameters.containsKey("strategy")) this.<PathfindStrategy>getParameter("strategy").setDescription(neu.getDescription());
         }));
     }
@@ -39,9 +39,6 @@ public class FeaturePathfindStrategy extends SimpleFeature {
 
     @Getter @RequiredArgsConstructor
     public enum PathfindStrategy {
-        THETA_STAR("The default pathfinding algorithm. It will generate sub-optimal path quickly."),
-        A_STAR_DIAGONAL("New pathfinding algorithm. It will generate path that looks like the one JPS generates"),
-        A_STAR_FINE_GRID("New pathfinding algorithm. It will generate path that kind of looks like stair"),
         A_STAR_FINE_GRID_SMART("A Star Fine grid, but with stonking/etherwarp support");
         private final String description;
     }
