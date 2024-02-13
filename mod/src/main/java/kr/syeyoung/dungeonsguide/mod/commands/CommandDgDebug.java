@@ -618,9 +618,47 @@ public class CommandDgDebug extends CommandBase {
                     Files.copy(f.toPath(), new File(target, f.getName()).toPath());
                 } else if (color == 63) {
                     // smth i haven't visited yeet
-                    File target = new File(outdir, "rare/"+jsonObject.get("dungeon").getAsString());
-                    target.mkdirs();
-                    Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                    // check
+
+                    NBTTagCompound compound = CompressedStreamTools.readCompressed(new ByteArrayInputStream(Base64.getDecoder().decode(
+                            jsonObject.get("schematic").getAsString()
+                    )));
+                    byte[] blocks = compound.getByteArray("Blocks");
+                    byte[] meta = compound.getByteArray("Data");
+
+                    int len = compound.getShort("Length");
+                    int wid = compound.getShort("Width");
+
+                    int air = 0;
+                    for (int i = 1; i <= 31; i++) {
+                        if (blocks[1 + i * wid + 70 * wid * len] == 0)
+                            air++;
+                        if (blocks[1 + i * wid + 70 * wid * len] == (byte)173)
+                            air += 3;
+                        if (blocks[31 + i * wid + 70 * wid * len] == 0)
+                            air++;
+                        if (blocks[31 + i * wid + 70 * wid * len] == (byte)173)
+                            air += 3;
+                        if (blocks[i + 1 * wid + 70 * wid * len] == 0)
+                            air++;
+                        if (blocks[i + 1 * wid + 70 * wid * len] == (byte)173)
+                            air += 3;
+                        if (blocks[i + 31 * wid + 70 * wid * len] == 0)
+                            air++;
+                        if (blocks[i + 31 * wid + 70 * wid * len] == (byte)173)
+                            air += 3;
+                    }
+                    if (air == 3) {
+
+                        File target = new File(outdir, "rare/"+jsonObject.get("dungeon").getAsString());
+                        target.mkdirs();
+                        Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                    } else {
+
+                        File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
+                        target.mkdirs();
+                        Files.copy(f.toPath(), new File(target, f.getName()).toPath());
+                    }
                 } else {
                     File target = new File(outdir, "uhhwaht/"+jsonObject.get("dungeon").getAsString());
                     target.mkdirs();
