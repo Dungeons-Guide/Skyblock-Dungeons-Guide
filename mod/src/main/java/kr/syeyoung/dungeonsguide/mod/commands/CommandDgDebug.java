@@ -193,6 +193,9 @@ public class CommandDgDebug extends CommandBase {
                     throw new RuntimeException(e);
                 }
                 break;
+            case "migratesecrets":
+                migrateSecrets();
+                break;
             case "removedoors":
                 try {
                     removedoors();
@@ -382,6 +385,41 @@ public class CommandDgDebug extends CommandBase {
     private void brandCommand() {
         String serverBrand = Minecraft.getMinecraft().thePlayer.getClientBrand();
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e" + serverBrand));
+    }
+
+    private void migrateSecrets() {
+        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            for (Map.Entry<String, DungeonMechanic> mechanic : dungeonRoomInfo.getMechanics().entrySet()) {
+                String name = mechanic.getKey();
+                DungeonMechanic _mech = mechanic.getValue();
+                if (!(_mech instanceof  DungeonSecret)) continue;
+                DungeonSecret secret = (DungeonSecret) _mech;
+
+                DungeonMechanic _replacement;
+                if (secret.getSecretType() == DungeonSecret.SecretType.CHEST) {
+                    DungeonSecretChest replacement = new DungeonSecretChest();
+                    replacement.setSecretPoint(secret.getSecretPoint());
+                    _replacement = replacement;
+                } else if (secret.getSecretType() == DungeonSecret.SecretType.BAT) {
+                    DungeonSecretBat replacement = new DungeonSecretBat();
+                    replacement.setSecretPoint(secret.getSecretPoint());
+                    _replacement = replacement;
+                } else if (secret.getSecretType() == DungeonSecret.SecretType.ESSENCE) {
+                    DungeonSecretEssence replacement = new DungeonSecretEssence();
+                    replacement.setSecretPoint(secret.getSecretPoint());
+                    _replacement = replacement;
+                } else if (secret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP) {
+                    DungeonSecretItemDrop replacement = new DungeonSecretItemDrop();
+                    replacement.setSecretPoint(secret.getSecretPoint());
+                    _replacement = replacement;
+                } else {
+                    System.out.println("How tho");
+                    continue;
+                }
+
+                dungeonRoomInfo.getMechanics().put(name, _replacement);
+            }
+        }
     }
     private void removedoors() throws Exception {
         File fileRoot = Main.getConfigDir();
