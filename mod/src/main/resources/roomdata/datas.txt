@@ -67,6 +67,7 @@ roomdata/7dd6596f-c647-4144-9eec-fb4690e12251.roomdata
 roomdata/8116e928-56f1-4e0b-933a-f86b841938c8.roomdata
 roomdata/a7f00d0f-bbf5-4d80-8eed-f3e28477879c.roomdata
 roomdata/31766264-1004-492f-9d65-cb5deaff82f0.roomdata
+roomdata/a05c7379-d3e7-41e8-9a69-2933b4ffaa81.roomdata
 roomdata/d4a015ae-f123-4696-8fb6-719b5a21b623.roomdata
 roomdata/12080b02-4ccc-49ce-9eaf-e7d8946f3984.roomdata
 roomdata/70a1451a-5430-40bd-b20b-13245aac910a.roomdata
@@ -134,3 +135,7 @@ roomdata/e96feab1-39a0-4bd6-8d18-08807b7b0668.roomdata
 roomdata/0877607a-b8a2-433a-b893-f4de7c83378a.roomdata
 roomdata/a1c8fd24-c105-49b6-ba56-51dfbb7023cb.roomdata
 roomdata/6b0dfb3e-c86c-41d1-8526-a172027dbb8d.roomdata
+roomdata/1d98546f-4680-486b-9091-8668c72b979f.roomdata
+roomdata/1bea0030-0b60-4223-bf57-5f90aaca8e69.roomdata
+roomdata/af86da97-0140-44cf-a922-0af8f0885568.roomdata
+roomdata/9416cda0-c7ca-4377-a2a8-60493734ac81.roomdata
