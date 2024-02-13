@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -469,6 +470,28 @@ public class GeneralRoomProcessor implements RoomProcessor {
                     }
                 }
             }
+            try {
+                if (ec != null && event.pos != null && Minecraft.getMinecraft().theWorld.getBlockState(event.pos).getBlock() == Blocks.sponge) {
+                    int nextId = 1;
+                    while (ec.getRoom().getDungeonRoomInfo().getMechanics().containsKey("ent-" + nextId)) nextId++;
+                    DungeonRoomDoor2 door2 = new DungeonRoomDoor2();
+                    ec.getRoom().getDungeonRoomInfo().getMechanics().put("ent-" + nextId, door2);
+                    EnumFacing enumFacing = event.face;
+                    enumFacing = enumFacing.rotateY();
+                    for (int x = -1; x <= 1; x++) {
+                        for (int y = 0; y < 4; y++) {
+                            BlockPos pos = event.pos.add(enumFacing.getFrontOffsetX() * x, y, enumFacing.getFrontOffsetZ() * x);
+                            door2.getBlocks().getOffsetPointList().add(new OffsetPoint(dungeonRoom, pos));
+                        }
+                    }
+                    door2.getPfPoint().setPosInWorld(dungeonRoom, event.pos.add(event.face.getDirectionVec()).add(event.face.getDirectionVec()));
+                    if (ec.getCurrent() instanceof GuiDungeonRoomEdit) {
+                        ((GuiDungeonRoomEdit) ec.getCurrent()).getSep().buildElements();
+                    }
+
+
+                }
+            } catch (Exception  e) {e.printStackTrace();}
         }
     }
 

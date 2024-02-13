@@ -98,6 +98,7 @@ public class SecretEditPane extends MPanel implements DynamicEditor {
             create.setParent(this); save.setParent(this);
         }
         {
+            parameters.clear();
             for (Map.Entry<String, DungeonMechanic> en : dungeonRoom.getDungeonRoomInfo().getMechanics().entrySet()) {
                 ValueEditCreator vec = ValueEditRegistry.getValueEditMap(en.getValue() == null ? "null" :en.getValue().getClass().getName());
 
