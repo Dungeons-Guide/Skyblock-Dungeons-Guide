@@ -33,7 +33,7 @@ import net.minecraft.util.Vec3;
 
 import java.util.*;
 
-public class AStarFineGridStonkingBetter implements IPathfinder {
+public class FineGridStonkingBFS implements IPathfinder {
     private int dx, dy, dz;
     private IPathfindWorld dungeonRoom;
 
@@ -45,7 +45,7 @@ public class AStarFineGridStonkingBetter implements IPathfinder {
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
     private long start;
 
-    public AStarFineGridStonkingBetter(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
+    public FineGridStonkingBFS(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
         this.algorithmSettings = algorithmSettings;
     }
     @Override
