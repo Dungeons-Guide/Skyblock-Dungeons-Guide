@@ -396,21 +396,26 @@ public class CommandDgDebug extends CommandBase {
                 DungeonSecret secret = (DungeonSecret) _mech;
 
                 DungeonMechanic _replacement;
+                System.out.println("Fixed "+mechanic.getKey()+" in "+dungeonRoomInfo.getName());
                 if (secret.getSecretType() == DungeonSecret.SecretType.CHEST) {
                     DungeonSecretChest replacement = new DungeonSecretChest();
                     replacement.setSecretPoint(secret.getSecretPoint());
+                    replacement.getPreRequisite().addAll(secret.getPreRequisite());
                     _replacement = replacement;
                 } else if (secret.getSecretType() == DungeonSecret.SecretType.BAT) {
                     DungeonSecretBat replacement = new DungeonSecretBat();
                     replacement.setSecretPoint(secret.getSecretPoint());
+                    replacement.getPreRequisite().addAll(secret.getPreRequisite());
                     _replacement = replacement;
                 } else if (secret.getSecretType() == DungeonSecret.SecretType.ESSENCE) {
                     DungeonSecretEssence replacement = new DungeonSecretEssence();
                     replacement.setSecretPoint(secret.getSecretPoint());
+                    replacement.getPreRequisite().addAll(secret.getPreRequisite());
                     _replacement = replacement;
                 } else if (secret.getSecretType() == DungeonSecret.SecretType.ITEM_DROP) {
                     DungeonSecretItemDrop replacement = new DungeonSecretItemDrop();
                     replacement.setSecretPoint(secret.getSecretPoint());
+                    replacement.getPreRequisite().addAll(secret.getPreRequisite());
                     _replacement = replacement;
                 } else {
                     System.out.println("How tho");
