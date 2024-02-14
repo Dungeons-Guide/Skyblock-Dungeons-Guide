@@ -66,7 +66,10 @@ public class ActionChangeState extends AbstractAction {
 
     @Override
     public boolean shouldRecalculatePath(DungeonRoom dungeonRoom) {
-        return dungeonRoom.getMechanics().get(mechanicName).getCurrentState(dungeonRoom).equalsIgnoreCase(state);
+        return dungeonRoom.getMechanics()
+                .get(mechanicName)
+                .getCurrentState(dungeonRoom)
+                .equalsIgnoreCase(state);
     }
 
     @Override

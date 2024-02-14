@@ -64,6 +64,7 @@ public class ValueEditRegistry {
         valueEditMap.put(DungeonSecretItemDrop.class.getName(), new ValueEditSecretItemdrop.Generator());
         valueEditMap.put(DungeonSecretEssence.class.getName(), new ValueEditSecretEssence.Generator());
         valueEditMap.put(DungeonSecretChest.class.getName(), new ValueEditSecretChest.Generator());
+        valueEditMap.put(DungeonSecretDoubleChest.class.getName(), new ValueEditSecretDoubleChest.Generator());
 
         valueEditMap.put(DungeonPressurePlate.class.getName(), new ValueEditPressurePlate.Generator());
         valueEditMap.put(DungeonOnewayLever.class.getName(), new ValueEditOnewayLever.Generator());

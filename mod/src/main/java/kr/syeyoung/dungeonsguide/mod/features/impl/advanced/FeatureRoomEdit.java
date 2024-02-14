@@ -324,6 +324,11 @@ public class FeatureRoomEdit  extends SimpleFeature {
         FeatureRoomEdit.this.setup = false;
     }
 
+    private static final JFileChooser chooser = new JFileChooser();
+    static {
+        chooser.setCurrentDirectory(new File(Main.getConfigDir(), "grouped3"));
+    }
+
     public class RoomConfiguration extends AnnotatedImportOnlyWidget {
 
         @Bind(
@@ -386,8 +391,6 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
         @On(functionName = "loaddgrun")
         public void loadDGRun() {
-            JFileChooser chooser = new JFileChooser();
-            chooser.setCurrentDirectory(new File(Main.getConfigDir(), "grouped3"));
             int returnValue = chooser.showOpenDialog( null ) ;
             File f = chooser.getSelectedFile();
             try {
