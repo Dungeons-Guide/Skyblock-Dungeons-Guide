@@ -58,9 +58,6 @@ public class ActionChangeState extends AbstractAction {
         if (mechanic == null) {
             return false;
         }
-        if (mechanic instanceof DungeonDummy) {
-            return true;
-        }
         return mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state);
     }
 

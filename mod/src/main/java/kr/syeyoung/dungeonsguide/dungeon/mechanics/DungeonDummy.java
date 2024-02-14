@@ -44,12 +44,6 @@ public class DungeonDummy implements DungeonMechanic {
     public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")){
             builder = builder.requires(new ActionMoveNearestAir(secretPoint));
-        } else if (state.equalsIgnoreCase("click")) {
-            builder = builder.requires(
-                    new AtomicAction.Builder()
-                            .requires(new ActionClick(secretPoint))
-                            .requires(new ActionMoveNearestAir(secretPoint))
-                            .build("MoveAndClick"));
         }
         {
             for (String str : preRequisite) {
@@ -83,11 +77,11 @@ public class DungeonDummy implements DungeonMechanic {
 
     @Override
     public Set<String> getPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("navigate", "click");
+        return Sets.newHashSet("navigate");
     }
     @Override
     public Set<String> getTotalPossibleStates(DungeonRoom dungeonRoom) {
-        return Sets.newHashSet("no-state","navigate,click");
+        return Sets.newHashSet("no-state","navigate");
     }
     @Override
     public OffsetPoint getRepresentingPoint(DungeonRoom dungeonRoom) {
