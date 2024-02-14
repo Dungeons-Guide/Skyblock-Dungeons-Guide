@@ -86,7 +86,7 @@ public class ActionMoveNearestAir extends AbstractAction {
     public void forceRefresh(DungeonRoom dungeonRoom) {
         BlockPos pos = target.getBlockPos(dungeonRoom);
         BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                .expand(2,2,2));
+                .expand(0.5,1,0.5));
         if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
         executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
@@ -116,7 +116,7 @@ public class ActionMoveNearestAir extends AbstractAction {
         );
         if (executor == null) {
             BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX() + 1, bpos.getY() + 1, bpos.getZ() + 1)
-                    .expand(2,2,2));
+                    .expand(0.5,1,0.5));
 
             executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
                     boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
