@@ -55,10 +55,10 @@ public class DungeonNPC implements DungeonMechanic {
                         actionClick.setRadius(3);
                         return actionClick;
                     })
-                    .requires(new ActionMove(secretPoint))
+                    .requires(new ActionMoveNearestAir(secretPoint))
                     .build("MoveAndInteract"));
         } else {
-            builder = builder.requires(new ActionMove(secretPoint));
+            builder = builder.requires(new ActionMoveNearestAir(secretPoint));
         }
 
         for (String str : preRequisite) {

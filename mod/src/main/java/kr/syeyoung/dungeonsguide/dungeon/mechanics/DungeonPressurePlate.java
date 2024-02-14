@@ -59,11 +59,11 @@ public class DungeonPressurePlate implements DungeonMechanic {
             builder = builder
                     .requires(new AtomicAction.Builder()
                             .requires(new ActionDropItem(platePoint))
-                            .requires(new ActionMove(platePoint))
+                            .requires(new ActionMoveNearestAir(platePoint))
                             .build("MoveAndDropItem"));
         } else {
             builder = builder
-                    .requires(new ActionMove(platePoint));
+                    .requires(new ActionMoveNearestAir(platePoint));
         }
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;

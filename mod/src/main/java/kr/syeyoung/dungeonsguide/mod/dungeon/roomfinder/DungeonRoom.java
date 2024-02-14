@@ -147,12 +147,12 @@ public class DungeonRoom implements IPathfindWorld {
         this.currentState = currentState;
     }
 
-    private final Map<BlockPos, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
+    private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
 
-    public PathfinderExecutor createEntityPathTo(BlockPos pos) {
+    public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-        if (activePathfind.containsKey(pos)) {
-            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos);
+        if (activePathfind.containsKey(pos.center())) {
+            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
             PathfinderExecutor executor = executorWeakReference.get();
             if (executor != null) {
                 return executor;
@@ -160,11 +160,11 @@ public class DungeonRoom implements IPathfindWorld {
         }
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
-            executor = new PathfinderExecutor(new AStarFineGridStonking(algorithmSettings), new Vec3(pos.getX(), pos.getY(), pos.getZ()).addVector(0.5, 0.5, 0.5), this);
+            executor = new PathfinderExecutor(new AStarFineGridStonking(algorithmSettings), pos, this);
         } else {
             return  null;
         }
-        activePathfind.put(pos, new WeakReference<>(executor));
+        activePathfind.put(pos.center(), new WeakReference<>(executor));
         context.getExecutors().add(new WeakReference<>(executor));
         return executor;
     }

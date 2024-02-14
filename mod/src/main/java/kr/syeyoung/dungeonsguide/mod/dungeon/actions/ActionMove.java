@@ -20,11 +20,14 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonking;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -38,6 +41,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
@@ -50,20 +54,24 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionMove extends AbstractAction {
-    private OffsetPoint target;
+    private OffsetPointSet targets;
 
-    public ActionMove(OffsetPoint target) {
-        this.target = target;
+    public ActionMove(OffsetPointSet target) {
+        this.targets = target;
+    }
+
+    public OffsetPoint getTarget() {
+        return targets.getOffsetPointList().get(0);
     }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return target.getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 25;
+        return targets.getOffsetPointList().get(0).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 25;
     }
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses);
+        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, targets.getOffsetPointList().get(0), poses);
     }
 
     static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, OffsetPoint target, PathfindResult poses) {
@@ -178,8 +186,7 @@ public class ActionMove extends AbstractAction {
     public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
         tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
         if (executor == null && actionRouteProperties.isPathfind()) {
-            executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
-            executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+            forceRefresh(dungeonRoom);
         }
         if (executor != null) {
             poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
@@ -198,17 +205,25 @@ public class ActionMove extends AbstractAction {
     }
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
-        if (executor == null) executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
+        BoundingBox boundingBox = new BoundingBox();
+        for (OffsetPoint offsetPoint : targets.getOffsetPointList()) {
+            BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
+            boundingBox.addBoundingBox(new AxisAlignedBB(
+                    pos.getX(), pos.getY(), pos.getZ(),
+                    pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1
+            ));
+        }
+        if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
         executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
     @Override
     public String toString() {
-        return "Move\n- target: "+target.toString();
+        return "Move\n- target: "+targets.getOffsetPointList().get(0).toString();
     }
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        BlockPos bpos = target.getBlockPos(room);
+        BlockPos bpos = targets.getOffsetPointList().get(0).getBlockPos(room);
 //        for (EnumFacing value : EnumFacing.VALUES) {
 //            if (room.getCachedWorld().getBlockState(bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ())).getBlock() == Blocks.air) {
 //                bpos = bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ());
@@ -227,8 +242,17 @@ public class ActionMove extends AbstractAction {
         );
         FineGridStonkingBFS a = null;
         if (executor == null) {
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
-                    .addVector(0.5, 0, 0.5), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
+            BoundingBox boundingBox = new BoundingBox();
+            for (OffsetPoint offsetPoint : targets.getOffsetPointList()) {
+                BlockPos pos = offsetPoint.getBlockPos(room);
+                boundingBox.addBoundingBox(new AxisAlignedBB(
+                        pos.getX(), pos.getY(), pos.getZ(),
+                        pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1
+                ));
+            }
+
+            executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
+                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
         executor.setTarget(state.getPlayerPos());

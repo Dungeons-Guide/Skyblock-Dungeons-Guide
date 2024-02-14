@@ -110,7 +110,7 @@ public class ActionRoute {
                         }
 
                         if (minCount > 4) {
-//                            memoization.put("stupidheuristic", true);
+                            memoization.put("stupidheuristic", true);
                             dagId = dag.getCount() - 1; // stupid heuristic can not skip any secrets :/ Sadly.
                         }
 

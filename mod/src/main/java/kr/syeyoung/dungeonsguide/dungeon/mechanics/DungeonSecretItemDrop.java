@@ -109,7 +109,7 @@ public class DungeonSecretItemDrop implements DungeonMechanic, ISecret {
         if (!"found".equalsIgnoreCase(state))
             throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
-        builder = builder.requires(new ActionMove(secretPoint));
+        builder = builder.requires(new ActionMoveNearestAir(secretPoint));
         for (String str : preRequisite) {
             if (str.isEmpty()) continue;
             builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));

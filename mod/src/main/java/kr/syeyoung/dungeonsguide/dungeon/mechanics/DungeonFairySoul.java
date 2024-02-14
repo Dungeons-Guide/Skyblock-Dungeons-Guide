@@ -53,7 +53,7 @@ public class DungeonFairySoul implements DungeonMechanic {
                         actionClick.setRadius(3);
                         return actionClick;
                     })
-                    .requires(new ActionMove(secretPoint))
+                    .requires(new ActionMoveNearestAir(secretPoint))
                     .build("MoveAndInteract")
                 );
 

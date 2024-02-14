@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import lombok.Getter;
 import net.minecraft.util.Vec3;
@@ -37,9 +38,9 @@ public class PathfinderExecutor {
     private boolean isComplete = false;
     private PathfindResult lastRoute = new PathfindResult(Collections.emptyList(), 0);
 
-    public PathfinderExecutor(IPathfinder pathfinder, Vec3 target, IPathfindWorld dungeonRoom) {
+    public PathfinderExecutor(IPathfinder pathfinder, BoundingBox target, IPathfindWorld dungeonRoom) {
         this.pathfinder = pathfinder;
-        this.target = target;
+        this.target = target.center();
         this.dungeonRoom = dungeonRoom;
 
         pathfinder.init(dungeonRoom, target);

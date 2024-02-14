@@ -18,11 +18,12 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import net.minecraft.util.Vec3;
 
 public interface IPathfinder {
-    void init(IPathfindWorld dungeonRoom, Vec3 destination);
+    void init(IPathfindWorld dungeonRoom, BoundingBox destination);
     boolean doOneStep();
 
     void setTarget(Vec3 from);

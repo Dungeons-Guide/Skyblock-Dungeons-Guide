@@ -95,7 +95,7 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
             builder = builder.requires(new AtomicAction.Builder()
                     .requires(new ActionClick(secretPoint))
-                    .requires(new ActionMove(secretPoint))
+                    .requires(new ActionMoveNearestAir(secretPoint))
                     .build("MoveAndClick"));
 
         for (String str : preRequisite) {

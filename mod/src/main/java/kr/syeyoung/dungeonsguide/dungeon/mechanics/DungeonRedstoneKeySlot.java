@@ -59,7 +59,7 @@ public class DungeonRedstoneKeySlot implements DungeonMechanic {
         builder = builder
                 .requires(new AtomicAction.Builder()
                         .requires(new ActionClick(slotPoint))
-                        .requires(new ActionMove(slotPoint))
+                        .requires(new ActionMoveNearestAir(slotPoint))
                         .build("MoveAndClick"));
         {
             for (String s : preRequisite.stream().filter(a -> a.contains(":obtained-self")).collect(Collectors.toList())) {

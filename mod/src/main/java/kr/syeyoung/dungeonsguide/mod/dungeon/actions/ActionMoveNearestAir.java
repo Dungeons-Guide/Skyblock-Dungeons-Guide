@@ -22,8 +22,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonking;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -31,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
@@ -62,8 +65,7 @@ public class ActionMoveNearestAir extends AbstractAction {
     public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
         tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
         if (executor == null && actionRouteProperties.isPathfind()) {
-            executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
-            executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
+            forceRefresh(dungeonRoom);
         }
         if (executor != null) {
             poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
@@ -82,7 +84,10 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
-        if (executor == null) executor = dungeonRoom.createEntityPathTo(target.getBlockPos(dungeonRoom));
+        BlockPos pos = target.getBlockPos(dungeonRoom);
+        BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
+                .expand(2,2,2));
+        if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
         executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
     @Override
@@ -110,8 +115,11 @@ public class ActionMoveNearestAir extends AbstractAction {
                 state.getOpenMechanics()+"-"+bpos
         );
         if (executor == null) {
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()), new Vec3(bpos.getX(), bpos.getY(), bpos.getZ())
-                    .addVector(0.5, 0, 0.5), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
+            BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX() + 1, bpos.getY() + 1, bpos.getZ() + 1)
+                    .expand(2,2,2));
+
+            executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
+                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
         executor.setTarget(state.getPlayerPos());

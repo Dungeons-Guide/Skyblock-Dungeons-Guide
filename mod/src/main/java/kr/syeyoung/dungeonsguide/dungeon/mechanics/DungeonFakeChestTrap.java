@@ -66,7 +66,7 @@ public class DungeonFakeChestTrap implements DungeonMechanic, RouteBlocker {
         builder = builder
                 .requires(new AtomicAction.Builder()
                         .requires(new ActionClick(chest))
-                        .requires(new ActionMove(chest))
+                        .requires(new ActionMoveNearestAir(chest))
                         .build("MoveAndClick"));
 
         for (String str : preRequisite) {

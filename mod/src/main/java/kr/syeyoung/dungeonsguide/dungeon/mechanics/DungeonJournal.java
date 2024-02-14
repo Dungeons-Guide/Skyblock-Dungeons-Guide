@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -45,7 +46,7 @@ public class DungeonJournal implements DungeonMechanic {
     @Override
     public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(state)) throw new PathfindImpossibleException(state+" is not valid state for secret");
-        builder = builder.requires(new ActionMove(secretPoint));
+        builder = builder.requires(new ActionMoveNearestAir(secretPoint));
         {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;

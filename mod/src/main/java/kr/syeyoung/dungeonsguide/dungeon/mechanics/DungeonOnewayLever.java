@@ -56,7 +56,7 @@ public class DungeonOnewayLever implements DungeonMechanic {
         builder = builder
                 .requires(new AtomicAction.Builder()
                         .requires(new ActionClick(leverPoint))
-                        .requires(new ActionMove(leverPoint))
+                        .requires(new ActionMoveNearestAir(leverPoint))
                         .build("MoveandClick"));
         {
             for (String str : preRequisite) {

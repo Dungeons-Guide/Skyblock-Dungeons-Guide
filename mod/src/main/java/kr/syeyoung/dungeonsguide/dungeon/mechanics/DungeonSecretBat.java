@@ -91,7 +91,7 @@ public class DungeonSecretBat implements DungeonMechanic, ISecret {
                         actionKill.setRadius(10);
                         actionKill.setPredicate(PredicateBat.INSTANCE);
                         return actionKill;
-                    }).requires(new ActionMove(secretPoint))
+                    }).requires(new ActionMoveNearestAir(secretPoint))
                     .build("MoveAndKill"));
 
         for (String str : preRequisite) {

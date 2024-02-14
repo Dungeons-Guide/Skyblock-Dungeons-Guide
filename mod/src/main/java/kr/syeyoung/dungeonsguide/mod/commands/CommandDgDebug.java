@@ -344,12 +344,15 @@ public class CommandDgDebug extends CommandBase {
 //            throw new RuntimeException(e);
 //        }
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            System.out.println(dungeonRoomInfo.getName()+"-------");
             for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
-                if (entry.getValue() instanceof DungeonDoor) {
-                    System.out.println(entry.getKey()+"/"+((DungeonDoor) entry.getValue()).getOpenPreRequisite()+"/"+((DungeonDoor) entry.getValue()).getClosePreRequisite()+"/"+((DungeonDoor) entry.getValue()).getMovePreRequisite());
-                } else if (entry.getValue() instanceof DungeonOnewayDoor){
-                    System.out.println(entry.getKey()+"/"+((DungeonOnewayDoor) entry.getValue()).getPreRequisite() +"/"+((DungeonOnewayDoor) entry.getValue()).getMovePreRequisite());
+//                if (entry.getValue() instanceof DungeonDoor) {
+//                    System.out.println(entry.getKey()+"/"+((DungeonDoor) entry.getValue()).getOpenPreRequisite()+"/"+((DungeonDoor) entry.getValue()).getClosePreRequisite()+"/"+((DungeonDoor) entry.getValue()).getMovePreRequisite());
+//                } else if (entry.getValue() instanceof DungeonOnewayDoor){
+//                    System.out.println(entry.getKey()+"/"+((DungeonOnewayDoor) entry.getValue()).getPreRequisite() +"/"+((DungeonOnewayDoor) entry.getValue()).getMovePreRequisite());
+//                }
+                if (entry.getValue() instanceof DungeonDummy) {
+                    System.out.println(dungeonRoomInfo.getName()+"-------");
+                    System.out.println(entry.getKey()+"/"+((DungeonDummy) entry.getValue()).getSecretPoint());
                 }
             }
         }

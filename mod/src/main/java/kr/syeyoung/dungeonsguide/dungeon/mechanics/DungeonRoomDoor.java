@@ -22,6 +22,7 @@ import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
@@ -60,7 +61,7 @@ public class DungeonRoomDoor implements DungeonMechanic {
     public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (!"navigate".equalsIgnoreCase(state))
             throw new PathfindImpossibleException(state + " is not valid state for secret");
-        builder.requires(new ActionMove(offsetPoint));
+        builder.requires(new ActionMoveNearestAir(offsetPoint));
     }
 
     @Override

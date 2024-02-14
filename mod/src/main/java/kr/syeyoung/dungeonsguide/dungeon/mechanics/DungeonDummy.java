@@ -43,12 +43,12 @@ public class DungeonDummy implements DungeonMechanic {
     @Override
     public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
         if (state.equalsIgnoreCase("navigate")){
-            builder = builder.requires(new ActionMove(secretPoint));
+            builder = builder.requires(new ActionMoveNearestAir(secretPoint));
         } else if (state.equalsIgnoreCase("click")) {
             builder = builder.requires(
                     new AtomicAction.Builder()
                             .requires(new ActionClick(secretPoint))
-                            .requires(new ActionMove(secretPoint))
+                            .requires(new ActionMoveNearestAir(secretPoint))
                             .build("MoveAndClick"));
         }
         {

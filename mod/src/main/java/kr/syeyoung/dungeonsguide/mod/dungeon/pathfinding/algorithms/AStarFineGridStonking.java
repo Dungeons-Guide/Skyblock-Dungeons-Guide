@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
@@ -43,20 +44,21 @@ public class AStarFineGridStonking implements IPathfinder {
     private Node goalNode;
 
     @Getter
-    private AxisAlignedBB destinationBB;
+    private BoundingBox destinationBB;
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
 
     public AStarFineGridStonking(FeaturePathfindSettings.AlgorithmSettings algorithmSettings) {
         this.algorithmSettings = algorithmSettings;
     }
     @Override
-    public void init(IPathfindWorld dungeonRoom, Vec3 destination) {
+    public void init(IPathfindWorld dungeonRoom, BoundingBox destination) {
         this.dungeonRoom = dungeonRoom;
+        destinationBB = destination.multiply(2);
 
-        this.dx = (int) (destination.xCoord * 2);
-        this.dy = (int) (destination.yCoord * 2);
-        this.dz = (int) (destination.zCoord * 2);
-        destinationBB = AxisAlignedBB.fromBounds(dx-2, dy-2, dz-2, dx+2, dy+2, dz+2);
+        Vec3 centerOfGravity = destinationBB.center();
+        this.dx = (int) (centerOfGravity.xCoord );
+        this.dy = (int) (centerOfGravity.yCoord );
+        this.dz = (int) (centerOfGravity.zCoord );
         startNode = openNode(dx, dy, dz, false);
     }
     private Map<Node.Coordinate, Node> nodeMap = new HashMap<>();
@@ -128,9 +130,7 @@ public class AStarFineGridStonking implements IPathfinder {
                 boolean isFlying2 = !dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y - 2, neighbor.coordinate.z).isBlockedNonStonk();
 
                 // check blocked.
-                if (destinationBB.minX <= neighbor.coordinate.x && neighbor.coordinate.x <= destinationBB.maxX &&
-                        destinationBB.minY <= neighbor.coordinate.y && neighbor.coordinate.y <= destinationBB.maxY &&
-                        destinationBB.minZ <= neighbor.coordinate.z && neighbor.coordinate.z <= destinationBB.maxZ && !neighbor.coordinate.stonk) { // not blocked
+                if (destinationBB.isIn(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z) && !neighbor.coordinate.stonk) { // not blocked
                 } else {
                     if (!n.coordinate.stonk && nodeState.isBlockedNonStonk()) {
                         continue;
