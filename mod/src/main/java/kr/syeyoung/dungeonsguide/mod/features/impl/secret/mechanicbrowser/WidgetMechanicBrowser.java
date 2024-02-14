@@ -64,6 +64,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
         if (t == DungeonSecretChest.class) return "Secrets";
         if (t == DungeonSecretItemDrop.class) return "Secrets";
         if (t == DungeonSecretEssence.class) return "Secrets";
+        if (t == DungeonSecretDoubleChest.class) return "Secrets";
         if (t == DungeonTomb.class) return "Crypts";
         if (t == DungeonNPC.class) return "NPC";
         if (t == DungeonJournal.class) return "Journals";
@@ -78,6 +79,7 @@ public class WidgetMechanicBrowser extends AnnotatedWidget implements Layouter {
         if (t == DungeonFloorTrap.class) return "Traps";
         if (t == DungeonArrowTrap.class) return "Traps";
         if (t == DungeonTripwireTrap.class) return "Traps";
+        if (t == DungeonCrusherTrap.class) return "Traps";
         return "ETC";
     }
 

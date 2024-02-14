@@ -19,8 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.mechanicedit;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretChest;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretDoubleChest;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDummy;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonMushroom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.Parameter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.valueedit.ValueEdit;
@@ -36,46 +36,50 @@ import java.awt.*;
 import java.util.Arrays;
 import java.util.Collections;
 
-public class ValueEditSecretDoubleChest extends MPanel implements ValueEdit<DungeonSecretDoubleChest> {
+public class ValueEditMushroom extends MPanel implements ValueEdit<DungeonMushroom> {
     private Parameter parameter;
 
     // scroll pane
     // just create
     // add set
-    private final DungeonSecretDoubleChest dungeonSecretChest;
+    private final DungeonMushroom dungeonSecret;
 
     private final MLabel label;
     private final MValue<OffsetPoint> value;
+    private final MLabel label2;
     private final MValue<OffsetPoint> value2;
     private final MTextField preRequisite;
     private final MLabelAndElement preRequisite2;
 
-    public ValueEditSecretDoubleChest(final Parameter parameter2) {
+    public ValueEditMushroom(final Parameter parameter2) {
         this.parameter = parameter2;
-        this.dungeonSecretChest = (DungeonSecretDoubleChest) parameter2.getNewData();
+        this.dungeonSecret = (DungeonMushroom) parameter2.getNewData();
 
 
         label = new MLabel();
-        label.setText("Secret Point");
+        label.setText("Mushroom Point");
         label.setAlignment(MLabel.Alignment.LEFT);
         add(label);
 
-        value = new MValue(dungeonSecretChest.getSecretPoint(), Collections.emptyList());
+        value = new MValue(dungeonSecret.getSecretPoint(), Collections.emptyList());
         add(value);
+        label2 = new MLabel();
+        label2.setText("Warp Point");
+        label2.setAlignment(MLabel.Alignment.LEFT);
+        add(label2);
 
-        value2 = new MValue(dungeonSecretChest.getSecretPoint2(), Collections.emptyList());
+        value2 = new MValue(dungeonSecret.getTeleportPoint(), Collections.emptyList());
         add(value2);
-
 
         preRequisite = new MTextField() {
             @Override
             public void edit(String str) {
-                dungeonSecretChest.setPreRequisite(Arrays.asList(str.split(",")));
+                dungeonSecret.setPreRequisite(Arrays.asList(str.split(",")));
             }
         };
-        preRequisite.setText(TextUtils.join(dungeonSecretChest.getPreRequisite(), ","));
+        preRequisite.setText(TextUtils.join(dungeonSecret.getPreRequisite(), ","));
         preRequisite2 = new MLabelAndElement("Req.",preRequisite);
-        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
+        preRequisite2.setBounds(new Rectangle(0,40,getBounds().width,20));
         add(preRequisite2);
     }
 
@@ -83,8 +87,9 @@ public class ValueEditSecretDoubleChest extends MPanel implements ValueEdit<Dung
     public void onBoundsUpdate() {
         label.setBounds(new Rectangle(0,0,getBounds().width, 20));
         value.setBounds(new Rectangle(0,20,getBounds().width, 20));
-        value2.setBounds(new Rectangle(0,40,getBounds().width, 20));
-        preRequisite2.setBounds(new Rectangle(0,60,getBounds().width,20));
+        label2.setBounds(new Rectangle(0,40,getBounds().width, 20));
+        value2.setBounds(new Rectangle(0,60,getBounds().width, 20));
+        preRequisite2.setBounds(new Rectangle(0,80,getBounds().width,20));
     }
 
     @Override
@@ -94,7 +99,7 @@ public class ValueEditSecretDoubleChest extends MPanel implements ValueEdit<Dung
 
     @Override
     public void renderWorld(float partialTicks) {
-        dungeonSecretChest.highlight(new Color(0,255,0,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
+        dungeonSecret.highlight(new Color(0,255,0,50), parameter.getName(), EditingContext.getEditingContext().getRoom(), partialTicks);
     }
 
     @Override
@@ -102,22 +107,22 @@ public class ValueEditSecretDoubleChest extends MPanel implements ValueEdit<Dung
         this.setBounds(new Rectangle(0,0,parentWidth, parentHeight));
     }
 
-    public static class Generator implements ValueEditCreator<ValueEditSecretDoubleChest> {
+    public static class Generator implements ValueEditCreator<ValueEditMushroom> {
 
         @Override
-        public ValueEditSecretDoubleChest createValueEdit(Parameter parameter) {
-            return new ValueEditSecretDoubleChest(parameter);
+        public ValueEditMushroom createValueEdit(Parameter parameter) {
+            return new ValueEditMushroom(parameter);
         }
 
         @Override
         public Object createDefaultValue(Parameter parameter) {
-            return new DungeonSecretDoubleChest();
+            return new DungeonMushroom();
         }
 
         @Override
         public Object cloneObj(Object object) {
             try {
-                return ((DungeonSecretDoubleChest)object).clone();
+                return ((DungeonMushroom)object).clone();
             } catch (CloneNotSupportedException e) {
                 e.printStackTrace();
             }

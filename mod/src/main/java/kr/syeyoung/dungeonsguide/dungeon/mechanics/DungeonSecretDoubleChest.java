@@ -127,6 +127,7 @@ public class DungeonSecretDoubleChest implements DungeonMechanic, ISecret {
     public void highlight(Color color, String name, DungeonRoom dungeonRoom, float partialTicks) {
         BlockPos pos = getSecretPoint().getBlockPos(dungeonRoom);
         RenderUtils.highlightBlock(pos, color, partialTicks);
+        RenderUtils.highlightBlock(getSecretPoint2().getBlockPos(dungeonRoom), color, partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() + 0.5f, pos.getY() + 0.375f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() + 0.5f, pos.getY() + 0f, pos.getZ() + 0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
     }

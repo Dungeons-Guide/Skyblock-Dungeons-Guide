@@ -60,6 +60,7 @@ public class ValueEditRegistry {
         valueEditMap.put(DungeonBreakableWall.class.getName(), new ValueEditBreakableWall.Generator());
         valueEditMap.put(DungeonJournal.class.getName(), new ValueEditJournal.Generator());
         valueEditMap.put(DungeonDummy.class.getName(), new ValueEditDummy.Generator());
+        valueEditMap.put(DungeonMushroom.class.getName(), new ValueEditMushroom.Generator());
         valueEditMap.put(DungeonSecretBat.class.getName(), new ValueEditSecretBat.Generator());
         valueEditMap.put(DungeonSecretItemDrop.class.getName(), new ValueEditSecretItemdrop.Generator());
         valueEditMap.put(DungeonSecretEssence.class.getName(), new ValueEditSecretEssence.Generator());
