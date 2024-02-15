@@ -191,7 +191,7 @@ public class ActionRoute {
 
         if (current -1 >= 0) {
             AbstractAction abstractAction = actions.get(current - 1);
-            if(((abstractAction instanceof ActionMove && ((ActionMove) abstractAction).getTarget().getPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25)
+            if(((abstractAction instanceof ActionMove && ((ActionMove) abstractAction).getTarget().getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) >= 25)
                             || (abstractAction instanceof ActionMoveNearestAir  && ((ActionMoveNearestAir) abstractAction).getTarget().getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) >= 25))){
                 abstractAction.onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag );
             }

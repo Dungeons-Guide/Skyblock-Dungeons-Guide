@@ -30,14 +30,17 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridSton
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 
 @Data
@@ -55,7 +58,7 @@ public class ActionMoveNearestAir extends AbstractAction {
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target, poses);
+        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target.getBlockPos(dungeonRoom), poses);
     }
 
     private int tick = -1;
@@ -119,7 +122,7 @@ public class ActionMoveNearestAir extends AbstractAction {
                     .expand(0.5,1,0.5));
 
             executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
-                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
+                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
         executor.setTarget(state.getPlayerPos());

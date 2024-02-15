@@ -46,6 +46,7 @@ import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
+import java.awt.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -72,24 +73,48 @@ public class ActionMove extends AbstractAction {
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, targets, poses);
+        double cx = 0, cy =0 , cz = 0;
+        for (OffsetVec3 _offsetVec3 : targets) {
+            Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+            cx += offsetVec3.xCoord;
+            cy += offsetVec3.yCoord;
+            cz += offsetVec3.zCoord;
+        }
+        cx /= targets.size();
+        cy /= targets.size();
+        cz /= targets.size();
+
+
+        for (OffsetVec3 offsetVec33 : targets) {
+            Vec3 offsetVec3 = offsetVec33.getPos(dungeonRoom);
+            RenderUtils.highlightBox(
+                    new AxisAlignedBB(
+                            offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.25f, offsetVec3.zCoord - 0.25f,
+                            offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.25f, offsetVec3.zCoord + 0.25f
+                    ),
+                    Color.green,
+                    partialTicks,
+                    true
+            );
+        }
+
+        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
     }
 
-    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, List<OffsetVec3> target, PathfindResult poses) {
-        BlockPos pos = new BlockPos(target.get(0).getPos(dungeonRoom));
+    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, BlockPos target, PathfindResult poses) {
 
-        float distance = MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
+        float distance = MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
         if (flag) multiplier *= 2.0f;
         float scale = 0.45f * multiplier;
         scale *= 25.0 / 6.0;
         if (actionRouteProperties.isBeacon()) {
-            RenderUtils.renderBeaconBeam(pos.getX(), pos.getY(), pos.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
-            RenderUtils.highlightBlock(pos, actionRouteProperties.getBeaconColor(), partialTicks);
+            RenderUtils.renderBeaconBeam(target.getX(), target.getY(), target.getZ(), actionRouteProperties.getBeaconBeamColor(), partialTicks);
+            RenderUtils.highlightBlock(target, actionRouteProperties.getBeaconColor(), partialTicks);
         }
-        RenderUtils.drawTextAtWorld("Destination", pos.getX() + 0.5f, pos.getY() + 0.5f + scale, pos.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld("Destination", target.getX() + 0.5f, target.getY() + 0.5f + scale, target.getZ() + 0.5f, 0xFF00FF00, flag ? 2f : 1f, true, false, partialTicks);
 
-        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", pos.getX() + 0.5f, pos.getY() + 0.5f - scale, pos.getZ() + 0.5f, 0xFFFFFF00, flag ? 2f : 1f, true, false, partialTicks);
+        RenderUtils.drawTextAtWorld(String.format("%.2f",MathHelper.sqrt_double(target.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition())))+"m", target.getX() + 0.5f, target.getY() + 0.5f - scale, target.getZ() + 0.5f, 0xFFFFFF00, flag ? 2f : 1f, true, false, partialTicks);
 
         if (!FeatureRegistry.SECRET_TOGGLE_KEY.isEnabled() || !FeatureRegistry.SECRET_TOGGLE_KEY.togglePathfindStatus) {
             if (poses != null){
@@ -224,17 +249,23 @@ public class ActionMove extends AbstractAction {
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        BlockPos bpos = new BlockPos(targets.get(0).getPos(room));
-//        for (EnumFacing value : EnumFacing.VALUES) {
-//            if (room.getCachedWorld().getBlockState(bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ())).getBlock() == Blocks.air) {
-//                bpos = bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ());
-//                break;
-//            }
-//        }
+
+
+        double cx = 0, cy =0 , cz = 0;
+        for (OffsetVec3 _offsetVec3 : targets) {
+            Vec3 offsetVec3 = _offsetVec3.getPos(room);
+            cx += offsetVec3.xCoord;
+            cy += offsetVec3.yCoord;
+            cz += offsetVec3.zCoord;
+        }
+        cx /= targets.size();
+        cy /= targets.size();
+        cz /= targets.size();
+        Vec3 bpos = new Vec3(cx,cy,cz);
 
         if (memoization.containsKey("stupidheuristic")) {
-            double cost = state.getPlayerPos().distanceTo(new Vec3(bpos));
-            state.setPlayerPos(new Vec3(bpos));
+            double cost = state.getPlayerPos().distanceTo(bpos);
+            state.setPlayerPos(bpos);
             return cost;
         }
 
@@ -253,11 +284,11 @@ public class ActionMove extends AbstractAction {
             }
 
             executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
-                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics()), bpos));
+                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
         executor.setTarget(state.getPlayerPos());
-        state.setPlayerPos(new Vec3(bpos.getX()+0.5, bpos.getY(), bpos.getZ()+0.5));
+        state.setPlayerPos(new Vec3(bpos.xCoord+0.5, bpos.yCoord, bpos.zCoord+0.5));
         double result = executor.findCost();
         if (Double.isNaN(result)) return 999999999;
         return result;

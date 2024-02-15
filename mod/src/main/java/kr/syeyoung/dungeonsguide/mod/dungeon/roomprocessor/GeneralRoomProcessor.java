@@ -262,11 +262,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
         for (ActionRoute value : path.values()) {
             BlockPos target;
             if (value.getCurrentAction() instanceof ActionMove) {
-                target = ((ActionMove) value.getCurrentAction()).getTarget().getPos(dungeonRoom);
+                target = new BlockPos(((ActionMove) value.getCurrentAction()).getTarget().getPos(dungeonRoom));
             } else if (value.getCurrentAction() instanceof ActionMoveNearestAir) {
                 target = ((ActionMoveNearestAir) value.getCurrentAction()).getTarget().getBlockPos(dungeonRoom);
             } else if (value.getCurrent() >= 1 && value.getActions().get(value.getCurrent()-1) instanceof ActionMove) {
-                target = ((ActionMove)value.getActions().get(value.getCurrent()-1)).getTarget().getPos(dungeonRoom);
+                target = new BlockPos(((ActionMove)value.getActions().get(value.getCurrent()-1)).getTarget().getPos(dungeonRoom));
             } else if (value.getCurrent() >= 1 && value.getActions().get(value.getCurrent()-1) instanceof ActionMoveNearestAir) {
                 target = ((ActionMoveNearestAir)value.getActions().get(value.getCurrent()-1)).getTarget().getBlockPos(dungeonRoom);
             } else continue;

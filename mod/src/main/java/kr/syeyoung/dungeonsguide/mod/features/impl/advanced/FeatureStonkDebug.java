@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -72,11 +73,11 @@ public class FeatureStonkDebug extends SimpleFeature {
             Color actual = new Color(c.getRGB(), true);
 
 
-            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (Vec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
-                                offsetVec3.getX() - 0.025f, offsetVec3.getY() - 0.025f, offsetVec3.getZ() - 0.025f,
-                                offsetVec3.getX() + 0.025f, offsetVec3.getY() + 0.025f, offsetVec3.getZ() + 0.025f
+                                offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.025f,
+                                offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord + 0.025f
                         ),
                         actual,
                         event.partialTicks,
@@ -84,10 +85,10 @@ public class FeatureStonkDebug extends SimpleFeature {
                 );
             }
             double cx = 0, cy =0 , cz = 0;
-            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
-                cx += offsetVec3.getX();
-                cy += offsetVec3.getY();
-                cz += offsetVec3.getZ();
+            for (Vec3 offsetVec3 : spot.getOffsetPointSet()) {
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord;
+                cz += offsetVec3.zCoord;
             }
             cx /= spot.getOffsetPointSet().size();
             cy /= spot.getOffsetPointSet().size();

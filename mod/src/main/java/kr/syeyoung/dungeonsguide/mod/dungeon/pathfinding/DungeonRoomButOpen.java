@@ -35,7 +35,7 @@ public class DungeonRoomButOpen implements IPathfindWorld {
     private Set<BlockPos> freeeeePoints = new HashSet<>();
 
 
-    public DungeonRoomButOpen(DungeonRoom dungeonRoom, Set<String> mechanics, BlockPos special) {
+    public DungeonRoomButOpen(DungeonRoom dungeonRoom, Set<String> mechanics) {
         this.dungeonRoom = dungeonRoom;
         this.mechanics = mechanics;
 
