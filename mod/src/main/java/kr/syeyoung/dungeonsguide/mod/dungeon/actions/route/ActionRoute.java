@@ -97,8 +97,8 @@ public class ActionRoute {
                     double minCost = Double.POSITIVE_INFINITY;
                     int minDagId = -1;
 
-                    for (int dagId = 0; dagId < dag.getCount(); dagId ++) {
-                        Map<String, Object> memoization = new HashMap<>();
+                    boolean stupidheuristic = false;
+                    for (int i = 0; i < dag.getCount(); i++) {
 
                         int minCount = 0;
                         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
@@ -107,39 +107,49 @@ public class ActionRoute {
                                 break;
                             }
                         }
-
                         if (minCount > 4) {
-                            memoization.put("stupidheuristic", true);
-                            dagId = dag.getCount() - 1; // stupid heuristic can not skip any secrets :/ Sadly.
-                        }
-
-
-                        this.nodeStatus = dag.getNodeStatus(dagId);
-
-
-                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
-                            cnt++;
-
-                            RoomState roomState = new RoomState();
-                            roomState.setPlayerPos(start);
-                            double cost = 0;
-                            for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
-                            }
-                            System.out.println(cost);
-                            if (cost < minCost) {
-                                minCost = cost;
-                                minCostRoute = actionDAGNodes;
-                                minDagId = dagId;
-                            }
-
-                            if (cnt > 10000) break;
-                        }
-                        if (minCostRoute == null) {
-                            System.out.println(minCostRoute);
-                            minCostRoute = new ArrayList<>();
+                            stupidheuristic = true;
                         }
                     }
+
+                        for (int dagId = 0; dagId < dag.getCount(); dagId++) {
+                            Map<String, Object> memoization = new HashMap<>();
+
+
+                            this.nodeStatus = dag.getNodeStatus(dagId);
+
+                            if (stupidheuristic) {
+                                memoization.put("stupidheuristic", true);
+
+                                if (dag.getAllNodes().stream().filter(a -> a.getType() == ActionDAGNode.NodeType.OPTIONAL)
+                                        .flatMap( a -> a.getPotentialRequires().stream())
+                                        .anyMatch(a -> this.nodeStatus[a.getId()] != 3)) continue;
+                            }
+
+                            for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
+                                cnt++;
+
+                                RoomState roomState = new RoomState();
+                                roomState.setPlayerPos(start);
+                                double cost = 0;
+                                for (ActionDAGNode actionDAGNode : actionDAGNodes) {
+                                    cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
+                                }
+                                System.out.println(cost);
+                                if (cost < minCost) {
+                                    minCost = cost;
+                                    minCostRoute = actionDAGNodes;
+                                    minDagId = dagId;
+                                }
+
+                                if (cnt > 10000) break;
+                            }
+                            if (minCostRoute == null) {
+                                System.out.println(minCostRoute);
+                                minCostRoute = new ArrayList<>();
+                            }
+                        }
+
                     this.dagId = minDagId;
                     order = minCostRoute;
                     ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost with Id "+dagId);

@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemTool;
+import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import java.util.ArrayList;
@@ -40,11 +41,12 @@ public class ActionUtils {
     }
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
 //dungeonRoom.getDungeonRoomInfo().getBlock(0,0,0 , )
-
         List<RaytraceHelper.PossibleClickingSpot> spots = RaytraceHelper.raycast(
                 dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
-                        new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), dungeonRoom.getRoomMatcher().getRotation()) : dungeonRoom.getCachedWorld(), target.getBlockPos(dungeonRoom), dungeonRoom::getBlock
+                        new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), 0) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
         );
+        System.out.println(spots.size()+" wat " + dungeonRoom.getDungeonRoomInfo().getBlocks() );
+        System.out.println(  new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), 0) .getBlockState(new BlockPos(target.getX(), target.getY(), target.getZ())));
         spots = spots.stream().filter(a -> {
             FeaturePathfindSettings.AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
             {
@@ -109,6 +111,17 @@ public class ActionUtils {
             }
             return true;
         }).collect(Collectors.toList());
+        for (RaytraceHelper.PossibleClickingSpot spot : spots) {
+            List<RaytraceHelper.TameVec3> tames = spot.getOffsetPointSet().stream()
+                    .map(a -> {
+                        return new OffsetVec3(a.xCoord, a.yCoord, a.zCoord).getPos(dungeonRoom);
+                    })
+                    .map(a -> {
+                        return new RaytraceHelper.TameVec3(a.xCoord ,a.yCoord, a.zCoord);
+                    }).collect(Collectors.toList());
+            spot.getOffsetPointSet().removeIf(a -> true);
+            spot.getOffsetPointSet().addAll(tames);
+        }
         ActionDAGBuilder last = builder;
         for (Map.Entry<Integer, List<RaytraceHelper.PossibleClickingSpot>> integerListEntry : spots.stream().collect(Collectors.groupingBy(a -> a.getClusterId())).entrySet()) {
 
