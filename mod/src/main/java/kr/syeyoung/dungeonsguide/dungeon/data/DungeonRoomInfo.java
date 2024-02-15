@@ -79,11 +79,15 @@ public class DungeonRoomInfo implements Serializable {
     }
 
     public IBlockState getBlock(OffsetPoint offsetPoint, int rot) {
-        if (offsetPoint.getY() < -70 || offsetPoint.getY() >= 186) return Blocks.air.getDefaultState();
-        if (offsetPoint.getX() < 0 || offsetPoint.getX() >= width) return Blocks.air.getDefaultState();
-        if (offsetPoint.getZ() < 0 || offsetPoint.getZ() >= length) return Blocks.air.getDefaultState();
+        return getBlock(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ(), rot);
+    }
 
-        int index = offsetPoint.getX() + ((offsetPoint.getY()+70) * length + offsetPoint.getZ()) * width;
+    public IBlockState getBlock(int x, int y, int z, int rot) {
+        if (y < -70 || y >= 186) return Blocks.air.getDefaultState();
+        if (x < 0 || x >= width) return Blocks.air.getDefaultState();
+        if (z < 0 || z >= length) return Blocks.air.getDefaultState();
+
+        int index = x + ((y+70) * length + z) * width;
         IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
 
         Optional<PropertyDirection> propertyDirection = blockState.getPropertyNames().stream()
