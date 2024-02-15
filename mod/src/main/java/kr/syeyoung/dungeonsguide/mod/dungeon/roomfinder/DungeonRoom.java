@@ -332,6 +332,10 @@ public class DungeonRoom implements IPathfindWorld {
         return pos;
     }
 
+    public Vec3 getRelativeVec3At(double x, double y, double z) {
+        Vec3 pos = new Vec3(x,y,z).addVector(min.getX(),min.getY(),min.getZ());
+        return pos;
+    }
     public int getRelativeBlockDataAt(int x, int y, int z) {
         // validate x y z's
         if (canAccessRelative(x,z)) {
@@ -385,8 +389,14 @@ public class DungeonRoom implements IPathfindWorld {
         Block b = iBlockState.getBlock();
         if (b.getBlockHardness(getCachedWorld(), pos) < 0) {
             return true;
-        } else if (algorithmSettings.getPickaxeSpeed() > 0 && algorithmSettings.getPickaxe().canHarvestBlock(b) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed()) {
-        } else if (algorithmSettings.getShovelSpeed() > 0 && b.isToolEffective("shovel", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getShovelSpeed()) {
+        } else if (algorithmSettings.getPickaxeSpeed() > 0 &&
+                ((algorithmSettings.getPickaxe().canHarvestBlock(b) &&
+                b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 30.0) ||
+                (b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 100.0))
+        ) {
+        } else if (algorithmSettings.getShovelSpeed() > 0
+                && b.isToolEffective("shovel", iBlockState)
+                && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getShovelSpeed()) {
         } else if (algorithmSettings.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getAxeSpeed()) {
         } else {
             return true;

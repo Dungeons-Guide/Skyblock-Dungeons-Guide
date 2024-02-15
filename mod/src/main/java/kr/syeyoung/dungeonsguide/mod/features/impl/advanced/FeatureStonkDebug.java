@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
@@ -71,7 +72,7 @@ public class FeatureStonkDebug extends SimpleFeature {
             Color actual = new Color(c.getRGB(), true);
 
 
-            for (RaytraceHelper.OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
                                 offsetVec3.getX() - 0.025f, offsetVec3.getY() - 0.025f, offsetVec3.getZ() - 0.025f,
@@ -83,7 +84,7 @@ public class FeatureStonkDebug extends SimpleFeature {
                 );
             }
             double cx = 0, cy =0 , cz = 0;
-            for (RaytraceHelper.OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 cx += offsetVec3.getX();
                 cy += offsetVec3.getY();
                 cz += offsetVec3.getZ();

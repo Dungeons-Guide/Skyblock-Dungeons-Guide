@@ -40,7 +40,7 @@ public class AStarFineGridStonking implements IPathfinder {
     private IPathfindWorld dungeonRoom;
 
 
-    private Node startNode;
+    private List<Node> startNodes = new ArrayList<>();
     private Node goalNode;
 
     @Getter
@@ -59,7 +59,16 @@ public class AStarFineGridStonking implements IPathfinder {
         this.dx = (int) (centerOfGravity.xCoord );
         this.dy = (int) (centerOfGravity.yCoord );
         this.dz = (int) (centerOfGravity.zCoord );
-        startNode = openNode(dx, dy, dz, false);
+
+        for (AxisAlignedBB boundingBox : destination.getBoundingBoxes()) {
+            for (int x = (int) Math.ceil(boundingBox.minX); x < boundingBox.maxX; x ++) {
+                for (int y = (int) Math.ceil(boundingBox.minY); y < boundingBox.maxY; y ++) {
+                    for (int z = (int) Math.ceil(boundingBox.minZ); z < boundingBox.maxZ; z ++) {
+                        startNodes.add(openNode(x,y,z, false));
+                    }
+                }
+            }
+        }
     }
     private Map<Node.Coordinate, Node> nodeMap = new HashMap<>();
     @Getter
@@ -295,11 +304,13 @@ public class AStarFineGridStonking implements IPathfinder {
         found = false;
 
         goalNode = openNode(lastSx, lastSy, lastSz, blocked);
-        startNode.g = 0;
-        startNode.f = 0;
+        for (Node startNode : startNodes) {
+            startNode.g = 0;
+            startNode.f = 0;
+        }
         goalNode.g = Integer.MAX_VALUE; goalNode.f = Integer.MAX_VALUE;
 
-        open.add(startNode);
+        open.addAll(startNodes);
 
 
         if (goalNode.parent != null) {

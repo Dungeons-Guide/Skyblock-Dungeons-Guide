@@ -20,7 +20,6 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
@@ -54,28 +53,30 @@ import java.util.Map;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionMove extends AbstractAction {
-    private OffsetPointSet targets;
+    private List<OffsetVec3> targets;
 
-    public ActionMove(OffsetPointSet target) {
+    public ActionMove(List<OffsetVec3> target) {
         this.targets = target;
     }
 
-    public OffsetPoint getTarget() {
-        return targets.getOffsetPointList().get(0);
+    public OffsetVec3 getTarget() {
+        return targets.get(0);
     }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return targets.getOffsetPointList().get(0).getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 25;
+        return targets.stream().anyMatch(
+                a-> a.getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) < 0.625
+        );
     }
 
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, targets.getOffsetPointList().get(0), poses);
+        draw(dungeonRoom, partialTicks, actionRouteProperties, flag, targets, poses);
     }
 
-    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, OffsetPoint target, PathfindResult poses) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
+    static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, List<OffsetVec3> target, PathfindResult poses) {
+        BlockPos pos = new BlockPos(target.get(0).getPos(dungeonRoom));
 
         float distance = MathHelper.sqrt_double(pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()));
         float multiplier = distance / 120f; //mobs only render ~120 blocks away
@@ -206,11 +207,11 @@ public class ActionMove extends AbstractAction {
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
         BoundingBox boundingBox = new BoundingBox();
-        for (OffsetPoint offsetPoint : targets.getOffsetPointList()) {
-            BlockPos pos = offsetPoint.getBlockPos(dungeonRoom);
+        for (OffsetVec3 offsetPoint : targets) {
+            Vec3 pos = offsetPoint.getPos(dungeonRoom);
             boundingBox.addBoundingBox(new AxisAlignedBB(
-                    pos.getX(), pos.getY(), pos.getZ(),
-                    pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1
+                    pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
+                    pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
             ));
         }
         if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
@@ -218,12 +219,12 @@ public class ActionMove extends AbstractAction {
     }
     @Override
     public String toString() {
-        return "Move\n- target: "+targets.getOffsetPointList().get(0).toString();
+        return "Move\n- target: "+targets.get(0).toString();
     }
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        BlockPos bpos = targets.getOffsetPointList().get(0).getBlockPos(room);
+        BlockPos bpos = new BlockPos(targets.get(0).getPos(room));
 //        for (EnumFacing value : EnumFacing.VALUES) {
 //            if (room.getCachedWorld().getBlockState(bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ())).getBlock() == Blocks.air) {
 //                bpos = bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ());
@@ -243,11 +244,11 @@ public class ActionMove extends AbstractAction {
         FineGridStonkingBFS a = null;
         if (executor == null) {
             BoundingBox boundingBox = new BoundingBox();
-            for (OffsetPoint offsetPoint : targets.getOffsetPointList()) {
-                BlockPos pos = offsetPoint.getBlockPos(room);
+            for (OffsetVec3 offsetPoint : targets) {
+                Vec3 pos = offsetPoint.getPos(room);
                 boundingBox.addBoundingBox(new AxisAlignedBB(
-                        pos.getX(), pos.getY(), pos.getZ(),
-                        pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1
+                        pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
+                        pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
                 ));
             }
 

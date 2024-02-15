@@ -285,7 +285,7 @@ public class RaytraceHelper {
                     return new PossibleClickingSpot(
                             entries.get(0).getValue(),
                             entries.stream().map(Map.Entry::getKey)
-                                    .map(b -> new OffsetVec3(b.xCoord, b.yCoord, b.zCoord))
+                                    .map(b -> new Vec3(b.xCoord, b.yCoord, b.zCoord))
                                     .collect(Collectors.toList()),
                             stonk.get(entries.get(0).getKey()), 0
                     );
@@ -294,18 +294,18 @@ public class RaytraceHelper {
     }
 
     public static List<PossibleClickingSpot> chooseMinimalY(List<PossibleClickingSpot> spots) {
-        Map<OffsetVec3, PossibleClickingSpot> clusterMap = new HashMap<>();
+        Map<Vec3, PossibleClickingSpot> clusterMap = new HashMap<>();
 
         for (PossibleClickingSpot spot : spots) {
-            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
-                clusterMap.put(offsetVec3, spot);
+            for (Vec3 Vec3 : spot.getOffsetPointSet()) {
+                clusterMap.put(Vec3, spot);
             }
         }
 
         return clusterMap.keySet().stream()
-                .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.getX(), a.getZ())))
+                .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.xCoord, a.zCoord)))
                 .values().stream()
-                    .map(a -> a.stream().min(Comparator.comparingDouble(OffsetVec3::getY)).orElse(null))
+                    .map(a -> a.stream().min(Comparator.comparingDouble(b -> b.yCoord)).orElse(null))
                 .collect(Collectors.groupingBy(clusterMap::get))
                 .entrySet().stream().map(
                         a -> new PossibleClickingSpot(
@@ -317,34 +317,34 @@ public class RaytraceHelper {
                 ).collect(Collectors.toList());
     }
     public static List<PossibleClickingSpot> doClustering(List<PossibleClickingSpot> spots) {
-        Map<OffsetVec3, PossibleClickingSpot> clusterMap = new HashMap<>();
-        Map<OffsetVec3, Integer> clusterId = new HashMap<>();
+        Map<Vec3, PossibleClickingSpot> clusterMap = new HashMap<>();
+        Map<Vec3, Integer> clusterId = new HashMap<>();
 
         for (PossibleClickingSpot spot : spots) {
-            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
-                clusterId.put(offsetVec3, -1);
-                clusterMap.put(offsetVec3, spot);
+            for (Vec3 Vec3 : spot.getOffsetPointSet()) {
+                clusterId.put(Vec3, -1);
+                clusterMap.put(Vec3, spot);
             }
         }
         int lastId = 0;
 
-        for (OffsetVec3 offsetVec3 : clusterId.keySet()) {
-            int id = clusterId.get(offsetVec3);
+        for (Vec3 Vec3 : clusterId.keySet()) {
+            int id = clusterId.get(Vec3);
             if (id != -1) continue;
             id = ++lastId;
 
-            Queue<OffsetVec3> toVisit = new LinkedList<>();
-            toVisit.add(offsetVec3);
+            Queue<Vec3> toVisit = new LinkedList<>();
+            toVisit.add(Vec3);
             while (!toVisit.isEmpty()) {
-                OffsetVec3 vec3 = toVisit.poll();
+                Vec3 vec3 = toVisit.poll();
                 if (clusterId.get(vec3) != -1) continue;
                 clusterId.put(vec3, id);
 
                 for (EnumFacing value : EnumFacing.VALUES) {
-                    OffsetVec3 newVec3 = new OffsetVec3(
-                            vec3.x + value.getFrontOffsetX() * 0.5,
-                            vec3.y + value.getFrontOffsetY() * 0.5,
-                            vec3.z + value.getFrontOffsetZ() * 0.5
+                    Vec3 newVec3 = new Vec3(
+                            vec3.xCoord + value.getFrontOffsetX() * 0.5,
+                            vec3.yCoord + value.getFrontOffsetY() * 0.5,
+                            vec3.zCoord + value.getFrontOffsetZ() * 0.5
                     );
                     if (!clusterId.containsKey(newVec3)) continue;
                     toVisit.add(newVec3);
@@ -508,83 +508,9 @@ public class RaytraceHelper {
     @AllArgsConstructor @Getter
     public static class PossibleClickingSpot {
         private RequiredTool[] tools;
-        private List<OffsetVec3> offsetPointSet;
+        private List<Vec3> offsetPointSet;
         private boolean stonkingReq;
         private int clusterId;
-    }
-
-    @Data
-    @AllArgsConstructor
-    public static class OffsetVec3 implements Cloneable, Serializable {
-        private static final long serialVersionUID = 3102336358774967540L;
-
-        private double x;
-        private double y;
-        private double z;
-
-        public OffsetVec3(DungeonRoom dungeonRoom, Vec3 pos) {
-            setPosInWorld(dungeonRoom, pos);
-        }
-
-
-        public void setPosInWorld(DungeonRoom dungeonRoom, Vec3 pos) {
-            Vector2d vector2d = new Vector2d(pos.xCoord - dungeonRoom.getMin().getX(), pos.zCoord - dungeonRoom.getMin().getZ());
-            for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
-                vector2d = VectorUtils.rotateClockwise(vector2d);
-                if (i % 2 == 0) {
-                    vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 1; // + Z
-                } else {
-                    vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 1; // + X
-                }
-            }
-
-            this.x =  vector2d.x;
-            this.z =  vector2d.y;
-            this.y = pos.yCoord-dungeonRoom.getMin().getY();
-        }
-
-        public BlockPos toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
-            Vector2d rot = new Vector2d(x,z);
-            for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
-                rot = VectorUtils.rotateCounterClockwise(rot);
-                if (i % 2 == 0) {
-                    rot.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1; // + Z
-                } else {
-                    rot.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1; // + X
-                }
-            }
-
-            return new BlockPos(rot.x, y, rot.y);
-        }
-
-        public Block getBlock(DungeonRoom dungeonRoom) {
-            BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
-
-            return dungeonRoom.getRelativeBlockAt(relBp.getX(), relBp.getY(), relBp.getZ());
-        }
-        public BlockPos getBlockPos(DungeonRoom dungeonRoom) {
-            BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
-            return dungeonRoom.getRelativeBlockPosAt(relBp.getX(), relBp.getY(), relBp.getZ());
-        }
-
-        public int getData(DungeonRoom dungeonRoom) {
-            BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
-
-            return dungeonRoom.getRelativeBlockDataAt(relBp.getX(), relBp.getY(), relBp.getZ());
-        }
-
-        @Override
-        public Object clone() throws CloneNotSupportedException {
-            return new OffsetVec3(x,y,z);
-        }
-
-        @Override
-        public String toString() {
-            return "OffsetPoint{x=" + x +
-                    ", y=" + y +
-                    ", z=" + z +
-                    '}';
-        }
     }
 
 

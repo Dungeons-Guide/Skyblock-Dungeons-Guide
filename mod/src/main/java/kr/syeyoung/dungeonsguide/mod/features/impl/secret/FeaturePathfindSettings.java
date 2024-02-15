@@ -61,7 +61,7 @@ public class FeaturePathfindSettings extends SimpleFeature {
     public AlgorithmSettings getAlgorithmSettings() {
         return new AlgorithmSettings(
                 getPickaxe(),
-                isPickaxe() ? getInstabreakPickaxe() : -1,
+                isPickaxe() ? getPickaxeFactor() : -1,
                 isShovel() ? getInstabreakShovel() : -1,
                 isAxe() ? getInstabreakAxe() : -1,
                 isStonkDown(),
@@ -94,14 +94,14 @@ public class FeaturePathfindSettings extends SimpleFeature {
     public Item getPickaxe() {
         return this.<Material>getParameter("pickaxe_type").getValue().getPickaxe();
     }
-    public double getInstabreakPickaxe() {
+    public double getPickaxeFactor() {
         int val1 = this.<Integer>getParameter("haste").getValue();
         int val2 = this.<Integer>getParameter("pickaxe_efficiency").getValue();
         Item.ToolMaterial toolMaterial = this.<Material>getParameter("pickaxe_type").getValue().getToolMaterial();
         double efficiency2 = toolMaterial.getEfficiencyOnProperMaterial();
         efficiency2 += val2 * val2 + 1;
         efficiency2 *= val1 * 0.2 + 1;
-        efficiency2 /= 30;
+//        efficiency2 /= 30;
         return efficiency2;
     }
     public double getInstabreakShovel() {
