@@ -51,6 +51,7 @@ public class FeatureStonkDebug extends SimpleFeature {
             return;
         }
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
+            event.setCanceled(true);
             // reset
             this.spots = RaytraceHelper.raycast(event.world, event.pos);
             System.out.println(spots);
@@ -73,7 +74,7 @@ public class FeatureStonkDebug extends SimpleFeature {
             Color actual = new Color(c.getRGB(), true);
 
 
-            for (Vec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (RaytraceHelper.TameVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.025f,
@@ -85,7 +86,7 @@ public class FeatureStonkDebug extends SimpleFeature {
                 );
             }
             double cx = 0, cy =0 , cz = 0;
-            for (Vec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (RaytraceHelper.TameVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 cx += offsetVec3.xCoord;
                 cy += offsetVec3.yCoord;
                 cz += offsetVec3.zCoord;

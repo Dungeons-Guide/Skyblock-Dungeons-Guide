@@ -60,7 +60,7 @@ public class AStarFineGridStonking implements IPathfinder {
         this.dy = (int) (centerOfGravity.yCoord );
         this.dz = (int) (centerOfGravity.zCoord );
 
-        for (AxisAlignedBB boundingBox : destination.getBoundingBoxes()) {
+        for (AxisAlignedBB boundingBox : destinationBB.getBoundingBoxes()) {
             for (int x = (int) Math.ceil(boundingBox.minX); x < boundingBox.maxX; x ++) {
                 for (int y = (int) Math.ceil(boundingBox.minY); y < boundingBox.maxY; y ++) {
                     for (int z = (int) Math.ceil(boundingBox.minZ); z < boundingBox.maxZ; z ++) {
@@ -69,6 +69,7 @@ public class AStarFineGridStonking implements IPathfinder {
                 }
             }
         }
+        System.out.println(startNodes.size());
     }
     private Map<Node.Coordinate, Node> nodeMap = new HashMap<>();
     @Getter
@@ -307,10 +308,10 @@ public class AStarFineGridStonking implements IPathfinder {
         for (Node startNode : startNodes) {
             startNode.g = 0;
             startNode.f = 0;
+            open.add(startNode);
         }
         goalNode.g = Integer.MAX_VALUE; goalNode.f = Integer.MAX_VALUE;
 
-        open.addAll(startNodes);
 
 
         if (goalNode.parent != null) {

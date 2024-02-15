@@ -34,6 +34,8 @@ public class ActionDAG {
     @Getter
     private List<ActionDAGNode> allNodes;
 
+    private List<ActionDAGNode> orNodes;
+
     private DungeonRoom dungeonRoom;
 
     public ActionDAG(DungeonRoom dungeonRoom, int count, ActionDAGNode node, List<ActionDAGNode> allNodes) {
@@ -41,6 +43,8 @@ public class ActionDAG {
         this.count = count;
         this.actionDAGNode = node;
         this.allNodes = allNodes;
+
+        orNodes = allNodes.stream().filter(a -> a.getType() == ActionDAGNode.NodeType.OR).collect(Collectors.toList());
     }
     public Iterator<List<ActionDAGNode>> topologicalSortIterator(int dagId) {
         return new TopologicalSortIterator(dagId);
@@ -53,6 +57,17 @@ public class ActionDAG {
                 return new TopologicalSortIterator(dagId);
             }
         };
+    }
+
+    public boolean isValidStatus(int[] nodeStatus) {
+        for (ActionDAGNode orNode : orNodes) {
+            int enabledCount = 0;
+            for (ActionDAGNode otentialRequire : orNode.getPotentialRequires()) {
+                if (nodeStatus[otentialRequire.getId()] == 3) enabledCount++;
+            }
+            if (enabledCount != 1) return false;
+        }
+        return true;
     }
 
     public int[] getNodeStatus(int dagId) {
@@ -143,21 +158,24 @@ public class ActionDAG {
             this.dagId = dagId;
 
             int[] nodeStatus = getNodeStatus(dagId);
+            if (isValidStatus(nodeStatus)) {
 
+                for (int i = 0; i < allNodes.size(); i++) {
+                    degree[i] = (int) allNodes.get(i).getPotentialRequires(dagId)
+                            .stream().filter(a -> nodeStatus[a.getId()] ==3).count();
+                    this.visited[i] = nodeStatus[i] != 3;
+                    sanityCheck[i] = allNodes.get(i).getAction().isSanityCheck();
+                    if (!this.visited[i]) solutionSize++;
+                }
+                path.add(0);
+                nextSolution = findNext(true);
 
-
-            for (int i = 0; i < allNodes.size(); i++) {
-                degree[i] = (int) allNodes.get(i).getPotentialRequires(dagId)
-                        .stream().filter(a -> nodeStatus[a.getId()] ==3).count();
-                this.visited[i] = nodeStatus[i] != 3;
-                sanityCheck[i] = allNodes.get(i).getAction().isSanityCheck();
-                if (!this.visited[i]) solutionSize++;
+                if (nextSolution == null) {
+                    System.out.println("WTF NULL PATH???");
+                }
             }
-            path.add(0);
-            nextSolution = findNext(true);
-            if (nextSolution == null) {
-                System.out.println("WTF NULL PATH???");
-            }
+
+
         }
         @Override
         public boolean hasNext() {

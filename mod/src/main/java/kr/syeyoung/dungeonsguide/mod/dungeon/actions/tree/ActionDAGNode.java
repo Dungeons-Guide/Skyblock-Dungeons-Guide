@@ -48,11 +48,11 @@ public class ActionDAGNode {
 
 
     public enum NodeType {
-        OPTIONAL, AND
+        OPTIONAL, AND, OR
     }
 
     public boolean isDisablable() {
-        return requiredBy.stream().allMatch(a -> a.type == NodeType.OPTIONAL) && requiredBy.size() != 0;
+        return requiredBy.stream().allMatch(a -> a.type == NodeType.OPTIONAL || a.type == NodeType.OR) && requiredBy.size() != 0;
     }
 
     private int bitIdx = -1;

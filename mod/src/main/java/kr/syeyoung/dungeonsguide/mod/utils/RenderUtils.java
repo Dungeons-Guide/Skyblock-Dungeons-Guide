@@ -1329,8 +1329,8 @@ public class RenderUtils {
         GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
         GlStateManager.scale(-lScale, -lScale, lScale);
         GlStateManager.disableLighting();
-        GlStateManager.depthMask(true);
-//        GlStateManager.disableDepth();
+        GlStateManager.depthMask(false);
+        GlStateManager.disableDepth();
         GlStateManager.enableBlend();
         GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
 

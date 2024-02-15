@@ -39,8 +39,12 @@ public class ActionUtils {
         ActionDAGBuilder build(ActionDAGBuilder builder) throws PathfindImpossibleException;
     }
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
+//dungeonRoom.getDungeonRoomInfo().getBlock(0,0,0 , )
 
-        List<RaytraceHelper.PossibleClickingSpot> spots = RaytraceHelper.raycast(dungeonRoom.getCachedWorld(), target.getBlockPos(dungeonRoom), dungeonRoom::getBlock);
+        List<RaytraceHelper.PossibleClickingSpot> spots = RaytraceHelper.raycast(
+                dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
+                        new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), dungeonRoom.getRoomMatcher().getRotation()) : dungeonRoom.getCachedWorld(), target.getBlockPos(dungeonRoom), dungeonRoom::getBlock
+        );
         spots = spots.stream().filter(a -> {
             FeaturePathfindSettings.AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
             {
@@ -107,15 +111,10 @@ public class ActionUtils {
         }).collect(Collectors.toList());
         ActionDAGBuilder last = builder;
         for (Map.Entry<Integer, List<RaytraceHelper.PossibleClickingSpot>> integerListEntry : spots.stream().collect(Collectors.groupingBy(a -> a.getClusterId())).entrySet()) {
-            List<OffsetVec3> vec3s = new ArrayList<>();
-            for (RaytraceHelper.PossibleClickingSpot possibleClickingSpot : integerListEntry.getValue()) {
-                for (Vec3 vec3 : possibleClickingSpot.getOffsetPointSet()) {
-                    vec3s.add(new OffsetVec3(dungeonRoom, vec3));
-                }
-            }
-            ActionDAGBuilder builder1 = builder.requires(new AtomicAction.Builder()
+
+            ActionDAGBuilder builder1 = builder.or(new AtomicAction.Builder()
                             .requires(new ActionClick(target))
-                            .requires(new ActionMove(vec3s))
+                            .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
                             .build("MoveAndClick"));
             last = eachBuild.build(builder1);
         }

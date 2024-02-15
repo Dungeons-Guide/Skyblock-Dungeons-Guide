@@ -287,7 +287,7 @@ public class FineGridStonkingBFS implements IPathfinder {
     @Override
     public Vec3 getTarget() {
         return null;
-//        return new Vec3(lastSx / 2.0, lastSy / 2.0, lastSz / 2.0);
+//        return new TameVec3(lastSx / 2.0, lastSy / 2.0, lastSz / 2.0);
     }
 
     @Override

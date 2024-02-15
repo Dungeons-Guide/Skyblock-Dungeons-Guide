@@ -101,6 +101,15 @@ public class ActionDAGBuilder {
         return requires(abstractAction);
     }
 
+    public ActionDAGBuilder or(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException {
+        AbstractAction abstractAction = abstractActionSupplier.get();
+        return or(abstractAction);
+    }
+    public ActionDAGBuilder or(AbstractAction abstractAction) throws PathfindImpossibleException {
+        current.setType(ActionDAGNode.NodeType.OR);
+        return requires(abstractAction);
+    }
+
     public ActionDAGBuilder getRoot() {
         if (parent != null) return parent.getRoot();
         return this;

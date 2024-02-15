@@ -19,17 +19,14 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
-import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
-import net.minecraft.client.Minecraft;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.*;
@@ -38,20 +35,20 @@ import net.minecraft.world.World;
 import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.IChunkProvider;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
+import org.apache.commons.lang3.tuple.ImmutableTriple;
 
-import javax.vecmath.Vector2d;
-import java.io.Serializable;
 import java.util.*;
 import java.util.stream.Collectors;
 
 public class RaytraceHelper {
-    private static class DRIWorld extends World {
+    public static class DRIWorld extends World {
 
         private DungeonRoomInfo dungeonRoomInfo;
-        protected DRIWorld(DungeonRoomInfo dungeonRoomInfo) {
+        private int rot;
+        protected DRIWorld(DungeonRoomInfo dungeonRoomInfo, int rot) {
             super(null, null, new WorldProviderSurface(), null, true);
             this.dungeonRoomInfo =  dungeonRoomInfo;
+            this.rot = rot;
         }
 
         @Override
@@ -81,7 +78,7 @@ public class RaytraceHelper {
 
         @Override
         public IBlockState getBlockState(BlockPos pos) {
-            return dungeonRoomInfo.getBlock(pos.getX(), pos.getY(), pos.getZ(),0);
+            return dungeonRoomInfo.getBlock(pos.getX(), pos.getY(), pos.getZ(),rot);
         }
 
         @Override
@@ -105,6 +102,13 @@ public class RaytraceHelper {
         }
     }
 
+
+    @Data @AllArgsConstructor @NoArgsConstructor
+    public static class TameVec3 {
+        public double xCoord;
+        public double yCoord;
+        public double zCoord;
+    }
 
     public static Vec3 interpolate(AxisAlignedBB axisAlignedBB, double x, double y, double z) {
         return new Vec3(
@@ -285,7 +289,7 @@ public class RaytraceHelper {
                     return new PossibleClickingSpot(
                             entries.get(0).getValue(),
                             entries.stream().map(Map.Entry::getKey)
-                                    .map(b -> new Vec3(b.xCoord, b.yCoord, b.zCoord))
+                                    .map(b -> new TameVec3(b.xCoord, b.yCoord, b.zCoord))
                                     .collect(Collectors.toList()),
                             stonk.get(entries.get(0).getKey()), 0
                     );
@@ -294,54 +298,54 @@ public class RaytraceHelper {
     }
 
     public static List<PossibleClickingSpot> chooseMinimalY(List<PossibleClickingSpot> spots) {
-        Map<Vec3, PossibleClickingSpot> clusterMap = new HashMap<>();
+        Map<TameVec3, PossibleClickingSpot> clusterMap = new HashMap<>();
 
         for (PossibleClickingSpot spot : spots) {
-            for (Vec3 Vec3 : spot.getOffsetPointSet()) {
+            for (TameVec3 Vec3 : spot.getOffsetPointSet()) {
                 clusterMap.put(Vec3, spot);
             }
         }
 
-        return clusterMap.keySet().stream()
-                .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.xCoord, a.zCoord)))
+        return clusterMap.entrySet().stream()
+                .collect(Collectors.groupingBy(a -> new ImmutableTriple<>(a.getKey().xCoord, a.getKey().zCoord, a.getValue().clusterId)))
                 .values().stream()
-                    .map(a -> a.stream().min(Comparator.comparingDouble(b -> b.yCoord)).orElse(null))
-                .collect(Collectors.groupingBy(clusterMap::get))
+                    .map(a -> a.stream().min(Comparator.comparingDouble(b -> b.getKey().yCoord)).orElse(null))
+                .collect(Collectors.groupingBy(a -> clusterMap.get(a.getKey())))
                 .entrySet().stream().map(
                         a -> new PossibleClickingSpot(
                                 a.getKey().getTools(),
-                                a.getValue(),
+                                a.getValue().stream().map(b -> b.getKey()).collect(Collectors.toList()),
                                 a.getKey().stonkingReq,
                                 a.getKey().clusterId
                         )
                 ).collect(Collectors.toList());
     }
     public static List<PossibleClickingSpot> doClustering(List<PossibleClickingSpot> spots) {
-        Map<Vec3, PossibleClickingSpot> clusterMap = new HashMap<>();
-        Map<Vec3, Integer> clusterId = new HashMap<>();
+        Map<TameVec3, PossibleClickingSpot> clusterMap = new HashMap<>();
+        Map<TameVec3, Integer> clusterId = new HashMap<>();
 
         for (PossibleClickingSpot spot : spots) {
-            for (Vec3 Vec3 : spot.getOffsetPointSet()) {
+            for (TameVec3 Vec3 : spot.getOffsetPointSet()) {
                 clusterId.put(Vec3, -1);
                 clusterMap.put(Vec3, spot);
             }
         }
         int lastId = 0;
 
-        for (Vec3 Vec3 : clusterId.keySet()) {
+        for (TameVec3 Vec3 : clusterId.keySet()) {
             int id = clusterId.get(Vec3);
             if (id != -1) continue;
             id = ++lastId;
 
-            Queue<Vec3> toVisit = new LinkedList<>();
+            Queue<TameVec3> toVisit = new LinkedList<>();
             toVisit.add(Vec3);
             while (!toVisit.isEmpty()) {
-                Vec3 vec3 = toVisit.poll();
+                TameVec3 vec3 = toVisit.poll();
                 if (clusterId.get(vec3) != -1) continue;
                 clusterId.put(vec3, id);
 
                 for (EnumFacing value : EnumFacing.VALUES) {
-                    Vec3 newVec3 = new Vec3(
+                    TameVec3 newVec3 = new TameVec3(
                             vec3.xCoord + value.getFrontOffsetX() * 0.5,
                             vec3.yCoord + value.getFrontOffsetY() * 0.5,
                             vec3.zCoord + value.getFrontOffsetZ() * 0.5
@@ -508,7 +512,7 @@ public class RaytraceHelper {
     @AllArgsConstructor @Getter
     public static class PossibleClickingSpot {
         private RequiredTool[] tools;
-        private List<Vec3> offsetPointSet;
+        private List<TameVec3> offsetPointSet;
         private boolean stonkingReq;
         private int clusterId;
     }

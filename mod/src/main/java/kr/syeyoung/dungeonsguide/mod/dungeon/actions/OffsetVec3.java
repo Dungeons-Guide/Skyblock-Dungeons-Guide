@@ -59,7 +59,7 @@ public class OffsetVec3 implements Cloneable, Serializable {
         this.y = pos.yCoord - dungeonRoom.getMin().getY();
     }
 
-    public BlockPos toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
+    public Vec3 toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
         Vector2d rot = new Vector2d(x, z);
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot = VectorUtils.rotateCounterClockwise(rot);
@@ -70,25 +70,14 @@ public class OffsetVec3 implements Cloneable, Serializable {
             }
         }
 
-        return new BlockPos(rot.x, y, rot.y);
-    }
-
-    public Block getBlock(DungeonRoom dungeonRoom) {
-        BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
-
-        return dungeonRoom.getRelativeBlockAt(relBp.getX(), relBp.getY(), relBp.getZ());
+        return new Vec3(rot.x, y, rot.y);
     }
 
     public Vec3 getPos(DungeonRoom dungeonRoom) {
-        BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
-        return dungeonRoom.getRelativeVec3At(relBp.getX(), relBp.getY(), relBp.getZ());
+        Vec3 relBp = toRotatedRelBlockPos(dungeonRoom);
+        return dungeonRoom.getRelativeVec3At(relBp.xCoord, relBp.yCoord, relBp.zCoord);
     }
 
-    public int getData(DungeonRoom dungeonRoom) {
-        BlockPos relBp = toRotatedRelBlockPos(dungeonRoom);
-
-        return dungeonRoom.getRelativeBlockDataAt(relBp.getX(), relBp.getY(), relBp.getZ());
-    }
 
     @Override
     public Object clone() throws CloneNotSupportedException {
