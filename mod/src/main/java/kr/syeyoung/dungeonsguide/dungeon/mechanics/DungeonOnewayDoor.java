@@ -90,6 +90,11 @@ public class DungeonOnewayDoor implements DungeonMechanic, RouteBlocker {
         return false;
     }
 
+    @Override
+    public List<OffsetPoint> blockedPoints() {
+        return secretPoint.getOffsetPointList();
+    }
+
     public DungeonOnewayDoor clone() throws CloneNotSupportedException {
         DungeonOnewayDoor dungeonSecret = new DungeonOnewayDoor();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();

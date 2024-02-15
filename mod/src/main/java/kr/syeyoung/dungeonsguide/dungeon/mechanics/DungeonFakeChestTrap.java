@@ -38,7 +38,7 @@ import java.util.List;
 import java.util.Set;
 
 @Data
-public class DungeonFakeChestTrap implements DungeonMechanic, RouteBlocker {
+public class DungeonFakeChestTrap implements DungeonMechanic {
     private static final long serialVersionUID = -7347076019472222115L;
     private OffsetPointSet tnts = new OffsetPointSet();
     private OffsetPoint chest = new OffsetPoint(0,0,0);
@@ -89,7 +89,6 @@ public class DungeonFakeChestTrap implements DungeonMechanic, RouteBlocker {
         }
     }
 
-    @Override
     public boolean isBlocking(DungeonRoom dungeonRoom) {
         for (OffsetPoint offsetPoint : tnts.getOffsetPointList()) {
             if (offsetPoint.getBlock(dungeonRoom) != Blocks.air) return true;

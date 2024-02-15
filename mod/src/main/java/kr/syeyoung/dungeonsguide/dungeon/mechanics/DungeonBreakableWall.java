@@ -115,6 +115,11 @@ public class DungeonBreakableWall implements DungeonMechanic, RouteBlocker {
         return false;
     }
 
+    @Override
+    public List<OffsetPoint> blockedPoints() {
+        return secretPoint.getOffsetPointList();
+    }
+
     public DungeonBreakableWall clone() throws CloneNotSupportedException {
         DungeonBreakableWall dungeonSecret = new DungeonBreakableWall();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();

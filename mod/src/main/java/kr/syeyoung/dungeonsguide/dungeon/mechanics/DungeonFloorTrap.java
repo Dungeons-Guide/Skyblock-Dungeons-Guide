@@ -92,6 +92,11 @@ public class DungeonFloorTrap implements DungeonMechanic, RouteBlocker {
         return false;
     }
 
+    @Override
+    public List<OffsetPoint> blockedPoints() {
+        return secretPoint.getOffsetPointList();
+    }
+
     public DungeonFloorTrap clone() throws CloneNotSupportedException {
         DungeonFloorTrap dungeonSecret = new DungeonFloorTrap();
         dungeonSecret.secretPoint = (OffsetPointSet) secretPoint.clone();
