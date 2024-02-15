@@ -101,7 +101,7 @@ public class ActionRoute {
                     for (int i = 0; i < dag.getCount(); i++) {
 
                         int minCount = 0;
-                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
+                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
                             minCount++;
                             if (minCount > 4) {
                                 break;
@@ -123,7 +123,7 @@ public class ActionRoute {
 
                                 if (dag.getAllNodes().stream().filter(a -> a.getType() == ActionDAGNode.NodeType.OPTIONAL)
                                         .flatMap( a -> a.getPotentialRequires().stream())
-                                        .anyMatch(a -> this.nodeStatus[a.getId()] != 3)) continue;
+                                        .anyMatch(a -> this.nodeStatus[a.getId()] == 0)) continue;
                             }
 
                             for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {

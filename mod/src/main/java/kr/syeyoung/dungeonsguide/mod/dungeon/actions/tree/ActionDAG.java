@@ -63,7 +63,7 @@ public class ActionDAG {
         for (ActionDAGNode orNode : orNodes) {
             int enabledCount = 0;
             for (ActionDAGNode otentialRequire : orNode.getPotentialRequires()) {
-                if (nodeStatus[otentialRequire.getId()] == 3) enabledCount++;
+                if (nodeStatus[otentialRequire.getId()] != 0) enabledCount++;
             }
             if (enabledCount != 1) return false;
         }

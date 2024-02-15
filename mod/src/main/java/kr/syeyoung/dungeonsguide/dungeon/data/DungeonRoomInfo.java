@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretChest;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretDoubleChest;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretEssence;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import lombok.Getter;
 import lombok.Setter;
@@ -87,6 +90,24 @@ public class DungeonRoomInfo implements Serializable {
         if (x < 0 || x >= width) return Blocks.air.getDefaultState();
         if (z < 0 || z >= length) return Blocks.air.getDefaultState();
 
+        for (DungeonMechanic value : mechanics.values()) {
+            if (value instanceof DungeonSecretEssence) {
+                OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.skull.getStateFromMeta(0);
+            } else if (value instanceof DungeonSecretChest) {
+                OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.chest.getStateFromMeta(0);
+            }else if (value instanceof DungeonSecretDoubleChest) {
+                OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.chest.getStateFromMeta(0);
+                offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint2();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.chest.getStateFromMeta(0);
+            }
+        }
         int index = x + ((y+70) * length + z) * width;
         IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
 
