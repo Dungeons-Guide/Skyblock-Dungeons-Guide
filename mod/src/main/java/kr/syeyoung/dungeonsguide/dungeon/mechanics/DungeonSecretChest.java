@@ -107,25 +107,26 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
         if (!"found".equalsIgnoreCase(state))
             throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
-            builder = builder.requires(new AtomicAction.Builder()
-                    .requires(new ActionClick(secretPoint))
-                    .requires(new ActionMoveNearestAir(secretPoint))
-                    .build("MoveAndClick"));
 
+        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
             boolean doneDoor = false;
             for (String str : preRequisite) {
                 if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) {
-                    builder.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                    builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
                     doneDoor = true;
                 }
             }
             if (doneDoor)
-                builder = builder.requires(new ActionRoot());
-        for (String str : preRequisite) {
-            if (str.isEmpty()) continue;
-            if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
-            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-        }
+                builder1 = builder1.requires(new ActionRoot());
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
+                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            }
+            return null;
+        });
+
+
     }
 
     @Override

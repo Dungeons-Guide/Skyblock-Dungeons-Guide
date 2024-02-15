@@ -63,16 +63,14 @@ public class DungeonFakeChestTrap implements DungeonMechanic {
             return;
         }
 
-        builder = builder
-                .requires(new AtomicAction.Builder()
-                        .requires(new ActionClick(chest))
-                        .requires(new ActionMoveNearestAir(chest))
-                        .build("MoveAndClick"));
+        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, chest, builder1 -> {
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            }
+            return null;
+        });
 
-        for (String str : preRequisite) {
-            if (str.isEmpty()) continue;
-            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-        }
     }
 
     @Override

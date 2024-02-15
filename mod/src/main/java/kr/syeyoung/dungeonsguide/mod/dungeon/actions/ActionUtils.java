@@ -34,7 +34,11 @@ import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ActionUtils {
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, Consumer<ActionDAGBuilder> eachBuild) throws PathfindImpossibleException {
+
+    public interface ActionDAGAccepter {
+        ActionDAGBuilder build(ActionDAGBuilder builder) throws PathfindImpossibleException;
+    }
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
 
         List<RaytraceHelper.PossibleClickingSpot> spots = RaytraceHelper.raycast(dungeonRoom.getCachedWorld(), target.getBlockPos(dungeonRoom), dungeonRoom::getBlock);
         spots = spots.stream().filter(a -> {
@@ -109,11 +113,11 @@ public class ActionUtils {
                     vec3s.add(new OffsetVec3(dungeonRoom, vec3));
                 }
             }
-            ActionDAGBuilder builder1 = last = builder.requires(new AtomicAction.Builder()
+            ActionDAGBuilder builder1 = builder.requires(new AtomicAction.Builder()
                             .requires(new ActionClick(target))
                             .requires(new ActionMove(vec3s))
                             .build("MoveAndClick"));
-            eachBuild.accept(builder1);
+            last = eachBuild.build(builder1);
         }
         return last;
     }

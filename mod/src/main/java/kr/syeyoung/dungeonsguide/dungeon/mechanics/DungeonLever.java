@@ -56,20 +56,13 @@ public class DungeonLever implements DungeonMechanic {
 
         if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return;
 
-        builder = builder
-                .requires(new AtomicAction.Builder()
-                    .requires(new ActionClick(leverPoint))
-                    .requires(new ActionMoveNearestAir(leverPoint))
-                    .build("MoveAndClick")
-                );
-
-        {
+        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverPoint, builder1 -> {
             for (String str : preRequisite) {
                 if (str.isEmpty()) continue;
-                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
             }
-        }
-        return;
+            return null;
+        });
     }
 
     @Override
