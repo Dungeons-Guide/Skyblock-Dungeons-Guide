@@ -129,7 +129,7 @@ public class ActionTreeDisplayPane extends MPanel {
 
         drawnPoints.put(actionTree, new Point(x + dim.width / 2, y + dim.height / 2));
         int xOff = 0;
-        for (ActionDAGNode tree:actionTree.getPotentialRequires()) {
+        for (ActionDAGNode tree:actionTree.getAllChildren()) {
             xOff += renderTree(tree, x + xOff, y + dim.height + 10, fr, pt, drawnPoints) + 10;
         }
         return Math.max(xOff, dim.width);

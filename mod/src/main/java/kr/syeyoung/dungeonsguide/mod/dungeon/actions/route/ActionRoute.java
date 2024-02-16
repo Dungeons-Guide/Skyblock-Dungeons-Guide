@@ -98,20 +98,22 @@ public class ActionRoute {
                     int minDagId = -1;
 
                     boolean stupidheuristic = false;
+                    int minCount = 0;
                     for (int i = 0; i < dag.getCount(); i++) {
 
-                        int minCount = 0;
                         for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
                             minCount++;
-                            if (minCount > 4) {
+                            if (minCount > 1000000) {
                                 break;
                             }
                         }
-                        if (minCount > 4) {
-                            stupidheuristic = true;
-                        }
                     }
+                    ChatTransmitter.sendDebugChat("With "+minCount+" Sorts");
 
+
+                    if (minCount > 32) {
+                        stupidheuristic = true;
+                    }
                         for (int dagId = 0; dagId < dag.getCount(); dagId++) {
                             Map<String, Object> memoization = new HashMap<>();
 
@@ -121,8 +123,7 @@ public class ActionRoute {
                             if (stupidheuristic) {
                                 memoization.put("stupidheuristic", true);
 
-                                if (dag.getAllNodes().stream().filter(a -> a.getType() == ActionDAGNode.NodeType.OPTIONAL)
-                                        .flatMap( a -> a.getPotentialRequires().stream())
+                                if (dag.getAllNodes().stream().flatMap(a -> a.getOptional().stream())
                                         .anyMatch(a -> this.nodeStatus[a.getId()] == 0)) continue;
                             }
 

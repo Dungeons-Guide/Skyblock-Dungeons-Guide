@@ -162,10 +162,10 @@ public class RaytraceHelper {
                                     RequiredTool[] requiredTools = new RequiredTool[3];
                                     // 0 pick 1 shovel 2 axe
                                     boolean imposs = false;
-                                    boolean stonka = blocks.lastIndexOf(target) == 0;
-                                    int until = stonka ? 0 : blocks.lastIndexOf(blocks.get(blocks.lastIndexOf(target) - 1));
+                                    boolean notstonk = blocks.lastIndexOf(target) == 0;
+                                    int until = notstonk ? 0 : blocks.lastIndexOf(blocks.get(blocks.lastIndexOf(target) - 1));
 
-                                    if (!stonka && !isAir) {
+                                    if (!notstonk && !isAir) {
                                         BlockPos pos = blocks.get(until);
                                         IBlockState from_state = w.getBlockState(pos);
                                         Block from_block = from_state.getBlock();
@@ -268,7 +268,7 @@ public class RaytraceHelper {
                                                 playerFoot, requiredTools
                                         );
                                         stonk.put(
-                                                playerFoot, stonka
+                                                playerFoot, !notstonk
                                         );
                                     }
                                 }

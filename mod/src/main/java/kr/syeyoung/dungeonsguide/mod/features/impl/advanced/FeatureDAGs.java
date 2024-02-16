@@ -97,8 +97,8 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
             while (!path.isEmpty()) {
                 ActionDAGNode actionDAGNode = path.peek();
                 boolean found = false;
-                for (int i = 0; i < actionDAGNode.getPotentialRequires().size(); i++) {
-                    ActionDAGNode actionDAGNode1 = actionDAGNode.getPotentialRequires().get(i);
+                for (int i = 0; i < actionDAGNode.getAllChildren().size(); i++) {
+                    ActionDAGNode actionDAGNode1 = actionDAGNode.getAllChildren().get(i);
                     if (visited[actionDAGNode1.getId()]) continue;
                     path.push(actionDAGNode1);
                     found = true;
@@ -180,7 +180,39 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                 GlStateManager.color(1,1,1,1);
                 GlStateManager.disableTexture2D();
                 worldRenderer.begin(GL11.GL_LINES, DefaultVertexFormats.POSITION_COLOR);
-                for (ActionDAGNode actionDAGNode : allNode.getPotentialRequires()) {
+                for (ActionDAGNode actionDAGNode : allNode.getRequire()) {
+                    Point p2 = locations.get(actionDAGNode);
+                    if (p2 == null) continue;
+                    worldRenderer.pos(p.x + 12.5, p.y + 12.5, 0).color(
+                            0.5f,
+                            0.0f,
+                            1.0f,
+                            1.0f
+                    ).endVertex();
+                    worldRenderer.pos(p2.x + 12.5, p2.y + 12.5, 0).color(
+                            0.5f,
+                            0.0f,
+                            1.0f,
+                            1.0f
+                    ).endVertex();
+                }
+                for (ActionDAGNode actionDAGNode : allNode.getOr()) {
+                    Point p2 = locations.get(actionDAGNode);
+                    if (p2 == null) continue;
+                    worldRenderer.pos(p.x + 12.5, p.y + 12.5, 0).color(
+                            0.0f,
+                            0.5f,
+                            1.0f,
+                            1.0f
+                    ).endVertex();
+                    worldRenderer.pos(p2.x + 12.5, p2.y + 12.5, 0).color(
+                            0.0f,
+                            0.5f,
+                            1.0f,
+                            1.0f
+                    ).endVertex();
+                }
+                for (ActionDAGNode actionDAGNode : allNode.getOptional()) {
                     Point p2 = locations.get(actionDAGNode);
                     if (p2 == null) continue;
                     worldRenderer.pos(p.x + 12.5, p.y + 12.5, 0).color(

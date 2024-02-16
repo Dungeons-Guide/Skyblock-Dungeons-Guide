@@ -53,13 +53,17 @@ public class ActionDAGTest {
         actionDAGBuilder
                 .requires(new DummyAction("1"))
                     .requires(new DummyAction("2"))
-                        .optional(new DummyAction("3")).requires(new DummyAction("8")).end().end()
-                        .optional(new DummyAction("4")).end().end()
-                    .requires(new DummyAction("5"));
+                        .or(new DummyAction("3")).requires(new DummyAction("8")).end().end()
+                        .or(new DummyAction("4")).end()
+                        .or(new DummyAction("5")).end()
+                        .or(new DummyAction("6")).end()
+                        .or(new DummyAction("7")).end().end()
+                    .requires(new DummyAction("8"));
 
         ActionDAG dag = actionDAGBuilder.build();
 
         for (int i = 0; i < dag.getCount(); i++) {
+            System.out.println(i);
             for (List<ActionDAGNode> sorted : dag.topologicalSort(i)) {
                 System.out.println(sorted.stream().map(a -> a.getAction().toString()).collect(Collectors.toList()));
             }

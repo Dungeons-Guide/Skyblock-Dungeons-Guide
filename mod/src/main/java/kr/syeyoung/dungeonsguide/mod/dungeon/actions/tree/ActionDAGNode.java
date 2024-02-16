@@ -19,31 +19,30 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionRoot;
-import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 public class ActionDAGNode {
     @Getter
     private final Set<ActionDAGNode> requiredBy = new HashSet<>();
     @Getter
     private final AbstractAction action;
-    @Getter
-    private final List<ActionDAGNode> potentialRequires = new ArrayList<>();
 
-    @Setter @Getter
-    private NodeType type;
+
+    @Getter
+    private final List<ActionDAGNode> or = new ArrayList<>();
+    @Getter
+    private final List<ActionDAGNode> optional = new ArrayList<>();
+    @Getter
+    private final List<ActionDAGNode> require = new ArrayList<>();
+
     @Getter @Setter
     private int maximumDepth;
 
-    public ActionDAGNode(AbstractAction action, NodeType type) {
+    public ActionDAGNode(AbstractAction action) {
         this.action = action;
-        this.type = type;
     }
 
 
@@ -51,34 +50,48 @@ public class ActionDAGNode {
         OPTIONAL, AND, OR
     }
 
-    public boolean isDisablable() {
-        return requiredBy.stream().allMatch(a -> a.type == NodeType.OPTIONAL || a.type == NodeType.OR) && requiredBy.size() != 0;
-    }
-
-    private int bitIdx = -1;
+    private int orFactor = -1;
+    private int optFactor = -1;
     @Getter @Setter
     private int id = 0;
     public int setIdx(int bitIdx) {
-        if (!isDisablable()) return bitIdx;
-        this.bitIdx = bitIdx;
-        return bitIdx + 1;
+        if (or.size() > 0) {
+            orFactor = bitIdx;
+            bitIdx *= or.size();
+        }
+        if (optional.size() > 0) {
+            optFactor = bitIdx;
+            bitIdx *= 2 << optional.size();
+        }
+        return bitIdx;
     }
-
-    public boolean isEnabled(int dagId) {
-        if (bitIdx == -1) return true;
-        return (dagId >> bitIdx  & 0x1) == 1;
-    }
-
     public List<ActionDAGNode> getPotentialRequires(int dagId) {
-        return potentialRequires.stream()
-                .filter(a -> a.isEnabled(dagId)).collect(Collectors.toList());
+        List<ActionDAGNode> nodes = new ArrayList<>(require);
+        if (orFactor > 0) {
+            int stuff = (dagId / orFactor) % or.size();
+            nodes.add(or.get(stuff));
+        }
+        if (optFactor > 0) {
+            int bitMask = (dagId / optFactor) % (2 << optional.size());
+            for (int i = 0; i < optional.size(); i++) {
+                if (((bitMask >> i) & 0x1) > 0) {
+                    nodes.add(optional.get(i));
+                }
+            }
+        }
+        return nodes;
     }
 
+    public List<ActionDAGNode> getAllChildren() {
+        List<ActionDAGNode> nodes = new ArrayList<>(require);
+        nodes.addAll(or);
+        nodes.addAll(optional);
+        return nodes;
+    }
     @Override
     public String toString() {
         return "ActionDAGNode{" +
                 "action=" + action +
-                ", type=" + type +
                 ", id=" + id +
                 '}';
     }

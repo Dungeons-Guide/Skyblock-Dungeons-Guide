@@ -27,8 +27,11 @@ import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import org.apache.commons.lang3.tuple.ImmutablePair;
+import org.apache.commons.lang3.tuple.Pair;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.function.Consumer;
@@ -123,13 +126,32 @@ public class ActionUtils {
             spot.getOffsetPointSet().addAll(tames);
         }
         ActionDAGBuilder last = builder;
-        for (Map.Entry<Integer, List<RaytraceHelper.PossibleClickingSpot>> integerListEntry : spots.stream().collect(Collectors.groupingBy(a -> a.getClusterId())).entrySet()) {
-
-            ActionDAGBuilder builder1 = builder.or(new AtomicAction.Builder()
-                            .requires(new ActionClick(target))
-                            .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
-                            .build("MoveAndClick"));
-            last = eachBuild.build(builder1);
+        Map<Integer, Boolean> stonkReq = new HashMap<>();
+        for (RaytraceHelper.PossibleClickingSpot spot : spots) {
+            if (!spot.isStonkingReq()) {
+                stonkReq.put(spot.getClusterId(), false);
+            }
+        }
+        for (Map.Entry<ImmutablePair<Integer, Boolean>, List<RaytraceHelper.PossibleClickingSpot>> integerListEntry :
+                spots.stream()
+                        .filter(a -> {
+                            if (stonkReq.containsKey(a.getClusterId()) && !a.isStonkingReq()) return true;
+                            return !stonkReq.containsKey(a.getClusterId());
+                        })
+                        .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.getClusterId(), a.isStonkingReq()))).entrySet()) {
+            if (integerListEntry.getKey().right) {
+                ActionDAGBuilder builder1 = builder.or(new AtomicAction.Builder()
+                        .requires(new ActionStonkClick(target))
+                        .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
+                        .build("MoveAndStonkClick"));
+                last = eachBuild.build(builder1);
+            } else {
+                ActionDAGBuilder builder1 = builder.or(new AtomicAction.Builder()
+                        .requires(new ActionClick(target))
+                        .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
+                        .build("MoveAndClick"));
+                last = eachBuild.build(builder1);
+            }
         }
         return last;
     }

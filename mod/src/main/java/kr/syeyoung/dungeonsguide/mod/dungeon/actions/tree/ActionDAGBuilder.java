@@ -43,7 +43,7 @@ public class ActionDAGBuilder {
         this.idempotentActions = parent.idempotentActions;
     }
     public ActionDAGBuilder(DungeonRoom dungeonRoom) {
-        this.current = new ActionDAGNode(new ActionRoot(), ActionDAGNode.NodeType.AND);
+        this.current = new ActionDAGNode(new ActionRoot());
         this.dungeonRoom = dungeonRoom;
         this.idempotentActions = new HashMap<>();
         this.parent = null;
@@ -55,27 +55,68 @@ public class ActionDAGBuilder {
         }
 
         @Override
-        public ActionDAGBuilder requires(AbstractAction abstractAction) throws PathfindImpossibleException {
+        public ActionDAGBuilder doAdd(AbstractAction abstractAction, ActionDAGNode.NodeType a) throws PathfindImpossibleException {
             throw new UnsupportedOperationException();
         }
     }
 
     public ActionDAGBuilder requires(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException  {
         AbstractAction abstractAction = abstractActionSupplier.get();
-        return requires(abstractAction);
+        return doAdd(abstractAction, ActionDAGNode.NodeType.AND);
+    }
+    public ActionDAGBuilder requires(AbstractAction abstractAction) throws PathfindImpossibleException {
+        return doAdd(abstractAction, ActionDAGNode.NodeType.AND);
     }
 
-    public ActionDAGBuilder requires(AbstractAction abstractAction) throws PathfindImpossibleException  {
+    public ActionDAGBuilder doAdd(AbstractAction abstractAction, ActionDAGNode.NodeType nodeType) throws PathfindImpossibleException  {
         if (abstractAction.isIdempotent() && idempotentActions.containsKey(abstractAction)) {
             ActionDAGNode actionDAGNode1 = idempotentActions.get(abstractAction);
-            current.getPotentialRequires().add(actionDAGNode1);
+
+            if (nodeType == ActionDAGNode.NodeType.AND) {
+                Iterator<ActionDAGNode> blah = actionDAGNode1.getRequiredBy().iterator();
+                while (blah.hasNext()) {
+                    ActionDAGNode node = blah.next();
+                    if (node.getOptional().contains(actionDAGNode1)) {
+                        blah.remove();
+                        node.getOptional().remove(actionDAGNode1);
+                    }
+                } // OPT + REQ => REMOVE OPT, because well, it's in anyways.
+            } else if (nodeType == ActionDAGNode.NodeType.OPTIONAL) {
+                for (ActionDAGNode node : actionDAGNode1.getRequiredBy()) {
+                    if (node.getRequire().contains(actionDAGNode1)) {
+                        return new ActionDAGBuilderNoMore(this);
+                    }
+                } // OPT + REQ => REMOVE OPT, because well, it's in anyways.
+            }
+
+
+            if (nodeType == ActionDAGNode.NodeType.AND)
+                current.getRequire().add(actionDAGNode1);
+            else if (nodeType == ActionDAGNode.NodeType.OR)
+                current.getOr().add(actionDAGNode1);
+            else if (nodeType == ActionDAGNode.NodeType.OPTIONAL)
+                current.getOptional().add(actionDAGNode1);
+            // art of combining.
+
+            // Here are the rules
+            // 1. REQ + REQ => KEEP
+            // 2. OR + REQ => KEEP
+            // 3. OPT + REQ => Remove OPT
+            // 4. OR + OR => KEEP
+            // 5. OR + OPT => KEEP
+            // 6. OPT + OPT => KEEP
             actionDAGNode1.setMaximumDepth(Math.max(current.getMaximumDepth() + 1, actionDAGNode1.getMaximumDepth()));
             actionDAGNode1.getRequiredBy().add(current);
             return new ActionDAGBuilderNoMore(this);
         }
 
-        ActionDAGNode child = new ActionDAGNode(abstractAction, ActionDAGNode.NodeType.AND);
-        current.getPotentialRequires().add(child);
+        ActionDAGNode child = new ActionDAGNode(abstractAction);
+        if (nodeType == ActionDAGNode.NodeType.AND)
+            current.getRequire().add(child);
+        else if (nodeType == ActionDAGNode.NodeType.OR)
+            current.getOr().add(child);
+        else if (nodeType == ActionDAGNode.NodeType.OPTIONAL)
+            current.getOptional().add(child);
         child.getRequiredBy().add(current);
 
         child.setMaximumDepth(current.getMaximumDepth() + 1);
@@ -97,8 +138,7 @@ public class ActionDAGBuilder {
         return optional(abstractAction);
     }
     public ActionDAGBuilder optional(AbstractAction abstractAction) throws PathfindImpossibleException {
-        current.setType(ActionDAGNode.NodeType.OPTIONAL);
-        return requires(abstractAction);
+        return doAdd(abstractAction, ActionDAGNode.NodeType.OPTIONAL);
     }
 
     public ActionDAGBuilder or(Supplier<AbstractAction> abstractActionSupplier) throws PathfindImpossibleException {
@@ -106,8 +146,7 @@ public class ActionDAGBuilder {
         return or(abstractAction);
     }
     public ActionDAGBuilder or(AbstractAction abstractAction) throws PathfindImpossibleException {
-        current.setType(ActionDAGNode.NodeType.OR);
-        return requires(abstractAction);
+        return doAdd(abstractAction, ActionDAGNode.NodeType.OR);
     }
 
     public ActionDAGBuilder getRoot() {
@@ -121,11 +160,11 @@ public class ActionDAGBuilder {
         dfs.push(current);
         Set<ActionDAGNode> visited = new HashSet<>();
         List<ActionDAGNode> allTheNodes = new ArrayList<>();
-        int idx = 0;
+        int idx = 1;
         int id = 0;
         while (!dfs.isEmpty()) {
             ActionDAGNode current =dfs.peek();
-            ActionDAGNode next = current.getPotentialRequires()
+            ActionDAGNode next = current.getAllChildren()
                     .stream().filter(a -> !visited.contains(a))
                     .findFirst().orElse(null);
             if (next == null) {
@@ -139,6 +178,6 @@ public class ActionDAGBuilder {
             if (dfs.contains(next)) throw new IllegalStateException("Cycle detected!");
             dfs.push(next);
         }
-        return new ActionDAG(dungeonRoom, 1 << idx, current, allTheNodes);
+        return new ActionDAG(dungeonRoom, idx, current, allTheNodes);
     }
 }

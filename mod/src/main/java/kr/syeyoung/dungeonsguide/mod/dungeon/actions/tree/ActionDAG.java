@@ -34,7 +34,6 @@ public class ActionDAG {
     @Getter
     private List<ActionDAGNode> allNodes;
 
-    private List<ActionDAGNode> orNodes;
 
     private DungeonRoom dungeonRoom;
 
@@ -44,7 +43,6 @@ public class ActionDAG {
         this.actionDAGNode = node;
         this.allNodes = allNodes;
 
-        orNodes = allNodes.stream().filter(a -> a.getType() == ActionDAGNode.NodeType.OR).collect(Collectors.toList());
     }
     public Iterator<List<ActionDAGNode>> topologicalSortIterator(int dagId) {
         return new TopologicalSortIterator(dagId);
@@ -58,18 +56,6 @@ public class ActionDAG {
             }
         };
     }
-
-    public boolean isValidStatus(int[] nodeStatus) {
-        for (ActionDAGNode orNode : orNodes) {
-            int enabledCount = 0;
-            for (ActionDAGNode otentialRequire : orNode.getPotentialRequires()) {
-                if (nodeStatus[otentialRequire.getId()] != 0) enabledCount++;
-            }
-            if (enabledCount != 1) return false;
-        }
-        return true;
-    }
-
     public int[] getNodeStatus(int dagId) {
         int[] enabled = new int[allNodes.size()];
         // 0: disabled
@@ -84,10 +70,10 @@ public class ActionDAG {
             int idx = stack.peek();
             ActionDAGNode current = allNodes.get(idx);
             boolean found = false;
-            for (int i = 0; i < current.getPotentialRequires().size(); i++) {
-                ActionDAGNode next = current.getPotentialRequires().get(i);
+            List<ActionDAGNode> ummmdfssearch = current.getPotentialRequires(dagId);
+            for (int i = 0; i <  ummmdfssearch.size(); i++) {
+                ActionDAGNode next = ummmdfssearch.get(i);
                 if (visited[next.getId()]) continue;
-                if (!next.isEnabled(dagId)) continue;
                 stack.push(next.getId());
                 found = true;
                 break;
@@ -158,7 +144,6 @@ public class ActionDAG {
             this.dagId = dagId;
 
             int[] nodeStatus = getNodeStatus(dagId);
-            if (isValidStatus(nodeStatus)) {
 
                 for (int i = 0; i < allNodes.size(); i++) {
                     degree[i] = (int) allNodes.get(i).getPotentialRequires(dagId)
@@ -173,7 +158,7 @@ public class ActionDAG {
                 if (nextSolution == null) {
                     System.out.println("WTF NULL PATH???");
                 }
-            }
+
 
 
         }

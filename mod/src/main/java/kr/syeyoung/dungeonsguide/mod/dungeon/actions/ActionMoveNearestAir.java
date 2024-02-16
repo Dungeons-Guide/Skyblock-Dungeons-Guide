@@ -104,6 +104,7 @@ public class ActionMoveNearestAir extends AbstractAction {
 
         if (memoization.containsKey("stupidheuristic")) {
             double cost = state.getPlayerPos().distanceTo(new Vec3(bpos));
+            System.out.println(state.getPlayerPos() +" to "+ bpos+" took "+cost);
             state.setPlayerPos(new Vec3(bpos));
             return cost;
         }

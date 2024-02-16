@@ -291,13 +291,14 @@ public class ActionMove extends AbstractAction {
             cy += offsetVec3.yCoord;
             cz += offsetVec3.zCoord;
         }
-        cx /= targets.size();
-        cy /= targets.size();
-        cz /= targets.size();
+        cx /= offsetVec3s.size();
+        cy /= offsetVec3s.size();
+        cz /= offsetVec3s.size();
         Vec3 bpos = new Vec3(cx,cy,cz);
 
         if (memoization.containsKey("stupidheuristic")) {
             double cost = state.getPlayerPos().distanceTo(bpos);
+            System.out.println(state.getPlayerPos() +" to "+ bpos+" took "+cost);
             state.setPlayerPos(bpos);
             return cost;
         }
