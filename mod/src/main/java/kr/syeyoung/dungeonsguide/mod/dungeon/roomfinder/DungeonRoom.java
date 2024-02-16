@@ -787,7 +787,7 @@ public class DungeonRoom implements IPathfindWorld {
         if (!canAccessAbsolute(new BlockPos(cx * 16+8,0, cz*16+8))) {
             return;
         }
-        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
+//        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
     }
 }

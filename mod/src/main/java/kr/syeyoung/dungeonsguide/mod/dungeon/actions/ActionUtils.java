@@ -114,17 +114,7 @@ public class ActionUtils {
             }
             return true;
         }).collect(Collectors.toList());
-        for (RaytraceHelper.PossibleClickingSpot spot : spots) {
-            List<RaytraceHelper.TameVec3> tames = spot.getOffsetPointSet().stream()
-                    .map(a -> {
-                        return new OffsetVec3(a.xCoord, a.yCoord, a.zCoord).getPos(dungeonRoom);
-                    })
-                    .map(a -> {
-                        return new RaytraceHelper.TameVec3(a.xCoord ,a.yCoord, a.zCoord);
-                    }).collect(Collectors.toList());
-            spot.getOffsetPointSet().removeIf(a -> true);
-            spot.getOffsetPointSet().addAll(tames);
-        }
+
         ActionDAGBuilder last = builder;
         Map<Integer, Boolean> stonkReq = new HashMap<>();
         for (RaytraceHelper.PossibleClickingSpot spot : spots) {

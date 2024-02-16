@@ -23,7 +23,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
+import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
+import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
@@ -44,7 +46,7 @@ public class FeatureStonkDebug extends SimpleFeature {
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.bone) {
+                event.entityPlayer.getHeldItem().getItem() != Item.getItemFromBlock(Blocks.ender_chest)) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
@@ -74,7 +76,7 @@ public class FeatureStonkDebug extends SimpleFeature {
             Color actual = new Color(c.getRGB(), true);
 
 
-            for (RaytraceHelper.TameVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
                                 offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.025f,
@@ -86,7 +88,7 @@ public class FeatureStonkDebug extends SimpleFeature {
                 );
             }
             double cx = 0, cy =0 , cz = 0;
-            for (RaytraceHelper.TameVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 cx += offsetVec3.xCoord;
                 cy += offsetVec3.yCoord;
                 cz += offsetVec3.zCoord;

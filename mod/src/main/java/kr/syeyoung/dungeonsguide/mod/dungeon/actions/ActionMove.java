@@ -55,25 +55,19 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper=false)
 public class ActionMove extends AbstractAction {
     private List<RaytraceHelper.PossibleClickingSpot> targets;
-    private List<OffsetVec3> offsetVec3s = new ArrayList<>();
 
     public ActionMove(List<RaytraceHelper.PossibleClickingSpot> target, DungeonRoom dungeonRoom) {
         this.targets = target;
-        for (RaytraceHelper.PossibleClickingSpot possibleClickingSpot : targets) {
-            for (RaytraceHelper.TameVec3 vec3 : possibleClickingSpot.getOffsetPointSet()) {
-                offsetVec3s.add(new OffsetVec3(dungeonRoom, new Vec3(vec3.xCoord, vec3.yCoord, vec3.zCoord)));
-            }
-        }
     }
 
     public OffsetVec3 getTarget() {
-        RaytraceHelper.TameVec3 vec = targets.get(0).getOffsetPointSet().get(0);
+        OffsetVec3 vec = targets.get(0).getOffsetPointSet().get(0);
         return new OffsetVec3(vec.xCoord, vec.yCoord, vec.zCoord);
     }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return offsetVec3s.stream().anyMatch(
+        return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
                 a-> a.getPos(dungeonRoom).squareDistanceTo(Minecraft.getMinecraft().thePlayer.getPositionVector()) < 0.625
         );
     }
@@ -90,7 +84,8 @@ public class ActionMove extends AbstractAction {
             Color actual = new Color(c.getRGB(), true);
 
 
-            for (RaytraceHelper.TameVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
                                 offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
@@ -102,7 +97,8 @@ public class ActionMove extends AbstractAction {
                 );
             }
             double cx = 0, cy =0 , cz = 0;
-            for (RaytraceHelper.TameVec3 offsetVec3 : spot.getOffsetPointSet()) {
+            for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
                 cx += offsetVec3.xCoord;
                 cy += offsetVec3.yCoord;
                 cz += offsetVec3.zCoord;
@@ -121,7 +117,7 @@ public class ActionMove extends AbstractAction {
 
         {
             double cx = 0, cy =0 , cz = 0;
-            for (OffsetVec3 _offsetVec3 : offsetVec3s) {
+            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
                 Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
                 cx += offsetVec3.xCoord;
                 cy += offsetVec3.yCoord;
@@ -265,7 +261,7 @@ public class ActionMove extends AbstractAction {
 
     public void forceRefresh(DungeonRoom dungeonRoom) {
         BoundingBox boundingBox = new BoundingBox();
-        for (OffsetVec3 offsetPoint : offsetVec3s) {
+        for (OffsetVec3 offsetPoint : targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
             Vec3 pos = offsetPoint.getPos(dungeonRoom);
             boundingBox.addBoundingBox(new AxisAlignedBB(
                     pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
@@ -285,15 +281,16 @@ public class ActionMove extends AbstractAction {
 
 
         double cx = 0, cy =0 , cz = 0;
-        for (OffsetVec3 _offsetVec3 : offsetVec3s) {
+        int size = (int) targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).count();
+        for (OffsetVec3 _offsetVec3 : targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
             Vec3 offsetVec3 = _offsetVec3.getPos(room);
             cx += offsetVec3.xCoord;
             cy += offsetVec3.yCoord;
             cz += offsetVec3.zCoord;
         }
-        cx /= offsetVec3s.size();
-        cy /= offsetVec3s.size();
-        cz /= offsetVec3s.size();
+        cx /= size;
+        cy /= size;
+        cz /= size;
         Vec3 bpos = new Vec3(cx,cy,cz);
 
         if (memoization.containsKey("stupidheuristic")) {
@@ -308,7 +305,7 @@ public class ActionMove extends AbstractAction {
         FineGridStonkingBFS a = null;
         if (executor == null) {
             BoundingBox boundingBox = new BoundingBox();
-            for (OffsetVec3 offsetPoint : offsetVec3s) {
+            for (OffsetVec3 offsetPoint : targets.stream().flatMap(b -> b.getOffsetPointSet().stream()).collect(Collectors.toList())) {
                 Vec3 pos = offsetPoint.getPos(room);
                 boundingBox.addBoundingBox(new AxisAlignedBB(
                         pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,

@@ -22,8 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.VectorUtils;
 import lombok.AllArgsConstructor;
 import lombok.Data;
-import net.minecraft.block.Block;
-import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
 import javax.vecmath.Vector2d;
@@ -34,9 +32,9 @@ import java.io.Serializable;
 public class OffsetVec3 implements Cloneable, Serializable {
     private static final long serialVersionUID = 3102336358774967540L;
 
-    private double x;
-    private double y;
-    private double z;
+    public double xCoord;
+    public double yCoord;
+    public double zCoord;
 
     public OffsetVec3(DungeonRoom dungeonRoom, Vec3 pos) {
         setPosInWorld(dungeonRoom, pos);
@@ -54,23 +52,23 @@ public class OffsetVec3 implements Cloneable, Serializable {
             }
         }
 
-        this.x = vector2d.x;
-        this.z = vector2d.y;
-        this.y = pos.yCoord - dungeonRoom.getMin().getY();
+        this.xCoord = vector2d.x;
+        this.zCoord = vector2d.y;
+        this.yCoord = pos.yCoord - dungeonRoom.getMin().getY();
     }
 
     public Vec3 toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
-        Vector2d rot = new Vector2d(x, z);
+        Vector2d rot = new Vector2d(xCoord, zCoord);
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             rot = VectorUtils.rotateCounterClockwise(rot);
             if (i % 2 == 0) {
-                rot.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 1; // + Z
+                rot.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 2; // + Z
             } else {
-                rot.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 1; // + X
+                rot.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 2; // + X
             }
         }
 
-        return new Vec3(rot.x, y, rot.y);
+        return new Vec3(rot.x, yCoord, rot.y);
     }
 
     public Vec3 getPos(DungeonRoom dungeonRoom) {
@@ -81,14 +79,14 @@ public class OffsetVec3 implements Cloneable, Serializable {
 
     @Override
     public Object clone() throws CloneNotSupportedException {
-        return new OffsetVec3(x, y, z);
+        return new OffsetVec3(xCoord, yCoord, zCoord);
     }
 
     @Override
     public String toString() {
-        return "OffsetPoint{x=" + x +
-                ", y=" + y +
-                ", z=" + z +
+        return "OffsetPoint{x=" + xCoord +
+                ", y=" + yCoord +
+                ", z=" + zCoord +
                 '}';
     }
 }
