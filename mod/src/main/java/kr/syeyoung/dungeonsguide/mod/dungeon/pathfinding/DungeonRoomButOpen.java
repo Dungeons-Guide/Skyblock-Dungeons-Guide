@@ -53,7 +53,7 @@ public class DungeonRoomButOpen implements IPathfindWorld {
     @Override
     public DungeonRoom.LayerNodeState getLayer(int x, int y, int z) {
         for (BlockPos freeeeePoint : freeeeePoints) {
-            if (Math.abs(freeeeePoint.getX() - x) <= 1&& Math.abs(freeeeePoint.getZ() - z) <= 1 && Math.abs(freeeeePoint.getY() - y) <= 1) {
+            if (Math.abs(freeeeePoint.getX() - x) <= 3&& Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
                 return DungeonRoom.LayerNodeState.OPEN;
             }
         }
@@ -63,7 +63,7 @@ public class DungeonRoomButOpen implements IPathfindWorld {
     @Override
     public DungeonRoom.NodeState getBlock(int x, int y, int z) {
         for (BlockPos freeeeePoint : freeeeePoints) {
-            if (Math.abs(freeeeePoint.getX() - x) <= 1 && Math.abs(freeeeePoint.getZ() - z) <= 1 && Math.abs(freeeeePoint.getY() - y) <= 1) {
+            if (Math.abs(freeeeePoint.getX() - x) <= 3 && Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
                 return DungeonRoom.NodeState.OPEN;
             }
         }

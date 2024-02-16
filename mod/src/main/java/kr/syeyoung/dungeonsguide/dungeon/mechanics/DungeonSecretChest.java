@@ -111,7 +111,7 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
         ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
             boolean doneDoor = false;
             for (String str : preRequisite) {
-                if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) {
+                if (dungeonRoom.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoor) {
                     builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
                     doneDoor = true;
                 }

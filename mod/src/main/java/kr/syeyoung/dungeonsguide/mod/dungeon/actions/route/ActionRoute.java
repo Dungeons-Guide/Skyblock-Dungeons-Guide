@@ -136,7 +136,6 @@ public class ActionRoute {
                                 for (ActionDAGNode actionDAGNode : actionDAGNodes) {
                                     cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
                                 }
-                                System.out.println(cost);
                                 if (cost < minCost) {
                                     minCost = cost;
                                     minCostRoute = actionDAGNodes;
@@ -146,7 +145,6 @@ public class ActionRoute {
                                 if (cnt > 10000) break;
                             }
                             if (minCostRoute == null) {
-                                System.out.println(minCostRoute);
                                 minCostRoute = new ArrayList<>();
                             }
                         }

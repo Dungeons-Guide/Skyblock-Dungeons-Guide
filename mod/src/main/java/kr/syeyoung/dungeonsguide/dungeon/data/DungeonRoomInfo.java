@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretChest;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretDoubleChest;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretEssence;
@@ -93,6 +94,10 @@ public class DungeonRoomInfo implements Serializable {
         for (DungeonMechanic value : mechanics.values()) {
             if (value instanceof DungeonSecretEssence) {
                 OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.skull.getStateFromMeta(0);
+            } if (value instanceof DungeonRedstoneKey) {
+                OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
                 if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
                     return Blocks.skull.getStateFromMeta(0);
             } else if (value instanceof DungeonSecretChest) {

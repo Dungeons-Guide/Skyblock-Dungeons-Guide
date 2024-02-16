@@ -69,7 +69,6 @@ public class AStarFineGridStonking implements IPathfinder {
                 }
             }
         }
-        System.out.println(startNodes.size());
     }
     private Map<Node.Coordinate, Node> nodeMap = new HashMap<>();
     @Getter

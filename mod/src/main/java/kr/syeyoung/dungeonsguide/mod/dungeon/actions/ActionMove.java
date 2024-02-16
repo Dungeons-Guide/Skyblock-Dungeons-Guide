@@ -320,6 +320,7 @@ public class ActionMove extends AbstractAction {
                     boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
+        System.out.println(state.getOpenMechanics());
         executor.setTarget(state.getPlayerPos());
         state.setPlayerPos(new Vec3(bpos.xCoord+0.5, bpos.yCoord, bpos.zCoord+0.5));
         double result = executor.findCost();
