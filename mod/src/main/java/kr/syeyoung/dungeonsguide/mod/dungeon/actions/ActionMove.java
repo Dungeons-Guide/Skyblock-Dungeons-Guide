@@ -298,7 +298,6 @@ public class ActionMove extends AbstractAction {
 
         if (memoization.containsKey("stupidheuristic")) {
             double cost = state.getPlayerPos().distanceTo(bpos);
-            System.out.println(state.getPlayerPos() +" to "+ bpos+" took "+cost);
             state.setPlayerPos(bpos);
             return cost;
         }

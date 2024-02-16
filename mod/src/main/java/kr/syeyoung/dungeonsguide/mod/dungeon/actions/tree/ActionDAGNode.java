@@ -55,15 +55,24 @@ public class ActionDAGNode {
     @Getter @Setter
     private int id = 0;
     public int setIdx(int bitIdx) {
+        boolean shouldOpt = false;
+        for (ActionDAGNode actionDAGNode : getRequiredBy()) {
+            if (actionDAGNode.getOptional().contains(this)) {
+                shouldOpt = true;
+            }
+        }
+        if (shouldOpt) {
+            optFactor = bitIdx;
+            bitIdx *= 2;
+        }
         if (or.size() > 0) {
             orFactor = bitIdx;
             bitIdx *= or.size();
         }
-        if (optional.size() > 0) {
-            optFactor = bitIdx;
-            bitIdx *= 2 << optional.size();
-        }
         return bitIdx;
+    }
+    public boolean isOptIncluded(int dagId) {
+        return (dagId / optFactor) % 2 == 1;
     }
     public List<ActionDAGNode> getPotentialRequires(int dagId) {
         List<ActionDAGNode> nodes = new ArrayList<>(require);
@@ -71,12 +80,9 @@ public class ActionDAGNode {
             int stuff = (dagId / orFactor) % or.size();
             nodes.add(or.get(stuff));
         }
-        if (optFactor > 0) {
-            int bitMask = (dagId / optFactor) % (2 << optional.size());
-            for (int i = 0; i < optional.size(); i++) {
-                if (((bitMask >> i) & 0x1) > 0) {
-                    nodes.add(optional.get(i));
-                }
+        for (ActionDAGNode actionDAGNode : optional) {
+            if (actionDAGNode.isOptIncluded(dagId)) {
+                nodes.add(actionDAGNode);
             }
         }
         return nodes;
