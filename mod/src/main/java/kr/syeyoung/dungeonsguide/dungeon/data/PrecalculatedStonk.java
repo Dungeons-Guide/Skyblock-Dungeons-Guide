@@ -65,7 +65,7 @@ public class PrecalculatedStonk implements Serializable {
             }
 
         }
-        List<PossibleClickingSpot>[] spots = new List[2 << calculateFor.size()];
+        List<PossibleClickingSpot>[] spots = new List[1 << calculateFor.size()];
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
             for (int i1 = 0; i1 < calculateFor.size(); i1++) {
