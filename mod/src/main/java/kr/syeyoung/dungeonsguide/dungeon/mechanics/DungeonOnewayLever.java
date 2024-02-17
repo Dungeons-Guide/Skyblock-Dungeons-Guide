@@ -56,13 +56,7 @@ public class DungeonOnewayLever implements DungeonMechanic {
         if (!("triggered".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for secret");
 
         if (leverCache != null)
-            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverCache, builder1 -> {
-                for (String str : preRequisite) {
-                    if (str.isEmpty()) continue;
-                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-                }
-                return null;
-            });
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverCache, preRequisite, Collections.emptyList());
         else
             ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverPoint, builder1 -> {
                 for (String str : preRequisite) {

@@ -22,8 +22,10 @@ import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.data.RequiredTool;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayDoor;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
@@ -32,6 +34,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.util.BlockPos;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -139,6 +142,54 @@ public class ActionUtils {
         }
         return last;
     }
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder,
+                                                           DungeonRoom dungeonRoom,
+                                                           PrecalculatedStonk precalculatedStonk,
+                                                           List<String> optionalPrerequisite,
+                                                           List<String> requiredPrerequisite) throws PathfindImpossibleException {
+        List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
+                .filter(a -> a.getValue() instanceof RouteBlocker)
+                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .map(a -> a.getKey())
+                .collect(Collectors.toList());
+        defaultOpenBlockers.addAll(requiredPrerequisite.stream().map(a -> a.split(":")[0]).collect(Collectors.toList()));
+        List<String> optionalOpenBlockers = optionalPrerequisite.stream().map(a -> a.split(":")[0]).collect(Collectors.toList());
+
+        List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
+                .filter(a -> optionalOpenBlockers.contains(a))
+                .collect(Collectors.toList());
+        ActionDAGBuilder last = null;
+        for (int i = 0; i < (2 << optionalSubset.size()); i++) {
+            ArrayList<String> newBlockers = new ArrayList<>(defaultOpenBlockers);
+            for (int i1 = 0; i1 < optionalSubset.size(); i1++) {
+                if (((i1 >> i) & 0x1) > 0) {
+                    newBlockers.add(optionalSubset.get(i1));
+                }
+            }
+            last = buildActionMoveAndClick(builder, dungeonRoom,
+                    RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(newBlockers)), precalculatedStonk.getTarget(),
+                    builder1 -> {
+                        for (String s : requiredPrerequisite) {
+                            String mech = s.split(":")[0];
+                            String state = s.split(":")[1];
+                            builder1.requires(new ActionChangeState(mech, state));
+                        }
+                        for (String s : optionalPrerequisite) {
+                            String mech = s.split(":")[0];
+                            String state = s.split(":")[1];
+                            if (optionalSubset.contains(mech)) {
+                                if (newBlockers.contains(mech))
+                                    builder1.requires(new ActionChangeState(mech, state));
+                            } else {
+                                builder1.optional(new ActionChangeState(mech, state));
+                            }
+                        }
+                        return null;
+                    });
+        }
+        return last;
+    }
+
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder,
                                                            DungeonRoom dungeonRoom,
                                                            PrecalculatedStonk precalculatedStonk,

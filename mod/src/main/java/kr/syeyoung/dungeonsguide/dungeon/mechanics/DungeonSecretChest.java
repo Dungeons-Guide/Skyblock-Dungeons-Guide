@@ -46,6 +46,7 @@ import java.awt.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Data
 public class DungeonSecretChest implements DungeonMechanic, ISecret {
@@ -111,24 +112,15 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
             throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
 
+        List<String> requiredRequisite = preRequisite.stream().filter(a -> {
+            return dungeonRoom.getMechanics().get(a.split(":")[0]) instanceof DungeonOnewayDoor;
+        }).collect(Collectors.toList());
+        List<String> optionalRequisite = preRequisite.stream().filter(a -> {
+            return !requiredRequisite.contains(a.split(":")[0]);
+        }).collect(Collectors.toList());
+
         if (secretCache != null)
-            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, builder1 -> {
-                boolean doneDoor = false;
-                for (String str : preRequisite) {
-                    if (dungeonRoom.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoor) {
-                        builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-                        doneDoor = true;
-                    }
-                }
-                if (doneDoor)
-                    builder1 = builder1.requires(new ActionRoot());
-                for (String str : preRequisite) {
-                    if (str.isEmpty()) continue;
-                    if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
-                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-                }
-                return null;
-            });
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, optionalRequisite, requiredRequisite);
         else
             ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
                 boolean doneDoor = false;

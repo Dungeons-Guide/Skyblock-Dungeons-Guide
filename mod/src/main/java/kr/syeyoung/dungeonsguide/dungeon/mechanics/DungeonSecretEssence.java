@@ -43,6 +43,7 @@ import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -98,13 +99,7 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
 
 
         if (secretCache != null)
-            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, builder1 -> {
-                for (String str : preRequisite) {
-                    if (str.isEmpty()) continue;
-                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-                }
-                return null;
-            });
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, preRequisite, Collections.emptyList());
         else
             ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
                 for (String str : preRequisite) {
