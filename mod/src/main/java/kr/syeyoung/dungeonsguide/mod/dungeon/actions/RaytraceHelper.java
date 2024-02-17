@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.tileentity.TileEntity;
@@ -221,7 +222,7 @@ public class RaytraceHelper {
                                         }
 
                                         int idx = 0;
-                                        if ("pickaxe".equals(breakData.toolClass)) {
+                                        if ("pickaxe".equals(breakData.toolClass) || from_block.getMaterial() == Material.rock || from_block.getMaterial() == Material.anvil || from_block.getMaterial() == Material.iron) {
                                             idx = 0;
                                         } else if ("axe".equals(breakData.toolClass)) {
                                             idx = 2;

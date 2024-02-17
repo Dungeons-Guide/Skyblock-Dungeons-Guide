@@ -78,6 +78,6 @@ public class ActionStonkClick extends AbstractAction {
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        return 10;
+        return 3;
     }
 }
