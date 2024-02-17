@@ -226,6 +226,7 @@ public class FeatureRegistry {
     // In Dungeon HUD
     public static final FeatureDungeonScore DUNGEON_SCORE = register(new FeatureDungeonScore());
     public static final FeatureDungeonTombs DUNGEON_TOMBS = register(new FeatureDungeonTombs());
+    public static final FeatureDungeonTotalCrypts DUNGEON_TOTAL_TOMBS = register(new FeatureDungeonTotalCrypts());
     public static final FeatureDungeonCurrentRoomSecrets DUNGEON_SECRETS_ROOM = register(new FeatureDungeonCurrentRoomSecrets());
     public static final FeatureDungeonSecrets DUNGEON_SECRETS = register(new FeatureDungeonSecrets());
     public static final FeatureDungeonSBTime DUNGEON_SBTIME = register(new FeatureDungeonSBTime());
