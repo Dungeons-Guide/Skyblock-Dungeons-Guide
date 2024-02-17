@@ -88,36 +88,6 @@ public class DungeonRoomInfo implements Serializable {
         if (x < 0 || x >= width) return Blocks.air.getDefaultState();
         if (z < 0 || z >= length) return Blocks.air.getDefaultState();
 
-        for (DungeonMechanic value : mechanics.values()) {
-            if (value instanceof DungeonSecretEssence) {
-                OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.skull.getStateFromMeta(0);
-            } else if (value instanceof DungeonRedstoneKey) {
-                OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.skull.getStateFromMeta(0);
-            } else if (value instanceof DungeonWizardCrystal) {
-                OffsetPoint offsetPoint = ((DungeonWizardCrystal) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.skull.getStateFromMeta(0);
-            } else if (value instanceof DungeonSecretChest) {
-                OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.chest.getStateFromMeta(0);
-            } else if (value instanceof DungeonOnewayLever) {
-                OffsetPoint offsetPoint = ((DungeonOnewayLever) value).getLeverPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.lever.getStateFromMeta(0);
-            } else if (value instanceof DungeonSecretDoubleChest) {
-                OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.chest.getStateFromMeta(0);
-                offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint2();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
-                    return Blocks.chest.getStateFromMeta(0);
-            }
-        }
         int index = x + ((y+70) * length + z) * width;
         IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
 
@@ -133,6 +103,60 @@ public class DungeonRoomInfo implements Serializable {
                 blockState = blockState.withProperty(propertyDirection.get(), enumFacing);
             }
         }
+
+        for (DungeonMechanic value : mechanics.values()) {
+            if (value instanceof DungeonSecretEssence) {
+                OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.skull)
+                        return Blocks.skull.getStateFromMeta(0);
+                    break;
+                }
+            } else if (value instanceof DungeonRedstoneKey) {
+                OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.skull)
+                        return Blocks.skull.getStateFromMeta(0);
+                    break;
+                }
+            } else if (value instanceof DungeonWizardCrystal) {
+                OffsetPoint offsetPoint = ((DungeonWizardCrystal) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.skull)
+                        return Blocks.skull.getStateFromMeta(0);
+                    break;
+                }
+            } else if (value instanceof DungeonSecretChest) {
+                OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.chest)
+                        return Blocks.chest.getStateFromMeta(0);
+                    break;
+
+                }
+            } else if (value instanceof DungeonOnewayLever) {
+                OffsetPoint offsetPoint = ((DungeonOnewayLever) value).getLeverPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.lever)
+                        return Blocks.lever.getStateFromMeta(0);
+                    break;
+                }
+            } else if (value instanceof DungeonSecretDoubleChest) {
+                OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.chest)
+                        return Blocks.chest.getStateFromMeta(0);
+                    break;
+                }
+                offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint2();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
+                    if (blockState.getBlock() != Blocks.chest)
+                        return Blocks.chest.getStateFromMeta(0);
+                    break;
+                }
+            }
+        }
+
 
         return blockState == null ? Blocks.air.getDefaultState() : blockState;
     }
