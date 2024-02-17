@@ -103,9 +103,9 @@ public class DungeonRoom {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
-                    continue;
-                }
+//                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
+//                    continue;
+//                } just don't check, it causes more problems
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
