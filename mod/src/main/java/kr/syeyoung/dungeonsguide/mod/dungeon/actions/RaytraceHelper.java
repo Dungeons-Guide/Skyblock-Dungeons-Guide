@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
+import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
@@ -187,9 +188,12 @@ public class RaytraceHelper {
                                         }
 
                                         int idx = 0;
-                                        if ("pickaxe".equals(breakData.toolClass)) {
+                                        if ("pickaxe".equals(breakData.toolClass)|| from_block.getMaterial() == Material.rock || from_block.getMaterial() == Material.anvil || from_block.getMaterial() == Material.iron) {
                                             idx = 0;
-                                        } else if ("axe".equals(breakData.toolClass)) {
+                                        } else if ("axe".equals(breakData.toolClass)||
+                                                from_block.getMaterial() == Material.wood ||
+                                                from_block.getMaterial() == Material.plants ||
+                                                from_block.getMaterial() == Material.vine) {
                                             idx = 2;
                                         } else if ("shovel".equals(breakData.toolClass)) {
                                             idx = 1;
@@ -224,9 +228,13 @@ public class RaytraceHelper {
                                         int idx = 0;
                                         if ("pickaxe".equals(breakData.toolClass) || from_block.getMaterial() == Material.rock || from_block.getMaterial() == Material.anvil || from_block.getMaterial() == Material.iron) {
                                             idx = 0;
-                                        } else if ("axe".equals(breakData.toolClass)) {
+                                        } else if ("axe".equals(breakData.toolClass) ||
+                                                from_block.getMaterial() == Material.wood ||
+                                                from_block.getMaterial() == Material.plants ||
+                                                from_block.getMaterial() == Material.vine
+                                        ) {
                                             idx = 2;
-                                        } else if ("shovel".equals(breakData.toolClass)) {
+                                        } else if ("shovel".equals(breakData.toolClass) ) {
                                             idx = 1;
                                         } else {
                                             breakData.harvestLv = 10;
@@ -351,14 +359,18 @@ public class RaytraceHelper {
                 if (clusterId.get(vec3) != -1) continue;
                 clusterId.put(vec3, id);
 
-                for (EnumFacing value : EnumFacing.VALUES) {
-                    OffsetVec3 newVec3 = new OffsetVec3(
-                            vec3.xCoord + value.getFrontOffsetX() * 0.5,
-                            vec3.yCoord + value.getFrontOffsetY() * 0.5,
-                            vec3.zCoord + value.getFrontOffsetZ() * 0.5
-                    );
-                    if (!clusterId.containsKey(newVec3)) continue;
-                    toVisit.add(newVec3);
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1;y  <= 1; y++) {
+                        for (int z = -1; z <= 1; z++) {
+                            OffsetVec3 newVec3 = new OffsetVec3(
+                                    vec3.xCoord + x * 0.5,
+                                    vec3.yCoord + y * 0.5,
+                                    vec3.zCoord + z * 0.5
+                            );
+                            if (!clusterId.containsKey(newVec3)) continue;
+                            toVisit.add(newVec3);
+                        }
+                    }
                 }
             }
         }
