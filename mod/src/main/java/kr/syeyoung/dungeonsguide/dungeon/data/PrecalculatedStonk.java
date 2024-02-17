@@ -44,7 +44,7 @@ public class PrecalculatedStonk implements Serializable {
         int spotIdx = 0;
         for (String routeBlocker : openBlockers) {
             int idx = dependentRouteBlocker.indexOf(routeBlocker);
-            if (idx != -1) spotIdx += 2 << idx;
+            if (idx != -1) spotIdx += 1 << idx;
         }
 
         return spots[spotIdx];
@@ -66,7 +66,7 @@ public class PrecalculatedStonk implements Serializable {
 
         }
         List<PossibleClickingSpot>[] spots = new List[2 << calculateFor.size()];
-        for (int i = 0; i < (2 << calculateFor.size()); i++) {
+        for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();
             for (int i1 = 0; i1 < calculateFor.size(); i1++) {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));

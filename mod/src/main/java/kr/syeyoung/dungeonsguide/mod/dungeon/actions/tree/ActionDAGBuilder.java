@@ -89,6 +89,8 @@ public class ActionDAGBuilder {
                 } // OPT + REQ => REMOVE OPT, because well, it's in anyways.
             }
 
+            if (current.getRequire().contains(actionDAGNode1) || current.getOptional().contains(actionDAGNode1) || current.getOr().contains(actionDAGNode1))
+                throw new IllegalArgumentException("PLEASE do not dupe add stuff");
 
             if (nodeType == ActionDAGNode.NodeType.AND)
                 current.getRequire().add(actionDAGNode1);
@@ -96,6 +98,7 @@ public class ActionDAGBuilder {
                 current.getOr().add(actionDAGNode1);
             else if (nodeType == ActionDAGNode.NodeType.OPTIONAL)
                 current.getOptional().add(actionDAGNode1);
+
             // art of combining.
 
             // Here are the rules

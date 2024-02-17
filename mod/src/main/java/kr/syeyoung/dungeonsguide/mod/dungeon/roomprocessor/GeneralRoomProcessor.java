@@ -78,6 +78,40 @@ public class GeneralRoomProcessor implements RoomProcessor {
     }
     private boolean ticked = false;
 
+    public void createSmartRoute() {
+        ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
+        for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
+            if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
+                try {
+                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"));
+                } catch (PathfindImpossibleException e) {
+                    ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                    e.printStackTrace();
+                    continue;
+                }
+            } else if (value.getValue() instanceof DungeonRedstoneKey && ((DungeonRedstoneKey) value.getValue()).getCurrentState(dungeonRoom).equalsIgnoreCase("unobtained")) {
+                try {
+                    actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
+                } catch (PathfindImpossibleException e) {
+                    ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                    e.printStackTrace();
+                    continue;
+                }
+            }
+        }
+
+        try {
+            ActionDAG dag = actionDAGBuilder.build();
+//                if (dag.getActionDAGNode().getPotentialRequires().size() != 0) {
+            ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag,
+                    FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties());
+            path.put("smart", actionRoute);
+//                }
+        } catch (PathfindImpossibleException e) {
+            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to everything failed due to "+e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
     @Override
     public void tick() {
@@ -85,38 +119,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
             searchForNextTarget();
         }
         if (!ticked && FeatureRegistry.SECRET_SMART_AUTO_START.isEnabled()) {
-            ActionDAGBuilder actionDAGBuilder = new ActionDAGBuilder(dungeonRoom);
-            for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
-                if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
-                    try {
-                        actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "found"));
-                    } catch (PathfindImpossibleException e) {
-                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                        e.printStackTrace();
-                        continue;
-                    }
-                } else if (value.getValue() instanceof DungeonRedstoneKey && ((DungeonRedstoneKey) value.getValue()).getCurrentState(dungeonRoom).equalsIgnoreCase("unobtained")) {
-                    try {
-                        actionDAGBuilder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
-                    } catch (PathfindImpossibleException e) {
-                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
-                        e.printStackTrace();
-                        continue;
-                    }
-                }
-            }
-
-            try {
-                ActionDAG dag = actionDAGBuilder.build();
-//                if (dag.getActionDAGNode().getPotentialRequires().size() != 0) {
-                    ActionRoute actionRoute = new ActionRoute("Smart Route", dungeonRoom, dag,
-                            FeatureRegistry.SECRET_LINE_PROPERTIES_SMART_ROUTE.getRouteProperties());
-                    path.put(UUID.randomUUID().toString(), actionRoute);
-//                }
-            } catch (PathfindImpossibleException e) {
-                ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to everything failed due to "+e.getMessage());
-                e.printStackTrace();
-            }
+            createSmartRoute();
         }
         if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
@@ -416,6 +419,8 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 actionRoute.getActionRouteProperties().setPathfind(true);
                 actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
+        } else if (FeatureRegistry.SECRET_SMART_KEYBIND.isEnabled() && FeatureRegistry.SECRET_SMART_KEYBIND.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
+            createSmartRoute();
         }
     }
 

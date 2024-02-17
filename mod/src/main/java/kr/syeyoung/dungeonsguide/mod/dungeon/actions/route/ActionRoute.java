@@ -119,7 +119,6 @@ public class ActionRoute {
 
 
                             this.nodeStatus = dag.getNodeStatus(dagId);
-
                             if (stupidheuristic) {
                                 memoization.put("stupidheuristic", true);
 
@@ -149,6 +148,14 @@ public class ActionRoute {
                             }
                         }
 
+            if (minDagId == -1) {
+                try {
+                    Thread.sleep(30000);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+
                     this.dagId = minDagId;
                     order = minCostRoute;
                     ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost with Id "+dagId);
@@ -157,7 +164,10 @@ public class ActionRoute {
                     nodes.add(new ActionComplete());
                     actions = nodes;
                     current = 0;
+
+
                     calculating = false;
+
                 }).start();
     }
     public AbstractAction next() {

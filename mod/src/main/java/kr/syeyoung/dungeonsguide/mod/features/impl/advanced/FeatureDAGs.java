@@ -83,7 +83,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
         int defaultLvCount = 0;
         for (Map.Entry<String, ActionRoute> stringActionRouteEntry : roomProcessor.getPath().entrySet()) {
-            if (stringActionRouteEntry.getValue().isCalculating()) continue;
+//            if (stringActionRouteEntry.getValue().isCalculating()) continue;
 
             ActionDAGNode rootNode = stringActionRouteEntry.getValue().getDag().getActionDAGNode();
             // let's dfs!!!
@@ -115,7 +115,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                     lvCount.put(pop.getMaximumDepth(), defaultLvCount);
                 }
                 locations.put(pop, new Point(
-                        lvCount.get(pop.getMaximumDepth())*50, pop.getMaximumDepth() * 50 + 20
+                        lvCount.get(pop.getMaximumDepth())*70, pop.getMaximumDepth() * 50 + 20
                 ));
                 lvCount.put(pop.getMaximumDepth(), lvCount.get(pop.getMaximumDepth())+1);
                 if (maxLvCount < lvCount.get(pop.getMaximumDepth())) maxLvCount = lvCount.get(pop.getMaximumDepth());
@@ -145,7 +145,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         GL11.glLineWidth(5.0f);
 
         for (ActionRoute value : roomProcessor.getPath().values()) {
-            if (value.isCalculating()) continue;
+//            if (value.isCalculating()) continue;
 
 
             WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
@@ -232,26 +232,28 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
                 GlStateManager.enableTexture2D();
             }
 
-            GlStateManager.color(1,1,1,1);
-            worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
-            GlStateManager.enableTexture2D();
-            int cnt = 0;
-            for (ActionDAGNode actionDAGNode : value.getOrder()) {
-                Point p = locations.get(actionDAGNode);
-                if (p != null) {
-                    worldRenderer.pos(p.x + 15, p.y + 15, 0).color(
-                            0.0f,
-                            1.0f,
-                            0.0f,
-                            1.0f
-                    ).endVertex();
-                    cnt++;
-                    fr.drawString(cnt+"", p.x, p.y+10, 0xFFFFFFFF);
+            if (!value.isCalculating()) {
+                GlStateManager.color(1, 1, 1, 1);
+                worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
+                GlStateManager.enableTexture2D();
+                int cnt = 0;
+                for (ActionDAGNode actionDAGNode : value.getOrder()) {
+                    Point p = locations.get(actionDAGNode);
+                    if (p != null) {
+                        worldRenderer.pos(p.x + 15, p.y + 15, 0).color(
+                                0.0f,
+                                1.0f,
+                                0.0f,
+                                1.0f
+                        ).endVertex();
+                        cnt++;
+                        fr.drawString(cnt + "", p.x, p.y + 10, 0xFFFFFFFF);
+                    }
                 }
+                GlStateManager.disableTexture2D();
+                Tessellator.getInstance().draw();
+                GlStateManager.enableTexture2D();
             }
-            GlStateManager.disableTexture2D();
-            Tessellator.getInstance().draw();
-            GlStateManager.enableTexture2D();
         }
         int y=  300;
         for (String s : dungeonRoom.getRoomContext().entrySet().stream().map(a -> a.getKey() + ":" + a.getValue()).collect(Collectors.toList())) {

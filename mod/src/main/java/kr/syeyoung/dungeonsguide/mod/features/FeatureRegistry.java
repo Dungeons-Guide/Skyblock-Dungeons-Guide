@@ -127,6 +127,9 @@ public class FeatureRegistry {
     // Smart Route
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SMART_ROUTE = register(new PathfindLineProperties("Pathfinding & Secrets.Smart Route", "Line Settings", "Line Settings when pathfinding using above features", "secret.lineproperties.smartroute", true, null));
     public static final SimpleFeature SECRET_SMART_AUTO_START = register(new SimpleFeature("Pathfinding & Secrets.Smart Route", "Auto pathfind to new secret", "Generate smart route going through all secrets upon entering the room.", "secret.smartroute", false));
+    public static final SimpleFeature SECRET_SMART_KEYBIND = register(new SimpleFeature("Pathfinding & Secrets.Smart Route", "Auto generate smart route upon pressing a key", "Generate smart route going through all secrets upon entering the room.\nPress settings to edit the key", "secret.smartroutekeynext", false) {{
+        addParameter("key", new FeatureParameter<Integer>("key", "Key", "Press to navigate to next best secret", Keyboard.KEY_NONE, TCKeybind.INSTANCE));
+    }});
 
     // Secret Browser
     public static final PathfindLineProperties SECRET_LINE_PROPERTIES_SECRET_BROWSER = register(new PathfindLineProperties("Pathfinding & Secrets.Secret Browser", "Line Settings", "Line Settings when pathfinding using Secret Browser", "secret.lineproperties.secretbrowser", true, null));

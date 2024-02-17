@@ -34,10 +34,7 @@ import net.minecraft.item.ItemTool;
 import net.minecraft.util.BlockPos;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class ActionUtils {
@@ -46,7 +43,7 @@ public class ActionUtils {
         ActionDAGBuilder build(ActionDAGBuilder builder) throws PathfindImpossibleException;
     }
 
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
             FeaturePathfindSettings.AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
             {
@@ -126,14 +123,19 @@ public class ActionUtils {
                             return !stonkReq.containsKey(a.getClusterId());
                         })
                         .collect(Collectors.groupingBy(a -> new ImmutablePair<>(a.getClusterId(), a.isStonkingReq()))).entrySet()) {
+            ActionDAGBuilder builder1 = builder;
+            if (guard)
+                builder1 = builder.or(new ActionStupidGuard());
+
+
             if (integerListEntry.getKey().right) {
-                ActionDAGBuilder builder1 = builder.or(new AtomicAction.Builder()
+                builder1 = builder1.or(new AtomicAction.Builder()
                         .requires(new ActionStonkClick(target))
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
                         .build("MoveAndStonkClick"));
                 last = eachBuild.build(builder1);
             } else {
-                ActionDAGBuilder builder1 = builder.or(new AtomicAction.Builder()
+                builder1 = builder1.or(new AtomicAction.Builder()
                         .requires(new ActionClick(target))
                         .requires(new ActionMove(integerListEntry.getValue(), dungeonRoom))
                         .build("MoveAndClick"));
@@ -159,10 +161,10 @@ public class ActionUtils {
                 .filter(a -> optionalOpenBlockers.contains(a))
                 .collect(Collectors.toList());
         ActionDAGBuilder last = null;
-        for (int i = 0; i < (2 << optionalSubset.size()); i++) {
-            ArrayList<String> newBlockers = new ArrayList<>(defaultOpenBlockers);
+        for (int i = 0; i < (1 << optionalSubset.size()); i++) {
+            Set<String> newBlockers = new HashSet<>(defaultOpenBlockers);
             for (int i1 = 0; i1 < optionalSubset.size(); i1++) {
-                if (((i1 >> i) & 0x1) > 0) {
+                if (((i >> i1) & 0x1) > 0) {
                     newBlockers.add(optionalSubset.get(i1));
                 }
             }
@@ -185,7 +187,7 @@ public class ActionUtils {
                             }
                         }
                         return null;
-                    });
+                    }, i != (1 << optionalSubset.size()) - 1);
         }
         return last;
     }
@@ -201,7 +203,7 @@ public class ActionUtils {
                 .collect(Collectors.toList());
 
         return buildActionMoveAndClick(builder, dungeonRoom,
-                RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(openBlockers)), precalculatedStonk.getTarget(), eachBuild);
+                RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(openBlockers)), precalculatedStonk.getTarget(), eachBuild, false);
     }
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
         List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
@@ -214,6 +216,6 @@ public class ActionUtils {
                 dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
                         new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
         ));
-        return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild);
+        return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild, false);
     }
 }

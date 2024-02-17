@@ -18,10 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretChest;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretDoubleChest;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecretEssence;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import lombok.Getter;
 import lombok.Setter;
@@ -96,15 +93,23 @@ public class DungeonRoomInfo implements Serializable {
                 OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
                 if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
                     return Blocks.skull.getStateFromMeta(0);
-            } if (value instanceof DungeonRedstoneKey) {
+            } else if (value instanceof DungeonRedstoneKey) {
                 OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.skull.getStateFromMeta(0);
+            } else if (value instanceof DungeonWizardCrystal) {
+                OffsetPoint offsetPoint = ((DungeonWizardCrystal) value).getSecretPoint();
                 if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
                     return Blocks.skull.getStateFromMeta(0);
             } else if (value instanceof DungeonSecretChest) {
                 OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
                 if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
                     return Blocks.chest.getStateFromMeta(0);
-            }else if (value instanceof DungeonSecretDoubleChest) {
+            } else if (value instanceof DungeonOnewayLever) {
+                OffsetPoint offsetPoint = ((DungeonOnewayLever) value).getLeverPoint();
+                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
+                    return Blocks.lever.getStateFromMeta(0);
+            } else if (value instanceof DungeonSecretDoubleChest) {
                 OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
                 if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z)
                     return Blocks.chest.getStateFromMeta(0);

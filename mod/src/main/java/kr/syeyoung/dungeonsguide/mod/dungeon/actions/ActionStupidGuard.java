@@ -36,34 +36,24 @@ import java.util.Map;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionStonkClick extends AbstractAction {
-    private OffsetPoint target;
-    private Predicate<ItemStack> predicate = Predicates.alwaysTrue();
+public class ActionStupidGuard extends AbstractAction {
 
-    private boolean clicked = false;
 
-    public ActionStonkClick(OffsetPoint target) {
-        this.target = target;
+    public ActionStupidGuard() {
+
     }
 
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
-        return clicked;
+        return true;
     }
 
     @Override
     public void onPlayerInteract(DungeonRoom dungeonRoom, PlayerInteractEvent event, ActionRouteProperties actionRouteProperties) {
-        if (clicked) return;
-        if (target.getBlockPos(dungeonRoom).equals(event.pos) &&
-                (predicate == null || predicate.apply(event.entityLiving.getHeldItem()))) {
-            clicked = true;
-        }
+
     }
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
-        RenderUtils.highlightBlock(pos, new Color(0, 255,255,50),partialTicks, false);
-        RenderUtils.drawTextAtWorld("Stonk&Click", pos.getX() + 0.5f, pos.getY() + 0.3f, pos.getZ() + 0.5f, 0xFFFFFF00, 0.02f, false, false, partialTicks);
     }
 
     @Override
@@ -73,11 +63,11 @@ public class ActionStonkClick extends AbstractAction {
 
     @Override
     public String toString() {
-        return "Stonk Click\n- target: "+target.toString()+"\n- predicate: "+predicate.getClass().getSimpleName();
+        return "Stupid Guard";
     }
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        return 10;
+        return memoization.containsKey("stupidheuristic") ? Double.POSITIVE_INFINITY : 0;
     }
 }

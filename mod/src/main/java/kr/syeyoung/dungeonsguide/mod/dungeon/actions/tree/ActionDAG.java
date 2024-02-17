@@ -156,6 +156,13 @@ public class ActionDAG {
                 nextSolution = findNext(true);
 
                 if (nextSolution == null) {
+                    for (int i = 0; i < allNodes.size(); i++) {
+                        System.out.println("NODE "+i+" / "+allNodes.get(i).getAction());
+                        System.out.println("Degree "+degree[i]);
+                        System.out.println("Visited "+visited[i]);
+                        System.out.println("Status "+nodeStatus[i]);
+                    }
+                    System.out.println("Solution size = "+solutionSize);
                     System.out.println("WTF NULL PATH???");
                 }
 

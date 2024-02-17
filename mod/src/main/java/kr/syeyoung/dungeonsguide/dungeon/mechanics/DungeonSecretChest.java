@@ -116,7 +116,7 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
             return dungeonRoom.getMechanics().get(a.split(":")[0]) instanceof DungeonOnewayDoor;
         }).collect(Collectors.toList());
         List<String> optionalRequisite = preRequisite.stream().filter(a -> {
-            return !requiredRequisite.contains(a.split(":")[0]);
+            return !requiredRequisite.contains(a);
         }).collect(Collectors.toList());
 
         if (secretCache != null)
