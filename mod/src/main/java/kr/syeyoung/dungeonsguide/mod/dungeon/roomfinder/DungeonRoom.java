@@ -103,9 +103,9 @@ public class DungeonRoom implements IPathfindWorld {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
-                    continue;
-                }
+//                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
+//                    continue;
+//                } just don't check, it causes more problems
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
@@ -789,5 +789,13 @@ public class DungeonRoom implements IPathfindWorld {
         }
 //        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
+
+        for (int x = 0; x < 16; x ++) { // fix pf not going through big block updates
+            for (int z = 0; z < 16; z++) {
+                for (int y = 0; y < 255; y++) {
+                    resetBlock(cx * 16 + x, y, cz * 16 + z);
+                }
+            }
+        }
     }
 }
