@@ -19,7 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
@@ -54,9 +55,9 @@ import java.util.stream.Collectors;
 @Data
 @EqualsAndHashCode(callSuper=false)
 public class ActionMove extends AbstractAction {
-    private List<RaytraceHelper.PossibleClickingSpot> targets;
+    private List<PossibleClickingSpot> targets;
 
-    public ActionMove(List<RaytraceHelper.PossibleClickingSpot> target, DungeonRoom dungeonRoom) {
+    public ActionMove(List<PossibleClickingSpot> target, DungeonRoom dungeonRoom) {
         this.targets = target;
     }
 
@@ -76,7 +77,7 @@ public class ActionMove extends AbstractAction {
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
         int i =0;
-        for (RaytraceHelper.PossibleClickingSpot spot : targets) {
+        for (PossibleClickingSpot spot : targets) {
             i++;
             Color c = Color.getHSBColor(
                     1.0f * i / targets.size() , 0.5f, 1.0f

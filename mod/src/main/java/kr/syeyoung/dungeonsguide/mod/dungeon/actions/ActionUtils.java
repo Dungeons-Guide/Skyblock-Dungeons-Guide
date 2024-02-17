@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
+import kr.syeyoung.dungeonsguide.dungeon.data.RequiredTool;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -26,15 +28,11 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSetting
 import net.minecraft.item.ItemPickaxe;
 import net.minecraft.item.ItemTool;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.Vec3;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.apache.commons.lang3.tuple.Pair;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 public class ActionUtils {
@@ -44,7 +42,7 @@ public class ActionUtils {
     }
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
 //dungeonRoom.getDungeonRoomInfo().getBlock(0,0,0 , )
-        List<RaytraceHelper.PossibleClickingSpot> spots = RaytraceHelper.raycast(
+        List<PossibleClickingSpot> spots = RaytraceHelper.raycast(
                 dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
                         new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), 0) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
         );
@@ -53,7 +51,7 @@ public class ActionUtils {
         spots = spots.stream().filter(a -> {
             FeaturePathfindSettings.AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
             {
-                RaytraceHelper.RequiredTool pickaxe = a.getTools()[0];
+                RequiredTool pickaxe = a.getTools()[0];
                 if (pickaxe != null) {
                     if (settings.getPickaxeSpeed() < 0) return false;
                     int lv = ((ItemPickaxe) settings.getPickaxe()).getToolMaterial().getHarvestLevel();
@@ -73,7 +71,7 @@ public class ActionUtils {
                 }
             }
             {
-                RaytraceHelper.RequiredTool shovel = a.getTools()[1];
+                RequiredTool shovel = a.getTools()[1];
                 if (shovel != null) {
                     if (settings.getShovelSpeed() < 0) return false;
                     int lv = ((ItemTool) settings.getPickaxe()).getToolMaterial().getHarvestLevel();
@@ -93,7 +91,7 @@ public class ActionUtils {
                 }
             }
             {
-                RaytraceHelper.RequiredTool axe = a.getTools()[2];
+                RequiredTool axe = a.getTools()[2];
                 if (axe != null) {
                     if (settings.getAxeSpeed() < 0) return false;
                     int lv = ((ItemTool) settings.getPickaxe()).getToolMaterial().getHarvestLevel();
@@ -117,12 +115,12 @@ public class ActionUtils {
 
         ActionDAGBuilder last = builder;
         Map<Integer, Boolean> stonkReq = new HashMap<>();
-        for (RaytraceHelper.PossibleClickingSpot spot : spots) {
+        for (PossibleClickingSpot spot : spots) {
             if (!spot.isStonkingReq()) {
                 stonkReq.put(spot.getClusterId(), false);
             }
         }
-        for (Map.Entry<ImmutablePair<Integer, Boolean>, List<RaytraceHelper.PossibleClickingSpot>> integerListEntry :
+        for (Map.Entry<ImmutablePair<Integer, Boolean>, List<PossibleClickingSpot>> integerListEntry :
                 spots.stream()
                         .filter(a -> {
                             if (stonkReq.containsKey(a.getClusterId()) && !a.isStonkingReq()) return true;

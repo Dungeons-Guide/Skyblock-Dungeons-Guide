@@ -18,13 +18,11 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.data.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
-import lombok.NoArgsConstructor;
 import net.minecraft.block.*;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
@@ -220,10 +218,10 @@ public class RaytraceHelper {
                                         }
 
                                         if (requiredTools[idx] == null) requiredTools[idx] = new RequiredTool();
-                                        if (requiredTools[idx].breakingPower < breakData.hardness)
-                                            requiredTools[idx].breakingPower = breakData.hardness;
-                                        if (requiredTools[idx].harvestLv < breakData.harvestLv)
-                                            requiredTools[idx].harvestLv = breakData.harvestLv;
+                                        if (requiredTools[idx].getBreakingPower() < breakData.hardness)
+                                            requiredTools[idx].setBreakingPower(breakData.hardness);
+                                        if (requiredTools[idx].getHarvestLv() < breakData.harvestLv)
+                                            requiredTools[idx].setHarvestLv(breakData.harvestLv);
                                     }
                                     if (imposs) continue;
 
@@ -248,11 +246,11 @@ public class RaytraceHelper {
                                             break;
                                         }
 
-                                        if (newTool.harvestLv < prevTool.harvestLv) {
+                                        if (newTool.getHarvestLv() < prevTool.getHarvestLv()) {
                                             swap = true;
                                             break;
                                         }
-                                        if (newTool.breakingPower < prevTool.breakingPower) {
+                                        if (newTool.getBreakingPower() < prevTool.getBreakingPower()) {
                                             swap = true;
                                             break;
                                         }
@@ -277,7 +275,7 @@ public class RaytraceHelper {
         List<PossibleClickingSpot> spots = actualReq.entrySet().stream()
                 .collect(Collectors.<Map.Entry<Vec3, RequiredTool[]>, String>groupingBy(a -> {
                     return Arrays.stream(a.getValue())
-                            .map(b -> b == null ? "n" : b.breakingPower + ":" + b.harvestLv).collect(Collectors.joining(";"))+";"+stonk.get(a.getKey());
+                            .map(b -> b == null ? "n" : b.getBreakingPower() + ":" + b.getHarvestLv()).collect(Collectors.joining(";"))+";"+stonk.get(a.getKey());
                 })).values().stream()
                 .map(entries -> {
                     return new PossibleClickingSpot(
@@ -309,8 +307,8 @@ public class RaytraceHelper {
                         a -> new PossibleClickingSpot(
                                 a.getKey().getTools(),
                                 a.getValue().stream().map(b -> b.getKey()).collect(Collectors.toList()),
-                                a.getKey().stonkingReq,
-                                a.getKey().clusterId
+                                a.getKey().isStonkingReq(),
+                                a.getKey().getClusterId()
                         )
                 ).collect(Collectors.toList());
     }
@@ -357,7 +355,7 @@ public class RaytraceHelper {
                         a -> new PossibleClickingSpot(
                                 a.getKey().getRight().getTools(),
                                 a.getValue(),
-                                a.getKey().getRight().stonkingReq,
+                                a.getKey().getRight().isStonkingReq(),
                                 a.getKey().getLeft()
                         )
                 ).collect(Collectors.toList());
@@ -496,19 +494,6 @@ public class RaytraceHelper {
         }
         return blocks;
 
-    }
-
-    @AllArgsConstructor @NoArgsConstructor @Getter
-    public static class RequiredTool {
-        private float breakingPower;
-        private int harvestLv;
-    }
-    @AllArgsConstructor @Getter
-    public static class PossibleClickingSpot {
-        private RequiredTool[] tools;
-        private List<OffsetVec3> offsetPointSet;
-        private boolean stonkingReq;
-        private int clusterId;
     }
 
 

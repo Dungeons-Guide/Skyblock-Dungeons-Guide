@@ -18,16 +18,15 @@
 
 package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.OffsetVec3;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.init.Blocks;
-import net.minecraft.init.Items;
 import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
-import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -42,7 +41,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         super("Debug", "Stonk Debug", "Toggles stonk debug", "stdebug", false);
     }
 
-    private List<RaytraceHelper.PossibleClickingSpot> spots;
+    private List<PossibleClickingSpot> spots;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.entityPlayer.getHeldItem() == null ||
@@ -68,7 +67,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (spots == null) return;
         int cnt = spots.size();
         int i = 0;
-        for (RaytraceHelper.PossibleClickingSpot spot : spots) {
+        for (PossibleClickingSpot spot : spots) {
             i++;
             Color c = Color.getHSBColor(
                     1.0f * i / cnt , 0.5f, 1.0f
@@ -105,7 +104,7 @@ public class FeatureStonkDebug extends SimpleFeature {
 
         }
          i = 0;
-        for (RaytraceHelper.PossibleClickingSpot spot : spots) {
+        for (PossibleClickingSpot spot : spots) {
             i++;
             Color c = Color.getHSBColor(
                     1.0f * i / cnt , 0.5f, 1.0f
