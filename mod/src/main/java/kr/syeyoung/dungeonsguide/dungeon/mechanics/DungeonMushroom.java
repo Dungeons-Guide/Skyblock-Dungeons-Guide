@@ -73,6 +73,7 @@ public class DungeonMushroom implements DungeonMechanic {
     public DungeonMushroom clone() throws CloneNotSupportedException {
         DungeonMushroom dungeonSecret = new DungeonMushroom();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
+        dungeonSecret.teleportPoint = (OffsetPoint) teleportPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }

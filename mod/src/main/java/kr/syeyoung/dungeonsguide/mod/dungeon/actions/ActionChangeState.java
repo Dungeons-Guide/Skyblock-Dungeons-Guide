@@ -92,7 +92,7 @@ public class ActionChangeState extends AbstractAction {
 
     @Override
     public boolean childComplete() {
-        return mechanicName.contains("dummy");
+        return mechanicName.contains("dummy") || state.equalsIgnoreCase("navigate") || state.equalsIgnoreCase("click");
     }
 
     @Override
