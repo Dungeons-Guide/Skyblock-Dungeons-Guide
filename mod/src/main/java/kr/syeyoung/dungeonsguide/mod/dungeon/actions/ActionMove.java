@@ -76,44 +76,46 @@ public class ActionMove extends AbstractAction {
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
-        int i =0;
-        for (PossibleClickingSpot spot : targets) {
-            i++;
-            Color c = Color.getHSBColor(
-                    1.0f * i / targets.size() , 0.5f, 1.0f
-            );
-            Color actual = new Color(c.getRGB(), true);
-
-
-            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
-                Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
-                RenderUtils.highlightBox(
-                        new AxisAlignedBB(
-                                offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord + 0.25f
-                        ),
-                        actual,
-                        partialTicks,
-                        true
+        if (FeatureRegistry.DEBUG_ST.isEnabled()) {
+            int i = 0;
+            for (PossibleClickingSpot spot : targets) {
+                i++;
+                Color c = Color.getHSBColor(
+                        1.0f * i / targets.size(), 0.5f, 1.0f
                 );
-            }
-            double cx = 0, cy =0 , cz = 0;
-            for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
-                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                cx += offsetVec3.xCoord;
-                cy += offsetVec3.yCoord;
-                cz += offsetVec3.zCoord;
-            }
-            cx /= spot.getOffsetPointSet().size();
-            cy /= spot.getOffsetPointSet().size();
-            cz /= spot.getOffsetPointSet().size();
-            cy += 0.2f;
-            RenderUtils.drawTextAtWorld(
-                    Arrays.stream(spot.getTools())
-                            .map(a -> a == null ? "null" : a.getBreakingPower()+":"+a.getHarvestLv()).collect(Collectors.joining(";"))
-                            +":::"+spot.getClusterId()+"/"+spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
+                Color actual = new Color(c.getRGB(), true);
 
 
+                for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                    RenderUtils.highlightBox(
+                            new AxisAlignedBB(
+                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
+                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord + 0.25f
+                            ),
+                            actual,
+                            partialTicks,
+                            true
+                    );
+                }
+                double cx = 0, cy = 0, cz = 0;
+                for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
+                    Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                    cx += offsetVec3.xCoord;
+                    cy += offsetVec3.yCoord;
+                    cz += offsetVec3.zCoord;
+                }
+                cx /= spot.getOffsetPointSet().size();
+                cy /= spot.getOffsetPointSet().size();
+                cz /= spot.getOffsetPointSet().size();
+                cy += 0.2f;
+                RenderUtils.drawTextAtWorld(
+                        Arrays.stream(spot.getTools())
+                                .map(a -> a == null ? "null" : a.getBreakingPower() + ":" + a.getHarvestLv()).collect(Collectors.joining(";"))
+                                + ":::" + spot.getClusterId() + "/" + spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
+
+
+            }
         }
 
         {
