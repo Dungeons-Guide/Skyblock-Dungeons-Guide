@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -50,6 +51,7 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
+    private PrecalculatedStonk secretCache;
     private List<String> preRequisite = new ArrayList<String>();
 
     public void tick(DungeonRoom dungeonRoom) {
@@ -94,13 +96,23 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
             throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
 
-        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-            }
-            return null;
-        });
+
+        if (secretCache != null)
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
+        else
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
     }
 
     @Override

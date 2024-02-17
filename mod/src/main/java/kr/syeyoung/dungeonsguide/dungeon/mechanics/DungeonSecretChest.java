@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -39,6 +40,7 @@ import net.minecraft.tileentity.TileEntityChest;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import net.minecraft.world.ChunkCache;
 
 import java.awt.*;
 import java.util.ArrayList;
@@ -50,6 +52,7 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
+    private PrecalculatedStonk secretCache;
     private List<String> preRequisite = new ArrayList<String>();
 
     public void tick(DungeonRoom dungeonRoom) {
@@ -108,23 +111,43 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
             throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
 
-        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
-            boolean doneDoor = false;
-            for (String str : preRequisite) {
-                if (dungeonRoom.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoor) {
-                    builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-                    doneDoor = true;
+        if (secretCache != null)
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, builder1 -> {
+                boolean doneDoor = false;
+                for (String str : preRequisite) {
+                    if (dungeonRoom.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoor) {
+                        builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                        doneDoor = true;
+                    }
                 }
-            }
-            if (doneDoor)
-                builder1 = builder1.requires(new ActionRoot());
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
-                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-            }
-            return null;
-        });
+                if (doneDoor)
+                    builder1 = builder1.requires(new ActionRoot());
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
+        else
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
+                boolean doneDoor = false;
+                for (String str : preRequisite) {
+                    if (dungeonRoom.getMechanics().get(str.split(":")[0]) instanceof DungeonOnewayDoor) {
+                        builder1.requires(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                        doneDoor = true;
+                    }
+                }
+                if (doneDoor)
+                    builder1 = builder1.requires(new ActionRoot());
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    if (dungeonRoom.getMechanics().get(str) instanceof DungeonOnewayDoor) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
+
 
 
     }

@@ -20,7 +20,9 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.data.RequiredTool;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -40,14 +42,8 @@ public class ActionUtils {
     public interface ActionDAGAccepter {
         ActionDAGBuilder build(ActionDAGBuilder builder) throws PathfindImpossibleException;
     }
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
-//dungeonRoom.getDungeonRoomInfo().getBlock(0,0,0 , )
-        List<PossibleClickingSpot> spots = RaytraceHelper.raycast(
-                dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
-                        new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), 0) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
-        );
-        System.out.println(spots.size()+" wat " + dungeonRoom.getDungeonRoomInfo().getBlocks() );
-        System.out.println(  new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), 0) .getBlockState(new BlockPos(target.getX(), target.getY(), target.getZ())));
+
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
         spots = spots.stream().filter(a -> {
             FeaturePathfindSettings.AlgorithmSettings settings = FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings();
             {
@@ -142,5 +138,31 @@ public class ActionUtils {
             }
         }
         return last;
+    }
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder,
+                                                           DungeonRoom dungeonRoom,
+                                                           PrecalculatedStonk precalculatedStonk,
+                                                           ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
+        List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
+                .filter(a -> a.getValue() instanceof RouteBlocker)
+                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .map(a -> a.getKey())
+                .collect(Collectors.toList());
+
+        return buildActionMoveAndClick(builder, dungeonRoom,
+                RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(openBlockers)), precalculatedStonk.getTarget(), eachBuild);
+    }
+    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
+        List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
+                .filter(a -> a.getValue() instanceof RouteBlocker)
+                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .map(a -> a.getKey())
+                .collect(Collectors.toList());
+
+        List<PossibleClickingSpot> spots = RaytraceHelper.chooseMinimalY(RaytraceHelper.raycast(
+                dungeonRoom.getDungeonRoomInfo().getBlocks() != null ?
+                        new RaytraceHelper.DRIWorld(dungeonRoom.getDungeonRoomInfo(), openBlockers) : dungeonRoom.getCachedWorld(), new BlockPos(target.getX(), target.getY(), target.getZ())
+        ));
+        return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild);
     }
 }

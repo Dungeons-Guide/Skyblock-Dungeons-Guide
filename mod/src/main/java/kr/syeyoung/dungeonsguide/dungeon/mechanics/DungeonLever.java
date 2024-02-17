@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
@@ -36,6 +37,7 @@ import java.util.*;
 public class DungeonLever implements DungeonMechanic {
     private static final long serialVersionUID = 1368671142707748380L;
     private OffsetPoint leverPoint = new OffsetPoint(0,0,0);
+    private PrecalculatedStonk leverCache;
     private List<String> preRequisite = new ArrayList<String>();
     private String triggering = "";
 
@@ -56,13 +58,23 @@ public class DungeonLever implements DungeonMechanic {
 
         if (state.equalsIgnoreCase(getCurrentState(dungeonRoom))) return;
 
-        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverPoint, builder1 -> {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-            }
-            return null;
-        });
+
+        if (leverCache != null)
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverCache, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
+        else
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverPoint, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
     }
 
     @Override

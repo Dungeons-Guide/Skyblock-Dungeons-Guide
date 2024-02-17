@@ -22,6 +22,7 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.launcher.Main;
@@ -172,6 +173,9 @@ public class CommandDgDebug extends CommandBase {
             case "process2":
                 process2();
                 break;
+            case "calculatestonks":
+                calculateStonks();
+                break;
             case "groupunknowns":
                 try {
                     groupunknowns();
@@ -266,6 +270,58 @@ public class CommandDgDebug extends CommandBase {
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverun §7-§f Save run to be sent to developer."));
                 ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §e/dg saverooms §7-§f Saves usergenerated dungeon roomdata."));
                 break;
+        }
+    }
+
+    private void calculateStonks() {
+        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                DungeonMechanic mechanic = stringDungeonMechanicEntry.getValue();
+                if (mechanic instanceof DungeonFakeChestTrap) {
+                    ((DungeonFakeChestTrap) mechanic).setChestCache(PrecalculatedStonk.createOne(
+                            ((DungeonFakeChestTrap) mechanic).getChest(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonFakeChestTrap) mechanic).getChestCache().getDependentRouteBlocker());
+                } else if (mechanic instanceof DungeonLever) {
+                    ((DungeonLever) mechanic).setLeverCache(PrecalculatedStonk.createOne(
+                            ((DungeonLever) mechanic).getLeverPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonLever) mechanic).getLeverCache().getDependentRouteBlocker());
+                } else if (mechanic instanceof DungeonOnewayLever) {
+                    ((DungeonOnewayLever) mechanic).setLeverCache(PrecalculatedStonk.createOne(
+                            ((DungeonOnewayLever) mechanic).getLeverPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonOnewayLever) mechanic).getLeverCache().getDependentRouteBlocker());
+                } else if (mechanic instanceof DungeonSecretChest) {
+                    ((DungeonSecretChest) mechanic).setSecretCache(PrecalculatedStonk.createOne(
+                            ((DungeonSecretChest) mechanic).getSecretPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretChest) mechanic).getSecretCache().getDependentRouteBlocker());
+                } else if (mechanic instanceof DungeonSecretEssence) {
+                    ((DungeonSecretEssence) mechanic).setSecretCache(PrecalculatedStonk.createOne(
+                        ((DungeonSecretEssence) mechanic).getSecretPoint(),
+                        dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretEssence) mechanic).getSecretCache().getDependentRouteBlocker());
+                } else if (mechanic instanceof DungeonWizardCrystal) {
+                    ((DungeonWizardCrystal) mechanic).setSecretCache(PrecalculatedStonk.createOne(
+                            ((DungeonWizardCrystal) mechanic).getSecretPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonWizardCrystal) mechanic).getSecretCache().getDependentRouteBlocker());
+                } else if (mechanic instanceof DungeonRedstoneKey) {
+                    ((DungeonRedstoneKey) mechanic).setSecretCache(PrecalculatedStonk.createOne(
+                            ((DungeonRedstoneKey) mechanic).getSecretPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonRedstoneKey) mechanic).getSecretCache().getDependentRouteBlocker());
+                }
+
+            }
         }
     }
 

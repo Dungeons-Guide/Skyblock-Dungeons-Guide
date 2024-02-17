@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
@@ -37,6 +38,7 @@ import java.util.List;
 public class DungeonRedstoneKey implements DungeonMechanic {
     private static final long serialVersionUID = 5154467820268491577L;
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
+    private PrecalculatedStonk secretCache;
     private List<String> preRequisite = new ArrayList<String>();
     private String triggering = "";
 
@@ -60,13 +62,22 @@ public class DungeonRedstoneKey implements DungeonMechanic {
                 throw new PathfindImpossibleException(state+" is not valid state for secret");
             }
 
-            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
-                for (String str : preRequisite) {
-                    if (str.isEmpty()) continue;
-                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-                }
-                return null;
-            });
+            if (secretCache != null)
+                ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretCache, builder1 -> {
+                    for (String str : preRequisite) {
+                        if (str.isEmpty()) continue;
+                        builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                    }
+                    return null;
+                });
+            else
+                ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, secretPoint, builder1 -> {
+                    for (String str : preRequisite) {
+                        if (str.isEmpty()) continue;
+                        builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                    }
+                    return null;
+                });
         } else { // placed
             if (! getCurrentState(dungeonRoom).equalsIgnoreCase("obtained-self")) {
                 throw new PathfindImpossibleException(state+" is not valid state for secret");

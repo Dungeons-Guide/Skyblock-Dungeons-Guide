@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
@@ -42,6 +43,7 @@ public class DungeonFakeChestTrap implements DungeonMechanic {
     private static final long serialVersionUID = -7347076019472222115L;
     private OffsetPointSet tnts = new OffsetPointSet();
     private OffsetPoint chest = new OffsetPoint(0,0,0);
+    private PrecalculatedStonk chestCache;
     private List<String> preRequisite = new ArrayList<>();
 
 
@@ -63,13 +65,22 @@ public class DungeonFakeChestTrap implements DungeonMechanic {
             return;
         }
 
-        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, chest, builder1 -> {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-            }
-            return null;
-        });
+        if (chestCache != null)
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, chestCache, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
+        else
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, chest, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
 
     }
 

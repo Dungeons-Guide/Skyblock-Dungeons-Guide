@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.*;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.NodeProcessorDungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import lombok.AllArgsConstructor;
@@ -42,11 +43,15 @@ public class RaytraceHelper {
     public static class DRIWorld extends World {
 
         private DungeonRoomInfo dungeonRoomInfo;
-        private int rot;
-        protected DRIWorld(DungeonRoomInfo dungeonRoomInfo, int rot) {
+        private List<String> openMechanics;
+
+        public DRIWorld(DungeonRoomInfo dungeonRoomInfo) {
+            this(dungeonRoomInfo, Collections.emptyList());
+        }
+        public DRIWorld(DungeonRoomInfo dungeonRoomInfo, List<String> openMechanics) {
             super(null, null, new WorldProviderSurface(), null, true);
             this.dungeonRoomInfo =  dungeonRoomInfo;
-            this.rot = rot;
+            this.openMechanics = openMechanics;
         }
 
         @Override
@@ -76,7 +81,16 @@ public class RaytraceHelper {
 
         @Override
         public IBlockState getBlockState(BlockPos pos) {
-            return dungeonRoomInfo.getBlock(pos.getX(), pos.getY(), pos.getZ(),rot);
+            for (String openMechanic : openMechanics) {
+                RouteBlocker routeBlocker = (RouteBlocker) dungeonRoomInfo.getMechanics().get(openMechanic);
+                for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
+                    if (offsetPoint.getX() == pos.getX() && offsetPoint.getY() == pos.getY() && offsetPoint.getZ() == pos.getZ()) {
+                        return Blocks.air.getDefaultState();
+                    }
+                }
+
+            }
+            return dungeonRoomInfo.getBlock(pos.getX(), pos.getY(), pos.getZ(),0);
         }
 
         @Override
@@ -286,7 +300,7 @@ public class RaytraceHelper {
                             stonk.get(entries.get(0).getKey()), 0
                     );
                 }).collect(Collectors.toList());
-        return chooseMinimalY(doClustering(spots));
+        return doClustering(spots);
     }
 
     public static List<PossibleClickingSpot> chooseMinimalY(List<PossibleClickingSpot> spots) {

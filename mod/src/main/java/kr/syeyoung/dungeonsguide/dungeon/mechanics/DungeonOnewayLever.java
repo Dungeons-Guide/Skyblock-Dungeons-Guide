@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
@@ -36,6 +37,7 @@ import java.util.*;
 public class DungeonOnewayLever implements DungeonMechanic {
     private static final long serialVersionUID = -3203171200265540652L;
     private OffsetPoint leverPoint = new OffsetPoint(0,0,0);
+    private PrecalculatedStonk leverCache;
     private List<String> preRequisite = new ArrayList<String>();
     private String triggering = "";
 
@@ -53,13 +55,22 @@ public class DungeonOnewayLever implements DungeonMechanic {
         }
         if (!("triggered".equalsIgnoreCase(state))) throw new PathfindImpossibleException(state+" is not valid state for secret");
 
-        ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverPoint, builder1 -> {
-            for (String str : preRequisite) {
-                if (str.isEmpty()) continue;
-                builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
-            }
-            return null;
-        });
+        if (leverCache != null)
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverCache, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
+        else
+            ActionUtils.buildActionMoveAndClick(builder, dungeonRoom, leverPoint, builder1 -> {
+                for (String str : preRequisite) {
+                    if (str.isEmpty()) continue;
+                    builder1.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+                }
+                return null;
+            });
     }
 
     @Override

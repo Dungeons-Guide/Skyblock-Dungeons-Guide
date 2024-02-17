@@ -54,7 +54,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            this.spots = RaytraceHelper.raycast(event.world, event.pos);
+            this.spots = RaytraceHelper.chooseMinimalY(RaytraceHelper.raycast(event.world, event.pos));
             System.out.println(spots);
         } else {
 //            this.spots = null;
