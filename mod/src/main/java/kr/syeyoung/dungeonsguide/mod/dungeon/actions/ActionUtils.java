@@ -154,8 +154,8 @@ public class ActionUtils {
                 .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
-        defaultOpenBlockers.addAll(requiredPrerequisite.stream().map(a -> a.split(":")[0]).collect(Collectors.toList()));
-        List<String> optionalOpenBlockers = optionalPrerequisite.stream().map(a -> a.split(":")[0]).collect(Collectors.toList());
+        defaultOpenBlockers.addAll(requiredPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList()));
+        List<String> optionalOpenBlockers = optionalPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList());
 
         List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
                 .filter(a -> optionalOpenBlockers.contains(a))
@@ -172,11 +172,13 @@ public class ActionUtils {
                     RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(newBlockers)), precalculatedStonk.getTarget(),
                     builder1 -> {
                         for (String s : requiredPrerequisite) {
+                            if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             String state = s.split(":")[1];
                             builder1.requires(new ActionChangeState(mech, state));
                         }
                         for (String s : optionalPrerequisite) {
+                            if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             String state = s.split(":")[1];
                             if (optionalSubset.contains(mech)) {
