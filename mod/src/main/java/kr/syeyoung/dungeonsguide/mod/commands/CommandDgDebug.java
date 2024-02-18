@@ -21,10 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.commands;
 import com.google.common.collect.Sets;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
-import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
-import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
+import kr.syeyoung.dungeonsguide.dungeon.data.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
@@ -36,7 +33,12 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
@@ -88,6 +90,7 @@ import java.security.cert.CertificateException;
 import java.util.List;
 import java.util.*;
 import java.util.function.Consumer;
+import java.util.stream.Collectors;
 
 public class CommandDgDebug extends CommandBase {
     @Override
@@ -417,8 +420,6 @@ public class CommandDgDebug extends CommandBase {
 //        }
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
             DungeonContext fakeContext = new DungeonContext("TEST DG", new DRIWorld(dungeonRoomInfo));
-            DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
-            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
             DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                     new Dimension(16, 16),
                     5,
@@ -457,9 +458,44 @@ public class CommandDgDebug extends CommandBase {
             ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoomInfo.getMechanics().entrySet()) {
                 if (value.getValue() instanceof ISecret) {
-                    builder.requires(new ActionChangeState(value.getKey()))
+                    try {
+                        builder.requires(new ActionChangeState(value.getKey(), "found"));
+                    } catch (PathfindImpossibleException e) {
+                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                        e.printStackTrace();
+                        continue;
+                    }
+                } else if (value.getValue() instanceof DungeonRedstoneKey) {
+                    try {
+                        builder.requires(new ActionChangeState(value.getKey(), "obtained-self"));
+                    } catch (PathfindImpossibleException e) {
+                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                        e.printStackTrace();
+                        continue;
+                    }
                 }
             }
+            ActionDAG dag = builder.build();
+            List<List<OffsetVec3>> toPfTo = new ArrayList<>();
+            Set<String> openMech = new HashSet<>();
+            for (ActionDAGNode allNode : dag.getAllNodes()) {
+                if (allNode.getAction() instanceof ActionMove) {
+                    toPfTo.add(
+                            ((ActionMove) allNode.getAction()).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
+                                    .collect(Collectors.toList())
+                    );
+                } else if (allNode.getAction() instanceof ActionMoveNearestAir) {
+                    OffsetPoint offsetPoint = ((ActionMoveNearestAir) allNode.getAction()).getTarget();
+                    toPfTo.add(
+                            Collections.singletonList(new OffsetVec3(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()))
+                    );
+                } else if (allNode.getAction() instanceof ActionChangeState) {
+                    if (((ActionChangeState) allNode.getAction()).getState().equalsIgnoreCase("open")) {
+                        openMech.add(((ActionChangeState) allNode.getAction()).getMechanicName());
+                    }
+                }
+            }
+            System.out.println(toPfTo.size() * (1 << openMech.size()) +" Pf for "+dungeonRoomInfo.getName());
 //            int dr = 0, wall = 0;
 //            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
 //                if (entry.getValue() instanceof DungeonDoor) {
