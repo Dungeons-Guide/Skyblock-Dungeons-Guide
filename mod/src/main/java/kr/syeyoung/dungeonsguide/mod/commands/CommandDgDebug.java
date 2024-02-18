@@ -410,30 +410,38 @@ public class CommandDgDebug extends CommandBase {
 //            throw new RuntimeException(e);
 //        }
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            int dr = 0, wall = 0;
             for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
 //                if (entry.getValue() instanceof DungeonDoor) {
 //                    System.out.println(entry.getKey()+"/"+((DungeonDoor) entry.getValue()).getOpenPreRequisite()+"/"+((DungeonDoor) entry.getValue()).getClosePreRequisite()+"/"+((DungeonDoor) entry.getValue()).getMovePreRequisite());
 //                } else if (entry.getValue() instanceof DungeonOnewayDoor){
 //                    System.out.println(entry.getKey()+"/"+((DungeonOnewayDoor) entry.getValue()).getPreRequisite() +"/"+((DungeonOnewayDoor) entry.getValue()).getMovePreRequisite());
 //                }
-                if (entry.getValue() instanceof RouteBlocker) {
-                    List<OffsetPoint> set = ((RouteBlocker) entry.getValue()).blockedPoints();
-                    int x = 0, y = 0, z = 0;
-                    for (OffsetPoint offsetPoint : set) {
-                        x += offsetPoint.getX();
-                        y += offsetPoint.getY();
-                        z += offsetPoint.getZ();
-                    }
-                    x /= set.size();
-                    y /= set.size();
-                    z /= set.size();
-                    OffsetPoint test = new OffsetPoint(x,y,z);
-                    if (!set.contains(test)) {
-                        System.out.println("Ummm check "+entry.getKey()+" in "+dungeonRoomInfo.getName()+" / "+dungeonRoomInfo.getUuid().toString());
-                    }
-
+//                if (entry.getValue() instanceof RouteBlocker) {
+//                    List<OffsetPoint> set = ((RouteBlocker) entry.getValue()).blockedPoints();
+//                    int x = 0, y = 0, z = 0;
+//                    for (OffsetPoint offsetPoint : set) {
+//                        x += offsetPoint.getX();
+//                        y += offsetPoint.getY();
+//                        z += offsetPoint.getZ();
+//                    }
+//                    x /= set.size();
+//                    y /= set.size();
+//                    z /= set.size();
+//                    OffsetPoint test = new OffsetPoint(x,y,z);
+//                    if (!set.contains(test)) {
+//                        System.out.println("Ummm check "+entry.getKey()+" in "+dungeonRoomInfo.getName()+" / "+dungeonRoomInfo.getUuid().toString());
+//                    }
+//
+//                }
+                if (entry.getValue() instanceof DungeonOnewayDoor) {
+                    dr ++;
+                } else if (entry.getValue() instanceof DungeonBreakableWall) {
+                    wall ++;
                 }
             }
+            System.out.println(dr+" / "+(dr + wall) +" : "+dungeonRoomInfo.getName());
+
         }
     }
 
