@@ -163,17 +163,27 @@ public class ActionUtils {
         ActionDAGBuilder last = null;
         for (int i = 0; i < (1 << optionalSubset.size()); i++) {
             Set<String> newBlockers = new HashSet<>(defaultOpenBlockers);
+            Set<String> notBlockers = new HashSet<>();
             for (int i1 = 0; i1 < optionalSubset.size(); i1++) {
                 if (((i >> i1) & 0x1) > 0) {
                     newBlockers.add(optionalSubset.get(i1));
+                } else {
+                    notBlockers.add(optionalSubset.get(i1));
                 }
             }
             last = buildActionMoveAndClick(builder, dungeonRoom,
                     RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(newBlockers)), precalculatedStonk.getTarget(),
                     builder1 -> {
+                        for (String newBlocker : newBlockers) {
+                            builder1.requires(new ActionChangeState(newBlocker, "open"));
+                        }
+                        for (String notBlocker : notBlockers) {
+                            builder1.requires(new ActionChangeState(notBlocker, "closed"));
+                        }
                         for (String s : requiredPrerequisite) {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
+                            if (newBlockers.contains(mech)) continue;
                             String state = s.split(":")[1];
                             builder1.requires(new ActionChangeState(mech, state));
                         }
@@ -181,10 +191,7 @@ public class ActionUtils {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             String state = s.split(":")[1];
-                            if (optionalSubset.contains(mech)) {
-                                if (newBlockers.contains(mech))
-                                    builder1.requires(new ActionChangeState(mech, state));
-                            } else {
+                            if (!optionalSubset.contains(mech)) {
                                 builder1.optional(new ActionChangeState(mech, state));
                             }
                         }

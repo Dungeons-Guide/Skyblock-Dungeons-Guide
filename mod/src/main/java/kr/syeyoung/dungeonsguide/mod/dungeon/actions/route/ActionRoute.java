@@ -134,6 +134,7 @@ public class ActionRoute {
                                 double cost = 0;
                                 for (ActionDAGNode actionDAGNode : actionDAGNodes) {
                                     cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
+                                    if (cost == Double.POSITIVE_INFINITY) break;
                                 }
                                 if (cost < minCost) {
                                     minCost = cost;

@@ -98,7 +98,7 @@ public class ActionChangeState extends AbstractAction {
     @Override
     public ActionDAGBuilder buildActionDAG(ActionDAGBuilder builder, DungeonRoom dungeonRoom) throws PathfindImpossibleException {
         DungeonMechanic mechanic = dungeonRoom.getMechanics().get(mechanicName);
-        if (mechanic!= null)
+        if (mechanic!= null && !mechanic.getCurrentState(dungeonRoom).equalsIgnoreCase(state))
             mechanic.buildAction(state, dungeonRoom, builder);
         return new ActionDAGBuilder.ActionDAGBuilderNoMore(builder);
     }

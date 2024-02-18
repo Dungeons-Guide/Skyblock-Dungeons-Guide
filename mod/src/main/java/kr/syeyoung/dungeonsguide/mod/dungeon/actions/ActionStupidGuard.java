@@ -62,6 +62,10 @@ public class ActionStupidGuard extends AbstractAction {
     }
 
     @Override
+    public boolean childComplete() {
+        return true;
+    }
+    @Override
     public String toString() {
         return "Stupid Guard";
     }

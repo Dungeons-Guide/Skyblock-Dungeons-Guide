@@ -22,9 +22,11 @@ import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
@@ -414,9 +416,22 @@ public class CommandDgDebug extends CommandBase {
 //                } else if (entry.getValue() instanceof DungeonOnewayDoor){
 //                    System.out.println(entry.getKey()+"/"+((DungeonOnewayDoor) entry.getValue()).getPreRequisite() +"/"+((DungeonOnewayDoor) entry.getValue()).getMovePreRequisite());
 //                }
-                if (entry.getValue() instanceof DungeonDummy) {
-                    System.out.println(dungeonRoomInfo.getName()+"-------");
-                    System.out.println(entry.getKey()+"/"+((DungeonDummy) entry.getValue()).getSecretPoint());
+                if (entry.getValue() instanceof RouteBlocker) {
+                    List<OffsetPoint> set = ((RouteBlocker) entry.getValue()).blockedPoints();
+                    int x = 0, y = 0, z = 0;
+                    for (OffsetPoint offsetPoint : set) {
+                        x += offsetPoint.getX();
+                        y += offsetPoint.getY();
+                        z += offsetPoint.getZ();
+                    }
+                    x /= set.size();
+                    y /= set.size();
+                    z /= set.size();
+                    OffsetPoint test = new OffsetPoint(x,y,z);
+                    if (!set.contains(test)) {
+                        System.out.println("Ummm check "+entry.getKey()+" in "+dungeonRoomInfo.getName()+" / "+dungeonRoomInfo.getUuid().toString());
+                    }
+
                 }
             }
         }
