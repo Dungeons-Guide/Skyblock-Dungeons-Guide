@@ -32,10 +32,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMove;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
-import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
@@ -62,7 +59,9 @@ import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.utils.AhUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.MapUtils;
+import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
 import kr.syeyoung.dungeonsguide.mod.wsresource.StaticResourceCache;
+import net.minecraft.block.Block;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityPlayerSP;
 import net.minecraft.client.settings.GameSettings;
@@ -418,8 +417,11 @@ public class CommandDgDebug extends CommandBase {
 //        } catch (Throwable e) {
 //            throw new RuntimeException(e);
 //        }
+        int est = 0;
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            DungeonContext fakeContext = new DungeonContext("TEST DG", new DRIWorld(dungeonRoomInfo));
+//            System.out.println("Loading "+dungeonRoomInfo.getName());
+            DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
+            DungeonContext fakeContext = new DungeonContext("TEST DG", driWorld);
             DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
                     new Dimension(16, 16),
                     5,
@@ -439,24 +441,33 @@ public class CommandDgDebug extends CommandBase {
                     }
                 }
             }
-
             DungeonRoom dungeonRoom = new DungeonRoom(
                     Sets.newHashSet(points),
                     dungeonRoomInfo.getShape(),
                     dungeonRoomInfo.getColor(),
                     new BlockPos(0, 70, 0),
-                    new BlockPos(32 * dungeonRoomInfo.getBlocks()[0].length - 1, 70, 32 * dungeonRoomInfo.getBlocks().length - 1),
+                    new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70,  dungeonRoomInfo.getBlocks().length - 1),
                     fakeContext,
                     Collections.emptySet());
-
+            dungeonRoom.setCachedWorld(driWorld);
 
             fakeContext.getScaffoldParser().getDungeonRoomList().add(dungeonRoom);
             for (Point p : points) {
                 fakeContext.getScaffoldParser().getRoomMap().put(p, dungeonRoom);
             }
 
+            while (dungeonRoom.getDungeonRoomInfo() == null) {
+                try {
+                    Thread.sleep(100);
+                } catch (InterruptedException e) {
+                    throw new RuntimeException(e);
+                }
+            }
+//            System.out.println("Matched as "+dungeonRoom.getDungeonRoomInfo().getName());
+
             ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
-            for (Map.Entry<String, DungeonMechanic> value : dungeonRoomInfo.getMechanics().entrySet()) {
+            for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {
+
                 if (value.getValue() instanceof ISecret) {
                     try {
                         builder.requires(new ActionChangeState(value.getKey(), "found"));
@@ -479,7 +490,25 @@ public class CommandDgDebug extends CommandBase {
             List<List<OffsetVec3>> toPfTo = new ArrayList<>();
             Set<String> openMech = new HashSet<>();
             for (ActionDAGNode allNode : dag.getAllNodes()) {
-                if (allNode.getAction() instanceof ActionMove) {
+                if (allNode.getAction() instanceof AtomicAction) {
+                    for (AbstractAction action : ((AtomicAction) allNode.getAction()).getActions()) {
+                        if (action instanceof ActionMove) {
+                            toPfTo.add(
+                                    ((ActionMove)action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
+                                            .collect(Collectors.toList())
+                            );
+                        } else if (action instanceof ActionMoveNearestAir) {
+                            OffsetPoint offsetPoint = ((ActionMoveNearestAir) action).getTarget();
+                            toPfTo.add(
+                                    Collections.singletonList(new OffsetVec3(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()))
+                            );
+                        } else if (action instanceof ActionChangeState) {
+                            if (((ActionChangeState) action).getState().equalsIgnoreCase("open")) {
+                                openMech.add(((ActionChangeState) action).getMechanicName());
+                            }
+                        }
+                    }
+                } else if (allNode.getAction() instanceof ActionMove) {
                     toPfTo.add(
                             ((ActionMove) allNode.getAction()).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
                                     .collect(Collectors.toList())
@@ -490,12 +519,15 @@ public class CommandDgDebug extends CommandBase {
                             Collections.singletonList(new OffsetVec3(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()))
                     );
                 } else if (allNode.getAction() instanceof ActionChangeState) {
-                    if (((ActionChangeState) allNode.getAction()).getState().equalsIgnoreCase("open")) {
+                    if (((ActionChangeState) allNode.getAction()).getState().equalsIgnoreCase("open")
+                    && ((ActionChangeState) allNode.getAction()).getMechanicName().startsWith("door")) {
                         openMech.add(((ActionChangeState) allNode.getAction()).getMechanicName());
                     }
                 }
             }
-            System.out.println(toPfTo.size() * (1 << openMech.size()) +" Pf for "+dungeonRoomInfo.getName());
+            System.out.println(toPfTo.size()+" pfs for "+(1<<openMech.size())+" states "+toPfTo.size() * (1 << openMech.size()) +" Pf for "+dungeonRoomInfo.getName());
+            ChatTransmitter.getReceiveQueue().clear();
+            est += toPfTo.size() * (1 << openMech.size()) * dungeonRoom.getUnitPoints().size();
 //            int dr = 0, wall = 0;
 //            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
 //                if (entry.getValue() instanceof DungeonDoor) {
@@ -528,7 +560,9 @@ public class CommandDgDebug extends CommandBase {
 //            }
 //
 //            System.out.println(dr+" / "+(dr + wall) +" : "+dungeonRoomInfo.getName());
+            fakeContext.cleanup();
         }
+        System.out.println("Estimated PF "+est+" on unit room");
     }
 
     private void loadRoomsCommand() {

@@ -231,7 +231,7 @@ public class RaytraceHelper {
                     return new PossibleClickingSpot(
                             entries.get(0).getValue(),
                             entries.stream().map(Map.Entry::getKey)
-                                    .map(b -> new OffsetVec3(b.xCoord, b.yCoord, b.zCoord))
+                                    .map(b -> new OffsetVec3(b.xCoord, b.yCoord - 70, b.zCoord))
                                     .collect(Collectors.toList()),
                             stonk.get(entries.get(0).getKey()), 0
                     );

@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.chat;
 
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
@@ -38,6 +39,7 @@ public class ChatTransmitter {
 
     public static ChatTransmitter INSTANCE = new ChatTransmitter();
 
+    @Getter
     static Queue<ChatComponentText> receiveQueue = new ConcurrentLinkedQueue<>();
 
     public static void addToQueue(String chat, boolean noDupe) {

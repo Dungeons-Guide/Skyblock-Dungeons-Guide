@@ -73,7 +73,7 @@ public class PrecalculatedStonk implements Serializable {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
 
-            spots[i] = RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()));
+            spots[i] = RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()));
         }
         return new PrecalculatedStonk(calculateFor, spots, offsetPoint);
     }

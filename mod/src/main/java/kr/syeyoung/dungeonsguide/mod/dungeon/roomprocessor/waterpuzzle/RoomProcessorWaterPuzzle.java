@@ -97,8 +97,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 EnumFacing enumFacing = enumOrientation.getFacing();
                 BlockPos newPos = pos.add(-enumFacing.getDirectionVec().getX(),0,-enumFacing.getDirectionVec().getZ());
 
-                int id = Block.getIdFromBlock(w.getChunkFromBlockCoords(newPos).getBlock(newPos));
-                int data = w.getChunkFromBlockCoords(newPos).getBlockMetadata(newPos);
+                int id = Block.getIdFromBlock(w.getBlockState(newPos).getBlock());
+                int data = w.getBlockState(newPos).getBlock().getMetaFromState(w.getBlockState(newPos));
 
                 switchFlips.put(id+":"+data, new ArrayList<>());
                 switchLoc.put(id+":"+data, pos);

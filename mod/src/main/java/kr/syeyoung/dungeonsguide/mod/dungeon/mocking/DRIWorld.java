@@ -79,13 +79,13 @@ public class DRIWorld extends World {
         for (String openMechanic : openMechanics) {
             RouteBlocker routeBlocker = (RouteBlocker) dungeonRoomInfo.getMechanics().get(openMechanic);
             for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
-                if (offsetPoint.getX() == pos.getX() && offsetPoint.getY() == pos.getY() && offsetPoint.getZ() == pos.getZ()) {
+                if (offsetPoint.getX() == pos.getX() && offsetPoint.getY() == pos.getY()-70 && offsetPoint.getZ() == pos.getZ()) {
                     return Blocks.air.getDefaultState();
                 }
             }
 
         }
-        return dungeonRoomInfo.getBlock(pos.getX(), pos.getY(), pos.getZ(), 0);
+        return dungeonRoomInfo.getBlock(pos.getX(), pos.getY()-70, pos.getZ(), 0);
     }
 
     @Override

@@ -89,6 +89,7 @@ public class DungeonRoom implements IPathfindWorld {
 
     private Map<String, DungeonMechanic> cached = null;
 
+    @Setter
     private World cachedWorld;
     private EditableChunkCache chunkCache;
 
