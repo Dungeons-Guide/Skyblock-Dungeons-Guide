@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.dungeon.data;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import lombok.Getter;
 import net.minecraft.util.BlockPos;
 
@@ -72,7 +73,7 @@ public class PrecalculatedStonk implements Serializable {
                 if (((i >> i1) & 0x1) > 0) included.add(calculateFor.get(i1));
             }
 
-            spots[i] = RaytraceHelper.raycast(new RaytraceHelper.DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()));
+            spots[i] = RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ()));
         }
         return new PrecalculatedStonk(calculateFor, spots, offsetPoint);
     }

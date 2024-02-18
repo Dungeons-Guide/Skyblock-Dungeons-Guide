@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.google.common.collect.Sets;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
@@ -34,7 +35,12 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatRoutine;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.guiconfig.configv3.MainConfigWidget;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionChangeState;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
+import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -410,8 +416,52 @@ public class CommandDgDebug extends CommandBase {
 //            throw new RuntimeException(e);
 //        }
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            int dr = 0, wall = 0;
-            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
+            DungeonContext fakeContext = new DungeonContext("TEST DG", new DRIWorld(dungeonRoomInfo));
+            DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
+            DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
+            DungeonMapLayout dungeonMapLayout = new DungeonMapLayout(
+                    new Dimension(16, 16),
+                    5,
+                    new Point(0,0),
+                    new BlockPos(0,70,0)
+            );
+            DungeonRoomScaffoldParser scaffoldParser1 = new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext);
+            fakeContext.setScaffoldParser(scaffoldParser1);
+
+            List<Point> points = new ArrayList<>();
+
+            for (int dy = 0; dy < 4; dy++) {
+                for (int dx = 0; dx < 4; dx++) {
+                    boolean isSet = ((dungeonRoomInfo.getShape()>> (dy * 4 + dx)) & 0x1) != 0;
+                    if (isSet) {
+                        points.add(new Point(dx, dy));
+                    }
+                }
+            }
+
+            DungeonRoom dungeonRoom = new DungeonRoom(
+                    Sets.newHashSet(points),
+                    dungeonRoomInfo.getShape(),
+                    dungeonRoomInfo.getColor(),
+                    new BlockPos(0, 70, 0),
+                    new BlockPos(32 * dungeonRoomInfo.getBlocks()[0].length - 1, 70, 32 * dungeonRoomInfo.getBlocks().length - 1),
+                    fakeContext,
+                    Collections.emptySet());
+
+
+            fakeContext.getScaffoldParser().getDungeonRoomList().add(dungeonRoom);
+            for (Point p : points) {
+                fakeContext.getScaffoldParser().getRoomMap().put(p, dungeonRoom);
+            }
+
+            ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
+            for (Map.Entry<String, DungeonMechanic> value : dungeonRoomInfo.getMechanics().entrySet()) {
+                if (value.getValue() instanceof ISecret) {
+                    builder.requires(new ActionChangeState(value.getKey()))
+                }
+            }
+//            int dr = 0, wall = 0;
+//            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
 //                if (entry.getValue() instanceof DungeonDoor) {
 //                    System.out.println(entry.getKey()+"/"+((DungeonDoor) entry.getValue()).getOpenPreRequisite()+"/"+((DungeonDoor) entry.getValue()).getClosePreRequisite()+"/"+((DungeonDoor) entry.getValue()).getMovePreRequisite());
 //                } else if (entry.getValue() instanceof DungeonOnewayDoor){
@@ -434,14 +484,14 @@ public class CommandDgDebug extends CommandBase {
 //                    }
 //
 //                }
-                if (entry.getValue() instanceof DungeonOnewayDoor) {
-                    dr ++;
-                } else if (entry.getValue() instanceof DungeonBreakableWall) {
-                    wall ++;
-                }
-            }
-            System.out.println(dr+" / "+(dr + wall) +" : "+dungeonRoomInfo.getName());
-
+//                if (entry.getValue() instanceof DungeonOnewayDoor) {
+//                    dr ++;
+//                } else if (entry.getValue() instanceof DungeonBreakableWall) {
+//                    wall ++;
+//                }
+//            }
+//
+//            System.out.println(dr+" / "+(dr + wall) +" : "+dungeonRoomInfo.getName());
         }
     }
 

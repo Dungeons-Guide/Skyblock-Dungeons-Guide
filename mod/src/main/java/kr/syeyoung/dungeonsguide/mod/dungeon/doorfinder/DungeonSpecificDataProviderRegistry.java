@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.MasterModeDataProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.catacombs.impl.NormalModeDataProvider;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.TESTDGProvider;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -31,6 +32,7 @@ public class DungeonSpecificDataProviderRegistry {
     static {
         doorFinders.put(Pattern.compile("The Catacombs (?:F[0-9]|E)"), new NormalModeDataProvider());
         doorFinders.put(Pattern.compile("The Catacombs (?:M[0-9])"), new MasterModeDataProvider());
+        doorFinders.put(Pattern.compile("TEST DG"), new TESTDGProvider());
     }
 
     public static DungeonSpecificDataProvider getDoorFinder(String dungeonName) {

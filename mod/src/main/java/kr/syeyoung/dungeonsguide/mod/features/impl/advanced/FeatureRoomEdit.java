@@ -37,6 +37,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProvi
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonSpecificDataProviderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.TESTDGProvider;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.gui.GuiDungeonRoomEdit;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -480,38 +481,6 @@ public class FeatureRoomEdit  extends SimpleFeature {
             System.out.println(Minecraft.getMinecraft().theWorld);
             Minecraft.getMinecraft().thePlayer.setPosition(0, 70, 0);
             Minecraft.getMinecraft().thePlayer.inventory.mainInventory[0] = new ItemStack(Items.stick);
-            DungeonSpecificDataProviderRegistry.doorFinders.put(Pattern.compile("TEST DG"), new DungeonSpecificDataProvider() {
-                @Override
-                public BlockPos findDoor(World w, String dungeonName) {
-                    return new BlockPos(0, 0, 0);
-                }
-
-                @Override
-                public Vector2d findDoorOffset(World w, String dungeonName) {
-                    return new Vector2d(0,0);
-                }
-
-                @Override
-                public BossfightProcessor createBossfightProcessor(World w, String dungeonName) {
-                    return null;
-                }
-
-                @Override
-                public boolean isTrapSpawn(String dungeonName) {
-                    return false;
-                }
-
-                @Override
-                public double secretPercentage(String dungeonName) {
-                    return 0;
-                }
-
-                @Override
-                public int speedSecond(String dungeonName) {
-                    return 0;
-                }
-            });
-
             DungeonContext fakeContext = new DungeonContext("TEST DG", Minecraft.getMinecraft().theWorld);
             DungeonsGuide.getDungeonsGuide().getDungeonFacade().setContext(fakeContext);
             DungeonsGuide.getDungeonsGuide().getSkyblockStatus().setForceIsOnDungeon(true);
