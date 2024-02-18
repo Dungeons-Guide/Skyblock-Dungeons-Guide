@@ -95,7 +95,9 @@ public class ArrowRightProcessor extends GeneralDefuseChamberProcessor {
     private int match(EntityArmorStand armorStand) {
         if (armorStand == null) return -1;
         ItemStack item = armorStand.getInventory()[4];
+        if (item == null) return -1;
         NBTTagList list = item.getTagCompound().getCompoundTag("SkullOwner").getCompoundTag("Properties").getTagList("textures", 10);
+        if (list == null) return -1;
         String str = ((NBTTagCompound)list.get(0)).getString("Value");
         return !integers.containsKey(str) ? -1 : integers.get(str);
     }
