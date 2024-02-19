@@ -121,7 +121,7 @@ public class ActionMoveNearestAir extends AbstractAction {
             BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX() + 1, bpos.getY() + 1, bpos.getZ() + 1)
                     .expand(0.5,1,0.5));
 
-            executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
+            executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
                     boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }

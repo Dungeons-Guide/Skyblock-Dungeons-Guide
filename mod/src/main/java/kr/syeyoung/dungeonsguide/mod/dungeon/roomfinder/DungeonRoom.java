@@ -161,7 +161,7 @@ public class DungeonRoom implements IPathfindWorld {
         }
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
-            executor = new PathfinderExecutor(new AStarFineGridStonking(algorithmSettings), pos, this);
+            executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSettings), pos, this);
         } else {
             return  null;
         }
@@ -794,7 +794,7 @@ public class DungeonRoom implements IPathfindWorld {
         for (int x = 0; x < 16; x ++) { // fix pf not going through big block updates
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < 255; y++) {
-                    resetBlock(cx * 16 + x, y, cz * 16 + z);
+                    resetBlock2(cx * 16 + x, y, cz * 16 + z);
                 }
             }
         }

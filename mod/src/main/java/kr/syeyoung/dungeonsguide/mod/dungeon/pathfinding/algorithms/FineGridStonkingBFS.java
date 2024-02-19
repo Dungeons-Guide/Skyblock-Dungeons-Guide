@@ -182,7 +182,7 @@ public class FineGridStonkingBFS implements IPathfinder {
         if (!n.coordinate.stonk && algorithmSettings.isRouteEtherwarp()) {
             if (n.coordinate.y % 2 == 0 && n.coordinate.x % 2 != 0 && n.coordinate.z % 2 != 0 && !originNodeState.isBlockedNonStonk()) {
                 if (dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y-2, n.coordinate.z).isBlockedNonStonk()
-                || dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y-1, n.coordinate.z).isBlockedNonStonk()) {
+                || dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y-1, n.coordinate.z).isBlockedNonStonk() && n.coordinate.y - 6 > 0) {
                     Node neighbor = openNode(n.coordinate.x, n.coordinate.y - 6, n.coordinate.z, false);
                     DungeonRoom.NodeState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                     while (!nodeState.isBlockedNonStonk()) {

@@ -316,11 +316,10 @@ public class ActionMove extends AbstractAction {
                 ));
             }
 
-            executor = new PathfinderExecutor(new AStarFineGridStonking(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
+            executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
                     boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
-        System.out.println(state.getOpenMechanics());
         executor.setTarget(state.getPlayerPos());
         state.setPlayerPos(new Vec3(bpos.xCoord+0.5, bpos.yCoord, bpos.zCoord+0.5));
         double result = executor.findCost();

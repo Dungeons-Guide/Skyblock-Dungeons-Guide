@@ -111,16 +111,16 @@ public class ActionRoute {
                     ChatTransmitter.sendDebugChat("With "+minCount+" Sorts");
 
 
-                    if (minCount > 32) {
-                        stupidheuristic = true;
-                    }
+                    Map<String, Object> memoization = new HashMap<>();
+//                    if (minCount > 1000000) {
+//                        stupidheuristic = true;
+//                        memoization.put("stupidheuristic", true);
+//                    }
                         for (int dagId = 0; dagId < dag.getCount(); dagId++) {
-                            Map<String, Object> memoization = new HashMap<>();
 
 
                             this.nodeStatus = dag.getNodeStatus(dagId);
                             if (stupidheuristic) {
-                                memoization.put("stupidheuristic", true);
 
                                 if (dag.getAllNodes().stream().flatMap(a -> a.getOptional().stream())
                                         .anyMatch(a -> this.nodeStatus[a.getId()] == 0)) continue;
