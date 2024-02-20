@@ -52,10 +52,10 @@ public class RaytraceHelper {
     }
 
     public static interface CalculateIsBlocked {
-        DungeonRoom.NodeState calculateIsBlocked(int x, int y, int z);
+        boolean canStand(int x, int y, int z);
     }
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target) {
-        return raycast(w, target, (a,b,c) -> RaytraceHelper.calculateIsBlocked(w,a,b,c));
+        return raycast(w, target, (a,b,c) -> RaytraceHelper.canStand(w,a,b,c));
     }
     public static List<PossibleClickingSpot> raycast(World w, BlockPos target, CalculateIsBlocked calculateIsBlocked) {
         IBlockState targetBlockState = w.getBlockState(target);
@@ -68,11 +68,11 @@ public class RaytraceHelper {
             for (double y = target.getY() - 6; y <= target.getY() + 4.5; y += 0.5) {
                 for (double z = target.getZ() - 4.5; z <= target.getZ() + 5.5; z += 0.5) {
                     // if can't stand on, we don't.
-                    if (calculateIsBlocked.calculateIsBlocked((int) Math.round(x * 2), (int) Math.round(y * 2), (int) Math.round(z * 2)).isBlockedNonStonk()) continue;
+                    if (!calculateIsBlocked.canStand((int) Math.round(x * 2), (int) Math.round(y * 2), (int) Math.round(z * 2))) continue;
 //                    if (!calculateIsBlocked.calculateIsBlocked((int) Math.round(x * 2), (int) Math.round(y * 2)-1, (int) Math.round(z * 2)).isBlockedNonStonk()
 //                            && y > target.getY() - 5.9) continue;
 
-                    boolean isAir = !calculateIsBlocked.calculateIsBlocked((int) Math.round(x * 2), (int) Math.round(y * 2)-1, (int) Math.round(z * 2)).isBlockedNonStonk();
+                    boolean isAir = calculateIsBlocked.canStand((int) Math.round(x * 2), (int) Math.round(y * 2)-1, (int) Math.round(z * 2));
 
                     Vec3 playerFoot = new Vec3(x, y, z);
                     for (int shift = 0; shift <= 1; shift++) {
@@ -451,12 +451,14 @@ public class RaytraceHelper {
     }
 
 
-    private static DungeonRoom.LayerNodeState calculateOneLayerIsBlocked(World world,int x, int y, int z) {
-//        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return DungeonRoom.LayerNodeState.OUT_OF_DUNGEON;
+    private static  boolean canStand(World w, int x, int y, int z) {
+       
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
-        double playerWidth = 0.3f;
 
-        AxisAlignedBB bb = AxisAlignedBB.fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth, wX + playerWidth, wY + .49f, wZ + playerWidth);
+        float playerWidth = 0.3f;
+        AxisAlignedBB bb = AxisAlignedBB
+                .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
+                        wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
 
         int minX = MathHelper.floor_double(bb.minX);
         int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
@@ -464,179 +466,26 @@ public class RaytraceHelper {
         int maxY = MathHelper.floor_double(bb.maxY + 1.0D);
         int minZ = MathHelper.floor_double(bb.minZ);
         int maxZ = MathHelper.floor_double(bb.maxZ + 1.0D);
+
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        List<AxisAlignedBB> list2 = new ArrayList<>();
+        int size = 0;
 
-        List<AxisAlignedBB> list = new ArrayList<>();
-        int blocked = 0;
-
-        int stairValid = 0;
-        int fence = 0;
-        boolean missedStair = false;
+        int notstonkable = 0;
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
                 for (int i2 = minY-1; i2 < maxY; ++i2) {
-                    boolean blocked2 = false;
                     blockPos.set(k1, i2, l1);
-                    IBlockState iBlockState1 = world.getBlockState(blockPos);
-                    Block b = iBlockState1.getBlock();
-                    if (!b.getMaterial().blocksMovement())continue;
-                    if (!(b instanceof BlockWall || b instanceof BlockFence || b instanceof BlockFenceGate) && i2 == minY-1) continue;
-                    if (iBlockState1.equals( NodeProcessorDungeonRoom.preBuilt)) continue;
-
-
-                    if (b.isFullCube()) {
-                        blocked2 = true;
-
-                        if (b.getBlockHardness(world, blockPos) < 0) {
-                            return DungeonRoom.LayerNodeState.FORBIDDEN;
-                        }
-                    }
-
-                    if (b instanceof BlockStairs) {
-                        if (iBlockState1.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.BOTTOM  && y % 2 == 0 && (stairValid >= 0)) {
-                            stairValid = 1;
-                        } else if (iBlockState1.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP && y % 2 == 1 && (stairValid >= 0)) {
-                            stairValid = 1;
-                        } else {
-                            stairValid = -1;
-                        }
-                    }
-
-                    try {
-                        int prev = list.size();
-                        b.addCollisionBoxesToList(world, blockPos, iBlockState1, bb, list, null);
-                        if (list.size() - prev > 0) {
-                            blocked2 = true;
-                        }
-
-                        if (b instanceof BlockStairs && !blocked2) {
-                            missedStair = true;
-                        } else if (b instanceof BlockStairs) {
-                            missedStair = false;
-                        }
-                    } catch (Exception e) {
-                        blocked2 = true;
-                    }
-
-
-                    if (blocked2) {
-                        blocked++;
-                    }
-                    if (blocked2 && i2 == minY - 1) {
-                        fence++;
-                    }
+                    IBlockState state = w.getBlockState(blockPos);
+                    Block block = state.getBlock();
+                    block.addCollisionBoxesToList(
+                            w, blockPos, state, bb, list2, null
+                    );
                 }
             }
         }
-
-        if (blocked > 0) {
-            if (stairValid == 1 && fence == 0) {
-                return DungeonRoom.LayerNodeState.ENTRANCE_STAIR_STONK;
-            }
-
-            if (missedStair)
-                return DungeonRoom.LayerNodeState.STONKABLE_STAIR_MID;
-            else
-                return DungeonRoom.LayerNodeState.STONKABLE;
-        }
-
-
-        return DungeonRoom.LayerNodeState.OPEN;
-    }
-
-    private static DungeonRoom.NodeState calculateIsBlocked(World world, int x, int y, int z) {
-//        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return DungeonRoom.NodeState.OUT_OF_DUNGEON;
-
-        DungeonRoom.LayerNodeState bottom = calculateOneLayerIsBlocked(world, x,y,z);
-        DungeonRoom.LayerNodeState bottomMid = calculateOneLayerIsBlocked(world, x,y+1,z);
-        DungeonRoom.LayerNodeState top= calculateOneLayerIsBlocked(world, x,y+2,z);
-        DungeonRoom.LayerNodeState topMid = calculateOneLayerIsBlocked(world, x,y+3,z);
-
-
-        int openCount = 0;
-
-
-        if (bottom == DungeonRoom.LayerNodeState.OPEN) openCount++;
-        if (bottomMid == DungeonRoom.LayerNodeState.OPEN) openCount++;
-        if (top == DungeonRoom.LayerNodeState.OPEN) openCount++;
-        if (topMid == DungeonRoom.LayerNodeState.OPEN) openCount++;
-
-        boolean falls = calculateOneLayerIsBlocked(world, x, y-1, z) == DungeonRoom.LayerNodeState.OPEN;
-        boolean highCeiling = calculateOneLayerIsBlocked(world, x, y+4, z) == DungeonRoom.LayerNodeState.OPEN;
-
-
-        if (openCount == 4) {
-            return DungeonRoom.NodeState.OPEN;
-        }
-        if (bottom == DungeonRoom.LayerNodeState.FORBIDDEN || bottomMid == DungeonRoom.LayerNodeState.FORBIDDEN || top == DungeonRoom.LayerNodeState.FORBIDDEN || topMid == DungeonRoom.LayerNodeState.FORBIDDEN) {
-            return DungeonRoom.NodeState.BLOCKED;
-        }
-        if (!topMid.isInstabreak()) {
-            // if top mid is blocked, then player can't go anywhere, unless, falling...
-            return DungeonRoom.NodeState.BLOCKED;
-
-        }
-
-
-        if (y % 2 == 0 && bottom.isStair() && openCount == 3 && highCeiling) {
-            if (falls) return DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_FALLING;
-            return DungeonRoom.NodeState.ENTRANCE_STONK_DOWN;
-        }
-        if (((x % 2 == 0) != (z % 2 == 0)) && y % 2 == 1 && calculateOneLayerIsBlocked(world, x, y-1, z).isStair() &&
-                (bottom == DungeonRoom.LayerNodeState.BLOCKED_ONE_STONK_STAIR_MID || bottom == DungeonRoom.LayerNodeState.STONKABLE_STAIR_MID) && openCount == 3 && highCeiling) {
-            return DungeonRoom.NodeState.ENTRANCE_STONK_DOWN_ECHEST;
-        }
-
-        if (y % 2 != 0 && topMid.isStair() && openCount == 3 && falls) {
-            return DungeonRoom.NodeState.ENTRANCE_STONK_UP;
-        }
-
-        // wall
-        if (x % 2 != 0 && z % 2 != 0 && y % 2 == 0 && bottom.isBlocked() && openCount == 3 && highCeiling) {
-            IBlockState iBlockState1 = world.getBlockState(new BlockPos(x/2.0, y/2-1, z/2.0));
-            Block b = iBlockState1.getBlock();
-            if (b instanceof BlockWall || b instanceof BlockFence || b instanceof BlockFenceGate) {
-                iBlockState1 = world.getBlockState(new BlockPos(x/2.0, y/2, z/2.0));
-                b = iBlockState1.getBlock();
-                if (b == Blocks.air) {
-                    return DungeonRoom.NodeState.ENTRANCE_TELEPORT_DOWN;
-                }
-            }
-        }
-
-        if (x % 2 != 0 && z % 2 != 0 && y % 2 == 0 && openCount == 1 && topMid == DungeonRoom.LayerNodeState.OPEN) {
-            IBlockState iBlockState1 = world.getBlockState(new BlockPos(x/2.0, y/2, z/2.0));
-            Block b = iBlockState1.getBlock();
-            if (b instanceof BlockWall || b instanceof BlockFence || b instanceof BlockFenceGate) {
-                iBlockState1 = world.getBlockState(new BlockPos(x/2.0, y/2+1, z/2.0));
-                b = iBlockState1.getBlock();
-                if (!b.getMaterial().blocksMovement()) {
-                    iBlockState1 = world.getBlockState(new BlockPos(x/2.0, y/2+2, z/2.0));
-                    b = iBlockState1.getBlock();
-                    if (!b.getMaterial().blocksMovement()) {
-                        if (falls) return DungeonRoom.NodeState.ENTRANCE_ETHERWARP_FALL;
-                        return DungeonRoom.NodeState.ENTRANCE_ETHERWARP;
-                    }
-                }
-            }
-        }
-
-        if (x%2 == 0 && z%2 == 0) {
-            return DungeonRoom.NodeState.BLOCKED; // never go corners while stonking..
-        }
-
-
-        if (x % 2 != 0 && z % 2 != 0 && y % 2 == 0) {
-            IBlockState iBlockState1 = world.getBlockState(new BlockPos(x/2.0, y/2-1, z/2.0));
-            Block b = iBlockState1.getBlock();
-            if (b instanceof BlockWall || b instanceof BlockFence || b instanceof BlockFenceGate) {
-                falls = true;
-            }
-        }
-
-        if (y % 2 == 0 && falls) return DungeonRoom.NodeState.BLOCKED_STONKABLE_FALLING;
-        if (y % 2 == 1 && bottom != DungeonRoom.LayerNodeState.OPEN || falls) return DungeonRoom.NodeState.BLOCKED_STONKABLE_FALLING;
-        return DungeonRoom.NodeState.BLOCKED_STONKABLE;
+        boolean blocked = !list2.isEmpty();
+        return !blocked;
     }
 
 }

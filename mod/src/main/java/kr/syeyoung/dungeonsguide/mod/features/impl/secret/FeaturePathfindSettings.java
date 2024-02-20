@@ -47,8 +47,7 @@ public class FeaturePathfindSettings extends SimpleFeature {
 
         addParameter("haste", new FeatureParameter<Integer>("haste", "Haste Lv", "Haste Lv on you when you stonk", 1, new TCInteger()));
 
-        addParameter("stonk_down", new FeatureParameter<Boolean>("stonk_down", "Stonk Entrance: Use Break Stair down", "Whether to consider using tools to break stair below you to enter stonking mode", true, new TCBoolean()));
-        addParameter("stonk_up", new FeatureParameter<Boolean>("stonk_up", "Stonk Entrance: Use Break Stair up", "Whether to consider using tools to break stair above you to enter stonking mode", true, new TCBoolean()));
+        addParameter("stonk", new FeatureParameter<Boolean>("stonk", "Stonk Entrance: Use Stairs", "Whether to consider using stair to enter stonking mode", true, new TCBoolean()));
         addParameter("teleport_down", new FeatureParameter<Boolean>("teleport_down", "Stonk Entrance: Use Teleport down", "Whether to consider using teleport tools (hype or aote) on top of fence/stonewall without torch on top to enter stoning mode. If you use Stonk Enter: etherwarp, you can disable this", true, new TCBoolean()));
         addParameter("etherwarp_ent", new FeatureParameter<Boolean>("etherwarp_ent", "Stonk Entrance: Use Etherwarp", "Whether to consider using etherwarp on fence/stonewall to enter stonking mode.", true, new TCBoolean()));
         addParameter("enderchest", new FeatureParameter<Boolean>("enderchest", "Stonk Entrance: Use Enderchest", "Whether to consider using enderchest on top of stair/fullblock combination to enter stonking mode.", false, new TCBoolean()));
@@ -64,8 +63,7 @@ public class FeaturePathfindSettings extends SimpleFeature {
                 isPickaxe() ? getPickaxeFactor() : -1,
                 isShovel() ? getInstabreakShovel() : -1,
                 isAxe() ? getInstabreakAxe() : -1,
-                isStonkDown(),
-                isStonkUp(),
+                isStonkStair(),
                 isStonkEtherwarp(),
                 isStonkTeleport(),
                 isStonkEChest(),
@@ -81,7 +79,6 @@ public class FeaturePathfindSettings extends SimpleFeature {
         private final double axeSpeed;
 
         private final boolean stonkDown;
-        private final boolean stonkUp;
         private final boolean stonkEtherwarp;
         private final boolean stonkTeleport;
         private final boolean stonkEChest;
@@ -136,11 +133,8 @@ public class FeaturePathfindSettings extends SimpleFeature {
     }
 
 
-    public boolean isStonkDown() {
-        return this.<Boolean>getParameter("stonk_down").getValue();
-    }
-    public boolean isStonkUp() {
-        return this.<Boolean>getParameter("stonk_up").getValue();
+    public boolean isStonkStair() {
+        return this.<Boolean>getParameter("stonk").getValue();
     }
     public boolean isStonkEChest() {
         return this.<Boolean>getParameter("enderchest").getValue();

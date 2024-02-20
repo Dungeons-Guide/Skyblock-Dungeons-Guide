@@ -27,7 +27,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonking;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -246,7 +245,7 @@ public class ActionMove extends AbstractAction {
         if (executor == null && actionRouteProperties.isPathfind()) {
             forceRefresh(dungeonRoom);
         }
-        if (executor != null) {
+        if (executor != null && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ) {
             poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
         }
 

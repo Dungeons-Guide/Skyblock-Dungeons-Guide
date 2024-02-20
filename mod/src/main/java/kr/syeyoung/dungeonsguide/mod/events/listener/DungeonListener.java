@@ -365,7 +365,7 @@ public class DungeonListener {
                     BlockPos real = new BlockPos(player.xCoord * 2, player.yCoord * 2, player.zCoord * 2);
                     try {
                         for (BlockPos allInBox : BlockPos.getAllInBox(real.add(-1, -1, -1), real.add(1, 1, 1))) {
-                            DungeonRoom.NodeState blocked = dungeonRoom.getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                            DungeonRoom.CollisionState blocked = dungeonRoom.getBlock(allInBox.getX(), allInBox.getY(), allInBox.getZ());
                             RenderUtils.highlightBox(
                                     AxisAlignedBB.fromBounds(
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,

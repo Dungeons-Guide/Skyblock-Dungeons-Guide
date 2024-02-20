@@ -79,18 +79,18 @@ public class FeatureStonkDebug extends SimpleFeature {
             for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 RenderUtils.highlightBox(
                         new AxisAlignedBB(
-                                offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.025f,
-                                offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord + 0.025f
+                                offsetVec3.xCoord - 0.025f, offsetVec3.yCoord - 0.025f + 70, offsetVec3.zCoord - 0.025f,
+                                offsetVec3.xCoord + 0.025f, offsetVec3.yCoord + 0.025f + 70, offsetVec3.zCoord + 0.025f
                         ),
                         actual,
                         event.partialTicks,
-                        true
+                        false
                 );
             }
             double cx = 0, cy =0 , cz = 0;
             for (OffsetVec3 offsetVec3 : spot.getOffsetPointSet()) {
                 cx += offsetVec3.xCoord;
-                cy += offsetVec3.yCoord;
+                cy += offsetVec3.yCoord + 70;
                 cz += offsetVec3.zCoord;
             }
             cx /= spot.getOffsetPointSet().size();

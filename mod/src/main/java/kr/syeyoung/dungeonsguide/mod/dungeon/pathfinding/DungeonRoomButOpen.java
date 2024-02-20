@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfindWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.BlockPos;
 
 import java.util.HashSet;
@@ -51,23 +52,23 @@ public class DungeonRoomButOpen implements IPathfindWorld {
     }
 
     @Override
-    public DungeonRoom.LayerNodeState getLayer(int x, int y, int z) {
-        for (BlockPos freeeeePoint : freeeeePoints) {
-            if (Math.abs(freeeeePoint.getX() - x) <= 3&& Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
-                return DungeonRoom.LayerNodeState.OPEN;
-            }
-        }
-        return dungeonRoom.getLayer(x,y,z);
+    public IBlockState getActualBlock(int x, int y, int z) {
+        return dungeonRoom.getActualBlock(x,y,z);
     }
 
     @Override
-    public DungeonRoom.NodeState getBlock(int x, int y, int z) {
+    public DungeonRoom.CollisionState getBlock(int x, int y, int z) {
         for (BlockPos freeeeePoint : freeeeePoints) {
             if (Math.abs(freeeeePoint.getX() - x) <= 3 && Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
-                return DungeonRoom.NodeState.OPEN;
+                return DungeonRoom.CollisionState.ONGROUND;
             }
         }
         return dungeonRoom.getBlock(x,y,z);
+    }
+
+    @Override
+    public boolean isInstabreak(int x, int y, int z) {
+        return dungeonRoom.isInstabreak(x,y,z);
     }
 
     @Override

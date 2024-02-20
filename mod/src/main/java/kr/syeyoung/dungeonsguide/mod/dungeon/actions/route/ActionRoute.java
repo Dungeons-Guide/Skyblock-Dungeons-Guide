@@ -247,11 +247,11 @@ public class ActionRoute {
         }
 
         boolean recalc = false;
-        for (int i = current; i < actions.size(); i++) {
-            if (actions.get(i).shouldRecalculatePath(dungeonRoom)) {
-                recalc = true;
-            }
-        }
+//        for (int i = current; i < actions.size(); i++) {
+//            if (actions.get(i).shouldRecalculatePath(dungeonRoom)) {
+//                recalc = true;
+//            }
+//        }
         if (recalc) {
             recalculatePath();
             while (currentAction.isComplete(dungeonRoom)) {

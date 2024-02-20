@@ -25,22 +25,18 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
-import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.AStarFineGridStonking;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
-import net.minecraft.util.MathHelper;
 import net.minecraft.util.Vec3;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 
 @Data
@@ -70,7 +66,7 @@ public class ActionMoveNearestAir extends AbstractAction {
         if (executor == null && actionRouteProperties.isPathfind()) {
             forceRefresh(dungeonRoom);
         }
-        if (executor != null) {
+        if (executor != null &&  !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ) {
             poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
         }
 
@@ -90,6 +86,7 @@ public class ActionMoveNearestAir extends AbstractAction {
         BlockPos pos = target.getBlockPos(dungeonRoom);
         BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
                 .expand(0.5,1,0.5));
+        System.out.println(boundingBox.getBoundingBoxes());
         if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
         executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }

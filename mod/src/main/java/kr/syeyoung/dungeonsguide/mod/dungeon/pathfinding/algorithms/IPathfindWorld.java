@@ -19,10 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import net.minecraft.block.state.IBlockState;
 
 public interface IPathfindWorld {
-    public DungeonRoom.LayerNodeState getLayer(int x, int y, int z);
-    public DungeonRoom.NodeState getBlock(int x, int y, int z);
+    public IBlockState getActualBlock(int x, int y, int z);
+    public DungeonRoom.CollisionState getBlock(int x, int y, int z);
+    public boolean isInstabreak(int x, int y, int z);
 
     public int getXwidth();
     public int getYwidth();
