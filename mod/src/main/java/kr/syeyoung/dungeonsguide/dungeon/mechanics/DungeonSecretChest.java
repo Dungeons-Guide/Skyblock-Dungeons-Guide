@@ -167,6 +167,7 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
     public DungeonSecretChest clone() throws CloneNotSupportedException {
         DungeonSecretChest dungeonSecret = new DungeonSecretChest();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
+        dungeonSecret.secretCache = secretCache;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }

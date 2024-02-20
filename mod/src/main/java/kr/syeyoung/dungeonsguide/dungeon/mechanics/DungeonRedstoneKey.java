@@ -93,6 +93,7 @@ public class DungeonRedstoneKey implements DungeonMechanic {
         DungeonRedstoneKey dungeonSecret = new DungeonRedstoneKey();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
         dungeonSecret.triggering = triggering;
+        dungeonSecret.secretCache = secretCache;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }

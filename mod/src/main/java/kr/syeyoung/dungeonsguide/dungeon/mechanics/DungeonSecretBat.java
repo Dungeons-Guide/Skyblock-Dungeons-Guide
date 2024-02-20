@@ -136,6 +136,7 @@ public class DungeonSecretBat implements DungeonMechanic, ISecret {
     public DungeonSecretBat clone() throws CloneNotSupportedException {
         DungeonSecretBat dungeonSecret = new DungeonSecretBat();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
+        dungeonSecret.moveNearest = moveNearest;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }

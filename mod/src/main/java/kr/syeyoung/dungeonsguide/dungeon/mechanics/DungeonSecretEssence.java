@@ -133,6 +133,7 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
     public DungeonSecretEssence clone() throws CloneNotSupportedException {
         DungeonSecretEssence dungeonSecret = new DungeonSecretEssence();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
+        dungeonSecret.secretCache = secretCache;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }

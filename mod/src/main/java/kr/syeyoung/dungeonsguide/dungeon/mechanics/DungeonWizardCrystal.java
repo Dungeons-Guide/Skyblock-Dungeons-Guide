@@ -84,6 +84,7 @@ public class DungeonWizardCrystal implements DungeonMechanic {
         DungeonWizardCrystal dungeonSecret = new DungeonWizardCrystal();
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
+        dungeonSecret.secretCache = secretCache;
         return dungeonSecret;
     }
     @Override

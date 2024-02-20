@@ -147,6 +147,7 @@ public class DungeonSecretItemDrop implements DungeonMechanic, ISecret {
 
     public DungeonSecretItemDrop clone() throws CloneNotSupportedException {
         DungeonSecretItemDrop dungeonSecret = new DungeonSecretItemDrop();
+        dungeonSecret.moveNearest = moveNearest;
         dungeonSecret.secretPoint = (OffsetPoint) secretPoint.clone();
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;

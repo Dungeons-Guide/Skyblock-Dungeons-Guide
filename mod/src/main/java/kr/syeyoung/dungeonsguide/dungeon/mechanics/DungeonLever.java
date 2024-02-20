@@ -83,6 +83,7 @@ public class DungeonLever implements DungeonMechanic {
         DungeonLever dungeonSecret = new DungeonLever();
         dungeonSecret.leverPoint = (OffsetPoint) leverPoint.clone();
         dungeonSecret.triggering = triggering;
+        dungeonSecret.leverCache = leverCache;
         dungeonSecret.preRequisite = new ArrayList<String>(preRequisite);
         return dungeonSecret;
     }

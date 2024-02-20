@@ -105,6 +105,7 @@ public class DungeonFakeChestTrap implements DungeonMechanic {
         dungeonSecret.tnts = (OffsetPointSet) tnts.clone();
         dungeonSecret.chest = (OffsetPoint) chest.clone();
         dungeonSecret.preRequisite = new ArrayList<>(preRequisite);
+        dungeonSecret.chestCache = chestCache;
         return dungeonSecret;
     }
 
