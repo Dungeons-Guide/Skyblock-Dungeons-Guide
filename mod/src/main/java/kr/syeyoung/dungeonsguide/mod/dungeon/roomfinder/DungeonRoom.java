@@ -509,7 +509,7 @@ public class DungeonRoom implements IPathfindWorld {
 
         if (!blocked && (x%2 == 0) != (z%2 == 0) && y %2 == 0 && isOnGround) {
             boolean stairFloor = false;
-            boolean elligible = true;
+            boolean elligible = false;
             for (int k1 = minX; k1 < maxX; ++k1) {
                 for (int l1 = minZ; l1 < maxZ; ++l1) {
                     blockPos.set(k1, minY - 1, l1);
@@ -521,14 +521,11 @@ public class DungeonRoom implements IPathfindWorld {
                             getCachedWorld(), blockPos, state, testBox, list2, null
                     );
                     if (size != list2.size()) {
-                        // collision occured.
-                        if (block instanceof BlockStairs) {
-                            elligible = false;
-                        }
-                    }
-                    if (block instanceof BlockStairs) {
+                        elligible = true;
+                    } else if (block instanceof BlockStairs) {
                         stairFloor = true;
                     }
+                    size = list2.size();
                 }
             }
             if (elligible && stairFloor) {
@@ -537,10 +534,6 @@ public class DungeonRoom implements IPathfindWorld {
         }
 
         if (!blocked) { // I'm on ground
-            if (stairs && isOnGround) {
-                return CollisionState.STAIR;
-            }
-
             if (superboom) {
                 if (isOnGround) {
                     return CollisionState.SUPERBOOMABLE_GROUND;
@@ -548,6 +541,10 @@ public class DungeonRoom implements IPathfindWorld {
                     return CollisionState.SUPERBOOMABLE_AIR;
                 }
             }
+            if (stairs && isOnGround) {
+                return CollisionState.STAIR;
+            }
+
             if (isOnGround) {
                 return CollisionState.ONGROUND;
             } else {
