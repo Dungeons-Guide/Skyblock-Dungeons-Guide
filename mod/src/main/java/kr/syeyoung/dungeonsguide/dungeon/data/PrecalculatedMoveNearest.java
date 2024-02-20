@@ -79,7 +79,7 @@ public class PrecalculatedMoveNearest implements Serializable {
             }
 
             spots[i] = RaytraceHelper.findMovespots(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()),
-                    a -> a.squareDistanceTo(vec) <= 5, 6);
+                    a -> a.squareDistanceTo(vec) <= 25, 6);
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
     }
@@ -100,8 +100,8 @@ public class PrecalculatedMoveNearest implements Serializable {
         Vec3 vec = new Vec3(offsetPoint.getX() + 0.5, offsetPoint.getY() + 70.5, offsetPoint.getZ() + 0.5);
         List<PossibleMoveSpot>[] spots = new List[1 << calculateFor.size()];
         AxisAlignedBB check = AxisAlignedBB.fromBounds(
-                vec.xCoord - 3, vec.yCoord - 1.5, vec.zCoord -3,
-                vec.xCoord + 3, vec.yCoord + 3, vec.zCoord + 3
+                vec.xCoord - 3, vec.yCoord + 1.5, vec.zCoord -3,
+                vec.xCoord + 3, vec.yCoord - 3, vec.zCoord + 3
         );
         for (int i = 0; i < (1 << calculateFor.size()); i++) {
             List<String> included = new ArrayList<>();

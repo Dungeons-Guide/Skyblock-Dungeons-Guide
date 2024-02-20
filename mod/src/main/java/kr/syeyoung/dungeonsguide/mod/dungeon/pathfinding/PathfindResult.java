@@ -58,7 +58,7 @@ public class PathfindResult {
         }
 
         public enum NodeType {
-            STONK_EXIT, STONK_WALK, WALK, ETHERWARP, DIG_DOWN, ECHEST, DIG_UP, TELEPORT_INTO;
+            STONK_EXIT, STONK_WALK, WALK, ETHERWARP, DIG_DOWN, ECHEST, DIG_UP, TELEPORT_INTO, SUPERBOOM;
         }
     }
 }

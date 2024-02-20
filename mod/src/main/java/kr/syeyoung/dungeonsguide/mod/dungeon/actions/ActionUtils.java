@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.*;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
@@ -159,6 +161,7 @@ public class ActionUtils {
 
         List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
                 .filter(a -> optionalOpenBlockers.contains(a))
+                .filter(a -> !(dungeonRoom.getMechanics().get(a) instanceof DungeonTomb || dungeonRoom.getMechanics().get(a) instanceof DungeonBreakableWall))
                 .collect(Collectors.toList());
         ActionDAGBuilder last = null;
         for (int i = 0; i < (1 << optionalSubset.size()); i++) {
@@ -175,6 +178,8 @@ public class ActionUtils {
                     RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(newBlockers)), precalculatedStonk.getTarget(),
                     builder1 -> {
                         for (String newBlocker : newBlockers) {
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWall) continue;
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTomb) continue;
                             builder1.requires(new ActionChangeState(newBlocker, "open"));
                         }
                         for (String notBlocker : notBlockers) {
@@ -184,12 +189,16 @@ public class ActionUtils {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             if (newBlockers.contains(mech)) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
                             String state = s.split(":")[1];
                             builder1.requires(new ActionChangeState(mech, state));
                         }
                         for (String s : optionalPrerequisite) {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
                             String state = s.split(":")[1];
                             if (!optionalSubset.contains(mech)) {
                                 builder1.optional(new ActionChangeState(mech, state));
@@ -240,16 +249,23 @@ public class ActionUtils {
                                                            List<String> requiredPrerequisite,
                                                       AtomicActionAccepter eachBuild,
                                                       String name) throws PathfindImpossibleException {
+
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof RouteBlocker)
                 .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
-        defaultOpenBlockers.addAll(requiredPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList()));
-        List<String> optionalOpenBlockers = optionalPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList());
+        defaultOpenBlockers.addAll(requiredPrerequisite.stream()
+                .filter(a -> !a.isEmpty())
+                .map(a -> a.split(":")[0])
+                .collect(Collectors.toList()));
+        List<String> optionalOpenBlockers = optionalPrerequisite.stream()
+                .filter(a -> !a.isEmpty())
+                .map(a -> a.split(":")[0]).collect(Collectors.toList());
 
         List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
                 .filter(a -> optionalOpenBlockers.contains(a))
+                .filter(a -> !(dungeonRoom.getMechanics().get(a) instanceof DungeonTomb || dungeonRoom.getMechanics().get(a) instanceof DungeonBreakableWall))
                 .collect(Collectors.toList());
         ActionDAGBuilder last = null;
         for (int i = 0; i < (1 << optionalSubset.size()); i++) {
@@ -268,6 +284,8 @@ public class ActionUtils {
                     eachBuild,
                     builder1 -> {
                         for (String newBlocker : newBlockers) {
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWall) continue;
+                            if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonTomb) continue;
                             builder1.requires(new ActionChangeState(newBlocker, "open"));
                         }
                         for (String notBlocker : notBlockers) {
@@ -277,12 +295,16 @@ public class ActionUtils {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
                             if (newBlockers.contains(mech)) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
                             String state = s.split(":")[1];
                             builder1.requires(new ActionChangeState(mech, state));
                         }
                         for (String s : optionalPrerequisite) {
                             if (s.isEmpty()) continue;
                             String mech = s.split(":")[0];
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonBreakableWall) continue;
+                            if (dungeonRoom.getMechanics().get(mech) instanceof DungeonTomb) continue;
                             String state = s.split(":")[1];
                             if (!optionalSubset.contains(mech)) {
                                 builder1.optional(new ActionChangeState(mech, state));

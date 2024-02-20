@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
@@ -54,9 +55,15 @@ public class FeatureAirchkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            this.spots = RaytraceHelper.chooseMinimalY2(
-                    RaytraceHelper.findMovespots(event.world, event.pos, a -> event.pos.distanceSq(a.xCoord, a.yCoord, a.zCoord) <= 25, 6)
+            Vec3 vec = new Vec3(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
+            AxisAlignedBB check = AxisAlignedBB.fromBounds(
+                    vec.xCoord - 3, vec.yCoord + 1.5, vec.zCoord -3,
+                    vec.xCoord + 3, vec.yCoord - 3, vec.zCoord + 3
             );
+
+            this.spots =
+                    RaytraceHelper.findMovespots(event.world, event.pos, a -> check.isVecInside(a), 3)
+            ;
             System.out.println(spots);
         } else {
 //            this.spots = null;

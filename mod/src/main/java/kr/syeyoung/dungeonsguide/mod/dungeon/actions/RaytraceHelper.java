@@ -336,6 +336,15 @@ public class RaytraceHelper {
                     for (int xp = MathHelper.floor_double(x - 0.3); xp < MathHelper.floor_double(x + 0.3) + 1; xp++) {
                         for (int zp = MathHelper.floor_double(z - 0.3); zp < MathHelper.floor_double(z + 0.3) + 1; zp++) {
                             isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() == Blocks.air;
+                            isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord-1, zp)).getBlock() == Blocks.air;
+                        }
+                    }
+                    if ((int)(y*2) % 2 == 1) {
+                        for (int xp = MathHelper.floor_double(x - 0.3); xp < MathHelper.floor_double(x + 0.3) + 1; xp++) {
+                            for (int zp = MathHelper.floor_double(z - 0.3); zp < MathHelper.floor_double(z + 0.3) + 1; zp++) {
+                                isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockSlab;
+                                isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() instanceof BlockStairs;
+                            }
                         }
                     }
 

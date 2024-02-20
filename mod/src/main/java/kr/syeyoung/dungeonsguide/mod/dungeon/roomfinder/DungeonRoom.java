@@ -21,7 +21,10 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder;
 import com.google.common.collect.Sets;
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -152,13 +155,13 @@ public class DungeonRoom implements IPathfindWorld {
 
     public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-        if (activePathfind.containsKey(pos.center())) {
-            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
-            PathfinderExecutor executor = executorWeakReference.get();
-            if (executor != null) {
-                return executor;
-            }
-        }
+//        if (activePathfind.containsKey(pos.center())) {
+//            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
+//            PathfinderExecutor executor = executorWeakReference.get();
+//            if (executor != null) {
+//                return executor;
+//            }
+//        }
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
             executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSettings), pos, this);
@@ -297,6 +300,19 @@ public class DungeonRoom implements IPathfindWorld {
 
         this.dungeonRoomInfo = dungeonRoomInfo;
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
+
+
+                    for (DungeonMechanic value : getMechanics().values()) {
+                        if (value instanceof DungeonTomb) {
+                            for (OffsetPoint offsetPoint : ((DungeonTomb) value).blockedPoints()) {
+                                poses.add(offsetPoint.getBlockPos(this));
+                            }
+                        } else if (value instanceof DungeonBreakableWall) {
+                            for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).blockedPoints()) {
+                                poses.add(offsetPoint.getBlockPos(this));
+                            }
+                        }
+                    }
     }
 
     public void updateRoomProcessor() {
@@ -413,6 +429,8 @@ public class DungeonRoom implements IPathfindWorld {
         return !isNoInstaBreak(blockState, pos);
     }
 
+    private HashSet<BlockPos> poses = new HashSet<>();
+
     private CollisionState calculateIsBlocked(int x, int y, int z) {
         if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return CollisionState.BLOCKED;
 
@@ -437,11 +455,14 @@ public class DungeonRoom implements IPathfindWorld {
 
 //        boolean
         boolean stairs = false;
+        boolean superboom = false;
         int notstonkable = 0;
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
-                for (int i2 = minY-1; i2 < maxY; ++i2) {
+                label: for (int i2 = minY-1; i2 < maxY; ++i2) {
                     blockPos.set(k1, i2, l1);
+
+
                     IBlockState state = getCachedWorld().getBlockState(blockPos);
                     Block block = state.getBlock();
                     block.addCollisionBoxesToList(
@@ -451,10 +472,19 @@ public class DungeonRoom implements IPathfindWorld {
                             getCachedWorld(), blockPos, state, bb, list2, null
                     );
 
+
                     if (list2.size() != size) {
                         // collision!!
+
+                        if (poses.contains(blockPos)) {
+                            for (int i = 0; i < Math.max(0, list2.size() - size); i++)
+                                list2.remove(size);
+                            superboom = true;
+                            continue label;
+                        }
+
                         if (isNoInstaBreak(state, blockPos)) {
-                            if (i2 == maxY - 1) {
+                            if (i2 == maxY - 1 && (state.getBlock() != Blocks.iron_bars && !(state.getBlock() instanceof BlockFence))) {
                                 // head level no break
                                 notstonkable = 99;
                             } else {
@@ -511,6 +541,13 @@ public class DungeonRoom implements IPathfindWorld {
                 return CollisionState.STAIR;
             }
 
+            if (superboom) {
+                if (isOnGround) {
+                    return CollisionState.SUPERBOOMABLE_GROUND;
+                } else {
+                    return CollisionState.SUPERBOOMABLE_AIR;
+                }
+            }
             if (isOnGround) {
                 return CollisionState.ONGROUND;
             } else {
@@ -533,9 +570,11 @@ public class DungeonRoom implements IPathfindWorld {
     public enum CollisionState {
         ONAIR(true, false, false, false, new Color(0x3300FF00, true)),
         ONGROUND(true, false, false, true , new Color(0x33007700, true)),
+        SUPERBOOMABLE_GROUND(true, false, false, true, new Color(0x33007777, true)),
+        SUPERBOOMABLE_AIR(true, false, false, false, new Color(0x3300FFFF, true)),
         STAIR(true, true, false, true, new Color(0x33FFFF00, true)), // can't enter stonking while flying, I tried, it's so hard.
         ENDERCHEST(true, true, false, true, new Color(0x33FFFF00, true)),
-        STONKING(true, true, true, true, new Color(0x33007777, true)),
+        STONKING(true, true, true, true, new Color(0x33000077, true)),
         STONKING_AIR(true, true, true, false, new Color(0x330000FF, true)),
         BLOCKED(false, true, true, true, new Color(0x33FF0000, true)); // 3 bytes per.... ehmmm...
 
