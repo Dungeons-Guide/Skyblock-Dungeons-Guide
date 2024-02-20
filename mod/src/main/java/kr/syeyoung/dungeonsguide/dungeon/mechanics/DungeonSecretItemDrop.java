@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedMoveNearest;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.predicates.PredicateBat;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -42,6 +43,7 @@ import net.minecraft.util.Vec3;
 
 import java.awt.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Set;
 
@@ -50,6 +52,7 @@ public class DungeonSecretItemDrop implements DungeonMechanic, ISecret {
     private static final long serialVersionUID = 8784808599222706537L;
 
     private OffsetPoint secretPoint = new OffsetPoint(0, 0, 0);
+    private PrecalculatedMoveNearest moveNearest;
     private List<String> preRequisite = new ArrayList<String>();
 
     @Override
@@ -109,10 +112,16 @@ public class DungeonSecretItemDrop implements DungeonMechanic, ISecret {
         if (!"found".equalsIgnoreCase(state))
             throw new PathfindImpossibleException(state + " is not valid state for secret");
         if (state.equals("found") && getSecretStatus(dungeonRoom) == SecretStatus.FOUND) return;
-        builder = builder.requires(new ActionMoveNearestAir(secretPoint));
-        for (String str : preRequisite) {
-            if (str.isEmpty()) continue;
-            builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+
+
+        if (moveNearest != null) {
+            ActionUtils.buildActionMoveAnd(builder, dungeonRoom, moveNearest, Collections.emptyList(), preRequisite, um -> um, "MoveNearest");
+        } else {
+            builder = builder.requires(new ActionMoveNearestAir(secretPoint));
+            for (String str : preRequisite) {
+                if (str.isEmpty()) continue;
+                builder.optional(new ActionChangeState(str.split(":")[0], str.split(":")[1]));
+            }
         }
     }
 

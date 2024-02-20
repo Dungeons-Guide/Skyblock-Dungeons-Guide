@@ -186,6 +186,9 @@ public class CommandDgDebug extends CommandBase {
             case "calculatestonks":
                 calculateStonks();
                 break;
+            case "calculatenearests":
+                calculateNearests();
+                break;
             case "groupunknowns":
                 try {
                     groupunknowns();
@@ -337,6 +340,30 @@ public class CommandDgDebug extends CommandBase {
                     ));
                     System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonRedstoneKey) mechanic).getSecretCache().getDependentRouteBlocker());
                     System.out.println(((DungeonRedstoneKey) mechanic).getSecretCache().getPrecalculatedStonk(Collections.emptyList()).size());
+                }
+
+            }
+        }
+    }
+
+    private void calculateNearests() {
+        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            for (Map.Entry<String, DungeonMechanic> stringDungeonMechanicEntry : dungeonRoomInfo.getMechanics().entrySet()) {
+                DungeonMechanic mechanic = stringDungeonMechanicEntry.getValue();
+                if (mechanic instanceof DungeonSecretBat) {
+                    ((DungeonSecretBat) mechanic).setMoveNearest(PrecalculatedMoveNearest.createOneBat(
+                            ((DungeonSecretBat) mechanic).getSecretPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretBat) mechanic).getMoveNearest().getDependentRouteBlocker());
+                    System.out.println(((DungeonSecretBat) mechanic).getMoveNearest().getPrecalculatedStonk(Collections.emptyList()).size());
+                } else if (mechanic instanceof DungeonSecretItemDrop) {
+                    ((DungeonSecretItemDrop) mechanic).setMoveNearest(PrecalculatedMoveNearest.createOneItem(
+                            ((DungeonSecretItemDrop) mechanic).getSecretPoint(),
+                            dungeonRoomInfo
+                    ));
+                    System.out.println(dungeonRoomInfo.getName()+"/"+stringDungeonMechanicEntry.getKey()+"/"+((DungeonSecretItemDrop) mechanic).getMoveNearest().getDependentRouteBlocker());
+                    System.out.println(((DungeonSecretItemDrop) mechanic).getMoveNearest().getPrecalculatedStonk(Collections.emptyList()).size());
                 }
 
             }

@@ -18,11 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
-import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
-import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
-import kr.syeyoung.dungeonsguide.dungeon.data.PrecalculatedStonk;
-import kr.syeyoung.dungeonsguide.dungeon.data.RequiredTool;
+import kr.syeyoung.dungeonsguide.dungeon.data.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
@@ -40,6 +38,9 @@ public class ActionUtils {
 
     public interface ActionDAGAccepter {
         ActionDAGBuilder build(ActionDAGBuilder builder) throws PathfindImpossibleException;
+    }
+    public interface AtomicActionAccepter {
+        AtomicAction.Builder build(AtomicAction.Builder builder) throws PathfindImpossibleException;
     }
 
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleClickingSpot> spots, OffsetPoint target, ActionDAGAccepter eachBuild, boolean guard) throws PathfindImpossibleException {
@@ -200,19 +201,6 @@ public class ActionUtils {
         return last;
     }
 
-    public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder,
-                                                           DungeonRoom dungeonRoom,
-                                                           PrecalculatedStonk precalculatedStonk,
-                                                           ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
-        List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
-                .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
-                .map(a -> a.getKey())
-                .collect(Collectors.toList());
-
-        return buildActionMoveAndClick(builder, dungeonRoom,
-                RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(openBlockers)), precalculatedStonk.getTarget(), eachBuild, false);
-    }
     public static ActionDAGBuilder buildActionMoveAndClick(ActionDAGBuilder builder, DungeonRoom dungeonRoom, OffsetPoint target, ActionDAGAccepter eachBuild) throws PathfindImpossibleException {
         List<String> openBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof RouteBlocker)
@@ -226,4 +214,84 @@ public class ActionUtils {
         ));
         return buildActionMoveAndClick(builder, dungeonRoom, spots, target, eachBuild, false);
     }
+
+
+    public static ActionDAGBuilder buildActionMoveAnd(ActionDAGBuilder builder, DungeonRoom dungeonRoom, List<PossibleMoveSpot> spots, String name, AtomicActionAccepter eachBuild, ActionDAGAccepter afterBuild, boolean guard) throws PathfindImpossibleException {
+
+        ActionDAGBuilder last = builder;
+        for (Map.Entry<Integer, List<PossibleMoveSpot>> integerListEntry :
+                spots.stream().collect(Collectors.groupingBy(a ->a.getClusterId())).entrySet()) {
+            ActionDAGBuilder builder1 = builder;
+            if (guard)
+                builder1 = builder.or(new ActionStupidGuard());
+
+            builder1 = builder1.or(
+                    eachBuild.build(new AtomicAction.Builder())
+                            .requires(new ActionMoveSpot(integerListEntry.getValue(), dungeonRoom))
+                            .build(name));
+            last = afterBuild.build(builder1);
+        }
+        return last;
+    }
+    public static ActionDAGBuilder buildActionMoveAnd(ActionDAGBuilder builder,
+                                                           DungeonRoom dungeonRoom,
+                                                           PrecalculatedMoveNearest precalculatedStonk,
+                                                           List<String> optionalPrerequisite,
+                                                           List<String> requiredPrerequisite,
+                                                      AtomicActionAccepter eachBuild,
+                                                      String name) throws PathfindImpossibleException {
+        List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
+                .filter(a -> a.getValue() instanceof RouteBlocker)
+                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .map(a -> a.getKey())
+                .collect(Collectors.toList());
+        defaultOpenBlockers.addAll(requiredPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList()));
+        List<String> optionalOpenBlockers = optionalPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList());
+
+        List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
+                .filter(a -> optionalOpenBlockers.contains(a))
+                .collect(Collectors.toList());
+        ActionDAGBuilder last = null;
+        for (int i = 0; i < (1 << optionalSubset.size()); i++) {
+            Set<String> newBlockers = new HashSet<>(defaultOpenBlockers);
+            Set<String> notBlockers = new HashSet<>();
+            for (int i1 = 0; i1 < optionalSubset.size(); i1++) {
+                if (((i >> i1) & 0x1) > 0) {
+                    newBlockers.add(optionalSubset.get(i1));
+                } else {
+                    notBlockers.add(optionalSubset.get(i1));
+                }
+            }
+            last = buildActionMoveAnd(builder, dungeonRoom,
+                    RaytraceHelper.chooseMinimalY2(precalculatedStonk.getPrecalculatedStonk(newBlockers)),
+                    name,
+                    eachBuild,
+                    builder1 -> {
+                        for (String newBlocker : newBlockers) {
+                            builder1.requires(new ActionChangeState(newBlocker, "open"));
+                        }
+                        for (String notBlocker : notBlockers) {
+                            builder1.requires(new ActionChangeState(notBlocker, "closed"));
+                        }
+                        for (String s : requiredPrerequisite) {
+                            if (s.isEmpty()) continue;
+                            String mech = s.split(":")[0];
+                            if (newBlockers.contains(mech)) continue;
+                            String state = s.split(":")[1];
+                            builder1.requires(new ActionChangeState(mech, state));
+                        }
+                        for (String s : optionalPrerequisite) {
+                            if (s.isEmpty()) continue;
+                            String mech = s.split(":")[0];
+                            String state = s.split(":")[1];
+                            if (!optionalSubset.contains(mech)) {
+                                builder1.optional(new ActionChangeState(mech, state));
+                            }
+                        }
+                        return null;
+                    }, i != (1 << optionalSubset.size()) - 1);
+        }
+        return last;
+    }
+
 }
