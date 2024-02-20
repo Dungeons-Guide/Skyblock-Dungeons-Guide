@@ -507,7 +507,7 @@ public class DungeonRoom implements IPathfindWorld {
         list2.clear();
         size = 0;
 
-        if (!blocked && x%2 != z%2 && y %2 == 0 && isOnGround) {
+        if (!blocked && (x%2 == 0) != (z%2 == 0) && y %2 == 0 && isOnGround) {
             boolean stairFloor = false;
             boolean elligible = true;
             for (int k1 = minX; k1 < maxX; ++k1) {
@@ -531,7 +531,7 @@ public class DungeonRoom implements IPathfindWorld {
                     }
                 }
             }
-            if (elligible && stairs) {
+            if (elligible && stairFloor) {
                 return CollisionState.ENDERCHEST;
             }
         }
