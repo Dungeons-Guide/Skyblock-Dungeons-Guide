@@ -110,8 +110,9 @@ public class RaytraceHelper {
                                         );
 
                                         if (breakData.hardness < 0) {
+                                            breakData.hardness = 9999;
                                             imposs = true;
-                                            break;
+                                            continue;
                                         }
 
                                         int idx = 0;
