@@ -39,6 +39,7 @@ import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.apache.commons.lang3.tuple.ImmutableTriple;
 
 import java.util.*;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 public class RaytraceHelper {
@@ -267,6 +268,7 @@ public class RaytraceHelper {
         Map<OffsetVec3, PossibleClickingSpot> clusterMap = new HashMap<>();
         Map<OffsetVec3, Integer> clusterId = new HashMap<>();
 
+
         for (PossibleClickingSpot spot : spots) {
             for (OffsetVec3 Vec3 : spot.getOffsetPointSet()) {
                 clusterId.put(Vec3, -1);
@@ -302,7 +304,6 @@ public class RaytraceHelper {
                 }
             }
         }
-
         return clusterMap.keySet().stream()
                 .collect(Collectors.groupingBy(a -> {
                     return new ImmutablePair<>(clusterId.get(a), clusterMap.get(a));
@@ -312,6 +313,196 @@ public class RaytraceHelper {
                                 a.getValue(),
                                 a.getKey().getRight().isStonkingReq(),
                                 a.getKey().getLeft()
+                        )
+                ).collect(Collectors.toList());
+    }
+    public static List<PossibleMoveSpot> findMovespots(World w, BlockPos target, Predicate<Vec3> included, double manhattenDist) {
+        return findMovespots(w, target, included, manhattenDist, (x,y,z) -> RaytraceHelper.canStand(w, x,y,z));
+    }
+
+    public static List<PossibleMoveSpot> findMovespots(World w, BlockPos target, Predicate<Vec3> included, double manhattenDist, CalculateIsBlocked calculateIsBlocked) {
+
+        Map<OffsetVec3, Boolean> lol = new HashMap<>();
+        Map<OffsetVec3, Boolean> air = new HashMap<>();
+        for (double x = target.getX() - manhattenDist; x <= target.getX() + manhattenDist + 1; x += 0.5) {
+            for (double y = target.getY() - manhattenDist; y <= target.getY() + manhattenDist + 1; y += 0.5) {
+                for (double z = target.getZ() - manhattenDist; z <= target.getZ() + manhattenDist + 1; z += 0.5) {
+                    Vec3 posToCheck = new Vec3(x,y,z);
+                    if (!included.test(posToCheck)) continue;
+
+                    boolean canStand = calculateIsBlocked.canStand((int) (x*2),(int) (y*2),(int) (z*2));
+
+                    boolean isAir = false;
+                    for (int xp = MathHelper.floor_double(x - 0.3); xp < MathHelper.floor_double(x + 0.3) + 1; xp++) {
+                        for (int zp = MathHelper.floor_double(z - 0.3); zp < MathHelper.floor_double(z + 0.3) + 1; zp++) {
+                            isAir |= w.getBlockState(new BlockPos(xp, posToCheck.yCoord, zp)).getBlock() == Blocks.air;
+                        }
+                    }
+
+
+                    if (isAir || canStand) {
+                        OffsetVec3 vec3 = new OffsetVec3(posToCheck.xCoord, posToCheck.yCoord -70, posToCheck.zCoord);
+                        lol.put(vec3, !canStand);
+                    }
+                }
+            }
+        }
+
+        List<PossibleMoveSpot> moveSpots = lol.keySet().stream().collect(Collectors.groupingBy(
+                                a -> lol.get(a)
+                        ))
+                        .entrySet().stream().map(
+                                a->
+                                    new PossibleMoveSpot(a.getValue(), a.getKey(), 0)
+                        ).collect(Collectors.toList());
+
+        return doClustering2(moveSpots);
+    }
+    public static List<PossibleMoveSpot> doClustering2(List<PossibleMoveSpot> spots) {
+        Map<OffsetVec3, PossibleMoveSpot> clusterMap = new HashMap<>();
+        Map<OffsetVec3, Integer> clusterId = new HashMap<>();
+
+        for (PossibleMoveSpot spot : spots) {
+            for (OffsetVec3 Vec3 : spot.getOffsetPointSet()) {
+                clusterId.put(Vec3, spot.isBlocked() ? -2 :  -1);
+                clusterMap.put(Vec3, spot);
+            }
+        }
+
+        for (OffsetVec3 vec3 : clusterId.keySet()) {
+            for (EnumFacing face : EnumFacing.VALUES) {
+                OffsetVec3 newVec3 = new OffsetVec3(
+                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                );
+                if (clusterId.containsKey(newVec3)) continue;
+                clusterId.put(vec3, -2);
+                break;
+            }
+        }
+        int lastId = 0;
+
+        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+            int id = clusterId.get(Vec3);
+            if (id != -1) continue;
+            id = ++lastId;
+
+            Queue<OffsetVec3> toVisit = new LinkedList<>();
+            toVisit.add(Vec3);
+            while (!toVisit.isEmpty()) {
+                OffsetVec3 vec3 = toVisit.poll();
+                if (clusterId.get(vec3) != -1) continue;
+                clusterId.put(vec3, id);
+
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1;y  <= 1; y++) {
+                        for (int z = -1; z <= 1; z++) {
+                            OffsetVec3 newVec3 = new OffsetVec3(
+                                    vec3.xCoord + x * 0.5,
+                                    vec3.yCoord + y * 0.5,
+                                    vec3.zCoord + z * 0.5
+                            );
+                            if (!clusterId.containsKey(newVec3)) continue;
+                            toVisit.add(newVec3);
+                        }
+                    }
+                }
+            }
+        }
+
+        Queue<OffsetVec3> chk = new LinkedList<>();
+        for (OffsetVec3 vec3 : clusterId.keySet()) {
+            if (clusterId.get(vec3) == -2) {
+                chk.add(vec3);
+            }
+        }
+
+        while (!chk.isEmpty()) {
+            OffsetVec3 vec3 = chk.poll();
+            if (clusterId.get(vec3) != -2) continue;
+            boolean found = false;
+            for (EnumFacing face : EnumFacing.VALUES) {
+                OffsetVec3 newVec3 = new OffsetVec3(
+                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                );
+                if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
+                clusterId.put(vec3, clusterId.get(newVec3));
+                found = true;
+                break;
+            }
+            if (found) {
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    OffsetVec3 newVec3 = new OffsetVec3(
+                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                    );
+                    if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) != -2) continue;
+                    chk.add(newVec3);
+                }
+            }
+        }
+        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+            int id = clusterId.get(Vec3);
+            if (id != -2) continue;
+            id = ++lastId;
+
+            Queue<OffsetVec3> toVisit = new LinkedList<>();
+            toVisit.add(Vec3);
+            while (!toVisit.isEmpty()) {
+                OffsetVec3 vec3 = toVisit.poll();
+                if (clusterId.get(vec3) != -2) continue;
+                clusterId.put(vec3, id);
+
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1;y  <= 1; y++) {
+                        for (int z = -1; z <= 1; z++) {
+                            OffsetVec3 newVec3 = new OffsetVec3(
+                                    vec3.xCoord + x * 0.5,
+                                    vec3.yCoord + y * 0.5,
+                                    vec3.zCoord + z * 0.5
+                            );
+                            if (!clusterId.containsKey(newVec3)) continue;
+                            toVisit.add(newVec3);
+                        }
+                    }
+                }
+            }
+        }
+
+        return clusterMap.keySet().stream()
+                .collect(Collectors.groupingBy(a -> {
+                    return new ImmutablePair<>(clusterId.get(a), clusterMap.get(a));
+                })).entrySet().stream().map(
+                        a -> new PossibleMoveSpot(
+                                a.getValue(),
+                                a.getKey().right.isBlocked(),
+                                a.getKey().left
+                        )
+                ).collect(Collectors.toList());
+    }
+    public static List<PossibleMoveSpot> chooseMinimalY2(List<PossibleMoveSpot> spots) {
+        Map<OffsetVec3, PossibleMoveSpot> clusterMap = new HashMap<>();
+
+        for (PossibleMoveSpot spot : spots) {
+            for (OffsetVec3 Vec3 : spot.getOffsetPointSet()) {
+                clusterMap.put(Vec3, spot);
+            }
+        }
+
+        return clusterMap.entrySet().stream()
+                .collect(Collectors.groupingBy(a -> new ImmutableTriple<>(a.getKey().xCoord, a.getKey().zCoord, a.getValue())))
+                .values().stream()
+                .map(a -> a.stream().min(Comparator.comparingDouble(b -> b.getKey().yCoord)).orElse(null))
+                .collect(Collectors.groupingBy(a -> clusterMap.get(a.getKey())))
+                .entrySet().stream().map(
+                        a -> new PossibleMoveSpot(
+                                a.getValue().stream().map(b -> b.getKey()).collect(Collectors.toList()),
+                                a.getKey().isBlocked(),
+                                a.getKey().getClusterId()
                         )
                 ).collect(Collectors.toList());
     }

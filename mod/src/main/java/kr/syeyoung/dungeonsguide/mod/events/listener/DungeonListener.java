@@ -581,6 +581,9 @@ public class DungeonListener {
 
     @SubscribeEvent
     public void onEntitySpawn(EntityJoinWorldEvent spawn) {
+        if (spawn.entity instanceof EntityBat)
+            System.out.println(spawn.entity +" Spawned!! dist: "+spawn.entity.getDistanceToEntity(Minecraft.getMinecraft().thePlayer));
+
         DungeonActionContext.getSpawnLocation().put(spawn.entity.getEntityId(), new Vec3(spawn.entity.posX, spawn.entity.posY, spawn.entity.posZ));
     }
 

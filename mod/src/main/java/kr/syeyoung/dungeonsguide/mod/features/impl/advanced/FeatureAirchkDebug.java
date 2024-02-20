@@ -20,13 +20,12 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
+import kr.syeyoung.dungeonsguide.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
-import net.minecraft.item.Item;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraftforge.client.event.RenderWorldLastEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
@@ -36,17 +35,17 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class FeatureStonkDebug extends SimpleFeature {
+public class FeatureAirchkDebug extends SimpleFeature {
 
-    public FeatureStonkDebug() {
-        super("Debug", "Stonk Debug", "Toggles stonk debug", "stdebug", false);
+    public FeatureAirchkDebug() {
+        super("Debug", "Airchk Debug", "Toggles airchk debug", "aidebug", false);
     }
 
-    private List<PossibleClickingSpot> spots;
+    private List<PossibleMoveSpot> spots;
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void onInteract(PlayerInteractEvent event) {
         if (event.entityPlayer.getHeldItem() == null ||
-                event.entityPlayer.getHeldItem().getItem() != Items.golden_shovel) {
+                event.entityPlayer.getHeldItem().getItem() != Items.golden_axe) {
             return;
         }
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK && event.action != PlayerInteractEvent.Action.RIGHT_CLICK_AIR) {
@@ -55,7 +54,9 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
             // reset
-            this.spots = RaytraceHelper.chooseMinimalY(RaytraceHelper.raycast(event.world, event.pos));
+            this.spots = RaytraceHelper.chooseMinimalY2(
+                    RaytraceHelper.findMovespots(event.world, event.pos, a -> event.pos.distanceSq(a.xCoord, a.yCoord, a.zCoord) <= 25, 6)
+            );
             System.out.println(spots);
         } else {
 //            this.spots = null;
@@ -68,7 +69,7 @@ public class FeatureStonkDebug extends SimpleFeature {
         if (spots == null) return;
         int cnt = spots.size();
         int i = 0;
-        for (PossibleClickingSpot spot : spots) {
+        for (PossibleMoveSpot spot : spots) {
             i++;
             Color c = Color.getHSBColor(
                     1.0f * i / cnt , 0.5f, 1.0f
@@ -97,14 +98,10 @@ public class FeatureStonkDebug extends SimpleFeature {
             cy /= spot.getOffsetPointSet().size();
             cz /= spot.getOffsetPointSet().size();
             cy += 0.2f;
-            RenderUtils.drawTextAtWorld(
-                    Arrays.stream(spot.getTools())
-                            .map(a -> a == null ? "null" : a.getBreakingPower()+":"+a.getHarvestLv()).collect(Collectors.joining(";"))
-                    +":::"+spot.getClusterId()+"/"+spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, event.partialTicks);
+            RenderUtils.drawTextAtWorld(spot.getClusterId()+"/"+spot.isBlocked(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.03f, false, true, event.partialTicks);
 
 
         }
-
     }
 
 }
