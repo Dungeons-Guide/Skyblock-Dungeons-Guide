@@ -279,7 +279,7 @@ public class ActionUtils {
                 }
             }
             last = buildActionMoveAnd(builder, dungeonRoom,
-                    RaytraceHelper.chooseMinimalY2(precalculatedStonk.getPrecalculatedStonk(newBlockers)),
+                    precalculatedStonk.getPrecalculatedStonk(newBlockers),
                     name,
                     eachBuild,
                     builder1 -> {

@@ -85,7 +85,7 @@ public class ActionMoveSpot extends AbstractAction {
                 Color c = Color.getHSBColor(
                         1.0f * i / targets.size(), 0.5f, 1.0f
                 );
-                Color actual = new Color(c.getRGB(), true);
+                Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x33000000, true);
 
 
                 for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
@@ -93,7 +93,7 @@ public class ActionMoveSpot extends AbstractAction {
                     RenderUtils.highlightBox(
                             new AxisAlignedBB(
                                     offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord + 0.25f
+                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
                             ),
                             actual,
                             partialTicks,
@@ -112,7 +112,7 @@ public class ActionMoveSpot extends AbstractAction {
                 cz /= spot.getOffsetPointSet().size();
                 cy += 0.2f;
                 RenderUtils.drawTextAtWorld(
-                        spot.getClusterId() + "/" + spot.isBlocked(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
+                        spot.getClusterId() + "/" + spot.isBlocked(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
 
 
             }

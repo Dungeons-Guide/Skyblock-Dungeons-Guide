@@ -51,6 +51,8 @@ public class FeaturePathfindSettings extends SimpleFeature {
         addParameter("teleport_down", new FeatureParameter<Boolean>("teleport_down", "Stonk Entrance: Use Teleport down", "Whether to consider using teleport tools (hype or aote) on top of fence/stonewall without torch on top to enter stoning mode. If you use Stonk Enter: etherwarp, you can disable this", true, new TCBoolean()));
         addParameter("etherwarp_ent", new FeatureParameter<Boolean>("etherwarp_ent", "Stonk Entrance: Use Etherwarp", "Whether to consider using etherwarp on fence/stonewall to enter stonking mode.", true, new TCBoolean()));
         addParameter("enderchest", new FeatureParameter<Boolean>("enderchest", "Stonk Entrance: Use Enderchest", "Whether to consider using enderchest on top of stair/fullblock combination to enter stonking mode.", false, new TCBoolean()));
+        addParameter("enderpearl", new FeatureParameter<Boolean>("enderpearl", "Stonk Entrance: Use Enderpearl", "Whether to consider using enderpearl anywhere.", false, new TCBoolean()));
+        addParameter("tntpearl", new FeatureParameter<Boolean>("tntpearl", "Stonk Entrance: Use Tntpearl", "Whether to consider using tntpearl to enter stonking mode.", false, new TCBoolean()));
 
         addParameter("max_stonk", new FeatureParameter<Integer>("max_stonk", "Maximum Length of Stonk path", "this is in dg-blocks, which means 1 block is 2", 12, new TCInteger()));
 
@@ -68,7 +70,9 @@ public class FeaturePathfindSettings extends SimpleFeature {
                 isStonkTeleport(),
                 isStonkEChest(),
                 isEtherwarp(),
-                this.<Integer>getParameter("max_stonk").getValue()
+                this.<Integer>getParameter("max_stonk").getValue(),
+                isStonkEnderpearl(),
+                isStonkTntpearl()
         );
     }
     @AllArgsConstructor @Getter
@@ -86,6 +90,8 @@ public class FeaturePathfindSettings extends SimpleFeature {
         private final boolean routeEtherwarp;
 
         private final int maxStonk;
+        private final boolean enderpearl;
+        private final boolean tntpearl;
     }
 
     public Item getPickaxe() {
@@ -144,6 +150,12 @@ public class FeaturePathfindSettings extends SimpleFeature {
     }
     public boolean isStonkEtherwarp() {
         return this.<Boolean>getParameter("etherwarp_ent").getValue();
+    }
+    public boolean isStonkEnderpearl() {
+        return this.<Boolean>getParameter("enderpearl").getValue();
+    }
+    public boolean isStonkTntpearl() {
+        return this.<Boolean>getParameter("tntpearl").getValue();
     }
     public boolean isEtherwarp() {
         return this.<Boolean>getParameter("etherwarp").getValue();

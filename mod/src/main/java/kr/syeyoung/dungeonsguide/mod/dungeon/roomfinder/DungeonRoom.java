@@ -439,6 +439,9 @@ public class DungeonRoom implements IPathfindWorld {
         AxisAlignedBB bb = AxisAlignedBB
                 .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
+        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+                wX - 0.5, wY - 0.5, wZ - 0.5, wX + 0.5, wY + 0.5, wZ+0.5
+        );
 
         int minX = MathHelper.floor_double(bb.minX);
         int maxX = MathHelper.floor_double(bb.maxX + 1.0D);
@@ -451,6 +454,7 @@ public class DungeonRoom implements IPathfindWorld {
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
         List<AxisAlignedBB> list = new ArrayList<>();
         List<AxisAlignedBB> list2 = new ArrayList<>();
+        List<AxisAlignedBB> pearlList = new ArrayList<>();
         int size = 0;
 
 //        boolean
@@ -471,6 +475,9 @@ public class DungeonRoom implements IPathfindWorld {
                     block.addCollisionBoxesToList(
                             getCachedWorld(), blockPos, state, bb, list2, null
                     );
+                    block.addCollisionBoxesToList(
+                            getCachedWorld(), blockPos, state, pearlTest, pearlList, null
+                    );
 
 
                     if (list2.size() != size) {
@@ -489,6 +496,9 @@ public class DungeonRoom implements IPathfindWorld {
                                 notstonkable = 99;
                             } else {
                                 notstonkable++;
+                            }
+                            if (state.getBlock() == Blocks.bedrock) {
+                                notstonkable = 99;
                             }
                         }
 
@@ -551,35 +561,57 @@ public class DungeonRoom implements IPathfindWorld {
                 return CollisionState.ONAIR;
             }
         } else {
+            double intersectArea = pearlList.stream().map(a -> {
+                double miX = Math.max(a.minX, pearlTest.minX);
+                double miY = Math.max(a.minY, pearlTest.minY);
+                double miZ = Math.max(a.minZ, pearlTest.minZ);
+                double maX = Math.min(a.maxX, pearlTest.maxX);
+                double maY = Math.min(a.maxY, pearlTest.maxY);
+                double maZ = Math.min(a.maxZ, pearlTest.maxZ);
+                return (maX - miX) * (maY - miY) * (maZ - miZ);
+            }).reduce(0.0, Double::sum);
+            boolean pearlable =  0 < intersectArea && intersectArea < 0.9 && (x%2 != 0 && z%2 != 0);
+
             // from here, blocked = true.
             if (notstonkable > 2) {
-                return CollisionState.BLOCKED;
+                if (!isOnGround) {
+                    return pearlable ? CollisionState.BLOCKED_PEARLTARGET : CollisionState.BLOCKED;
+                } else {
+                    return pearlable ? CollisionState.BLOCKED_PEARLTARGET_GROUND : CollisionState.BLOCKED_GROUND;
+                }
             }
+
             if (!isOnGround) {
-                return CollisionState.STONKING_AIR;
+                return pearlable ? CollisionState.STONKING_PEARLTARGET_AIR : CollisionState.STONKING_AIR;
             } else {
-                return CollisionState.STONKING;
+                return pearlable ? CollisionState.STONKING_PEARLTARGET : CollisionState.STONKING;
             }
         }
     }
 
     @AllArgsConstructor @Getter
     public enum CollisionState {
-        ONAIR(true, false, false, false, new Color(0x3300FF00, true)),
-        ONGROUND(true, false, false, true , new Color(0x33007700, true)),
-        SUPERBOOMABLE_GROUND(true, false, false, true, new Color(0x33007777, true)),
-        SUPERBOOMABLE_AIR(true, false, false, false, new Color(0x3300FFFF, true)),
-        STAIR(true, true, false, true, new Color(0x33FFFF00, true)), // can't enter stonking while flying, I tried, it's so hard.
-        ENDERCHEST(true, true, false, true, new Color(0x33FFFF00, true)),
-        STONKING(true, true, true, true, new Color(0x33000077, true)),
-        STONKING_AIR(true, true, true, false, new Color(0x330000FF, true)),
-        BLOCKED(false, true, true, true, new Color(0x33FF0000, true)); // 3 bytes per.... ehmmm...
+        ONAIR(true, false, false, false, false, new Color(0x3300FF00, true)),
+        ONGROUND(true, false, false, true , false, new Color(0x33007700, true)),
+        SUPERBOOMABLE_GROUND(true, false, false, true, false, new Color(0x33007777, true)),
+        SUPERBOOMABLE_AIR(true, false, false, false, false, new Color(0x3300FFFF, true)),
+        STAIR(true, true, false, true, false, new Color(0x33FFFF00, true)), // can't enter stonking while flying, I tried, it's so hard.
+        ENDERCHEST(true, true, false, true, false, new Color(0x33FFFF00, true)),
+        STONKING(true, true, true, true, false, new Color(0x33000077, true)),
+        STONKING_AIR(true, true, true, false, false, new Color(0x330000FF, true)),
+        STONKING_PEARLTARGET(true, true, true, true, true, new Color(0x33770077, true)),
+        STONKING_PEARLTARGET_AIR(true, true, true, false, true, new Color(0x33FF00FF, true)),
+        BLOCKED(false, true, true, false, false, new Color(0x33FF0000, true)),
+        BLOCKED_GROUND(false, true, true, true, false, new Color(0x33FF0000, true)),
+        BLOCKED_PEARLTARGET(false, true, true, false, true, new Color(0x33FFFFFF, true)),
+        BLOCKED_PEARLTARGET_GROUND(false, true, true, true, true, new Color(0x33777777, true)),; // 3 bytes per.... ehmmm...
 
 
         private boolean canGo;
         private boolean isClip;
         private boolean blocked;
         private boolean onGround;
+        private boolean pearltarget;
         private Color color;
 
         public static final int BITS = (int) Math.ceil(Math.log(CollisionState.values().length ) / Math.log(2));

@@ -85,8 +85,8 @@ public class DungeonRoomInfo implements Serializable {
 
     public IBlockState getBlock(int x, int y, int z, int rot) {
         if (y < -70 || y >= 186) return Blocks.bedrock.getDefaultState();
-        if (x < 0 || x >= width) return Blocks.bedrock.getDefaultState();
-        if (z < 0 || z >= length) return Blocks.bedrock.getDefaultState();
+        if (x <= 0 || x >= width) return Blocks.bedrock.getDefaultState();
+        if (z <= 0 || z >= length) return Blocks.bedrock.getDefaultState();
 
         int index = x + ((y+70) * length + z) * width;
         IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);

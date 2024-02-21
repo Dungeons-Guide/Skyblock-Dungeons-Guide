@@ -57,8 +57,8 @@ public class FeatureAirchkDebug extends SimpleFeature {
             // reset
             Vec3 vec = new Vec3(event.pos.getX() + 0.5, event.pos.getY() + 0.5, event.pos.getZ() + 0.5);
             AxisAlignedBB check = AxisAlignedBB.fromBounds(
-                    vec.xCoord - 3, vec.yCoord + 1.5, vec.zCoord -3,
-                    vec.xCoord + 3, vec.yCoord - 3, vec.zCoord + 3
+                    vec.xCoord - 3.1, vec.yCoord + 1.1, vec.zCoord -3.1,
+                    vec.xCoord + 3.1, vec.yCoord - 3.6, vec.zCoord + 3.1
             );
 
             this.spots =
