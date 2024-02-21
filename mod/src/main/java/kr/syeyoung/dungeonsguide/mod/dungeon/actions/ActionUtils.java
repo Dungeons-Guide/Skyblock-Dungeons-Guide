@@ -175,7 +175,7 @@ public class ActionUtils {
                 }
             }
             last = buildActionMoveAndClick(builder, dungeonRoom,
-                    RaytraceHelper.chooseMinimalY(precalculatedStonk.getPrecalculatedStonk(newBlockers)), precalculatedStonk.getTarget(),
+                    precalculatedStonk.getPrecalculatedStonk(newBlockers), precalculatedStonk.getTarget(),
                     builder1 -> {
                         for (String newBlocker : newBlockers) {
                             if (dungeonRoom.getMechanics().get(newBlocker) instanceof DungeonBreakableWall) continue;

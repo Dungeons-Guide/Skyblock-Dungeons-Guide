@@ -78,16 +78,49 @@ public class ActionMoveSpot extends AbstractAction {
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
+        {
+            double cx = 0, cy =0 , cz = 0;
+            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
+                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord;
+                cz += offsetVec3.zCoord;
+            }
+            cx /= targets.size();
+            cy /= targets.size();
+            cz /= targets.size();
+            draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
+        }
+
         if (FeatureRegistry.DEBUG_ST.isEnabled()) {
             int i = 0;
             for (PossibleMoveSpot spot : targets) {
+                GlStateManager.disableAlpha();
                 i++;
                 Color c = Color.getHSBColor(
                         1.0f * i / targets.size(), 0.5f, 1.0f
                 );
-                Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x33000000, true);
+                Color actual;
 
 
+                GlStateManager.disableAlpha();
+                if (!spot.isBlocked()) {
+                    actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
+                    PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
+                    for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
+                        Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                        RenderUtils.highlightBox(
+                                new AxisAlignedBB(
+                                        offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
+                                        offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
+                                ),
+                                actual,
+                                partialTicks,
+                                true
+                        );
+                    }
+                }
+                actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
                 for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
                     Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
@@ -112,25 +145,13 @@ public class ActionMoveSpot extends AbstractAction {
                 cz /= spot.getOffsetPointSet().size();
                 cy += 0.2f;
                 RenderUtils.drawTextAtWorld(
-                        spot.getClusterId() + "/" + spot.isBlocked(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
+                        spot.getClusterId() + "/" + spot.isBlocked() + " / "+spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
 
 
+                GlStateManager.enableAlpha();
             }
         }
 
-        {
-            double cx = 0, cy =0 , cz = 0;
-            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                cx += offsetVec3.xCoord;
-                cy += offsetVec3.yCoord;
-                cz += offsetVec3.zCoord;
-            }
-            cx /= targets.size();
-            cy /= targets.size();
-            cz /= targets.size();
-            draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
-        }
     }
 
     static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, BlockPos target, PathfindResult poses) {

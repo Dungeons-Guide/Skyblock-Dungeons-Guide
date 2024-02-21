@@ -198,9 +198,18 @@ public class FineGridStonkingBFS implements IPathfinder {
                 Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * 4, n.coordinate.y + value.getFrontOffsetY() * 4,
                         n.coordinate.z + value.getFrontOffsetZ() * 4);
                 DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+
+                int down  =0;
+                while (!neighborState.isOnGround() && neighbor.coordinate.y > 0) {
+                    neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y - 1, neighbor.coordinate.z);
+                    neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                    down ++;
+                }
+
+
                 neighbor.blocked = neighborState.isBlocked();
                 if (!neighborState.isBlocked()) {
-                    float gScore = n.g + 50;
+                    float gScore = n.g + 50 + MathHelper.sqrt_float(down*down + 16);
                     if (gScore < neighbor.g) {
                         neighbor.parent = n;
                         neighbor.stonkLength = 0;

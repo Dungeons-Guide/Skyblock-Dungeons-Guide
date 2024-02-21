@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
+import kr.syeyoung.dungeonsguide.dungeon.data.PossibleMoveSpot;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
@@ -76,27 +77,50 @@ public class ActionMove extends AbstractAction {
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
         if (FeatureRegistry.DEBUG_ST.isEnabled()) {
+
             int i = 0;
-            for (PossibleClickingSpot spot : targets) {
+            for (PossibleClickingSpot spot : RaytraceHelper.chooseMinimalY(targets)) {
+                GlStateManager.disableAlpha();
                 i++;
                 Color c = Color.getHSBColor(
                         1.0f * i / targets.size(), 0.5f, 1.0f
                 );
-                Color actual = new Color(c.getRGB(), true);
-
-
+                Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
                 for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
                     Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
                     RenderUtils.highlightBox(
                             new AxisAlignedBB(
-                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
-                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord + 0.25f
+                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
+                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
                             ),
                             actual,
                             partialTicks,
                             true
                     );
                 }
+            }
+
+            i = 0;
+            for (PossibleClickingSpot spot : targets) {
+                GlStateManager.disableAlpha();
+                i++;
+                Color c = Color.getHSBColor(
+                        1.0f * i / targets.size(), 0.5f, 1.0f
+                );
+                Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
+                for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                    RenderUtils.highlightBox(
+                            new AxisAlignedBB(
+                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
+                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
+                            ),
+                            actual,
+                            partialTicks,
+                            true
+                    );
+                }
+
                 double cx = 0, cy = 0, cz = 0;
                 for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
                     Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);

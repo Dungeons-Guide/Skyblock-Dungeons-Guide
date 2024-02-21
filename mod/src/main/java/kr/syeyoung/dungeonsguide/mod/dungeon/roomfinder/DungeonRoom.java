@@ -209,7 +209,7 @@ public class DungeonRoom implements IPathfindWorld {
 
 
 
-        minx = min.getX() * 2; miny = 0; minz = min.getZ() * 2;
+        minx = min.getX() * 2 + 2; miny = 0; minz = min.getZ() * 2 + 2;
         maxx = max.getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = max.getZ() * 2 + 2;
 
         lenx = maxx - minx;
@@ -396,7 +396,7 @@ public class DungeonRoom implements IPathfindWorld {
     private final int maxy;
     private final int maxz;
     private final int lenx, leny, lenz;
-    private static final float playerWidth = 0.3f;
+    private static final float playerWidth = 0.25f;
 
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
 
