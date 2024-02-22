@@ -28,6 +28,7 @@ import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import net.minecraft.block.Block;
+import net.minecraft.block.BlockAir;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockWall;
 import net.minecraft.block.state.IBlockState;
@@ -111,6 +112,16 @@ public class FineGridStonkingBFS implements IPathfinder {
     }
     private boolean finished = false;
 
+    private boolean emptyFor(IBlockState blockState) {
+        if (blockState.getBlock() == Blocks.carpet) return true;
+        if (blockState.getBlock() == Blocks.skull) return true;
+        if (blockState.getBlock() == Blocks.standing_sign) return false;
+        if (blockState.getBlock() == Blocks.wall_sign) return false;
+        if (blockState.getBlock() == Blocks.air) return true;
+        if (!blockState.getBlock().canCollideCheck(blockState, false)) return true;
+        return false;
+    }
+
     @Override
     public boolean doOneStep() {
         if (finished) return true;
@@ -132,10 +143,10 @@ public class FineGridStonkingBFS implements IPathfinder {
 
         if (n.blocked && algorithmSettings.isStonkTeleport()
                 && n.coordinate.x % 2 == 1 && n.coordinate.z % 2 == 1 && n.coordinate.y % 2 == 0) {
-            Block b = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2, (n.coordinate.z-1) / 2).getBlock();
-            Block b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 + 1, (n.coordinate.z-1) / 2).getBlock();
-            if (b instanceof BlockFence || b instanceof BlockWall) {
-                if (b2 == Blocks.air) {
+            IBlockState b = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 - 1, (n.coordinate.z-1) / 2);
+            IBlockState b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2, (n.coordinate.z-1) / 2);
+            if (b.getBlock() instanceof BlockFence || b.getBlock() instanceof BlockWall) {
+                if (b2.getBlock() == Blocks.air) {
                     Node neighbor = openNode(n.coordinate.x, n.coordinate.y + 3, n.coordinate.z);
                     DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                     neighbor.blocked = neighborState.isBlocked();
@@ -155,13 +166,15 @@ public class FineGridStonkingBFS implements IPathfinder {
         }
         if (n.blocked && algorithmSettings.isStonkEtherwarp()
                 && n.coordinate.x % 2 == 1 && n.coordinate.z % 2 == 1 && n.coordinate.y % 2 == 0) {
-            Block b = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2, (n.coordinate.z-1) / 2).getBlock();
-            if (b instanceof BlockFence || b instanceof BlockWall) {
+            IBlockState b = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 - 1, (n.coordinate.z-1) / 2);
+            IBlockState b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2, (n.coordinate.z-1) / 2);
+            IBlockState b3 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 + 1, (n.coordinate.z-1) / 2);
+            if (!emptyFor(b) && emptyFor(b2) && emptyFor(b3)) {
                 for (EnumFacing value : EnumFacing.VALUES) {
-                    Block b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2 + value.getFrontOffsetX(),
-                            n.coordinate.y / 2 + value.getFrontOffsetY(),
+                    Block near = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2 + value.getFrontOffsetX(),
+                            n.coordinate.y / 2 + value.getFrontOffsetY() - 1,
                             (n.coordinate.z-1) / 2 + value.getFrontOffsetZ()).getBlock();
-                    if (b2 == Blocks.air) {
+                    if (near == Blocks.air) {
                         Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * 2, n.coordinate.y + value.getFrontOffsetY() * 2,
                                 n.coordinate.z + value.getFrontOffsetZ() * 2);
                         DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);

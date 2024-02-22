@@ -78,10 +78,10 @@ public class RaytraceHelper {
                     Vec3 playerFoot = new Vec3(x, y, z);
                     for (int shift = 0; shift <= 1; shift++) {
                         Vec3 eye = playerFoot.addVector(0, 1.62F  - shift * 0.08F, 0); // assume sneaking lol
-                        for (int ix = 0; ix <= 1; ix++) {
-                            for (int iy = 0; iy <= 1; iy++) {
-                                for (int iz = 0; iz <= 1; iz++) {
-                                    Vec3 to = interpolate(bb, ix * 0.9 + 0.05, iy * 0.9 + 0.05, iz * 0.9 + 0.05);
+                        for (int ix = 0; ix <= 2; ix++) {
+                            for (int iy = 0; iy <= 2; iy++) {
+                                for (int iz = 0; iz <= 2; iz++) {
+                                    Vec3 to = interpolate(bb, ix * 0.45 + 0.05, iy * 0.45 + 0.05, iz * 0.45 + 0.05);
 
                                     if (to.squareDistanceTo(eye) > 4.5 * 4.5) {
                                         to = to.subtract(eye).normalize();
@@ -268,11 +268,23 @@ public class RaytraceHelper {
         Map<OffsetVec3, PossibleClickingSpot> clusterMap = new HashMap<>();
         Map<OffsetVec3, Integer> clusterId = new HashMap<>();
 
-
         for (PossibleClickingSpot spot : spots) {
             for (OffsetVec3 Vec3 : spot.getOffsetPointSet()) {
                 clusterId.put(Vec3, -1);
                 clusterMap.put(Vec3, spot);
+            }
+        }
+
+        for (OffsetVec3 vec3 : clusterId.keySet()) {
+            for (EnumFacing face : EnumFacing.VALUES) {
+                OffsetVec3 newVec3 = new OffsetVec3(
+                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                );
+                if (clusterId.containsKey(newVec3)) continue;
+                clusterId.put(vec3, -2);
+                break;
             }
         }
         int lastId = 0;
@@ -287,6 +299,68 @@ public class RaytraceHelper {
             while (!toVisit.isEmpty()) {
                 OffsetVec3 vec3 = toVisit.poll();
                 if (clusterId.get(vec3) != -1) continue;
+                clusterId.put(vec3, id);
+
+                for (int x = -1; x <= 1; x++) {
+                    for (int y = -1;y  <= 1; y++) {
+                        for (int z = -1; z <= 1; z++) {
+                            OffsetVec3 newVec3 = new OffsetVec3(
+                                    vec3.xCoord + x * 0.5,
+                                    vec3.yCoord + y * 0.5,
+                                    vec3.zCoord + z * 0.5
+                            );
+                            if (!clusterId.containsKey(newVec3)) continue;
+                            toVisit.add(newVec3);
+                        }
+                    }
+                }
+            }
+        }
+
+        Queue<OffsetVec3> chk = new LinkedList<>();
+        for (OffsetVec3 vec3 : clusterId.keySet()) {
+            if (clusterId.get(vec3) == -2) {
+                chk.add(vec3);
+            }
+        }
+
+        while (!chk.isEmpty()) {
+            OffsetVec3 vec3 = chk.poll();
+            if (clusterId.get(vec3) != -2) continue;
+            boolean found = false;
+            for (EnumFacing face : EnumFacing.VALUES) {
+                OffsetVec3 newVec3 = new OffsetVec3(
+                        vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                        vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                        vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                );
+                if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) == -2) continue;
+                clusterId.put(vec3, clusterId.get(newVec3));
+                found = true;
+                break;
+            }
+            if (found) {
+                for (EnumFacing face : EnumFacing.VALUES) {
+                    OffsetVec3 newVec3 = new OffsetVec3(
+                            vec3.xCoord + face.getFrontOffsetX() * 0.5,
+                            vec3.yCoord + face.getFrontOffsetY() * 0.5,
+                            vec3.zCoord + face.getFrontOffsetZ() * 0.5
+                    );
+                    if (!clusterId.containsKey(newVec3) || clusterId.get(newVec3) != -2) continue;
+                    chk.add(newVec3);
+                }
+            }
+        }
+        for (OffsetVec3 Vec3 : clusterId.keySet()) {
+            int id = clusterId.get(Vec3);
+            if (id != -2) continue;
+            id = ++lastId;
+
+            Queue<OffsetVec3> toVisit = new LinkedList<>();
+            toVisit.add(Vec3);
+            while (!toVisit.isEmpty()) {
+                OffsetVec3 vec3 = toVisit.poll();
+                if (clusterId.get(vec3) != -2) continue;
                 clusterId.put(vec3, id);
 
                 for (int x = -1; x <= 1; x++) {

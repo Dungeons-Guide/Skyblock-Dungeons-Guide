@@ -113,7 +113,7 @@ public class ActionMoveSpot extends AbstractAction {
                                 new AxisAlignedBB(
                                         offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
                                         offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
-                                ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
+                                ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
                                 actual,
                                 partialTicks,
                                 true
@@ -127,7 +127,7 @@ public class ActionMoveSpot extends AbstractAction {
                             new AxisAlignedBB(
                                     offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
                                     offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
-                            ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
+                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
                             actual,
                             partialTicks,
                             true
