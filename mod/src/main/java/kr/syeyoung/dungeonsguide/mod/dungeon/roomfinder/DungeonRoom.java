@@ -460,6 +460,8 @@ public class DungeonRoom implements IPathfindWorld {
 //        boolean
         boolean stairs = false;
         boolean superboom = false;
+        boolean foundstairat = false;
+        boolean slabTop = false;
         int notstonkable = 0;
         for (int k1 = minX; k1 < maxX; ++k1) {
             for (int l1 = minZ; l1 < maxZ; ++l1) {
@@ -507,11 +509,17 @@ public class DungeonRoom implements IPathfindWorld {
                     if (block instanceof BlockStairs && i2 != minY - 1) {
                         stairs = true;
                     }
+                    if (block instanceof BlockStairs && i2 == minY) {
+                        foundstairat = true;
+                        slabTop = state.getValue(BlockStairs.HALF) == BlockStairs.EnumHalf.TOP;
+                    }
                 }
             }
         }
         boolean isOnGround = list.stream().anyMatch(a -> a.maxY <= bb.minY);
         boolean blocked = !list2.isEmpty();
+        int headcut = (int) list2.stream().filter(a -> a.minY >= wY + 0.9f && a.minY <= wY + 1.4f).count();
+        int bodycut = (int) list2.stream().filter(a -> a.minY >= wY).count() - headcut;
 
         // weirdest thing ever check.
         list2.clear();
@@ -520,7 +528,7 @@ public class DungeonRoom implements IPathfindWorld {
         if (!blocked && (x%2 == 0) != (z%2 == 0) && y %2 == 0 && isOnGround) {
             boolean stairFloor = false;
             boolean elligible = false;
-            for (int k1 = minX; k1 < maxX; ++k1) {
+            label: for (int k1 = minX; k1 < maxX; ++k1) {
                 for (int l1 = minZ; l1 < maxZ; ++l1) {
                     blockPos.set(k1, minY - 1, l1);
 
@@ -536,6 +544,17 @@ public class DungeonRoom implements IPathfindWorld {
                         stairFloor = true;
                     }
                     size = list2.size();
+
+
+                    blockPos.set(k1, minY, l1);
+
+                    state = getCachedWorld().getBlockState(blockPos);
+                    block = state.getBlock();
+
+                    if (block.canCollideCheck(state, true)) {
+                        elligible = false;
+                        break label;
+                    }
                 }
             }
             if (elligible && stairFloor) {
@@ -570,7 +589,26 @@ public class DungeonRoom implements IPathfindWorld {
                 double maZ = Math.min(a.maxZ, pearlTest.maxZ);
                 return (maX - miX) * (maY - miY) * (maZ - miZ);
             }).reduce(0.0, Double::sum);
-            boolean pearlable =  0 < intersectArea && intersectArea < 0.9 && (x%2 != 0 && z%2 != 0);
+            double intersectArea2 = pearlList.stream().map(a -> { // head intersect.
+                double miX = Math.max(a.minX, pearlTest.minX);
+                double miY = Math.max(a.minY, pearlTest.minY+0.5);
+                double miZ = Math.max(a.minZ, pearlTest.minZ);
+                double maX = Math.min(a.maxX, pearlTest.maxX);
+                double maY = Math.min(a.maxY, pearlTest.maxY);
+                double maZ = Math.min(a.maxZ, pearlTest.maxZ);
+                if (miY > maY) return 0.0;
+                return (maX - miX) * (maY - miY) * (maZ - miZ);
+            }).reduce(0.0, Double::sum);
+            boolean pearlable =  false;
+            // 0.125 is usually there to prevent ironbars.
+            if (intersectArea > 0.125 && intersectArea2 == 0 && isOnGround)
+                pearlable = true; // there is match, but not top match. this means bottom slab with block ab`ove, or air and block above. node is not created on wall. ACTUALLY THIS IS STAIR.
+            if (intersectArea2 > 0.125 && intersectArea == intersectArea2)
+                pearlable = true; // there is match, but not bottom match. this means ceiling usually./
+            if (intersectArea == 0.375 && foundstairat && (x%2 == 0) != (z%2 == 0) && intersectArea2 == 0.125 && slabTop == (y %2 == 0)) // werid facing slab
+                pearlable = true;
+            if ((x%2 == 0) != (z %2 == 0) && isOnGround && intersectArea == 0.5 && intersectArea2 == 0.25 && headcut >= 2 && bodycut == 1)
+                pearlable = true;
 
             // from here, blocked = true.
             if (notstonkable > 2) {

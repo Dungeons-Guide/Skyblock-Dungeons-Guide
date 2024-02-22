@@ -209,7 +209,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                 neighbor.blocked = neighborState.isBlocked();
                 if (!neighborState.isBlocked()) {
-                    float gScore = n.g + 50 + MathHelper.sqrt_float(down*down + 16);
+                    float gScore = n.g + 150 + MathHelper.sqrt_float(down*down + 16);
                     if (gScore < neighbor.g) {
                         neighbor.parent = n;
                         neighbor.stonkLength = 0;
@@ -260,7 +260,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                     float gScore = n.g;
                     if (!neighborState.isClip() && elligibleForTntPearl)
-                        gScore += 100; // tntpearl slow
+                        gScore += 300; // tntpearl slow
                     if (!neighborState.isBlocked() && neighborState.isClip()) {
                         // stonk entrance!!!
                         gScore += 15;
