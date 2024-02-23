@@ -22,13 +22,23 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
+import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Vec3;
 
+import java.awt.*;
 import java.io.Serializable;
 import java.util.*;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class PrecalculatedStonk implements Serializable {
+    private static final long serialVersionUID = 3014165936155675745L;
     private final List<PossibleClickingSpot>[] spots;
     @Getter
     private final List<String> dependentRouteBlocker;
@@ -76,6 +86,74 @@ public class PrecalculatedStonk implements Serializable {
             spots[i] = RaytraceHelper.raycast(new DRIWorld(dri, included), new BlockPos(offsetPoint.getX(), offsetPoint.getY()+70, offsetPoint.getZ()));
         }
         return new PrecalculatedStonk(calculateFor, spots, offsetPoint);
+    }
+
+    public void render(float partialTicks, DungeonRoom dungeonRoom) {
+        if (EditingContext.getEditingContext() == null) return;
+        List<PossibleClickingSpot> targets = getPrecalculatedStonk(dungeonRoom.getMechanics().entrySet().stream()
+                .filter(a -> a.getValue() instanceof RouteBlocker)
+                .filter(a -> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));
+        int i = 0;
+        for (PossibleClickingSpot spot : RaytraceHelper.chooseMinimalY(targets)) {
+            GlStateManager.disableAlpha();
+            i++;
+            Color c = Color.getHSBColor(
+                    1.0f * i / targets.size(), 0.5f, 1.0f
+            );
+            Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
+            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                RenderUtils.highlightBox(
+                        new AxisAlignedBB(
+                                offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
+                                offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
+                        ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
+                        actual,
+                        partialTicks,
+                        true
+                );
+            }
+        }
+
+        i = 0;
+        for (PossibleClickingSpot spot : targets) {
+            GlStateManager.disableAlpha();
+            i++;
+            Color c = Color.getHSBColor(
+                    1.0f * i / targets.size(), 0.5f, 1.0f
+            );
+            Color actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
+            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                RenderUtils.highlightBox(
+                        new AxisAlignedBB(
+                                offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
+                                offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
+                        ).expand(0.0020000000949949026, 0.0020000000949949026, 0.0020000000949949026),
+                        actual,
+                        partialTicks,
+                        true
+                );
+            }
+
+            double cx = 0, cy = 0, cz = 0;
+            for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord;
+                cz += offsetVec3.zCoord;
+            }
+            cx /= spot.getOffsetPointSet().size();
+            cy /= spot.getOffsetPointSet().size();
+            cz /= spot.getOffsetPointSet().size();
+            cy += 0.2f;
+            RenderUtils.drawTextAtWorld(
+                    Arrays.stream(spot.getTools())
+                            .map(a -> a == null ? "null" : a.getBreakingPower() + ":" + a.getHarvestLv()).collect(Collectors.joining(";"))
+                            + ":::" + spot.getClusterId() + "/" + spot.isStonkingReq(), (float) cx, (float) cy, (float) cz, actual.getRGB(), 0.01f, false, true, partialTicks);
+
+
+        }
     }
 
 }

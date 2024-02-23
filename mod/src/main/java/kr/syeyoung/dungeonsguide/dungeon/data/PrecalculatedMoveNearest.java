@@ -22,18 +22,23 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
+import java.awt.*;
 import java.io.Serializable;
-import java.util.ArrayList;
-import java.util.Collection;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
+import java.util.stream.Collectors;
 
 public class PrecalculatedMoveNearest implements Serializable {
+    private static final long serialVersionUID = 4182147755650845821L;
     private final List<PossibleMoveSpot>[] spots;
     @Getter
     private final List<String> dependentRouteBlocker;
@@ -113,6 +118,70 @@ public class PrecalculatedMoveNearest implements Serializable {
                     a -> check.isVecInside(a), 8);
         }
         return new PrecalculatedMoveNearest(calculateFor, spots, offsetPoint);
+    }
+
+    public void render(float partialTicks, DungeonRoom dungeonRoom) {
+        if (EditingContext.getEditingContext() == null) return;
+        int i = 0;
+        List<PossibleMoveSpot> targets = getPrecalculatedStonk(dungeonRoom.getMechanics().entrySet().stream()
+                .filter(a -> a.getValue() instanceof RouteBlocker)
+                .filter(a -> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom)).map(a -> a.getKey()).collect(Collectors.toList()));
+        for (PossibleMoveSpot spot : targets) {
+            GlStateManager.disableAlpha();
+            i++;
+            Color c = Color.getHSBColor(
+                    1.0f * i / targets.size(), 0.5f, 1.0f
+            );
+            Color actual;
+
+
+            GlStateManager.disableAlpha();
+            if (!spot.isBlocked()) {
+                actual = new Color(c.getRGB() & 0xFFFFFF | 0x90000000, true);
+                PossibleMoveSpot spot2 = RaytraceHelper.chooseMinimalY2(Arrays.asList(spot)).get(0);
+                for (OffsetVec3 _vec3 : spot2.getOffsetPointSet()) {
+                    Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                    RenderUtils.highlightBox(
+                            new AxisAlignedBB(
+                                    offsetVec3.xCoord - 0.25f, offsetVec3.yCoord + 0.025f, offsetVec3.zCoord - 0.25f,
+                                    offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.026f, offsetVec3.zCoord + 0.25f
+                            ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
+                            actual,
+                            partialTicks,
+                            true
+                    );
+                }
+            }
+            actual = new Color(c.getRGB() & 0xFFFFFF | 0x10000000, true);
+            for (OffsetVec3 _vec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _vec3.getPos(dungeonRoom);
+                RenderUtils.highlightBox(
+                        new AxisAlignedBB(
+                                offsetVec3.xCoord - 0.25f, offsetVec3.yCoord - 0.025f, offsetVec3.zCoord - 0.25f,
+                                offsetVec3.xCoord + 0.25f, offsetVec3.yCoord + 0.475f, offsetVec3.zCoord + 0.25f
+                        ).expand(0.0030000000949949026, 0.0030000000949949026, 0.0030000000949949026),
+                        actual,
+                        partialTicks,
+                        true
+                );
+            }
+            double cx = 0, cy = 0, cz = 0;
+            for (OffsetVec3 _offsetVec3 : spot.getOffsetPointSet()) {
+                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord;
+                cz += offsetVec3.zCoord;
+            }
+            cx /= spot.getOffsetPointSet().size();
+            cy /= spot.getOffsetPointSet().size();
+            cz /= spot.getOffsetPointSet().size();
+            cy += 0.2f;
+            RenderUtils.drawTextAtWorld(
+                    spot.getClusterId() + "/" + spot.isBlocked() + " / "+spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
+
+
+            GlStateManager.enableAlpha();
+        }
     }
 
 }

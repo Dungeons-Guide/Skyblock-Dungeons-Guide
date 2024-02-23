@@ -48,10 +48,8 @@ import net.minecraft.util.Vec3;
 import org.lwjgl.opengl.GL11;
 
 import java.awt.*;
-import java.util.Arrays;
-import java.util.HashSet;
+import java.util.*;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Data
@@ -80,15 +78,17 @@ public class ActionMoveSpot extends AbstractAction {
 
         {
             double cx = 0, cy =0 , cz = 0;
+            int cnt = 0;
             for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
                 Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
                 cx += offsetVec3.xCoord;
                 cy += offsetVec3.yCoord;
                 cz += offsetVec3.zCoord;
+                cnt ++;
             }
-            cx /= targets.size();
-            cy /= targets.size();
-            cz /= targets.size();
+            cx /= cnt;
+            cy /= cnt;
+            cz /= cnt;
             draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
         }
 
@@ -342,7 +342,10 @@ public class ActionMoveSpot extends AbstractAction {
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
         executor.setTarget(state.getPlayerPos());
-        state.setPlayerPos(new Vec3(bpos.xCoord+0.5, bpos.yCoord, bpos.zCoord+0.5));
+        OffsetVec3 pos = RaytraceHelper.chooseMinimalY2(targets).stream().min(Comparator.comparingInt(b -> b.isBlocked() ? 1 : 0)).get()
+                .getOffsetPointSet().get(0);
+
+        state.setPlayerPos(pos.getPos(room));
         double result = executor.findCost();
         if (Double.isNaN(result)) return 999999999;
         return result;

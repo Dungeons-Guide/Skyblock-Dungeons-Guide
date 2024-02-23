@@ -154,6 +154,7 @@ public class ActionUtils {
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof RouteBlocker)
                 .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .filter(a -> precalculatedStonk.getDependentRouteBlocker().contains(a.getKey()))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
         defaultOpenBlockers.addAll(requiredPrerequisite.stream().filter(a -> !a.isEmpty()).map(a -> a.split(":")[0]).collect(Collectors.toList()));

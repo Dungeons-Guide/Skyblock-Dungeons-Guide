@@ -107,9 +107,10 @@ public class DungeonRoom implements IPathfindWorld {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-//                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
-//                    continue;
-//                } just don't check, it causes more problems
+                if (!canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
+                && !canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
+                    continue;
+                }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
@@ -493,7 +494,7 @@ public class DungeonRoom implements IPathfindWorld {
                         }
 
                         if (isNoInstaBreak(state, blockPos)) {
-                            if (i2 == maxY - 1 && (state.getBlock() != Blocks.iron_bars && !(state.getBlock() instanceof BlockFence))) {
+                            if (i2 == maxY - 1 && (state.getBlock() != Blocks.iron_bars && !(state.getBlock() instanceof BlockFence)) && !(state.getBlock() instanceof BlockSkull)) {
                                 // head level no break
                                 notstonkable = 99;
                             } else {

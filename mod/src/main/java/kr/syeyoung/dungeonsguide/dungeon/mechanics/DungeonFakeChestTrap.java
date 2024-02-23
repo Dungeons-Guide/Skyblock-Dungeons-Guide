@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.block.Block;
@@ -91,6 +92,9 @@ public class DungeonFakeChestTrap implements DungeonMechanic {
         for (OffsetPoint offsetPoint : tnts.getOffsetPointList()) {
             RenderUtils.highlightBlock(offsetPoint.getBlockPos(dungeonRoom), color, partialTicks);
         }
+
+        if (chestCache != null && FeatureRegistry.DEBUG_ST.isEnabled())
+            chestCache.render(partialTicks, dungeonRoom);
     }
 
     public boolean isBlocking(DungeonRoom dungeonRoom) {

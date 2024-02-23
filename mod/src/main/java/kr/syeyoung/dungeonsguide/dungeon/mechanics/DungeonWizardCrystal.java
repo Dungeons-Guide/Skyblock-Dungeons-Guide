@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import net.minecraft.client.Minecraft;
@@ -77,6 +78,9 @@ public class DungeonWizardCrystal implements DungeonMechanic {
         RenderUtils.highlightBlock(pos, color,partialTicks);
         RenderUtils.drawTextAtWorld(name, pos.getX() +0.5f, pos.getY()+0.75f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
         RenderUtils.drawTextAtWorld(getCurrentState(dungeonRoom), pos.getX() +0.5f, pos.getY()+0.25f, pos.getZ()+0.5f, 0xFFFFFFFF, 0.03f, false, true, partialTicks);
+
+        if (secretCache != null && FeatureRegistry.DEBUG_ST.isEnabled())
+            secretCache.render(partialTicks, dungeonRoom);
     }
 
     @Override
