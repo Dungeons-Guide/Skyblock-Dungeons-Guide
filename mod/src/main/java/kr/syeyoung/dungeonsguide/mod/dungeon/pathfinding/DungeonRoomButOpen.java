@@ -67,6 +67,16 @@ public class DungeonRoomButOpen implements IPathfindWorld {
     }
 
     @Override
+    public DungeonRoom.PearlLandType getPearl(int x, int y, int z) {
+        for (BlockPos freeeeePoint : freeeeePoints) {
+            if (Math.abs(freeeeePoint.getX() - x) <= 3 && Math.abs(freeeeePoint.getZ() - z) <= 3 && Math.abs(freeeeePoint.getY() - y) <= 1) {
+                return DungeonRoom.PearlLandType.OPEN;
+            }
+        }
+        return dungeonRoom.getPearl(x,y,z);
+    }
+
+    @Override
     public boolean isInstabreak(int x, int y, int z) {
         return dungeonRoom.isInstabreak(x,y,z);
     }

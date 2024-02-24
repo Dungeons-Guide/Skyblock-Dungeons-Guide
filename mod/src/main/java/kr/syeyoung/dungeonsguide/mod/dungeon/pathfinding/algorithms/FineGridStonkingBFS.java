@@ -134,7 +134,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
 
         DungeonRoom.CollisionState originNodeState = dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y, n.coordinate.z);
-
+        DungeonRoom.PearlLandType originalPearlType = dungeonRoom.getPearl(n.coordinate.x, n.coordinate.y, n.coordinate.z);
 
 
         if (n.blocked && algorithmSettings.isStonkTeleport()
@@ -147,7 +147,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                     DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                     neighbor.blocked = neighborState.isBlocked();
                     if (!neighborState.isBlocked()) {
-                        float gScore = n.g + 2;
+                        float gScore = n.g + 4;
                         if (gScore < neighbor.g) {
                             neighbor.parent = n;
                             neighbor.stonkLength = 0;
@@ -178,7 +178,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                         DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                         neighbor.blocked = neighborState.isBlocked();
                         if (!neighborState.isBlocked()) {
-                            float gScore = n.g + 2;
+                            float gScore = n.g + 4;
                             if (gScore < neighbor.g) {
                                 neighbor.parent = n;
                                 neighbor.stonkLength = 0;
@@ -193,21 +193,19 @@ public class FineGridStonkingBFS implements IPathfinder {
             }
         }
 
-        if (originNodeState.isPearltarget() && algorithmSettings.isEnderpearl()) {
-            for (EnumFacing value : EnumFacing.VALUES) {
-                if (value == EnumFacing.UP) continue;
+        if ((originalPearlType == DungeonRoom.PearlLandType.FLOOR || originalPearlType == DungeonRoom.PearlLandType.CEILING) && algorithmSettings.isEnderpearl() && originNodeState.isBlocked()) {
+            label: for (EnumFacing value : EnumFacing.VALUES) {
+                if (value == EnumFacing.UP) continue;;
+                for (int i = 1; i < 3; i++) {
+                    DungeonRoom.PearlLandType landType = dungeonRoom.getPearl(n.coordinate.x + i* value.getFrontOffsetX(), n.coordinate.y + i*value.getFrontOffsetY(), n.coordinate.z + i*value.getFrontOffsetZ());
+                    if (landType != DungeonRoom.PearlLandType.OPEN
+                            && !(originalPearlType == DungeonRoom.PearlLandType.FLOOR && landType == DungeonRoom.PearlLandType.FLOOR)
+                            && !(originalPearlType == DungeonRoom.PearlLandType.CEILING && landType == DungeonRoom.PearlLandType.CEILING)) continue label;
+                }
 
-                IBlockState b1 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2 + value.getFrontOffsetX(),
-                        n.coordinate.y / 2 + value.getFrontOffsetY(),
-                        (n.coordinate.z-1) / 2 + value.getFrontOffsetZ());
-                IBlockState b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2 + 2*value.getFrontOffsetX(),
-                        n.coordinate.y / 2 + 2*value.getFrontOffsetY(),
-                        (n.coordinate.z-1) / 2 + 2*value.getFrontOffsetZ());
-                if (b1.getBlock() != Blocks.air) continue;
-                if (b2.getBlock() != Blocks.air) continue;
 
-                Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * 4, n.coordinate.y + value.getFrontOffsetY() * 4,
-                        n.coordinate.z + value.getFrontOffsetZ() * 4);
+                Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * 2, n.coordinate.y + value.getFrontOffsetY() * 2,
+                        n.coordinate.z + value.getFrontOffsetZ() * 2);
                 DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
 
                 int down  =0;
@@ -217,10 +215,50 @@ public class FineGridStonkingBFS implements IPathfinder {
                     down ++;
                 }
 
+                if (neighbor.coordinate.y == 0) continue;
 
                 neighbor.blocked = neighborState.isBlocked();
                 if (!neighborState.isBlocked() && down < 10) {
-                    float gScore = n.g + 3 + MathHelper.sqrt_float(down*down + 16);
+                    float gScore = n.g + 20 + MathHelper.sqrt_float(down*down + 16);
+                    if (gScore < neighbor.g) {
+                        neighbor.parent = n;
+                        neighbor.stonkLength = 0;
+                        neighbor.connectionType = PathfindResult.PathfindNode.NodeType.ENDERPEARL;
+                        neighbor.g = gScore;
+                        neighbor.f = gScore;
+                        open.add(neighbor);
+                    }
+                }
+            }
+        }
+
+        if ((originalPearlType == DungeonRoom.PearlLandType.WALL) && algorithmSettings.isEnderpearl() && originNodeState.isBlocked() && originNodeState.isOnGround()) {
+            label: for (EnumFacing value : EnumFacing.VALUES) {
+                if (value == EnumFacing.UP) continue;;
+                for (int i = 1; i < 2; i++) {
+                    DungeonRoom.PearlLandType landType = dungeonRoom.getPearl(n.coordinate.x + i* value.getFrontOffsetX(), n.coordinate.y + i*value.getFrontOffsetY(), n.coordinate.z + i*value.getFrontOffsetZ());
+                    DungeonRoom.CollisionState collisionState = dungeonRoom.getBlock(n.coordinate.x + i* value.getFrontOffsetX(), n.coordinate.y + i*value.getFrontOffsetY(), n.coordinate.z + i*value.getFrontOffsetZ());
+                    if (landType != DungeonRoom.PearlLandType.OPEN) continue label;
+                    if (!collisionState.isBlocked() || !collisionState.isCanGo()) continue label;
+                }
+
+
+                Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * 2, n.coordinate.y + value.getFrontOffsetY() * 2,
+                        n.coordinate.z + value.getFrontOffsetZ() * 2);
+                DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+
+                int down  =0;
+                while (!neighborState.isOnGround() && neighbor.coordinate.y > 0) {
+                    neighbor = openNode(neighbor.coordinate.x, neighbor.coordinate.y - 1, neighbor.coordinate.z);
+                    neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                    down ++;
+                }
+                if (neighbor.coordinate.y == 0) continue;
+
+
+                neighbor.blocked = neighborState.isBlocked();
+                if (!neighborState.isBlocked() && 5 < down && down < 30) {
+                    float gScore = n.g + 20 + MathHelper.sqrt_float(down*down + 16);
                     if (gScore < neighbor.g) {
                         neighbor.parent = n;
                         neighbor.stonkLength = 0;
@@ -237,11 +275,12 @@ public class FineGridStonkingBFS implements IPathfinder {
 //        if (originNodeState.isCanGo()) {
             if (n.blocked) {
                 // in wall
+                boolean ontop = dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y + 1, n.coordinate.z) == DungeonRoom.CollisionState.ONGROUND;
                 label:
                 for (EnumFacing value : EnumFacing.VALUES) {
                     Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX(), n.coordinate.y + (value == EnumFacing.DOWN ? 2 : 1) * value.getFrontOffsetY(), n.coordinate.z + value.getFrontOffsetZ());
                     DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
-
+//                    DungeonRoom.PearlLandType pearlLandType = dungeonRoom.getPearl(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                     if (!neighborState.isCanGo() && (neighborState.isOnGround() || value != EnumFacing.UP)) {
                         continue; // obv, it's forbidden.
                     }
@@ -251,10 +290,10 @@ public class FineGridStonkingBFS implements IPathfinder {
                     if (value.getFrontOffsetY() == -1 && !neighborState.isOnGround()) {
                         continue; // can not jump while floating in air.
                     }
+//                    if (neighborState)
 
                     boolean elligibleForTntPearl = algorithmSettings.isTntpearl() && neighborState.isOnGround() && !neighborState.isClip()
-                            && ((n.coordinate.x % 2 == 0) != (n.coordinate.z % 2 == 0))
-                            && value.getFrontOffsetY() == 0 && neighbor.coordinate.y % 2 == 0;
+                            && value.getFrontOffsetY() == 0 && neighbor.coordinate.y % 2 == 0 && originalPearlType == DungeonRoom.PearlLandType.FLOOR_WALL && dungeonRoom.getActualBlock((int) Math.floor(neighbor.coordinate.x / 2.0), neighbor.coordinate.y / 2, (int) Math.floor(neighbor.coordinate.z / 2.0)).getBlock() == Blocks.air;
 
 
                     if (!neighborState.isClip() && !elligibleForTntPearl) {
@@ -271,13 +310,16 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                     float gScore = n.g;
                     if (!neighborState.isClip() && elligibleForTntPearl)
-                        gScore += 3; // tntpearl slow
+                        gScore += 20; // tntpearl slow
                     if (!neighborState.isBlocked() && neighborState.isClip()) {
                         // stonk entrance!!!
-                        gScore += 3;
+                        gScore += 6;
+                    } else if (value.getFrontOffsetY() == -1) {
+                        gScore += 100;
+                    } else if (neighbor.coordinate.x % 2 == 0 || neighbor.coordinate.z % 2 == 0) {
+                        gScore += 3;// pls don't jump.
                     } else {
-                        gScore += value.getFrontOffsetY() == -1
-                                || (neighbor.coordinate.x % 2 == 0 && neighbor.coordinate.z % 2 == 0) ? 20 : 3; // pls don't jump.
+                        gScore += 2;
                     }
 
                     if (gScore < neighbor.g) {
@@ -326,7 +368,7 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                     boolean superboomthingy = (originNodeState == DungeonRoom.CollisionState.SUPERBOOMABLE_AIR || originNodeState == DungeonRoom.CollisionState.SUPERBOOMABLE_GROUND) &&
                             (neighborState != DungeonRoom.CollisionState.SUPERBOOMABLE_AIR && neighborState != DungeonRoom.CollisionState.SUPERBOOMABLE_GROUND);
-                    float gScore = n.g + (superboomthingy ? 15 : neighborState.isOnGround() ? 1 : 2 * (updist + 1));
+                    float gScore = n.g + (superboomthingy ? 10 : neighborState.isOnGround() || value == EnumFacing.UP ? 1 : 2 * (updist + 1));
                     if (gScore < neighbor.g) {
                         neighbor.parent = n;
                         if (neighbor.blocked)
@@ -364,7 +406,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                         DungeonRoom.CollisionState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                         neighbor.blocked = nodeState.isBlocked();
                         if (!nodeState.isBlocked()) {
-                            float gScore = n.g + 2; // don't use etherwarp unelss it saves like 50 blocks
+                            float gScore = n.g + 20; // don't use etherwarp unelss it saves like 50 blocks
 
                             if (gScore < neighbor.g) {
                                 neighbor.parent = n;

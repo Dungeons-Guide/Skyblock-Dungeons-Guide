@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -49,6 +50,7 @@ import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.Setter;
 import net.minecraft.block.*;
+import net.minecraft.block.material.Material;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.init.Blocks;
 import net.minecraft.client.Minecraft;
@@ -218,6 +220,7 @@ public class DungeonRoom implements IPathfindWorld {
         lenz = maxz - minz;
 
         whole = new BitStorage(lenx, leny, lenz, CollisionState.BITS); // plus 1 , because I don't wanna do floating point op for dividing and ceiling
+        enderpearl = new BitStorage(lenx, leny, lenz, PearlLandType.BITS);
 
         this.doorsAndStates = doorsAndStates;
         tryRematch();
@@ -265,16 +268,18 @@ public class DungeonRoom implements IPathfindWorld {
     private static final Set<Vector2d> directions = Sets.newHashSet(new Vector2d(0,16), new Vector2d(0, -16), new Vector2d(16, 0), new Vector2d(-16 , 0));
 
     private void buildDoors(Set<Tuple<Vector2d, EDungeonDoorType>> doorsAndStates) {
-        Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
-        BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16,0,16);
-        for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
-            Vector2d vector2d = doorsAndState.getFirst();
-            BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
-            positions.add(new Tuple<>(neu, doorsAndState.getSecond()));
-        }
+        if (getDungeonRoomInfo().getMechanics().values().stream().noneMatch(a -> a instanceof DungeonRoomDoor2)) {
+            Set<Tuple<BlockPos, EDungeonDoorType>> positions = new HashSet<>();
+            BlockPos pos = context.getScaffoldParser().getDungeonMapLayout().roomPointToWorldPoint(minRoomPt).add(16, 0, 16);
+            for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : doorsAndStates) {
+                Vector2d vector2d = doorsAndState.getFirst();
+                BlockPos neu = pos.add(vector2d.x * 32, 0, vector2d.y * 32);
+                positions.add(new Tuple<>(neu, doorsAndState.getSecond()));
+            }
 
-        for (Tuple<BlockPos, EDungeonDoorType> door : positions) {
-            doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
+            for (Tuple<BlockPos, EDungeonDoorType> door : positions) {
+                doors.add(new DungeonDoor(context.getWorld(), door.getFirst(), door.getSecond()));
+            }
         }
     }
 
@@ -374,21 +379,29 @@ public class DungeonRoom implements IPathfindWorld {
     }
 
     public boolean canAccessAbsolute(BlockPos pos) {
-        DungeonRoomScaffoldParser mapProcessor = this.context.getScaffoldParser();
-        Point roomPt = mapProcessor.getDungeonMapLayout().worldPointToRoomPoint(pos);
-        roomPt.translate(-minRoomPt.x, -minRoomPt.y);
-        if (roomPt.x < 0 || roomPt.y < 0 || roomPt.x >= 4 || roomPt.y >= 4) return false;
-
-        return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
+        return canAccessRelative(pos.getX() - this.min.getX(), pos.getZ() - this.min.getZ());
     }
     public boolean canAccessRelative(int x, int z) {
-        return  x>= 0 && z >= 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
+        boolean firstCond =  x> 0 && z > 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
+        boolean zCond = (shape >> ((z / 32) * 4 + (x / 32) - 1) & 0x1) > 0;
+        boolean xCond = (shape >> ((z / 32) * 4 + (x / 32) - 4) & 0x1) > 0;
+        if (x % 32 == 0 && z % 32 == 0) {
+            return firstCond && (shape >>((z/32) *4 +(x/32) - 5) & 0x1) > 0
+                    && xCond
+                    && zCond;
+        } else if (x % 32 == 0) {
+            return firstCond && zCond;
+        } else if (z % 32 == 0) {
+            return firstCond && xCond;
+        }
+
+        return firstCond;
     }
 
 
 
 
-    BitStorage oneLayer, whole;
+    BitStorage enderpearl, whole;
     // These values are doubled
     private final int minx;
     private final int miny;
@@ -402,13 +415,13 @@ public class DungeonRoom implements IPathfindWorld {
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
 
 
-    private boolean isNoInstaBreak(IBlockState iBlockState, BlockPos pos) {
+    private int isNoInstaBreak(IBlockState iBlockState, BlockPos pos) {
         Block b = iBlockState.getBlock();
-        if (b == Blocks.air) return false;
+        if (b == Blocks.air) return 0;
         if (b.getBlockHardness(getCachedWorld(), pos) < 0) {
-            return true;
+            return 99;
         } else if (algorithmSettings.getPickaxeSpeed() > 0 &&
-                ((algorithmSettings.getPickaxe().canHarvestBlock(b) &&
+                (((algorithmSettings.getPickaxe().canHarvestBlock(b)) &&
                 b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 30.0) ||
                 (b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getPickaxeSpeed() / 100.0))
         ) {
@@ -417,9 +430,9 @@ public class DungeonRoom implements IPathfindWorld {
                 && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getShovelSpeed()) {
         } else if (algorithmSettings.getAxeSpeed() > 0 && b.isToolEffective("axe", iBlockState) && b.getBlockHardness(getCachedWorld(), pos) <= algorithmSettings.getAxeSpeed()) {
         } else {
-            return true;
+            return algorithmSettings.getPickaxe().canHarvestBlock(b) ? 1 : 1;
         }
-        return false;
+        return 0;
     }
     public boolean isInstabreak(int x, int y, int z) {
         if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return false;
@@ -427,13 +440,14 @@ public class DungeonRoom implements IPathfindWorld {
 
         BlockPos pos = new BlockPos(x/2,y/2,z/2);
         IBlockState blockState = getCachedWorld().getBlockState(pos);
-        return !isNoInstaBreak(blockState, pos);
+        return isNoInstaBreak(blockState, pos) == 0;
     }
 
     private HashSet<BlockPos> poses = new HashSet<>();
 
     private CollisionState calculateIsBlocked(int x, int y, int z) {
-        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return CollisionState.BLOCKED;
+//        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return CollisionState.BLOCKED;
+        if (!canAccessRelative( (x - minx + 2) / 2, (z - minz + 2) / 2)) return CollisionState.BLOCKED;
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
@@ -455,7 +469,6 @@ public class DungeonRoom implements IPathfindWorld {
         BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
         List<AxisAlignedBB> list = new ArrayList<>();
         List<AxisAlignedBB> list2 = new ArrayList<>();
-        List<AxisAlignedBB> pearlList = new ArrayList<>();
         int size = 0;
 
 //        boolean
@@ -478,9 +491,6 @@ public class DungeonRoom implements IPathfindWorld {
                     block.addCollisionBoxesToList(
                             getCachedWorld(), blockPos, state, bb, list2, null
                     );
-                    block.addCollisionBoxesToList(
-                            getCachedWorld(), blockPos, state, pearlTest, pearlList, null
-                    );
 
 
                     if (list2.size() != size) {
@@ -493,12 +503,13 @@ public class DungeonRoom implements IPathfindWorld {
                             continue label;
                         }
 
-                        if (isNoInstaBreak(state, blockPos)) {
+                        int breakFactor = isNoInstaBreak(state, blockPos);
+                        if (breakFactor > 0) {
                             if (i2 == maxY - 1 && (state.getBlock() != Blocks.iron_bars && !(state.getBlock() instanceof BlockFence)) && !(state.getBlock() instanceof BlockSkull)) {
                                 // head level no break
                                 notstonkable = 99;
                             } else {
-                                notstonkable++;
+                                notstonkable+= breakFactor;
                             }
                             if (state.getBlock() == Blocks.bedrock) {
                                 notstonkable = 99;
@@ -581,79 +592,114 @@ public class DungeonRoom implements IPathfindWorld {
                 return CollisionState.ONAIR;
             }
         } else {
-            double intersectArea = pearlList.stream().map(a -> {
-                double miX = Math.max(a.minX, pearlTest.minX);
-                double miY = Math.max(a.minY, pearlTest.minY);
-                double miZ = Math.max(a.minZ, pearlTest.minZ);
-                double maX = Math.min(a.maxX, pearlTest.maxX);
-                double maY = Math.min(a.maxY, pearlTest.maxY);
-                double maZ = Math.min(a.maxZ, pearlTest.maxZ);
-                return (maX - miX) * (maY - miY) * (maZ - miZ);
-            }).reduce(0.0, Double::sum);
-            double intersectArea2 = pearlList.stream().map(a -> { // head intersect.
-                double miX = Math.max(a.minX, pearlTest.minX);
-                double miY = Math.max(a.minY, pearlTest.minY+0.5);
-                double miZ = Math.max(a.minZ, pearlTest.minZ);
-                double maX = Math.min(a.maxX, pearlTest.maxX);
-                double maY = Math.min(a.maxY, pearlTest.maxY);
-                double maZ = Math.min(a.maxZ, pearlTest.maxZ);
-                if (miY > maY) return 0.0;
-                return (maX - miX) * (maY - miY) * (maZ - miZ);
-            }).reduce(0.0, Double::sum);
-            boolean pearlable =  false;
-            // 0.125 is usually there to prevent ironbars.
-            if (intersectArea > 0.125 && intersectArea2 == 0 && isOnGround)
-                pearlable = true; // there is match, but not top match. this means bottom slab with block ab`ove, or air and block above. node is not created on wall. ACTUALLY THIS IS STAIR.
-            if (intersectArea2 > 0.125 && intersectArea == intersectArea2)
-                pearlable = true; // there is match, but not bottom match. this means ceiling usually./
-            if (intersectArea == 0.375 && foundstairat && (x%2 == 0) != (z%2 == 0) && intersectArea2 == 0.125 && slabTop == (y %2 == 0)) // werid facing slab
-                pearlable = true;
-            if ((x%2 == 0) != (z %2 == 0) && isOnGround && intersectArea == 0.5 && intersectArea2 == 0.25 && headcut >= 2 && bodycut == 1)
-                pearlable = true;
+
 
             // from here, blocked = true.
             if (notstonkable > 2) {
                 if (!isOnGround) {
-                    return pearlable ? CollisionState.BLOCKED_PEARLTARGET : CollisionState.BLOCKED;
+                    return CollisionState.BLOCKED;
                 } else {
-                    return pearlable ? CollisionState.BLOCKED_PEARLTARGET_GROUND : CollisionState.BLOCKED_GROUND;
+                    return CollisionState.BLOCKED_GROUND;
                 }
             }
 
             if (!isOnGround) {
-                return pearlable ? CollisionState.STONKING_PEARLTARGET_AIR : CollisionState.STONKING_AIR;
+                return CollisionState.STONKING_AIR;
             } else {
-                return pearlable ? CollisionState.STONKING_PEARLTARGET : CollisionState.STONKING;
+                return CollisionState.STONKING;
             }
         }
     }
+    private PearlLandType calculateCanPearl(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return PearlLandType.BLOCKED;
 
+        float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
+
+        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+                wX-0.3, wY-0.3, wZ-0.3, wX+ 0.3, wY+ 0.3, wZ + 0.3
+        );
+
+        int minX = MathHelper.floor_double(pearlTest.minX);
+        int maxX = MathHelper.floor_double(pearlTest.maxX + 1.0D);
+        int minY = MathHelper.floor_double(pearlTest.minY);
+        int maxY = MathHelper.floor_double(pearlTest.maxY + 1.0D);
+        int minZ = MathHelper.floor_double(pearlTest.minZ);
+        int maxZ = MathHelper.floor_double(pearlTest.maxZ + 1.0D);
+
+        BlockPos.MutableBlockPos blockPos = new BlockPos.MutableBlockPos();
+        List<AxisAlignedBB> pearlList = new ArrayList<>();
+        for (int k1 = minX; k1 < maxX; ++k1) {
+            for (int l1 = minZ; l1 < maxZ; ++l1) {
+                label: for (int i2 = minY-1; i2 < maxY; ++i2) {
+                    blockPos.set(k1, i2, l1);
+
+
+                    IBlockState state = getCachedWorld().getBlockState(blockPos);
+                    Block block = state.getBlock();
+                    block.addCollisionBoxesToList(
+                            getCachedWorld(), blockPos, state, pearlTest, pearlList, null
+                    );
+                }
+            }
+        }
+        if (pearlList.isEmpty()) return PearlLandType.OPEN;
+        double wholeVolume = pearlList.stream().map(a -> {
+            double miX = Math.max(a.minX, pearlTest.minX);
+            double miY = Math.max(a.minY, pearlTest.minY);
+            double miZ = Math.max(a.minZ, pearlTest.minZ);
+            double maX = Math.min(a.maxX, pearlTest.maxX);
+            double maY = Math.min(a.maxY, pearlTest.maxY);
+            double maZ = Math.min(a.maxZ, pearlTest.maxZ);
+            return (maX - miX) * (maY - miY) * (maZ - miZ);
+        }).reduce(0.0, Double::sum);
+        double topVolume = pearlList.stream().map(a -> { // head intersect.
+            double miX = Math.max(a.minX, pearlTest.minX);
+            double miY = Math.max(a.minY, pearlTest.minY+0.3);
+            double miZ = Math.max(a.minZ, pearlTest.minZ);
+            double maX = Math.min(a.maxX, pearlTest.maxX);
+            double maY = Math.min(a.maxY, pearlTest.maxY);
+            double maZ = Math.min(a.maxZ, pearlTest.maxZ);
+            if (miY > maY) return 0.0;
+            return (maX - miX) * (maY - miY) * (maZ - miZ);
+        }).reduce(0.0, Double::sum);
+        // total is 0.216
+        if (wholeVolume > 0.215) return PearlLandType.BLOCKED;
+        if (wholeVolume > 0.027 && 0 == topVolume) return PearlLandType.FLOOR;
+        if (wholeVolume  == topVolume && wholeVolume > 0.027) return PearlLandType.CEILING;
+        // floor wall and ceiling wall.
+        if (wholeVolume - topVolume > 0.027 && topVolume > 0 && wholeVolume != topVolume * 2) return PearlLandType.FLOOR_WALL;
+        if (wholeVolume > 0) return PearlLandType.WALL;
+        return PearlLandType.OPEN;
+    }
+
+    public enum PearlLandType {
+        UNCACHED, FLOOR, CEILING, FLOOR_WALL, WALL, BLOCKED, OPEN;
+
+        public static final int BITS = (int) Math.ceil(Math.log(PearlLandType.values().length ) / Math.log(2));
+        public static final PearlLandType[] VALUES = PearlLandType.values();
+    }
     @AllArgsConstructor @Getter
     public enum CollisionState {
-        ONAIR(true, false, false, false, false, new Color(0x3300FF00, true)),
-        ONGROUND(true, false, false, true , false, new Color(0x33007700, true)),
-        SUPERBOOMABLE_GROUND(true, false, false, true, false, new Color(0x33007777, true)),
-        SUPERBOOMABLE_AIR(true, false, false, false, false, new Color(0x3300FFFF, true)),
-        STAIR(true, true, false, true, false, new Color(0x33FFFF00, true)), // can't enter stonking while flying, I tried, it's so hard.
-        ENDERCHEST(true, true, false, true, false, new Color(0x33FFFF00, true)),
-        STONKING(true, true, true, true, false, new Color(0x33000077, true)),
-        STONKING_AIR(true, true, true, false, false, new Color(0x330000FF, true)),
-        STONKING_PEARLTARGET(true, true, true, true, true, new Color(0x33770077, true)),
-        STONKING_PEARLTARGET_AIR(true, true, true, false, true, new Color(0x33FF00FF, true)),
-        BLOCKED(false, true, true, false, false, new Color(0x33FF0000, true)),
-        BLOCKED_GROUND(false, true, true, true, false, new Color(0x33FF0000, true)),
-        BLOCKED_PEARLTARGET(false, true, true, false, true, new Color(0x33FFFFFF, true)),
-        BLOCKED_PEARLTARGET_GROUND(false, true, true, true, true, new Color(0x33777777, true)),; // 3 bytes per.... ehmmm...
+        UNCACHED(false, false, false, false, null),
+        ONAIR(true, false, false, false, new Color(0x3300FF00, true)),
+        ONGROUND(true, false, false, true, new Color(0x33007700, true)),
+        SUPERBOOMABLE_GROUND(true, false, false, true, new Color(0x33007777, true)),
+        SUPERBOOMABLE_AIR(true, false, false, false, new Color(0x3300FFFF, true)),
+        STAIR(true, true, false, true, new Color(0x33FFFF00, true)), // can't enter stonking while flying, I tried, it's so hard.
+        ENDERCHEST(true, true, false, true, new Color(0x33FFFF00, true)),
+        STONKING(true, true, true, true, new Color(0x33000077, true)),
+        STONKING_AIR(true, true, true, false, new Color(0x330000FF, true)),
+        BLOCKED(false, true, true, false, new Color(0x33FF0000, true)),
+        BLOCKED_GROUND(false, true, true, true, new Color(0x33FF0000, true));
 
 
         private boolean canGo;
         private boolean isClip;
         private boolean blocked;
         private boolean onGround;
-        private boolean pearltarget;
         private Color color;
 
-        public static final int BITS = (int) Math.ceil(Math.log(CollisionState.values().length ) / Math.log(2));
+        public static final int BITS = (int) Math.ceil(Math.log(CollisionState.values().length) / Math.log(2));
         public static final CollisionState[] VALUES = CollisionState.values();
     }
 
@@ -670,6 +716,15 @@ public class DungeonRoom implements IPathfindWorld {
         if (data != 0) return CollisionState.VALUES[data];
         CollisionState val = calculateIsBlocked(x, y, z);
         whole.store(dx,dy,dz, val.ordinal());
+        return val;
+    }
+    public PearlLandType getPearl(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return PearlLandType.BLOCKED;
+        int dx = x - minx, dy = y - miny, dz = z - minz;
+        int data = enderpearl.read(dx, dy, dz);
+        if (data != 0) return PearlLandType.VALUES[data];
+        PearlLandType val = calculateCanPearl(x, y, z);
+        enderpearl.store(dx,dy,dz, val.ordinal());
         return val;
     }
 
@@ -710,6 +765,7 @@ public class DungeonRoom implements IPathfindWorld {
             for (int y = -5; y <= 5; y++) {
                 for (int z = -2; z <= 2; z++) {
                     resetBlock2(pos.getX()*2 + x, pos.getY()*2 + y, pos.getZ()*2 + z);
+                    resetBlock3(pos.getX() * 2 + x, pos.getY() * 2 + y, pos.getZ() * 2 + z);
                 }
             }
         }
@@ -719,6 +775,13 @@ public class DungeonRoom implements IPathfindWorld {
         if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return;
         int dx = x - minx, dy = y - miny, dz = z - minz;
         if (whole.store(dx, dy, dz, calculateIsBlocked(x,y,z).ordinal())) {
+            blockUpdateId++;
+        }
+    }
+    private void resetBlock3(int x, int y, int z) {
+        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y >= maxy) return;
+        int dx = x - minx, dy = y - miny, dz = z - minz;
+        if (enderpearl.store(dx, dy, dz, calculateCanPearl(x,y,z).ordinal())) {
             blockUpdateId++;
         }
     }
@@ -734,6 +797,7 @@ public class DungeonRoom implements IPathfindWorld {
             for (int z = 0; z < 16; z++) {
                 for (int y = 0; y < 255; y++) {
                     resetBlock2(cx * 16 + x, y, cz * 16 + z);
+                    resetBlock3(cx * 16 + x, y, cz * 16 + z);
                 }
             }
         }

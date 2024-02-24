@@ -151,6 +151,15 @@ public class GeneralRoomProcessor implements RoomProcessor {
                             ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
                         }
                     }
+                } else if (value.getValue() instanceof DungeonRoomDoor2) {
+                    DungeonRoomDoor2 dungeonDoor = (DungeonRoomDoor2) value.getValue();
+                    if (dungeonDoor.isHeadtoBlood(dungeonRoom)) {
+                        try {
+                            pathfind(value.getKey(), "navigate", FeatureRegistry.SECRET_BLOOD_RUSH_LINE_PROPERTIES.getRouteProperties());
+                        } catch (Exception e) {
+                            ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to "+value.getKey()+":found failed due to "+e.getMessage());
+                        }
+                    }
                 }
             }
         }

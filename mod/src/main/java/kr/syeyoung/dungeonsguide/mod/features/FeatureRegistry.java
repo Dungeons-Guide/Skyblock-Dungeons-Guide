@@ -198,6 +198,7 @@ public class FeatureRegistry {
     public static final FeatureDebug DEBUG = register(new FeatureDebug());
     public static final FeatureStonkDebug DEBUG_ST = register(new FeatureStonkDebug());
     public static final FeatureAirchkDebug DEBUG_AIR = register(new FeatureAirchkDebug());
+    public static final FeatureEtherwarpDebug DEBUG_ETHER = register(new FeatureEtherwarpDebug());
     public static final FeatureCompareRoom COMPARE_ROOM = register(new FeatureCompareRoom());
     public static final FeatureRoomEdit ADVANCED_ROOMEDIT = register(new FeatureRoomEdit());
     public static final FeatureRoomDebugInfo ADVANCED_DEBUG_ROOM = register(new FeatureRoomDebugInfo());

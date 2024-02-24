@@ -24,6 +24,7 @@ import net.minecraft.block.state.IBlockState;
 public interface IPathfindWorld {
     public IBlockState getActualBlock(int x, int y, int z);
     public DungeonRoom.CollisionState getBlock(int x, int y, int z);
+    public DungeonRoom.PearlLandType getPearl(int x, int y, int z);
     public boolean isInstabreak(int x, int y, int z);
 
     public int getXwidth();

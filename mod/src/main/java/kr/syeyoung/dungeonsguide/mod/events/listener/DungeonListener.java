@@ -371,7 +371,9 @@ public class DungeonListener {
                                             allInBox.getX() / 2.0 - 0.1, allInBox.getY() / 2.0 - 0.1, allInBox.getZ() / 2.0 - 0.1,
                                             allInBox.getX() / 2.0 + 0.1, allInBox.getY() / 2.0 + 0.1, allInBox.getZ() / 2.0 + 0.1
                                     ), blocked.getColor(), renderWorldLastEvent.partialTicks, false);
-
+                            DungeonRoom.PearlLandType type = dungeonRoom.getPearl(allInBox.getX(), allInBox.getY(), allInBox.getZ());
+                            RenderUtils.drawTextAtWorld(type.name(), (float) (allInBox.getX() / 2.0 - 0.1), (float) (allInBox.getY() / 2.0 - 0.1), (float) (allInBox.getZ() / 2.0 - 0.1),
+                                    0xFFFFFFFF,0.01f, false, true, renderWorldLastEvent.partialTicks);
                         }
                     } catch (Exception ignored) {}
 

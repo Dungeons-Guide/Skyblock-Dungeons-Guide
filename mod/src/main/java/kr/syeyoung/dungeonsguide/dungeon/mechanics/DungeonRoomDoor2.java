@@ -27,11 +27,14 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.ActionMoveNearestAir;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.PathfindImpossibleException;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.DungeonDoor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Getter;
 import net.minecraft.util.BlockPos;
+import net.minecraft.util.Tuple;
 
+import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.util.ArrayList;
 import java.util.Set;
@@ -43,6 +46,13 @@ public class DungeonRoomDoor2 implements DungeonMechanic {
     @Getter
     private OffsetPointSet blocks = new OffsetPointSet();
 
+
+    private Vector2d getIdentifier(DungeonRoom dungeonRoom) {
+        BlockPos pos = pfPoint.getBlockPos(dungeonRoom).subtract(dungeonRoom.getMin());
+        double xWat = Math.round(pos.getX() / 16) / 2.0 - 0.5;
+        double zWat = Math.round(pos.getZ() / 16) / 2.0 - 0.5;
+        return new Vector2d(xWat, zWat);
+    }
 
     @Override
     public void buildAction(String state, DungeonRoom dungeonRoom, ActionDAGBuilder builder) throws PathfindImpossibleException {
@@ -62,7 +72,23 @@ public class DungeonRoomDoor2 implements DungeonMechanic {
     @Override
     public String getCurrentState(DungeonRoom dungeonRoom) {
 //        return doorfinder.getType().isKeyRequired() ? "key" : "normal";
-        return "no-state";
+        Vector2d id = getIdentifier(dungeonRoom);
+        for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
+            if (doorsAndState.getFirst().equals(id)) {
+                return doorsAndState.getSecond().isKeyRequired() ? "key" : "normal";
+            }
+        }
+        return "no-spawn";
+    }
+
+    public boolean isHeadtoBlood(DungeonRoom dungeonRoom) {
+        Vector2d id = getIdentifier(dungeonRoom);
+        for (Tuple<Vector2d, EDungeonDoorType> doorsAndState : dungeonRoom.getDoorsAndStates()) {
+            if (doorsAndState.getFirst().equals(id)) {
+                return doorsAndState.getSecond().isHeadToBlood();
+            }
+        }
+        return false;
     }
 
     @Override
