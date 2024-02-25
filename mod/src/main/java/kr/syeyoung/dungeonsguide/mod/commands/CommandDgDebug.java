@@ -40,6 +40,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.DungeonEventHolder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -76,6 +77,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraftforge.common.MinecraftForge;
 import org.apache.commons.io.FileUtils;
 import org.apache.commons.io.IOUtils;
+import org.apache.commons.lang3.tuple.ImmutablePair;
 
 import javax.crypto.BadPaddingException;
 import javax.crypto.IllegalBlockSizeException;
@@ -180,8 +182,12 @@ public class CommandDgDebug extends CommandBase {
             case "process":
                 processCommand1();
                 break;
-            case "process2":
-                process2();
+            case "generaterequests":
+                try {
+                    process2();
+                } catch (Exception e) {
+                    e.printStackTrace();
+                }
                 break;
             case "calculatestonks":
                 calculateStonks();
@@ -434,7 +440,7 @@ public class CommandDgDebug extends CommandBase {
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully saved user generated roomdata"));
     }
 
-    private void process2() {
+    private void process2() throws IOException {
 //        try {
 //            Field f=  ValueEditRegistry.class.getDeclaredField("valueEditMap");
 //            f.setAccessible(true);
@@ -445,6 +451,7 @@ public class CommandDgDebug extends CommandBase {
 //            throw new RuntimeException(e);
 //        }
         int est = 0;
+        List<PathfindRequest> requests = new ArrayList<>();
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
 //            System.out.println("Loading "+dungeonRoomInfo.getName());
             DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
@@ -483,9 +490,15 @@ public class CommandDgDebug extends CommandBase {
                 fakeContext.getScaffoldParser().getRoomMap().put(p, dungeonRoom);
             }
 
+            int cnt = 0;
             while (dungeonRoom.getDungeonRoomInfo() == null) {
+                cnt++;
+                if (cnt > 10) {
+                    dungeonRoom.tryRematch();
+                    cnt = 0;
+                }
                 try {
-                    Thread.sleep(100);
+                    Thread.sleep(10);
                 } catch (InterruptedException e) {
                     throw new RuntimeException(e);
                 }
@@ -511,6 +524,14 @@ public class CommandDgDebug extends CommandBase {
                         e.printStackTrace();
                         continue;
                     }
+                } else if (value.getValue() instanceof DungeonRoomDoor2) {
+                    try {
+                        builder.requires(new ActionChangeState(value.getKey(), "navigate"));
+                    } catch (PathfindImpossibleException e) {
+                        ChatTransmitter.addToQueue("Dungeons Guide :: Pathfind to door: "+value.getKey()+":navigate failed due to "+e.getMessage());
+                        e.printStackTrace();
+                        continue;
+                    }
                 }
             }
             ActionDAG dag = builder.build();
@@ -524,6 +545,11 @@ public class CommandDgDebug extends CommandBase {
                                     ((ActionMove)action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
                                             .collect(Collectors.toList())
                             );
+                        } else if (action instanceof ActionMoveSpot) {
+                            toPfTo.add(
+                                    ((ActionMoveSpot)action).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
+                                            .collect(Collectors.toList())
+                            );
                         } else if (action instanceof ActionMoveNearestAir) {
                             OffsetPoint offsetPoint = ((ActionMoveNearestAir) action).getTarget();
                             toPfTo.add(
@@ -531,13 +557,21 @@ public class CommandDgDebug extends CommandBase {
                             );
                         } else if (action instanceof ActionChangeState) {
                             if (((ActionChangeState) action).getState().equalsIgnoreCase("open")) {
-                                openMech.add(((ActionChangeState) action).getMechanicName());
+                                if (!((ActionChangeState) action).getMechanicName().startsWith("superboom") &&
+                                        !((ActionChangeState) action).getMechanicName().startsWith("crypt") &&
+                                        !((ActionChangeState) action).getMechanicName().startsWith("prince"))
+                                    openMech.add(((ActionChangeState) action).getMechanicName());
                             }
                         }
                     }
                 } else if (allNode.getAction() instanceof ActionMove) {
                     toPfTo.add(
                             ((ActionMove) allNode.getAction()).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
+                                    .collect(Collectors.toList())
+                    );
+                } else if (allNode.getAction() instanceof ActionMoveSpot) {
+                    toPfTo.add(
+                            ((ActionMoveSpot)allNode.getAction()).getTargets().stream().flatMap(a -> a.getOffsetPointSet().stream())
                                     .collect(Collectors.toList())
                     );
                 } else if (allNode.getAction() instanceof ActionMoveNearestAir) {
@@ -552,8 +586,25 @@ public class CommandDgDebug extends CommandBase {
                     }
                 }
             }
+
+            List<String> openMechList = new ArrayList<>(openMech);
+
+            for (List<OffsetVec3> offsetVec3s : toPfTo) {
+                for (int i = 0; i < (1 << openMech.size()); i++) {
+                    Set<String> open = new HashSet<>();
+                    for (int i1 = 0; i1 < openMechList.size(); i1++) {
+                        if (((i << i1) & 0x1) > 0) {
+                            open.add(openMechList.get(i1));
+                        }
+                    }
+                    requests.add(new PathfindRequest(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(), dungeonRoomInfo, open, offsetVec3s));
+                }
+            }
+
+
             System.out.println(toPfTo.size()+" pfs for "+(1<<openMech.size())+" states "+toPfTo.size() * (1 << openMech.size()) +" Pf for "+dungeonRoomInfo.getName());
             ChatTransmitter.getReceiveQueue().clear();
+
             est += toPfTo.size() * (1 << openMech.size()) * dungeonRoom.getUnitPoints().size();
 //            int dr = 0, wall = 0;
 //            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
@@ -590,6 +641,37 @@ public class CommandDgDebug extends CommandBase {
             fakeContext.cleanup();
         }
         System.out.println("Estimated PF "+est+" on unit room");
+        File fileRoot = Main.getConfigDir();
+        File outdir = new File(fileRoot, "pfRequest");
+
+        outdir.mkdirs();
+
+        requests.stream().collect(Collectors.groupingBy(a ->
+                new ImmutablePair<>(a.getDungeonRoomInfo().getUuid(), a.getOpenMech().stream().sorted(String::compareTo).collect(Collectors.joining(",")))
+        )).entrySet().parallelStream().forEach(stuff -> {
+            PathfindRequest begin = stuff.getValue().get(0);
+
+            DRIWorld driWorld = new DRIWorld(begin.getDungeonRoomInfo(), new ArrayList<>(begin.getOpenMech()));
+
+            long start2 = System.currentTimeMillis();
+            for (PathfindRequest request : stuff.getValue()) {
+                UUID id = UUID.randomUUID();
+                try {
+                    long start = System.currentTimeMillis();
+                    System.out.println("Writing "+id.toString() + ".pfreq  / " + request.getId());
+                    File f = new File(outdir, id.toString() + ".pfreq");
+                    DataOutputStream dataOutputStream = new DataOutputStream(new BufferedOutputStream(new FileOutputStream(f)));
+                    request.write(driWorld, dataOutputStream);
+                    dataOutputStream.flush();
+                    dataOutputStream.close();
+                    System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : "+request.getId());
+                } catch (Exception e) {
+                    System.out.println("Error while "+id.toString() + ".pfreq / "+request.getId());
+                    e.printStackTrace();
+                }
+            }
+            System.out.println("ROOM: "+begin.getDungeonRoomInfo().getName()+" took "+(System.currentTimeMillis() -start2)+"ms to complete");
+        });
     }
 
     private void loadRoomsCommand() {
