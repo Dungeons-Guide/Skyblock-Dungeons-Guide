@@ -153,7 +153,7 @@ public class ActionUtils {
                                                            List<String> requiredPrerequisite) throws PathfindImpossibleException {
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom) || a.getValue() instanceof DungeonTomb || a.getValue() instanceof DungeonBreakableWall)
                 .filter(a -> precalculatedStonk.getDependentRouteBlocker().contains(a.getKey()))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
@@ -244,10 +244,10 @@ public class ActionUtils {
         return last;
     }
     public static ActionDAGBuilder buildActionMoveAnd(ActionDAGBuilder builder,
-                                                           DungeonRoom dungeonRoom,
-                                                           PrecalculatedMoveNearest precalculatedStonk,
-                                                           List<String> optionalPrerequisite,
-                                                           List<String> requiredPrerequisite,
+                                                      DungeonRoom dungeonRoom,
+                                                      PrecalculatedMoveNearest precalculatedStonk,
+                                                      List<String> optionalPrerequisite,
+                                                      List<String> requiredPrerequisite,
                                                       AtomicActionAccepter eachBuild,
                                                       String name) throws PathfindImpossibleException {
 

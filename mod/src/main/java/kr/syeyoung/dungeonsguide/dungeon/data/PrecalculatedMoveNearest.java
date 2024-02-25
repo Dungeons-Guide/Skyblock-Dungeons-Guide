@@ -18,6 +18,9 @@
 
 package kr.syeyoung.dungeonsguide.dungeon.data;
 
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.RaytraceHelper;
@@ -65,6 +68,9 @@ public class PrecalculatedMoveNearest implements Serializable {
         List<String> calculateFor = new ArrayList<>();
         for (Map.Entry<String, DungeonMechanic> value : dri.getMechanics().entrySet()) {
             if (!(value.getValue() instanceof RouteBlocker)) continue;
+            if (value.getValue() instanceof DungeonTomb) continue;
+            if (value.getValue() instanceof DungeonBreakableWall) continue; // well... let's just assume they don't exist lol
+            if (value.getValue() instanceof DungeonDoor) continue; // welll.... closable door is not something oyu wanna work with
             for (OffsetPoint blockedPoint : ((RouteBlocker) value.getValue()).blockedPoints()) {
                 int xDiff = Math.abs(blockedPoint.getX() - offsetPoint.getX());
                 int yDiff = Math.abs(blockedPoint.getY() - offsetPoint.getY());
@@ -92,6 +98,9 @@ public class PrecalculatedMoveNearest implements Serializable {
         List<String> calculateFor = new ArrayList<>();
         for (Map.Entry<String, DungeonMechanic> value : dri.getMechanics().entrySet()) {
             if (!(value.getValue() instanceof RouteBlocker)) continue;
+            if (value.getValue() instanceof DungeonTomb) continue;
+            if (value.getValue() instanceof DungeonBreakableWall) continue; // well... let's just assume they don't exist lol
+            if (value.getValue() instanceof DungeonDoor) continue; // welll.... closable door is not something oyu wanna work with
             for (OffsetPoint blockedPoint : ((RouteBlocker) value.getValue()).blockedPoints()) {
                 int xDiff = Math.abs(blockedPoint.getX() - offsetPoint.getX());
                 int yDiff = Math.abs(blockedPoint.getY() - offsetPoint.getY());

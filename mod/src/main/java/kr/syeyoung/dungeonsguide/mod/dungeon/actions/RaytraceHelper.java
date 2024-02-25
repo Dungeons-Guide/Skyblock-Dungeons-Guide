@@ -81,7 +81,7 @@ public class RaytraceHelper {
                         for (int ix = 0; ix <= 2; ix++) {
                             for (int iy = 0; iy <= 2; iy++) {
                                 for (int iz = 0; iz <= 2; iz++) {
-                                    Vec3 to = interpolate(bb, ix * 0.45 + 0.05, iy * 0.45 + 0.05, iz * 0.45 + 0.05);
+                                    Vec3 to = interpolate(bb, ix * 0.45 + 0.05 + 0.001, iy * 0.45 + 0.05 + 0.002, iz * 0.45 + 0.05 + 0.003);
 
                                     if (to.squareDistanceTo(eye) > 4.5 * 4.5) {
                                         to = to.subtract(eye).normalize();

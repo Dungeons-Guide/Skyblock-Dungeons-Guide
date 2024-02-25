@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.ShadowCast;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.Data;
@@ -160,25 +161,33 @@ public class FineGridStonkingBFS implements IPathfinder {
                 }
             }
         }
-        if (n.blocked && algorithmSettings.isStonkEtherwarp()
-                && (n.coordinate.x % 2) != 0 && (n.coordinate.z % 2) != 0 && n.coordinate.y % 2 == 0 && originNodeState.isBlocked()) {
+        if (algorithmSettings.isRouteEtherwarp()
+                && (n.coordinate.x % 2) != 0 && (n.coordinate.z % 2) != 0 && n.coordinate.y % 2 == 0) {
             IBlockState b = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 - 1, (n.coordinate.z-1) / 2);
             IBlockState b2 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2, (n.coordinate.z-1) / 2);
             IBlockState b3 = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2, n.coordinate.y / 2 + 1, (n.coordinate.z-1) / 2);
             if (!emptyFor(b) && emptyFor(b2) && emptyFor(b3)) {
                 // elligible for etherwarp.
 
-                for (EnumFacing value : EnumFacing.VALUES) {
-                    Block near = dungeonRoom.getActualBlock((n.coordinate.x-1) / 2 + value.getFrontOffsetX(),
-                            n.coordinate.y / 2 + value.getFrontOffsetY() - 1,
-                            (n.coordinate.z-1) / 2 + value.getFrontOffsetZ()).getBlock();
-                    if (near == Blocks.air) {
-                        Node neighbor = openNode(n.coordinate.x + value.getFrontOffsetX() * 2, n.coordinate.y + value.getFrontOffsetY() * 2 - 2,
-                                n.coordinate.z + value.getFrontOffsetZ() * 2);
+                BlockPos start = new BlockPos((n.coordinate.x-1) / 2,
+                        n.coordinate.y / 2 - 1,
+                        (n.coordinate.z-1) / 2);
+
+                for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> dungeonRoom.getActualBlock(x,y,z).getBlock() != Blocks.air, start.getX(), start.getY(), start.getZ(), 61)) {
+                    if (target.distanceSq(start) >61 * 61) continue;
+                    if (target.getX() * 2 + 1 < dungeonRoom.getMinX()) continue;
+                    if (target.getY() * 2 + 1 < dungeonRoom.getMinY()) continue;
+                    if (target.getZ() * 2 + 1 < dungeonRoom.getMinZ()) continue;
+                    if (target.getX() * 2 + 1 >= dungeonRoom.getXwidth() + minX) continue;
+                    if (target.getY() * 2 + 1 >= dungeonRoom.getYwidth() + minY) continue;
+                    if (target.getZ() * 2 + 1 >= dungeonRoom.getZwidth() + minZ) continue;
+
+                    Node neighbor = openNode(target.getX() * 2 + 1, target.getY() * 2 - 2,
+                                target.getZ() * 2 + 1);
                         DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
                         neighbor.blocked = neighborState.isBlocked();
-                        if (!neighborState.isBlocked()) {
-                            float gScore = n.g + 4;
+//                        if (!neighborState.isBlocked()) {
+                            float gScore = n.g + 20; // don't etherwarp unless it saves like 10 blocks
                             if (gScore < neighbor.g) {
                                 neighbor.parent = n;
                                 neighbor.stonkLength = 0;
@@ -187,8 +196,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                                 neighbor.f = gScore;
                                 open.add(neighbor);
                             }
-                        }
-                    }
+//                        }
                 }
             }
         }
@@ -313,7 +321,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                         gScore += 20; // tntpearl slow
                     if (!neighborState.isBlocked() && neighborState.isClip()) {
                         // stonk entrance!!!
-                        gScore += 6;
+                        gScore += neighborState == DungeonRoom.CollisionState.ENDERCHEST ? 50 : 6; // don't enderchest unless it saves like 25 blocks
                     } else if (value.getFrontOffsetY() == -1) {
                         gScore += 100;
                     } else if (neighbor.coordinate.x % 2 == 0 || neighbor.coordinate.z % 2 == 0) {
@@ -391,36 +399,6 @@ public class FineGridStonkingBFS implements IPathfinder {
 //        }
 
 
-        // etherwarps.
-        if (!n.blocked && algorithmSettings.isRouteEtherwarp()) {
-            if (n.coordinate.y % 2 == 0 && n.coordinate.x % 2 != 0 && n.coordinate.z % 2 != 0 && !originNodeState.isBlocked()) {
-                if (dungeonRoom.getBlock(n.coordinate.x, n.coordinate.y-2, n.coordinate.z).isBlocked()) {
-                    int xp = (n.coordinate.x-1) / 2;
-                    int yp = (n.coordinate.y) / 2 - 2;
-                    int zp = (n.coordinate.z-1) / 2;
-                    for (; yp >= 0; yp--) {
-                        if (dungeonRoom.getActualBlock(xp,yp,zp).getBlock() != Blocks.air) break;
-                    }
-                    if (yp != -1) {
-                        Node neighbor = openNode(n.coordinate.x, yp * 2 + 2, n.coordinate.z);
-                        DungeonRoom.CollisionState nodeState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
-                        neighbor.blocked = nodeState.isBlocked();
-                        if (!nodeState.isBlocked()) {
-                            float gScore = n.g + 20; // don't use etherwarp unelss it saves like 50 blocks
-
-                            if (gScore < neighbor.g) {
-                                neighbor.parent = n;
-                                neighbor.stonkLength = 0;
-                                neighbor.g = gScore;
-                                neighbor.connectionType = PathfindResult.PathfindNode.NodeType.ETHERWARP;
-                                neighbor.f = gScore;
-                                open.add(neighbor);
-                            }
-                        }
-                    }
-                }
-            }
-        }
 
         return false;
     }

@@ -42,6 +42,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.Entity;
+import net.minecraft.init.Blocks;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.MathHelper;
@@ -57,6 +58,7 @@ import java.util.stream.Collectors;
 @EqualsAndHashCode(callSuper=false)
 public class ActionMove extends AbstractAction {
     private List<PossibleClickingSpot> targets;
+    private String id;
 
     public ActionMove(List<PossibleClickingSpot> target, DungeonRoom dungeonRoom) {
         this.targets = target;
@@ -178,10 +180,23 @@ public class ActionMove extends AbstractAction {
             if (poses != null){
                 ActionMove.drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks);
 
+                int cnt = 0;
+                boolean warp = false;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
+                    cnt ++;
                     if (pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
+
+                    if (warp) {
+                        BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
+                        RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
+                        warp = false;
+                    }
+                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP && cnt < 5) {
+                        warp = true;
+                    }
+
                 }
             }
         }
@@ -206,7 +221,7 @@ public class ActionMove extends AbstractAction {
         GL11.glLineWidth(thickness);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        if (poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
@@ -232,7 +247,7 @@ public class ActionMove extends AbstractAction {
                 worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
 
-                if (pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK && pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
                     GlStateManager.disableDepth();
                     GlStateManager.depthMask(false);
                 } else {

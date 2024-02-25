@@ -27,6 +27,7 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.util.AxisAlignedBB;
@@ -58,10 +59,9 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         }
         if (event.action == PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) {
             event.setCanceled(true);
-            toHighlight = new LinkedList<>();
 
             long start = System.nanoTime();
-            ShadowCast.realShadowcast(this, event.pos.getX(), event.pos.getY(), event.pos.getZ(), 10, 0);
+            toHighlight = ShadowCast.realShadowcast(this, event.pos.getX(), event.pos.getY(), event.pos.getZ(), 61);
             ChatTransmitter.sendDebugChat("Shadowcasting took "+(System.nanoTime() - start)+" ns");
             System.out.println(toHighlight.size());
         } else {
@@ -72,19 +72,16 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     @DGEventHandler(triggerOutOfSkyblock = true)
     public void renderworldLast(RenderWorldLastEvent event) {
         if (toHighlight == null) return;
-        Color c =  new Color(0x3300FF00, true);
+        GlStateManager.disableAlpha();
+        Color c =  new Color(0x1500FF00, true);
         for (BlockPos spot : toHighlight) {
              RenderUtils.highlightBlock(spot, c, event.partialTicks, false);
         }
+        GlStateManager.enableAlpha();
     }
 
     @Override
     public boolean checkIfBlocked(int x, int y, int z) {
         return !Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(x,y,z));
-    }
-
-    @Override
-    public boolean mark(int x, int y, int z) {
-        return toHighlight.add(new BlockPos(x,y,z));
     }
 }
