@@ -153,7 +153,7 @@ public class ActionUtils {
                                                            List<String> requiredPrerequisite) throws PathfindImpossibleException {
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof RouteBlocker)
-                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom) || a.getValue() instanceof DungeonTomb || a.getValue() instanceof DungeonBreakableWall)
+                .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
                 .filter(a -> precalculatedStonk.getDependentRouteBlocker().contains(a.getKey()))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
@@ -162,7 +162,6 @@ public class ActionUtils {
 
         List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
                 .filter(a -> optionalOpenBlockers.contains(a))
-                .filter(a -> !(dungeonRoom.getMechanics().get(a) instanceof DungeonTomb || dungeonRoom.getMechanics().get(a) instanceof DungeonBreakableWall))
                 .collect(Collectors.toList());
         ActionDAGBuilder last = null;
         for (int i = 0; i < (1 << optionalSubset.size()); i++) {
@@ -254,6 +253,7 @@ public class ActionUtils {
         List<String> defaultOpenBlockers = dungeonRoom.getMechanics().entrySet().stream()
                 .filter(a -> a.getValue() instanceof RouteBlocker)
                 .filter(a-> !((RouteBlocker) a.getValue()).isBlocking(dungeonRoom))
+                .filter(a -> precalculatedStonk.getDependentRouteBlocker().contains(a.getKey()))
                 .map(a -> a.getKey())
                 .collect(Collectors.toList());
         defaultOpenBlockers.addAll(requiredPrerequisite.stream()
@@ -266,7 +266,6 @@ public class ActionUtils {
 
         List<String> optionalSubset = precalculatedStonk.getDependentRouteBlocker().stream()
                 .filter(a -> optionalOpenBlockers.contains(a))
-                .filter(a -> !(dungeonRoom.getMechanics().get(a) instanceof DungeonTomb || dungeonRoom.getMechanics().get(a) instanceof DungeonBreakableWall))
                 .collect(Collectors.toList());
         ActionDAGBuilder last = null;
         for (int i = 0; i < (1 << optionalSubset.size()); i++) {
