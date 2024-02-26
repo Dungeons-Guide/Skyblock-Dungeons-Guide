@@ -176,10 +176,10 @@ public class FineGridStonkingBFS implements IPathfinder {
                 for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> dungeonRoom.getActualBlock(x,y,z).getBlock() != Blocks.air, start.getX(), start.getY(), start.getZ(), 61)) {
                     if (target.distanceSq(start) >61 * 61) continue;
                     if (target.getX() * 2 + 1 < dungeonRoom.getMinX()) continue;
-                    if (target.getY() * 2 + 1 < dungeonRoom.getMinY()) continue;
+                    if (target.getY() * 2 - 2 < dungeonRoom.getMinY()) continue;
                     if (target.getZ() * 2 + 1 < dungeonRoom.getMinZ()) continue;
                     if (target.getX() * 2 + 1 >= dungeonRoom.getXwidth() + minX) continue;
-                    if (target.getY() * 2 + 1 >= dungeonRoom.getYwidth() + minY) continue;
+                    if (target.getY() * 2 - 2 >= dungeonRoom.getYwidth() + minY) continue;
                     if (target.getZ() * 2 + 1 >= dungeonRoom.getZwidth() + minZ) continue;
 
                     Node neighbor = openNode(target.getX() * 2 + 1, target.getY() * 2 - 2,

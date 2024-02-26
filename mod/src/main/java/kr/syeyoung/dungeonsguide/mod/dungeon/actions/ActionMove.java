@@ -22,17 +22,24 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleClickingSpot;
 import kr.syeyoung.dungeonsguide.dungeon.data.PossibleMoveSpot;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
@@ -79,6 +86,22 @@ public class ActionMove extends AbstractAction {
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
+
+        {
+            double cx = 0, cy =0 , cz = 0;
+            int cnt = 0;
+            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
+                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
+                cx += offsetVec3.xCoord;
+                cy += offsetVec3.yCoord;
+                cz += offsetVec3.zCoord;
+                cnt ++;
+            }
+            cx /= cnt;
+            cy /= cnt;
+            cz /= cnt;
+            draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
+        }
         if (FeatureRegistry.DEBUG_ST.isEnabled()) {
 
             int i = 0;
@@ -143,22 +166,6 @@ public class ActionMove extends AbstractAction {
 
             }
         }
-
-        {
-            double cx = 0, cy =0 , cz = 0;
-            int cnt = 0;
-            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                cx += offsetVec3.xCoord;
-                cy += offsetVec3.yCoord;
-                cz += offsetVec3.zCoord;
-                cnt ++;
-            }
-            cx /= cnt;
-            cy /= cnt;
-            cz /= cnt;
-            draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
-        }
     }
 
     static void draw(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag, BlockPos target, PathfindResult poses) {
@@ -193,7 +200,7 @@ public class ActionMove extends AbstractAction {
                         RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
                         warp = false;
                     }
-                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP && cnt < 5) {
+                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP && cnt < 10) {
                         warp = true;
                     }
 
@@ -221,7 +228,7 @@ public class ActionMove extends AbstractAction {
         GL11.glLineWidth(thickness);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100 || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
@@ -247,7 +254,8 @@ public class ActionMove extends AbstractAction {
                 worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
 
-                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100
+                || pos.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
                     GlStateManager.disableDepth();
                     GlStateManager.depthMask(false);
                 } else {
@@ -312,6 +320,15 @@ public class ActionMove extends AbstractAction {
                     pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
             ));
         }
+        if (executor == null) executor = dungeonRoom.loadPrecalculated(new PathfindRequest(
+                FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
+                dungeonRoom.getDungeonRoomInfo(),
+                dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
+                    return  (b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor);
+                }).filter(b -> !((RouteBlocker)b).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
+                getTargets().stream().flatMap(b -> b.getOffsetPointSet().stream())
+                        .collect(Collectors.toList())
+        ).getId());
         if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
         executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
@@ -348,18 +365,30 @@ public class ActionMove extends AbstractAction {
         );
         FineGridStonkingBFS a = null;
         if (executor == null) {
-            BoundingBox boundingBox = new BoundingBox();
-            for (OffsetVec3 offsetPoint : targets.stream().flatMap(b -> b.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-                Vec3 pos = offsetPoint.getPos(room);
-                boundingBox.addBoundingBox(new AxisAlignedBB(
-                        pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
-                        pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
-                ));
-            }
+            executor = room.loadPrecalculated(new PathfindRequest(
+                    FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
+                    room.getDungeonRoomInfo(),
+                    state.getOpenMechanics().stream().filter(b -> {
+                        return  room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
+                    }).collect(Collectors.toSet()),
+                    getTargets().stream().flatMap(b -> b.getOffsetPointSet().stream())
+                            .collect(Collectors.toList())
+                    ).getId());
+            if (executor == null) {
+                BoundingBox boundingBox = new BoundingBox();
+                for (OffsetVec3 offsetPoint : targets.stream().flatMap(b -> b.getOffsetPointSet().stream()).collect(Collectors.toList())) {
+                    Vec3 pos = offsetPoint.getPos(room);
+                    boundingBox.addBoundingBox(new AxisAlignedBB(
+                            pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
+                            pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
+                    ));
+                }
 
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
-                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
+                executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
+                        boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
+            }
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
+
         }
         executor.setTarget(state.getPlayerPos());
         OffsetVec3 pos = RaytraceHelper.chooseMinimalY(targets).stream().min(Comparator.comparingInt(b -> !b.isStonkingReq() ? 1 : 0)).get()

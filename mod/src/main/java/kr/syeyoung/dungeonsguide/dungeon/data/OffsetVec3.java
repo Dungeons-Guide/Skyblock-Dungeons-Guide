@@ -46,9 +46,9 @@ public class OffsetVec3 implements Cloneable, Serializable {
         for (int i = 0; i < dungeonRoom.getRoomMatcher().getRotation(); i++) {
             vector2d = VectorUtils.rotateClockwise(vector2d);
             if (i % 2 == 0) {
-                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 1; // + Z
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks()[0].length - 2; // + Z
             } else {
-                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 1; // + X
+                vector2d.x += dungeonRoom.getDungeonRoomInfo().getBlocks().length - 2; // + X
             }
         }
 
@@ -56,6 +56,23 @@ public class OffsetVec3 implements Cloneable, Serializable {
         this.zCoord = vector2d.y;
         this.yCoord = pos.yCoord - dungeonRoom.getMin().getY();
     }
+
+    public void setPosInWorld(int xWid, int zWid, int minX, int minY, int minZ, double x, double y, double z, int rotation) {
+        Vector2d vector2d = new Vector2d(x-minX, z-minZ);
+        for (int i = 0; i < rotation; i++) {
+            vector2d = VectorUtils.rotateClockwise(vector2d);
+            if (i % 2 == 0) {
+                vector2d.x += xWid - 2; // + Z
+            } else {
+                vector2d.x += zWid - 2; // + X
+            }
+        }
+
+        this.xCoord = vector2d.x;
+        this.zCoord = vector2d.y;
+        this.yCoord = y - minY;
+    }
+
 
     public Vec3 toRotatedRelBlockPos(DungeonRoom dungeonRoom) {
         Vector2d rot = new Vector2d(xCoord, zCoord);
@@ -65,6 +82,21 @@ public class OffsetVec3 implements Cloneable, Serializable {
                 rot.y += dungeonRoom.getMax().getZ() - dungeonRoom.getMin().getZ() + 2; // + Z
             } else {
                 rot.y += dungeonRoom.getMax().getX() - dungeonRoom.getMin().getX() + 2; // + X
+            }
+        }
+
+        return new Vec3(rot.x, yCoord, rot.y);
+    }
+
+
+    public Vec3 toRotatedRelBlockPos(int rotation, int localZWid, int localXWid) {
+        Vector2d rot = new Vector2d(xCoord, zCoord);
+        for (int i = 0; i < rotation; i++) {
+            rot = VectorUtils.rotateCounterClockwise(rot);
+            if (i % 2 == 0) {
+                rot.y += localZWid + 2; // + Z
+            } else {
+                rot.y += localXWid + 2; // + X
             }
         }
 

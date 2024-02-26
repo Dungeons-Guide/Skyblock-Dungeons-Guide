@@ -38,6 +38,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.PathfindCache;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomedit.EditingContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.ProcessorFactory;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
@@ -61,6 +64,7 @@ import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.io.IOException;
 import java.lang.ref.WeakReference;
 import java.util.List;
 import java.util.*;
@@ -156,6 +160,26 @@ public class DungeonRoom implements IPathfindWorld {
 
     private final Map<Vec3, WeakReference<PathfinderExecutor>> activePathfind = new HashMap<>();
 
+    private final Map<String, PathfinderExecutor> idExecutor = new HashMap<>();
+    public PathfinderExecutor loadPrecalculated(String id) {
+        PathfinderExecutor executor1 =         idExecutor.get(id);
+        if (executor1 != null) return executor1;
+        System.out.println(id);
+        PathfindCache cachedPathfinder = CachedPathfinderRegistry.getById(id);
+        System.out.println(cachedPathfinder);
+        if (cachedPathfinder == null) return null;
+        try {
+            IPathfinder pathfinder = cachedPathfinder.createPathfinder(getRoomMatcher().getRotation());
+            executor1 = new PathfinderExecutor(pathfinder, BoundingBox.of(AxisAlignedBB.fromBounds(0,0,0,0,0,0)), this);
+            idExecutor.put(id, executor1);
+            executor1.doStep();
+            return executor1;
+        } catch (IOException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
     public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
 //        if (activePathfind.containsKey(pos.center())) {
@@ -179,6 +203,10 @@ public class DungeonRoom implements IPathfindWorld {
             new ThreadFactoryBuilder()
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
                     .setNameFormat("DG-RoomMatcher-%d").build()));
+    private static final ExecutorService pathfindLoaderThread = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newFixedThreadPool(8,
+            new ThreadFactoryBuilder()
+                    .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-PathfindLoader-%d").build()));
 
     @Getter
     private final Map<String, Object> roomContext = new HashMap<>();
@@ -308,7 +336,7 @@ public class DungeonRoom implements IPathfindWorld {
         totalSecrets = dungeonRoomInfo.getTotalSecrets();
 
 
-                    for (DungeonMechanic value : getMechanics().values()) {
+        for (DungeonMechanic value : getMechanics().values()) {
                         if (value instanceof DungeonTomb) {
                             for (OffsetPoint offsetPoint : ((DungeonTomb) value).blockedPoints()) {
                                 poses.add(offsetPoint.getBlockPos(this));
@@ -319,6 +347,13 @@ public class DungeonRoom implements IPathfindWorld {
                             }
                         }
                     }
+
+        List<PathfindCache> pathfinders = CachedPathfinderRegistry.getByRoom(dungeonRoomInfo.getUuid());
+        if (pathfinders != null) {
+            for (PathfindCache pathfinder : pathfinders) {
+                loadPrecalculated(pathfinder.getId());
+            }
+        }
     }
 
     public void updateRoomProcessor() {

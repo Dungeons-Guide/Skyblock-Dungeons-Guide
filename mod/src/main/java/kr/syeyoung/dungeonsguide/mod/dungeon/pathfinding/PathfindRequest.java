@@ -24,6 +24,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.util.AxisAlignedBB;
@@ -35,7 +37,8 @@ import java.io.IOException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-@Data @AllArgsConstructor
+@Getter @Setter
+@AllArgsConstructor
 public class PathfindRequest {
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
     private DungeonRoomInfo dungeonRoomInfo;
@@ -56,13 +59,27 @@ public class PathfindRequest {
         return idStart;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        return Objects.equals(getId(), ((PathfindRequest) o).getId());
+    }
+
+    @Override
+    public int hashCode() {
+        String id = getId();
+        return id == null ? 0 : id.hashCode();
+    }
+
     public void write(DRIWorld driWorld, DataOutputStream dataOutputStream) throws IOException {
-        dataOutputStream.writeChars("DGPF");
+        dataOutputStream.writeUTF("DGPF");
         dataOutputStream.writeUTF(getId());
         dataOutputStream.writeUTF(dungeonRoomInfo.getUuid().toString());
         dataOutputStream.writeUTF(dungeonRoomInfo.getName());
         // export algorithm settings
-        dataOutputStream.writeChars("ALGO");
+        dataOutputStream.writeUTF("ALGO");
         dataOutputStream.writeBoolean(algorithmSettings.isEnderpearl());
         dataOutputStream.writeBoolean(algorithmSettings.isTntpearl());
         dataOutputStream.writeBoolean(algorithmSettings.isStonkDown());
@@ -70,10 +87,18 @@ public class PathfindRequest {
         dataOutputStream.writeBoolean(algorithmSettings.isStonkTeleport());
         dataOutputStream.writeBoolean(algorithmSettings.isRouteEtherwarp());
         dataOutputStream.writeInt(algorithmSettings.getMaxStonk());
+        // export targets
+        dataOutputStream.writeUTF("TRGT");
+        dataOutputStream.writeInt(target.size());
+        for (OffsetVec3 offsetVec3 : target) {
+            dataOutputStream.writeInt((int) (offsetVec3.xCoord * 2));
+            dataOutputStream.writeInt((int) (offsetVec3.yCoord * 2) + 140);
+            dataOutputStream.writeInt((int) (offsetVec3.zCoord * 2));
+        }
         // export blockage map.
 
         // export world itself first.
-        dataOutputStream.writeChars("WRLD");
+        dataOutputStream.writeUTF("WRLD");
         dataOutputStream.writeInt(dungeonRoomInfo.getWidth()); // x len
         dataOutputStream.writeInt(dungeonRoomInfo.getLength()); // z len
         dataOutputStream.writeInt(256); // y len, why not lol.
@@ -90,7 +115,7 @@ public class PathfindRequest {
 
 
         // export nodestatemap
-        dataOutputStream.writeChars("CLPL");
+        dataOutputStream.writeUTF("CLPL");
         dataOutputStream.writeInt(dungeonRoomInfo.getWidth()*2); // x len
         dataOutputStream.writeInt(dungeonRoomInfo.getLength()*2); // z len
         dataOutputStream.writeInt(512); // y len, why not lol.

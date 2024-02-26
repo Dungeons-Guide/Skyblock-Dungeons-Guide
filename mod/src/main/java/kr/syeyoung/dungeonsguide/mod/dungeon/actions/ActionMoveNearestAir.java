@@ -20,10 +20,17 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.actions;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonBreakableWall;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonOnewayDoor;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonTomb;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.RouteBlocker;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.route.RoomState;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.BoundingBox;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.DungeonRoomButOpen;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindResult;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.PathfinderExecutor;
@@ -36,8 +43,10 @@ import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
 
+import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @Data
 @EqualsAndHashCode(callSuper=false)
@@ -87,6 +96,15 @@ public class ActionMoveNearestAir extends AbstractAction {
         BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
                 .expand(0.5,1,0.5));
         System.out.println(boundingBox.getBoundingBoxes());
+
+        if (executor == null) executor = dungeonRoom.loadPrecalculated(new PathfindRequest(
+                FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
+                dungeonRoom.getDungeonRoomInfo(),
+                dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
+                    return  b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor;
+                }).filter(b -> !((RouteBlocker)b).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
+                Collections.singletonList(new OffsetVec3(target.getX(), target.getY(), target.getZ()))
+        ).getId());
         if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
         executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
     }
@@ -115,11 +133,21 @@ public class ActionMoveNearestAir extends AbstractAction {
                 state.getOpenMechanics()+"-"+bpos
         );
         if (executor == null) {
-            BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX() + 1, bpos.getY() + 1, bpos.getZ() + 1)
-                    .expand(0.5,1,0.5));
+            executor = room.loadPrecalculated(new PathfindRequest(
+                    FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
+                    room.getDungeonRoomInfo(),
+                    state.getOpenMechanics().stream().filter(b -> {
+                        return room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
+                    }).collect(Collectors.toSet()),
+                    Collections.singletonList(new OffsetVec3(target.getX(), target.getY(), target.getZ()))
+            ).getId());
+            if (executor == null) {
+                BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX() + 1, bpos.getY() + 1, bpos.getZ() + 1)
+                        .expand(0.5, 1, 0.5));
 
-            executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
-                    boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
+                executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
+                        boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
+            }
             memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
         }
         executor.setTarget(state.getPlayerPos());

@@ -19,6 +19,8 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon;
 
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import lombok.Getter;
@@ -53,5 +55,8 @@ public class DungeonFacade {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
+        new File(Main.getConfigDir(), "resulttest").mkdirs();
+        CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "resulttest"));
+        System.out.println(CachedPathfinderRegistry.getRegistered().size());
     }
 }

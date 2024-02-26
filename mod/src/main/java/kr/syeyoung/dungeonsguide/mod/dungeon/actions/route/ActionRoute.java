@@ -95,6 +95,7 @@ public class ActionRoute {
 
                     List<ActionDAGNode> minCostRoute = null;
                     double minCost = Double.POSITIVE_INFINITY;
+                    long startttt = System.currentTimeMillis();
                     int minDagId = -1;
 
                     boolean stupidheuristic = false;
@@ -160,7 +161,7 @@ public class ActionRoute {
                     this.dagId = minDagId;
                     order = minCostRoute;
                     ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost with Id "+dagId);
-
+                    ChatTransmitter.sendDebugChat("Pathfinding took "+ (System.currentTimeMillis() - startttt)+"ms");
                     List<AbstractAction> nodes = minCostRoute.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
                     nodes.add(new ActionComplete());
                     actions = nodes;

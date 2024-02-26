@@ -204,53 +204,5 @@ public class ShadowCast {
             }
             prevY = y;
         }
-
-        // BSP.
-
-
-
-//            for (int y =; y <= ; y++) {
-//                double currentSlopeY = y / realZ;
-//
-//                boolean globalBlockStatus = false;
-//                double nextStartSlopeX = startSlopeX;
-//                ;
-//                ;
-////                if (startSlopeYY >= endSlopeYY) continue;
-//
-//                for (int x = ; x <= ; x++) {
-//                    double currentSlopeX = x / realZ;
-//
-//
-//                    // TRY BINARY SPATIAL PARTITIONING LATER, HERE, I try NATIVE METHOD.
-//                    if (!localBlocked) {
-//                        if (currentSlopeY < startSlopeY || currentSlopeY > endSlopeY || currentSlopeX < startSlopeX || currentSlopeX > endSlopeX) {
-//                        } else {
-//                            checker.mark(trX, trY, trZ);
-//                        }
-//                    }
-//                    if (globalBlockStatus) {
-//                        // currently blocked..
-//                        if (!localBlocked) {
-//                            nextStartSlopeX =Math.max(startSlopeX,  (x - 0.5) / (realZ - 0.5));
-//                        }
-//                    } else {
-//                        if (localBlocked) {
-//                            // omg it now is blocked
-//                            double nextEndSlopeX = Math.min(endSlopeX, (x - 0.5) / (realZ + 0.5));
-//
-//                            if (nextEndSlopeX > nextStartSlopeX) {
-//                                shadowcast(checker, centerX, centerY, centerZ, startZ + 1, nextStartSlopeX, nextEndSlopeX,
-//                                        startSlopeYY ,endSlopeYY , radius, zOffset, trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33);
-//                            }
-//                        }
-//                    }
-//                    globalBlockStatus = localBlocked;
-//                }
-//                if (!globalBlockStatus) {
-//                    shadowcast(checker, centerX, centerY, centerZ, startZ + 1, nextStartSlopeX, endSlopeX,
-//                           startSlopeYY ,endSlopeYY , radius, zOffset, trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33);
-//                }
-//            }
     }
 }

@@ -19,29 +19,93 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
 import io.netty.buffer.ByteBuf;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.ResourceLocation;
+import org.apache.commons.io.input.CountingInputStream;
 import sun.nio.ch.DirectBuffer;
 
-import java.io.IOException;
-import java.io.InputStream;
+import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channels;
+import java.nio.channels.ReadableByteChannel;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import java.util.zip.DeflaterInputStream;
+import java.util.zip.GZIPInputStream;
+import java.util.zip.InflaterInputStream;
 
 public class PathfindCache {
-    private ByteBuffer byteBuffer;
-    public PathfindCache(FineGridStonkingBFS stonkingBFS) {
-//        byteBuffer = ByteBuffer.allocateDirect(
-//                stonkingBFS.getNodes().length * stonkingBFS.getNodes()[0].length * stonkingBFS.getNodes()[0][0].length * 2
-//
-//        )
+    @Getter
+    private String id;
+    @Getter
+    private UUID roomId;
+    private File file;
+    @Getter
+    private List<OffsetVec3> targets;
 
+    private int gzipStart = 0;
+
+    public PathfindCache(File f) throws IOException {
+        this.file = f;
+
+        try (FileInputStream fis = new FileInputStream(f)) {
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fis);
+            CountingInputStream countingInputStream = new CountingInputStream(bufferedInputStream);
+            DataInputStream dis = new DataInputStream(countingInputStream);
+            String magicValue = dis.readUTF();
+            if (!magicValue.equals("RDGPF")) throw new IllegalStateException("Expected magic value RDGPF Instead got "+magicValue);
+
+            this.id = dis.readUTF();
+            this.roomId = UUID.fromString(dis.readUTF());
+            dis.readUTF(); // room name
+            magicValue = dis.readUTF();
+            if (!magicValue.equals("ALGO")) throw new IllegalStateException("Expected magic value ALGO Instead got "+magicValue);
+            dis.skipBytes(10); // skip algorithm settings
+            magicValue = dis.readUTF();
+            if (!magicValue.equals("TRGT")) throw new IllegalStateException("Expected magic value TRGT Instead got "+magicValue);
+
+            int targetSize = dis.readInt();
+            targets = new ArrayList<>();
+            for (int i = 0; i < targetSize; i ++) {
+                targets.add(new OffsetVec3(
+                        dis.readInt() / 2.0, (dis.readInt() - 140) / 2.0, dis.readInt() / 2.0
+                ));
+            }
+            magicValue = dis.readUTF();
+            if (!magicValue.equals("NODE")) throw new IllegalStateException("Expected magic value NODE Instead got "+magicValue);
+            this.gzipStart = countingInputStream.getCount();
+        }
     }
 
-    public static PathfindCache load(InputStream inputStream) {
-        return null;
+    public IPathfinder createPathfinder(int rotation) throws IOException {
+        try (FileInputStream fileInputStream = new FileInputStream(file)) {
+            fileInputStream.skip(gzipStart);
+            BufferedInputStream bufferedInputStream = new BufferedInputStream(fileInputStream);
+            InflaterInputStream gzipInputStream = new InflaterInputStream(bufferedInputStream);
+            DataInputStream dataInputStream = new DataInputStream(gzipInputStream);
+            int xStart = dataInputStream.readShort();
+            int yStart = dataInputStream.readShort();
+            int zStart = dataInputStream.readShort();
+            int xLen = dataInputStream.readShort();
+            int yLen = dataInputStream.readShort();
+            int zLen = dataInputStream.readShort();
+
+            byte[] b = new byte[xLen * yLen * zLen * 8];
+            dataInputStream.readFully(b);
+            ByteBuffer buffer = ByteBuffer.allocateDirect(xLen * yLen * zLen * 8); // use off-heap buffer.
+            buffer.put(b);
+
+            System.out.println(xStart+ " / "+yStart + " / "+zStart + " / "+xLen + " / "+yLen +" / " +zLen +" expected "+ b.length +" got ");
+
+            return new CachedPathfinder(this, rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
+        }
     }
-    public static PathfindCache load(ResourceLocation resourceLocation) throws IOException {
-        return load(Minecraft.getMinecraft().getResourceManager().getResource(resourceLocation).getInputStream());
-    }
+
+
 }

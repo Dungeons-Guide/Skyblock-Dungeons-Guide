@@ -451,7 +451,7 @@ public class CommandDgDebug extends CommandBase {
 //            throw new RuntimeException(e);
 //        }
         int est = 0;
-        List<PathfindRequest> requests = new ArrayList<>();
+        Set<PathfindRequest> requests = new HashSet<>();
         for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
 //            System.out.println("Loading "+dungeonRoomInfo.getName());
             DRIWorld driWorld = new DRIWorld(dungeonRoomInfo);
@@ -593,7 +593,7 @@ public class CommandDgDebug extends CommandBase {
                 for (int i = 0; i < (1 << openMech.size()); i++) {
                     Set<String> open = new HashSet<>();
                     for (int i1 = 0; i1 < openMechList.size(); i1++) {
-                        if (((i << i1) & 0x1) > 0) {
+                        if (((i >> i1) & 0x1) > 0) {
                             open.add(openMechList.get(i1));
                         }
                     }
