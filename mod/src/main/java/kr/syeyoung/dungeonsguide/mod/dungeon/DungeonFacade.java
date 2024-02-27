@@ -55,8 +55,8 @@ public class DungeonFacade {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
-        new File(Main.getConfigDir(), "resulttest").mkdirs();
-        CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "resulttest"));
+        new File(Main.getConfigDir(), "pfResult").mkdirs();
+        CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "pfResult"));
         System.out.println(CachedPathfinderRegistry.getRegistered().size());
     }
 }

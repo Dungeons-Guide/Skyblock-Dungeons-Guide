@@ -87,7 +87,7 @@ public class CachedPathfinder implements IPathfinder {
     @Override
     public PathfindResult getRoute(Vec3 from) {
         OffsetVec3 offsetVec3 = new OffsetVec3(0,0,0);
-        offsetVec3.setPosInWorld(xLen/2, zLen/2,roomXMin/2, roomYMin/2, roomZMin/2, from.xCoord, from.yCoord, from.zCoord, rotation);
+        offsetVec3.setPosInWorld(xLen/2+3, zLen/2+3,roomXMin/2, roomYMin/2, roomZMin/2, from.xCoord, from.yCoord, from.zCoord, rotation);
         int nodeX = (int) Math.round(offsetVec3.xCoord * 2);
         int nodeY = (int) Math.round(offsetVec3.yCoord * 2);
         int nodeZ = (int) Math.round(offsetVec3.zCoord * 2);
@@ -98,17 +98,18 @@ public class CachedPathfinder implements IPathfinder {
         if (curr.nodeType == null) return null;
         Vec3 nextPos = new Vec3(((int)Math.round(from.xCoord * 2)) / 2.0,((int)Math.round(from.yCoord * 2)) / 2.0 + 0.05,((int)Math.round(from.zCoord * 2)) / 2.0);
         int cnt = 0;
-        while(curr.nodeType != null && curr.nodeType != PathfindResult.PathfindNode.NodeType.DESTINATION && curr.gScore <= gScore) {
+        while(curr.nodeType != null && curr.nodeType != PathfindResult.PathfindNode.NodeType.DESTINATION) {
             route.addLast(new PathfindResult.PathfindNode(nextPos.xCoord, nextPos.yCoord, nextPos.zCoord, curr.nodeType));
 
             OffsetVec3 offsetVec31 = new OffsetVec3(curr.x / 2.0, curr.y / 2.0, curr.z / 2.0);
-            nextPos = offsetVec31.toRotatedRelBlockPos(rotation, zLen, xLen).addVector(roomXMin / 2.0, roomYMin / 2.0 + 0.05, roomZMin / 2.0);
+            nextPos = offsetVec31.toRotatedRelBlockPos(rotation, roomZLen, roomXLen).addVector(roomXMin / 2.0, roomYMin / 2.0 + 0.05, roomZMin / 2.0);
 
             curr = getNode(curr.x, curr.y, curr.z);
             cnt ++;
             if (cnt > 1000) break;
-        }
+        };
         route.addLast(new PathfindResult.PathfindNode(nextPos.xCoord, nextPos.yCoord, nextPos.zCoord, curr.nodeType));
+
         return new PathfindResult(route, gScore);
     }
 
@@ -119,7 +120,7 @@ public class CachedPathfinder implements IPathfinder {
         private PathfindResult.PathfindNode.NodeType nodeType;
     }
 
-    private CachedPathfindNode getNode(int x, int y, int z) {
+    public CachedPathfindNode getNode(int x, int y, int z) {
         if (x < xStart || y < yStart || z < zStart || x >= xStart + xLen || y >= yStart + yLen || z >= zStart + zLen) {
             return new CachedPathfindNode(0,0,0, Float.POSITIVE_INFINITY, null);
         }
@@ -134,18 +135,19 @@ public class CachedPathfinder implements IPathfinder {
             return new CachedPathfindNode(0,0,0, Float.POSITIVE_INFINITY,null);
         }
 
-        int parentX = Byte.toUnsignedInt(data[0]);
-        int parentY = Byte.toUnsignedInt(data[1]);
-        int parentZ = Byte.toUnsignedInt(data[2]);
+        int parentX = Byte.toUnsignedInt(data[0]) + xStart;
+        int parentY = Byte.toUnsignedInt(data[1]) + yStart;
+        int parentZ = Byte.toUnsignedInt(data[2]) + zStart;
         PathfindResult.PathfindNode.NodeType type = PathfindResult.PathfindNode.NodeType.values()[data[3]];
         float gScore = Float.intBitsToFloat((data[7] << 24 & 0xFF000000) | (data[6] << 16 & 0xFF0000) | (data[ 5] << 8 & 0xFF00) | (data[4] & 0xFF));
+
         return new CachedPathfindNode(parentX, parentY, parentZ, gScore, type);
     }
 
     @Override
     public double getCost(Vec3 from) {
         OffsetVec3 offsetVec3 = new OffsetVec3(0,0,0);
-        offsetVec3.setPosInWorld(xLen/2, zLen/2,roomXMin/2, roomYMin/2, roomZMin/2, from.xCoord, from.yCoord, from.zCoord, rotation);
+        offsetVec3.setPosInWorld(xLen/2+3, zLen/2+3,roomXMin/2, roomYMin/2, roomZMin/2, from.xCoord, from.yCoord, from.zCoord, rotation);
         int nodeX = (int) Math.round(offsetVec3.xCoord * 2);
         int nodeY = (int) Math.round(offsetVec3.yCoord * 2);
         int nodeZ = (int) Math.round(offsetVec3.zCoord * 2);

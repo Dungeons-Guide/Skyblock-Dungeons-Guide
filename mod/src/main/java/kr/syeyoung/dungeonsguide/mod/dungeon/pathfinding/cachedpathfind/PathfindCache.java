@@ -19,9 +19,12 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind;
 
 import io.netty.buffer.ByteBuf;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.FineGridStonkingBFS;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.IPathfinder;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -80,7 +83,16 @@ public class PathfindCache {
             magicValue = dis.readUTF();
             if (!magicValue.equals("NODE")) throw new IllegalStateException("Expected magic value NODE Instead got "+magicValue);
             this.gzipStart = countingInputStream.getCount();
+
+            CachedPathfinder pathfinder =
+                    (CachedPathfinder) createPathfinder(0);
+            pathfinder.init(new DRIWorld(DungeonRoomInfoRegistry.getByUUID(roomId)), null);
+            for (OffsetVec3 target : targets) {
+                CachedPathfinder.CachedPathfindNode node = pathfinder.getNode((int) (target.xCoord * 2), (int) (target.yCoord * 2), (int) (target.zCoord * 2));
+                System.out.println(node.getNodeType() + " / "+node.getX() + " / "+node.getY() + " / "+node.getZ() + " / "+node.getGScore());
+            }
         }
+
     }
 
     public IPathfinder createPathfinder(int rotation) throws IOException {
@@ -100,8 +112,6 @@ public class PathfindCache {
             dataInputStream.readFully(b);
             ByteBuffer buffer = ByteBuffer.allocateDirect(xLen * yLen * zLen * 8); // use off-heap buffer.
             buffer.put(b);
-
-            System.out.println(xStart+ " / "+yStart + " / "+zStart + " / "+xLen + " / "+yLen +" / " +zLen +" expected "+ b.length +" got ");
 
             return new CachedPathfinder(this, rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
         }

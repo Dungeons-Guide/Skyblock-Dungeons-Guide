@@ -200,7 +200,7 @@ public class ActionMoveSpot extends AbstractAction {
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
                     return  b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor;
-                }).filter(b -> !((RouteBlocker)b).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
+                }).filter(b -> !((RouteBlocker)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
                 getTargets().stream().flatMap(b -> b.getOffsetPointSet().stream())
                         .collect(Collectors.toList())
         ).getId());

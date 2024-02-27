@@ -62,8 +62,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
 
             long start = System.nanoTime();
             toHighlight = ShadowCast.realShadowcast(this, event.pos.getX(), event.pos.getY(), event.pos.getZ(), 61);
-            ChatTransmitter.sendDebugChat("Shadowcasting took "+(System.nanoTime() - start)+" ns");
-            System.out.println(toHighlight.size());
+            ChatTransmitter.sendDebugChat("Shadowcasting took "+(System.nanoTime() - start)+" ns with "+toHighlight.size());
         } else {
 //            toHighlight = null;
         }

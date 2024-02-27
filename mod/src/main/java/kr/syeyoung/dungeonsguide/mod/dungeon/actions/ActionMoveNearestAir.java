@@ -102,7 +102,7 @@ public class ActionMoveNearestAir extends AbstractAction {
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
                     return  b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor;
-                }).filter(b -> !((RouteBlocker)b).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
+                }).filter(b -> !((RouteBlocker)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
                 Collections.singletonList(new OffsetVec3(target.getX(), target.getY(), target.getZ()))
         ).getId());
         if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);

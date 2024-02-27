@@ -191,7 +191,7 @@ public class ActionMove extends AbstractAction {
                 boolean warp = false;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     cnt ++;
-                    if (pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
+                    if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
 
@@ -325,7 +325,7 @@ public class ActionMove extends AbstractAction {
                 dungeonRoom.getDungeonRoomInfo(),
                 dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
                     return  (b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor);
-                }).filter(b -> !((RouteBlocker)b).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
+                }).filter(b -> !((RouteBlocker)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
                 getTargets().stream().flatMap(b -> b.getOffsetPointSet().stream())
                         .collect(Collectors.toList())
         ).getId());
