@@ -83,79 +83,38 @@ public class DungeonRoomInfo implements Serializable {
         return getBlock(offsetPoint.getX(), offsetPoint.getY(), offsetPoint.getZ(), rot);
     }
 
+    private static final PropertyDirection[] directionMap = new PropertyDirection[4096];
+    static {
+        for (Block block : Block.blockRegistry) {
+
+            Optional<PropertyDirection> propertyDirection = block.getDefaultState().getPropertyNames().stream()
+                    .filter(a -> a instanceof PropertyDirection)
+                    .map(PropertyDirection.class::cast).findFirst();
+            directionMap[Block.getIdFromBlock(block)] = propertyDirection.orElse(null);
+        }
+    }
+
     public IBlockState getBlock(int x, int y, int z, int rot) {
         if (y < -70 || y >= 186) return Blocks.bedrock.getDefaultState();
         if (x <= 0 || x >= width) return Blocks.bedrock.getDefaultState();
         if (z <= 0 || z >= length) return Blocks.bedrock.getDefaultState();
 
-        int index = x + ((y+70) * length + z) * width;
+        int index = x + ((y + 70) * length + z) * width;
         IBlockState blockState = Block.BLOCK_STATE_IDS.getByValue(world[index]);
+        if (rot != 0) {
+            PropertyDirection directions = directionMap[world[index] >> 4];
 
-        Optional<PropertyDirection> propertyDirection = blockState.getPropertyNames().stream()
-                .filter(a -> a instanceof PropertyDirection)
-                .map(PropertyDirection.class::cast).findFirst();
-
-        if (propertyDirection.isPresent()) {
-            EnumFacing enumFacing = blockState.getValue(propertyDirection.get());
-            if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
-                for (int i = 0; i < 4- rot; i++)
-                    enumFacing = enumFacing.rotateY();
-                blockState = blockState.withProperty(propertyDirection.get(), enumFacing);
+            if (directions != null) {
+                EnumFacing enumFacing = blockState.getValue(directions);
+                if (!(enumFacing == EnumFacing.UP || enumFacing == EnumFacing.DOWN)) {
+                    for (int i = 0; i < 4 - rot; i++)
+                        enumFacing = enumFacing.rotateY();
+                    blockState = blockState.withProperty(directions, enumFacing);
+                }
             }
         }
 
-        for (DungeonMechanic value : mechanics.values()) {
-            if (value instanceof DungeonSecretEssence) {
-                OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.skull)
-                        return Blocks.skull.getStateFromMeta(0);
-                    break;
-                }
-            } else if (value instanceof DungeonRedstoneKey) {
-                OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.skull)
-                        return Blocks.skull.getStateFromMeta(0);
-                    break;
-                }
-            } else if (value instanceof DungeonWizardCrystal) {
-                OffsetPoint offsetPoint = ((DungeonWizardCrystal) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.skull)
-                        return Blocks.skull.getStateFromMeta(0);
-                    break;
-                }
-            } else if (value instanceof DungeonSecretChest) {
-                OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.chest)
-                        return Blocks.chest.getStateFromMeta(0);
-                    break;
 
-                }
-            } else if (value instanceof DungeonOnewayLever) {
-                OffsetPoint offsetPoint = ((DungeonOnewayLever) value).getLeverPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.lever)
-                        return Blocks.lever.getStateFromMeta(0);
-                    break;
-                }
-            } else if (value instanceof DungeonSecretDoubleChest) {
-                OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.chest)
-                        return Blocks.chest.getStateFromMeta(0);
-                    break;
-                }
-                offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint2();
-                if (offsetPoint.getX() == x && offsetPoint.getY() == y && offsetPoint.getZ() == z) {
-                    if (blockState.getBlock() != Blocks.chest)
-                        return Blocks.chest.getStateFromMeta(0);
-                    break;
-                }
-            }
-        }
 
 
         return blockState == null ? Blocks.air.getDefaultState() : blockState;

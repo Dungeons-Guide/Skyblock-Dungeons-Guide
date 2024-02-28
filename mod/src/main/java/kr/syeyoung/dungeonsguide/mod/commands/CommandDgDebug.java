@@ -226,6 +226,9 @@ public class CommandDgDebug extends CommandBase {
             case "check":
                 checkCommand();
                 break;
+            case "check2":
+                check2command();
+                break;
             case "reloaddungeon":
                 reloadDungeonCommand();
                 break;
@@ -642,7 +645,7 @@ public class CommandDgDebug extends CommandBase {
         }
         System.out.println("Estimated PF "+est+" on unit room");
         File fileRoot = Main.getConfigDir();
-        File outdir = new File(fileRoot, "pfRequest");
+        File outdir = new File(fileRoot, "pfRequest2");
 
         outdir.mkdirs();
 
@@ -1272,6 +1275,58 @@ public class CommandDgDebug extends CommandBase {
         }
     }
 
+    private void check2command() {
+        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+            if (dungeonRoomInfo.getWorld() == null) {
+                System.out.println("world null for " + dungeonRoomInfo.getName());
+                continue;
+            }
+            for (DungeonMechanic value : dungeonRoomInfo.getMechanics().values()) {
+                if (value instanceof DungeonSecretEssence) {
+                    OffsetPoint offsetPoint = ((DungeonSecretEssence) value).getSecretPoint();
+                    if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
+                        System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
+                        dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
+                    }
+                } else if (value instanceof DungeonRedstoneKey) {
+                    OffsetPoint offsetPoint = ((DungeonRedstoneKey) value).getSecretPoint();
+                    if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
+                        System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
+                        dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
+                    }
+                } else if (value instanceof DungeonWizardCrystal) {
+                    OffsetPoint offsetPoint = ((DungeonWizardCrystal) value).getSecretPoint();
+                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.skull) {
+                            System.out.println("setblock "+offsetPoint+" to skul on "+dungeonRoomInfo.getName());
+                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.skull.getStateFromMeta(0));
+                        }
+                } else if (value instanceof DungeonSecretChest) {
+                    OffsetPoint offsetPoint = ((DungeonSecretChest) value).getSecretPoint();
+                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.chest) {
+                            System.out.println("setblock "+offsetPoint+" to chest on "+dungeonRoomInfo.getName());
+                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.chest.getStateFromMeta(0));
+                        }
+                } else if (value instanceof DungeonOnewayLever) {
+                    OffsetPoint offsetPoint = ((DungeonOnewayLever) value).getLeverPoint();
+                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.lever) {
+                            System.out.println("setblock "+offsetPoint+" to lever on "+dungeonRoomInfo.getName());
+                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.lever.getStateFromMeta(0));
+                        }
+                } else if (value instanceof DungeonSecretDoubleChest) {
+                    OffsetPoint offsetPoint = ((DungeonSecretDoubleChest) value).getSecretPoint();
+                        if (dungeonRoomInfo.getBlock(offsetPoint, 0).getBlock() != Blocks.chest) {
+                            System.out.println("setblock "+offsetPoint+" to chest on "+dungeonRoomInfo.getName());
+                            dungeonRoomInfo.setBlock(offsetPoint, Blocks.chest.getStateFromMeta(0));
+                        }
+                    OffsetPoint offsetPoint2 = ((DungeonSecretDoubleChest) value).getSecretPoint2();
+                        if (dungeonRoomInfo.getBlock(offsetPoint2, 0).getBlock() != Blocks.chest) {
+                            System.out.println("setblock "+offsetPoint2+" to chest on "+dungeonRoomInfo.getName());
+                            dungeonRoomInfo.setBlock(offsetPoint2, Blocks.chest.getStateFromMeta(0));
+                        }
+                }
+            }
+        }
+    }
     private void checkCommand() {
         File fileroot = new File(Main.getConfigDir(), "processorinput");
         for (File f : fileroot.listFiles()) {

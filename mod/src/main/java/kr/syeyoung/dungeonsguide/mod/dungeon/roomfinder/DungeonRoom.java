@@ -349,11 +349,11 @@ public class DungeonRoom implements IPathfindWorld {
                     }
 
         List<PathfindCache> pathfinders = CachedPathfinderRegistry.getByRoom(dungeonRoomInfo.getUuid());
-        if (pathfinders != null) {
-            for (PathfindCache pathfinder : pathfinders) {
-                loadPrecalculated(pathfinder.getId());
-            }
-        }
+//        if (pathfinders != null) {
+//            for (PathfindCache pathfinder : pathfinders) {
+//                loadPrecalculated(pathfinder.getId());
+//            }
+//        }
     }
 
     public void updateRoomProcessor() {
@@ -564,10 +564,20 @@ public class DungeonRoom implements IPathfindWorld {
                 }
             }
         }
-        boolean isOnGround = list.stream().anyMatch(a -> a.maxY <= bb.minY);
+        boolean isOnGround = false;
+        for (AxisAlignedBB axisAlignedBB : list) {
+            if (axisAlignedBB.maxY <= bb.minY) {
+                isOnGround = true;
+                break;
+            }
+        }
         boolean blocked = !list2.isEmpty();
-        int headcut = (int) list2.stream().filter(a -> a.minY >= wY + 0.9f && a.minY <= wY + 1.4f).count();
-        int bodycut = (int) list2.stream().filter(a -> a.minY >= wY).count() - headcut;
+
+        int headcut = 0, bodycut = 0;
+        for (AxisAlignedBB axisAlignedBB : list2) {
+            if (axisAlignedBB.minY >= wY + 0.9f && axisAlignedBB.minY <= wY + 1.4f) headcut++;
+            if (axisAlignedBB.minY >= wY) bodycut++;
+        }
 
         // weirdest thing ever check.
         list2.clear();

@@ -58,6 +58,7 @@ public class DRIWorld extends World implements IPathfindWorld {
     private int shape;
 
     private HashSet<BlockPos> poses = new HashSet<>();
+    private HashSet<BlockPos> open = new HashSet<>();
     private FeaturePathfindSettings.AlgorithmSettings algorithmSettings;
 
     private BitStorage enderpearl, whole;
@@ -81,6 +82,14 @@ public class DRIWorld extends World implements IPathfindWorld {
                     poses.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() + 70, offsetPoint.getZ()));
                 }
             }
+        }
+
+        for (String openMechanic : openMechanics) {
+            RouteBlocker routeBlocker = (RouteBlocker) dungeonRoomInfo.getMechanics().get(openMechanic);
+            for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
+                open.add(new BlockPos(offsetPoint.getX(), offsetPoint.getY() +70, offsetPoint.getZ()));
+            }
+
         }
 
 
@@ -117,14 +126,8 @@ public class DRIWorld extends World implements IPathfindWorld {
 
     @Override
     public IBlockState getBlockState(BlockPos pos) {
-        for (String openMechanic : openMechanics) {
-            RouteBlocker routeBlocker = (RouteBlocker) dungeonRoomInfo.getMechanics().get(openMechanic);
-            for (OffsetPoint offsetPoint : routeBlocker.blockedPoints()) {
-                if (offsetPoint.getX() == pos.getX() && offsetPoint.getY() == pos.getY()-70 && offsetPoint.getZ() == pos.getZ()) {
-                    return Blocks.air.getDefaultState();
-                }
-            }
-
+        if (open.contains(pos)) {
+            return Blocks.air.getDefaultState();
         }
         return dungeonRoomInfo.getBlock(pos.getX(), pos.getY()-70, pos.getZ(), 0);
     }
@@ -269,10 +272,20 @@ public class DRIWorld extends World implements IPathfindWorld {
                 }
             }
         }
-        boolean isOnGround = list.stream().anyMatch(a -> a.maxY <= bb.minY);
+
+        boolean isOnGround = false;
+        for (AxisAlignedBB axisAlignedBB : list) {
+            if (axisAlignedBB.maxY <= bb.minY) {
+                isOnGround = true;
+                break;
+            }
+        }
         boolean blocked = !list2.isEmpty();
-        int headcut = (int) list2.stream().filter(a -> a.minY >= wY + 0.9f && a.minY <= wY + 1.4f).count();
-        int bodycut = (int) list2.stream().filter(a -> a.minY >= wY).count() - headcut;
+        int headcut = 0, bodycut = 0;
+        for (AxisAlignedBB axisAlignedBB : list2) {
+            if (axisAlignedBB.minY >= wY + 0.9f && axisAlignedBB.minY <= wY + 1.4f) headcut++;
+            if (axisAlignedBB.minY >= wY) bodycut++;
+        }
 
         // weirdest thing ever check.
         list2.clear();
