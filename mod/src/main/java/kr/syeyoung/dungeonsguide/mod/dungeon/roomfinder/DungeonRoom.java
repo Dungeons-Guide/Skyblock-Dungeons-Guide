@@ -689,25 +689,20 @@ public class DungeonRoom implements IPathfindWorld {
             }
         }
         if (pearlList.isEmpty()) return PearlLandType.OPEN;
-        double wholeVolume = pearlList.stream().map(a -> {
+        double wholeVolume = 0;
+        double topVolume = 0;
+        for (AxisAlignedBB a : pearlList) {
             double miX = Math.max(a.minX, pearlTest.minX);
             double miY = Math.max(a.minY, pearlTest.minY);
             double miZ = Math.max(a.minZ, pearlTest.minZ);
             double maX = Math.min(a.maxX, pearlTest.maxX);
             double maY = Math.min(a.maxY, pearlTest.maxY);
             double maZ = Math.min(a.maxZ, pearlTest.maxZ);
-            return (maX - miX) * (maY - miY) * (maZ - miZ);
-        }).reduce(0.0, Double::sum);
-        double topVolume = pearlList.stream().map(a -> { // head intersect.
-            double miX = Math.max(a.minX, pearlTest.minX);
-            double miY = Math.max(a.minY, pearlTest.minY+0.3);
-            double miZ = Math.max(a.minZ, pearlTest.minZ);
-            double maX = Math.min(a.maxX, pearlTest.maxX);
-            double maY = Math.min(a.maxY, pearlTest.maxY);
-            double maZ = Math.min(a.maxZ, pearlTest.maxZ);
-            if (miY > maY) return 0.0;
-            return (maX - miX) * (maY - miY) * (maZ - miZ);
-        }).reduce(0.0, Double::sum);
+            wholeVolume += (maX - miX) * (maY - miY) * (maZ - miZ);
+            miY = Math.max(a.minY, pearlTest.minY+0.3);
+            if (miY > maY) continue;
+            topVolume += (maX - miX) * (maY - miY) * (maZ - miZ);
+        }
         // total is 0.216
         if (wholeVolume > 0.215) return PearlLandType.BLOCKED;
         if (wholeVolume > 0.027 && 0 == topVolume) return PearlLandType.FLOOR;
