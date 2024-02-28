@@ -195,10 +195,9 @@ public class DRIWorld extends World implements IPathfindWorld {
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
         float playerWidth = 0.25f;
 
-        AxisAlignedBB bb = AxisAlignedBB
-                .fromBounds(wX - playerWidth, wY+0.06251, wZ - playerWidth,
+        AxisAlignedBB bb = new AxisAlignedBB(wX - playerWidth, wY+0.06251, wZ - playerWidth,
                         wX + playerWidth, wY +0.06251 + 1.8, wZ + playerWidth);
-        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+        AxisAlignedBB pearlTest = new AxisAlignedBB(
                 wX - 0.5, wY - 0.5, wZ - 0.5, wX + 0.5, wY + 0.5, wZ+0.5
         );
 
@@ -370,7 +369,7 @@ public class DRIWorld extends World implements IPathfindWorld {
 
         float wX = x / 2.0f, wY = y / 2.0f, wZ = z / 2.0f;
 
-        AxisAlignedBB pearlTest = AxisAlignedBB.fromBounds(
+        AxisAlignedBB pearlTest = new AxisAlignedBB(
                 wX-0.3, wY-0.3, wZ-0.3, wX+ 0.3, wY+ 0.3, wZ + 0.3
         );
 
