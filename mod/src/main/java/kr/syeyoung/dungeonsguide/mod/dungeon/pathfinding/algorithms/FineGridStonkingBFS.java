@@ -114,6 +114,7 @@ public class FineGridStonkingBFS implements IPathfinder {
         if (blockState.getBlock() == Blocks.standing_sign) return false;
         if (blockState.getBlock() == Blocks.wall_sign) return false;
         if (blockState.getBlock() == Blocks.air) return true;
+        if (blockState.getBlock() == Blocks.quartz_ore) return true;
         if (!blockState.getBlock().canCollideCheck(blockState, false)) return true;
         if (blockState.getBlock().getCollisionBoundingBox(Minecraft.getMinecraft().theWorld, new BlockPos(0,0,0), blockState) == null) return true;
         return false;
@@ -174,7 +175,7 @@ public class FineGridStonkingBFS implements IPathfinder {
                         (n.coordinate.z-1) / 2);
 
                 for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> dungeonRoom.getActualBlock(x,y,z).getBlock() != Blocks.air, start.getX(), start.getY(), start.getZ(), 61)) {
-                    if (target.distanceSq(start) >61 * 61) continue;
+                    if (start.distanceSq(target.getX()/2.0, target.getY()/2.0 - 1.5 , target.getZ()/2.0) >57 * 57) continue;
                     if (target.getX()  < dungeonRoom.getMinX()) continue;
                     if (target.getY() - 3 < dungeonRoom.getMinY()) continue;
                     if (target.getZ() < dungeonRoom.getMinZ()) continue;
@@ -304,7 +305,6 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                     boolean elligibleForTntPearl = algorithmSettings.isTntpearl() && neighborState.isOnGround() && !neighborState.isClip()
                             && value.getFrontOffsetY() == 0 && neighbor.coordinate.y % 2 == 0 && originalPearlType == DungeonRoom.PearlLandType.FLOOR_WALL && dungeonRoom.getActualBlock((int) Math.floor(neighbor.coordinate.x / 2.0), neighbor.coordinate.y / 2, (int) Math.floor(neighbor.coordinate.z / 2.0)).getBlock() == Blocks.air;
-
 
                     if (!neighborState.isClip() && !elligibleForTntPearl) {
                         continue; // can not go from non-clip to blocked.

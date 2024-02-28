@@ -139,9 +139,9 @@ public class ShadowCast {
                 double currentSlopeXP = ((x-xOffset) / 2.0) / (realZ);
 
                 boolean localBlocked = blockMap[y/2 - startY][x/2 - startX];
-                if (x%2 != 0) localBlocked |= blockMap[y/2 - startY][x/2 - startX+1];
-                if (y%2 != 0) localBlocked |= blockMap[y/2 - startY +1][x/2 - startX];
-                if (x%2 != 0 && y%2 != 0) localBlocked |= blockMap[y/2 - startY + 1][x/2 - startX+1];
+                if (x%2 != 0) localBlocked &= blockMap[y/2 - startY][x/2 - startX+1];
+                if (y%2 != 0) localBlocked &= blockMap[y/2 - startY +1][x/2 - startX];
+                if (x%2 != 0 && y%2 != 0) localBlocked &= blockMap[y/2 - startY + 1][x/2 - startX+1];
                 if (localBlocked) continue;
 
                 if (!(currentSlopeY < startSlopeY || currentSlopeY > endSlopeY || currentSlopeX < startSlopeX || currentSlopeX > endSlopeX)) {
