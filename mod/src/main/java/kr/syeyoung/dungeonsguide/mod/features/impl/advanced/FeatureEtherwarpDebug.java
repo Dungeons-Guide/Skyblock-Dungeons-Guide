@@ -61,7 +61,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
             event.setCanceled(true);
 
             long start = System.nanoTime();
-            toHighlight = ShadowCast.realShadowcast(this, event.pos.getX(), event.pos.getY(), event.pos.getZ(), 61);
+            toHighlight = ShadowCast.realShadowcast(this, event.pos.getX(),event.pos.getY(),event.pos.getZ(),10);
             ChatTransmitter.sendDebugChat("Shadowcasting took "+(System.nanoTime() - start)+" ns with "+toHighlight.size());
         } else {
 //            toHighlight = null;
@@ -74,7 +74,11 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
         GlStateManager.disableAlpha();
         Color c =  new Color(0x1500FF00, true);
         for (BlockPos spot : toHighlight) {
-             RenderUtils.highlightBlock(spot, c, event.partialTicks, false);
+             RenderUtils.highlightBox(
+//                     spot
+                     AxisAlignedBB.fromBounds(spot.getX() / 2.0 - 0.25, spot.getY() / 2.0 - 0.25, spot.getZ() / 2.0 - 0.25,
+                             spot.getX() / 2.0 + 0.25, spot.getY() / 2.0 + 0.25, spot.getZ() / 2.0 + 0.25)
+                     , c, event.partialTicks, true);
         }
         GlStateManager.enableAlpha();
     }
@@ -82,5 +86,18 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     @Override
     public boolean checkIfBlocked(int x, int y, int z) {
         return !Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(x,y,z));
+//
+//        int maxX = (int) Math.floor(x/2.0);
+//        int maxY = (int) Math.floor(y/2.0);
+//        int maxZ = (int) Math.floor(z/2.0);
+//        int minX = x%2 == 0 ? maxX - 1 : maxX;
+//        int minY = y%2 == 0 ? maxY - 1 : maxY;
+//        int minZ = z%2 == 0 ? maxZ - 1 : maxZ;
+//        for (int xp = minX; xp <= maxX; xp++)
+//            for (int yp = minY; yp <= maxY; yp++)
+//                for (int zp = minZ; zp <= maxZ; zp++)
+//                    if (Minecraft.getMinecraft().theWorld.isAirBlock(new BlockPos(xp,yp,zp)))
+//                        return false;
+//        return true;
     }
 }

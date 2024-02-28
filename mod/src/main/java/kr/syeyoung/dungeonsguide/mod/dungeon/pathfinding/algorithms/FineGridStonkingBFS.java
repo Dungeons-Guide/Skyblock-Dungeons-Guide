@@ -175,17 +175,19 @@ public class FineGridStonkingBFS implements IPathfinder {
 
                 for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> dungeonRoom.getActualBlock(x,y,z).getBlock() != Blocks.air, start.getX(), start.getY(), start.getZ(), 61)) {
                     if (target.distanceSq(start) >61 * 61) continue;
-                    if (target.getX() * 2 + 1 < dungeonRoom.getMinX()) continue;
-                    if (target.getY() * 2 - 2 < dungeonRoom.getMinY()) continue;
-                    if (target.getZ() * 2 + 1 < dungeonRoom.getMinZ()) continue;
-                    if (target.getX() * 2 + 1 >= dungeonRoom.getXwidth() + minX) continue;
-                    if (target.getY() * 2 - 2 >= dungeonRoom.getYwidth() + minY) continue;
-                    if (target.getZ() * 2 + 1 >= dungeonRoom.getZwidth() + minZ) continue;
+                    if (target.getX()  < dungeonRoom.getMinX()) continue;
+                    if (target.getY() - 3 < dungeonRoom.getMinY()) continue;
+                    if (target.getZ() < dungeonRoom.getMinZ()) continue;
+                    if (target.getX() >= dungeonRoom.getXwidth() + minX) continue;
+                    if (target.getY() -3 >= dungeonRoom.getYwidth() + minY) continue;
+                    if (target.getZ() >= dungeonRoom.getZwidth() + minZ) continue;
 
-                    Node neighbor = openNode(target.getX() * 2 + 1, target.getY() * 2 - 2,
-                                target.getZ() * 2 + 1);
-                        DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
-                        neighbor.blocked = neighborState.isBlocked();
+                    Node neighbor = openNode(target.getX(), target.getY()-3, target.getZ());
+                    DungeonRoom.CollisionState neighborState = dungeonRoom.getBlock(neighbor.coordinate.x, neighbor.coordinate.y, neighbor.coordinate.z);
+                    if (!neighborState.isOnGround()) {
+                        continue;
+                    }
+                    neighbor.blocked = neighborState.isBlocked();
 //                        if (!neighborState.isBlocked()) {
                             float gScore = n.g + 20; // don't etherwarp unless it saves like 10 blocks
                             if (gScore < neighbor.g) {

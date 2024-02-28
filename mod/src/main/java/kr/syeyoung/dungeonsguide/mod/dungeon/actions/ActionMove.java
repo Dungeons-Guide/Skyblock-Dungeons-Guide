@@ -228,7 +228,7 @@ public class ActionMove extends AbstractAction {
         GL11.glLineWidth(thickness);
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100 || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
+        if ((poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK ) && poses.get(0).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
@@ -254,8 +254,7 @@ public class ActionMove extends AbstractAction {
                 worldRenderer.begin(GL11.GL_LINE_STRIP, DefaultVertexFormats.POSITION_COLOR);
 
 
-                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100
-                || pos.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP) {
+                if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
                     GlStateManager.disableDepth();
                     GlStateManager.depthMask(false);
                 } else {
