@@ -417,6 +417,7 @@ public class DungeonRoom implements IPathfindWorld {
         return canAccessRelative(pos.getX() - this.min.getX(), pos.getZ() - this.min.getZ());
     }
     public boolean canAccessRelative(int x, int z) {
+        if (x/32 >= 4 || z / 32 >= 4) return false;
         boolean firstCond =  x> 0 && z > 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
         boolean zCond = (shape >> ((z / 32) * 4 + (x / 32) - 1) & 0x1) > 0;
         boolean xCond = (shape >> ((z / 32) * 4 + (x / 32) - 4) & 0x1) > 0;
@@ -822,7 +823,7 @@ public class DungeonRoom implements IPathfindWorld {
     }
 
     public void chunkUpdate(int cx, int cz) {
-        if (!canAccessAbsolute(new BlockPos(cx * 16+8,0, cz*16+8))) {
+        if (!chunkCache.isManaged(cx, cz)) {
             return;
         }
 //        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());

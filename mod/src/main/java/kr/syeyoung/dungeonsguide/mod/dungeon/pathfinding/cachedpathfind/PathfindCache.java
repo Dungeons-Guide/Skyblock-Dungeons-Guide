@@ -83,14 +83,6 @@ public class PathfindCache {
             magicValue = dis.readUTF();
             if (!magicValue.equals("NODE")) throw new IllegalStateException("Expected magic value NODE Instead got "+magicValue);
             this.gzipStart = countingInputStream.getCount();
-
-            CachedPathfinder pathfinder =
-                    (CachedPathfinder) createPathfinder(0);
-            pathfinder.init(new DRIWorld(DungeonRoomInfoRegistry.getByUUID(roomId)), null);
-            for (OffsetVec3 target : targets) {
-                CachedPathfinder.CachedPathfindNode node = pathfinder.getNode((int) (target.xCoord * 2), (int) (target.yCoord * 2), (int) (target.zCoord * 2));
-                System.out.println(node.getNodeType() + " / "+node.getX() + " / "+node.getY() + " / "+node.getZ() + " / "+node.getGScore());
-            }
         }
 
     }

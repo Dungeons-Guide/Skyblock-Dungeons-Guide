@@ -188,20 +188,20 @@ public class ActionMove extends AbstractAction {
                 ActionMove.drawLinesPathfindNode(poses.getNodeList(), actionRouteProperties.getLineColor(), (float) actionRouteProperties.getLineWidth(), partialTicks);
 
                 int cnt = 0;
-                boolean warp = false;
+                int warp = 0;
                 for (PathfindResult.PathfindNode pose : poses.getNodeList()) {
                     cnt ++;
                     if (pose.getType() != null && pose.getType() != PathfindResult.PathfindNode.NodeType.WALK && pose.getType() != PathfindResult.PathfindNode.NodeType.STONK_WALK && pose.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
                         RenderUtils.drawTextAtWorld(pose.getType().toString(), pose.getX(), pose.getY() + 0.5f, pose.getZ(), 0xFF00FF00, 0.02f, false, true, partialTicks);
                     }
 
-                    if (warp) {
+                    if (warp == 1) {
                         BlockPos pos = new BlockPos(Math.floor(pose.getX()), Math.floor(pose.getY()) -1 , Math.floor(pose.getZ()));
                         RenderUtils.highlightBox(Blocks.stone.getSelectedBoundingBox(null, pos).expand(0.003, 0.003, 0.003), Color.green, partialTicks, true);
-                        warp = false;
+                        warp = 2;
                     }
-                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP && cnt < 10) {
-                        warp = true;
+                    if (pose.getType() == PathfindResult.PathfindNode.NodeType.ETHERWARP && cnt < 10 && warp < 2) {
+                        warp = 1;
                     }
 
                 }
