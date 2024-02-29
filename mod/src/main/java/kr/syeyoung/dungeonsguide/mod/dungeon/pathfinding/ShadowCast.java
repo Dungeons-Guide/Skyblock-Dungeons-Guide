@@ -76,24 +76,38 @@ public class ShadowCast {
     public static List<BlockPos> realShadowcast(Checker checker, int centerX, int centerY, int centerZ, int radius, double leeway, double boffset) {
         LinkedList<BlockPos> result = new LinkedList<>();
         for (int[] matrix : TRANSFORM_MATRICES) {
-            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius, leeway,
+
+//            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius, leeway,
+//                    0, 0, 0,
+//                    matrix[0], matrix[1], matrix[2],
+//                    matrix[3], matrix[4], matrix[5],
+//                    matrix[6], matrix[7], matrix[8], result
+//            );
+
+            if (!checker.checkIfBlocked(centerX + 1 * matrix[0], centerY + 1 * matrix[3], centerZ + 1 * matrix[6]))
+
+            shadowcast(checker, centerX, centerY, centerZ, 1, (0.5 - boffset + leeway) / 0.5, 1, 0, 1, radius, leeway,
                     boffset, 0, 0,
                     matrix[0], matrix[1], matrix[2],
                     matrix[3], matrix[4], matrix[5],
                     matrix[6], matrix[7], matrix[8], result
             );
-            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,leeway,
+
+            if (!checker.checkIfBlocked(centerX + 1 * matrix[1], centerY + 1 * matrix[4], centerZ + 1 * matrix[7]))
+            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, (0.5 - boffset + leeway) / 0.5, 1, radius,leeway,
                     0, boffset, 0,
                     matrix[0], matrix[1], matrix[2],
                     matrix[3], matrix[4], matrix[5],
                     matrix[6], matrix[7], matrix[8], result
             );
+            if (!checker.checkIfBlocked(centerX + 1 * matrix[2], centerY + 1 * matrix[5], centerZ + 1 * matrix[8]))
             shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,leeway,
                     0, 0, boffset,
                     matrix[0], matrix[1], matrix[2],
                     matrix[3], matrix[4], matrix[5],
                     matrix[6], matrix[7], matrix[8], result
             );
+//            return result;
         }
         return result;
     }
@@ -125,8 +139,8 @@ public class ShadowCast {
                 int trZ = centerZ + x * trMatrix13 + y * trMatrix23 + startZ * trMatrix33;
                 boolean localBlocked =checker.checkIfBlocked(trX, trY, trZ) && startZ != 0;
 
-                if (endSlopeX == 1 && x +1 == endX && blockMap[y - startY][x-1 - startX] && xOffset != 0) localBlocked = true;
-                if (endSlopeY == 1 && y +1 == endY && blockMap[y-1 - startY][x - startX] && yOffset != 0) localBlocked = true;
+                if (endSlopeX == 1 && x +1 == endX && blockMap[y - startY][x-1 - startX] ) localBlocked = true;
+                if (endSlopeY == 1 && y +1 == endY && blockMap[y-1 - startY][x - startX] ) localBlocked = true;
 
                 blockMap[y - startY][x - startX] = localBlocked;
             }

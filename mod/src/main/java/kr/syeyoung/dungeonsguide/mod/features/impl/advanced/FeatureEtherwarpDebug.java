@@ -61,7 +61,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
             event.setCanceled(true);
 
             long start = System.nanoTime();
-            toHighlight = ShadowCast.realShadowcast(this, event.pos.getX(),event.pos.getY(),event.pos.getZ(),61, 1/16.0, 0.4);
+            toHighlight = ShadowCast.realShadowcast(this, event.pos.getX(),event.pos.getY(),event.pos.getZ(),5, 1/16.0, 0.4);
             ChatTransmitter.sendDebugChat("Shadowcasting took "+(System.nanoTime() - start)+" ns with "+toHighlight.size());
         } else {
 //            toHighlight = null;
@@ -72,7 +72,7 @@ public class FeatureEtherwarpDebug extends SimpleFeature implements ShadowCast.C
     public void renderworldLast(RenderWorldLastEvent event) {
         if (toHighlight == null) return;
         GlStateManager.disableAlpha();
-        Color c =  new Color(0x1500FF00, true);
+        Color c =  new Color(0x3300FF00, true);
         for (BlockPos spot : toHighlight) {
              RenderUtils.highlightBox(
 //                     spot
