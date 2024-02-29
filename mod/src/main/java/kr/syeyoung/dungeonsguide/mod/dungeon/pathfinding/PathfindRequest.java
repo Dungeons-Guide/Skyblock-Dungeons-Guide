@@ -87,6 +87,9 @@ public class PathfindRequest {
         dataOutputStream.writeBoolean(algorithmSettings.isStonkTeleport());
         dataOutputStream.writeBoolean(algorithmSettings.isRouteEtherwarp());
         dataOutputStream.writeInt(algorithmSettings.getMaxStonk());
+        dataOutputStream.writeInt(algorithmSettings.getEtherwarpRadius());
+        dataOutputStream.writeFloat((float) algorithmSettings.getEtherwarpLeeway());
+        dataOutputStream.writeFloat((float) algorithmSettings.getEtherwarpOffset());
         // export targets
         dataOutputStream.writeUTF("TRGT");
         dataOutputStream.writeInt(target.size());
