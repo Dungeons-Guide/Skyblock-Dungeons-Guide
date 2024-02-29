@@ -69,7 +69,7 @@ public class PathfindCache {
             dis.readUTF(); // room name
             magicValue = dis.readUTF();
             if (!magicValue.equals("ALGO")) throw new IllegalStateException("Expected magic value ALGO Instead got "+magicValue);
-            dis.skipBytes(10); // skip algorithm settings
+            dis.skipBytes(22); // skip algorithm settings
             magicValue = dis.readUTF();
             if (!magicValue.equals("TRGT")) throw new IllegalStateException("Expected magic value TRGT Instead got "+magicValue);
 
