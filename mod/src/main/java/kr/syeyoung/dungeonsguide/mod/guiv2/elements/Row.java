@@ -51,7 +51,7 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
     public final BindableAttribute<MainAxisAlignment> hAlign = new BindableAttribute<>(MainAxisAlignment.class, MainAxisAlignment.START);
 
     @Export(attributeName = "_")
-    public final BindableAttribute<WidgetList> children = new BindableAttribute<>(WidgetList.class);
+    public final BindableAttribute<List<Widget>> widgets = new BindableAttribute(WidgetList.class);
 
 
     @Export(attributeName = "api")
@@ -63,7 +63,7 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
 
     @Override
     public List<Widget> build(DomElement buildContext) {
-        return children.getValue();
+        return widgets.getValue();
     }
 
     @Override
@@ -73,15 +73,22 @@ public class Row extends AnnotatedExportOnlyWidget implements Layouter {
 
 
     public void addWidget(Widget widget) {
-        if (getDomElement().getWidget() == null) {
-            children.getValue().add(widget);
-        } else {
+        widgets.getValue().add(widget);
+        if (getDomElement().getWidget() != null) {
             DomElement domElement = widget.createDomElement(getDomElement());
             getDomElement().addElement(domElement);
         }
     }
 
+    public void removeAllWidget() {
+        widgets.getValue().clear();
+        for (DomElement child : getDomElement().getChildren()) {
+            getDomElement().removeElement(child);
+        }
+    }
+
     public void removeWidget(Widget widget) {
+        widgets.getValue().remove(widget);
         getDomElement().removeElement(widget.getDomElement());
     }
 

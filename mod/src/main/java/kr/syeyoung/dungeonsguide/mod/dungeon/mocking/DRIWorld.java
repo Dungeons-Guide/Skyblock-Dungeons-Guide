@@ -30,6 +30,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.BitStorage;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.FeaturePathfindSettings;
+import lombok.Getter;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockFence;
 import net.minecraft.block.BlockSkull;
@@ -53,6 +54,7 @@ import java.util.List;
 
 public class DRIWorld extends World implements IPathfindWorld {
 
+    @Getter
     private DungeonRoomInfo dungeonRoomInfo;
     private List<String> openMechanics;
     private int shape;

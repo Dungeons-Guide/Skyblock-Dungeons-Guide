@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.events.SerializableBlockPos;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonRoomMatchEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.events.impl.DungeonStateChangeEvent;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
+import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.algorithms.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinder;
@@ -255,6 +256,80 @@ public class DungeonRoom implements IPathfindWorld {
 
         algorithmSettings = context.getAlgorithmSettings();
     }
+
+    public DungeonRoom(DungeonContext context) {
+        if (!(context.getWorld() instanceof DRIWorld)) {
+            throw new IllegalArgumentException("This constructor only applicable for DRIWorld based DungeonContext");
+        }
+        DRIWorld driWorld = (DRIWorld) context.getWorld();
+
+        this.dungeonRoomInfo = driWorld.getDungeonRoomInfo();
+        this.unitPoints = new HashSet<>();
+        for (int dy = 0; dy < 4; dy++) {
+            for (int dx = 0; dx < 4; dx++) {
+                boolean isSet = ((this.dungeonRoomInfo.getShape()>> (dy * 4 + dx)) & 0x1) != 0;
+                if (isSet) {
+                    unitPoints.add(new Point(dx, dy));
+                }
+            }
+        }
+
+        context.getScaffoldParser().getDungeonRoomList().add(this);
+        for (Point p : unitPoints) {
+            context.getScaffoldParser().getRoomMap().put(p, this);
+        }
+
+
+        this.shape = this.dungeonRoomInfo.getShape();
+        this.color = this.dungeonRoomInfo.getColor();
+        this.min = new BlockPos(0, 70, 0);
+        this.max = new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70,  dungeonRoomInfo.getBlocks().length - 1);
+        this.context = context;
+
+        minRoomPt = new Point(Integer.MAX_VALUE, Integer.MAX_VALUE);
+        for (Point pt : unitPoints) {
+            if (pt.x < minRoomPt.x) minRoomPt.x = pt.x;
+            if (pt.y < minRoomPt.y) minRoomPt.y = pt.y;
+        }
+        unitWidth = (int) Math.ceil((max.getX() - min.getX()) / 32.0);
+        unitHeight = (int) Math.ceil((max.getZ() - min.getZ()) / 32.0);
+
+
+
+
+        minx = min.getX() * 2 + 2; miny = 0; minz = min.getZ() * 2 + 2;
+        maxx = max.getX() * 2 + 2; maxy = 255 * 2 + 2; maxz = max.getZ() * 2 + 2;
+
+        lenx = maxx - minx;
+        leny = maxy - miny;
+        lenz = maxz - minz;
+
+        whole = new BitStorage(lenx, leny, lenz, CollisionState.BITS); // plus 1 , because I don't wanna do floating point op for dividing and ceiling
+        enderpearl = new BitStorage(lenx, leny, lenz, PearlLandType.BITS);
+
+        this.doorsAndStates = new HashSet<>();
+        this.cachedWorld = driWorld;
+        this.roomMatcher = new RoomMatcher(this);
+        this.roomMatcher.setMatch(dungeonRoomInfo);
+        this.roomMatcher.setRotation(0);
+
+        algorithmSettings = context.getAlgorithmSettings();
+        totalSecrets = dungeonRoomInfo.getTotalSecrets();
+
+
+        for (DungeonMechanic value : getMechanics().values()) {
+            if (value instanceof DungeonTomb) {
+                for (OffsetPoint offsetPoint : ((DungeonTomb) value).blockedPoints()) {
+                    poses.add(offsetPoint.getBlockPos(this));
+                }
+            } else if (value instanceof DungeonBreakableWall) {
+                for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).blockedPoints()) {
+                    poses.add(offsetPoint.getBlockPos(this));
+                }
+            }
+        }
+    }
+
     private volatile boolean matched = false;
     private volatile boolean matching = false;
 
@@ -349,11 +424,11 @@ public class DungeonRoom implements IPathfindWorld {
                     }
 
         List<PathfindCache> pathfinders = CachedPathfinderRegistry.getByRoom(dungeonRoomInfo.getUuid());
-//        if (pathfinders != null) {
-//            for (PathfindCache pathfinder : pathfinders) {
-//                loadPrecalculated(pathfinder.getId());
-//            }
-//        }
+        if (pathfinders != null) {
+            for (PathfindCache pathfinder : pathfinders) {
+                loadPrecalculated(pathfinder.getId());
+            }
+        }
     }
 
     public void updateRoomProcessor() {

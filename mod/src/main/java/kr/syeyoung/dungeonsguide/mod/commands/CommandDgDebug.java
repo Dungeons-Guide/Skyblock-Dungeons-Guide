@@ -465,48 +465,8 @@ public class CommandDgDebug extends CommandBase {
                     new Point(0,0),
                     new BlockPos(0,70,0)
             );
-            DungeonRoomScaffoldParser scaffoldParser1 = new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext);
-            fakeContext.setScaffoldParser(scaffoldParser1);
-
-            List<Point> points = new ArrayList<>();
-
-            for (int dy = 0; dy < 4; dy++) {
-                for (int dx = 0; dx < 4; dx++) {
-                    boolean isSet = ((dungeonRoomInfo.getShape()>> (dy * 4 + dx)) & 0x1) != 0;
-                    if (isSet) {
-                        points.add(new Point(dx, dy));
-                    }
-                }
-            }
-            DungeonRoom dungeonRoom = new DungeonRoom(
-                    Sets.newHashSet(points),
-                    dungeonRoomInfo.getShape(),
-                    dungeonRoomInfo.getColor(),
-                    new BlockPos(0, 70, 0),
-                    new BlockPos(dungeonRoomInfo.getBlocks()[0].length - 1, 70,  dungeonRoomInfo.getBlocks().length - 1),
-                    fakeContext,
-                    Collections.emptySet());
-            dungeonRoom.setCachedWorld(driWorld);
-
-            fakeContext.getScaffoldParser().getDungeonRoomList().add(dungeonRoom);
-            for (Point p : points) {
-                fakeContext.getScaffoldParser().getRoomMap().put(p, dungeonRoom);
-            }
-
-            int cnt = 0;
-            while (dungeonRoom.getDungeonRoomInfo() == null) {
-                cnt++;
-                if (cnt > 10) {
-                    dungeonRoom.tryRematch();
-                    cnt = 0;
-                }
-                try {
-                    Thread.sleep(10);
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
-                }
-            }
-//            System.out.println("Matched as "+dungeonRoom.getDungeonRoomInfo().getName());
+            fakeContext.setScaffoldParser(new DungeonRoomScaffoldParser(dungeonMapLayout, fakeContext));
+            DungeonRoom dungeonRoom = new DungeonRoom(fakeContext);
 
             ActionDAGBuilder builder = new ActionDAGBuilder(dungeonRoom);
             for (Map.Entry<String, DungeonMechanic> value : dungeonRoom.getMechanics().entrySet()) {

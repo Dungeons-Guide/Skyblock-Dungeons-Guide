@@ -38,6 +38,9 @@ public class CachedPathfinderRegistry {
         return byRoom.get(uid);
     }
 
+    public static Map<UUID, List<PathfindCache>> getByRooms() {
+        return byRoom;
+    }
     public static PathfindCache getById(String id) {
         return idMap.get(id);
     }

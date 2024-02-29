@@ -1,0 +1,50 @@
+
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding left="5" right="5" bottom="5">
+    <RoundRect radius="5" backgroundColor="#FF111111">
+        <padding left="5" top="5" right="5" bottom="5">
+            <col mainAlign="START" crossAlign="START">
+                <row crossAlign="START">
+                    <size width="12" height="12">
+                        <bgcolor bind:backgroundColor="roomColor"/>
+                    </size>
+                    <size width="5"/>
+                    <Text bind:text="shape" color="#FFFFFFFF" size="12"/>
+                    <size width="5"/>
+                    <Text bind:text="name" color="#FFFFFFFF" size="12"/>
+                    <size width="5"/>
+                    <Text bind:text="uuid" color="#FF888888" size="12"/>
+                </row>
+                <size height="5"/>
+                <Text text="Missing" color="#FFFFFFFF" size="8"/>
+                <size height="5"/>
+                <line color="#FFFFFFFF"/>
+                <size height="5"/>
+                <Text bind:text="missing" color="#FFCC0000" size="8"/>
+                <size height="5"/>
+                <Text text="Loaded" color="#FFFFFFFF" size="8"/>
+                <size height="5"/>
+                <line color="#FFFFFFFF"/>
+                <size height="5"/>
+                <Text bind:text="loaded" color="#FFCCCCCC" size="8"/>
+            </col>
+        </padding>
+    </RoundRect>
+</padding>

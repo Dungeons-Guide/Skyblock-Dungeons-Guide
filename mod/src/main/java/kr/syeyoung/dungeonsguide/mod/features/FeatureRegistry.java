@@ -41,6 +41,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.FeatureCustom
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FeatureViewPlayerStatsOnJoin;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.secret.mechanicbrowser.FeatureMechanicBrowse;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest.FeatureRequestCalculation;
 import kr.syeyoung.dungeonsguide.mod.features.impl.solvers.*;
 import kr.syeyoung.dungeonsguide.mod.features.richtext.DefaultTextHUDFeatureStyleFeature;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
@@ -145,6 +146,8 @@ public class FeatureRegistry {
     public static final FeatureTogglePathfind SECRET_TOGGLE_KEY = register(new FeatureTogglePathfind());
     public static final FeaturePathfindStrategy SECRET_PATHFIND_STRATEGY = register(new FeaturePathfindStrategy());
     public static final FeaturePathfindSettings SECRET_PATHFIND_SETTINGS = register(new FeaturePathfindSettings());
+    public static final FeatureRequestCalculation SECRET_PATHFIND_REQUEST = register(new FeatureRequestCalculation());
+
     public static final FeatureActions SECRET_ACTIONS = register(new FeatureActions());
     public static final FeatureDAGs SECRET_DAGS = register(new FeatureDAGs());
 

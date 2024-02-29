@@ -23,6 +23,7 @@ import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.utils.ArrayUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.block.Block;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.ChatComponentText;
@@ -33,9 +34,9 @@ import java.util.List;
 
 public class RoomMatcher {
     private final DungeonRoom dungeonRoom;
-    @Getter
+    @Getter @Setter
     private DungeonRoomInfo match;
-    @Getter
+    @Getter @Setter
     private int rotation; // how much the "found room" has to rotate clockwise to match the given dungeon room info. !
     private boolean triedMatch = false;
 

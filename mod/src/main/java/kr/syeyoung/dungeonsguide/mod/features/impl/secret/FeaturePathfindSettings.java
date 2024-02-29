@@ -75,9 +75,9 @@ public class FeaturePathfindSettings extends SimpleFeature {
                 this.<Integer>getParameter("max_stonk").getValue(),
                 isStonkEnderpearl(),
                 isStonkTntpearl(),
-                this.<Integer>getParameter("boffset_etherwarp").getValue(),
+                this.<Double>getParameter("boffset_etherwarp").getValue(),
                 this.<Integer>getParameter("max_etherwarp").getValue(),
-                this.<Integer>getParameter("leeway_etherwarp").getValue()
+                this.<Double>getParameter("leeway_etherwarp").getValue()
         );
     }
     @AllArgsConstructor @Getter
