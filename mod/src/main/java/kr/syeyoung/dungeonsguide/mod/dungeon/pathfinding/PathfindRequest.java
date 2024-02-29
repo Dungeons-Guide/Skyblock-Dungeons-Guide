@@ -90,7 +90,7 @@ public class PathfindRequest {
         dataOutputStream.writeInt(algorithmSettings.getEtherwarpRadius());
         dataOutputStream.writeFloat((float) algorithmSettings.getEtherwarpLeeway());
         dataOutputStream.writeFloat((float) algorithmSettings.getEtherwarpOffset());
-        // export targetsO
+        // export targets
         dataOutputStream.writeUTF("TRGT");
         dataOutputStream.writeInt(target.size());
         for (OffsetVec3 offsetVec3 : target) {
