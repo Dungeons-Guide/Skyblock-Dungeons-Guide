@@ -174,7 +174,8 @@ public class FineGridStonkingBFS implements IPathfinder {
                         n.coordinate.y / 2 - 1,
                         (n.coordinate.z-1) / 2);
 
-                for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> dungeonRoom.getActualBlock(x,y,z).getBlock() != Blocks.air, start.getX(), start.getY(), start.getZ(), 61)) {
+                for (BlockPos target : ShadowCast.realShadowcast((x,y,z) -> dungeonRoom.getActualBlock(x,y,z).getBlock() != Blocks.air, start.getX(), start.getY(), start.getZ(),
+                        algorithmSettings.getEtherwarpRadius(), algorithmSettings.getEtherwarpLeeway(), algorithmSettings.getEtherwarpOffset())) {
                     if (start.distanceSq(target.getX()/2.0, target.getY()/2.0 - 1.5 , target.getZ()/2.0) >57 * 57) continue;
                     if (target.getX()  < dungeonRoom.getMinX()) continue;
                     if (target.getY() - 3 < dungeonRoom.getMinY()) continue;

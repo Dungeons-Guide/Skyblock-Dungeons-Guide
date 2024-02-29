@@ -73,23 +73,23 @@ public class ShadowCast {
             {0,0,-1, -1,0,0,0,-1,0}, // Y-, (Z-, X-)
 
     };
-    public static List<BlockPos> realShadowcast(Checker checker, int centerX, int centerY, int centerZ, int radius) {
+    public static List<BlockPos> realShadowcast(Checker checker, int centerX, int centerY, int centerZ, int radius, double leeway, double boffset) {
         LinkedList<BlockPos> result = new LinkedList<>();
         for (int[] matrix : TRANSFORM_MATRICES) {
-            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,
-                    0.4, 0, 0,
+            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius, leeway,
+                    boffset, 0, 0,
                     matrix[0], matrix[1], matrix[2],
                     matrix[3], matrix[4], matrix[5],
                     matrix[6], matrix[7], matrix[8], result
             );
-            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,
-                    0, 0.4, 0,
+            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,leeway,
+                    0, boffset, 0,
                     matrix[0], matrix[1], matrix[2],
                     matrix[3], matrix[4], matrix[5],
                     matrix[6], matrix[7], matrix[8], result
             );
-            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,
-                    0, 0, 0.4,
+            shadowcast(checker, centerX, centerY, centerZ, 1, 0, 1, 0, 1, radius,leeway,
+                    0, 0, boffset,
                     matrix[0], matrix[1], matrix[2],
                     matrix[3], matrix[4], matrix[5],
                     matrix[6], matrix[7], matrix[8], result
@@ -104,7 +104,7 @@ public class ShadowCast {
     // [ 12 22 32 ] [ y ] + [cy] = [try]
     // [ 13 23 33 ] [ z ]   [cz]   [trz]
     public static void shadowcast(Checker checker, int centerX, int centerY, int centerZ, int startZ,
-                                  double startSlopeX, double endSlopeX, double startSlopeY, double endSlopeY, int radius,
+                                  double startSlopeX, double endSlopeX, double startSlopeY, double endSlopeY, int radius, double leeway,
                                             double xOffset, double yOffset, double zOffset,
                                             int trMatrix11, int trMatrix21, int trMatrix31,
                                             int trMatrix12, int trMatrix22, int trMatrix32,
@@ -172,7 +172,6 @@ public class ShadowCast {
         xEdge.add(blockMap[0].length - 1);
 
 
-        double leeway = 0.0625;
         int prevY = -1;
         for (Integer y : yEdge) {
             int prevX = -1;
@@ -191,7 +190,7 @@ public class ShadowCast {
                         double endSlopeXX = Math.min(endSlopeX, (x + startX - xOffset  + 0.5 - leeway) / (realZ + 0.5));
                         if (startSlopeYY < endSlopeYY && startSlopeXX < endSlopeXX) {
                             shadowcast(checker, centerX, centerY, centerZ, startZ + 1, startSlopeXX, endSlopeXX,
-                                    startSlopeYY ,endSlopeYY , radius,
+                                    startSlopeYY ,endSlopeYY , radius,leeway,
                                     xOffset, yOffset, zOffset, trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33, result);
                         }
                     } else if ((xGood && !yGood) || (yGood && !xGood)) {
@@ -201,7 +200,7 @@ public class ShadowCast {
                         double endSlopeXX = Math.min(endSlopeX, (x + startX - xOffset  + 0.5 - leeway) / (realZ + 0.5));
                         if (startSlopeYY < endSlopeYY && startSlopeXX < endSlopeXX) {
                             shadowcast(checker, centerX, centerY, centerZ, startZ + 1, startSlopeXX, endSlopeXX,
-                                    startSlopeYY ,endSlopeYY , radius,
+                                    startSlopeYY ,endSlopeYY , radius, leeway,
                                     xOffset, yOffset, zOffset, trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33, result);
                         }
                     } else if (!diagonalGood && yGood && xGood) {
@@ -212,7 +211,7 @@ public class ShadowCast {
                             double endSlopeXX = Math.min(endSlopeX, (x + startX - xOffset + 0.5 - leeway) / (realZ + 0.5));
                             if (startSlopeYY < endSlopeYY && startSlopeXX < endSlopeXX) {
                                 shadowcast(checker, centerX, centerY, centerZ, startZ + 1, startSlopeXX, endSlopeXX,
-                                        startSlopeYY, endSlopeYY, radius,
+                                        startSlopeYY, endSlopeYY, radius,leeway,
                                         xOffset, yOffset, zOffset,  trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33, result);
                             }
                         }
@@ -223,7 +222,7 @@ public class ShadowCast {
                             double endSlopeXX = Math.min(endSlopeX, (x + startX - xOffset + 0.5 - leeway) / (realZ + 0.5));
                             if (startSlopeYY < endSlopeYY && startSlopeXX < endSlopeXX) {
                                 shadowcast(checker, centerX, centerY, centerZ, startZ + 1, startSlopeXX, endSlopeXX,
-                                        startSlopeYY ,endSlopeYY , radius,
+                                        startSlopeYY ,endSlopeYY , radius,leeway,
                                         xOffset, yOffset, zOffset,  trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33, result);
                             }
                         }
@@ -234,7 +233,7 @@ public class ShadowCast {
                         double endSlopeXX = Math.min(endSlopeX, (x + startX - xOffset + 0.5 - leeway) / (realZ + 0.5));
                         if (startSlopeYY < endSlopeYY && startSlopeXX < endSlopeXX) {
                             shadowcast(checker, centerX, centerY, centerZ, startZ + 1, startSlopeXX, endSlopeXX,
-                                    startSlopeYY ,endSlopeYY , radius,
+                                    startSlopeYY ,endSlopeYY , radius,leeway,
                                     xOffset, yOffset, zOffset,  trMatrix11, trMatrix21, trMatrix31, trMatrix12, trMatrix22, trMatrix32, trMatrix13, trMatrix23, trMatrix33, result);
                         }
                         // normal case

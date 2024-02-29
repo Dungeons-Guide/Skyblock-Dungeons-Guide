@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCInteger;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
@@ -53,9 +54,12 @@ public class FeaturePathfindSettings extends SimpleFeature {
         addParameter("enderpearl", new FeatureParameter<Boolean>("enderpearl", "Stonk Entrance: Use Enderpearl", "Whether to consider using enderpearl anywhere.", false, new TCBoolean()));
         addParameter("tntpearl", new FeatureParameter<Boolean>("tntpearl", "Stonk Entrance: Use Tntpearl", "Whether to consider using tntpearl to enter stonking mode.", false, new TCBoolean()));
 
-        addParameter("max_stonk", new FeatureParameter<Integer>("max_stonk", "Maximum Length of Stonk path", "this is in dg-blocks, which means 1 block is 2", 12, new TCInteger()));
+        addParameter("max_stonk", new FeatureParameter<Integer>("max_stonk", "Maximum Length of Stonk path", "this is in dg-blocks, which means 1 mc block is 2 dg block", 12, new TCInteger()));
 
         addParameter("etherwarp", new FeatureParameter<Boolean>("etherwarp", "Routing/Stonk Entrance: Use Etherwarp", "Whether to use etherwarp in normal pathfinding.", true, new TCBoolean()));
+        addParameter("max_etherwarp", new FeatureParameter<Integer>("max_etherwarp", "Maximum Length of Etherwarp path", "this is in real-blocks, which means 1 block is really 1 block. Default is 61 for maxed out etherwarp. You probably don't want to make this higher than 61. Range is [0, inf)", 61, new TCInteger()));
+        addParameter("boffset_etherwarp", new FeatureParameter<Double>("boffset_etherwarp", "Etherwarp calculation block offset", "Leave it at 0.4 if you don't know what you're doing. Big number = wider cone from block, small number = smaller cone from block. Range: [0~0.5)", 0.4, new TCDouble()));
+        addParameter("leeway_etherwarp", new FeatureParameter<Double>("leeway_etherwarp", "Etherwarp calculation block leeway", "Bigger number = less tight etherwarp (etherwarp target away from edge), smaller number = tighter etherwarp (right on the edge of block). Default is 0.0625 (1/16 of block). Range is [0, inf).", 0.0625, new TCDouble()));
     }
 
     public AlgorithmSettings getAlgorithmSettings() {
@@ -70,7 +74,10 @@ public class FeaturePathfindSettings extends SimpleFeature {
                 isEtherwarp(),
                 this.<Integer>getParameter("max_stonk").getValue(),
                 isStonkEnderpearl(),
-                isStonkTntpearl()
+                isStonkTntpearl(),
+                this.<Integer>getParameter("boffset_etherwarp").getValue(),
+                this.<Integer>getParameter("max_etherwarp").getValue(),
+                this.<Integer>getParameter("leeway_etherwarp").getValue()
         );
     }
     @AllArgsConstructor @Getter
@@ -89,6 +96,10 @@ public class FeaturePathfindSettings extends SimpleFeature {
         private final int maxStonk;
         private final boolean enderpearl;
         private final boolean tntpearl;
+
+        private final double etherwarpOffset;
+        private final int etherwarpRadius;
+        private final double etherwarpLeeway;
     }
 
     public Item getPickaxe() {
