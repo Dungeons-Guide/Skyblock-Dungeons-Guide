@@ -23,7 +23,7 @@
                 <col crossAlign="START">
                     <row>
                         <flexible>
-                            <Text text="Calculation service unavailable" color="#FFFFFFFF" size="12"/>
+                            <Text text="Calculation service to be added..." color="#FFFFFFFF" size="12"/>
                         </flexible>
                         <size height="20" width="150">
                             <RoundButton text="Request calculation" on:click="requestcalc" bind:disabled="calculationdisable"/>
