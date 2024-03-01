@@ -22,10 +22,7 @@ import net.minecraft.block.state.IBlockState;
 import net.minecraft.tileentity.TileEntity;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
-import net.minecraft.world.ChunkCache;
-import net.minecraft.world.EnumSkyBlock;
-import net.minecraft.world.World;
-import net.minecraft.world.WorldProviderSurface;
+import net.minecraft.world.*;
 import net.minecraft.world.chunk.IChunkProvider;
 
 public class CachedWorld extends World {
@@ -33,6 +30,12 @@ public class CachedWorld extends World {
 
     public CachedWorld(ChunkCache chunkCache) {
         super(null, null, new WorldProviderSurface(), null, true);
+        this.chunkCache = chunkCache;
+    }
+
+
+    public CachedWorld(ChunkCache chunkCache, WorldProvider provider) {
+        super(null, null, provider, null, true);
         this.chunkCache = chunkCache;
     }
 
