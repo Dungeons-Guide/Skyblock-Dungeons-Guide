@@ -102,6 +102,7 @@ public class PathfindRequest {
 
         // export world itself first.
         dataOutputStream.writeUTF("WRLD");
+        if (dungeonRoomInfo.getWidth() == 0 || dungeonRoomInfo.getLength() == 0 || dungeonRoomInfo.getWorld() == null) throw new IllegalStateException("World doesnot have blocks");
         dataOutputStream.writeInt(dungeonRoomInfo.getWidth()); // x len
         dataOutputStream.writeInt(dungeonRoomInfo.getLength()); // z len
         dataOutputStream.writeInt(256); // y len, why not lol.

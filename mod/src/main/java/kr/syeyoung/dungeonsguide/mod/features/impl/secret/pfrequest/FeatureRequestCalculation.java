@@ -283,6 +283,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                 addProgress(roomProgress);
                 addProgress(requestProgress);
 
+                List<File> files = new ArrayList<>();
                 File outdir;
                 try {
                     Path p = Files.createTempDirectory("dg-pfrequest-gen");
@@ -309,6 +310,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                                 System.out.println("It took " + (System.currentTimeMillis() - start) + "ms : " + request.getId());
                                 int currentReq = requestProgress.current.incrementAndGet();
                                 requestProgress.message = "Requests " + currentReq + "/" + requestProgress.total.get();
+                                files.add(f);
                             } catch (Exception e) {
                                 System.out.println("Error while " + id.toString() + ".pfreq / " + request.getId());
                                 e.printStackTrace();
@@ -323,7 +325,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                     removeProgress(requestProgress);
                 }
 
-                Progress zip = new Progress("Zipping... 0/"+outdir.listFiles().length, new AtomicInteger(0), new AtomicInteger(outdir.listFiles().length), true);
+                Progress zip = new Progress("Zipping... 0/"+files.size()+1, new AtomicInteger(0), new AtomicInteger(files.size()+1), true);
                 addProgress(zip);
 
                 try {
@@ -334,8 +336,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                         final FileOutputStream fos = new FileOutputStream(target);
                         ZipOutputStream zipOut = new ZipOutputStream(fos);
 
-
-                        for (File srcFile : outdir.listFiles()) {
+                        for (File srcFile : files) {
                             FileInputStream fis = new FileInputStream(srcFile);
                             ZipEntry zipEntry = new ZipEntry(srcFile.getName());
                             zipOut.putNextEntry(zipEntry);
