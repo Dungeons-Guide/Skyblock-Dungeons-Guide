@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRedstoneKey;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
+import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
@@ -53,6 +54,8 @@ import net.minecraft.util.BlockPos;
 import net.minecraft.util.ResourceLocation;
 
 import java.awt.*;
+import java.io.File;
+import java.io.IOException;
 import java.util.List;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -75,7 +78,16 @@ public class WidgetCheckMissing extends AnnotatedImportOnlyWidget {
     }
 
 
-    @On(functionName = "checkmissing")
+    @On(functionName = "opendir")
+    public void opendir() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        try {
+            Desktop.getDesktop().open(new File(Main.getConfigDir(), "pfResult"));
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+        @On(functionName = "checkmissing")
     public void checkMissing() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         precalculationApi.getValue().removeAllWidget();
