@@ -41,6 +41,7 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.mocking.DRIWorld;
 import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.PathfindRequest;
+import kr.syeyoung.dungeonsguide.mod.dungeon.pathfinding.cachedpathfind.CachedPathfinderRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
@@ -169,6 +170,9 @@ public class CommandDgDebug extends CommandBase {
                 break;
             case "loadrooms":
                 loadRoomsCommand();
+                break;
+            case "loadroutes":
+                loadRoutesCommand();
                 break;
             case "reloadah":
                 reloadAHCommand();
@@ -645,6 +649,16 @@ public class CommandDgDebug extends CommandBase {
         } catch (BadPaddingException | InvalidKeyException | InvalidAlgorithmParameterException |
                  NoSuchAlgorithmException | IOException | IllegalBlockSizeException |
                  NoSuchPaddingException e) {
+            e.printStackTrace();
+        }
+        ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
+    }
+    private void loadRoutesCommand() {
+        try {
+            CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "pfResult"));
+            ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §fSuccessfully loaded pfResults"));
+            return;
+        } catch (Exception e) {
             e.printStackTrace();
         }
         ChatTransmitter.addToQueue(new ChatComponentText("§eDungeons Guide §7:: §cAn error has occurred while loading roomdata"));
