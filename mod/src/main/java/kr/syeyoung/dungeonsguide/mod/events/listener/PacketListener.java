@@ -40,6 +40,8 @@ import net.minecraft.util.EnumChatFormatting;
 import net.minecraft.util.Tuple;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProvider;
+import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.IChunkProvider;
 import net.minecraft.world.storage.MapData;
@@ -218,6 +220,7 @@ public class PacketListener {
             } else if (action == S38PacketPlayerListItem.Action.UPDATE_GAME_MODE) {
                 for (S38PacketPlayerListItem.AddPlayerData entry : pkt.getEntries()) {
                     TabListEntry entry1 = TabList.INSTANCE.getEntry(entry.getProfile().getId());
+                    if (entry1 == null) return;
                     TabListEntry neu = new TabListEntry(entry1.getGameProfile(), entry.getGameMode());
                     neu.setPing(entry1.getPing());
                     neu.setDisplayName(entry1.getDisplayName());
@@ -228,7 +231,10 @@ public class PacketListener {
         } else if (packet instanceof S21PacketChunkData) {
             try {
                 if (((S21PacketChunkData) packet).getExtractedSize() == 0) return;
-                Chunk c = new Chunk(new CachedWorld(null), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
+                WorldProvider provider = new WorldProviderSurface();
+                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+
+                Chunk c = new Chunk(new CachedWorld(null, provider), ((S21PacketChunkData) packet).getChunkX(), ((S21PacketChunkData) packet).getChunkZ());
                 c.fillChunk(((S21PacketChunkData) packet).getExtractedDataBytes(), ((S21PacketChunkData) packet).getExtractedSize(), ((S21PacketChunkData) packet).func_149274_i());
                 ChunkUpdateEvent chunkUpdateEvent = new ChunkUpdateEvent(Collections.singletonList(c));
                 MinecraftForge.EVENT_BUS.post(chunkUpdateEvent);
@@ -237,9 +243,12 @@ public class PacketListener {
             }
         } else if (packet instanceof S26PacketMapChunkBulk) {
             try {
+                WorldProvider provider = new WorldProviderSurface();
+                if (Minecraft.getMinecraft().theWorld != null) provider = Minecraft.getMinecraft().theWorld.provider;
+
                 List<Chunk> set = new ArrayList<>();
                 for (int i = 0; i < ((S26PacketMapChunkBulk) packet).getChunkCount(); i++) {
-                    Chunk c = new Chunk(new CachedWorld(null), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
+                    Chunk c = new Chunk(new CachedWorld(null, provider), ((S26PacketMapChunkBulk) packet).getChunkX(i), ((S26PacketMapChunkBulk) packet).getChunkZ(i));
                     c.fillChunk(((S26PacketMapChunkBulk) packet).getChunkBytes(i), ((S26PacketMapChunkBulk) packet).getChunkSize(i), true);
                     set.add(c);
                 }

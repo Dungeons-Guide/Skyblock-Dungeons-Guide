@@ -53,6 +53,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.util.*;
 import net.minecraft.world.ChunkCache;
 import net.minecraft.world.World;
+import net.minecraft.world.WorldProviderSurface;
 import net.minecraft.world.chunk.Chunk;
 import net.minecraft.world.chunk.storage.ExtendedBlockStorage;
 import net.minecraftforge.common.MinecraftForge;
@@ -122,7 +123,7 @@ public class DungeonRoom {
         }
 
         this.chunkCache = new EditableChunkCache(getContext().getWorld(), min.add(-3, 0, -3), max.add(3,0,3), 0);
-        CachedWorld cachedWorld =  new CachedWorld(chunkCache);
+        CachedWorld cachedWorld =  new CachedWorld(chunkCache, context.getWorld().provider);
 
         return this.cachedWorld = cachedWorld;
     }
