@@ -114,14 +114,18 @@ public class GuiScreenAdapter extends GuiScreen {
 
         try {
             if (view.isRelayoutRequested()) {
-
                 view.setRelayoutRequested(false);
-                view.getLayouter().layout(view, new ConstraintBox(
-                        Minecraft.getMinecraft().displayWidth,
-                        Minecraft.getMinecraft().displayWidth,
-                        Minecraft.getMinecraft().displayHeight,
-                        Minecraft.getMinecraft().displayHeight
-                ));
+                try {
+                    view.getLayouter().layout(view, new ConstraintBox(
+                            Minecraft.getMinecraft().displayWidth,
+                            Minecraft.getMinecraft().displayWidth,
+                            Minecraft.getMinecraft().displayHeight,
+                            Minecraft.getMinecraft().displayHeight
+                    ));
+                } catch (Exception e) {
+                    view.setRelayoutRequested(true);
+                    throw e;
+                }
             }
 
 
