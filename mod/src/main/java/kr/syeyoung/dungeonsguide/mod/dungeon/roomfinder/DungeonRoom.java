@@ -184,13 +184,13 @@ public class DungeonRoom implements IPathfindWorld {
 
     public PathfinderExecutor createEntityPathTo(BoundingBox pos) {
         FeaturePathfindStrategy.PathfindStrategy pathfindStrategy = FeatureRegistry.SECRET_PATHFIND_STRATEGY.getPathfindStrat();
-//        if (activePathfind.containsKey(pos.center())) {
-//            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
-//            PathfinderExecutor executor = executorWeakReference.get();
-//            if (executor != null) {
-//                return executor;
-//            }
-//        }
+        if (activePathfind.containsKey(pos.center())) {
+            WeakReference<PathfinderExecutor> executorWeakReference = activePathfind.get(pos.center());
+            PathfinderExecutor executor = executorWeakReference.get();
+            if (executor != null) {
+                return executor;
+            }
+        }
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
             executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSettings), pos, this);
