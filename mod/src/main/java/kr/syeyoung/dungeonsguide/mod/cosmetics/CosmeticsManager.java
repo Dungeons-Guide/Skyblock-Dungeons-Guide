@@ -244,7 +244,7 @@ public class CosmeticsManager {
     }
 
     private final ThreadLocal<Stack<List<ReplacementContext>>> contextThreadLocal = new ThreadLocal<>();
-    @SubscribeEvent(priority = EventPriority.HIGHEST)
+    @SubscribeEvent(priority = EventPriority.HIGHEST, receiveCanceled = true)
     public void onChatDetect(ClientChatReceivedEvent clientChatReceivedEvent) {
         try {
             if (clientChatReceivedEvent.type == 2) return;
