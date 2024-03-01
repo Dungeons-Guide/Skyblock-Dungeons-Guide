@@ -39,6 +39,14 @@ public class EditableChunkCache extends ChunkCache {
         super(worldIn, posFromIn, posToIn, subIn);
     }
 
+    public boolean isManaged(int cx, int cz) {
+        int xWidth = this.chunkArray.length;
+        int zWidth = this.chunkArray[0].length;
+        int localX = cx- this.chunkX;
+        int localZ = cz - this.chunkZ;
+        return localZ >= 0 && localX >= 0 && localX < xWidth && localZ < zWidth;
+    }
+
     public void updateChunk(Chunk c) {
         int xWidth = this.chunkArray.length;
         int zWidth = this.chunkArray[0].length;

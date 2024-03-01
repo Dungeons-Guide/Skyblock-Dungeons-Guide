@@ -103,9 +103,10 @@ public class DungeonRoom {
 
         for (int z = minZChunk; z <= maxZChunk; z++) {
             for (int x = minXChunk; x <= maxXChunk; x++) {
-//                if (!canAccessAbsolute(new BlockPos(x * 16+8,0, z*16+8))) {
-//                    continue;
-//                } just don't check, it causes more problems
+                if (!canAccessAbsolute(new BlockPos(x * 16,0, z*16)) && !canAccessAbsolute(new BlockPos(x * 16+15,0, z*16+15))
+                && !canAccessAbsolute(new BlockPos(x * 16+15,0, z*16)) && !canAccessAbsolute(new BlockPos(x * 16,0, z*16+15))) {
+                    continue;
+                }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
                     ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
@@ -348,15 +349,24 @@ public class DungeonRoom {
     }
 
     public boolean canAccessAbsolute(BlockPos pos) {
-        DungeonRoomScaffoldParser mapProcessor = this.context.getScaffoldParser();
-        Point roomPt = mapProcessor.getDungeonMapLayout().worldPointToRoomPoint(pos);
-        roomPt.translate(-minRoomPt.x, -minRoomPt.y);
-        if (roomPt.x < 0 || roomPt.y < 0 || roomPt.x >= 4 || roomPt.y >= 4) return false;
-
-        return (shape >>(roomPt.y *4 +roomPt.x) & 0x1) > 0;
+        return canAccessRelative(pos.getX() - this.min.getX(), pos.getZ() - this.min.getZ());
     }
     public boolean canAccessRelative(int x, int z) {
-        return  x>= 0 && z >= 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
+        if (x/32 >= 4 || z / 32 >= 4) return false;
+        boolean firstCond =  x> 0 && z > 0 && (shape >>((z/32) *4 +(x/32)) & 0x1) > 0;
+        boolean zCond = (shape >> ((z / 32) * 4 + (x / 32) - 1) & 0x1) > 0;
+        boolean xCond = (shape >> ((z / 32) * 4 + (x / 32) - 4) & 0x1) > 0;
+        if (x % 32 == 0 && z % 32 == 0) {
+            return firstCond && (shape >>((z/32) *4 +(x/32) - 5) & 0x1) > 0
+                    && xCond
+                    && zCond;
+        } else if (x % 32 == 0) {
+            return firstCond && zCond;
+        } else if (z % 32 == 0) {
+            return firstCond && xCond;
+        }
+
+        return firstCond;
     }
 
 
@@ -447,10 +457,10 @@ public class DungeonRoom {
     }
 
     public void chunkUpdate(int cx, int cz) {
-        if (!canAccessAbsolute(new BlockPos(cx * 16+8,0, cz*16+8))) {
+        if (!chunkCache.isManaged(cx, cz)) {
             return;
         }
-        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
+//        ChatTransmitter.sendDebugChat("UPDATING!!! "+cx+"/"+cz +" from "+dungeonRoomInfo.getName());
         chunkCache.updateChunk(new BlockPos(cx*16+8, 0, cz*16+8));
 
         for (int x = 0; x < 16; x ++) { // fix pf not going through big block updates
