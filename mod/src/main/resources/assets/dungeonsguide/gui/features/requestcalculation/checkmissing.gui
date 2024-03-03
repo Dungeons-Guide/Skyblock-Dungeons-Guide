@@ -28,6 +28,10 @@
                         <flexible>
                             <Text text="Loaded precalculations" color="#FFFFFFFF" size="12"/>
                         </flexible>
+                        <size height="20" width="150">
+                            <RoundButton text="Reload Precalculations" on:click="reload"/>
+                        </size>
+                        <size width="5"/>
                         <size height="20" width="100">
                             <RoundButton text="Open Dir" on:click="opendir"/>
                         </size>

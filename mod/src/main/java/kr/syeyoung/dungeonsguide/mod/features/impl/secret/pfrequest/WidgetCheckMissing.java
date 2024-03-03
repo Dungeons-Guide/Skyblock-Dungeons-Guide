@@ -87,7 +87,12 @@ public class WidgetCheckMissing extends AnnotatedImportOnlyWidget {
             e.printStackTrace();
         }
     }
-        @On(functionName = "checkmissing")
+    @On(functionName = "reload")
+    public void reload() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        CachedPathfinderRegistry.loadAll(new File(Main.getConfigDir(), "pfResult"));
+    }
+    @On(functionName = "checkmissing")
     public void checkMissing() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         precalculationApi.getValue().removeAllWidget();

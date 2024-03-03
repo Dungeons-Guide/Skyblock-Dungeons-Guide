@@ -1,0 +1,27 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+<padding top="5" left="0" right="0">
+    <row>
+        <Text bind:text="key" color="#FFFFFFFF" size="8"/>
+        <Text bind:text="timestamp" color="#FFCCCCCC" size="8"/>
+        <flexible><size height="0"/></flexible>
+        <size height="12" width="50">
+            <RoundButton text="Download" on:click="download"/>
+        </size>
+    </row>
+</padding>

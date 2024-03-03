@@ -20,6 +20,8 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 
 import com.google.common.util.concurrent.ThreadFactoryBuilder;
+import com.google.gson.Gson;
+import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
@@ -28,10 +30,13 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonRoomDoor2;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.launcher.Main;
+import kr.syeyoung.dungeonsguide.launcher.auth.AuthManager;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.VersionInfo;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.*;
+import kr.syeyoung.dungeonsguide.mod.dungeon.actions.AbstractAction;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAG;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
@@ -47,6 +52,7 @@ import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.WidgetPartyInviteViewer;
+import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
@@ -54,12 +60,17 @@ import kr.syeyoung.dungeonsguide.mod.overlay.WholeScreenPositioner;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import net.minecraft.util.BlockPos;
+import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
 import org.spongepowered.asm.mixin.injection.At;
 import scala.xml.Atom;
 
+import javax.net.ssl.HttpsURLConnection;
+import javax.swing.*;
 import java.awt.*;
 import java.io.*;
+import java.net.URL;
+import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
@@ -120,6 +131,8 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
             }
         }
     }
+
+
 
 
     @AllArgsConstructor @Getter
@@ -329,7 +342,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                 addProgress(zip);
 
                 try {
-                    File target = new File(Main.getConfigDir(), UUID.randomUUID().toString() + ".pfreq.zip");
+                    File target = new File(Main.getConfigDir(), "pfreq-"+System.currentTimeMillis() + ".zip");
                     {
                         System.out.println("Writing to " + target);
                         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eWriting pathfind request zip file to " + target.getAbsolutePath());
@@ -357,13 +370,12 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                 } finally {
                     removeProgress(zip);
                 }
-
-                Progress complete = new Progress("Complete!", new AtomicInteger(1), new AtomicInteger(1), true);
-                addProgress(complete);
+                FeatureRequestCalculation.Progress complete = new FeatureRequestCalculation.Progress("Complete!", new AtomicInteger(1), new AtomicInteger(1), true);
+                FeatureRegistry.SECRET_PATHFIND_REQUEST.addProgress(complete);
                 try {
                     Thread.sleep(5000);
                 } finally {
-                    removeProgress(complete);
+                    FeatureRegistry.SECRET_PATHFIND_REQUEST.removeProgress(complete);
                 }
 
             } catch (Exception e) {
@@ -371,6 +383,90 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                 e.printStackTrace();
             } finally {
                 this.calculating.set(false);
+            }
+        }).start();
+    }
+
+    private static final JFileChooser chooser  = new JFileChooser();
+    static {
+        chooser.setCurrentDirectory(Main.getConfigDir());
+    }
+    public void uploadToService() {
+        new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+            try {
+                int returnValue = chooser.showOpenDialog( null ) ;
+                if (returnValue != JFileChooser.APPROVE_OPTION) return;
+                File f = chooser.getSelectedFile();
+
+                String uploadUrl;
+                Progress p1 = new Progress("Getting upload url...", null, null, false);
+                try {
+                    addProgress(p1);
+                    HttpsURLConnection connection = (HttpsURLConnection) new URL("https://pathfind.dungeons.guide/upload").openConnection();
+                    connection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
+                    connection.setRequestMethod("POST");
+                    connection.addRequestProperty("Authorization", "Bearer "+AuthManager.getInstance().getWorkingTokenOrThrow());
+                    connection.setConnectTimeout(10000);
+                    connection.setReadTimeout(10000);
+                    InputStreamReader inputStreamReader = new InputStreamReader(connection.getInputStream());
+                    String servers = IOUtils.toString(inputStreamReader);
+                    JsonObject key = new Gson().fromJson(servers, JsonObject.class);
+                    uploadUrl = key.get("url").getAsString();
+                } finally {
+                    removeProgress(p1);
+                }
+                p1 = new Progress("Uploading..." , new AtomicInteger(), new AtomicInteger((int) f.length()), true);
+                try {
+                    addProgress(p1);
+                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) new URL(uploadUrl).openConnection();
+                    httpsURLConnection.setDoOutput(true);
+                    httpsURLConnection.setRequestProperty("Content-Length", f.length()+"");
+                    httpsURLConnection.setRequestProperty("Content-Type", "application/zip");
+                    httpsURLConnection.setRequestMethod("PUT");
+                    FileInputStream fileInputStream = new FileInputStream(f);
+                    byte buf[] = new byte[1024 *1024];
+                    int len = 0;
+                    long total = 0;
+                    while((len = fileInputStream.read(buf)) != -1) {
+                        httpsURLConnection.getOutputStream().write(buf, 0, len);
+                        total += len;
+                        p1.getCurrent().set((int) total);
+                    }
+                    System.out.println(httpsURLConnection.getResponseCode());
+                    System.out.println(httpsURLConnection.getResponseMessage());
+                    if (httpsURLConnection.getResponseCode() != 200) {
+                        throw new RuntimeException("Status code "+httpsURLConnection.getResponseCode());
+                    }
+                } finally {
+                    removeProgress(p1);
+                }
+                p1 = new Progress("Requesting Calculation", null, null, false);
+                try {
+                    addProgress(p1);
+                    HttpsURLConnection httpsURLConnection = (HttpsURLConnection) new URL("https://pathfind.dungeons.guide/process").openConnection();
+                    httpsURLConnection.setRequestMethod("POST");
+                    httpsURLConnection.setRequestProperty("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
+                    httpsURLConnection.addRequestProperty("Authorization", "Bearer "+AuthManager.getInstance().getWorkingTokenOrThrow());
+                    System.out.println(httpsURLConnection.getResponseCode());
+                    System.out.println(httpsURLConnection.getResponseMessage());
+                    if (httpsURLConnection.getResponseCode() != 200) {
+                        throw new RuntimeException("Status code "+httpsURLConnection.getResponseCode());
+                    }
+                } finally {
+                    removeProgress(p1);
+                }
+                p1 = new Progress("Requested calculation! Track status in config", new AtomicInteger(1), new AtomicInteger(1), true);
+                addProgress(p1);
+                try {
+                    Thread.sleep(5000);
+                } finally {
+                    removeProgress(p1);
+                }
+
+            } catch (Exception e) {
+                ChatTransmitter.addToQueue("An error occured while doing stuff: contact dg support");
+                System.out.println("An error occured while requesting pfreqs");
+                e.printStackTrace();
             }
         }).start();
     }

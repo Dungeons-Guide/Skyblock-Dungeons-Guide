@@ -23,7 +23,7 @@
                 <col crossAlign="START">
                     <row>
                         <flexible>
-                            <Text text="Calculation service to be added..." color="#FFFFFFFF" size="12"/>
+                            <Text text="Calculation Service" color="#FFFFFFFF" size="12"/>
                         </flexible>
                         <size height="20" width="150">
                             <RoundButton text="Request calculation" on:click="requestcalc" bind:disabled="calculationdisable"/>
@@ -33,6 +33,49 @@
                             <RoundButton text="Generate .pfreq files" on:click="generatereq" bind:disabled="generatingreq"/>
                         </size>
                     </row>
+                    <size height="5"/>
+                    <line/>
+                    <size height="5"/>
+                    <padding left="5" right="5">
+                        <row>
+                            <Text text="Your tokens: " color="#FFFFFFFF" size="8"/>
+                            <Text bind:text="token" color="#FFFFFFFF" size="8"/>
+                            <flexible><size height="0"/></flexible>
+                            <Text text="1 token allows you to request 1 pathfind with zip file" color="#FFCCCCCC" size="8"/>
+                            <size width="5"/>
+                            <size height="20" width="100">
+                                <RoundButton text="Purchase Tokens" on:click="purchaseToken"/>
+                            </size><size width="5"/>
+                            <size height="20" width="100">
+                                <RoundButton text="Reload" on:click="reload"/>
+                            </size>
+                        </row>
+                    </padding>
+                    <size height="5"/>
+                    <slot bind:child="progress"/>
+                    <size height="5"/>
+                    <padding left="5" right="5" bottom="5">
+                        <RoundRect radius="5" backgroundColor="#FF111111">
+                            <padding left="5" top="5" right="5" bottom="5">
+                                <col mainAlign="START" crossAlign="START">
+                                    <row crossAlign="END">
+                                        <size width="5"/>
+                                        <Text text="Completed Pathfinds" color="#FFFFFFFF" size="12"/>
+                                        <size width="3"/>
+                                        <Text text="This is retained for 7 days" color="#FFCCCCCC" size="8"/>
+                                    </row>
+                                    <size height="3"/>
+                                    <line color="#FFCCCCCC"/>
+                                    <col bind:api="completes"/>
+                                    <size height="3"/>
+                                    <Text text="Download above file, unzip it, and put it into folder opened by open dir below" color="#FFFFFF00" size="8"/>
+                                </col>
+                            </padding>
+                        </RoundRect>
+                    </padding>
+                    <size height="5"/>
+<!--                    <Text bind:text="lastStatus" color="#FFCC0000" size="8"/>-->
+                    <Text bind:text="error" color="#FFCC0000" size="8"/>
                 </col>
             </padding>
         </RoundRect>

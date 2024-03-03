@@ -1,0 +1,40 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<padding top="5" right="5" left="5" bottom="5">
+    <col crossAlign="START">
+        <Text text="Request Metadata" color="#FFFFFFFF" size="12"/>
+        <size height="5"/>
+        <row>
+            <Text text="      Started at: " color="#FFAAAAAA"/>
+            <Text bind:text="timestamp" color="#FFFFFFFF"/>
+        </row>
+        <row>
+            <Text text="                 ID: " color="#FFAAAAAA"/>
+            <Text bind:text="id" color="#FFFFFFFF"/>
+        </row>
+        <row>
+            <Text text="Current Status: " color="#FFAAAAAA"/>
+            <Text bind:text="status" color="#FF00FFFF"/>
+        </row>
+        <size height="10"/>
+        <Text text="Events" color="#FFFFFFFF" size="12"/>
+        <size height="5"/>
+        <col bind:_="events"></col>
+    </col>
+</padding>
