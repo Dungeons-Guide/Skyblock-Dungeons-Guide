@@ -149,8 +149,8 @@ public class ActionRoute {
                                 localMinCostRoute = actionDAGNodes;
                             }
 
-                            if (cnt > 100000)  {
-                                ChatTransmitter.sendDebugChat("While traversing "+dagId+ " limit of 100000 was reached");
+                            if (cnt > 1000000)  {
+                                ChatTransmitter.sendDebugChat("While traversing "+dagId+ " limit of 1000000 was reached");
                                 break;
                             }
                         }
@@ -260,11 +260,11 @@ public class ActionRoute {
         }
 
         boolean recalc = false;
-//        for (int i = current; i < actions.size(); i++) {
-//            if (actions.get(i).shouldRecalculatePath(dungeonRoom)) {
-//                recalc = true;
-//            }
-//        }
+        for (int i = current; i < actions.size(); i++) {
+            if (actions.get(i).shouldRecalculatePath(dungeonRoom)) {
+                recalc = true;
+            }
+        }
         if (recalc) {
             recalculatePath();
             while (currentAction.isComplete(dungeonRoom)) {

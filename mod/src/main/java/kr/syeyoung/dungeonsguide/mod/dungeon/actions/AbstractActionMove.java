@@ -101,6 +101,15 @@ public abstract class AbstractActionMove extends AbstractAction {
         return beaconTargetPos = new BlockPos(targetVec3.getPos(dungeonRoom));
     }
 
+    private Vec3 transformedTargetVec3;
+    private String vec3Str;
+    private Vec3 getTransformedTargetVec3(DungeonRoom dungeonRoom) {
+        if (transformedTargetVec3 != null) return transformedTargetVec3;
+        this.transformedTargetVec3 = getTargetVec3().getPos(dungeonRoom);
+        vec3Str = transformedTargetVec3.toString();
+        return transformedTargetVec3;
+    }
+
     //    @Override
 //    public boolean isComplete(DungeonRoom dungeonRoom) {
 //        return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
@@ -289,7 +298,7 @@ public abstract class AbstractActionMove extends AbstractAction {
 
     @Override
     public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        Vec3 bpos = getTargetVec3().getPos(room);
+        Vec3 bpos = getTransformedTargetVec3(room);
 
         if (memoization.containsKey("stupidheuristic")) {
             double cost = state.getPlayerPos().distanceTo(bpos);
@@ -298,7 +307,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         }
 
         PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
-                state.getOpenMechanics()+"-"+bpos
+                state.getOpenMechanics()+"-"+vec3Str
         );
         FineGridStonkingBFS a = null;
         if (executor == null) {
@@ -315,7 +324,7 @@ public abstract class AbstractActionMove extends AbstractAction {
                 executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
                         getPathfindBoundingBox(room), new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
             }
-            memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
+            memoization.put(state.getOpenMechanics()+"-"+vec3Str, executor);
 
         }
         executor.setTarget(state.getPlayerPos());

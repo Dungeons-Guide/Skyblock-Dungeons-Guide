@@ -73,11 +73,6 @@ public class ActionMoveSpot extends AbstractActionMove {
         this.targets = target;
     }
 
-    public OffsetVec3 getTargetVec3() {
-        OffsetVec3 vec = targets.get(0).getOffsetPointSet().get(0);
-        return new OffsetVec3(vec.xCoord, vec.yCoord, vec.zCoord);
-    }
-
     @Override
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).anyMatch(
