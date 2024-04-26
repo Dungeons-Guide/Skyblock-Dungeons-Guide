@@ -64,9 +64,9 @@ public class StompManager {
         }
     }
 
-    ScheduledExecutorService ex = Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
+    ScheduledExecutorService ex = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newSingleThreadScheduledExecutor(new ThreadFactoryBuilder()
             .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-            .setNameFormat("DG-StompManager-%d").build());
+            .setNameFormat("DG-StompManager-%d").build()));
 
     private volatile boolean disconnecting = false;
     public void onStompDied(StompDiedEvent event) {

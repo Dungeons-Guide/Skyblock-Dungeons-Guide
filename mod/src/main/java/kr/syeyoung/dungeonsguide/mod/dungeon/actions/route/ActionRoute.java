@@ -26,6 +26,8 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import lombok.AllArgsConstructor;
+import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Vec3;
@@ -33,8 +35,12 @@ import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.util.*;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class ActionRoute {
 
@@ -56,8 +62,6 @@ public class ActionRoute {
     @Getter
     private transient List<ActionDAGNode> order;
 
-    @Getter
-    private int[] nodeStatus;
     private final DungeonRoom dungeonRoom;
 
     @Getter
@@ -81,76 +85,84 @@ public class ActionRoute {
     @Getter
     private boolean calculating = false;
 
+    private static final ExecutorService pathCalculator = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newWorkStealingPool(10));
+
+
+    @Data @AllArgsConstructor
+    private static class PartialCalculationResult {
+        private int dagId;
+        private List<ActionDAGNode> route;
+        private double cost;
+        private int searchSpace;
+    }
     private void recalculatePath() {
         calculating = true;
         current = 0;
         actions = new ArrayList<>();
         actions.add(new ActionRoot());
-        new Thread(DungeonsGuide.THREAD_GROUP, () -> {
-                    Vec3 start = Minecraft.getMinecraft().thePlayer.getPositionVector();
+        pathCalculator.submit(() -> {
+            Vec3 start = Minecraft.getMinecraft().thePlayer.getPositionVector();
 
 
-                    int cnt = 0;
-                    ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
+            ChatTransmitter.sendDebugChat("ActionDAG has "+dag.getCount()+" Possible action set");
 
-                    List<ActionDAGNode> minCostRoute = null;
-                    double minCost = Double.POSITIVE_INFINITY;
-                    long startttt = System.currentTimeMillis();
-                    int minDagId = -1;
+            long startttt = System.currentTimeMillis();
 
-                    boolean stupidheuristic = false;
-                    int minCount = 0;
-                    for (int i = 0; i < dag.getCount(); i++) {
+            boolean stupidheuristic = false;
+            int minCount = 0;
+            for (int i = 0; i < dag.getCount(); i++) {
 
-                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
-                            minCount++;
-                            if (minCount > 1000000) {
+                for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
+                    minCount++;
+                    if (minCount > 1000000) {
+                        break;
+                    }
+                }
+            }
+            ChatTransmitter.sendDebugChat("With "+minCount+" Sorts");
+
+            Map<String, Object> memoization = new ConcurrentHashMap<>();
+            List<PartialCalculationResult> results = IntStream.range(0, dag.getCount())
+                    .parallel()
+                    .mapToObj((dagId) -> {
+                        int[] nodeStatus = dag.getNodeStatus(dagId);
+                        if (stupidheuristic) {
+                            if (dag.getAllNodes().stream().flatMap(a -> a.getOptional().stream())
+                                    .anyMatch(a -> nodeStatus[a.getId()] == 0)) return new PartialCalculationResult(dagId, null, Double.POSITIVE_INFINITY, 0);
+                        }
+                        int cnt = 0;
+                        double localMinCost = Double.POSITIVE_INFINITY;
+                        List<ActionDAGNode> localMinCostRoute = null;
+
+                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
+                            cnt++;
+
+                            RoomState roomState = new RoomState();
+                            roomState.setPlayerPos(start);
+                            double cost = 0;
+                            for (ActionDAGNode actionDAGNode : actionDAGNodes) {
+                                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
+                                if (cost == Double.POSITIVE_INFINITY) break;
+                            }
+                            if (cost < localMinCost) {
+                                localMinCost = cost;
+                                localMinCostRoute = actionDAGNodes;
+                            }
+
+                            if (cnt > 100000)  {
+                                ChatTransmitter.sendDebugChat("While traversing "+dagId+ " limit of 100000 was reached");
                                 break;
                             }
                         }
-                    }
-                    ChatTransmitter.sendDebugChat("With "+minCount+" Sorts");
+                        return new PartialCalculationResult(dagId, localMinCostRoute, localMinCost, cnt);
+                    })
+                    .collect(Collectors.toList());
+            PartialCalculationResult minCostRoute = results.stream()
+                    .min(Comparator.comparingDouble(a -> a.cost)).orElse(null);
 
+            int cnt = results.stream().mapToInt(a -> a.searchSpace).sum();
 
-                    Map<String, Object> memoization = new HashMap<>();
-//                    if (minCount > 1000000) {
-//                        stupidheuristic = true;
-//                        memoization.put("stupidheuristic", true);
-//                    }
-                        for (int dagId = 0; dagId < dag.getCount(); dagId++) {
-
-
-                            this.nodeStatus = dag.getNodeStatus(dagId);
-                            if (stupidheuristic) {
-
-                                if (dag.getAllNodes().stream().flatMap(a -> a.getOptional().stream())
-                                        .anyMatch(a -> this.nodeStatus[a.getId()] == 0)) continue;
-                            }
-
-                            for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
-                                cnt++;
-
-                                RoomState roomState = new RoomState();
-                                roomState.setPlayerPos(start);
-                                double cost = 0;
-                                for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                                    cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
-                                    if (cost == Double.POSITIVE_INFINITY) break;
-                                }
-                                if (cost < minCost) {
-                                    minCost = cost;
-                                    minCostRoute = actionDAGNodes;
-                                    minDagId = dagId;
-                                }
-
-                                if (cnt > 10000) break;
-                            }
-                            if (minCostRoute == null) {
-                                minCostRoute = new ArrayList<>();
-                            }
-                        }
-
-            if (minDagId == -1) {
+            if (minCostRoute == null) {
                 try {
                     Thread.sleep(30000);
                 } catch (InterruptedException e) {
@@ -158,19 +170,19 @@ public class ActionRoute {
                 }
             }
 
-                    this.dagId = minDagId;
-                    order = minCostRoute;
-                    ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+minCost+" cost with Id "+dagId);
-                    ChatTransmitter.sendDebugChat("Pathfinding took "+ (System.currentTimeMillis() - startttt)+"ms");
-                    List<AbstractAction> nodes = minCostRoute.stream().map(ActionDAGNode::getAction).collect(Collectors.toList());
-                    nodes.add(new ActionComplete());
-                    actions = nodes;
-                    current = 0;
+            this.dagId = minCostRoute == null ? 0 : minCostRoute.dagId;
+            order = minCostRoute == null ? new ArrayList<>() : minCostRoute.route;
+            ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+(minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.cost)+" cost with Id "+dagId);
+            ChatTransmitter.sendDebugChat("Pathfinding took "+ (System.currentTimeMillis() - startttt)+"ms");
+            List<AbstractAction> nodes = minCostRoute != null ? minCostRoute.route.stream().map(ActionDAGNode::getAction).collect(Collectors.toList()) : new ArrayList<>();
+            nodes.add(new ActionComplete());
+            actions = nodes;
+            current = 0;
 
 
-                    calculating = false;
+            calculating = false;
 
-                }).start();
+        });
     }
     public AbstractAction next() {
         if (!(getCurrentAction() instanceof  ActionMove || getCurrentAction() instanceof  ActionMoveNearestAir))

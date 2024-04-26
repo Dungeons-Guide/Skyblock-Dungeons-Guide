@@ -159,7 +159,7 @@ public class ActionDAGBuilder {
     public ActionDAG build() {
         if (parent != null)
             return getRoot().build();
-        Stack<ActionDAGNode> dfs = new Stack<>();
+        Deque<ActionDAGNode> dfs = new ArrayDeque<>();
         dfs.push(current);
         Set<ActionDAGNode> visited = new HashSet<>();
         List<ActionDAGNode> allTheNodes = new ArrayList<>();

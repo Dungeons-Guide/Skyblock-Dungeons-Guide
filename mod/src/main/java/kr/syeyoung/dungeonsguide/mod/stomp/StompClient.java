@@ -66,10 +66,10 @@ public class StompClient extends WebSocketClient {
 
     private ScheduledFuture heartbeat = null;
 
-    private static final ScheduledExecutorService ex = Executors.newScheduledThreadPool(1,
+    private static final ScheduledExecutorService ex = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newScheduledThreadPool(1,
             new ThreadFactoryBuilder()
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
-                    .setNameFormat("DG-StompClient-%d").build());
+                    .setNameFormat("DG-StompClient-%d").build()));
     @Override
     public void onOpen(ServerHandshake handshakeData) {
         send(new StompPayload().method(StompHeader.CONNECT)

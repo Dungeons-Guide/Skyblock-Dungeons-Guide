@@ -77,7 +77,7 @@ public abstract class AbstractActionMove extends AbstractAction {
     public AbstractActionMove(OffsetVec3 targetVec3, OffsetPoint targetOffsetPtSet) {
         this.targetVec3 = targetVec3;
         this.targetOffsetPointSet = Arrays.asList(
-                new OffsetVec3(targetOffsetPtSet.getX()+0.5, targetOffsetPtSet.getY(), targetOffsetPtSet.getZ()+0.5)
+                new OffsetVec3(targetOffsetPtSet.getX(), targetOffsetPtSet.getY(), targetOffsetPtSet.getZ())
         );
     }
 

@@ -57,7 +57,7 @@ public class ActionMoveNearestAir extends AbstractActionMove {
     private OffsetPoint target;
 
     public ActionMoveNearestAir(OffsetPoint target) {
-        super(new OffsetVec3(target.getX()+ 0.5, target.getY() + 0.5, target.getZ() + 0.5), target);
+        super(new OffsetVec3(target.getX(), target.getY(), target.getZ()), target);
         this.target = target;
     }
 

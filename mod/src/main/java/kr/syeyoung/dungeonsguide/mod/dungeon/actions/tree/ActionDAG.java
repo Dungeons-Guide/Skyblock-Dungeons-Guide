@@ -135,7 +135,7 @@ public class ActionDAG {
 
         private  int[] degree = new int[allNodes.size()];
         private boolean[] sanityCheck = new boolean[allNodes.size()];
-        private Stack<Integer> path = new Stack<>();
+        private Deque<Integer> path = new ArrayDeque<>();
         private List<ActionDAGNode> nextSolution;
         private int solutionSize;
 
@@ -224,7 +224,12 @@ public class ActionDAG {
                 }
                 if (path.size() == solutionSize+1) {
                     path.pop(); // has weird 0
-                    return path.stream().map(allNodes::get).collect(Collectors.toList());
+                    List<ActionDAGNode> nodes = new ArrayList<>();
+                    Iterator<Integer> it = path.descendingIterator();
+                    while (it.hasNext()) {
+                        nodes.add(allNodes.get(it.next()));
+                    }
+                    return nodes;
                 }
                 if (found) {
                     continue;

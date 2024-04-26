@@ -90,7 +90,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
 
             boolean[] visited = new boolean[stringActionRouteEntry.getValue().getDag().getAllNodes().size()];
 
-            Stack<ActionDAGNode> path = new Stack<>();
+            Deque<ActionDAGNode> path = new ArrayDeque<>();
             path.push(rootNode);
 
             int maxLvCount = 0;

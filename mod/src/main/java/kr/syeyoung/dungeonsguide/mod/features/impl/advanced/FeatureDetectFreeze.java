@@ -53,7 +53,7 @@ public class FeatureDetectFreeze extends SimpleFeature {
     }
 
     private long lastTick = Long.MAX_VALUE;
-    private Thread t = new Thread(DungeonsGuide.THREAD_GROUP,this::run);
+    private Thread t = new Thread(DungeonsGuide.THREAD_GROUP,this::run, "DG-FreezeDetector");
 
     public void run() {
         while(!t.isInterrupted()) {
