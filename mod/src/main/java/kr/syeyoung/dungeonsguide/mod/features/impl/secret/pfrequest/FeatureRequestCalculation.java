@@ -19,7 +19,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.secret.pfrequest;
 
 
-import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
@@ -50,9 +49,6 @@ import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractGuiFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
-import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
-import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.WidgetPartyInviteViewer;
-import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.api.ApiFetcher;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayType;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayWidget;
@@ -62,22 +58,17 @@ import lombok.Getter;
 import net.minecraft.util.BlockPos;
 import org.apache.commons.io.IOUtils;
 import org.apache.commons.lang3.tuple.ImmutablePair;
-import org.spongepowered.asm.mixin.injection.At;
-import scala.xml.Atom;
 
 import javax.net.ssl.HttpsURLConnection;
 import javax.swing.*;
 import java.awt.*;
 import java.io.*;
 import java.net.URL;
-import java.net.URLConnection;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
@@ -387,16 +378,25 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
         }).start();
     }
 
-    private static final JFileChooser chooser  = new JFileChooser();
-    static {
-        chooser.setCurrentDirectory(Main.getConfigDir());
-    }
-    public void uploadToService() {
+
+    public void uploadToService(WidgetRequestCalculation widgetRequestCalculation) {
         new Thread(DungeonsGuide.THREAD_GROUP, () -> {
             try {
-                int returnValue = chooser.showOpenDialog( null ) ;
-                if (returnValue != JFileChooser.APPROVE_OPTION) return;
-                File f = chooser.getSelectedFile();
+                final JFileChooser[] fc = new JFileChooser[1];
+                final int[] returnVal = new int[1];
+                EventQueue.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        fc[0] = new JFileChooser(Main.getConfigDir());
+                        returnVal[0] = fc[0].showOpenDialog(null);
+                    }
+                });
+
+                if (returnVal[0] != JFileChooser.APPROVE_OPTION) {
+                    widgetRequestCalculation.reload();
+                    return;
+                }
+                File f = fc[0].getSelectedFile();
 
                 String uploadUrl;
                 Progress p1 = new Progress("Getting upload url...", null, null, false);

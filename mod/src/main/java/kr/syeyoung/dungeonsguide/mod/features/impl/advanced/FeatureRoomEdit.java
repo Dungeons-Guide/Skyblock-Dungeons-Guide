@@ -114,6 +114,7 @@ import java.awt.event.KeyEvent;
 import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -325,11 +326,6 @@ public class FeatureRoomEdit  extends SimpleFeature {
         FeatureRoomEdit.this.setup = false;
     }
 
-    private static final JFileChooser chooser = new JFileChooser();
-    static {
-        chooser.setCurrentDirectory(new File(Main.getConfigDir(), "grouped3"));
-    }
-
     public class RoomConfiguration extends AnnotatedImportOnlyWidget {
 
         @Bind(
@@ -392,8 +388,23 @@ public class FeatureRoomEdit  extends SimpleFeature {
         }
         @On(functionName = "loaddgrun")
         public void loadDGRun() {
-            int returnValue = chooser.showOpenDialog( null ) ;
-            File f = chooser.getSelectedFile();
+
+            final JFileChooser[] fc = new JFileChooser[1];
+            final int[] returnVal = new int[1];
+            try {
+                EventQueue.invokeAndWait(new Runnable() {
+                    @Override
+                    public void run() {
+                        fc[0] = new JFileChooser(Main.getConfigDir());
+                        returnVal[0] = fc[0].showOpenDialog(null);
+                    }
+                });
+            } catch (InterruptedException | InvocationTargetException e) {
+                throw new RuntimeException(e);
+            }
+            if (returnVal[0] != JFileChooser.APPROVE_OPTION) return;
+
+            File f = fc[0].getSelectedFile();
             try {
                 load(f);
             } catch (Exception e) {

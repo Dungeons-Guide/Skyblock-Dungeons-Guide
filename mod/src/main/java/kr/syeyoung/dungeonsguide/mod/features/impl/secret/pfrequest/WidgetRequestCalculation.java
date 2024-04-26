@@ -122,7 +122,7 @@ public class WidgetRequestCalculation extends AnnotatedImportOnlyWidget {
     public void reqCalc() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         calculationDisable.setValue(true);
-        FeatureRegistry.SECRET_PATHFIND_REQUEST.uploadToService();
+        FeatureRegistry.SECRET_PATHFIND_REQUEST.uploadToService(this);
     }
 
     @On(functionName = "generatereq")
