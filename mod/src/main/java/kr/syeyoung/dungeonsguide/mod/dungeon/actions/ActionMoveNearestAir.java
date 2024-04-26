@@ -38,22 +38,26 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.Vec3;
+import scala.actors.threadpool.Arrays;
 
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-@Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionMoveNearestAir extends AbstractAction {
+public class ActionMoveNearestAir extends AbstractActionMove {
+    @Getter
     private OffsetPoint target;
 
     public ActionMoveNearestAir(OffsetPoint target) {
+        super(new OffsetVec3(target.getX()+ 0.5, target.getY() + 0.5, target.getZ() + 0.5), target);
         this.target = target;
     }
 
@@ -61,99 +65,10 @@ public class ActionMoveNearestAir extends AbstractAction {
     public boolean isComplete(DungeonRoom dungeonRoom) {
         return target.getBlockPos(dungeonRoom).distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 25;
     }
-    @Override
-    public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
-        ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, target.getBlockPos(dungeonRoom), poses);
-    }
 
-    private int tick = -1;
-    private PathfindResult poses;
-    private PathfinderExecutor executor;
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
-        if (executor == null && actionRouteProperties.isPathfind()) {
-            forceRefresh(dungeonRoom);
-        }
-        if (executor != null &&  !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ) {
-            poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
-        }
-
-        if (tick == 0 && actionRouteProperties.isPathfind() && executor != null) {
-            if (actionRouteProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && executor.isComplete()) {
-                executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
-            }
-        }
-    }
-
-    @Override
-    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        executor = null;
-    }
-
-    public void forceRefresh(DungeonRoom dungeonRoom) {
-        BlockPos pos = target.getBlockPos(dungeonRoom);
-        BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(pos.getX(), pos.getY(), pos.getZ(), pos.getX() + 1, pos.getY() + 1, pos.getZ() + 1)
-                .expand(0.5,1,0.5));
-        System.out.println(boundingBox.getBoundingBoxes());
-
-        if (executor == null) executor = dungeonRoom.loadPrecalculated(new PathfindRequest(
-                FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
-                dungeonRoom.getDungeonRoomInfo(),
-                dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
-                    return  b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor;
-                }).filter(b -> !((RouteBlocker)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
-                Collections.singletonList(new OffsetVec3(target.getX(), target.getY(), target.getZ()))
-        ).getId());
-        if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
-        executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
-    }
     @Override
     public String toString() {
         return "MoveNearestAir\n- target: "+target.toString();
     }
 
-    @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-        BlockPos bpos = target.getBlockPos(room);
-
-        if (memoization.containsKey("stupidheuristic")) {
-            double cost = state.getPlayerPos().distanceTo(new Vec3(bpos));
-            state.setPlayerPos(new Vec3(bpos));
-            return cost;
-        }
-
-//        for (EnumFacing value : EnumFacing.VALUES) {
-//            if (room.getCachedWorld().getBlockState(bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ())).getBlock() == Blocks.air) {
-//                bpos = bpos.add(value.getFrontOffsetX(), value.getFrontOffsetY(), value.getFrontOffsetZ());
-//                break;
-//            }
-//        }
-        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
-                state.getOpenMechanics()+"-"+bpos
-        );
-        if (executor == null) {
-            executor = room.loadPrecalculated(new PathfindRequest(
-                    FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
-                    room.getDungeonRoomInfo(),
-                    state.getOpenMechanics().stream().filter(b -> {
-                        return room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
-                    }).collect(Collectors.toSet()),
-                    Collections.singletonList(new OffsetVec3(target.getX(), target.getY(), target.getZ()))
-            ).getId());
-            if (executor == null) {
-                BoundingBox boundingBox = BoundingBox.of(AxisAlignedBB.fromBounds(bpos.getX(), bpos.getY(), bpos.getZ(), bpos.getX() + 1, bpos.getY() + 1, bpos.getZ() + 1)
-                        .expand(0.5, 1, 0.5));
-
-                executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
-                        boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
-            }
-            memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
-        }
-        executor.setTarget(state.getPlayerPos());
-        state.setPlayerPos(new Vec3(bpos.getX()+0.5, bpos.getY(), bpos.getZ()+0.5));
-        double result = executor.findCost();
-        if (Double.isNaN(result)) return 999999999;
-        return result;
-    }
 }

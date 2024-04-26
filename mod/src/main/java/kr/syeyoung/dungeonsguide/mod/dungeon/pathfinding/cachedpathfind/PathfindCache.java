@@ -34,6 +34,7 @@ import sun.nio.ch.DirectBuffer;
 
 import java.io.*;
 import java.nio.ByteBuffer;
+import java.nio.channels.Channel;
 import java.nio.channels.Channels;
 import java.nio.channels.ReadableByteChannel;
 import java.util.ArrayList;
@@ -100,10 +101,11 @@ public class PathfindCache {
             int yLen = dataInputStream.readShort();
             int zLen = dataInputStream.readShort();
 
-            byte[] b = new byte[xLen * yLen * zLen * 8];
-            dataInputStream.readFully(b);
+//            byte[] b = new byte[xLen * yLen * zLen * 8];
+//            dataInputStream.readFully(b);
             ByteBuffer buffer = ByteBuffer.allocateDirect(xLen * yLen * zLen * 8); // use off-heap buffer.
-            buffer.put(b);
+            ReadableByteChannel channel = Channels.newChannel(dataInputStream);
+            while (channel.read(buffer) > 0);
 
             return new CachedPathfinder(this, rotation, xStart, yStart, zStart, xLen, yLen, zLen, buffer);
         }

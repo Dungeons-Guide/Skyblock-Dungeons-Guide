@@ -191,6 +191,8 @@ public class DungeonRoom implements IPathfindWorld {
                 return executor;
             }
         }
+        if (true)
+            return null;
         PathfinderExecutor executor;
         if (pathfindStrategy == FeaturePathfindStrategy.PathfindStrategy.A_STAR_FINE_GRID_SMART) {
             executor = new PathfinderExecutor(new FineGridStonkingBFS(algorithmSettings), pos, this);

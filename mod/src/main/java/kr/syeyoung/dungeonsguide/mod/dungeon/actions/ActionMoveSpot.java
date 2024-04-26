@@ -41,6 +41,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.client.renderer.Tessellator;
@@ -58,16 +59,21 @@ import java.util.*;
 import java.util.List;
 import java.util.stream.Collectors;
 
-@Data
 @EqualsAndHashCode(callSuper=false)
-public class ActionMoveSpot extends AbstractAction {
+public class ActionMoveSpot extends AbstractActionMove {
+    @Getter
     private List<PossibleMoveSpot> targets;
 
     public ActionMoveSpot(List<PossibleMoveSpot> target, DungeonRoom dungeonRoom) {
+        super(
+                RaytraceHelper.chooseMinimalY2(target).stream().min(Comparator.comparingInt(b -> b.isBlocked() ? 1 : 0)).get()
+                        .getOffsetPointSet().get(0),
+                target.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())
+        );
         this.targets = target;
     }
 
-    public OffsetVec3 getTarget() {
+    public OffsetVec3 getTargetVec3() {
         OffsetVec3 vec = targets.get(0).getOffsetPointSet().get(0);
         return new OffsetVec3(vec.xCoord, vec.yCoord, vec.zCoord);
     }
@@ -82,22 +88,7 @@ public class ActionMoveSpot extends AbstractAction {
     @Override
     public void onRenderWorld(DungeonRoom dungeonRoom, float partialTicks, ActionRouteProperties actionRouteProperties, boolean flag) {
 
-        {
-            double cx = 0, cy =0 , cz = 0;
-            int cnt = 0;
-            for (OffsetVec3 _offsetVec3 : targets.stream().flatMap( a-> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-                Vec3 offsetVec3 = _offsetVec3.getPos(dungeonRoom);
-                cx += offsetVec3.xCoord;
-                cy += offsetVec3.yCoord;
-                cz += offsetVec3.zCoord;
-                cnt ++;
-            }
-            cx /= cnt;
-            cy /= cnt;
-            cz /= cnt;
-            ActionMove.draw(dungeonRoom, partialTicks, actionRouteProperties, flag, new BlockPos(cx,cy,cz), poses);
-        }
-
+        super.onRenderWorld(dungeonRoom, partialTicks, actionRouteProperties, flag);
         if (FeatureRegistry.DEBUG_ST.isEnabled()) {
             int i = 0;
             for (PossibleMoveSpot spot : targets) {
@@ -151,126 +142,17 @@ public class ActionMoveSpot extends AbstractAction {
                 cz /= spot.getOffsetPointSet().size();
                 cy += 0.2f;
                 RenderUtils.drawTextAtWorld(
-                        spot.getClusterId() + "/" + spot.isBlocked() + " / "+spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
+                        spot.getClusterId() + "/" + spot.isBlocked() + " / " + spot.getOffsetPointSet().size(), (float) cx, (float) cy, (float) cz, actual.getRGB() | 0xFF000000, 0.01f, false, true, partialTicks);
 
 
                 GlStateManager.enableAlpha();
             }
         }
-
     }
 
-    private int tick = -1;
-    private PathfindResult poses;
-    private PathfinderExecutor executor;
-    @Override
-    public void onTick(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        tick = (tick+1) % Math.max(1, actionRouteProperties.getLineRefreshRate());
-        if (executor == null && actionRouteProperties.isPathfind()) {
-            forceRefresh(dungeonRoom);
-        }
-        if (executor != null && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() ) {
-            poses = executor.getRoute(Minecraft.getMinecraft().thePlayer.getPositionVector());
-        }
-
-        if (tick == 0 && actionRouteProperties.isPathfind() && executor != null) {
-            if (actionRouteProperties.getLineRefreshRate() != -1 && !FeatureRegistry.SECRET_FREEZE_LINES.isEnabled() && executor.isComplete()) {
-                executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
-            }
-        }
-    }
-
-    @Override
-    public void cleanup(DungeonRoom dungeonRoom, ActionRouteProperties actionRouteProperties) {
-        executor = null;
-    }
-
-    public void forceRefresh(DungeonRoom dungeonRoom) {
-        BoundingBox boundingBox = new BoundingBox();
-        for (OffsetVec3 offsetPoint : targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-            Vec3 pos = offsetPoint.getPos(dungeonRoom);
-            boundingBox.addBoundingBox(new AxisAlignedBB(
-                    pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
-                    pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
-            ));
-        }
-
-        if (executor == null) executor = dungeonRoom.loadPrecalculated(new PathfindRequest(
-                FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
-                dungeonRoom.getDungeonRoomInfo(),
-                dungeonRoom.getMechanics().entrySet().stream().filter(b -> {
-                    return  b.getValue() instanceof DungeonDoor || b.getValue() instanceof DungeonOnewayDoor;
-                }).filter(b -> !((RouteBlocker)b.getValue()).isBlocking(dungeonRoom)).map(Map.Entry::getKey).collect(Collectors.toSet()),
-                getTargets().stream().flatMap(b -> b.getOffsetPointSet().stream())
-                        .collect(Collectors.toList())
-        ).getId());
-        if (executor == null) executor = dungeonRoom.createEntityPathTo(boundingBox);
-        executor.setTarget(Minecraft.getMinecraft().thePlayer.getPositionVector());
-    }
     @Override
     public String toString() {
         return "Move\n- target: "+targets.get(0).toString();
     }
 
-    @Override
-    public double evalulateCost(RoomState state, DungeonRoom room, Map<String, Object> memoization) {
-
-
-        double cx = 0, cy =0 , cz = 0;
-        int size = (int) targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).count();
-        for (OffsetVec3 _offsetVec3 : targets.stream().flatMap(a -> a.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-            Vec3 offsetVec3 = _offsetVec3.getPos(room);
-            cx += offsetVec3.xCoord;
-            cy += offsetVec3.yCoord;
-            cz += offsetVec3.zCoord;
-        }
-        cx /= size;
-        cy /= size;
-        cz /= size;
-        Vec3 bpos = new Vec3(cx,cy,cz);
-
-        if (memoization.containsKey("stupidheuristic")) {
-            double cost = state.getPlayerPos().distanceTo(bpos);
-            state.setPlayerPos(bpos);
-            return cost;
-        }
-
-        PathfinderExecutor executor = (PathfinderExecutor) memoization.get(
-                state.getOpenMechanics()+"-"+bpos
-        );
-        FineGridStonkingBFS a = null;
-        if (executor == null) {
-            executor = room.loadPrecalculated(new PathfindRequest(
-                    FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings(),
-                    room.getDungeonRoomInfo(),
-                    state.getOpenMechanics().stream().filter(b -> {
-                        return room.getMechanics().get(b) instanceof DungeonDoor || room.getMechanics().get(b) instanceof DungeonOnewayDoor;
-                    }).collect(Collectors.toSet()),
-                    getTargets().stream().flatMap(b -> b.getOffsetPointSet().stream())
-                            .collect(Collectors.toList())
-            ).getId());
-            if (executor == null) {
-                BoundingBox boundingBox = new BoundingBox();
-                for (OffsetVec3 offsetPoint : targets.stream().flatMap(b -> b.getOffsetPointSet().stream()).collect(Collectors.toList())) {
-                    Vec3 pos = offsetPoint.getPos(room);
-                    boundingBox.addBoundingBox(new AxisAlignedBB(
-                            pos.xCoord - 0.1, pos.yCoord - 0.1, pos.zCoord - 0.1,
-                            pos.xCoord + 0.1, pos.yCoord + 0.1, pos.zCoord + 0.1
-                    ));
-                }
-
-                executor = new PathfinderExecutor(new FineGridStonkingBFS(FeatureRegistry.SECRET_PATHFIND_SETTINGS.getAlgorithmSettings()),
-                        boundingBox, new DungeonRoomButOpen(room, new HashSet<>(state.getOpenMechanics())));
-            }
-            memoization.put(state.getOpenMechanics()+"-"+bpos, executor);
-        }
-        executor.setTarget(state.getPlayerPos());
-        OffsetVec3 pos = RaytraceHelper.chooseMinimalY2(targets).stream().min(Comparator.comparingInt(b -> b.isBlocked() ? 1 : 0)).get()
-                .getOffsetPointSet().get(0);
-
-        state.setPlayerPos(pos.getPos(room));
-        double result = executor.findCost();
-        if (Double.isNaN(result)) return 999999999;
-        return result;
-    }
 }
