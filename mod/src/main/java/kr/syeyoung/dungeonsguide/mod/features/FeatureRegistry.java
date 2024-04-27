@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeaturePlayerModel;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm.PlayingDGAlarm;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.*;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.FeatureDungeonMap2;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyList;
@@ -233,6 +234,7 @@ public class FeatureRegistry {
 
 
     public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
+    public static final FeatureDungeonMap2 DUNGEON_MAP2 = register(new FeatureDungeonMap2());
 //    public static final FeatureChestPrice BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
     public static final FeatureEpicCountdown EPIC_COUNTDOWN = register(new FeatureEpicCountdown());

@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2023  cyoung06 (syeyoung)
+ * Copyright (C) 2024  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,28 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
+package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import net.minecraft.util.ResourceLocation;
 
-import java.util.Objects;
-import java.util.function.Supplier;
+public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
-public class ExportedWidgetConverter<W extends Widget & ExportedWidget, R extends Widget & ImportingWidget> extends PropByPropParsedWidgetConverter<W, R> {
-    private Supplier<W> constructor;
+    @Bind(variableName = "demo")
+    public final BindableAttribute<Widget> widgetBindableAttribute = new BindableAttribute<>(Widget.class);
 
-    public ExportedWidgetConverter(Supplier<W> constructor) {
-        this.constructor = Objects.requireNonNull(constructor);
-    }
-
-
-    public W instantiateWidget(ParserElement parserElement) {
-        return constructor.get();
-    }
-
-    public final BindableAttribute getExportedAttribute(W widget, String attributeName) {
-        return widget.getExportedAttribute(attributeName);
+    public WidgetMapConfiguration(FeatureDungeonMap2 featureDungeonMap2) {
+        super(new ResourceLocation("dungeonsguide:gui/features/map/editor.gui"));
+        widgetBindableAttribute.setValue(featureDungeonMap2.instantiateDemoWidget());
     }
 }

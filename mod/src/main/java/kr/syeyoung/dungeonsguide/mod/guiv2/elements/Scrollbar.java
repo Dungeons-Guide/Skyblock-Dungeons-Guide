@@ -81,12 +81,11 @@ public class Scrollbar extends AnnotatedWidget {
     private double per1, per2;
 
     private void updateStuff(double _, double __) {
-        if (getDomElement().getSize() != null)
-            updatePers(getDomElement().getSize());
+        if (size.getValue() != null)
+            updatePers(size.getValue());
         updateThumbLocation(0, 0);
     }
     private void updatePers(Size size) {
-
         double min = this.min.getValue();
         double max = this.max.getValue();
         double thumbSize = this.thumbValue.getValue();

@@ -84,7 +84,6 @@ public class DomElementRegistry {
         register("InvertStencil", new ExportedWidgetConverter(NegativeStencil::new));
         register("WrapGrid", new ExportedWidgetConverter(Wrap::new));
 
-        register("SimpleCheckBox", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/checkbox.gui")));
         register("ColorButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/simpleButton.gui")));
         register("RoundButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/dgButton.gui")));
         register("IconButton", new DelegatingWidgetConverter(new ResourceLocation("dungeonsguide:gui/elements/iconButton.gui")));
@@ -97,6 +96,8 @@ public class DomElementRegistry {
         register("UrlImage", new ExportedWidgetConverter(URLImage::new));
         register("SelectiveContainer", new ExportedWidgetConverter(SelectiveContainer::new));
         register("ItemStack", new ExportedWidgetConverter(ItemStackRender::new));
+        register("Include", new DelegatingWidgetConverter(null));
+
     }
 
     public static Parser obtainParser(ResourceLocation resourceLocation) {

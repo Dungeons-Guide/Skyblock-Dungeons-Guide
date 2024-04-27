@@ -18,5 +18,5 @@
   -->
 
 <size width="10" height="10">
-        <SimpleCheckBox bind:enabled="enabled"/>
+        <Include include="dungeonsguide:gui/elements/checkbox.gui" bind:enabled="enabled"/>
 </size>

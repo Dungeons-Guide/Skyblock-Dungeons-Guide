@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
 import net.minecraft.util.ResourceLocation;
 
 public class DelegatingWidgetConverter<R extends Widget & ImportingWidget> extends PropByPropParsedWidgetConverter<DelegatingWidget, R> {
@@ -28,7 +29,8 @@ public class DelegatingWidgetConverter<R extends Widget & ImportingWidget> exten
         this.resourceLocation = resourceLocation;
     }
 
-    public DelegatingWidget instantiateWidget() {
+    public DelegatingWidget instantiateWidget(ParserElement parserElement) {
+        if (resourceLocation == null) return new DelegatingWidget(new ResourceLocation(parserElement.getAttributeValue("include")));
         return new DelegatingWidget(resourceLocation);
     }
 
