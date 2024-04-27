@@ -1,0 +1,52 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2023  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<bgcolor backgroundColor="#FF111111">
+        <align vAlign="CENTER">
+            <ConstrainedBox  maxWidth="600" maxHeight="450">
+                <col crossAlign="CENTER">
+                    <size width="0" height="10"/>
+                    <Text text="Dungeons Guide Loader Options" color="#FFFFFFFF" size="16"/>
+                    <size width="0" height="10"/>
+                    <line color="#FFFFFFFF"/>
+                    <size width="0" height="10"/>
+                    <Text text="Current Status" color="#FFFFFFFF" size="12"/>
+                    <size width="0" height="5"/>
+                    <Text bind:text="currentBranch" color="#FFFFFF00"/>
+                    <Text bind:text="currentVersion" color="#FFFFFF00"/>
+                    <size width="0" height="10"/>
+                    <line color="#FFFFFFFF"/>
+                    <size width="0" height="10"/>
+                    <Text text="Loader Config" size="12" color="#FFFFFFFF"/>
+                    <size width="0" height="5"/>
+                    <Text bind:text="autoloadBranch" color="#FFFFFF00"/>
+                    <Text bind:text="autoloadVersion" color="#FFFFFF00"/>
+                    <size width="0" height="10"/>
+                    <line color="#FFFFFFFF"/>
+                    <size width="0" height="10"/>
+                    <size width="200" height="20">
+                        <RoundButton text="Unload and reload Dungeons Guide" on:click="unload"/>
+                    </size>
+                    <size width="0" height="10"/>
+                    <size width="200" height="20">
+                        <RoundButton text="Open Mod Config" on:click="config"/>
+                    </size>
+                </col>
+            </ConstrainedBox>
+        </align>
+</bgcolor>

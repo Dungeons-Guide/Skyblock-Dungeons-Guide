@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Mod(modid = Main.MOD_ID, version = Main.VERSION, clientSideOnly = true)
+@Mod(modid = Main.MOD_ID, version = Main.VERSION, clientSideOnly = true, guiFactory = "kr.syeyoung.dungeonsguide.launcher.DGLoaderGuiFactory")
 public class Main
 {
     public static final String MOD_ID = "dungeons_guide_loader";
