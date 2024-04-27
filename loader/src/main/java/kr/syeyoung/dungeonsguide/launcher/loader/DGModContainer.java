@@ -181,6 +181,7 @@ public class DGModContainer implements ModContainer {
 
     @Override
     public List<String> getOwnedPackages() {
+        if (Main.getMain() == null) return Collections.emptyList();
         IDGLoader loader = Main.getMain().getCurrentLoader();
         if (loader == null) return Collections.emptyList();
         if (!loader.isLoaded()) return Collections.emptyList();
