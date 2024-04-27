@@ -183,6 +183,7 @@ public class DGModContainer implements ModContainer {
     public List<String> getOwnedPackages() {
         IDGLoader loader = Main.getMain().getCurrentLoader();
         if (loader == null) return Collections.emptyList();
+        if (!loader.isLoaded()) return Collections.emptyList();
         return new ArrayList<>(((DGClassLoader)loader.getInstance().getClass().getClassLoader()).getLoadedPackages());
     }
 

@@ -100,7 +100,7 @@ public class WidgetConfig extends AnnotatedImportOnlyWidget {
         try {
             GuiScreen newScreen = Main.getMain().getCurrentLoader().getInstance().getModConfigGUI().getConstructor(GuiScreen.class).newInstance(Minecraft.getMinecraft().currentScreen);
             Minecraft.getMinecraft().displayGuiScreen(newScreen);
-        } catch (InstantiationException | InvocationTargetException | IllegalAccessException | NoSuchMethodException e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
