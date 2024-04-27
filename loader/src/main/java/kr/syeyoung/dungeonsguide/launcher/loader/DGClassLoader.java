@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.events.DGAwareEventSubscriptionTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.IOException;
@@ -103,6 +104,15 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+
+        final int lastDot = name.lastIndexOf('.');
+        final String packageName = lastDot == -1 ? "" : name.substring(0, lastDot);
+
+        Package pkg = getPackage(packageName);
+        if (pkg == null) {
+            definePackage(packageName, null,null,null,null,null,null,null);
+        }
+
         byte[] res;
         try {
             res = getClassBytes(name);
