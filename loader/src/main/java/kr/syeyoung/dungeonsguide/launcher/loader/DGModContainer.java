@@ -184,6 +184,7 @@ public class DGModContainer implements ModContainer {
         IDGLoader loader = Main.getMain().getCurrentLoader();
         if (loader == null) return Collections.emptyList();
         if (!loader.isLoaded()) return Collections.emptyList();
+        if (loader instanceof DevEnvLoader) return Collections.emptyList();
         return new ArrayList<>(((DGClassLoader)loader.getInstance().getClass().getClassLoader()).getLoadedPackages());
     }
 
