@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2023  cyoung06 (syeyoung)
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,35 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher.coremod;
+package kr.syeyoung.dungeonsguide.launcher;
 
-import net.minecraftforge.fml.relauncher.IFMLLoadingPlugin;
+import kr.syeyoung.dungeonsguide.launcher.gui.screen.ConfigGuiScreenAdapter;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.gui.GuiScreen;
+import net.minecraftforge.fml.client.IModGuiFactory;
 
-import java.util.Map;
+import java.util.Set;
 
-public class DGTweaker implements IFMLLoadingPlugin {
+public class DGLoaderGuiFactory implements IModGuiFactory {
     @Override
-    public String[] getASMTransformerClass() {
-        return new String[] {EventBusTransformer.class.getName()};
+    public void initialize(Minecraft minecraft) {}
+
+    @Override
+    public Class<? extends GuiScreen> mainConfigGuiClass() {
+        return ConfigGuiScreenAdapter.class;
     }
 
     @Override
-    public String getModContainerClass() {
-        return "kr.syeyoung.dungeonsguide.launcher.loader.DGModContainer";
-    }
-
-    @Override
-    public String getSetupClass() {
+    public Set<RuntimeOptionCategoryElement> runtimeGuiCategories() {
         return null;
     }
 
     @Override
-    public void injectData(Map<String, Object> map) {
-
-    }
-
-    @Override
-    public String getAccessTransformerClass() {
+    public RuntimeOptionGuiHandler getHandlerFor(RuntimeOptionCategoryElement runtimeOptionCategoryElement) {
         return null;
     }
 }

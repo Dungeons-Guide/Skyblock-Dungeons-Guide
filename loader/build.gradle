@@ -7,9 +7,9 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.0.0"
+version = "4.0.1"
 group = "kr.syeyoung.dungeonsguide"
-archivesBaseName = "dungeonsguide"
+archivesBaseName = "dungeonsguide-loader"
 
 
 java {
@@ -103,7 +103,6 @@ tasks.withType(JavaCompile) {
 }
 
 tasks.withType(Jar) {
-    archivesBaseName = "dungeonsguide-loader"
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
         attributes["FMLCorePlugin"] = 'kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker'

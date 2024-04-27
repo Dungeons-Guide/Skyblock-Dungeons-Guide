@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingExcep
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.ModMetadata;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
@@ -32,6 +33,7 @@ import java.io.InputStream;
 import java.lang.ref.PhantomReference;
 import java.lang.ref.Reference;
 import java.lang.ref.ReferenceQueue;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -108,6 +110,16 @@ public class JarLoader implements IDGLoader {
         classLoader = null;
         dgInterface = null;
         System.gc();// pls do
+        // Force an OoM
+        try {
+            final ArrayList<Object[]> allocations = new ArrayList<Object[]>();
+            int size;
+            while( (size = Math.min(Math.abs((int)Runtime.getRuntime().freeMemory()),Integer.MAX_VALUE))>0 )
+                allocations.add( new Object[size] );
+        } catch( OutOfMemoryError e ) {
+            // great!
+        }
+
         Reference<? extends ClassLoader> t = refQueue.poll();
         phantomReference = null;
         if (t == null) throw new DungeonsGuideUnloadingException(toString(),new ReferenceLeakedException("Reference Leaked")); // Why do you have to be that strict? Well, to tell them to actually listen on DungeonsGuideReloadListener. If it starts causing issues then I will remove check cus it's not really loaded (classes are loaded by child classloader)

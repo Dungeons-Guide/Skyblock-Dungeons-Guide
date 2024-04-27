@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.launcher;
 
+import kr.syeyoung.dungeonsguide.launcher.loader.IDGLoader;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiScreen;
 import net.minecraftforge.fml.client.IModGuiFactory;
@@ -30,7 +31,10 @@ public class DGModGuiFactory implements IModGuiFactory {
 
     @Override
     public Class<? extends GuiScreen> mainConfigGuiClass() {
-        return Main.getMain().getCurrentLoader() == null ? null : Main.getMain().getCurrentLoader().getInstance().getModConfigGUI();
+        IDGLoader idgLoader = Main.getMain().getCurrentLoader();
+        if (idgLoader == null) return null;
+        if (!idgLoader.isLoaded()) return null;
+        return idgLoader.getInstance().getModConfigGUI();
     }
 
     @Override

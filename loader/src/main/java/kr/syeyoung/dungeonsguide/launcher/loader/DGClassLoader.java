@@ -21,14 +21,17 @@ package kr.syeyoung.dungeonsguide.launcher.loader;
 import kr.syeyoung.dungeonsguide.launcher.Main;
 import kr.syeyoung.dungeonsguide.launcher.events.DGAwareEventSubscriptionTransformer;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraft.launchwrapper.LogWrapper;
 import net.minecraftforge.fml.relauncher.ReflectionHelper;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public abstract class DGClassLoader extends ClassLoader implements ByteStreamURLHandler.InputStreamGenerator{
 
@@ -80,6 +83,19 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
         }
     }
 
+    @Override
+    public Package[] getPackages() {
+        return super.getPackages();
+    }
+
+    public Set<String> getLoadedPackages() {
+        return classesILoaded.stream()
+                .map(a -> {
+                    final int lastDot = a.lastIndexOf('.');
+                    return lastDot == -1 ? "" : a.substring(0, lastDot);
+                }).collect(Collectors.toSet());
+    }
+
     public void cleanup() {
         for (String s : classesILoaded) {
             launchClassLoaderCacheMap.remove(s);
@@ -88,6 +104,15 @@ public abstract class DGClassLoader extends ClassLoader implements ByteStreamURL
 
     @Override
     protected Class<?> findClass(String name) throws ClassNotFoundException {
+
+        final int lastDot = name.lastIndexOf('.');
+        final String packageName = lastDot == -1 ? "" : name.substring(0, lastDot);
+
+        Package pkg = getPackage(packageName);
+        if (pkg == null) {
+            definePackage(packageName, null,null,null,null,null,null,null);
+        }
+
         byte[] res;
         try {
             res = getClassBytes(name);

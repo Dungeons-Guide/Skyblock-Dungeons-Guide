@@ -42,12 +42,22 @@ import static org.lwjgl.opengl.GL11.GL_GREATER;
 public class GuiScreenAdapter extends GuiScreen {
 
     @Getter
-    private RootDom view;
-    private boolean isOpen = false;
+    protected RootDom view;
+    protected boolean isOpen = false;
 
-    private Stack<RootDom> domStack = new Stack<>();
+    protected Stack<RootDom> domStack = new Stack<>();
 
+    protected GuiScreen parent;
+    protected boolean allowEsc;
     public GuiScreenAdapter(Widget widget) {
+        this(widget, null, true);
+    }
+    public GuiScreenAdapter(Widget widget, GuiScreen parent) {
+        this(widget, parent, true);
+    }
+    public GuiScreenAdapter(Widget widget, GuiScreen parent, boolean allowEsc) {
+        this.parent = parent;
+        this.allowEsc = allowEsc;
         view = new RootDom(widget);
         view.getContext().CONTEXT.put("screenAdapter", this);
 
@@ -104,12 +114,17 @@ public class GuiScreenAdapter extends GuiScreen {
             if (view.isRelayoutRequested()) {
 
                 view.setRelayoutRequested(false);
-                view.getLayouter().layout(view, new ConstraintBox(
-                        Minecraft.getMinecraft().displayWidth,
-                        Minecraft.getMinecraft().displayWidth,
-                        Minecraft.getMinecraft().displayHeight,
-                        Minecraft.getMinecraft().displayHeight
-                ));
+                try {
+                    view.getLayouter().layout(view, new ConstraintBox(
+                            Minecraft.getMinecraft().displayWidth,
+                            Minecraft.getMinecraft().displayWidth,
+                            Minecraft.getMinecraft().displayHeight,
+                            Minecraft.getMinecraft().displayHeight
+                    ));
+                } catch (Exception e) {
+                    view.setRelayoutRequested(true);
+                    throw e;
+                }
             }
 
 
@@ -134,12 +149,18 @@ public class GuiScreenAdapter extends GuiScreen {
 
     @Override
     public void keyTyped(char typedChar, int keyCode) throws IOException {
+        if (keyCode == 1 && allowEsc) {
+            this.mc.displayGuiScreen((GuiScreen)parent);
+            if (this.mc.currentScreen == null) {
+                this.mc.setIngameFocus();
+            }
+            return;
+        }
+
         try {
             view.keyPressed0(typedChar, keyCode);
-            super.keyTyped(typedChar, keyCode);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -147,8 +168,7 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.keyHeld0(typedChar, keyCode);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -156,8 +176,7 @@ public class GuiScreenAdapter extends GuiScreen {
         try {
             view.keyReleased0(typedChar, keyCode);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -168,8 +187,7 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseClicked0(mouseX, mouseY
                     , mouseX, mouseY, mouseButton);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -193,8 +211,7 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseReleased0(mouseX, mouseY
                     , mouseX, mouseY, state);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -204,8 +221,7 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseClickMove0(mouseX, mouseY
                     , mouseX, mouseY, clickedMouseButton, timeSinceLastClick);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -214,8 +230,7 @@ public class GuiScreenAdapter extends GuiScreen {
             view.mouseMoved0(mouseX, mouseY
                     , mouseX, mouseY, true);
         } catch (Exception e) {
-           
-                e.printStackTrace();
+            e.printStackTrace();
         }
     }
 
@@ -231,53 +246,53 @@ public class GuiScreenAdapter extends GuiScreen {
     @Override
     public void handleMouseInput() throws IOException {
         if (!isOpen) return;
-            int i = Mouse.getEventX();
-            int j = this.mc.displayHeight - Mouse.getEventY();
-            int k = Mouse.getEventButton();
+        int i = Mouse.getEventX();
+        int j = this.mc.displayHeight - Mouse.getEventY();
+        int k = Mouse.getEventButton();
 
-            if (Mouse.getEventButtonState()) {
-                if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {
-                    return;
-                }
-
-                this.eventButton = k;
-                this.lastMouseEvent = Minecraft.getSystemTime();
-                this.mouseClicked(i, j, this.eventButton);
-            } else if (k != -1) {
-                if (this.mc.gameSettings.touchscreen && --this.touchValue > 0) {
-                    return;
-                }
-
-                this.eventButton = -1;
-                this.mouseReleased(i, j, k);
-            } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
-                long l = Minecraft.getSystemTime() - this.lastMouseEvent;
-                this.mouseClickMove(i, j, this.eventButton, l);
-            }
-            if (lastX != i || lastY != j) {
-                    EnumCursor prevCursor = view.getCurrentCursor();
-                    view.setCursor(EnumCursor.DEFAULT);
-                    this.mouseMove(i, j);
-                    EnumCursor newCursor = view.getCurrentCursor();
-                try {
-                    if (prevCursor != newCursor)
-                        Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
-                } catch (Throwable e) {
-                        e.printStackTrace();
-                }
+        if (Mouse.getEventButtonState()) {
+            if (this.mc.gameSettings.touchscreen && this.touchValue++ > 0) {
+                return;
             }
 
+            this.eventButton = k;
+            this.lastMouseEvent = Minecraft.getSystemTime();
+            this.mouseClicked(i, j, this.eventButton);
+        } else if (k != -1) {
+            if (this.mc.gameSettings.touchscreen && --this.touchValue > 0) {
+                return;
+            }
 
-            int wheel = Mouse.getEventDWheel();
-            if (wheel != 0) {
-                try {
-                    view.mouseScrolled0(i, j, i, j, wheel);
-                } catch (Exception e) {
+            this.eventButton = -1;
+            this.mouseReleased(i, j, k);
+        } else if (this.eventButton != -1 && this.lastMouseEvent > 0L) {
+            long l = Minecraft.getSystemTime() - this.lastMouseEvent;
+            this.mouseClickMove(i, j, this.eventButton, l);
+        }
+        if (lastX != i || lastY != j) {
+            EnumCursor prevCursor = view.getCurrentCursor();
+            view.setCursor(EnumCursor.DEFAULT);
+            this.mouseMove(i, j);
+            EnumCursor newCursor = view.getCurrentCursor();
+            try {
+                if (prevCursor != newCursor) Mouse.setNativeCursor(GLCursors.getCursor(newCursor));
+            } catch (Throwable e) {
+                if (e.getMessage() == null || !e.getMessage().contains("hack to stop"))
                     e.printStackTrace();
-                }
             }
-            lastX = i;
-            lastY = j;
+        }
+
+
+        int wheel = Mouse.getEventDWheel();
+        if (wheel != 0) {
+            try {
+                view.mouseScrolled0(i, j, i, j, wheel);
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+        lastX = i;
+        lastY = j;
     }
 
     public void handleKeyboardInput() throws IOException {

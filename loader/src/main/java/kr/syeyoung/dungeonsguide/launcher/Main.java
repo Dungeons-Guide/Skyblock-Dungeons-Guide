@@ -60,7 +60,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-@Mod(modid = Main.MOD_ID, version = Main.VERSION, clientSideOnly = true, guiFactory = "kr.syeyoung.dungeonsguide.launcher.DGModGuiFactory")
+@Mod(modid = Main.MOD_ID, version = Main.VERSION, clientSideOnly = true, guiFactory = "kr.syeyoung.dungeonsguide.launcher.DGLoaderGuiFactory")
 public class Main
 {
     public static final String MOD_ID = "dungeons_guide_loader";
@@ -145,11 +145,12 @@ public class Main
             e.printStackTrace();
             try {
                 unload();
+                GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
             } catch (Exception e2) {
                 e2.printStackTrace();
+                e2.addSuppressed(e);
                 GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e2))));
-            }
-            GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
+            };
         } catch (DungeonsGuideUnloadingException e) {
             GuiDisplayer.INSTANCE.displayGui(new GuiScreenAdapter(new GlobalHUDScale(new WidgetError(e))));
         }

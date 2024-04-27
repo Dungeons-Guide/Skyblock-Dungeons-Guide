@@ -64,7 +64,7 @@ public class DevEnvLoader implements IDGLoader {
 
     @Override
     public String version() {
-        return "unknown";
+        return "DEV ENV";
     }
 
 
