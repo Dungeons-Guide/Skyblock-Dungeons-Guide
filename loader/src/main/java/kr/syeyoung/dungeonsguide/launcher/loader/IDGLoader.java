@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingExcep
 import net.minecraftforge.common.config.Configuration;
 
 public interface IDGLoader {
+
     DGInterface loadDungeonsGuide() throws DungeonsGuideLoadingException;
     DGInterface getInstance();
     void unloadDungeonsGuide() throws DungeonsGuideUnloadingException;

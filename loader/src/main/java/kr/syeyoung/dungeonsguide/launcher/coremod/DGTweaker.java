@@ -30,7 +30,7 @@ public class DGTweaker implements IFMLLoadingPlugin {
 
     @Override
     public String getModContainerClass() {
-        return null;
+        return "kr.syeyoung.dungeonsguide.launcher.loader.DGModContainer";
     }
 
     @Override

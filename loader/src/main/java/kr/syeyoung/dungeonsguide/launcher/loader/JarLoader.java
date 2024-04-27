@@ -24,6 +24,7 @@ import kr.syeyoung.dungeonsguide.launcher.exceptions.DungeonsGuideUnloadingExcep
 import kr.syeyoung.dungeonsguide.launcher.exceptions.ReferenceLeakedException;
 import kr.syeyoung.dungeonsguide.launcher.util.ProgressStateHolder;
 import net.minecraft.launchwrapper.LaunchClassLoader;
+import net.minecraftforge.fml.common.ModMetadata;
 import org.apache.commons.io.IOUtils;
 
 import java.io.ByteArrayInputStream;
