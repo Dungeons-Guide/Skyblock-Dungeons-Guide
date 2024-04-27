@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.icefill;
 
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -36,10 +37,18 @@ import java.util.Arrays;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
     private final List<List<BlockPos>> solution = new CopyOnWriteArrayList<List<BlockPos>>();
 
+
+
+    private static final ExecutorService executorService = DungeonsGuide.getDungeonsGuide().registerExecutorService(
+            Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-IcePath-Calculator").build())
+    );
 
     public RoomProcessorIcePath2(DungeonRoom dungeonRoom) {
 
@@ -70,7 +79,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                     }
                 }
 
-                new Thread(DungeonsGuide.THREAD_GROUP, () -> {
+                executorService.submit( () -> {
                     List<Point> hamiltonianPath = findFirstHamiltonianPath(map, startX, startY, endX, endY);
                     if (hamiltonianPath == null) {
                         ChatTransmitter.addToQueue("§eDungeons Guide §7:: §eIcePath §7:: §cCouldn't find solution for floor "+s);
@@ -83,7 +92,7 @@ public class RoomProcessorIcePath2 extends GeneralRoomProcessor {
                         poses.add(map2[p.y][p.x]);
                     }
                     solution.add(poses);
-                }).start();
+                });
             } catch (Exception e) {
                 FeatureCollectDiagnostics.queueSendLogAsync(e);
                 e.printStackTrace();

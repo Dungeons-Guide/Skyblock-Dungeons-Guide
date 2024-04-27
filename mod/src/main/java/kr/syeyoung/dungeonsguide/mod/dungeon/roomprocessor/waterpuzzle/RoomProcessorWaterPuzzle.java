@@ -18,8 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 
+import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
+import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
@@ -37,6 +39,9 @@ import net.minecraft.world.World;
 import java.awt.*;
 import java.util.*;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
 import java.util.stream.Collectors;
 
 public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
@@ -58,8 +63,6 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private List<String> targetDoors = new ArrayList<>();
 
     private Map<Simulator.Pt, BlockPos> ptMapping = new HashMap<>();
-
-    private Thread t;
     private List<WaterPathfinder.NodeNode> solutionList = new ArrayList<>();
     private long lastStable;
     private long lastUnstable;
@@ -169,7 +172,13 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         }
     }
 
+    private static final ExecutorService executorService = DungeonsGuide.getDungeonsGuide().registerExecutorService(
+            Executors.newSingleThreadExecutor(new ThreadFactoryBuilder().setThreadFactory(DungeonsGuide.THREAD_FACTORY)
+                    .setNameFormat("DG-WaterPuzzle-Calculator").build())
+    );
+
     Simulator.Node[][] lastCopy = null;
+    private Future lastCalc;
 
     private int idx = 0;
     @Override
@@ -192,8 +201,8 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             }
             Simulator.simulateTicks(nodes);
             if ((System.currentTimeMillis() - lastUnstable) > 1000) {
-                if (t == null || !t.isAlive()) {
-                    t = new Thread(() -> {
+                if (lastCalc == null || lastCalc.isDone()) {
+                    lastCalc = executorService.submit(() -> {
                         try {
                             List<Simulator.Pt> targets = targetDoors.stream().map(waterNodeEnds::get).collect(Collectors.toList());
                             List<Simulator.Pt> nonTargets = waterNodeEnds.values().stream().filter(a -> !targets.contains(a)).collect(Collectors.toList());
@@ -215,7 +224,6 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                             lastCopy = null;
                         }
                     });
-                    t.start();
                 }
             }
 

@@ -85,6 +85,7 @@ import java.io.IOException;
 import java.lang.reflect.Method;
 import java.util.*;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -166,6 +167,10 @@ public class DungeonsGuide implements DGInterface {
         return executorService;
     }
 
+    public ScheduledExecutorService registerExecutorService(ScheduledExecutorService executorService) {
+        this.executorServices.add(executorService);
+        return executorService;
+    }
 
     private PacketInjector packetInjector;
     public void init(File f) {
