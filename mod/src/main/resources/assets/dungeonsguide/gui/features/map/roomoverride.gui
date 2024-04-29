@@ -1,0 +1,65 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+
+    <RoundRect radius="3" backgroundColor="#FF222222">
+        <padding left="3" top="3" right="3" bottom="3">
+            <col>
+                <row>
+                    <bgcolor bind:backgroundColor="roomColor">
+                        <size width="8" height="8">
+                        </size>
+                    </bgcolor>
+                    <size width="3"/>
+                    <flexible>
+                        <Text bind:text="roomName" color="#FFFFFFFF"/>
+                    </flexible>
+                    <size width="50" height="15">
+                        <RoundButton text="delete" on:click="delete"/>
+                    </size>
+                </row>
+                <size height="3"/>
+                <row>
+                    <flexible><Text text="Draw name" color="#FFFFFFFF"/></flexible>
+                    <size width="40" height="14">
+                        <slot bind:child="drawName"/>
+                    </size>
+                </row>
+                <size height="3"/>
+                <TextField bind:placeholder="defaultName" bind:value="name"/>
+                <size height="3"/>
+                <TextField placeholder="Icon Location" bind:value="iconLocation"/>
+                <size height="3"/>
+                <TextField placeholder="Texture Location" bind:value="textureLocation"/>
+                <size height="3"/>
+                <row>
+                    <flexible><Text text="Icon Style" color="#FFFFFFFF"/></flexible>
+                    <size width="100" height="14">
+                        <slot bind:child="iconStyle"/>
+                    </size>
+                </row>
+                <size height="3"/>
+                <row>
+                    <flexible><Text text="Icon Rotation" color="#FFFFFFFF"/></flexible>
+                    <size width="100" height="14">
+                        <slot bind:child="iconRotation"/>
+                    </size>
+                </row>
+            </col>
+        </padding>
+    </RoundRect>

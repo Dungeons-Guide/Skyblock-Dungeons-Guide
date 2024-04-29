@@ -200,8 +200,8 @@ public class DungeonRoom {
             if (pt.x < minRoomPt.x) minRoomPt.x = pt.x;
             if (pt.y < minRoomPt.y) minRoomPt.y = pt.y;
         }
-        unitWidth = (int) Math.ceil(max.getX() - min.getX() / 32.0);
-        unitHeight = (int) Math.ceil(max.getZ() - min.getZ() / 32.0);
+        unitWidth = (int) Math.ceil((max.getX() - min.getX()) / 32.0);
+        unitHeight = (int) Math.ceil((max.getZ() - min.getZ()) / 32.0);
 
 
 

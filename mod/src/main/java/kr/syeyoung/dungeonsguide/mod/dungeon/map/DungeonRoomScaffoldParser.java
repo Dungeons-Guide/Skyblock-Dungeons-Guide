@@ -52,6 +52,11 @@ public class DungeonRoomScaffoldParser {
 
     @Getter
     private final Map<Point, DungeonRoom> roomMap = new HashMap<>();
+
+    @Getter
+    private final Set<Point> potential = new HashSet<>();
+
+
     @Getter
     private final List<DungeonRoom> dungeonRoomList = new ArrayList<>();
 
@@ -129,6 +134,7 @@ public class DungeonRoomScaffoldParser {
                     dungeonRoomList.add(room);
                     for (Point p : room.getUnitPoints()) {
                         roomMap.put(p, room);
+                        potential.remove(p);
                     }
                     if (room.getRoomProcessor() != null && room.getRoomProcessor().readGlobalChat()) {
                         context.getGlobalRoomProcessors().add(room.getRoomProcessor());
@@ -137,6 +143,7 @@ public class DungeonRoomScaffoldParser {
                     MinecraftForge.EVENT_BUS.post(new DungeonRoomDiscoveredEvent(room));
                 } else if (color == 85) {
                     undiscoveredRoom++;
+                    potential.add(new Point(x,y));
                 }
 
             }

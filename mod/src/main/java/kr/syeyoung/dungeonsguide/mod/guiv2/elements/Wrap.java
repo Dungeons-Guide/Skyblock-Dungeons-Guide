@@ -44,10 +44,34 @@ public class Wrap extends AnnotatedExportOnlyWidget implements Layouter {
     @Export(attributeName = "_")
     public final BindableAttribute<WidgetList> widgetListBindableAttribute = new BindableAttribute<>(WidgetList.class);
 
+
+    @Export(attributeName = "api")
+    public final BindableAttribute<Wrap> api = new BindableAttribute<>(Wrap.class, this);
+
     @Override
     public List<Widget> build(DomElement buildContext) {
         return widgetListBindableAttribute.getValue();
     }
+
+    public void addWidget(Widget widget) {
+        if (getDomElement().getWidget() == null) {
+            widgetListBindableAttribute.getValue().add(widget);
+        } else {
+            DomElement domElement = widget.createDomElement(getDomElement());
+            getDomElement().addElement(domElement);
+        }
+    }
+
+    public void removeAllWidget() {
+        for (DomElement child : getDomElement().getChildren()) {
+            getDomElement().removeElement(child);
+        }
+    }
+
+    public void removeWidget(Widget widget) {
+        getDomElement().removeElement(widget.getDomElement());
+    }
+
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {

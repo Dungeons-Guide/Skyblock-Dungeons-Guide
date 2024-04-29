@@ -72,7 +72,9 @@ public abstract class AbstractFeature implements IFeature {
             JsonElement element = jsonObject.get(parameterEntry.getKey());
             if (element == null) continue;
             FeatureTypeHandler featureTypeHandler = parameterEntry.getValue().getFeatureTypeHandler();
-            parameterEntry.getValue().setValue(featureTypeHandler.deserialize(element));
+            try {
+                parameterEntry.getValue().setValue(featureTypeHandler.deserialize(element));
+            } catch (Exception e) {}
         }
     }
 

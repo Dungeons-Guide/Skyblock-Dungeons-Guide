@@ -1,0 +1,139 @@
+[
+  {
+    "name": "Puzzle Icons",
+    "description": "Display Icon on Puzzle Rooms",
+    "overrides": {
+      "11982f7f-703e-4d98-9d27-4e07ba3fef71": {
+        "nameOverride": "Creeper Beams",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_creeperbeam.png"
+      },
+      "5000be9d-3081-4a5e-8563-dd826705663a": {
+        "nameOverride": "Tic Tac Toe",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_tictactoe.png"
+      },
+      "6367a338-dd48-4c30-9e03-7ff6b5c7a936": {
+        "nameOverride": "Bomb Defuse",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_bombdefuse.png"
+      },
+      "9139cb1c-b6f3-4bac-92de-909b1eb73449": {
+        "nameOverride": "Water Board",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_waterboard.png"
+      },
+      "d3e61abf-4198-4520-a950-a03761a0eb6f": {
+        "nameOverride": "Higher Or Lower (TD)",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_blaze_td.png"
+      },
+      "cf44c95c-950e-49e0-aa4c-82c2b18d0acc": {
+        "nameOverride": "Higher Or Lower (DT)",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_blaze_dt.png"
+      },
+      "cf6d49d3-4f1e-4ec9-836e-049573793ddd": {
+        "nameOverride": "Boulder",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_boulder.png"
+      },
+      "a053f4fa-d6b2-4aef-ae3e-97c7eee0252e": {
+        "nameOverride": "Ice Path",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_icepath.png"
+      },
+      "990f6e4c-f7cf-4d27-ae91-11219b85861f": {
+        "nameOverride": "Ice Fill",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_icefill.png"
+      },
+      "ffd5411b-6ff4-4f60-b387-72f00510ec50": {
+        "nameOverride": "Teleport Maze",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_teleport.png"
+      },
+      "c2ea0a41-d495-437f-86cc-235a71c49f22": {
+        "nameOverride": "Three Weirdos",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_threeweirdo.png"
+      },
+      "b2dce4ed-2bda-4303-a4d7-3ebb914db318": {
+        "nameOverride": "Quiz",
+        "iconRotation": "ROTATE",
+        "iconLocation": "dungeonsguide:map/overrides/icon_quiz.png"
+      }
+    }
+  },
+  {
+    "name": "Puzzle Names",
+    "description": "Display Name on Puzzle Rooms",
+    "overrides": {
+      "11982f7f-703e-4d98-9d27-4e07ba3fef71": {
+        "nameOverride": "Creeper Beams",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "5000be9d-3081-4a5e-8563-dd826705663a": {
+        "nameOverride": "Tic Tac Toe",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "6367a338-dd48-4c30-9e03-7ff6b5c7a936": {
+        "nameOverride": "Bomb Defuse",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "9139cb1c-b6f3-4bac-92de-909b1eb73449": {
+        "nameOverride": "Water Board",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "d3e61abf-4198-4520-a950-a03761a0eb6f": {
+        "nameOverride": "Higher Or Lower (TD)",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "cf44c95c-950e-49e0-aa4c-82c2b18d0acc": {
+        "nameOverride": "Higher Or Lower (DT)",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "cf6d49d3-4f1e-4ec9-836e-049573793ddd": {
+        "nameOverride": "Boulder",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "a053f4fa-d6b2-4aef-ae3e-97c7eee0252e": {
+        "nameOverride": "Ice Path",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "990f6e4c-f7cf-4d27-ae91-11219b85861f": {
+        "nameOverride": "Ice Fill",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "ffd5411b-6ff4-4f60-b387-72f00510ec50": {
+        "nameOverride": "Teleport Maze",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "c2ea0a41-d495-437f-86cc-235a71c49f22": {
+        "nameOverride": "Three Weirdos",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      },
+      "b2dce4ed-2bda-4303-a4d7-3ebb914db318": {
+        "nameOverride": "Quiz",
+        "iconRotation": "ROTATE",
+        "drawName": true
+      }
+    }
+  },
+  {
+    "name": "Empty Preset",
+    "description": "Use this to clear Overrides",
+    "overrides": {}
+  }
+]

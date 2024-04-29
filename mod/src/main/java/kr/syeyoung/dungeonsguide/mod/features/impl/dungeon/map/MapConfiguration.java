@@ -19,36 +19,87 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.Getter;
 
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 
+@Data
 public class MapConfiguration {
     private double mapScale;
-    private MapRotation mapRotation;
-    private PlayerHeadSettings selfSettings;
-    private PlayerHeadSettings otherSettings;
+    private MapRotation mapRotation = MapRotation.VERTICAL;
+    private PlayerHeadSettings selfSettings = new PlayerHeadSettings();
+    private PlayerHeadSettings teammateSettings = new PlayerHeadSettings();
 
-    private boolean centerCheckmarks;
     private boolean drawName;
-    private boolean drawSecrets;
 
     private AColor backgroundColor;
     private AColor border;
     private double borderWidth;
 
+    private RoomInfoSettings checkmarkSettings = new RoomInfoSettings();
+
+    private NameSettings nameSettings = new NameSettings();
+
+    private Map<UUID, RoomOverride> roomOverrides = new HashMap<>();
+
+    @Data
+    public static class RoomOverride {
+        private boolean drawName = false;
+        private String nameOverride = "";
+        private String iconLocation = "";
+        private String textureLocation = "";
+        private RoomInfoSettings.IconRotation iconRotation = RoomInfoSettings.IconRotation.SNAP;
+        private RoomInfoSettings.Style style = RoomInfoSettings.Style.ICON;
+    }
+
+    @Data
+    public static class NameSettings {
+        private boolean drawName;
+        private AColor textColor;
+        private double size;
+        private double padding;
+        private NameRotation nameRotation = NameRotation.SNAP;
+        public enum NameRotation {
+            ROTATE, FIX, SNAP, SNAP_LONG
+        }
+    }
+    @Data
+    public static class RoomInfoSettings {
+        private double scale;
+        private IconRotation iconRotation = IconRotation.FIX;
+
+        private Style style;
+        private boolean center;
+        public enum IconRotation {
+            ROTATE, FIX, SNAP
+        }
+
+        @AllArgsConstructor @Getter
+        public enum Style {
+            ICON("Checkmark or Resource Pack icon"),
+            SECRET_COUNT("Colored Secret Count Only"),
+            CHECKMARK_AND_COUNT("Draw Icon And Secret Count");
+
+            final String description;
+        }
+    }
+
+    @Data
     public static class PlayerHeadSettings {
-        private IconType iconType;
+        private IconType iconType = IconType.HEAD;
         private double iconSize;
 
         public enum IconType {
-            NONE, PLAYER_HEAD, ARROW
+            NONE, HEAD, HEAD_FLIP, ARROW
         }
     }
 
     public enum MapRotation {
-        NORMAL, CENTER, CENTER_ROTATE
+        VERTICAL, ROTATE, CENTER_ROTATE, CENTER
     }
 
 }

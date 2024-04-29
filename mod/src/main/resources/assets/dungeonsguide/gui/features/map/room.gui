@@ -1,0 +1,50 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<size height="21">
+<!--    <RoundRect backgroundColor="#ff3b3b3b" radius="3">-->
+        <col>
+            <size height="20">
+                <padding left="3" right="3">
+                    <row crossAlign="CENTER">
+                        <bgcolor bind:backgroundColor="color">
+                            <size width="8" height="8">
+                            </size>
+                        </bgcolor>
+                        <size width="3"/>
+                        <flexible>
+                            <align vAlign="CENTER" hAlign="START">
+                                <Text bind:text="name" color="#FFFFFFFF"/>
+                            </align>
+                        </flexible>
+                        <size width="50" height="16">
+                                    <RoundRect backgroundColor="#FF02EE67" radius="3">
+                                        <padding top="1" left="1" right="1" bottom="1">
+                                            <RoundButton text="Add" on:click="add" radius="2"
+                                                         backgroundColor="#FF181818" hoveredBackgroundColor="#FF3B3B3B" pressedBackgroundColor="#FF383838"
+                                                         textColor="#FF02EE67" hoveredTextColor="#FF02EE67" pressedTextColor="#FF02EE67"/>
+                                        </padding>
+                                    </RoundRect>
+                        </size>
+                    </row>
+                </padding>
+            </size>
+            <line color="#FFFFFFFF"/>
+        </col>
+<!--    </RoundRect>-->
+</size>

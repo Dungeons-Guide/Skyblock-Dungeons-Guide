@@ -16,35 +16,43 @@
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 
-<wrapper radius="3" thickness="7" min="0" max="100" thumbValue="5" minThumbSize="5" thumbColor="#FF494949" thumbHoverColor="#FF555758" thumbActiveColor="#FF555758" backgroundColor="#FF1F1F1F">
-    <RoundRect bind:radius="radius" bind:backgroundColor="backgroundColor">
+<stack>
         <padding left="3" right="3">
-            <size bind:height="thickness">
-                <AbstractScrollBar bind:max="max" bind:min="min" bind:current="current" bind:thumbValue="thumbValue" bind:minThumbSize="minThumbSize"
+                <AbstractScrollBar bind:max="max" bind:min="min" bind:current="current" thumbValue="0.1" minThumbSize="5"
                                    orientation="HORIZONTAL">
-
-                        <row slot="track">
-                            <flexible><size width="0"/></flexible>
-                            <line dir="VERTICAL" color="#FFFFFFFF"/>
-                            <flexible><size width="0"/></flexible>
-                            <line dir="VERTICAL" color="#FFFFFFFF"/>
-                            <flexible><size width="0"/></flexible>
-                            <line dir="VERTICAL" color="#FFFFFFFF"/>
-                            <flexible><size width="0"/></flexible>
-                        </row>
-                    <align slot="thumb">
+                    <col slot="track" mainAlign="CENTER">
                         <size height="10">
+                            <row>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                            </row>
+                        </size>
+                    </col>
+                    <align slot="thumb">
+<!--                        <size height="10">-->
                             <RoundButton
-                                    bind:backgroundColor="thumbColor"          textColor="#FFFFFFFF"
-                                    bind:hoveredBackgroundColor="thumbHoverColor"   hoveredTextColor="#FFFFFFFF"
+                                    backgroundColor="#FF777777"          textColor="#FFFFFFFF"
+                                    hoveredBackgroundColor="#FF888888"   hoveredTextColor="#FFFFFFFF"
                                     disabledBackgroundColor="#00000000"  disabledTextColor="#FFFFFFFF"
-                                    bind:pressedBackgroundColor="thumbActiveColor"   pressedTextColor="#FFFFFFFF"
+                                    pressedBackgroundColor="#FF898989"   pressedTextColor="#FFFFFFFF"
                                     text="" radius="2"
                             />
-                        </size>
+<!--                        </size>-->
                     </align>
                 </AbstractScrollBar>
-            </size>
         </padding>
-    </RoundRect>
-</wrapper>
+
+        <align vAlign="CENTER">
+            <size height="10">
+                <RoundRect radius="3" backgroundColor="#FF1F1F1F">
+                </RoundRect>
+            </size>
+        </align>
+    </stack>
