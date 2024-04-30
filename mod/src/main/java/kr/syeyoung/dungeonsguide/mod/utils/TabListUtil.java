@@ -18,12 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.utils;
 
-import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.FeatureDungeonMap;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
-import net.minecraft.client.Minecraft;
-import net.minecraft.client.network.NetworkPlayerInfo;
-import net.minecraft.scoreboard.ScorePlayerTeam;
 import org.jetbrains.annotations.Nullable;
 
 import java.util.ArrayList;

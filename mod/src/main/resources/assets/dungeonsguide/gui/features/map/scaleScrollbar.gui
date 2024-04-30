@@ -1,0 +1,58 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<stack>
+        <padding left="3" right="3">
+                <AbstractScrollBar bind:max="max" bind:min="min" bind:current="current" thumbValue="0.1" minThumbSize="5"
+                                   orientation="HORIZONTAL">
+                    <col slot="track" mainAlign="CENTER">
+                        <size height="10">
+                            <row>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                                <line dir="VERTICAL" color="#FFFFFFFF"/>
+                                <flexible><size width="0"/></flexible>
+                            </row>
+                        </size>
+                    </col>
+                    <align slot="thumb">
+<!--                        <size height="10">-->
+                            <RoundButton
+                                    backgroundColor="#FF777777"          textColor="#FFFFFFFF"
+                                    hoveredBackgroundColor="#FF888888"   hoveredTextColor="#FFFFFFFF"
+                                    disabledBackgroundColor="#00000000"  disabledTextColor="#FFFFFFFF"
+                                    pressedBackgroundColor="#FF898989"   pressedTextColor="#FFFFFFFF"
+                                    text="" radius="2"
+                            />
+<!--                        </size>-->
+                    </align>
+                </AbstractScrollBar>
+        </padding>
+
+        <align vAlign="CENTER">
+            <size height="10">
+                <RoundRect radius="3" backgroundColor="#FF1F1F1F">
+                </RoundRect>
+            </size>
+        </align>
+    </stack>

@@ -108,6 +108,16 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
         }
 
         @Override
+        public double getMaxIntrinsicWidth(DomElement buildContext, double height) {
+            return getFeatureRect().getWidth();
+        }
+
+        @Override
+        public double getMaxIntrinsicHeight(DomElement buildContext, double width) {
+            return ratio != null ? getFeatureRect().getWidth() * ratio : getFeatureRect().getHeight();
+        }
+
+        @Override
         public List<Position> getMarkers() {
             Size size = getDomElement().getSize();
 

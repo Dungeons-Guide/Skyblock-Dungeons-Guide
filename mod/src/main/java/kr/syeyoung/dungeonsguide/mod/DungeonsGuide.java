@@ -39,6 +39,7 @@ import kr.syeyoung.dungeonsguide.mod.events.listener.PacketInjector;
 import kr.syeyoung.dungeonsguide.mod.events.listener.PacketListener;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.guiv2.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
@@ -208,6 +209,7 @@ public class DungeonsGuide implements DGInterface {
         registerEventsForge(skyblockStatus);
         registerEventsForge(ChatTransmitter.INSTANCE);
         registerEventsForge(new BlockCache());
+        registerEventsForge(PassthroughManager.INSTANCE);
 
         FeatureRegistry.getFeatureList();
 

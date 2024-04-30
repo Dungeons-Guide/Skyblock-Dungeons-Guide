@@ -43,13 +43,9 @@ public class RenderUtils {
     public static final ResourceLocation icons = new ResourceLocation("textures/gui/icons.png");
     private static final ResourceLocation beaconBeam = new ResourceLocation("textures/entity/beacon_beam.png");
 
-    /**
-     * Taken from NotEnoughUpdates under Creative Commons Attribution-NonCommercial 3.0
-     * And modified to fit out need.
-     * https://github.com/Moulberry/NotEnoughUpdates/blob/master/LICENSE
-     * @author Moulberry
-     */
+
     public static void renderBeaconBeam(double x, double y, double z, AColor aColor, float partialTicks) {
+
         Entity player = Minecraft.getMinecraft().thePlayer;
         double playerX = player.prevPosX + (player.posX - player.prevPosX) * partialTicks;
         double playerY = player.prevPosY + (player.posY - player.prevPosY) * partialTicks;
@@ -59,6 +55,18 @@ public class RenderUtils {
 
         GlStateManager.pushMatrix();
         GlStateManager.translate(-playerX, -playerY, -playerZ);
+
+        _renderBeaconBeam(x,y,z, aColor, partialTicks);
+        GlStateManager.popMatrix();
+    }
+
+    /**
+     * Taken from NotEnoughUpdates under Creative Commons Attribution-NonCommercial 3.0
+     * And modified to fit out need.
+     * https://github.com/Moulberry/NotEnoughUpdates/blob/master/LICENSE
+     * @author Moulberry
+     */
+    public static void _renderBeaconBeam(double x, double y, double z, AColor aColor, float partialTicks) {
         int height = 300;
         int bottomOffset = 0;
         int topOffset = bottomOffset + height;
@@ -76,7 +84,7 @@ public class RenderUtils {
         GlStateManager.enableBlend();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
 
-        double time = Minecraft.getMinecraft().theWorld.getTotalWorldTime() + (double)partialTicks;
+        double time = System.currentTimeMillis() / 50 + (double)partialTicks;
         double d1 = MathHelper.func_181162_h(-time * 0.2D - (double)MathHelper.floor_double(-time * 0.1D));
 
         int c = getColorAt(x,y,z, aColor);
@@ -138,8 +146,6 @@ public class RenderUtils {
         tessellator.draw();
 
         GlStateManager.enableDepth();
-
-        GlStateManager.popMatrix();
     }
 
 
@@ -728,16 +734,7 @@ public class RenderUtils {
     public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks) {
         highlightBlock(blockpos,c,partialTicks,false);
     }
-    public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks, boolean depth) {
-        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
-
-        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
-        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
-        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
-
-        GlStateManager.pushMatrix();
-
-        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+    public static void _highlightBlock(BlockPos blockpos, Color c, float partialTicks, boolean depth) {
 
         GlStateManager.disableLighting();
         GlStateManager.enableBlend();
@@ -794,10 +791,25 @@ public class RenderUtils {
         }
         GlStateManager.enableTexture2D();
         GlStateManager.enableLighting();
+
+
+
+//...
+
+    }
+
+    public static void highlightBlock(BlockPos blockpos, Color c, float partialTicks, boolean depth) {
+        Entity viewing_from = Minecraft.getMinecraft().getRenderViewEntity();
+
+        double x_fix = viewing_from.lastTickPosX + ((viewing_from.posX - viewing_from.lastTickPosX) * partialTicks);
+        double y_fix = viewing_from.lastTickPosY + ((viewing_from.posY - viewing_from.lastTickPosY) * partialTicks);
+        double z_fix = viewing_from.lastTickPosZ + ((viewing_from.posZ - viewing_from.lastTickPosZ) * partialTicks);
+
+        GlStateManager.pushMatrix();
+
+        GlStateManager.translate(-x_fix, -y_fix, -z_fix);
+        _highlightBlock(blockpos, c, partialTicks, depth);
         GlStateManager.popMatrix();
-
-
-
 //...
 
     }

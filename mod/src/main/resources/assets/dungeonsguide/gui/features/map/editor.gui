@@ -1,0 +1,203 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<row>
+<!--    <size width="200">-->
+    <ConstrainedBox maxWidth="220">
+        <IntrinsicWidth>
+            <IntrinsicHeight>
+                <padding top="5" left="5" bottom="5" right="5">
+                    <stack>
+<!--                        <bgcolor backgroundColor="#FF333333">-->
+                            <ScrollablePanel direction="BOTH">
+                                    <slot bind:child="demo"/>
+                            </ScrollablePanel>
+<!--                        </bgcolor>-->
+                        <Passthrough/>
+                    </stack>
+                </padding>
+            </IntrinsicHeight>
+        </IntrinsicWidth>
+    </ConstrainedBox>
+<!--    </size>-->
+    <line dir="VERTICAL" color="#FFFFFFFF"/>
+    <flexible fit="TIGHT">
+        <ScrollablePanel direction="VERTICAL">
+            <padding top="5" left="5" bottom="5" right="5">
+                <col crossAlign="START">
+                    <align hAlign="END">
+                        <size width="100" height="15">
+                            <RoundButton text="Reset to Defaults" on:click="reset"/>
+                        </size>
+                    </align>
+
+                    <Text text="Map Rendering" size="12" color="#FFFFFFFF"/>
+                    <size height="5"/>
+                    <WrapGrid minimumWidth="200" gap="5">
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Map Scale:" color="#FFFFFFFF"/></align></flexible>
+                            <size width="5"/>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="mapscale"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Background Color" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="backgroundColor"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Border Thickness" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="borderThickness"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Border Color" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="borderColor"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Center&amp;Rotation" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="mapRotation"/>
+                            </flexible>
+                        </row>
+                    </WrapGrid>
+                    <size height="5"/>
+                    <line color="#FFFFFFFF" dir="HORIZONTAL"/>
+                    <size height="5"/>
+                    <Text text="Default Room Rendering" size="12" color="#FFFFFFFF"/>
+                    <size height="5"/>
+                    <WrapGrid minimumWidth="200" gap="5">
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Icon Scale:" color="#FFFFFFFF"/></align></flexible>
+                            <size width="5"/>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="iconscale"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Icon Rotation" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="iconrotation"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Center Icons" color="#FFFFFFFF"/></align></flexible>
+                            <slot bind:child="iconcenter"/>
+                        </row>
+                        <col>
+                            <row crossAlign="CENTER">
+                                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Icon Style" color="#FFFFFFFF"/></align></flexible>
+                                <flexible fit="TIGHT">
+                                    <slot bind:child="iconstyle"/>
+                                </flexible>
+                            </row>
+                            <size height="5"/>
+                            <Text bind:text="iconstyledescription" color="#FF777777"/>
+                        </col>
+                    </WrapGrid>
+                    <size height="5"/>
+                    <WrapGrid minimumWidth="150" gap="5">
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Draw Names:" color="#FFFFFFFF"/></align></flexible>
+                            <slot bind:child="drawname"/>
+                        </row>
+                    </WrapGrid>
+                    <size height="5"/>
+                    <SelectiveContainer bind:visible="drawnameToggle">
+                        <WrapGrid minimumWidth="200" gap="5" slot="true">
+                            <row crossAlign="CENTER">
+                                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Room Name Color:" color="#FFFFFFFF"/></align></flexible>
+                                <flexible fit="TIGHT"><slot bind:child="namecolor"/></flexible>
+                            </row>
+                            <row crossAlign="CENTER">
+                                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Room Name Rotation" color="#FFFFFFFF"/></align></flexible>
+                                <flexible fit="TIGHT"><slot bind:child="namestyle"/></flexible>
+                            </row>
+                            <row crossAlign="CENTER">
+                                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Room Name Size" color="#FFFFFFFF"/></align></flexible>
+                                <flexible fit="TIGHT"><slot bind:child="namesize"/></flexible>
+                            </row>
+                            <row crossAlign="CENTER">
+                                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Room Name Padding" color="#FFFFFFFF"/></align></flexible>
+                                <flexible fit="TIGHT"><slot bind:child="namepadding"/></flexible>
+                            </row>
+                        </WrapGrid>
+                        <size width="0" height="0" slot="false"/>
+                    </SelectiveContainer>
+                    <size height="5"/>
+                    <line color="#FFFFFFFF" dir="HORIZONTAL"/>
+                    <size height="5"/>
+                    <Text text="Player Rendering" size="12" color="#FFFFFFFF"/>
+                    <size height="5"/>
+                    <WrapGrid minimumWidth="200" gap="5">
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Self Scale:" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="selfscale"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Self Style:" color="#FFFFFFFF"/></align></flexible>
+                            <size width="5"/>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="selfstyle"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Teammate Scale:" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="otherscale"/>
+                            </flexible>
+                        </row>
+                        <row crossAlign="CENTER">
+                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Teammate Style:" color="#FFFFFFFF"/></align></flexible>
+                            <flexible fit="TIGHT">
+                                <slot bind:child="otherstyle"/>
+                            </flexible>
+                        </row>
+                        <size height="15">
+                            <RoundButton text="Sync Scale" on:click="syncscale"/>
+                        </size>
+                    </WrapGrid>
+                    <size height="5"/>
+                    <line color="#FFFFFFFF" dir="HORIZONTAL"/>
+                    <size height="5"/>
+                    <slot bind:child="presetList"/>
+                    <size height="5"/>
+                    <line color="#FFFFFFFF" dir="HORIZONTAL"/>
+                    <size height="5"/>
+                    <row crossAlign="END">
+                        <Text text="Room Overrides" size="12" color="#FFFFFFFF"/>
+                        <flexible><size/></flexible>
+                        <size width="5"/>
+                        <size height="15" width="100">
+                            <RoundButton text="Add Room" on:click="addOverride"/>
+                        </size>
+                    </row>
+                    <size height="5"/>
+                    <WrapGrid minimumWidth="150" gap="5" bind:_="overrides" bind:api="overrideApi"/>
+                </col>
+            </padding>
+        </ScrollablePanel>
+    </flexible>
+</row>

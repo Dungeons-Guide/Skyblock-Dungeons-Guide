@@ -33,6 +33,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeaturePlayerModel;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.PartyInviteViewer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm.PlayingDGAlarm;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.*;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.FeatureDungeonMap2;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyList;
@@ -154,7 +155,31 @@ public class FeatureRegistry {
 
 
     static {
-        categoryDescription.put("ROOT.Secrets.Keybinds", "Useful keybinds / Toggle Pathfind lines, Freeze Pathfind lines, Refresh pathfind line or Trigger pathfind (you would want to use it, if you're using Pathfind to All)");
+
+        categoryDescription.put("Misc", "Misc features");
+        categoryDescription.put("Misc.HUD", "HUDs that didn't fit other categories w/ Ability cooldown & DG Cooldown counter");
+        categoryDescription.put("Misc.Chat Utils", "Cool Chat Utils that you should use other mods for");
+        categoryDescription.put("Player & Mob", "Boxing specific mobs and player render related features");
+        categoryDescription.put("Dungeon HUD", "Use information and warnings to display on screen in dungeons");
+        categoryDescription.put("Dungeon HUD.In Dungeon HUD", "Useful information to view in dungeons");
+        categoryDescription.put("Dungeon HUD.Alerts", "Alert HUDs w/ Fairy soul, watcher spawn alert");
+        categoryDescription.put("Communication", "Communication between DG users and DG server");
+        categoryDescription.put("Dungeon Party", "Party and Party finder related settings w/ Custom Party Finder & In Chat Profile Viewer & Reparty");
+        categoryDescription.put("Dungeon Party.Reparty", "Reparty settings");
+        categoryDescription.put("Debug", "Developer Settings");
+        categoryDescription.put("Cosmetics", "Apply purchased Dungeons Guide cosmetics here. Cosmetics can be purchased at Dungeons Guide store, by clicking dg icon below");
+        categoryDescription.put("Discord", "Discord RPC! (Supports ask-to-invite)");
+        categoryDescription.put("Bossfight", "Anything that might help in bossfight");
+        categoryDescription.put("Bossfight.Floor 7", "F7 Specific bossfight settings w/ Terminal Solvers");
+        categoryDescription.put("Bossfight.Floor 6", "F6 Specific bossfight HUDs and settings");
+        categoryDescription.put("Bossfight.Floor 5", "F5 Specific bossfight settings w/ Real Livid detector");
+        categoryDescription.put("Bossfight.Floor 4", "F4 Specific bossfight settings");
+        categoryDescription.put("Puzzle Solvers", "Access puzzle room solvers here");
+        categoryDescription.put("Pathfinding & Secrets", "Access pathfind&secret related settings here. Blood Rush & Secrets Waypoints & Secret Lines");
+        categoryDescription.put("Pathfinding & Secrets.Blood Rush", "Start pathfind to nearest wither/blood doors");
+        categoryDescription.put("Pathfinding & Secrets.Display One", "Start pathfind to nearest secret");
+        categoryDescription.put("Pathfinding & Secrets.Display All", "Start pathfind to All secrets. Disable pathfind option inside to use this only for beacons");
+        categoryDescription.put("Global HUD", "Configure settings that affect all the HUDs. Scale & Quick Text colors");
     }
 
 
@@ -245,7 +270,7 @@ public class FeatureRegistry {
     public static final FeatureDungeonRoomName DUNGEON_ROOMNAME = register(new FeatureDungeonRoomName());
 
 
-    public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
+    public static final FeatureDungeonMap2 DUNGEON_MAP2 = register(new FeatureDungeonMap2());
 //    public static final FeatureChestPrice BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());
     public static final FeatureEpicCountdown EPIC_COUNTDOWN = register(new FeatureEpicCountdown());

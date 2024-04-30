@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.guiv2.xml;
 
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
+import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.ParserElement;
 
 import java.util.Objects;
 import java.util.function.Supplier;
@@ -32,7 +33,7 @@ public class ExportedWidgetConverter<W extends Widget & ExportedWidget, R extend
     }
 
 
-    public W instantiateWidget() {
+    public W instantiateWidget(ParserElement parserElement) {
         return constructor.get();
     }
 

@@ -1,0 +1,93 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<ScrollablePanel direction="VERTICAL">
+    <padding top="5" left="5" bottom="5" right="5">
+        <col>
+            <SelectiveContainer bind:visible="globalToggle">
+                <row crossAlign="CENTER" slot="true">
+                    <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Use Parent Settings" color="#FFFFFFFF"/></align></flexible>
+                    <slot bind:child="useParent"/>
+                </row>
+                <size width="0" height="0" slot="false"/>
+            </SelectiveContainer>
+            <size height="10"/>
+            <SelectiveContainer bind:visible="parentToggle">
+                <col slot="true">
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Enable Pathfind Lines" color="#FFFFFF00"/></align></flexible>
+                        <slot bind:child="pathfindEnable"/>
+                    </row>
+                    <size height="5"/>
+                    <SelectiveContainer bind:visible="pathfindToggle">
+                        <row slot="true">
+                            <size width="10"/>
+                            <flexible>
+                                <col >
+                                    <WrapGrid minimumWidth="200" gap="5">
+                                        <row crossAlign="CENTER">
+                                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Line Color" color="#FFFFFFFF"/></align></flexible>
+                                            <flexible fit="TIGHT"><slot bind:child="linecolor"/></flexible>
+                                        </row>
+                                        <row crossAlign="CENTER">
+                                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Line Thickness" color="#FFFFFFFF"/></align></flexible>
+                                            <flexible fit="TIGHT"><slot bind:child="linethickness"/></flexible>
+                                        </row>
+                                        <row crossAlign="CENTER">
+                                            <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Line Refreshrate" color="#FFFFFFFF"/></align></flexible>
+                                            <flexible fit="TIGHT"><slot bind:child="refreshrate"/></flexible>
+                                        </row>
+                                    </WrapGrid>
+                                    <size height="5"/>
+                                    <Text text="Refreshrate: Ticks to wait per line refresh. Specify it to -1 to don't refresh line at all" color="#FF777777"/>
+                                </col>
+                            </flexible>
+                        </row>
+                        <size width="0" height="0" slot="false"/>
+                    </SelectiveContainer>
+                    <size height="10"/>
+                    <row crossAlign="CENTER">
+                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Enable Beacons" color="#FFFFFF00"/></align></flexible>
+                        <slot bind:child="beaconEnable"/>
+                    </row>
+                    <size height="5"/>
+
+                    <SelectiveContainer bind:visible="beaconToggle">
+                        <row slot="true">
+                            <size width="10"/>
+                            <flexible>
+                                <WrapGrid minimumWidth="200" gap="5">
+                                    <row crossAlign="CENTER">
+                                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Beam Color" color="#FFFFFFFF"/></align></flexible>
+                                        <flexible fit="TIGHT"><slot bind:child="beamcolor"/></flexible>
+                                    </row>
+                                    <row crossAlign="CENTER">
+                                        <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Target Color" color="#FFFFFFFF"/></align></flexible>
+                                        <flexible fit="TIGHT"><slot bind:child="targetcolor"/></flexible>
+                                    </row>
+                                </WrapGrid>
+                            </flexible>
+                        </row>
+                        <size width="0" height="0" slot="false"/>
+                    </SelectiveContainer>
+                </col>
+                <size width="0" height="0" slot="false"/>
+            </SelectiveContainer>
+        </col>
+    </padding>
+</ScrollablePanel>

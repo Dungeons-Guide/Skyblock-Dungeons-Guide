@@ -29,12 +29,14 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.util.ResourceLocation;
 import org.lwjgl.input.Keyboard;
 
 public class TCEnum<T extends Enum<T>> implements FeatureTypeHandler<T> {
+    @Getter
     private final T[] values;
     public TCEnum(T[] values) {
         this.values = values;

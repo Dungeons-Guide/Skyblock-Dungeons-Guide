@@ -20,7 +20,7 @@
     <row>
         <SelectiveContainer bind:visible="disableable">
             <size width="10" height="10" slot="show">
-                <SimpleCheckBox bind:enabled="enabled"/>
+                <Include include="dungeonsguide:gui/elements/checkbox.gui" bind:enabled="enabled"/>
             </size>
             <size width="10" height="10" slot="hide">
                     <RoundRect backgroundColor="#FFAAAAAA" radius="3">

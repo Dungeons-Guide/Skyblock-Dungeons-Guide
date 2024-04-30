@@ -34,13 +34,13 @@ import java.util.stream.Collectors;
 
 public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extends Widget & ImportingWidget> implements ParsedWidgetConverter<W, R> {
 
-    public abstract W instantiateWidget();
+    public abstract W instantiateWidget(ParserElement parserElement);
 
     public abstract BindableAttribute getExportedAttribute(W widget, String attributeName);
 
     @Override
     public W convert(R rootWidget, ParserElement element) {
-        W partial = instantiateWidget();
+        W partial = instantiateWidget(element);
 
         Set<String> boundSlots = new HashSet<>();
         for (String attribute : element.getAttributes()) {
@@ -87,7 +87,7 @@ public abstract class PropByPropParsedWidgetConverter<W extends Widget, R extend
                         throw new RuntimeException(e);
                     }
                 // this should bind to methodhandle
-            } else if (attribute.equals("slot")) {
+            } else if (attribute.equals("slot") || attribute.equals("include")) {
             } else {
                 BindableAttribute bindableAttribute = getExportedAttribute(partial, attribute);
                 if (bindableAttribute == null) throw new IllegalStateException("No exported variable found named "+attribute+"!");
