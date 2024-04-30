@@ -70,9 +70,9 @@ public class Passthrough extends AnnotatedExportOnlyWidget implements Layouter, 
         GlStateManager.color(1f, 1f, 1f, 1f);
 
         double sx = rect.getX() / screenWidth;
-        double sy = (rect.getY() - 40) / screenHeight;
+        double sy = (Minecraft.getMinecraft().displayHeight - rect.getY()) / screenHeight;
         double ex = (rect.getX() + rect.getWidth())/ screenWidth;
-        double ey = (rect.getY() + rect.getHeight() - 40) / screenHeight;
+        double ey = (Minecraft.getMinecraft().displayHeight - rect.getY() - rect.getHeight()) / screenHeight;
 
         Gui.drawRect(0,0, (int) w, (int) h, PassthroughManager.INSTANCE.getFogColor());
 
@@ -82,16 +82,16 @@ public class Passthrough extends AnnotatedExportOnlyWidget implements Layouter, 
         worldrenderer.begin(7, DefaultVertexFormats.POSITION_TEX);
         worldrenderer
                 .pos(0, h, 0.0D)
-                .tex(sx, sy).endVertex();
+                .tex(sx, ey).endVertex();
         worldrenderer
                 .pos(w,h, 0.0D)
-                .tex(ex, sy).endVertex();
-        worldrenderer
-                .pos(w,0, 0.0D)
                 .tex(ex, ey).endVertex();
         worldrenderer
+                .pos(w,0, 0.0D)
+                .tex(ex, sy).endVertex();
+        worldrenderer
                 .pos(0,0, 0.0D)
-                .tex(sx, ey).endVertex();
+                .tex(sx, sy).endVertex();
         tessellator.draw();
 
 

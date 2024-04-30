@@ -23,10 +23,17 @@ import kr.syeyoung.dungeonsguide.mod.config.types.*;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionRouteProperties;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.secret.lineproperties.WidgetLinePropertiesEditor;
+import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 
 import java.util.LinkedHashMap;
 
+
 public class PathfindLineProperties extends SimpleFeature {
+    public PathfindLineProperties getParent() {
+        return parent;
+    }
+
     private PathfindLineProperties parent;
     public PathfindLineProperties(String category, String name, String description, String key, boolean useParent, PathfindLineProperties parent) {
         super(category, name, description, key);
@@ -48,6 +55,11 @@ public class PathfindLineProperties extends SimpleFeature {
     @Override
     public boolean isDisableable() {
         return false;
+    }
+
+    @Override
+    public Widget getConfigureWidget() {
+        return new WidgetLinePropertiesEditor(this);
     }
 
     public boolean isGlobal() {
