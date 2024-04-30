@@ -75,6 +75,12 @@ public class MainConfigWidget extends AnnotatedImportOnlyWidget implements Rende
                 ).collect(Collectors.toList());
     }
 
+    @Override
+    public void onMount() {
+        super.onMount();
+        getDomElement().getContext().CONTEXT.put("mainconfig", this);
+    }
+
     @On(functionName = "back")
     public void back() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));

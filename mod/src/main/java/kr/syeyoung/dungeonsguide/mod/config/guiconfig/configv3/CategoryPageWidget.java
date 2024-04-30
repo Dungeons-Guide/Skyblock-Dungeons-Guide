@@ -40,6 +40,7 @@ public class CategoryPageWidget extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "categoryShow")
     public final BindableAttribute<String > showCategory = new BindableAttribute<>(String.class);
     private String category;
+
     public CategoryPageWidget(String category) {
         super(new ResourceLocation("dungeonsguide:gui/config/categorypage.gui"));
         items.setValue(buildMenu(category));

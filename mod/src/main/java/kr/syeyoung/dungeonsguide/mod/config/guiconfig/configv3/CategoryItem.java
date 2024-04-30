@@ -41,6 +41,7 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "icon")
     public final BindableAttribute<String> icon = new BindableAttribute<>(String.class, "dungeonsguide:textures/dglogox128.png");
     private Supplier<Widget> pageCreator;
+    private boolean triggerSidemenu = false;
 
     public CategoryItem(Supplier<Widget> pageCreator, String category, String description) {
         super(new ResourceLocation("dungeonsguide:gui/config/categoryitem.gui"));
@@ -58,9 +59,17 @@ public class CategoryItem extends AnnotatedImportOnlyWidget {
         }
     }
 
+    public CategoryItem triggerSidemenu(){
+        this.triggerSidemenu = true;
+        return this;
+    }
+
     @On(functionName = "click")
     public void openPage() {
         Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         Navigator.getNavigator(getDomElement()).openPage(pageCreator.get());
+
+        MainConfigWidget mainConfigWidget = (MainConfigWidget) getDomElement().getContext().CONTEXT.get("mainconfig");
+        if (mainConfigWidget != null && triggerSidemenu) mainConfigWidget.sidebar.setValue("show");
     }
 }

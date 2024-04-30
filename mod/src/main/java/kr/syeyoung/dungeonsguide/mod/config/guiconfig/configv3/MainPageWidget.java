@@ -53,7 +53,7 @@ public class MainPageWidget extends AnnotatedImportOnlyWidget {
         return FeatureRegistry.getFeaturesByCategory().keySet().stream().map(a -> a.split("\\.")[0])
                 .collect(Collectors.toSet()).stream()
                 .map( a -> new CategoryItem(() -> new CategoryPageWidget(a), a,
-                        FeatureRegistry.getCategoryDescription().getOrDefault(a, "idk")))
+                        FeatureRegistry.getCategoryDescription().getOrDefault(a, "idk")).triggerSidemenu())
                 .collect(Collectors.toList());
     }
 
