@@ -596,9 +596,14 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 if (style == MapConfiguration.RoomInfoSettings.Style.CHECKMARK_AND_COUNT && dungeonRoom.getTotalSecrets() != 0 &&
                         (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS || dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
                     || style == MapConfiguration.RoomInfoSettings.Style.SECRET_COUNT) {
-                    String toDraw = dungeonRoom.getMechanics().values().stream().filter(a -> a instanceof DungeonSecret)
-                                    .filter(a -> ((DungeonSecret) a).getSecretStatus(dungeonRoom) == DungeonSecret.SecretStatus.FOUND)
-                                            .count() + "/" +dungeonRoom.getTotalSecrets();
+                    String toDraw;
+                    if (dungeonRoom.getDungeonRoomInfo() != null) {
+                        toDraw = dungeonRoom.getMechanics().values().stream().filter(a -> a instanceof DungeonSecret)
+                                .filter(a -> ((DungeonSecret) a).getSecretStatus(dungeonRoom) == DungeonSecret.SecretStatus.FOUND)
+                                .count() + "/" + dungeonRoom.getTotalSecrets();
+                    } else {
+                        toDraw = "?/"+(dungeonRoom.getTotalSecrets() == -1 ? "?" : dungeonRoom.getTotalSecrets());
+                    }
 
                     int color = 0xFFFFFFFF;
                     if (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.FAILED)
