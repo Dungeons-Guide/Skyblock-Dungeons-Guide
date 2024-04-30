@@ -24,7 +24,7 @@ import com.google.common.reflect.TypeToken;
 import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
-import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -596,8 +596,9 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 if (style == MapConfiguration.RoomInfoSettings.Style.CHECKMARK_AND_COUNT && dungeonRoom.getTotalSecrets() != 0 &&
                         (dungeonRoom.getCurrentState() == DungeonRoom.RoomState.COMPLETE_WITHOUT_SECRETS || dungeonRoom.getCurrentState() == DungeonRoom.RoomState.DISCOVERED)
                     || style == MapConfiguration.RoomInfoSettings.Style.SECRET_COUNT) {
-                    String toDraw = dungeonRoom.getMechanics().values().stream().filter(a -> a instanceof DungeonSecret)
-                                    .filter(a -> ((DungeonSecret) a).getSecretStatus(dungeonRoom) == DungeonSecret.SecretStatus.FOUND)
+
+                    String toDraw = dungeonRoom.getMechanics().values().stream().filter(a -> a instanceof ISecret)
+                                    .filter(a -> ((ISecret) a).isFound(dungeonRoom))
                                             .count() + "/" +dungeonRoom.getTotalSecrets();
 
                     int color = 0xFFFFFFFF;
