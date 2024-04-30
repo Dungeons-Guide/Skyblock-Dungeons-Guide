@@ -233,7 +233,6 @@ public class FeatureRegistry {
     public static final FeatureDungeonRoomName DUNGEON_ROOMNAME = register(new FeatureDungeonRoomName());
 
 
-    public static final FeatureDungeonMap DUNGEON_MAP = register(new FeatureDungeonMap());
     public static final FeatureDungeonMap2 DUNGEON_MAP2 = register(new FeatureDungeonMap2());
 //    public static final FeatureChestPrice BOSSFIGHT_CHESTPRICE = register(new FeatureChestPrice());
     public static final FeatureWarningOnPortal BOSSFIGHT_WARNING_ON_PORTAL = register(new FeatureWarningOnPortal());

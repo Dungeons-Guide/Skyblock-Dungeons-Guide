@@ -146,7 +146,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
             "  }";
 
     public FeatureDungeonMap2() {
-        super("Dungeon HUD", "Dungeon Map V2", "Display dungeon map!", "dungeon.map2", true, 128, 128);
+        super("Dungeon HUD", "Dungeon Map", "Display dungeon map!", "dungeon.map2", true, 128, 128);
         this.setEnabled(false);
 
         addParameter("scale", new FeatureParameter<>("scale", "Color of the background", "Same as name", 1.0, TCDouble.INSTANCE, mapConfiguration::setMapScale));
