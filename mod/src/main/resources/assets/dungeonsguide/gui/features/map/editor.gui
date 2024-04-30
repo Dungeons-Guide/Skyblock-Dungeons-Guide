@@ -22,11 +22,14 @@
         <IntrinsicWidth>
             <IntrinsicHeight>
                 <padding top="5" left="5" bottom="5" right="5">
-                    <bgcolor backgroundColor="#FF333333">
-                        <ScrollablePanel direction="BOTH">
-                                <slot bind:child="demo"/>
-                        </ScrollablePanel>
-                    </bgcolor>
+                    <stack>
+<!--                        <bgcolor backgroundColor="#FF333333">-->
+                            <ScrollablePanel direction="BOTH">
+                                    <slot bind:child="demo"/>
+                            </ScrollablePanel>
+<!--                        </bgcolor>-->
+                        <Passthrough/>
+                    </stack>
                 </padding>
             </IntrinsicHeight>
         </IntrinsicWidth>

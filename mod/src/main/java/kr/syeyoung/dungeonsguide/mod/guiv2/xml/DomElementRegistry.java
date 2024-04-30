@@ -96,7 +96,9 @@ public class DomElementRegistry {
         register("UrlImage", new ExportedWidgetConverter(URLImage::new));
         register("SelectiveContainer", new ExportedWidgetConverter(SelectiveContainer::new));
         register("ItemStack", new ExportedWidgetConverter(ItemStackRender::new));
+        register("Passthrough", new ExportedWidgetConverter(Passthrough::new));
         register("Include", new DelegatingWidgetConverter(null));
+
 
     }
 
