@@ -27,6 +27,7 @@ import java.util.List;
 
 public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     public BossfightProcessorScarf(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_TWO" : "CATACOMBS_FLOOR_TWO");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] Scarf §r§f: This is where the journey ends for you, Adventurers.§r")

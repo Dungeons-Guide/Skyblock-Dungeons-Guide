@@ -26,6 +26,7 @@ import java.util.List;
 public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     // \A7 to §
     public BossfightProcessorNecron() {
+        super("CATACOMBS_FLOOR_SEVEN");
         addPhase(PhaseData.builder()
                 .phase("crystals")
                 .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cFinally, I heard so much about you. The Eye likes you very much.§r")

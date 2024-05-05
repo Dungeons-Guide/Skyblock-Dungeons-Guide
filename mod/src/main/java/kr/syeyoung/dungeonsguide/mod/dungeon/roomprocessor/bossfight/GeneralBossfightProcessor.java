@@ -18,17 +18,24 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import com.google.gson.Gson;
 import kr.syeyoung.dungeonsguide.mod.events.impl.BlockUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.KeyBindPressedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 import lombok.*;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.resources.IResource;
 import net.minecraft.util.IChatComponent;
+import net.minecraft.util.ResourceLocation;
 import net.minecraft.world.World;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.event.entity.living.LivingDeathEvent;
 import net.minecraftforge.event.entity.living.LivingEvent;
 import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
+import java.io.IOException;
+import java.io.InputStreamReader;
 import java.util.*;
 
 public abstract class GeneralBossfightProcessor implements BossfightProcessor {
@@ -36,8 +43,67 @@ public abstract class GeneralBossfightProcessor implements BossfightProcessor {
     private PhaseData currentPhase = null;
 
     @Getter
-    @Setter
-    private String name;
+    private final String name;
+
+    @Override
+    public String getFloorName() {
+        return name;
+    }
+
+    @Override
+    public BossfightRenderSettings getMapRenderSettings() {
+        try {
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            if (resource != null) {
+                resource.getInputStream();
+                try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
+                    settings = new Gson()
+                            .fromJson(inputStreamReader, BossfightRenderSettingSettings.class);
+                    if (settings.getResources() != null)
+                        for (BossfightRenderSettings value : settings.getResources().values()) {
+                            value.setResourceLocation(new ResourceLocation(value.getLocation()));
+                        }
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+        if (settings == null) return null;
+        return settings.getResources().get(settings.phaseMap.getOrDefault(getCurrentPhase(), "default"));
+    }
+
+    private BossfightRenderSettingSettings settings;
+    public GeneralBossfightProcessor(String name) {
+        this.name = name;
+
+        try {
+            IResource resource = Minecraft.getMinecraft().getResourceManager().getResource(new ResourceLocation("dungeonsguide:map/bossfight/"+name+".json"));
+            if (resource != null) {
+                resource.getInputStream();
+                try (InputStreamReader inputStreamReader = new InputStreamReader(resource.getInputStream())) {
+                    settings = new Gson()
+                            .fromJson(inputStreamReader, BossfightRenderSettingSettings.class);
+                    if (settings.getResources() != null)
+                        for (BossfightRenderSettings value : settings.getResources().values()) {
+                            value.setResourceLocation(new ResourceLocation(value.getLocation()));
+                        }
+
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    @Data
+    public static class BossfightRenderSettingSettings {
+        private Map<String, BossfightRenderSettings> resources = new HashMap<>();
+        private Map<String, String> phaseMap = new HashMap<>();
+    }
 
     private World world;
 

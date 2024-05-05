@@ -1,0 +1,16 @@
+{
+  "resources": {
+    "default": {
+      "minX": -37,
+      "minZ": -37,
+      "maxX": 48,
+      "maxZ": 48,
+      "location": "dungeonsguide:map/bossfight/f4_boss.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    }
+  },
+  "phaseMap": {
+    "fight": "default"
+  }
+}

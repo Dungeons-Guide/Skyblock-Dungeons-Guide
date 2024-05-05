@@ -1,0 +1,66 @@
+{
+  "resources": {
+    "default": {
+      "minX": 33,
+      "minZ": 11,
+      "maxX": 114,
+      "maxZ": 87,
+      "location": "dungeonsguide:map/bossfight/f7_boss_end.png",
+      "textureWidth": 90,
+      "textureHeight": 90
+    },
+    "p1": {
+      "minX": 33,
+      "minZ": 11,
+      "maxX": 114,
+      "maxZ": 87,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s1.png",
+      "textureWidth": 505,
+      "textureHeight": 480
+    },
+    "p2": {
+      "minX": -19,
+      "minZ": -1,
+      "maxX": 128,
+      "maxZ": 108,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s2.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    },
+    "p3": {
+      "minX": -3,
+      "minZ": 29,
+      "maxX": 112,
+      "maxZ": 144,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s3.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    },
+    "p4": {
+      "minX": -3,
+      "minZ": 19,
+      "maxX": 112,
+      "maxZ": 134,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s4.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    },
+    "p5": {
+      "minX": -5,
+      "minZ": -5,
+      "maxX": 132,
+      "maxZ": 143,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s5.png",
+      "textureWidth": 480,
+      "textureHeight": 523
+    }
+  },
+  "phaseMap": {
+    "crystals": "p1",
+    "laser-attack": "p1",
+    "fight-1": "p2",
+    "terminals": "p3",
+    "fight-2": "p4",
+    "won": "default"
+  }
+}

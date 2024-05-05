@@ -28,9 +28,10 @@ import net.minecraftforge.event.entity.living.LivingEvent;
 import java.util.ArrayList;
 import java.util.List;
 
-@AllArgsConstructor
+
 public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     public BossfightProcessorBonzo(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_ONE" : "CATACOMBS_FLOOR_ONE");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] Bonzo §r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
@@ -79,6 +80,7 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     }
 
     private EntityArmorStand bonzoStand;
+
     @Override
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿

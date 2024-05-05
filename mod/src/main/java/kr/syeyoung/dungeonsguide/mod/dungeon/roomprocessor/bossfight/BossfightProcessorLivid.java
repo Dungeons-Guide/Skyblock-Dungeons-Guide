@@ -46,6 +46,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private final boolean isMasterMode;
 
     public BossfightProcessorLivid(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_FIVE" : "CATACOMBS_FLOOR_FIVE");
         addPhase(PhaseData.builder().phase("start").build());
         this.isMasterMode = isMasterMode;
     }

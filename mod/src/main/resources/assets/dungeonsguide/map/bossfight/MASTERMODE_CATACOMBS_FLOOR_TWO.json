@@ -1,0 +1,20 @@
+{
+  "resources": {
+    "default": {
+      "minX": -34,
+      "minZ": -35,
+      "maxX": 19,
+      "maxZ": 16,
+      "location": "dungeonsguide:map/bossfight/f2_boss.png",
+      "textureWidth": 499,
+      "textureHeight": 480
+    }
+  },
+  "phaseMap": {
+    "start": "default",
+    "fight-1": "default",
+    "first-defeat": "default",
+    "fight-2": "default",
+    "final-defeat": "default"
+  }
+}

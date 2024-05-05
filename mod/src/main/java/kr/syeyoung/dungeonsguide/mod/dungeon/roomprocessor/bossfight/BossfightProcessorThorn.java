@@ -38,6 +38,7 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
 
 
     public BossfightProcessorThorn(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_FOUR" : "CATACOMBS_FLOOR_FOUR");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("fight").build()
         );

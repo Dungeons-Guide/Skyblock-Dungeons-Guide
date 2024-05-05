@@ -35,9 +35,10 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonRoomScaffoldParser;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.*;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
-import kr.syeyoung.dungeonsguide.mod.events.impl.BossroomEnterEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonEndedEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
@@ -45,7 +46,6 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
-import kr.syeyoung.dungeonsguide.mod.utils.ShortUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
@@ -59,10 +59,10 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.entity.player.EnumPlayerModelParts;
 import net.minecraft.scoreboard.ScorePlayerTeam;
 import net.minecraft.util.ResourceLocation;
 import net.minecraft.util.Tuple;
+import net.minecraft.util.Vec3;
 import net.minecraft.util.Vec4b;
 import net.minecraft.world.WorldSettings;
 import net.minecraft.world.storage.MapData;
@@ -225,9 +225,10 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
     }
 
     @DGEventHandler(ignoreDisabled = true)
-    public void onBossroomEnter(BossroomEnterEvent event) {
+    public void onBossromLeave(DungeonLeftEvent event) {
         on = false;
     }
+
 
     @Override
     public void drawHUD(float partialTicks) {
@@ -294,39 +295,105 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
         float scale = width / 128.0f;
         GlStateManager.translate(width / 2.0, width / 2.0, 0);
         GlStateManager.scale(scale, scale, 0);
-        GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
 
         Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(p.getPositionEyes(partialTicks));
 
-        double yaw = ((p.prevRotationYawHead + (p.rotationYawHead - p.prevRotationYawHead) * partialTicks) % 360 + 360) % 360;
-
-        boolean rotated = false;
-        if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.VERTICAL) {
-            if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.CENTER) {
-                GlStateManager.rotate((float) (180.0 - yaw), 0, 0, 1);
-                rotated = true;
+        if (dungeonContext.getBossfightProcessor() != null) {
+            GlStateManager.translate(-64, -64, 0);
+            BossfightProcessor bossfightProcessor = dungeonContext.getBossfightProcessor();
+            BossfightRenderSettings settings = bossfightProcessor.getMapRenderSettings();
+            if (settings != null) {
+                renderBossfight(partialTicks, scale,settings);
             }
-            if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.ROTATE) {
-                GlStateManager.translate(-pt.x, -pt.y, 0);
+        } else {
+
+            double yaw = ((p.prevRotationYawHead + (p.rotationYawHead - p.prevRotationYawHead) * partialTicks) % 360 + 360) % 360;
+
+            boolean rotated = false;
+            if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.VERTICAL) {
+                if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.CENTER) {
+                    GlStateManager.rotate((float) (180.0 - yaw), 0, 0, 1);
+                    rotated = true;
+                }
+                if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.ROTATE) {
+                    GlStateManager.translate(-pt.x, -pt.y, 0);
+                } else {
+                    GlStateManager.translate(-64, -64, 0);
+                }
             } else {
                 GlStateManager.translate(-64, -64, 0);
             }
-        } else {
-            GlStateManager.translate(-64, -64, 0);
-        }
 
+            GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
 
-        double snapRotation = 0;
-        if (rotated) {
-            snapRotation =  (yaw - 180) % 360;
+            double snapRotation = 0;
+            if (rotated) {
+                snapRotation =  (yaw - 180) % 360;
+            }
+            renderRooms(mapProcessor);
+            renderIcons(mapProcessor, scale * mapConfiguration.getMapScale(), snapRotation + 360);
+            GlStateManager.color(1,1,1,1);
+            renderPlayers(partialTicks, mapProcessor, mapData, dungeonContext, scale * mapConfiguration.getMapScale());
         }
-        renderRooms(mapProcessor);
-        renderIcons(mapProcessor, scale * mapConfiguration.getMapScale(), snapRotation + 360);
-        GlStateManager.color(1,1,1,1);
-        renderPlayers(partialTicks, mapProcessor, mapData, dungeonContext, scale * mapConfiguration.getMapScale());
-//
     }
 
+
+    private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings) {
+        Minecraft.getMinecraft().getTextureManager().bindTexture(bossfightRenderSettings.getResourceLocation());
+        double x, y, width, height;
+        if (bossfightRenderSettings.getTextureWidth() > bossfightRenderSettings.getTextureHeight()) {
+            double rHeight = bossfightRenderSettings.getTextureHeight() * 128.0 / bossfightRenderSettings.getTextureWidth();
+            x = 0; y = (128 -rHeight) / 2; width = 128; height = rHeight;
+            drawScaledCustomSizeModalRect(
+                    0,(128 -rHeight) / 2, 0, 0, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight(), 128, rHeight, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight()
+            );
+        } else {
+            double rWidth = bossfightRenderSettings.getTextureWidth() * 128.0 / bossfightRenderSettings.getTextureHeight();
+            x = (128 - rWidth) / 2; y = 0; width = rWidth; height = 128;
+            drawScaledCustomSizeModalRect(
+                    (128 - rWidth) / 2,0, 0, 0, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight(), rWidth, 128, bossfightRenderSettings.getTextureWidth(), bossfightRenderSettings.getTextureHeight()
+            );
+        }
+
+        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
+
+        Set<TabListEntry> playerList = getPlayerListCached();
+
+
+        // 21 iterations bc we only want to scan the player part of tab list
+        int i = 0;
+        for (TabListEntry playerInfo : playerList) {
+            if (++i >= 20) break;
+
+            String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
+            if (name == null) continue;
+
+
+            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+
+            Vector2d pt2 = null;
+            double yaw2 = 0;
+
+            if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == thePlayer)) {
+                // getting location from player entity
+                Vec3 playerPos = entityplayer.getPositionEyes(partialTicks);
+                double px = width * (playerPos.xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
+                double pz = height * (playerPos.zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
+
+                pt2 = new Vector2d(px, pz);
+                yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
+                if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
+            }
+
+            if(pt2 == null) return;
+
+            if (entityplayer == thePlayer) {
+                drawPlayer(mapConfiguration.getSelfSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
+            } else {
+                drawPlayer(mapConfiguration.getTeammateSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
+            }
+        }
+    }
 
     private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
 
@@ -637,7 +704,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
     }
 
 
-    public static void drawScaledCustomSizeModalRect(double x, double y, float u, float v, int uWidth, int vHeight, int width, int height, float tileWidth, float tileHeight) {
+    public static void drawScaledCustomSizeModalRect(double x, double y, float u, float v, int uWidth, int vHeight, double width, double height, float tileWidth, float tileHeight) {
         float f = 1.0F / tileWidth;
         float g = 1.0F / tileHeight;
         Tessellator tessellator = Tessellator.getInstance();

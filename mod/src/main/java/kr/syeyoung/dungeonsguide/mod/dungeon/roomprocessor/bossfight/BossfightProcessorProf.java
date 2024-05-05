@@ -27,6 +27,7 @@ import java.util.List;
 
 public class BossfightProcessorProf extends GeneralBossfightProcessor {
     public BossfightProcessorProf(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_THREE" : "CATACOMBS_FLOOR_THREE");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
@@ -39,7 +40,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians one weakness?§r")
+                .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians' one weakness?§r")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()

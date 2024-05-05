@@ -27,6 +27,7 @@ import java.util.List;
 
 public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     public BossfightProcessorSadan() {
+        super("CATACOMBS_FLOOR_SIX");
         addPhase(PhaseData.builder()
                 .phase("start")
                 .signatureMsg("So you made it all the way §r§fhere...and§r§f you wish to defy me? Sadan?!§r")
