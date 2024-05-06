@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
 
 import java.util.ArrayList;
@@ -162,5 +163,10 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     @Override
     public String getBossName() {
         return "Necron";
+    }
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        return null;
     }
 }

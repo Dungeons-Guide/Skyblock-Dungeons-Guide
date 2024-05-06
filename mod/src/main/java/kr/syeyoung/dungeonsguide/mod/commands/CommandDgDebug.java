@@ -18,6 +18,8 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
@@ -58,6 +60,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.Tuple;
@@ -303,14 +307,25 @@ public class CommandDgDebug extends CommandBase {
 //            throw new RuntimeException(e);
 //        }
 
-        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
-            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
-                if (entry.getKey().contains("redstone")) {
-//                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
-                    System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
-                } else if (entry.getKey().contains("key-slot")) {
-
-                }
+//        for (DungeonRoomInfo dungeonRoomInfo : DungeonRoomInfoRegistry.getRegistered()) {
+//            for (Map.Entry<String, DungeonMechanic> entry : dungeonRoomInfo.getMechanics().entrySet()) {
+//                if (entry.getKey().contains("redstone")) {
+////                    DungeonSecret dungeonSecret = (DungeonSecret) entry.getValue();
+//                    System.out.println(dungeonRoomInfo.getUuid()+"/"+dungeonRoomInfo.getName()+"/"+entry.getKey()+" at "+entry.getValue());
+//                } else if (entry.getKey().contains("key-slot")) {
+//
+//                }
+//            }
+//        }
+        for (Entity entity : Minecraft.getMinecraft().theWorld.getLoadedEntityList()) {
+            System.out.println(entity);
+            if (entity instanceof EntityPlayer) {
+                GameProfile gameProfile = ((EntityPlayer) entity).getGameProfile();
+                System.out.println(gameProfile);
+                String texture = gameProfile.getProperties().get("textures").stream().findFirst().map(Property::getValue).orElse(null);
+                System.out.println(texture);
+                if (texture != null)
+                    System.out.println(new String(Base64.getDecoder().decode(texture)));
             }
         }
     }

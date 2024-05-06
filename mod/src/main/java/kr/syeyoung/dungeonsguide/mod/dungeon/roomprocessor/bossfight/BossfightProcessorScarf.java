@@ -18,12 +18,14 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BossfightProcessorScarf extends GeneralBossfightProcessor {
     public BossfightProcessorScarf(boolean isMasterMode) {
@@ -134,5 +136,26 @@ public class BossfightProcessorScarf extends GeneralBossfightProcessor {
             else if (updateEvent.entityLiving.getName().contains("§6§4§lUndead Warrior"))
                 berserkStand = (EntityArmorStand) updateEvent.entityLiving;
         }
+    }
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        if (entity instanceof EntityOtherPlayerMP) {
+            if ("Scarf ".equals(entity.getName())) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 8);
+            }
+            Collection<Property> obj = ((EntityOtherPlayerMP) entity).getGameProfile().getProperties().get("textures");
+            String texture = obj.stream().findFirst().map(Property::getValue).orElse(null);
+            if (texture.equals("ewogICJ0aW1lc3RhbXAiIDogMTU4OTk5NDg1NjMyMCwKICAicHJvZmlsZUlkIiA6ICJkYTQ5OGFjNGU5Mzc0ZTVjYjYxMjdiMzgwODU1Nzk4MyIsCiAgInByb2ZpbGVOYW1lIiA6ICJOaXRyb2hvbGljXzIiLAogICJzaWduYXR1cmVSZXF1aXJlZCIgOiB0cnVlLAogICJ0ZXh0dXJlcyIgOiB7CiAgICAiU0tJTiIgOiB7CiAgICAgICJ1cmwiIDogImh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvYWFlZjU2Y2QwNGQwMzlhMzRjZDZmMTZlMDIzYjZlNjNmY2M3MmYzN2Y3NTk1YTJjOWU0YTE5Zjk0ZTI3M2I0MiIKICAgIH0KICB9Cn0=")) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 9); // priest
+            } else if (texture.equals("eyJ0aW1lc3RhbXAiOjE1NzkxMDg2MTYxMjYsInByb2ZpbGVJZCI6IjJjMTA2NGZjZDkxNzQyODI4NGUzYmY3ZmFhN2UzZTFhIiwicHJvZmlsZU5hbWUiOiJOYWVtZSIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvODBiYzI5ODg5M2FhMGZhYmQ1MjUwY2RjNTMxYmE4MmVhN2M3MmQwYzE5N2E4NzA4NTIzNGE5NDYzNTEwZmY1MCJ9fX0=")) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 12); // mage
+            } else if (texture.equals("eyJ0aW1lc3RhbXAiOjE1NzkxMDg1ODc3MDEsInByb2ZpbGVJZCI6IjczODJkZGZiZTQ4NTQ1NWM4MjVmOTAwZjg4ZmQzMmY4IiwicHJvZmlsZU5hbWUiOiJZYU9PUCIsInNpZ25hdHVyZVJlcXVpcmVkIjp0cnVlLCJ0ZXh0dXJlcyI6eyJTS0lOIjp7InVybCI6Imh0dHA6Ly90ZXh0dXJlcy5taW5lY3JhZnQubmV0L3RleHR1cmUvNTNjYzQzYmJjNjA4N2QwYzBkYzgyNWM3OGI3NTViYjhhYzFiN2UyMzZlZjNlNWM4MmFjODUwNzc0MGFkM2JlZiJ9fX0=")) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 10); // archer
+            } else if (texture.equals("eyJ0aW1lc3RhbXAiOjE1NzkwMzU2NjQ5ODEsInByb2ZpbGVJZCI6ImIwZDRiMjhiYzFkNzQ4ODlhZjBlODY2MWNlZTk2YWFiIiwicHJvZmlsZU5hbWUiOiJNaW5lU2tpbl9vcmciLCJzaWduYXR1cmVSZXF1aXJlZCI6dHJ1ZSwidGV4dHVyZXMiOnsiU0tJTiI6eyJ1cmwiOiJodHRwOi8vdGV4dHVyZXMubWluZWNyYWZ0Lm5ldC90ZXh0dXJlL2RlNTRjMjE0NDVjNTg4Mjc4Mjk4YzFhMThlOTM0Mzk4ZDRlYTQ4NjIzYTJkZjVlZTU2OWY0NDg0OGJjODg5YjgifX19")) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 11); // warrior
+            }
+        }
+        return null;
     }
 }

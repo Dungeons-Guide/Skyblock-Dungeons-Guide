@@ -23,7 +23,11 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.block.Block;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.passive.*;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.world.World;
@@ -104,5 +108,29 @@ public class BossfightProcessorThorn extends GeneralBossfightProcessor {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
+    }
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        if (entity.isInvisible()) return null;
+        if (entity instanceof EntityBat) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 28);
+        } else if (entity instanceof EntitySheep) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 30);
+        } else if (entity instanceof EntityCow) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 26);
+        } else if (entity instanceof EntityChicken) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 31);
+        } else if (entity instanceof EntityWolf) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 29);
+        } else if (entity instanceof EntityRabbit) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.ANIMALS, 27);
+        } else if (entity instanceof EntityGhast) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 25);
+        } else if (entity instanceof EntityOtherPlayerMP) {
+            if (entity.getName().equals("Spirit Bear"))
+                return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 24);
+        }
+        return null;
     }
 }

@@ -34,5 +34,7 @@ public interface BossfightProcessor extends RoomProcessor {
 
     String getFloorName();
 
+    List<MarkerData> getMarkers();
+
     BossfightRenderSettings getMapRenderSettings();
 }

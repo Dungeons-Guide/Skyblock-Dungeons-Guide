@@ -73,6 +73,7 @@ import javax.vecmath.Vector2d;
 import java.awt.*;
 import java.lang.reflect.Type;
 import java.util.*;
+import java.util.List;
 
 //TODO: reduce gl drawcalls somehow
 
@@ -303,7 +304,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
             BossfightProcessor bossfightProcessor = dungeonContext.getBossfightProcessor();
             BossfightRenderSettings settings = bossfightProcessor.getMapRenderSettings();
             if (settings != null) {
-                renderBossfight(partialTicks, scale,settings);
+                renderBossfight(partialTicks, scale, settings, bossfightProcessor.getMarkers());
             }
         } else {
 
@@ -338,7 +339,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
     }
 
 
-    private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings) {
+    private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings, List<MarkerData> markers) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(bossfightRenderSettings.getResourceLocation());
         double x, y, width, height;
         if (bossfightRenderSettings.getTextureWidth() > bossfightRenderSettings.getTextureHeight()) {
@@ -393,7 +394,30 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 drawPlayer(mapConfiguration.getTeammateSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
             }
         }
+
+
+        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation2);
+        for (MarkerData marker : markers) {
+            double xCoord = marker.getPrevX() + (marker.getCurrX() - marker.getPrevX()) * partialTicks;
+            double zCoord = marker.getPrevZ() + (marker.getCurrZ() - marker.getPrevZ()) * partialTicks;
+            double px = width * (xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
+            double pz = height * (zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
+            double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;
+
+            GlStateManager.enableTexture2D();
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(px, pz, 0);
+            GlStateManager.rotate((float) yaw, 0, 0, 1);
+
+            GlStateManager.scale(1 / scale, 1 / scale, 0);
+
+            int tx = marker.getMarkerIndex() % 8;
+            int ty = marker.getMarkerIndex() / 8;
+            Gui.drawScaledCustomSizeModalRect(-4, -4, tx * 72,ty * 72, 72, 72, 8, 8, 576, 576);
+            GlStateManager.popMatrix();
+        }
     }
+    private final ResourceLocation resourceLocation2 = new ResourceLocation("dungeonsguide:map/bossfight/markers.png");
 
     private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
 
