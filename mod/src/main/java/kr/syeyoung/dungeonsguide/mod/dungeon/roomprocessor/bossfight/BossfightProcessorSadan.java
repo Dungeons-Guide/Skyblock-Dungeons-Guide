@@ -158,7 +158,16 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
                 boolean zS = Math.abs(updateEvent.entityLiving.posZ - 53.5) < 0.01;
                 boolean zB = Math.abs(updateEvent.entityLiving.posZ - 79.5) < 0.01;
 
-
+                // 43 44 51 52
+                if (xS && zS) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 52); // jolley
+                } else if (xS && zB) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 43); // diamond
+                } else if (xB && zB) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 51); // big foot
+                } else if (xB && zS) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 49); // laser
+                }
             }
             // lpx
             // fpx
@@ -177,9 +186,11 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     @Override
     public MarkerData convertToMarker(Entity entity) {
         if (entity instanceof EntityIronGolem) {
-            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, 42);
+            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.rotationPitch - 59.0625) < 0.01 ? 42 : 49);
         } else if (entity instanceof EntityGiantZombie) {
-            return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, 43);
+            Integer map = mapping.get(entity.getEntityId());
+            if (map == null) return null;
+            return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, map);
         } else if (entity instanceof EntityOtherPlayerMP) {
             String name = entity.getName();
             if ("Terracotta ".equals(name)) {
