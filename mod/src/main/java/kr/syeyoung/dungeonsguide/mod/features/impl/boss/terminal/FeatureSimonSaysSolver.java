@@ -56,7 +56,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(309,123,291) > 400) return;
+        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(110,120,94) > 400) return;
 
 
         if (orderClick.size() >= 1)
@@ -74,18 +74,18 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
 
-        if (wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.air) {
+        if (wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(110, 121, 91)).getBlock() == Blocks.air) {
             orderClick.clear();
             orderBuild.clear();
             wasButton = false;
-        } else if (!wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.stone_button){
+        } else if (!wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(110, 121, 91)).getBlock() == Blocks.stone_button){
             orderClick.addAll(orderBuild);
             wasButton = true;
         }
 
 
         if (!wasButton) {
-            for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(310, 123, 291), new BlockPos(310, 120, 294))) {
+            for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(111, 120, 92), new BlockPos(111, 123, 95))) {
                 if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
                     orderBuild.add(allInBox);
                 }
@@ -104,7 +104,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         World w = dc.getWorld();
 
         BlockPos pos = event.pos.add(1,0,0);
-        if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 310 && 291 <= pos.getZ() && pos.getZ() <= 294) {
+        if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 111 && 92 <= pos.getZ() && pos.getZ() <= 95) {
             if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
             if (pos.equals(orderClick.peek())) {
                 orderClick.poll();
