@@ -32,7 +32,7 @@ public class MarkerData {
     private int height;
 
     public enum MobType {
-        BOSS, MINIBOSS, WRONG_LIVID, TERRACOTA, GOLEM, ENEMIES, ANIMALS, TERMINALS // animals, because there are ton of them
+        BOSS, MINIBOSS, WRONG_LIVID, TERRACOTA, GOLEM, ENEMIES, ANIMALS, TERMINALS, CRYSTALS // animals, because there are ton of them
     }
 
     private double prevX;

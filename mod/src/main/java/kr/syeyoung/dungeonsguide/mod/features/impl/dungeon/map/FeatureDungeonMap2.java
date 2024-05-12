@@ -176,6 +176,12 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
 
         Preset preset = new Gson().fromJson(DEFAULT_OVERRIDES, Preset.class);
         mapConfiguration.getRoomOverrides().putAll(preset.getOverrides());
+
+
+        for (MarkerData.MobType value : MarkerData.MobType.values()) {
+            if (!mapConfiguration.getHeadSettingsMap().containsKey(value))
+                mapConfiguration.getHeadSettingsMap().put(value, new MapConfiguration.PlayerHeadSettings());
+        }
     }
 
     @Getter
@@ -191,14 +197,15 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
     public JsonObject saveConfig() {
         JsonObject jsonObject = super.saveConfig();
         jsonObject.add("overrides", new Gson().toJsonTree(mapConfiguration.getRoomOverrides()));
+        jsonObject.add("bosshead", new Gson().toJsonTree(mapConfiguration.getHeadSettingsMap()));
         return jsonObject;
     }
 
     @Override
     public void loadConfig(JsonObject jsonObject) {
         super.loadConfig(jsonObject);
-        Type type = new TypeToken<Map<UUID, MapConfiguration.RoomOverride>>(){}.getType();
         if (jsonObject.has("overrides")) {
+            Type type = new TypeToken<Map<UUID, MapConfiguration.RoomOverride>>(){}.getType();
             mapConfiguration.setRoomOverrides(new Gson().fromJson(jsonObject.get("overrides"), type));
             if (mapConfiguration.getRoomOverrides() == null)
                 mapConfiguration.setRoomOverrides(new HashMap<>());
@@ -211,6 +218,17 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 if (value.getIconLocation() == null) value.setIconLocation("");
             }
         }
+        if (jsonObject.has("bosshead")) {
+            Type type = new TypeToken<Map<MarkerData.MobType, MapConfiguration.PlayerHeadSettings>>(){}.getType();
+            mapConfiguration.setHeadSettingsMap(new Gson().fromJson(jsonObject.get("bosshead"), type));
+            if (mapConfiguration.getHeadSettingsMap() == null) mapConfiguration.setHeadSettingsMap(new HashMap<>());
+        }
+
+        for (MarkerData.MobType value : MarkerData.MobType.values()) {
+            if (!mapConfiguration.getHeadSettingsMap().containsKey(value))
+                mapConfiguration.getHeadSettingsMap().put(value, new MapConfiguration.PlayerHeadSettings());
+        }
+
     }
 
     private boolean on = false;

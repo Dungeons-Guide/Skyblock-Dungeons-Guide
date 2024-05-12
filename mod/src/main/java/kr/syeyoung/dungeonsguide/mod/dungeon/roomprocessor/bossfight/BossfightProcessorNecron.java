@@ -20,8 +20,13 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
+import net.minecraft.entity.boss.EntityWither;
+import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.item.EntityEnderCrystal;
+import net.minecraft.entity.monster.EntitySkeleton;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
 public class BossfightProcessorNecron extends GeneralBossfightProcessor {
@@ -155,8 +160,23 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     @Override
     public List<HealthData> getHealths() {
         List<HealthData> healths = new ArrayList<HealthData>();
-        int maxHealth = 1_000_000_000;
-        healths.add(new HealthData("Necron", (int) (BossStatus.healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
+        int maxHealth = 10;
+
+        String name = "";
+        if (Arrays.asList("maxor-fight").contains(getCurrentPhase())) {
+            name = "Maxor";
+            maxHealth = 100_000_000;
+        } else if (Arrays.asList("storm-fight").contains(getCurrentPhase())) {
+            name = "Storm";
+            maxHealth = 400_000_000;
+        } else if (Arrays.asList("goldor-terminals-1", "goldor-terminals-2", "goldor-terminals-3", "goldor-terminals-1", "goldor-fight").contains(getCurrentPhase())) {
+            name = "Goldor";
+            maxHealth = 750_000_000;
+        } else if (Arrays.asList("necron-intro", "necron-fight").contains(getCurrentPhase())) {
+            name = "Necron";
+            maxHealth = 1_000_000_000;
+        }
+        healths.add(new HealthData(name, (int) (BossStatus.healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
         return healths;
     }
 
@@ -167,6 +187,28 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
 
     @Override
     public MarkerData convertToMarker(Entity entity) {
+        if (entity instanceof EntityEnderCrystal) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.CRYSTALS, 53);
+        } else if (entity instanceof EntitySkeleton) {
+            if (((EntitySkeleton) entity).getSkeletonType() == 1) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 56);
+            }
+        } else if (entity instanceof EntityWither) {
+            int idx = -1;
+            if (Arrays.asList("maxor-fight").contains(getCurrentPhase())) {
+                idx = 58;
+            } else if (Arrays.asList("storm-fight").contains(getCurrentPhase())) {
+                idx = 59;
+            } else if (Arrays.asList("goldor-terminals-1", "goldor-terminals-2", "goldor-terminals-3", "goldor-terminals-1", "goldor-fight").contains(getCurrentPhase())) {
+                idx = 60;
+            } else if (Arrays.asList("necron-intro", "necron-fight").contains(getCurrentPhase())) {
+                idx = 61;
+            }
+            if (idx == -1) return  null;
+            return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, idx);
+        } else if (entity instanceof EntityArmorStand) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.TERMINALS, 63);
+        }
         return null;
     }
 }
