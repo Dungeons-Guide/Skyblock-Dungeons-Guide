@@ -93,6 +93,46 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
     *
     * */
 
+    /*
+     * Terminal Coordinates
+     * Coord / Armor stand / Type
+     * P1
+     * 111 113 73 (110 113 73) T
+     * 111 119 79 (110 119 79) T
+     * 111 121 91 (110 121 91) D 109 120 93 / stand
+     * 89  112 92 (90  112 92) T
+     * 89  122 101 (90 122 101) T
+     * 106 124 113 L
+     * 94 124 113 L
+     *
+     * P2
+     * 68 109 121 (68 109 122) T
+     * 59 120 122 (59 120 123) T
+     * 62 132 143 ~ 58 136 143 (61 132 42) LLL 60 132 141
+     * 47 109 121 (47 109 122) T
+     * 39 108 143 (39 108 142) T
+     * 27 124 127 L
+     * 23 132 138 L
+     *
+     * P3
+     * -2 109 112 (-1 109 112) T
+     * 19 122 93 (18 122 93) T
+     * -2 119 93 (-1 119 93) T
+     * -2 109 77 (-1 109 77) T
+     * 0 120 77 (??) (-2 120 79 ~ -2 124 75) X=-1 for frame ARROW
+     * 2 122 55 (L)
+     * 14 122 55 (L)
+     *
+     * P4
+     * 41 109 29 (41 109 30) T
+     * 44 121 29 (44 121 30) T
+     * 67 109 29 (67 109 30) T
+     * 72 115 48 (72 115 47) T
+     * 84 121 34 L
+     * 86 128 46 L
+     * 68 126 50 ~ 64 130 50: 63 127 35 stand ARROW SHOOT
+     */
+
     public BossfightProcessorNecron() {
         super("CATACOMBS_FLOOR_SEVEN");
         addPhase(PhaseData.builder()
