@@ -176,7 +176,7 @@ public abstract class AbstractActionMove extends AbstractAction {
         }
     }
 
-    private static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
+    public static void drawLinesPathfindNode(List<PathfindResult.PathfindNode> poses, AColor colour, float thickness, float partialTicks) {
         if (poses.size() == 0) return;
         Entity render = Minecraft.getMinecraft().getRenderViewEntity();
         WorldRenderer worldRenderer = Tessellator.getInstance().getWorldRenderer();
@@ -222,11 +222,11 @@ public abstract class AbstractActionMove extends AbstractAction {
 
 
                 if ((pos.getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK || poses.get(0).getType() == PathfindResult.PathfindNode.NodeType.STONK_WALK)&& pos.distanceSq(Minecraft.getMinecraft().thePlayer.getPosition()) < 100) {
-                    GlStateManager.disableDepth();
-                    GlStateManager.depthMask(false);
+//                    GlStateManager.disableDepth();
+//                    GlStateManager.depthMask(false);
                 } else {
-                    GlStateManager.enableDepth();
-                    GlStateManager.depthMask(true);
+//                    GlStateManager.enableDepth();
+//                    GlStateManager.depthMask(true);
                 }
 
                 worldRenderer.pos(pos.getX(), pos.getY(), pos.getZ()).color(
@@ -245,8 +245,8 @@ public abstract class AbstractActionMove extends AbstractAction {
         GlStateManager.disableBlend();
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
-        GlStateManager.enableDepth();
-        GlStateManager.depthMask(true);
+//        GlStateManager.enableDepth();
+//        GlStateManager.depthMask(true);
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
         GL11.glLineWidth(1);

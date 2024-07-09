@@ -151,6 +151,9 @@ public class CommandDgDebug extends CommandBase {
             case "scoreboard":
                 scoreboardCommand();
                 break;
+            case "pfresdebug":
+                FeatureRegistry.DEBUG_PFRES.onCommand(args);
+                break;
             case "scoreboardclean":
                 scoreboardCleanCommand();
                 break;
