@@ -329,6 +329,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
             double yaw = ((p.prevRotationYawHead + (p.rotationYawHead - p.prevRotationYawHead) * partialTicks) % 360 + 360) % 360;
 
             boolean rotated = false;
+            GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
             if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.VERTICAL) {
                 if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.CENTER) {
                     GlStateManager.rotate((float) (180.0 - yaw), 0, 0, 1);
@@ -343,7 +344,6 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 GlStateManager.translate(-64, -64, 0);
             }
 
-            GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
 
             double snapRotation = 0;
             if (rotated) {
