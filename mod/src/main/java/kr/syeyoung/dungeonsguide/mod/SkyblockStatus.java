@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod;
 
 import com.google.common.collect.Sets;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonLeftEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.HypixelJoinedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.SkyblockJoinedEvent;
@@ -51,6 +52,7 @@ public class SkyblockStatus {
         SkyblockStatus skyblockStatus = DungeonsGuide.getDungeonsGuide().getSkyblockStatus();
         boolean isOnDungeonPrev = isOnDungeon();
         boolean isOnSkyblockPrev = isOnSkyblock();
+        boolean isRunningDungeonPrev = isDungeonRunning;
         skyblockStatus.updateStatus();
 
         if (!wasOnHypixel && skyblockStatus.isOnHypixel()) {
@@ -64,7 +66,7 @@ public class SkyblockStatus {
             MinecraftForge.EVENT_BUS.post(new SkyblockJoinedEvent());
         }
 
-        if (isOnDungeonPrev && !isOnDungeon()) {
+        if (isOnDungeonPrev && !isOnDungeon() || isRunningDungeonPrev && !isDungeonRunning) {
             MinecraftForge.EVENT_BUS.post(new DungeonLeftEvent());
         }
 
@@ -89,6 +91,8 @@ public class SkyblockStatus {
 
     private boolean isOnSkyblock;
     private boolean isOnDungeon;
+
+    private boolean isDungeonRunning;
 
     @Getter
     @Setter
@@ -151,6 +155,8 @@ public class SkyblockStatus {
                 locationName = strippedLine.trim();
             }
         }
+
+        isDungeonRunning = foundDungeon;
 
         if (locationName != null)
             isOnDungeon = locationName.startsWith("The Catacombs") | foundDungeon;
