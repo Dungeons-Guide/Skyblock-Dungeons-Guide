@@ -372,6 +372,30 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
             );
         }
 
+
+
+        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation2);
+        for (MarkerData marker : markers) {
+            double xCoord = marker.getPrevX() + (marker.getCurrX() - marker.getPrevX()) * partialTicks;
+            double zCoord = marker.getPrevZ() + (marker.getCurrZ() - marker.getPrevZ()) * partialTicks;
+            double px = width * (xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
+            double pz = height * (zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
+            double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;
+
+            GlStateManager.enableTexture2D();
+            GlStateManager.pushMatrix();
+            GlStateManager.translate(px, pz, 0);
+            GlStateManager.rotate((float) yaw, 0, 0, 1);
+
+            GlStateManager.scale(1 / scale, 1 / scale, 0);
+
+            int tx = marker.getMarkerIndex() % 8;
+            int ty = marker.getMarkerIndex() / 8;
+            Gui.drawScaledCustomSizeModalRect(-4, -4, tx * 72,ty * 72, 72, 72, 8, 8, 576, 576);
+            GlStateManager.popMatrix();
+        }
+
+
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
         Set<TabListEntry> playerList = getPlayerListCached();
@@ -411,27 +435,6 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
             }
         }
 
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation2);
-        for (MarkerData marker : markers) {
-            double xCoord = marker.getPrevX() + (marker.getCurrX() - marker.getPrevX()) * partialTicks;
-            double zCoord = marker.getPrevZ() + (marker.getCurrZ() - marker.getPrevZ()) * partialTicks;
-            double px = width * (xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
-            double pz = height * (zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
-            double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;
-
-            GlStateManager.enableTexture2D();
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(px, pz, 0);
-            GlStateManager.rotate((float) yaw, 0, 0, 1);
-
-            GlStateManager.scale(1 / scale, 1 / scale, 0);
-
-            int tx = marker.getMarkerIndex() % 8;
-            int ty = marker.getMarkerIndex() / 8;
-            Gui.drawScaledCustomSizeModalRect(-4, -4, tx * 72,ty * 72, 72, 72, 8, 8, 576, 576);
-            GlStateManager.popMatrix();
-        }
     }
     private final ResourceLocation resourceLocation2 = new ResourceLocation("dungeonsguide:map/bossfight/markers.png");
 
