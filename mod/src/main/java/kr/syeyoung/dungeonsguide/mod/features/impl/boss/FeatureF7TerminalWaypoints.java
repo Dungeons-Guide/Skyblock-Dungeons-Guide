@@ -330,7 +330,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
         waypoints.put("goldor-terminals-1", phase);
         phase = new ArrayList<>();
         phase.add(new WaypointData(68, 109, 121, WaypointData.WaypointType.TERMINAL, "gt21"));
-        phase.add(new WaypointData(59, 120, 123, WaypointData.WaypointType.TERMINAL, "gt22"));
+        phase.add(new WaypointData(59, 120, 122, WaypointData.WaypointType.TERMINAL, "gt22"));
         phase.add(new WaypointData(61, 131, 142, WaypointData.WaypointType.LAMP, "gt23"));
         phase.add(new WaypointData(47, 109, 121, WaypointData.WaypointType.TERMINAL, "gt24"));
         phase.add(new WaypointData(39, 108, 143, WaypointData.WaypointType.TERMINAL, "gt25"));
