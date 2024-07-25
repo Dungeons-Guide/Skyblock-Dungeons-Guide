@@ -947,6 +947,10 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
 
 
         // 21 iterations bc we only want to scan the player part of tab list
+        TabListEntry self = null;
+        Vector2d selfPt2 = null;
+        double selfYaw2 = 0;
+
         int i = 0;
         for (TabListEntry playerInfo : playerList) {
             if (++i >= 20) break;
@@ -986,11 +990,16 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
             if(pt2 == null) return;
 
             if (entityplayer == thePlayer) {
-                drawPlayer(mapConfiguration.getSelfSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
+                self = playerInfo;
+                selfPt2 = pt2;
+                selfYaw2 = yaw2;
             } else {
                 drawPlayer(mapConfiguration.getTeammateSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
             }
         }
+
+        if (self != null)
+            drawPlayer(mapConfiguration.getSelfSettings(), scale, self, thePlayer, selfPt2, selfYaw2);
     }
     private void drawPlayer(MapConfiguration.PlayerHeadSettings settings, double scale, TabListEntry info, EntityPlayer entityPlayer, Vector2d pt2, double yaw2) {
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) return;
