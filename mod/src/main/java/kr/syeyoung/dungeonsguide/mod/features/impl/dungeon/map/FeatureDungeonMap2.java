@@ -233,10 +233,6 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
 
     private boolean on = false;
 
-    @DGEventHandler(ignoreDisabled = true)
-    public void onDungeonEnd(DungeonEndedEvent event) {
-        on = false;
-    }
 
     @DGEventHandler
     public void onDungeonStart(DungeonStartedEvent event) {
@@ -244,7 +240,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
     }
 
     @DGEventHandler(ignoreDisabled = true)
-    public void onBossromLeave(DungeonLeftEvent event) {
+    public void onDungeonLeave(DungeonLeftEvent event) {
         on = false;
     }
 

@@ -139,12 +139,6 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
 
     @DGEventHandler
-    public void onDungeonEnd(DungeonEndedEvent event)  {
-        nearPlayer.clear();
-        completedTerminals.clear();
-    }
-
-    @DGEventHandler
     public void onDungeonQuit(DungeonLeftEvent event) {
         completedTerminals.clear();
         nearPlayer.clear();
