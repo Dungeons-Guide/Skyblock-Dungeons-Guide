@@ -194,6 +194,7 @@ public class FeatureRegistry {
     public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
     public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
+    public static final FeatureF7TerminalWaypoints BOSSFIGHT_F7_WAYPOINTS = register(new FeatureF7TerminalWaypoints());
 
     // Discord RPC
     public static final SimpleFeature DISCORD_RICHPRESENCE = register(new SimpleFeature("Discord", "Discord RPC", "Enable Discord rich presence", "advanced.discordrichpresence", true) {

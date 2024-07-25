@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.boss.EntityWither;
@@ -246,9 +247,14 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
             }
             if (idx == -1) return  null;
             return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, idx);
-        } else if (entity instanceof EntityArmorStand) {
-            return MarkerData.fromEntity(entity, MarkerData.MobType.TERMINALS, 63);
         }
         return null;
+    }
+
+    @Override
+    public List<MarkerData> getMarkers() {
+        List<MarkerData> markers =  super.getMarkers();
+        FeatureRegistry.BOSSFIGHT_F7_WAYPOINTS.addMarkers(markers);
+        return markers;
     }
 }

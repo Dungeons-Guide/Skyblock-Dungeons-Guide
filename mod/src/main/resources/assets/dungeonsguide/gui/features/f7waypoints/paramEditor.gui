@@ -1,0 +1,61 @@
+<!--
+  ~ Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
+  ~ Copyright (C) 2024  cyoung06 (syeyoung)
+  ~
+  ~ This program is free software: you can redistribute it and/or modify
+  ~ it under the terms of the GNU Affero General Public License as published
+  ~ by the Free Software Foundation, either version 3 of the License, or
+  ~ (at your option) any later version.
+  ~
+  ~ This program is distributed in the hope that it will be useful,
+  ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
+  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ GNU Affero General Public License for more details.
+  ~
+  ~ You should have received a copy of the GNU Affero General Public License
+  ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
+  -->
+
+<ScrollablePanel direction="VERTICAL">
+    <padding top="5" left="5" bottom="5" right="5">
+        <col>
+            <row crossAlign="CENTER">
+                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Highlight waypoints in world" color="#FFFFFF00"/></align></flexible>
+                <slot bind:child="wayptEnable"/>
+            </row>
+            <size height="5"/>
+            <SelectiveContainer bind:visible="wayptToggle">
+                <row slot="true">
+                    <size width="10"/>
+                    <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Target Color" color="#FFFFFFFF"/></align></flexible>
+                    <flexible fit="TIGHT"><slot bind:child="targetcolor"/></flexible>
+                </row>
+                <size width="0" height="0" slot="false"/>
+            </SelectiveContainer>
+            <size height="5"/>
+            <row crossAlign="CENTER">
+                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Enable beacon beam" color="#FFFFFF00"/></align></flexible>
+                <slot bind:child="beamEnable"/>
+            </row>
+            <size height="5"/>
+            <SelectiveContainer bind:visible="beamToggle">
+                <row slot="true">
+                    <size width="10"/>
+                    <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Beam Color" color="#FFFFFFFF"/></align></flexible>
+                    <flexible fit="TIGHT"><slot bind:child="beamcolor"/></flexible>
+                </row>
+                <size width="0" height="0" slot="false"/>
+            </SelectiveContainer>
+            <size height="5"/>
+            <row>
+                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Render terminal status on world" color="#FFFFFFFF"/></align></flexible>
+                <flexible fit="TIGHT"><slot bind:child="status"/></flexible>
+            </row>
+            <size height="5"/>
+            <row>
+                <flexible fit="TIGHT"><align vAlign="CENTER" hAlign="START"><Text text="Only render current sub-phase (also applies to map)" color="#FFFFFFFF"/></align></flexible>
+                <flexible fit="TIGHT"><slot bind:child="all"/></flexible>
+            </row>
+        </col>
+    </padding>
+</ScrollablePanel>
