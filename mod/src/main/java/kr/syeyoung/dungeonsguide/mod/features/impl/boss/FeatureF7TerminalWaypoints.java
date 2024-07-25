@@ -178,9 +178,8 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
             String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
             if (name == null) continue;
-
-
             EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+            if (entityplayer == null) continue;
 
             for (List<WaypointData> value : waypoints.values()) {
                 for (WaypointData waypointData : value) {
