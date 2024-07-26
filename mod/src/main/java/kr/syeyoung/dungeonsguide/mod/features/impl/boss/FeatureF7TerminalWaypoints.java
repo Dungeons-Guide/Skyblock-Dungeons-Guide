@@ -60,7 +60,7 @@ import java.util.*;
 
 public class FeatureF7TerminalWaypoints extends SimpleFeature {
     public FeatureF7TerminalWaypoints() {
-        super("Bossfight", "Terminal Waypoints", "Render terminal waypoints in world and map\n(Configure inside the feature)", "bossfight.f7waypoints");
+        super("Bossfight.Floor 7", "Terminal Waypoints", "Render terminal waypoints in world and map\n(Configure inside the feature)", "bossfight.f7waypoints");
         this.setEnabled(true);
 
         addParameter("beacons", new FeatureParameter<Boolean>("beacons", "Highlight waypoints in world", "Render waypoints in the world", true, TCBoolean.INSTANCE, nval -> beacon = nval));
