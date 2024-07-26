@@ -968,7 +968,6 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 // getting location from player entity
                 pt2 = scaffoldParser.getDungeonMapLayout().worldPointToMapPointFLOAT(entityplayer.getPositionEyes(partialTicks));
                 yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
-                if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
             }
             else {
                 // getting player location from map
@@ -976,14 +975,9 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 if (iconName != null) {
                     Vec4b vec = mapData.mapDecorations.get(iconName);
                     if (vec != null) {
-                        System.out.println("Got player location from map");
                         pt2 = new Vector2d(vec.func_176112_b() / 2d + 64, vec.func_176113_c() / 2d + 64);
                         yaw2 = vec.func_176111_d() * 360 / 16.0f;
-                    } else {
-                        System.out.println("Failed getting location from map, vec is null");
                     }
-                } else {
-                    System.out.println("Failed getting location from map, icon name is null");
                 }
             }
 

@@ -78,8 +78,6 @@ public class MapPlayerProcessor {
 
 
     private void getPlayersFromMap(MapData mapdata) {
-
-        logger.info("Getting players from map");
         int lim = Minecraft.getMinecraft().gameSettings.renderDistanceChunks * 16;
         lim = lim * lim;
 
@@ -88,8 +86,6 @@ public class MapPlayerProcessor {
             String mapDecString = stringVec4bEntry.getKey();
             Vec4b vec4 = stringVec4bEntry.getValue();
             if (vec4.func_176110_a() == 1) continue;
-
-            System.out.println(mapDecString + " / " +vec4.func_176110_a());
 
             if (!mapIconToPlayerMap.containsValue(mapDecString)) {
                 int x = vec4.func_176112_b() / 2 + 64;
@@ -110,19 +106,9 @@ public class MapPlayerProcessor {
 
                 if (players == 1) {
                     mapIconToPlayerMap.put(potentialPlayer, stringVec4bEntry.getKey());
-
-
-                } else {
-                    logger.info("potentialPlayer is "+players);
                 }
-
-            } else {
-                logger.info("mapIconToPlayerMap has player ");
             }
         }
-        System.out.println(mapIconToPlayerMap);
-
-
     }
 
     private boolean isPlayerNear(String player, BlockPos mapPos) {
