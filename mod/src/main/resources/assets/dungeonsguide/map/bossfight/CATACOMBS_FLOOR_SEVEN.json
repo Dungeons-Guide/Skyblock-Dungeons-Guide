@@ -1,0 +1,62 @@
+{
+  "resources": {
+    "default": {
+      "minX": 33,
+      "minZ": 11,
+      "maxX": 114,
+      "maxZ": 87,
+      "location": "dungeonsguide:map/bossfight/f7_boss_end.png",
+      "textureWidth": 90,
+      "textureHeight": 90
+    },
+    "p1": {
+      "minX": 33,
+      "minZ": 11,
+      "maxX": 114,
+      "maxZ": 87,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s1.png",
+      "textureWidth": 505,
+      "textureHeight": 480
+    },
+    "p2": {
+      "minX": 19,
+      "minZ": -1,
+      "maxX": 128,
+      "maxZ": 108,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s2.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    },
+    "p3": {
+      "minX": -3,
+      "minZ": 29,
+      "maxX": 112,
+      "maxZ": 144,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s3.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    },
+    "p4": {
+      "minX": -3,
+      "minZ": 19,
+      "maxX": 112,
+      "maxZ": 134,
+      "location": "dungeonsguide:map/bossfight/f7_boss_s4.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    }
+  },
+  "phaseMap": {
+    "maxor-fight": "p1",
+    "storm-fight": "p2",
+    "goldor-terminals-1": "p3",
+    "goldor-terminals-2": "p3",
+    "goldor-terminals-3": "p3",
+    "goldor-terminals-4": "p3",
+    "goldor-fight": "p3",
+    "necron-intro": "p4",
+    "necron-fight": "p4",
+    "won": "default",
+    "lost": "default"
+  }
+}

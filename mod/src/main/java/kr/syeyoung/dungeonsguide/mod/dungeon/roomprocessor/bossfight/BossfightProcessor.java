@@ -19,6 +19,7 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessor;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.BossfightRenderSettings;
 
 import java.util.List;
 
@@ -30,4 +31,10 @@ public interface BossfightProcessor extends RoomProcessor {
     List<HealthData> getHealths();
 
     String getBossName();
+
+    String getFloorName();
+
+    List<MarkerData> getMarkers();
+
+    BossfightRenderSettings getMapRenderSettings();
 }

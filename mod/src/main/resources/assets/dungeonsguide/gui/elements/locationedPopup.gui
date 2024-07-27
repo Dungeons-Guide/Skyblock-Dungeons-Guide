@@ -9,16 +9,16 @@
   ~
   ~ This program is distributed in the hope that it will be useful,
   ~ but WITHOUT ANY WARRANTY; without even the implied warranty of
-  ~ MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  ~ MERCHANTABILITY or FITNESS FOR A PAROTICULAR PURPOSE.  See the
   ~ GNU Affero General Public License for more details.
   ~
   ~ You should have received a copy of the GNU Affero General Public License
   ~ along with this program.  If not, see <https://www.gnu.org/licenses/>.
   -->
 <absXY bind:x="x" bind:y="y">
-    <UnconstrainedBox>
+<!--    <UnconstrainedBox>-->
         <measure bind:size="size">
             <slot bind:child="child" bind:ref="ref"/>
         </measure>
-    </UnconstrainedBox>
+<!--    </UnconstrainedBox>-->
 </absXY>

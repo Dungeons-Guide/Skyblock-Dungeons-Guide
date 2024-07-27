@@ -1,0 +1,16 @@
+{
+  "resources": {
+    "default": {
+      "minX": -35,
+      "minZ": 2,
+      "maxX": 46,
+      "maxZ": 83,
+      "location": "dungeonsguide:map/bossfight/f5_boss.png",
+      "textureWidth": 480,
+      "textureHeight": 480
+    }
+  },
+  "phaseMap": {
+    "start": "default"
+  }
+}

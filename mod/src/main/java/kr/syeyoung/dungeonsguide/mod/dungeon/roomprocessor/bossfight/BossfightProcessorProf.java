@@ -18,15 +18,20 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
+import com.mojang.authlib.properties.Property;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.monster.EntityGuardian;
+import net.minecraft.util.Vec3;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.*;
 
 public class BossfightProcessorProf extends GeneralBossfightProcessor {
     public BossfightProcessorProf(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_THREE" : "CATACOMBS_FLOOR_THREE");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] The Professor§r§f: I was burdened with terrible news recently...§r")
@@ -39,7 +44,7 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("first-defeat")
-                .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians one weakness?§r")
+                .signatureMsg("§r§c[BOSS] The Professor§r§f: Oh? You found my Guardians' one weakness?§r")
                 .nextPhase("fight-2").build()
         );
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
@@ -142,5 +147,48 @@ public class BossfightProcessorProf extends GeneralBossfightProcessor {
             else if (updateEvent.entityLiving.getName().startsWith("§cReinforced Guardian"))
                 reinforcedGuard = (EntityArmorStand) updateEvent.entityLiving;
         }
+        if (updateEvent.entityLiving instanceof EntityGuardian) {
+            boolean xB = Math.abs(updateEvent.entityLiving.posX - 14.5) < 0.01;
+            boolean xS = Math.abs(updateEvent.entityLiving.posX - -11.5) < 0.01;
+            boolean zB = Math.abs(updateEvent.entityLiving.posZ - 14.5) < 0.01;
+            boolean zS = Math.abs(updateEvent.entityLiving.posZ - -11.5) < 0.01;
+            boolean yE = Math.abs(updateEvent.entityLiving.posY - 72.5) < 0.01;
+
+            if (getCurrentPhase().equals("fight-3")) {
+                if (profStand.getPosition().distanceSq(updateEvent.entityLiving.getPosition().add(0, 2, 0)) < 5) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 23);
+                }
+            }
+
+            if (yE && xB && zB) {
+                mapping.put(updateEvent.entityLiving.getEntityId(), 18);
+            } else if (yE && xB && zS) {
+                mapping.put(updateEvent.entityLiving.getEntityId(), 19);
+            } else if (yE && xS && zB) {
+                mapping.put(updateEvent.entityLiving.getEntityId(), 17);
+            } else if (yE && xS && zS) {
+                mapping.put(updateEvent.entityLiving.getEntityId(), 20);
+            } else if (!mapping.containsKey(updateEvent.entityLiving.getEntityId())) {
+                mapping.put(updateEvent.entityLiving.getEntityId(), ((EntityGuardian) updateEvent.entityLiving).isElder() ? 21 : 22);
+            }
+        }
+    }
+
+
+    private Map<Integer, Integer> mapping = new HashMap<>();
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        if (entity instanceof EntityOtherPlayerMP) {
+            if ("The Professor".equals(entity.getName())) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 16);
+            }
+        } else if (entity instanceof EntityGuardian) {
+            if (entity.isInvisible()) return null;
+            Integer val = mapping.get(entity.getEntityId());
+            if (val == null) return null;
+            return MarkerData.fromEntity(entity, val == 23 ? MarkerData.MobType.BOSS : val > 20 ? MarkerData.MobType.ENEMIES : MarkerData.MobType.MINIBOSS, val); // Rogue
+        }
+        return null;
     }
 }

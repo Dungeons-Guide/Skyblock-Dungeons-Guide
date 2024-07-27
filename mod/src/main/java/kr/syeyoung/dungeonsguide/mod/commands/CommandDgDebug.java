@@ -18,6 +18,10 @@
 
 package kr.syeyoung.dungeonsguide.mod.commands;
 
+import com.mojang.authlib.GameProfile;
+import com.mojang.authlib.properties.Property;
+import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import com.google.gson.*;
 import com.google.gson.stream.JsonWriter;
 import kr.syeyoung.dungeonsguide.dungeon.data.*;
@@ -66,6 +70,8 @@ import net.minecraft.client.settings.GameSettings;
 import net.minecraft.command.CommandBase;
 import net.minecraft.command.CommandException;
 import net.minecraft.command.ICommandSender;
+import net.minecraft.entity.Entity;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.nbt.CompressedStreamTools;
 import net.minecraft.nbt.NBTTagCompound;

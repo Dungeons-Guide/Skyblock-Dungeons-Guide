@@ -25,6 +25,7 @@ import net.minecraft.block.BlockColored;
 import net.minecraft.block.state.IBlockState;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.init.Blocks;
 import net.minecraft.item.EnumDyeColor;
@@ -46,6 +47,7 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     private final boolean isMasterMode;
 
     public BossfightProcessorLivid(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_FIVE" : "CATACOMBS_FLOOR_FIVE");
         addPhase(PhaseData.builder().phase("start").build());
         this.isMasterMode = isMasterMode;
     }
@@ -112,5 +114,37 @@ public class BossfightProcessorLivid extends GeneralBossfightProcessor {
     @Override
     public String getBossName() {
         return realLividName == null ? "Livid" : realLividName;
+    }
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        if (entity instanceof EntityOtherPlayerMP) {
+            String name = entity.getName();
+            int idx = 0;
+            if (name.equals("Livid ")) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.BOSS, 46);
+            } else if ("Purple Livid".equals(name)) {
+                idx = 36;
+            } else if ("Vendetta Livid".equals(name)) {
+                idx = 33;
+            } else if ("Crossed Livid".equals(name)) {
+                idx = 38;
+            } else if ("Frog Livid".equals(name)) {
+                idx = 35;
+            } else if ("Hockey Livid".equals(name)) {
+                idx = 37;
+            } else if ("Smile Livid".equals(name)) {
+                idx = 39;
+            } else if ("Arcade Livid".equals(name)) {
+                idx = 32;
+            } else if ("Doctor Livid".equals(name)) {
+                idx = 34;
+            } else if ("Scream Livid".equals(name)) {
+                idx = 47;
+            }
+            if (idx == 0) return null;
+            return MarkerData.fromEntity(entity, name.startsWith(realLividName) ? MarkerData.MobType.BOSS : MarkerData.MobType.WRONG_LIVID, idx);
+        }
+        return null;
     }
 }

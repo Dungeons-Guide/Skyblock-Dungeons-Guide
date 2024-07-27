@@ -19,9 +19,11 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map;
 
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -45,6 +47,8 @@ public class MapConfiguration {
     private NameSettings nameSettings = new NameSettings();
 
     private Map<UUID, RoomOverride> roomOverrides = new HashMap<>();
+
+    private Map<MarkerData.MobType, PlayerHeadSettings> headSettingsMap = new HashMap<>();
 
     @Data
     public static class RoomOverride {
@@ -88,10 +92,10 @@ public class MapConfiguration {
         }
     }
 
-    @Data
+    @Data @NoArgsConstructor
     public static class PlayerHeadSettings {
         private IconType iconType = IconType.HEAD;
-        private double iconSize;
+        private double iconSize = 1.0;
 
         public enum IconType {
             NONE, HEAD, HEAD_FLIP, ARROW

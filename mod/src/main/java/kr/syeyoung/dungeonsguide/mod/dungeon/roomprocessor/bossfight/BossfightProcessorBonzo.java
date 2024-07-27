@@ -22,15 +22,20 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import lombok.AllArgsConstructor;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.util.ResourceLocation;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 
-@AllArgsConstructor
+
 public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     public BossfightProcessorBonzo(boolean isMasterMode) {
+        super(isMasterMode ? "MASTERMODE_CATACOMBS_FLOOR_ONE" : "CATACOMBS_FLOOR_ONE");
         addPhase(GeneralBossfightProcessor.PhaseData.builder()
                 .phase("start")
                 .signatureMsg("§r§c[BOSS] Bonzo §r§f: Gratz for making it this far, but I’m basically unbeatable.§r")
@@ -79,6 +84,23 @@ public class BossfightProcessorBonzo extends GeneralBossfightProcessor {
     }
 
     private EntityArmorStand bonzoStand;
+
+
+    private static final ResourceLocation UNDEAD = new ResourceLocation("dungeonsguide:map/bossfight/f1/undead.png");
+    private static final ResourceLocation BONZO = new ResourceLocation("dungeonsguide:map/bossfight/f1/bonzo.png");
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        if (entity instanceof EntityOtherPlayerMP) {
+            if ("Undead ".equals(entity.getName())) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, 4);
+            } else if ("Bonzo ".equals(entity.getName())){
+                return MarkerData.fromEntity(entity, MarkerData.MobType.ENEMIES, Arrays.asList("start", "fight-1", "first-defeat").contains(getCurrentPhase()) ? 0 : 1);
+            }
+        }
+        return null;
+    }
+
     @Override
     // §e﴾ §c§lBonzo§r §e71k§c❤ §e﴿
     // §e﴾ §c§lBonzo§r §a250k§c❤ §e﴿

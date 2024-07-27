@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCDouble;
 import kr.syeyoung.dungeonsguide.mod.config.types.TCEnum;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoomInfoRegistry;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteTooltip.WidgetInvite;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -47,6 +48,8 @@ import net.minecraft.util.ResourceLocation;
 import java.util.*;
 import java.util.function.Consumer;
 import java.util.function.Function;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
@@ -112,6 +115,12 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "overrideApi")
     public final BindableAttribute<Wrap> overrideApi = new BindableAttribute<>(Wrap.class);
 
+    @Bind(variableName = "waypoints")
+    public final BindableAttribute<List<Widget>> waypointSettings =  new BindableAttribute(WidgetList.class);
+    @Bind(variableName = "waypointsApi")
+    public final BindableAttribute<Wrap> waypointSettingsApi = new BindableAttribute<>(Wrap.class);
+
+
     private <T> Widget generateConfigWidget(FeatureDungeonMap2 featureDungeonMap2, String key, Function<FeatureParameter<T>, Widget> converter) {
         FeatureParameter<T> featureParameter = featureDungeonMap2.getParameter(key);
         return converter.apply(featureParameter);
@@ -167,16 +176,45 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         });
         iconstyledescription.setValue(featureDungeonMap2.<MapConfiguration.RoomInfoSettings.Style>getParameter("iconStyle").getValue().getDescription());
 
+
+        if (waypointSettingsApi.getValue() != null) {
+            waypointSettingsApi.getValue().removeAllWidget();;
+
+            for (MarkerData.MobType value : MarkerData.MobType.values()) {
+                MapConfiguration.PlayerHeadSettings headSettings = featureDungeonMap2.getMapConfiguration().getHeadSettingsMap().get(value);
+                waypointSettingsApi.getValue().addWidget(new WidgetSimpleField(value.name()+" Scale: ", new WidgetScalebar(headSettings.getIconSize(), headSettings::setIconSize, 0.5, 3.0)));
+                waypointSettingsApi.getValue().addWidget(new WidgetSimpleField(value.name()+" Style: ", new EnumEditWidget<>(
+                        Stream.of(MapConfiguration.PlayerHeadSettings.IconType.values()).filter(a -> a != MapConfiguration.PlayerHeadSettings.IconType.ARROW).collect(Collectors.toList()).toArray(new MapConfiguration.PlayerHeadSettings.IconType[3]), headSettings.getIconType(), headSettings::setIconType)));
+            }
+        } else {
+            List<Widget> widgets = new ArrayList<>();
+            for (MarkerData.MobType value : MarkerData.MobType.values()) {
+                MapConfiguration.PlayerHeadSettings headSettings = featureDungeonMap2.getMapConfiguration().getHeadSettingsMap().get(value);
+                widgets.add(new WidgetSimpleField(value.name()+" Scale: ", new WidgetScalebar(headSettings.getIconSize(), headSettings::setIconSize, 0.5, 3.0)));
+                widgets.add(new WidgetSimpleField(value.name()+" Style: ", new EnumEditWidget<>(
+                        Stream.of(MapConfiguration.PlayerHeadSettings.IconType.values()).filter(a -> a != MapConfiguration.PlayerHeadSettings.IconType.ARROW).collect(Collectors.toList()).toArray(new MapConfiguration.PlayerHeadSettings.IconType[3]), headSettings.getIconType(), headSettings::setIconType)));
+            }
+            waypointSettings.setValue(widgets);
+        }
+
         rebuildOverrides();
     }
 
     @On(functionName = "addOverride")
     public void addOverride() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         WidgetAddRoomPopup modalMessage = new WidgetAddRoomPopup(this);
         PopupMgr.getPopupMgr(getDomElement()).openPopup(new Modal(300, 200, "Add New Room", modalMessage, true), (a) -> {
             if (a instanceof UUID)
                 addOverride((UUID)a);
         });
+    }
+    @On(functionName = "resetscale")
+    public void resetScale() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        for (MapConfiguration.PlayerHeadSettings value : dungeonMap2.getMapConfiguration().getHeadSettingsMap().values()) {
+            value.setIconSize(1.0);
+        }
     }
 
     public void addOverride(UUID uuid) {
@@ -188,8 +226,10 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         return dungeonMap2.getMapConfiguration().getRoomOverrides().containsKey(uuid);
     }
 
+
     @On(functionName = "reset")
     public void reset() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         for (FeatureParameter parameter : dungeonMap2.getParameters()) {
             parameter.setValue(parameter.getDefault_value());
         }
@@ -221,6 +261,18 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         rebuildOverrides();
     }
 
+    public static class WidgetSimpleField extends AnnotatedImportOnlyWidget {
+        @Bind(variableName = "fieldName")
+        public final BindableAttribute<String> name = new BindableAttribute<>(String.class);
+        @Bind(variableName = "fieldValue")
+        public final BindableAttribute<Widget> value = new BindableAttribute<>(Widget.class);
+
+        public WidgetSimpleField(String name, Widget editor) {
+            super(new ResourceLocation("dungeonsguide:gui/features/map/field.gui"));
+            this.name.setValue(name);
+            this.value.setValue(editor);
+        }
+    }
     public static class WidgetRoomOverride extends AnnotatedImportOnlyWidget {
         @Bind(variableName = "iconLocation")
         public final BindableAttribute<String> iconLocation = new BindableAttribute<>(String.class);
@@ -328,12 +380,14 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
 
         @On(functionName = "delete")
         public void delete() {
+            Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
             widgetMapConfiguration.deleteOverride(uuid);
         }
     }
 
     @On(functionName = "syncscale")
     public void syncScale() {
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
         FeatureParameter<Double> param1 = dungeonMap2.<Double>getParameter("selfscale");
         FeatureParameter<Double> param2 = dungeonMap2.<Double>getParameter("otherscale");
         double newVal = Math.max(param1.getValue(), param2.getValue());
@@ -352,7 +406,10 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         public BooleanEditWidget(Boolean defaultValue, Consumer<Boolean> onUpdate) {
             super(new ResourceLocation("dungeonsguide:gui/config/parameter/boolean.gui"));
             isEnabled.setValue(defaultValue);
-            isEnabled.addOnUpdate((old, neu) -> onUpdate.accept(neu));
+            isEnabled.addOnUpdate((old, neu) -> {
+                Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+                onUpdate.accept(neu);
+            });
         }
     }
 

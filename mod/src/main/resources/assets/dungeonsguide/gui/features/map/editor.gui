@@ -182,6 +182,16 @@
                     <size height="5"/>
                     <line color="#FFFFFFFF" dir="HORIZONTAL"/>
                     <size height="5"/>
+                    <Text text="Mob &amp; Waypoint Rendering" size="12" color="#FFFFFFFF"/>
+                    <size height="5"/>
+                    <WrapGrid minimumWidth="200" gap="5" bind:_="waypoints" bind:api="waypointsApi"/>
+                    <size height="5"/>
+                    <size height="15">
+                        <RoundButton text="Reset All Waypoint Scale to One" on:click="resetscale"/>
+                    </size>
+                    <size height="5"/>
+                    <line color="#FFFFFFFF" dir="HORIZONTAL"/>
+                    <size height="5"/>
                     <slot bind:child="presetList"/>
                     <size height="5"/>
                     <line color="#FFFFFFFF" dir="HORIZONTAL"/>

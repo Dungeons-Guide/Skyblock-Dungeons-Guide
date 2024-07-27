@@ -37,8 +37,8 @@ public class DungeonMapLayout {
 
 
     public BlockPos mapPointToWorldPoint(Point mapPoint) {
-        int x = (int) ((mapPoint.x - originPoint.x) / ((double) unitRoomSize.width + mapRoomGap) * 32 + worldMin.getX());
-        int y = (int) ((mapPoint.y - originPoint.y) / ((double) unitRoomSize.height + mapRoomGap) * 32 + worldMin.getZ());
+        int x = (int) ((mapPoint.x - originPoint.x + mapRoomGap / 2.0) / ((double) unitRoomSize.width + mapRoomGap) * 32 + worldMin.getX());
+        int y = (int) ((mapPoint.y - originPoint.y + mapRoomGap / 2.0) / ((double) unitRoomSize.height + mapRoomGap) * 32 + worldMin.getZ());
         return new BlockPos(x, 70, y);
     }
 
@@ -57,13 +57,13 @@ public class DungeonMapLayout {
 
     public Point worldPointToMapPoint(Vec3 worldPoint) {
         if (worldMin == null) return null;
-        return new Point(originPoint.x + (int) ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)), originPoint.y + (int) ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)));
+        return new Point(originPoint.x + (int) ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2, originPoint.y + (int) ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2);
     }
 
     public Vector2d worldPointToMapPointFLOAT(Vec3 worldPoint) {
         if (worldMin == null) return null;
-        double x = originPoint.x + ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap));
-        double y = originPoint.y + ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap));
+        double x = originPoint.x + ((worldPoint.xCoord - worldMin.getX()) / 32.0f * (unitRoomSize.width + mapRoomGap)) - mapRoomGap / 2.0;
+        double y = originPoint.y + ((worldPoint.zCoord - worldMin.getZ()) / 32.0f * (unitRoomSize.height + mapRoomGap)) - mapRoomGap / 2.0;
         return new Vector2d(x, y);
     }
 

@@ -19,14 +19,23 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight;
 
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.entity.EntityOtherPlayerMP;
+import net.minecraft.entity.Entity;
 import net.minecraft.entity.item.EntityArmorStand;
+import net.minecraft.entity.monster.EntityGhast;
+import net.minecraft.entity.monster.EntityGiantZombie;
+import net.minecraft.entity.monster.EntityIronGolem;
+import net.minecraft.entity.passive.*;
 import net.minecraftforge.event.entity.living.LivingEvent;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 public class BossfightProcessorSadan extends GeneralBossfightProcessor {
     public BossfightProcessorSadan() {
+        super("CATACOMBS_FLOOR_SIX");
         addPhase(PhaseData.builder()
                 .phase("start")
                 .signatureMsg("So you made it all the way §r§fhere...and§r§f you wish to defy me? Sadan?!§r")
@@ -83,7 +92,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[3];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("The Diamond Giant", (int) health, 25000000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("The Diamond Giant", (int) health, 25000000, this.getCurrentPhase().equals("fight-2")));
             }
             {
                 long health = 0;
@@ -92,7 +101,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[1];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Bigfoot", (int) health, 25000000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("Bigfoot", (int) health, 25000000, this.getCurrentPhase().equals("fight-2")));
             }
             {
                 long health = 0;
@@ -101,7 +110,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[1];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("L.A.S.R.", (int) health, 25000000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("L.A.S.R.", (int) health, 25000000, this.getCurrentPhase().equals("fight-2")));
             }
             {
                 long health = 0;
@@ -110,7 +119,7 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
                     String healthPart = name.split(" ")[3];
                     health = TextUtils.reverseFormat(healthPart.substring(0, healthPart.length() - 1));
                 }
-                healths.add(new HealthData("Jolly Pink Giant", (int) health, 25000000, this.getCurrentPhase().startsWith("fight-")));
+                healths.add(new HealthData("Jolly Pink Giant", (int) health, 25000000, this.getCurrentPhase().equals("fight-2")));
             }
         }
         return healths;
@@ -139,6 +148,57 @@ public class BossfightProcessorSadan extends GeneralBossfightProcessor {
                 diamondGiant = (EntityArmorStand) updateEvent.entityLiving;
             else if (updateEvent.entityLiving.getName().startsWith("§c§c§lBigfoot"))
                 bigfootGiant = (EntityArmorStand) updateEvent.entityLiving;
+        } else if (updateEvent.entityLiving instanceof EntityGiantZombie) {
+
+            if (updateEvent.entityLiving.posY < 55) {
+                mapping.put(updateEvent.entityLiving.getEntityId(), 50);
+            } else if (Math.abs(updateEvent.entityLiving.posY - 84.0) < 0.01) {
+                boolean xS = Math.abs(updateEvent.entityLiving.posX - -16.5) < 0.01;
+                boolean xB = Math.abs(updateEvent.entityLiving.posX - -0.5) < 0.01;
+                boolean zS = Math.abs(updateEvent.entityLiving.posZ - 53.5) < 0.01;
+                boolean zB = Math.abs(updateEvent.entityLiving.posZ - 79.5) < 0.01;
+
+                // 43 44 51 52
+                if (xS && zS) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 52); // jolley
+                } else if (xS && zB) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 43); // diamond
+                } else if (xB && zB) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 51); // big foot
+                } else if (xB && zS) {
+                    mapping.put(updateEvent.entityLiving.getEntityId(), 49); // laser
+                }
+            }
+            // lpx
+            // fpx
+
+            // -8.5 66.5 54.0
+            // -16.5 79.5
+            // -0.5 53.5
+            // -0.5 79.5
+            // -16.5 53.5
         }
+    }
+
+    private Map<Integer, Integer> mapping = new HashMap<>();
+
+
+    @Override
+    public MarkerData convertToMarker(Entity entity) {
+        if (entity instanceof EntityIronGolem) {
+            return MarkerData.fromEntity(entity, MarkerData.MobType.GOLEM, Math.abs(entity.rotationPitch - 59.0625) < 0.01 ? 42 : 49);
+        } else if (entity instanceof EntityGiantZombie) {
+            Integer map = mapping.get(entity.getEntityId());
+            if (map == null) return null;
+            return MarkerData.fromEntity(entity, MarkerData.MobType.MINIBOSS, map);
+        } else if (entity instanceof EntityOtherPlayerMP) {
+            String name = entity.getName();
+            if ("Terracotta ".equals(name)) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.TERRACOTA, 41);
+            } else if ("Sadan ".equals(name)) {
+                return MarkerData.fromEntity(entity, MarkerData.MobType.TERRACOTA, 40);
+            }
+        }
+        return null;
     }
 }

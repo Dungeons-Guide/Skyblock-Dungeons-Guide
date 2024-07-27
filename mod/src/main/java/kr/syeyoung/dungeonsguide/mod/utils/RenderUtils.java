@@ -1373,6 +1373,55 @@ public class RenderUtils {
         GlStateManager.popMatrix();
     }
 
+    public static void drawTextAtWorldDepth(String text, float x, float y, float z, int color, float scale, boolean increase, boolean renderBlackBox, float partialTicks) {
+        float lScale = scale;
+
+        RenderManager renderManager = Minecraft.getMinecraft().getRenderManager();
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+
+        Vector3f renderPos = getRenderPos(x, y, z, partialTicks);
+
+        if (increase) {
+            double distance = Math.sqrt(renderPos.x * renderPos.x + renderPos.y * renderPos.y + renderPos.z * renderPos.z);
+            double multiplier = distance / 120f; //mobs only render ~120 blocks away
+            lScale *= 0.45f * multiplier;
+        }
+
+        GlStateManager.color(1f, 1f, 1f, 0.5f);
+        GlStateManager.pushMatrix();
+        GlStateManager.translate(renderPos.x, renderPos.y, renderPos.z);
+        GlStateManager.rotate(-renderManager.playerViewY, 0.0f, 1.0f, 0.0f);
+        GlStateManager.rotate(renderManager.playerViewX, 1.0f, 0.0f, 0.0f);
+        GlStateManager.scale(-lScale, -lScale, lScale);
+        GlStateManager.disableLighting();
+        GlStateManager.enableBlend();
+        GlStateManager.blendFunc(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA);
+
+        int textWidth = fontRenderer.getStringWidth(text);
+
+        Tessellator tessellator = Tessellator.getInstance();
+        WorldRenderer worldRenderer = tessellator.getWorldRenderer();
+        if (renderBlackBox) {
+            double j = textWidth / 2;
+            GlStateManager.disableTexture2D();
+            worldRenderer.begin(7, DefaultVertexFormats.POSITION_COLOR);
+            worldRenderer.pos(-j - 1, -1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(-j - 1, 8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(j + 1, 8, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            worldRenderer.pos(j + 1, -1, 0.0).color(0.0f, 0.0f, 0.0f, 0.25f).endVertex();
+            tessellator.draw();
+            GlStateManager.enableTexture2D();
+        }
+
+        GlStateManager.enableBlend();
+        GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
+        fontRenderer.drawString(text, -textWidth / 2, 0, color);
+
+        GlStateManager.color(1.0f, 1.0f, 1.0f, 1.0f);
+        GlStateManager.popMatrix();
+    }
+
     public static Vector3f getRenderPos(float x, float y, float z, float partialTicks) {
         EntityPlayerSP sp = Minecraft.getMinecraft().thePlayer;
         return new Vector3f(

@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorMasterModeNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
@@ -41,7 +42,7 @@ import java.util.List;
 
 public class FeatureSimonSaysSolver extends SimpleFeature {
     public FeatureSimonSaysSolver() {
-        super("Bossfight.Floor 7","Simon Says Solver","Solver for Simon says puzzle", "Dungeon.Bossfight.simonsays2");
+        super("Bossfight.Floor 7","Simon Says Solver","Solver for Simon says device", "Dungeon.Bossfight.simonsays2");
     }
 
     private final List<BlockPos> orderBuild = new ArrayList<BlockPos>();
@@ -55,8 +56,8 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (dc == null) {
             return;
         }
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(309,123,291) > 400) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
+        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(110,120,94) > 400) return;
 
 
         if (orderClick.size() >= 1)
@@ -72,22 +73,26 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             wasButton = false;
             return;
         }
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
-        if (wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.air) {
+        World w = dc.getWorld();
+        if (wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.air) { // check here instead :D
             orderClick.clear();
             orderBuild.clear();
             wasButton = false;
-        } else if (!wasButton && DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(new BlockPos(309, 123, 291)).getBlock() == Blocks.stone_button){
+        } else if (!wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.stone_button){
             orderClick.addAll(orderBuild);
             wasButton = true;
+            System.out.println(orderClick);
         }
 
 
         if (!wasButton) {
-            for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(310, 123, 291), new BlockPos(310, 120, 294))) {
-                if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
+            for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(111, 120, 92), new BlockPos(111, 123, 95))) {
+                if (w.getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
                     orderBuild.add(allInBox);
+
+                    System.out.println(orderBuild);
                 }
             }
         }
@@ -99,13 +104,13 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
 
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) return;
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
         World w = dc.getWorld();
 
         BlockPos pos = event.pos.add(1,0,0);
-        if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 310 && 291 <= pos.getZ() && pos.getZ() <= 294) {
-            if (DungeonsGuide.getDungeonsGuide().getBlockCache().getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
+        if (120 <= pos.getY() && pos.getY() <= 123 && pos.getX() == 111 && 92 <= pos.getZ() && pos.getZ() <= 95) {
+            if (w.getBlockState(event.pos).getBlock() != Blocks.stone_button) return;
             if (pos.equals(orderClick.peek())) {
                 orderClick.poll();
             }

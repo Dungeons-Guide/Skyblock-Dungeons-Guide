@@ -25,8 +25,9 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 public interface Layouter {
     public abstract Size layout(DomElement buildContext, ConstraintBox constraintBox);
     public static double clamp(double val, double min, double max) {
-        if (val < min) return min;
+        if (min > max) throw new IllegalArgumentException("Min is bigger than MAX!!!");
         if (val > max) return max;
+        if (val < min) return min;
         return val;
     }
 
