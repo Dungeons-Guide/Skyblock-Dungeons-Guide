@@ -41,7 +41,7 @@ import java.util.List;
 
 public class FeatureTerminalSolvers extends SimpleFeature {
     public FeatureTerminalSolvers() {
-        super("Bossfight.Floor 7","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, starts with, order, navigate, correct panes)", "bossfight.terminals");
+        super("Bossfight.Floor 7","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, starts with, order, navigate, correct panes, click in time)", "bossfight.terminals");
 
         addParameter("cancelwrongclick", new FeatureParameter<>("cancelwrongclick", "Block invalid clicks", "", true, TCBoolean.INSTANCE, nval -> block = nval));
     }
@@ -56,6 +56,7 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         solutionProviders.add(new SelectInOrderSolutionProvider());
         solutionProviders.add(new NavigateMazeSolutionProvider());
         solutionProviders.add(new CorrectThePaneSolutionProvider());
+        solutionProviders.add(new MelodySolutionProvider());
     }
 
     private TerminalSolutionProvider solutionProvider;
@@ -145,9 +146,14 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         if (solution.getCurrSlots() == null) {
             return;
         }
-        Slot s = ((GuiChest) Minecraft.getMinecraft().currentScreen).getSlotUnderMouse();
+        GuiChest chest = (GuiChest) Minecraft.getMinecraft().currentScreen;
+
+        Slot s = chest.getSlotUnderMouse();
         if (solution.getCurrSlots().contains(s)) {
             clicked.add(s);
+            // swap with middle click
+//            mouseInputEvent.setCanceled(true);
+//            Minecraft.getMinecraft().playerController.windowClick(chest.inventorySlots.windowId, s.slotNumber, 0, 4, Minecraft.getMinecraft().thePlayer);
         } else {
             if (block)
                 mouseInputEvent.setCanceled(true);

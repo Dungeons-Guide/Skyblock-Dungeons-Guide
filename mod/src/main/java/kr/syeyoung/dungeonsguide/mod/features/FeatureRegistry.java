@@ -25,6 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.*;
+import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureChangeAllToSameColorSolver;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureSimonSaysSolver;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureTerminalSolvers;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeatureNicknameColor;
@@ -193,6 +194,7 @@ public class FeatureRegistry {
     public static final FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER = register(new FeatureTerracotaTimer());
     public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
     public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
+    public static final FeatureChangeAllToSameColorSolver BOSSFIGHT_CHANGE_ALL_SAME_TERMINAL_SOLVER = register(new FeatureChangeAllToSameColorSolver());
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
     public static final FeatureF7TerminalWaypoints BOSSFIGHT_F7_WAYPOINTS = register(new FeatureF7TerminalWaypoints());
 
