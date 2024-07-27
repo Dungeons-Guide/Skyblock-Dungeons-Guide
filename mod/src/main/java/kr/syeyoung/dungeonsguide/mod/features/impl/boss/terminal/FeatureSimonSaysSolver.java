@@ -83,7 +83,6 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         } else if (!wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.stone_button){
             orderClick.addAll(orderBuild);
             wasButton = true;
-            System.out.println(orderClick);
         }
 
 
@@ -91,8 +90,6 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             for (BlockPos allInBox : BlockPos.getAllInBox(new BlockPos(111, 120, 92), new BlockPos(111, 123, 95))) {
                 if (w.getBlockState(allInBox).getBlock() == Blocks.sea_lantern && !orderBuild.contains(allInBox)) {
                     orderBuild.add(allInBox);
-
-                    System.out.println(orderBuild);
                 }
             }
         }

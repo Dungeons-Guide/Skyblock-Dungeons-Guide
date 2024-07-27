@@ -55,7 +55,6 @@ public class MelodySolutionProvider implements TerminalSolutionProvider {
                 break;
             }
         }
-        System.out.println(target +" / " + row);
         Slot toChk = chest.getSlot(10 + target + 9 * row);
         if (toChk.getHasStack() && toChk.getStack() != null &&
                 toChk.getStack().getItem() == Item.getItemFromBlock(Blocks.stained_glass_pane) &&

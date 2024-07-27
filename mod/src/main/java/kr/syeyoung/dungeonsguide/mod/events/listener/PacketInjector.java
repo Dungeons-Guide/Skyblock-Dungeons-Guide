@@ -22,6 +22,7 @@ import io.netty.channel.*;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PacketProcessedEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.RawPacketReceivedEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import net.minecraft.client.Minecraft;
 import net.minecraft.network.Packet;
@@ -96,7 +97,12 @@ public class PacketInjector extends ChannelDuplexHandler {
                 piee = new PlayerInteractEntityEvent(true, false, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
             else
                 piee = new PlayerInteractEntityEvent(false, packet2.getAction() == C02PacketUseEntity.Action.INTERACT_AT, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
-            if (MinecraftForge.EVENT_BUS.post(piee)) return;
+            try {
+                if (MinecraftForge.EVENT_BUS.post(piee)) return;
+            } catch (Exception e) {
+                FeatureCollectDiagnostics.queueSendLogAsync(e);
+                e.printStackTrace();
+            }
         }
         super.write(ctx, msg, promise);
     }

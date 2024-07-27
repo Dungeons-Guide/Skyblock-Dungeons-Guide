@@ -77,7 +77,6 @@ public class DungeonWizard implements DungeonMechanic {
         if ("quest".equalsIgnoreCase(state)) {
             base.add(new ActionChangeState(crystal, "obtained-self"));
         }
-        System.out.println(realbase);
         return realbase;
     }
 
