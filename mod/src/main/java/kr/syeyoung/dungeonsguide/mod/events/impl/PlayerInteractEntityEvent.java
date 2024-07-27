@@ -30,6 +30,8 @@ public class PlayerInteractEntityEvent extends Event {
     @Getter @Setter
     private boolean attack;
     @Getter @Setter
+    private boolean interactAt;
+    @Getter @Setter
     private Entity entity;
 
     @Override

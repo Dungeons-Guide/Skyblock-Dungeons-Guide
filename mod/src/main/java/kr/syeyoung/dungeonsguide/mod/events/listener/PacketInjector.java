@@ -93,9 +93,9 @@ public class PacketInjector extends ChannelDuplexHandler {
             C02PacketUseEntity packet2 = (C02PacketUseEntity) packet;
             PlayerInteractEntityEvent piee;
             if (packet2.getAction() == C02PacketUseEntity.Action.ATTACK)
-                piee = new PlayerInteractEntityEvent(true, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
+                piee = new PlayerInteractEntityEvent(true, false, packet2.getEntityFromWorld(Minecraft.getMinecraft().theWorld));
             else
-                piee = new PlayerInteractEntityEvent(false, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
+                piee = new PlayerInteractEntityEvent(false, packet2.getAction() == C02PacketUseEntity.Action.INTERACT_AT, ((C02PacketUseEntity) packet).getEntityFromWorld(Minecraft.getMinecraft().theWorld));
             if (MinecraftForge.EVENT_BUS.post(piee)) return;
         }
         super.write(ctx, msg, promise);

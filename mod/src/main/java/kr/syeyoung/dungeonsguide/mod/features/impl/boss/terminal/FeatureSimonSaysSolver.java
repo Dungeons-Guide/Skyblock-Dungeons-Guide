@@ -41,7 +41,7 @@ import java.util.List;
 
 public class FeatureSimonSaysSolver extends SimpleFeature {
     public FeatureSimonSaysSolver() {
-        super("Bossfight.Floor 7","Simon Says Solver","Solver for Simon says puzzle", "Dungeon.Bossfight.simonsays2");
+        super("Bossfight.Floor 7","Simon Says Solver","Solver for Simon says device", "Dungeon.Bossfight.simonsays2");
     }
 
     private final List<BlockPos> orderBuild = new ArrayList<BlockPos>();
