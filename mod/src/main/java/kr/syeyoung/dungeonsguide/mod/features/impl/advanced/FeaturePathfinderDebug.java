@@ -79,7 +79,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
             for (CachedPathfinder cachedPathfinder : instance) {
                 PathfindResult res = cachedPathfinder.getRoute(pfDebugPt);
                 if (res == null) continue;
-                cnt++; EnderPea
+                cnt++;
                 Color c = Color.getHSBColor(cnt / ((float)instance.size() * pfDebugPts.size()), 1.0f, 1.0f);
 
                 GlStateManager.disableDepth();
