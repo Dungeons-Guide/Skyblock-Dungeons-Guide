@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorMasterModeNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
@@ -64,7 +65,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         if (dc == null) {
             return;
         }
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
 
         for (int y = 0; y < 5; y++){
@@ -83,7 +84,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             wasButton = false;
             return;
         }
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
 
         if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
@@ -192,7 +193,7 @@ public class FeatureArrowPathSolver extends SimpleFeature {
 
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) return;
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (event.isAttack()) return;
         if (event.isInteractAt()) return;
 

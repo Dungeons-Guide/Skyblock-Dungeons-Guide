@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonFacade;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorMasterModeNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
@@ -84,18 +85,18 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
     private boolean all;
 
-    public BossfightProcessorNecron getProcessor() {
+    public BossfightProcessor getProcessor() {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context == null) return null;
         BossfightProcessor processor = context.getBossfightProcessor();
-        if (!(processor instanceof BossfightProcessorNecron)) return null;
-        return (BossfightProcessorNecron) processor;
+        if (!(processor instanceof BossfightProcessorNecron || context.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return null;
+        return  processor;
     }
 
     @DGEventHandler
     public void onRenderWorldLast(RenderWorldLastEvent event) {
         if (!beacon) return;
-        BossfightProcessorNecron necron = getProcessor();
+        BossfightProcessor necron = getProcessor();
         if (necron == null) return;
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;
         List<WaypointData> allWaypts = new ArrayList<>();
@@ -159,7 +160,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
 
     @DGEventHandler
     public void onTick(DGTickEvent event) {
-        BossfightProcessorNecron necron = getProcessor();
+        BossfightProcessor necron = getProcessor();
         if (necron == null) return;
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;
 
@@ -268,7 +269,7 @@ public class FeatureF7TerminalWaypoints extends SimpleFeature {
     }
 
     public void addMarkers(List<MarkerData> markers) {
-        BossfightProcessorNecron necron = getProcessor();
+        BossfightProcessor necron = getProcessor();
         if (necron == null) return;
         if (!necron.getCurrentPhase().startsWith("goldor-terminals")) return;
         List<WaypointData> allWaypts = new ArrayList<>();

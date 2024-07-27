@@ -22,6 +22,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorMasterModeNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
@@ -55,7 +56,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
         if (dc == null) {
             return;
         }
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(110,120,94) > 400) return;
 
 
@@ -72,7 +73,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
             wasButton = false;
             return;
         }
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
 
         World w = dc.getWorld();
         if (wasButton && w.getBlockState(new BlockPos(110, 121, 92)).getBlock() == Blocks.air) { // check here instead :D
@@ -103,7 +104,7 @@ public class FeatureSimonSaysSolver extends SimpleFeature {
 
         DungeonContext dc = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dc == null) return;
-        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron)) return;
+        if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
         if (event.action != PlayerInteractEvent.Action.RIGHT_CLICK_BLOCK) return;
         World w = dc.getWorld();
 

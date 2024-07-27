@@ -41,6 +41,8 @@ public class MasterModeDataProvider extends CatacombsDataProvider {
             return new BossfightProcessorProf(true);
         } else if (floor.equals("M4")) {
             return new BossfightProcessorThorn(true);
+        } else if (floor.equals("M7")) {
+            return new BossfightProcessorMasterModeNecron(); // necron bossfight is bit different
         }
         return null;
     }

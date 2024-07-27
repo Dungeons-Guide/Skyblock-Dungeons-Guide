@@ -22,7 +22,6 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import net.minecraft.entity.Entity;
 import net.minecraft.entity.boss.BossStatus;
 import net.minecraft.entity.boss.EntityWither;
-import net.minecraft.entity.item.EntityArmorStand;
 import net.minecraft.entity.item.EntityEnderCrystal;
 import net.minecraft.entity.monster.EntitySkeleton;
 
@@ -31,7 +30,7 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
 
-public class BossfightProcessorNecron extends GeneralBossfightProcessor {
+public class BossfightProcessorMasterModeNecron extends GeneralBossfightProcessor {
     // \A7 to §
 
     /*
@@ -135,7 +134,7 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
      * 68 126 50 ~ 64 130 50: 63 127 35 stand ARROW SHOOT
      */
 
-    public BossfightProcessorNecron() {
+    public BossfightProcessorMasterModeNecron() {
         super("CATACOMBS_FLOOR_SEVEN");
         addPhase(PhaseData.builder()
                 .phase("maxor-fight")
@@ -182,11 +181,15 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
         addPhase(PhaseData.builder()
                 .phase("necron-fight")
                 .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cThat's a very impressive trick. I guess I'll have to handle this myself.§r")
-                .nextPhase("won").nextPhase("lost").build()
+                .nextPhase("witherking-fight").nextPhase("lost").build()
         );
         addPhase(PhaseData.builder()
+                .phase("witherking-fight")
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cThe Catacombs... are no more.§r")
+                .nextPhase("won").nextPhase("lost").build());
+        addPhase(PhaseData.builder()
                 .phase("won")
-                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cAll this, for nothing...§r").build()
+                .signatureMsg("§r§4[BOSS] Necron§r§c: §r§cIncredible. You did what I couldn't do myself.§r").build()
         );
         addPhase(PhaseData.builder()
                 .phase("lost")
@@ -194,6 +197,7 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
                 .signatureMsg("§r§4[BOSS] Goldor§r§c: §r§cFINALLY! This took way too long.§r")
                 .signatureMsg("§r§4[BOSS] Storm§r§c: §r§cFINALLY! This took way too long.§r")
                 .signatureMsg("§r§4[BOSS] Maxor§r§c: §r§cFINALLY! This took way too long.§r")
+                .signatureMsg("§r§4[BOSS] Wither King§r§c: Thank you for coming all the way here.§r")
                 .build()
         );
     }
@@ -207,16 +211,16 @@ public class BossfightProcessorNecron extends GeneralBossfightProcessor {
         String name = "";
         if (Arrays.asList("maxor-fight").contains(getCurrentPhase())) {
             name = "Maxor";
-            maxHealth = 100_000_000;
+            maxHealth = 800_000_000;
         } else if (Arrays.asList("storm-fight").contains(getCurrentPhase())) {
             name = "Storm";
-            maxHealth = 400_000_000;
+            maxHealth = 800_000_000;
         } else if (Arrays.asList("goldor-terminals-1", "goldor-terminals-2", "goldor-terminals-3", "goldor-terminals-1", "goldor-fight").contains(getCurrentPhase())) {
             name = "Goldor";
-            maxHealth = 750_000_000;
+            maxHealth = 1_200_000_000;
         } else if (Arrays.asList("necron-intro", "necron-fight").contains(getCurrentPhase())) {
             name = "Necron";
-            maxHealth = 1_000_000_000;
+            maxHealth = 1_400_000_000;
         }
         if (name.equals("")) return Collections.emptyList();
         healths.add(new HealthData(name, (int) (BossStatus.healthScale * maxHealth),maxHealth , this.getCurrentPhase().startsWith("fight-")));
