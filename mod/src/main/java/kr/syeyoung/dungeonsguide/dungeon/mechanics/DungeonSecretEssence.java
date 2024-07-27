@@ -60,7 +60,7 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
-                dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("e-" + ISecret.toString(pos), true);
             }
 
     }
@@ -73,10 +73,10 @@ public class DungeonSecretEssence implements DungeonMechanic, ISecret {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
-                dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("e-" + ISecret.toString(pos), true);
                 return SecretStatus.DEFINITELY_NOT;
             } else {
-                if (dungeonRoom.getRoomContext().containsKey("e-" + pos.toString()))
+                if (dungeonRoom.getRoomContext().containsKey("e-" + ISecret.toString(pos)))
                     return SecretStatus.FOUND;
                 return SecretStatus.NOT_SURE;
             }

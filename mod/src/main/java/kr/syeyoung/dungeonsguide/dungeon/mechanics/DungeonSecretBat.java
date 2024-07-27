@@ -51,14 +51,14 @@ public class DungeonSecretBat implements DungeonMechanic, ISecret {
 
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
             BlockPos bpos = secretPoint.getBlockPos(dungeonRoom);
-            if (dungeonRoom.getRoomContext().containsKey("b-"+bpos.toString())) {
+            if (dungeonRoom.getRoomContext().containsKey("b-"+ISecret.toString(bpos))) {
                 return SecretStatus.FOUND;
             }
             Vec3 spawn = new Vec3(bpos);
             for (Integer killed : DungeonActionContext.getKilleds()) {
                 if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
                 if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
-                    dungeonRoom.getRoomContext().put("b-"+bpos.toString(), true);
+                    dungeonRoom.getRoomContext().put("b-"+ISecret.toString(bpos), true);
                     return SecretStatus.FOUND;
                 }
             }

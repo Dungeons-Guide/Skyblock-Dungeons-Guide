@@ -64,9 +64,9 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if(chest != null){
                     if (chest.numPlayersUsing > 0) {
-                        dungeonRoom.getRoomContext().put("c-" + pos.toString(), 2);
+                        dungeonRoom.getRoomContext().put("c-" + ISecret.toString(pos), 2);
                     } else {
-                        dungeonRoom.getRoomContext().put("c-" + pos.toString(), 1);
+                        dungeonRoom.getRoomContext().put("c-" + ISecret.toString(pos), 1);
                     }
                 } else {
                     System.out.println("Expected TileEntityChest at " + pos + " to not be null");
@@ -81,8 +81,8 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
     public SecretStatus getSecretStatus(DungeonRoom dungeonRoom) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
-            if (dungeonRoom.getRoomContext().containsKey("c-" + pos.toString()))
-                return ((int) dungeonRoom.getRoomContext().get("c-" + pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
+            if (dungeonRoom.getRoomContext().containsKey("c-" + ISecret.toString(pos)))
+                return ((int) dungeonRoom.getRoomContext().get("c-" + ISecret.toString(pos)) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
             if (blockState.getBlock() == Blocks.air) {
                 return SecretStatus.DEFINITELY_NOT;

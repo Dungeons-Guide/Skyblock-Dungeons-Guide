@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.dungeon.mechanics;
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
+import net.minecraft.util.BlockPos;
 
 import java.util.List;
 
@@ -30,4 +31,8 @@ public interface ISecret {
     void tick(DungeonRoom dungeonRoom);
 
     List<String> getPreRequisite();
+
+    static String toString(BlockPos pos) {
+        return pos.getX()+","+pos.getY()+","+pos.getZ();
+    }
 }
