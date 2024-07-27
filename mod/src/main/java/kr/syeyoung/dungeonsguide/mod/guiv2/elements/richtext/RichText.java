@@ -33,6 +33,7 @@ import java.util.List;
 
 public class RichText extends Widget implements Layouter, Renderer {
     private TextSpan rootSpan;
+    private List<FlatTextSpan> flattenSpan = new LinkedList<>();
     private BreakWord breakWord;
     private boolean takeAllSpace = false;
     @Setter
@@ -46,6 +47,7 @@ public class RichText extends Widget implements Layouter, Renderer {
 
     public RichText(TextSpan textSpan, BreakWord breakWord, boolean takeAllSpace, TextAlign align) {
         this.rootSpan = textSpan;
+        rootSpan.flattenTextSpan(flattenSpan::add);
         this.breakWord = breakWord;
         this.takeAllSpace = takeAllSpace;
         this.align = align;
@@ -53,6 +55,8 @@ public class RichText extends Widget implements Layouter, Renderer {
 
     public void setRootSpan(TextSpan rootSpan) {
         this.rootSpan = rootSpan;
+        flattenSpan.clear();
+        rootSpan.flattenTextSpan(flattenSpan::add);
         this.getDomElement().requestRelayout();
     }
 
@@ -68,9 +72,7 @@ public class RichText extends Widget implements Layouter, Renderer {
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        LinkedList<FlatTextSpan> flatTextSpans = new LinkedList<>();
-        rootSpan.flattenTextSpan(flatTextSpans::add);
-
+        LinkedList<FlatTextSpan> flatTextSpans = new LinkedList<>(flattenSpan); // shallow copy it. for faster layout
         LinkedList<RichLine> lines = new LinkedList<>();
         LinkedList<FlatTextSpan> line = new LinkedList<>();
         double remaining = constraintBox.getMaxWidth();

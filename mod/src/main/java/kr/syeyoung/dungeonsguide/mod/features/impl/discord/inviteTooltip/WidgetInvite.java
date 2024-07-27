@@ -70,7 +70,6 @@ public class WidgetInvite extends AnnotatedImportOnlyWidget {
 
         String searchTxt = search.getValue().trim().toLowerCase();
         for (JDiscordRelation value : DiscordIntegrationManager.INSTANCE.getRelationMap().values()) {
-            System.out.println(value);
 //            if (value.getDiscordActivity().getApplicationId() != 816298079732498473L) continue;
             if (value.getRelationType() == JDiscordRelation.DiscordRelationType.Blocked) continue;
             if (!searchTxt.isEmpty() && !(value.getDiscordUser().getName().toLowerCase().contains(searchTxt))) continue;

@@ -25,6 +25,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonObject;
 import kr.syeyoung.dungeonsguide.dungeon.data.DungeonRoomInfo;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.ISecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.DungeonSecret;
+import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
@@ -709,9 +711,15 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                     || style == MapConfiguration.RoomInfoSettings.Style.SECRET_COUNT) {
                     String toDraw;
                     if (dungeonRoom.getDungeonRoomInfo() != null) {
-                        toDraw = dungeonRoom.getMechanics().values().stream().filter(a -> a instanceof ISecret)
-                                .filter(a -> ((ISecret) a).isFound(dungeonRoom))
-                                .count() + "/" +dungeonRoom.getTotalSecrets();
+                        int cnt = 0;
+                        for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
+                            if (value instanceof ISecret) {
+                                if (((ISecret) value).isFound(dungeonRoom)) {
+                                    cnt += 1;
+                                }
+                            }
+                        }
+                        toDraw = cnt + "/" + dungeonRoom.getTotalSecrets();
                     } else {
                         toDraw = "?/"+(dungeonRoom.getTotalSecrets() == -1 ? "?" : dungeonRoom.getTotalSecrets());
                     }
@@ -982,7 +990,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 }
             }
 
-            if(pt2 == null) return;
+            if(pt2 == null) continue;
 
             if (entityplayer == thePlayer) {
                 self = playerInfo;

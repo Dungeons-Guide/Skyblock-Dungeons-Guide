@@ -340,8 +340,6 @@ public class PartyManager {
             public ChatProcessResult process(String str, Map<String, Object> context) {
                 if (ACCEPT_INVITE_LEADER.match(str, matches)) {
                     String leader = processName(matches.get("1"));
-
-                    leader = leader.substring(0, leader.length()-2); // remove 's
                     partyContext = new PartyContext();
                     getPartyContext().setPartyOwner(leader);
                     getPartyContext().addPartyMember(Minecraft.getMinecraft().getSession().getUsername());
