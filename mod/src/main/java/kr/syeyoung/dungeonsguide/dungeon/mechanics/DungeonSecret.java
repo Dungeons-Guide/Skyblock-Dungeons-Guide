@@ -55,6 +55,10 @@ public class DungeonSecret implements DungeonMechanic {
     private SecretType secretType = SecretType.CHEST;
     private List<String> preRequisite = new ArrayList<String>();
 
+    private String toString(BlockPos pos) {
+        return pos.getX()+","+pos.getY()+","+pos.getZ();
+    }
+
     public void tick(DungeonRoom dungeonRoom) {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
@@ -63,9 +67,9 @@ public class DungeonSecret implements DungeonMechanic {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if(chest != null){
                     if (chest.numPlayersUsing > 0) {
-                        dungeonRoom.getRoomContext().put("c-" + pos.toString(), 2);
+                        dungeonRoom.getRoomContext().put("c-" + toString(pos), 2);
                     } else {
-                        dungeonRoom.getRoomContext().put("c-" + pos.toString(), 1);
+                        dungeonRoom.getRoomContext().put("c-" + toString(pos), 1);
                     }
                 } else {
                     System.out.println("Expected TileEntityChest at " + pos + " to not be null");
@@ -75,25 +79,25 @@ public class DungeonSecret implements DungeonMechanic {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
-                dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("e-" + toString(pos), true);
             }
         } else if (secretType == SecretType.ITEM_DROP) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 2) {
                 List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(),pos.getZ()));
                 if (items.size() == 0) {
-                    dungeonRoom.getRoomContext().put("i-"+pos.toString(), true); // was there, but gone!
-                    ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+"found.");
+                    dungeonRoom.getRoomContext().put("i-"+toString(pos), true); // was there, but gone!
+                    ChatTransmitter.sendDebugChat("Assume at "+toString(pos)+"found.");
                 }
             }
             if (Minecraft.getMinecraft().thePlayer.getDistanceSq(pos) < 100) {
                 List<EntityItem> items = Minecraft.getMinecraft().theWorld.getEntitiesWithinAABB(EntityItem.class, new AxisAlignedBB(-4, -4, -4, 4, 4, 4).addCoord(pos.getX(), pos.getY(),pos.getZ()));
                 if (items.size() != 0) {
-                    dungeonRoom.getRoomContext().put("i-"+pos.toString(), false);
-                    ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+" not found? "+items.size());
-                } else if (Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+pos.toString()))) {
-                    dungeonRoom.getRoomContext().put("i-"+pos.toString(), true); // was there, but gone!
-                    ChatTransmitter.sendDebugChat("Assume at "+pos.toString()+"found? "+items.size());
+                    dungeonRoom.getRoomContext().put("i-"+toString(pos), false);
+                    ChatTransmitter.sendDebugChat("Assume at "+toString(pos)+" not found? "+items.size());
+                } else if (Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+toString(pos)))) {
+                    dungeonRoom.getRoomContext().put("i-"+toString(pos), true); // was there, but gone!
+                    ChatTransmitter.sendDebugChat("Assume at "+toString(pos)+"found? "+items.size());
                 }
             }
 
@@ -104,8 +108,8 @@ public class DungeonSecret implements DungeonMechanic {
         if (secretType == SecretType.CHEST) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
-            if (dungeonRoom.getRoomContext().containsKey("c-" + pos.toString()))
-                return ((int) dungeonRoom.getRoomContext().get("c-" + pos.toString()) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
+            if (dungeonRoom.getRoomContext().containsKey("c-" + toString(pos)))
+                return ((int) dungeonRoom.getRoomContext().get("c-" + toString(pos)) == 2 || blockState.getBlock() == Blocks.air) ? SecretStatus.FOUND : SecretStatus.CREATED;
 
             if (blockState.getBlock() == Blocks.air) {
                 return SecretStatus.DEFINITELY_NOT;
@@ -123,42 +127,42 @@ public class DungeonSecret implements DungeonMechanic {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
             IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.skull) {
-                dungeonRoom.getRoomContext().put("e-" + pos.toString(), true);
+                dungeonRoom.getRoomContext().put("e-" + toString(pos), true);
                 return SecretStatus.DEFINITELY_NOT;
             } else {
-                if (dungeonRoom.getRoomContext().containsKey("e-" + pos.toString()))
+                if (dungeonRoom.getRoomContext().containsKey("e-" + toString(pos)))
                     return SecretStatus.FOUND;
                 return SecretStatus.NOT_SURE;
             }
         } else if (secretType == SecretType.BAT) {
             BlockPos bpos = secretPoint.getBlockPos(dungeonRoom);
-            if (dungeonRoom.getRoomContext().containsKey("b-"+bpos.toString())) {
+            if (dungeonRoom.getRoomContext().containsKey("b-"+toString(bpos))) {
                 return SecretStatus.FOUND;
             }
             Vec3 spawn = new Vec3(bpos);
             for (Integer killed : DungeonActionContext.getKilleds()) {
                 if (DungeonActionContext.getSpawnLocation().get(killed) == null) continue;
                 if (DungeonActionContext.getSpawnLocation().get(killed).squareDistanceTo(spawn) < 100) {
-                    dungeonRoom.getRoomContext().put("b-"+bpos.toString(), true);
+                    dungeonRoom.getRoomContext().put("b-"+toString(bpos), true);
                     return SecretStatus.FOUND;
                 }
             }
             return SecretStatus.NOT_SURE;
         } else {
             BlockPos bpos = secretPoint.getBlockPos(dungeonRoom);
-            if (Boolean.TRUE.equals(dungeonRoom.getRoomContext().get("i-"+bpos.toString()))) {
+            if (Boolean.TRUE.equals(dungeonRoom.getRoomContext().get("i-"+toString(bpos)))) {
                 return SecretStatus.FOUND;
             }
             Vec3 pos = new Vec3(bpos);
             for (Integer pickedup : DungeonActionContext.getPickedups()) {
                 if (DungeonActionContext.getSpawnLocation().get(pickedup) == null) continue;
                 if (DungeonActionContext.getSpawnLocation().get(pickedup).squareDistanceTo(pos) < 4) {
-                    dungeonRoom.getRoomContext().put("i-"+bpos.toString(), true);
+                    dungeonRoom.getRoomContext().put("i-"+toString(bpos), true);
                     return SecretStatus.FOUND;
                 }
             }
 
-            return Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+bpos.toString())) ? SecretStatus.DEFINITELY_NOT : SecretStatus.NOT_SURE;
+            return Boolean.FALSE.equals(dungeonRoom.getRoomContext().get("i-"+toString(bpos))) ? SecretStatus.DEFINITELY_NOT : SecretStatus.NOT_SURE;
         }
     }
 
