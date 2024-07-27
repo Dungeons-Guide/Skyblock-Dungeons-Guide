@@ -988,7 +988,7 @@ public class FeatureDungeonMap2 extends RawRenderingGuiFeature {
                 }
             }
 
-            if(pt2 == null) return;
+            if(pt2 == null) continue;
 
             if (entityplayer == thePlayer) {
                 self = playerInfo;
