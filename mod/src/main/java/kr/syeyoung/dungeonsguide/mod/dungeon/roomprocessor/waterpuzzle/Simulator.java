@@ -40,14 +40,30 @@ public class Simulator {
         private NodeType nodeType;
         private boolean update;
     }
-    @Getter @AllArgsConstructor @Data
+    @Getter @Data
     public static class Pt {
+        private static final Pt[][] cache = new Pt[50][50];
+
+        public static Pt ofPt(int x, int y) {
+            return cache[y+5][x+5];
+//            return new Pt(x,y);
+        }
+
+        static {
+            for (int y = 0; y < 50; y++) {
+                for (int x = 0; x < 50; x++) {
+                    cache[y][x] = new Pt(x-5, y-5);
+                }
+            }
+        }
+
+
         private final int x, y;
 
-        public Pt up() {return new Pt(x, y-1);}
-        public Pt down() {return new Pt(x, y+1);}
-        public Pt left() {return new Pt(x-1, y);}
-        public Pt right() {return new Pt(x+1, y);}
+        public Pt up() {return cache[y+4][x+5];}
+        public Pt down() {return cache[y+6][x+5];}
+        public Pt left() {return cache[y+5][x+4];}
+        public Pt right() {return cache[y+5][x+6];}
 
         public boolean check(int w, int h) {
             return x < 0 || y < 0 || x >= w || y >= h;
@@ -58,6 +74,12 @@ public class Simulator {
                 return new Node(0, NodeType.BLOCK, false);
             }
             return nodes[y][x];
+        }
+        public NodeType getType(Node[][] nodes) {
+            if (check(nodes[0].length, nodes.length)) {
+                return NodeType.BLOCK;
+            }
+            return nodes[y][x].nodeType;
         }
 
         public void set(Node[][] nodes, NodeType nodeType) {
@@ -74,10 +96,10 @@ public class Simulator {
                 if (right == 8) {
                     right = 999; break;
                 }
-                if (rightPt.get(nodes).nodeType == NodeType.BLOCK) {
+                if (rightPt.getType(nodes) == NodeType.BLOCK) {
                     right = 999; break;
                 }
-                if (rightPt.down().get(nodes).nodeType != NodeType.BLOCK) {
+                if (rightPt.down().getType(nodes) != NodeType.BLOCK) {
                     break;
                 }
 
@@ -91,10 +113,10 @@ public class Simulator {
                 if (left == 8) {
                     left = 999; break;
                 }
-                if (leftPt.get(nodes).nodeType == NodeType.BLOCK) {
+                if (leftPt.getType(nodes) == NodeType.BLOCK) {
                     left = 999; break;
                 }
-                if (leftPt.down().get(nodes).nodeType != NodeType.BLOCK) {
+                if (leftPt.down().getType(nodes) != NodeType.BLOCK) {
                     break;
                 }
 
@@ -136,20 +158,20 @@ public class Simulator {
         Node prev = pt.get(nodes);
         int maxWaterLv = Math.max(0, prev.nodeType == NodeType.SOURCE ? 8 : prev.waterLevel - 1);
         if (prev.nodeType == NodeType.AIR || prev.nodeType == NodeType.WATER) {
-            if (pt.up().get(nodes).nodeType.isWater()) {
+            if (pt.up().getType(nodes).isWater()) {
                 maxWaterLv = 8;
             }
-            if (pt.left().get(nodes).nodeType.isWater()) {
-                boolean isSource = pt.left().get(nodes).nodeType == NodeType.SOURCE;
-                NodeType bottomLeft = pt.left().down().get(nodes).nodeType;
+            if (pt.left().getType(nodes).isWater()) {
+                boolean isSource = pt.left().getType(nodes) == NodeType.SOURCE;
+                NodeType bottomLeft = pt.left().down().getType(nodes);
                 if (prev.nodeType == NodeType.WATER  // if was water
                         || (pt.left().shouldUpdate(nodes) && (bottomLeft == NodeType.BLOCK || (isSource && bottomLeft != NodeType.AIR)) && pt.left().getFlowDirection(nodes) >= 0)) {
                     maxWaterLv = Math.max(maxWaterLv, pt.left().get(nodes).waterLevel - 1);
                 }
             }
-            if (pt.right().get(nodes).nodeType.isWater()) {
-                boolean isSource = pt.right().get(nodes).nodeType == NodeType.SOURCE;
-                NodeType bottomRight = pt.right().down().get(nodes).nodeType;
+            if (pt.right().getType(nodes).isWater()) {
+                boolean isSource = pt.right().getType(nodes) == NodeType.SOURCE;
+                NodeType bottomRight = pt.right().down().getType(nodes);
                 if (prev.nodeType == NodeType.WATER
                         || (pt.right().shouldUpdate(nodes) && (bottomRight == NodeType.BLOCK || (isSource && bottomRight != NodeType.AIR)) && pt.right().getFlowDirection(nodes) <= 0))
                     maxWaterLv = Math.max(maxWaterLv, pt.right().get(nodes).waterLevel - 1);
@@ -173,19 +195,19 @@ public class Simulator {
         boolean update = false;
         for (int y = 0; y < nodes.length; y++) {
             for (int x = 0; x < nodes[y].length; x++) {
-                Pt pt = new Pt(x,y);
+                Pt pt = Pt.ofPt(x,y);
 
 
                 if (doTick(nodes, nodesNew, pt)) update =true;
 
-                if ( pt.get(nodesNew).waterLevel - pt.get(nodes).waterLevel > 0 && pt.get(nodes).nodeType == NodeType.WATER && pt.get(nodesNew).nodeType == NodeType.WATER) {
+                if ( pt.get(nodesNew).waterLevel - pt.get(nodes).waterLevel > 0 && pt.getType(nodes) == NodeType.WATER && pt.get(nodesNew).nodeType == NodeType.WATER) {
                     Node prev = pt.get(nodes);
 
                     nodes[y][x] = nodesNew[y][x];
 
-                    if (!pt.left().check(nodes[0].length, nodes.length))
+                    if (x > 0)
                         doTick(nodes, nodesNew, pt.left());
-                    if (!pt.right().check(nodes[0].length, nodes.length))
+                    if (x < nodes[0].length - 1)
                         doTick(nodes, nodesNew, pt.right());
 
                     nodes[y][x] = prev;
