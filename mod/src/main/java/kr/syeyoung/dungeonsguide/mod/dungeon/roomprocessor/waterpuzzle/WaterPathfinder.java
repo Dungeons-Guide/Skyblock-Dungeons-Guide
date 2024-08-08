@@ -51,7 +51,7 @@ public class WaterPathfinder {
         maxMatch = total.size();
         for (Map.Entry<String, List<Simulator.Pt>> stringListEntry : switchFlips.entrySet()) {
             if (!stringListEntry.getValue().isEmpty())
-                availableActions.add(new AdvanceAction(stringListEntry.getValue(), stringListEntry.getKey(), 25, total, 3));
+                availableActions.add(new AdvanceAction(stringListEntry.getValue(), stringListEntry.getKey(), 10, total, 3));
         }
 
         availableActions.add(new AdvanceAction(new ArrayList<>(), "nothing", 1, total, 1)); // it can handle 1 moves. yes.
@@ -61,22 +61,36 @@ public class WaterPathfinder {
 
     private float fScore(NodeNode node) {
         Simulator.Node[][] newstate = Simulator.clone(node.state.state);
-        int updatedTicks = 0;
-        for (int i = 0; i < 30; i++) {
-            updatedTicks = i;
+        int updatedTicks = 40;
+
+        int[] newFlips = Arrays.copyOf(node.state.flips, node.state.flips.length);
+        for (int j = 0; j < 40; j++) {
+            boolean[] prevState = new boolean[targets.size() + nonTargets.size()];
+            for (int i = 0; i < targets.size(); i++) {
+                prevState[i] = targets.get(i).getType(newstate).isWater();
+            }
+            for (int i = 0; i < nonTargets.size(); i++) {
+                prevState[i + targets.size()] = nonTargets.get(i).getType(newstate).isWater();
+            }
+
             if (!Simulator.simulateSingleTick(newstate)) {
                 break;
             }
-        }
 
-        int[] newFlips = Arrays.copyOf(node.state.flips, node.state.flips.length);
-
-        for (int i = 0; i < targets.size(); i++) {
-            Simulator.Pt target = targets.get(i);
-            if (!target.get(node.state.state).getNodeType().isWater() && target.get(newstate).getNodeType().isWater()) {
-                newFlips[i]++;
+            for (int i = 0; i < targets.size(); i++) {
+                if (!prevState[i] && targets.get(i).getType(newstate).isWater()) {
+                    newFlips[i]++;
+                    updatedTicks = j;
+                }
+            }
+            for (int i = 0; i < nonTargets.size(); i++) {
+                if (!prevState[i + targets.size()] && nonTargets.get(i).getType(newstate).isWater()) {
+                    newFlips[i+targets.size()]++;
+                    updatedTicks = j;
+                }
             }
         }
+
 
         // loooook into the future~
 
@@ -84,13 +98,18 @@ public class WaterPathfinder {
         int cnt = 0;
         for (int i = 0; i < node.state.flips.length; i++) {
             if ((newFlips[i] % 2 == 1) != (i < targets.size())) {
-                cnt += i < targets.size() ? 1 : 100; // predict moves. admissible heuristic.
+                cnt += i < targets.size() ? 10 : 10; // predict moves. admissible heuristic.
             }
         }
 
-        return (cnt ) * (updatedTicks + 1);
+//        if (flips > 0)
+        if (cnt == 0 && updatedTicks == 40) return 0;
+        return updatedTicks + cnt;
+//        else
+//            return 50;
 //        if (cnt == 0) return updatedTicks;
-//        return cnt * 50; // dijkstra lol
+//        if (updatedTicks < 10 && cnt > 4) return (10-updatedTicks) * cnt;
+//        return cnt * 30; // dijkstra lol
     }
 
     private boolean isDone(NodeNode node) {
@@ -99,6 +118,18 @@ public class WaterPathfinder {
                 return false;
             }
         }
+        Simulator.Node[][] newstate = Simulator.clone(node.state.state);
+        for (int i = 0; i < 30; i++) {
+            if (!Simulator.simulateSingleTick(newstate)) {
+                break;
+            }
+        }
+        for (Simulator.Pt target : nonTargets) {
+            if (!target.get(node.state.state).getNodeType().isWater() && target.get(newstate).getNodeType().isWater()) {
+                return false;
+            }
+        }
+
         return true;
     }
 
@@ -114,15 +145,17 @@ public class WaterPathfinder {
 
         while (!nodes.isEmpty()) {
             NodeNode node = nodes.poll();
-            if (isDone(node)) return node; // first solution ggs
+            if (isDone(node)) {
+                return node; // first solution ggs
+            }
 
-            if (stuff % 1000 == 0)
-                System.out.println(stuff + " / "+node.f + " / " + fScore(node) + " / " +nodes.size());
+            if (stuff % 1000 == 0) {
+                System.out.println(stuff + " / " + node.f + " / " + fScore(node) + " / " + nodes.size());
+            }
             stuff++;
             if (nodes.size() > 500000) return null;
 
             for (AdvanceAction availableAction : availableActions) {
-//                if ((availableAction.flips.size() > 0 ? 1 : 0) + node.totalFlips > 5) continue;
 
                 State newState = availableAction.generateNew(node.state);
                 if (newState == null) continue; // if nothing happened as result of action, end tree here.
@@ -133,18 +166,18 @@ public class WaterPathfinder {
                 if (newNodeNode.g > newG) {
                     newNodeNode.g = newG;
 
-                    boolean nope = false;
-                    for (int i = targets.size(); i < newNodeNode.state.flips.length; i++) {
-                        if (newNodeNode.state.flips[i] % 2 == 1) {
-                            nope = true;
-                            break;
-                        }
-                    }
-                    if (nope) continue;
+//                    boolean nope = false;
+//                    for (int i = targets.size(); i < newNodeNode.state.flips.length; i++) {
+//                        if (newNodeNode.state.flips[i] % 2 == 1) {
+//                            nope = true;
+//                            break;
+//                        }
+//                    }
+//                    if (nope) continue;
 
                     float heuristic = fScore(newNodeNode) ;
 //                    if (heuristic > 50) continue;
-                    newNodeNode.f = newNodeNode.g + heuristic * 2 ;// heuristic
+                    newNodeNode.f = newNodeNode.g + heuristic ;// heuristic
                     newNodeNode.parent = node;
                     newNodeNode.parentToMeAction = availableAction;
 
@@ -281,6 +314,7 @@ public class WaterPathfinder {
 
     // test pathfinder
     public static void main(String[] args) {
+        long start = System.currentTimeMillis();
         String config =
                 "X      XWXWX      X\n" +
                 "XX      X XX      X\n" +
@@ -310,7 +344,7 @@ public class WaterPathfinder {
         String[][] configuration =  Arrays.stream(config.split("\n")).map(a -> a.split("")).toArray(String[][]::new);
 
         int[] targets = {0, 4, 9, 14, 18};
-        boolean[] targetActivate = {true, false, false, true, true};
+        boolean[] targetActivate = {false, false, true, true,true};
 
         Simulator.Node[][] nodes = new Simulator.Node[25][19];
         Map<String, List<Simulator.Pt>> switchFlips = new HashMap<>();
@@ -359,6 +393,7 @@ public class WaterPathfinder {
         }
 
         System.out.println(totalCost * 5 / 20.0 +"s");
+        System.out.println(System.currentTimeMillis() - start);
 //[19:38:47] [DG-WaterPuzzle-Calculator/INFO] (STDOUT) [kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.WaterPathfinder:<init>:62]: {
 //
 //            172:0=[],

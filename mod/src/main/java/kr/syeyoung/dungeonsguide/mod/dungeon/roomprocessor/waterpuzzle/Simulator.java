@@ -145,9 +145,11 @@ public class Simulator {
     // if there is waterLevel bigger coming nearby, make water
     // if there is waterLevel bigger coming nearby, delete water
     //
-    public static void simulateTicks(Node[][] nodes) {
-        while(simulateSingleTick(nodes));
-    }
+//    public static void simulateTicks(Node[][] nodes) {
+//        Node[][]
+//
+//        while(simulateSingleTick(nodes));
+//    }
 
     public static Node[][] clone(Node[][] nodes) {
         Node[][] newNodes = new Node[nodes.length][nodes[0].length];
@@ -186,6 +188,7 @@ public class Simulator {
         }
 
         nodesNew[y][x] = new Node(prev.waterLevel, prev.nodeType, false);
+//        nodesNew[y][x].setNodeType(prev.nodeType);
         nodesNew[y][x].setWaterLevel(maxWaterLv);
         if (maxWaterLv == 0 && nodesNew[y][x].nodeType == NodeType.WATER)
             nodesNew[y][x].setNodeType(NodeType.AIR);
@@ -252,35 +255,35 @@ public class Simulator {
 
     // New waterboard simulator pog
     public static void main(String[] args) {
-        NodeType[][] nodeTypes = {
-                {NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.AIR, NodeType.SOURCE, NodeType.BLOCK},
-                {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
-                {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
-                {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
-                {NodeType.BLOCK,  NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR }
-        };
-
-        Node[][] nodes = new Node[nodeTypes.length][nodeTypes[0].length];
-        for (int y = 0; y < nodes.length; y++) {
-            for (int x = 0; x < nodes[y].length; x++) {
-                nodes[y][x] = new Node(0, nodeTypes[y][x], false);
-                if (nodeTypes[y][x] == NodeType.SOURCE) {
-                    nodes[y][x].update = true;
-                    nodes[y][x].waterLevel = 8;
-                }
-            }
-        }
-        Scanner scanner = new Scanner(System.in);
-        while(true) {
-            print(nodes);
-            while(simulateSingleTick(nodes))
-                print(nodes);
-
-            int x = scanner.nextInt();
-            int y= scanner.nextInt();
-            nodes[y][x] = new Node(0,
-                    nodes[y][x].nodeType == NodeType.BLOCK ?
-                        NodeType.AIR : NodeType.BLOCK, true);
-        }
+//        NodeType[][] nodeTypes = {
+//                {NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.BLOCK, NodeType.AIR, NodeType.SOURCE, NodeType.BLOCK},
+//                {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
+//                {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
+//                {NodeType.AIR,    NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR },
+//                {NodeType.BLOCK,  NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR  , NodeType.AIR,   NodeType.AIR,   NodeType.AIR,   NodeType.AIR }
+//        };
+//
+//        Node[][] nodes = new Node[nodeTypes.length][nodeTypes[0].length];
+//        for (int y = 0; y < nodes.length; y++) {
+//            for (int x = 0; x < nodes[y].length; x++) {
+//                nodes[y][x] = new Node(0, nodeTypes[y][x], false);
+//                if (nodeTypes[y][x] == NodeType.SOURCE) {
+//                    nodes[y][x].update = true;
+//                    nodes[y][x].waterLevel = 8;
+//                }
+//            }
+//        }
+//        Scanner scanner = new Scanner(System.in);
+//        while(true) {
+//            print(nodes);
+//            while(simulateSingleTick(nodes))
+//                print(nodes);
+//
+//            int x = scanner.nextInt();
+//            int y= scanner.nextInt();
+//            nodes[y][x] = new Node(0,
+//                    nodes[y][x].nodeType == NodeType.BLOCK ?
+//                        NodeType.AIR : NodeType.BLOCK, true);
+//        }
     }
 }

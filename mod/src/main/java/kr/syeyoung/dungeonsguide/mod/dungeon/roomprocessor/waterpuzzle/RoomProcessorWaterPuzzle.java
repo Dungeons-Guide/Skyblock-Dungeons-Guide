@@ -202,7 +202,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             } else {
                 lastUnstable = System.currentTimeMillis();
             }
-            Simulator.simulateTicks(nodes);
+//            Simulator.simulateTicks(nodes);
             if ((System.currentTimeMillis() - lastUnstable) > 1000) {
                 if (lastCalc == null || lastCalc.isDone()) {
                     lastCalc = executorService.submit(() -> {
