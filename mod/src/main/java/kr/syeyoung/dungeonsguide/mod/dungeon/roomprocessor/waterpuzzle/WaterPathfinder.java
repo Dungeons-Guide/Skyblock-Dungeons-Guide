@@ -62,9 +62,9 @@ public class WaterPathfinder {
     private float fScore(NodeNode node) {
         Simulator.Node[][] newstate = Simulator.clone(node.state.state);
         int updatedTicks = 0;
-        for (int i = 0; i < 50; i++) {
+        for (int i = 0; i < 30; i++) {
             updatedTicks = i;
-            if (Simulator.simulateSingleTick(newstate)) {
+            if (!Simulator.simulateSingleTick(newstate)) {
                 break;
             }
         }
@@ -88,7 +88,9 @@ public class WaterPathfinder {
             }
         }
 
-        return (cnt) *  (50 - updatedTicks); // dijkstra lol
+        return (cnt ) * (updatedTicks + 1);
+//        if (cnt == 0) return updatedTicks;
+//        return cnt * 50; // dijkstra lol
     }
 
     private boolean isDone(NodeNode node) {
@@ -114,7 +116,7 @@ public class WaterPathfinder {
             NodeNode node = nodes.poll();
             if (isDone(node)) return node; // first solution ggs
 
-//            if (stuff % 1000 == 0)
+            if (stuff % 1000 == 0)
                 System.out.println(stuff + " / "+node.f + " / " + fScore(node) + " / " +nodes.size());
             stuff++;
             if (nodes.size() > 500000) return null;
@@ -140,9 +142,9 @@ public class WaterPathfinder {
                     }
                     if (nope) continue;
 
-                    float heuristic = fScore(newNodeNode);
+                    float heuristic = fScore(newNodeNode) ;
 //                    if (heuristic > 50) continue;
-                    newNodeNode.f = newNodeNode.g ;// heuristic
+                    newNodeNode.f = newNodeNode.g + heuristic * 2 ;// heuristic
                     newNodeNode.parent = node;
                     newNodeNode.parentToMeAction = availableAction;
 
@@ -308,7 +310,7 @@ public class WaterPathfinder {
         String[][] configuration =  Arrays.stream(config.split("\n")).map(a -> a.split("")).toArray(String[][]::new);
 
         int[] targets = {0, 4, 9, 14, 18};
-        boolean[] targetActivate = {true, false, false, false, false};
+        boolean[] targetActivate = {true, false, false, true, true};
 
         Simulator.Node[][] nodes = new Simulator.Node[25][19];
         Map<String, List<Simulator.Pt>> switchFlips = new HashMap<>();

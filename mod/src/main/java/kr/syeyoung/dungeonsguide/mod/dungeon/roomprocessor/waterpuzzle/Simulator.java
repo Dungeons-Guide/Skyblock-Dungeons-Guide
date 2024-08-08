@@ -82,6 +82,13 @@ public class Simulator {
             return nodes[y][x].nodeType;
         }
 
+        public boolean getUpdate(Node[][] nodes) {
+            if (check(nodes[0].length, nodes.length)) {
+                return false;
+            }
+            return nodes[y][x].update;
+        }
+
         public void set(Node[][] nodes, NodeType nodeType) {
             get(nodes).nodeType = nodeType;
             get(nodes).waterLevel = 0;
@@ -129,10 +136,10 @@ public class Simulator {
         }
 
         public boolean shouldUpdate(Node[][] nodes) {
-            return get(nodes).update || right().get(nodes).update
-                    || left().get(nodes).update
-                    || up().get(nodes).update
-                    || down().get(nodes).update;
+            return getUpdate(nodes) || right().getUpdate(nodes)
+                    || left().getUpdate(nodes)
+                    || up().getUpdate(nodes)
+                    || down().getUpdate(nodes);
         }
     }
     // if there is waterLevel bigger coming nearby, make water
