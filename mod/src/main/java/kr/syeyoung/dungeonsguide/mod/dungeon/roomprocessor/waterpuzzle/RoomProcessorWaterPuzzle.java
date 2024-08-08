@@ -22,6 +22,7 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
@@ -84,6 +85,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             buildNodes(true);
             targetDoors();
 
+            ChatTransmitter.sendDebugChat(switchFlips+"");
         }
 
 
@@ -181,6 +183,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private Future lastCalc;
 
     private int idx = 0;
+    private int currMoveTick = 0;
     @Override
     public void tick() {
         super.tick();
@@ -209,6 +212,14 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
                             WaterPathfinder waterPathfinder = new WaterPathfinder(copy, targets, nonTargets, switchFlips);
                             WaterPathfinder.NodeNode nodeNode = waterPathfinder.pathfind();
+
+                            WaterPathfinder.NodeNode treeWalk = nodeNode;
+                            while (treeWalk.getParent() != null) {
+                                System.out.println(treeWalk.getParentToMeAction().getKey() + "/" + treeWalk.getParentToMeAction().getCost() + "/" + treeWalk.getParentToMeAction().getMoves());
+                                treeWalk = treeWalk.getParent();
+                            }
+
+
                             LinkedList<WaterPathfinder.NodeNode> solution = new LinkedList<>();
                             if (nodeNode.getParentToMeAction() != null)
                                 solution.addFirst(nodeNode);
@@ -219,6 +230,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                             }
                             this.solutionList = solution;
                             idx = 0;
+                            currMoveTick = 0;
                             lastStable = System.currentTimeMillis();
                         } catch (Exception e) {
                             lastCopy = null;
@@ -230,8 +242,10 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
 
 
             if (solutionList != null && solutionList.size() > 0) {
-                while (System.currentTimeMillis() - lastStable > (long) (idx) * 2500 + 250) { // water flows 5 ticks/s
+
+                while (System.currentTimeMillis() - lastStable > (long) (currMoveTick) * 250 + 250) { // water flows 5 ticks/s
                     idx ++;
+                    currMoveTick += solutionList.get(idx).getParentToMeAction().getMoves();
                 }
             }
         } catch (Exception e) {
@@ -260,18 +274,25 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         }
 
         if (solutionList.size() > 0) {
+            int culMoves = 0;
+            for (int i = 0; i < idx; i++) {
+                culMoves += solutionList.get(i).getParentToMeAction().getMoves();
+            }
+            int startingMoves = culMoves;
             for (int i = idx; i < solutionList.size(); i++) {
 
                 String key = solutionList.get(i).getParentToMeAction().getKey();
+                int moves = solutionList.get(i).getParentToMeAction().getMoves();
                 if (!key.equals("nothing")) {
                     BlockPos pos = switchLoc.get(key);
                     // target:
-                    long target = lastStable + 2500L * i;
+                    long target = lastStable + 250L * culMoves;
 
                     double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
-                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i-idx)*0.5f - 0.5f, pos.getZ()+0.5f,
+                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.1f - 0.5f, pos.getZ()+0.5f,
                             time < 0.5 ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
                 }
+                culMoves += moves;
             }
 
         }
