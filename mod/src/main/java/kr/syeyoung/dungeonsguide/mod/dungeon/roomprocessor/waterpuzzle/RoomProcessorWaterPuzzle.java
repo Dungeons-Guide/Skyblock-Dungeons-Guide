@@ -64,7 +64,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private List<String> targetDoors = new ArrayList<>();
 
     private Map<Simulator.Pt, BlockPos> ptMapping = new HashMap<>();
-    private List<WaterPathfinder.NodeNode> solutionList = new ArrayList<>();
+//    private List<WaterPathfinder.NodeNode> solutionList = new ArrayList<>();
     private long lastStable;
     private long lastUnstable;
 
@@ -203,51 +203,51 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                 lastUnstable = System.currentTimeMillis();
             }
 //            Simulator.simulateTicks(nodes);
-            if ((System.currentTimeMillis() - lastUnstable) > 1000) {
-                if (lastCalc == null || lastCalc.isDone()) {
-                    lastCalc = executorService.submit(() -> {
-                        try {
-                            List<Simulator.Pt> targets = targetDoors.stream().map(waterNodeEnds::get).collect(Collectors.toList());
-                            List<Simulator.Pt> nonTargets = waterNodeEnds.values().stream().filter(a -> !targets.contains(a)).collect(Collectors.toList());
-
-                            WaterPathfinder waterPathfinder = new WaterPathfinder(copy, targets, nonTargets, switchFlips);
-                            WaterPathfinder.NodeNode nodeNode = waterPathfinder.pathfind();
-
-                            WaterPathfinder.NodeNode treeWalk = nodeNode;
-                            while (treeWalk.getParent() != null) {
-                                System.out.println(treeWalk.getParentToMeAction().getKey() + "/" + treeWalk.getParentToMeAction().getCost() + "/" + treeWalk.getParentToMeAction().getMoves());
-                                treeWalk = treeWalk.getParent();
-                            }
-
-
-                            LinkedList<WaterPathfinder.NodeNode> solution = new LinkedList<>();
-                            if (nodeNode.getParentToMeAction() != null)
-                                solution.addFirst(nodeNode);
-                            while (nodeNode.getParent() != null) {
-                                nodeNode = nodeNode.getParent();
-                                if (nodeNode.getParentToMeAction() != null)
-                                    solution.addFirst(nodeNode);
-                            }
-                            this.solutionList = solution;
-                            idx = 0;
-                            currMoveTick = 0;
-                            lastStable = System.currentTimeMillis();
-                        } catch (Exception e) {
-                            lastCopy = null;
-                        }
-                    });
-                }
-            }
-
-
-
-            if (solutionList != null && solutionList.size() > 0) {
-
-                while (System.currentTimeMillis() - lastStable > (long) (currMoveTick) * 250 + 250) { // water flows 5 ticks/s
-                    idx ++;
-                    currMoveTick += solutionList.get(idx).getParentToMeAction().getMoves();
-                }
-            }
+//            if ((System.currentTimeMillis() - lastUnstable) > 1000) {
+//                if (lastCalc == null || lastCalc.isDone()) {
+//                    lastCalc = executorService.submit(() -> {
+//                        try {
+//                            List<Simulator.Pt> targets = targetDoors.stream().map(waterNodeEnds::get).collect(Collectors.toList());
+//                            List<Simulator.Pt> nonTargets = waterNodeEnds.values().stream().filter(a -> !targets.contains(a)).collect(Collectors.toList());
+//
+//                            WaterPathfinder waterPathfinder = new WaterPathfinder(copy, targets, nonTargets, switchFlips);
+//                            WaterPathfinder.NodeNode nodeNode = waterPathfinder.pathfind();
+//
+//                            WaterPathfinder.NodeNode treeWalk = nodeNode;
+//                            while (treeWalk.getParent() != null) {
+//                                System.out.println(treeWalk.getParentToMeAction().getKey() + "/" + treeWalk.getParentToMeAction().getCost() + "/" + treeWalk.getParentToMeAction().getMoves());
+//                                treeWalk = treeWalk.getParent();
+//                            }
+//
+//
+//                            LinkedList<WaterPathfinder.NodeNode> solution = new LinkedList<>();
+//                            if (nodeNode.getParentToMeAction() != null)
+//                                solution.addFirst(nodeNode);
+//                            while (nodeNode.getParent() != null) {
+//                                nodeNode = nodeNode.getParent();
+//                                if (nodeNode.getParentToMeAction() != null)
+//                                    solution.addFirst(nodeNode);
+//                            }
+//                            this.solutionList = solution;
+//                            idx = 0;
+//                            currMoveTick = 0;
+//                            lastStable = System.currentTimeMillis();
+//                        } catch (Exception e) {
+//                            lastCopy = null;
+//                        }
+//                    });
+//                }
+//            }
+//
+//
+//
+//            if (solutionList != null && solutionList.size() > 0) {
+//
+//                while (System.currentTimeMillis() - lastStable > (long) (currMoveTick) * 250 + 250) { // water flows 5 ticks/s
+//                    idx ++;
+//                    currMoveTick += solutionList.get(idx).getParentToMeAction().getMoves();
+//                }
+//            }
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
@@ -273,29 +273,29 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             }
         }
 
-        if (solutionList.size() > 0) {
-            int culMoves = 0;
-            for (int i = 0; i < idx; i++) {
-                culMoves += solutionList.get(i).getParentToMeAction().getMoves();
-            }
-            int startingMoves = culMoves;
-            for (int i = idx; i < solutionList.size(); i++) {
-
-                String key = solutionList.get(i).getParentToMeAction().getKey();
-                int moves = solutionList.get(i).getParentToMeAction().getMoves();
-                if (!key.equals("nothing")) {
-                    BlockPos pos = switchLoc.get(key);
-                    // target:
-                    long target = lastStable + 250L * culMoves;
-
-                    double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
-                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.1f - 0.5f, pos.getZ()+0.5f,
-                            time < 0.5 ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
-                }
-                culMoves += moves;
-            }
-
-        }
+//        if (solutionList.size() > 0) {
+//            int culMoves = 0;
+//            for (int i = 0; i < idx; i++) {
+//                culMoves += solutionList.get(i).getParentToMeAction().getMoves();
+//            }
+//            int startingMoves = culMoves;
+//            for (int i = idx; i < solutionList.size(); i++) {
+//
+//                String key = solutionList.get(i).getParentToMeAction().getKey();
+//                int moves = solutionList.get(i).getParentToMeAction().getMoves();
+//                if (!key.equals("nothing")) {
+//                    BlockPos pos = switchLoc.get(key);
+//                    // target:
+//                    long target = lastStable + 250L * culMoves;
+//
+//                    double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
+//                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.1f - 0.5f, pos.getZ()+0.5f,
+//                            time < 0.5 ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
+//                }
+//                culMoves += moves;
+//            }
+//
+//        }
     }
 
     public static class Generator implements RoomProcessorGenerator<RoomProcessorWaterPuzzle> {

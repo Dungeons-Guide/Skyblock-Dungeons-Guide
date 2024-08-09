@@ -19,15 +19,9 @@
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 
 import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.EqualsAndHashCode;
 import lombok.Getter;
 
 import java.util.*;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.PriorityBlockingQueue;
 
 public class WaterPathfinder {
     // A* on waterboard... lol graph search
@@ -35,7 +29,6 @@ public class WaterPathfinder {
 
 
     private State begin;
-    private Map<State, NodeNode> mapping = new HashMap<>();
 
     private List<Simulator.Pt> targets = new ArrayList<>();
     private List<Simulator.Pt> nonTargets = new ArrayList<>();
@@ -51,81 +44,28 @@ public class WaterPathfinder {
         maxMatch = total.size();
         for (Map.Entry<String, List<Simulator.Pt>> stringListEntry : switchFlips.entrySet()) {
             if (!stringListEntry.getValue().isEmpty())
-                availableActions.add(new AdvanceAction(stringListEntry.getValue(), stringListEntry.getKey(), 10, total, 3));
+                availableActions.add(new AdvanceAction(stringListEntry.getValue(), stringListEntry.getKey(), total, 3));
         }
 
-        availableActions.add(new AdvanceAction(new ArrayList<>(), "nothing", 1, total, 1)); // it can handle 1 moves. yes.
+//        availableActions.add(new AdvanceAction(new ArrayList<>(), "nothing", 1, total, 1)); // it can handle 1 moves. yes.
         this.begin = new State(begin, new int[total.size()]);
 
     }
 
-    private float fScore(NodeNode node) {
-        Simulator.Node[][] newstate = Simulator.clone(node.state.state);
-        int updatedTicks = 40;
-
-        int[] newFlips = Arrays.copyOf(node.state.flips, node.state.flips.length);
-        for (int j = 0; j < 40; j++) {
-            boolean[] prevState = new boolean[targets.size() + nonTargets.size()];
-            for (int i = 0; i < targets.size(); i++) {
-                prevState[i] = targets.get(i).getType(newstate).isWater();
-            }
-            for (int i = 0; i < nonTargets.size(); i++) {
-                prevState[i + targets.size()] = nonTargets.get(i).getType(newstate).isWater();
-            }
-
-            if (!Simulator.simulateSingleTick(newstate)) {
-                break;
-            }
-
-            for (int i = 0; i < targets.size(); i++) {
-                if (!prevState[i] && targets.get(i).getType(newstate).isWater()) {
-                    newFlips[i]++;
-                    updatedTicks = j;
-                }
-            }
-            for (int i = 0; i < nonTargets.size(); i++) {
-                if (!prevState[i + targets.size()] && nonTargets.get(i).getType(newstate).isWater()) {
-                    newFlips[i+targets.size()]++;
-                    updatedTicks = j;
-                }
-            }
-        }
-
-
-        // loooook into the future~
-
-
-        int cnt = 0;
-        for (int i = 0; i < node.state.flips.length; i++) {
-            if ((newFlips[i] % 2 == 1) != (i < targets.size())) {
-                cnt += i < targets.size() ? 10 : 10; // predict moves. admissible heuristic.
-            }
-        }
-
-//        if (flips > 0)
-        if (cnt == 0 && updatedTicks == 40) return 0;
-        return updatedTicks + cnt;
-//        else
-//            return 50;
-//        if (cnt == 0) return updatedTicks;
-//        if (updatedTicks < 10 && cnt > 4) return (10-updatedTicks) * cnt;
-//        return cnt * 30; // dijkstra lol
-    }
-
-    private boolean isDone(NodeNode node) {
-        for (int i = 0; i < node.state.flips.length; i++) {
-            if ((node.state.flips[i] % 2 == 1) != (i < targets.size())) {
+    private boolean isDone(State state) {
+        for (int i = 0; i < state.flips.length; i++) {
+            if ((state.flips[i] % 2 == 1) != (i < targets.size())) {
                 return false;
             }
         }
-        Simulator.Node[][] newstate = Simulator.clone(node.state.state);
+        Simulator.Node[][] newstate = Simulator.clone(state.state);
         for (int i = 0; i < 30; i++) {
             if (!Simulator.simulateSingleTick(newstate)) {
                 break;
             }
         }
         for (Simulator.Pt target : nonTargets) {
-            if (!target.get(node.state.state).getNodeType().isWater() && target.get(newstate).getNodeType().isWater()) {
+            if (!target.get(state.state).getNodeType().isWater() && target.get(newstate).getNodeType().isWater()) {
                 return false;
             }
         }
@@ -133,70 +73,140 @@ public class WaterPathfinder {
         return true;
     }
 
-    public NodeNode pathfind() {
-        PriorityQueue<NodeNode> nodes = new PriorityQueue<>(Comparator.comparingDouble((NodeNode a) -> a.f).thenComparing(a -> a.g).thenComparing(NodeNode::hashCode));
-        NodeNode start = openNode(begin, 0);
-        start.f = fScore(start);
-        start.g = 0;
-        nodes.add(start);
+    public List<AdvanceAction> pathfind() {
+        Random r = new Random(); // yes. Probablistic method.
 
-        int stuff = 0;
+        ArrayList<Simulator.Pt> total = new ArrayList();
+        total.addAll(targets);
+        total.addAll(nonTargets);
 
+        List<AdvanceAction> currentActions = new ArrayList<>();
+        for (int i = 0; i < 30; i++) {
+            currentActions.add(new AdvanceAction(new ArrayList<>(), "nothing", total, 1));
+        }
 
-        while (!nodes.isEmpty()) {
-            NodeNode node = nodes.poll();
-            if (isDone(node)) {
-                return node; // first solution ggs
-            }
-
-            if (stuff % 1000 == 0) {
-                System.out.println(stuff + " / " + node.f + " / " + fScore(node) + " / " + nodes.size());
-            }
-            stuff++;
-            if (nodes.size() > 500000) return null;
-
-            for (AdvanceAction availableAction : availableActions) {
-
-                State newState = availableAction.generateNew(node.state);
-                if (newState == null) continue; // if nothing happened as result of action, end tree here.
-                NodeNode newNodeNode = openNode(newState, node.totalFlips + (availableAction.flips.size() > 0 ? 1 : 0));
-                if (newNodeNode == null) continue; // already visited.
-
-                float newG = node.g + availableAction.cost;
-                if (newNodeNode.g > newG) {
-                    newNodeNode.g = newG;
-
-//                    boolean nope = false;
-//                    for (int i = targets.size(); i < newNodeNode.state.flips.length; i++) {
-//                        if (newNodeNode.state.flips[i] % 2 == 1) {
-//                            nope = true;
-//                            break;
-//                        }
-//                    }
-//                    if (nope) continue;
-
-                    float heuristic = fScore(newNodeNode) ;
-//                    if (heuristic > 50) continue;
-                    newNodeNode.f = newNodeNode.g + heuristic ;// heuristic
-                    newNodeNode.parent = node;
-                    newNodeNode.parentToMeAction = availableAction;
-
-
-                    nodes.add(newNodeNode);
-                }
-
+        List<Integer> idxes = new ArrayList<>();
+        int idx = currentActions.size();
+        for (AdvanceAction availableAction : availableActions) {
+            for (int j = 0; j < 3; j ++) {
+                currentActions.add(availableAction); // add 15 actions.
+                idxes.add(idx);
             }
         }
 
-        return null;
+        double lastEvaluation = Integer.MAX_VALUE;
+
+        double temperature = 2.3;
+        int iteration = 0;
+        int lastTarget = 0;
+        
+        double currentMinimum = 99999999;
+        List<AdvanceAction> currentMinimumActions = Collections.emptyList();
+        
+        while(true) {
+            long start = System.nanoTime();
+
+            int swapX = r.nextInt(currentActions.size());
+            int swapY = r.nextInt(idxes.size());
+
+            if (idxes.contains(swapX)) continue;
+
+            int realSwapY = idxes.get(swapY);
+
+
+            // do swap
+            AdvanceAction actionAtX = currentActions.get(swapX);
+            AdvanceAction actionAtY = currentActions.get(realSwapY);
+
+            currentActions.set(swapX, actionAtY);
+            currentActions.set(realSwapY, actionAtX);
+
+            // did swap.
+
+            // evaluate solution.
+            State begin = this.begin;
+            int chainLength = 0;
+            int untilAction = 0;
+            boolean done = false;
+            for (AdvanceAction currentAction : currentActions) {
+                chainLength += currentAction.moves;
+                untilAction += 1;
+                begin = currentAction.generateNew(begin);
+
+                if (isDone(begin)) {
+                    done = true;
+                    break;
+                }
+            }
+
+
+            double additionalPenalty = 0;
+            if (done) {
+                int flipIdxes = 0;
+                for (int i = 0; i < untilAction; i++) {
+                    if (!currentActions.get(i).flips.isEmpty()) {
+                        flipIdxes += i;
+                    }
+                }
+                additionalPenalty += flipIdxes/10.0;
+            } else {
+                additionalPenalty += 10000;
+
+                for (int i = 0; i < begin.flips.length; i++) {
+                    if ((begin.flips[i] % 2 == 1) != (i < targets.size())) {
+                        additionalPenalty += 20;
+                    }
+                }
+
+            }
+
+            double currentEvaluation = additionalPenalty + chainLength;
+
+
+            double variation = currentEvaluation - lastEvaluation;
+            boolean accepted = false;
+            if (variation < 0) {
+                accepted = true;
+                lastTarget = untilAction;
+            } else {
+                if (r.nextDouble() < Math.exp(-variation / temperature)) {
+                    accepted = true;
+                }
+            }
+
+            if (accepted) {
+                idxes.remove(swapY);
+                idxes.add(swapX);
+
+                lastEvaluation = currentEvaluation;
+            } else {
+                currentActions.set(swapX, actionAtX);
+                currentActions.set(realSwapY, actionAtY);
+            }
+
+            iteration++;
+            long dur = System.nanoTime() - start;
+            if (iteration % 100 == 0) {
+                System.out.println(iteration + "/" + lastEvaluation + "/" + temperature + "/" + chainLength + "/" + currentMinimum + "/" + lastTarget);
+                System.out.println("Iteraiton took "+ dur);
+            }
+            temperature *= 0.9999;
+
+            if (lastEvaluation > 10000 && temperature < 2.0) {
+                temperature = 2.3; // :D
+            }
+            
+            if (currentEvaluation <= currentMinimum) {
+                currentMinimum = currentEvaluation;
+                currentMinimumActions = new ArrayList<>(currentActions.subList(0, untilAction));
+            }
+
+            if (temperature < 0.01) {
+                return currentMinimumActions;
+            }
+        }
     }
 
-    public NodeNode openNode(State state, int flips) {
-        NodeNode nodeNode = new NodeNode(state, null, null, Float.MAX_VALUE, Float.MAX_VALUE, flips);
-        NodeNode previous = mapping.putIfAbsent(state, nodeNode);
-        if (previous != null) return null;
-        return nodeNode;
-    }
 
     @AllArgsConstructor
     @Getter
@@ -250,33 +260,14 @@ public class WaterPathfinder {
         }
     }
 
-    @Data
-    @AllArgsConstructor
-    public static class NodeNode {
-        private State state;
-        @EqualsAndHashCode.Exclude
-        private NodeNode parent;
-        @EqualsAndHashCode.Exclude
-        private AdvanceAction parentToMeAction;
-
-        @EqualsAndHashCode.Exclude
-        private float f;
-        @EqualsAndHashCode.Exclude
-        private float g;
-
-        private int totalFlips;
-        // dist curr
-    }
-
 
     @Getter
     @AllArgsConstructor
     public static class AdvanceAction {
         private final List<Simulator.Pt> flips;
         private final String key;
-        private final float cost;
         private final List<Simulator.Pt> targets;
-        private final int moves;
+        private int moves;
 
         public State generateNew(State from) {
             Simulator.Node[][] nodes = Simulator.clone(from.state);
@@ -293,10 +284,8 @@ public class WaterPathfinder {
                 else flip.set(nodes, Simulator.NodeType.BLOCK);
             }
 //            if (!flips.isEmpty() && !foundWater) return null;
-            for (int i = 0; i < moves; i++) {
-                boolean status = Simulator.simulateSingleTick(nodes);
-                if (i == 0 && !status && flips.isEmpty()) return null;
-            }
+            for (int i = 0; i < moves; i ++)
+                Simulator.simulateSingleTick(nodes);
 
             int[] newFlips = Arrays.copyOf(from.flips, from.flips.length);
 
@@ -344,7 +333,7 @@ public class WaterPathfinder {
         String[][] configuration =  Arrays.stream(config.split("\n")).map(a -> a.split("")).toArray(String[][]::new);
 
         int[] targets = {0, 4, 9, 14, 18};
-        boolean[] targetActivate = {false, false, true, true,true};
+        boolean[] targetActivate = {true, false, false, true,true};
 
         Simulator.Node[][] nodes = new Simulator.Node[25][19];
         Map<String, List<Simulator.Pt>> switchFlips = new HashMap<>();
@@ -381,18 +370,20 @@ public class WaterPathfinder {
         }
 
         WaterPathfinder waterPathfinder = new WaterPathfinder(nodes, ptTargets, notTargets, switchFlips);
-        NodeNode result = waterPathfinder.pathfind();
-        System.out.println(result.state);
-        int totalCost = 0;
-        NodeNode treeWalk = result;
-        while (treeWalk.parent != null) {
-            System.out.println(treeWalk.parentToMeAction.key + "/" + treeWalk.parentToMeAction.cost + "/" + treeWalk.parentToMeAction.moves);
-
-            totalCost += treeWalk.parentToMeAction.moves;
-            treeWalk = treeWalk.parent;
+        List<AdvanceAction> actions = waterPathfinder.pathfind();
+        State s = waterPathfinder.begin;
+        int cost = 0;
+        for (AdvanceAction action : actions) {
+            System.out.println(action.key);
+            s = action.generateNew(s);
+            cost += action.moves;
+        }
+        System.out.println(s);
+        for (int i = 0; i < s.flips.length; i++) {
+            System.out.println(s.flips[i]);
         }
 
-        System.out.println(totalCost * 5 / 20.0 +"s");
+        System.out.println(cost * 5 / 20.0 +"s");
         System.out.println(System.currentTimeMillis() - start);
 //[19:38:47] [DG-WaterPuzzle-Calculator/INFO] (STDOUT) [kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.WaterPathfinder:<init>:62]: {
 //
