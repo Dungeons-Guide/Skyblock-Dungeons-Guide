@@ -2,7 +2,7 @@
 .idea
 
 eclipse/*
-
+out/*
 build/*
 jars/*
 runtime/logs/*

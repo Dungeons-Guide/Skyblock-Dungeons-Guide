@@ -52,7 +52,7 @@ public class GuiDungeonRoomEdit extends MGui {
         tabbedPane.addTab("General", new GeneralEditPane(room));
         tabbedPane.addTab("Match", new RoomDataDisplayPane(room));
         tabbedPane.addTab("Secrets", sep = new SecretEditPane(room));
-        tabbedPane.addTab("Actions", new ActionDisplayPane(room));
+        tabbedPane.addTab("Action", new ActionDisplayPane(room));
         tabbedPane.addTab("Test", new RoommatchingPane(room));
         tabbedPane.addTab("Proc.Params", new ProcessorParameterEditPane(room));
         this.tabbedPane = tabbedPane;

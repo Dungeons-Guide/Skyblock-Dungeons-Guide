@@ -176,7 +176,7 @@ public class DungeonsGuide implements DGInterface {
 
     private PacketInjector packetInjector;
     public void init(File f) {
-        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 4);
+        ProgressManager.ProgressBar progressbar = ProgressManager.push("DungeonsGuide", 5);
 
 
         progressbar.step("Creating Configuration");
@@ -199,6 +199,14 @@ public class DungeonsGuide implements DGInterface {
         }
 
         registerEventsForge(this);
+
+        progressbar.step("Loading Native Libraries");
+
+        try {
+            NativeLoader.extractLibraryAndLoad("waterboard");
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
 
         progressbar.step("Registering Events & Commands");
 
@@ -269,6 +277,7 @@ public class DungeonsGuide implements DGInterface {
             registerCommands(commandReparty);
         }
         DiscordIntegrationManager.INSTANCE.isLoaded();
+
 
 
         TimeScoreUtil.init();
