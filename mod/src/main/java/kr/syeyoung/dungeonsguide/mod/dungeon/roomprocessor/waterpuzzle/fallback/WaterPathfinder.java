@@ -37,7 +37,7 @@ public class WaterPathfinder {
     private Simulator.Pt[] nonTargets;
     private int maxMatch = 0;
 
-    public WaterPathfinder(Simulator.Node[][] begin, Simulator.Pt[] targets, Simulator.Pt[] nonTargets, Map<String, Simulator.Pt[]> switchFlips) {
+    public WaterPathfinder(Simulator.Node[][] begin, Simulator.Pt[] targets, Simulator.Pt[] nonTargets, Map<String, Simulator.Pt[]> switchFlips, int moves) {
         this.targets = targets;
         this.nonTargets = nonTargets;
 
@@ -47,7 +47,7 @@ public class WaterPathfinder {
         maxMatch = total.size();
         for (Map.Entry<String, Simulator.Pt[]> stringListEntry : switchFlips.entrySet()) {
             if (stringListEntry.getValue().length != 0)
-                availableActions.add(new AdvanceAction(stringListEntry.getValue(), stringListEntry.getKey(), total, 3));
+                availableActions.add(new AdvanceAction(stringListEntry.getValue(), stringListEntry.getKey(), total, moves));
         }
 
 //        availableActions.add(new AdvanceAction(new ArrayList<>(), "nothing", 1, total, 1)); // it can handle 1 moves. yes.
@@ -76,7 +76,7 @@ public class WaterPathfinder {
         return true;
     }
 
-    public List<AdvanceAction> pathfind(double temperatureMultiplier, double targetTemperature, int targetIterations) {
+    public List<AdvanceAction> pathfind(double temperatureMultiplier, double targetTemperature, int targetIterations, int cnt1, int cnt2) {
         Random r = new Random(); // yes. Probablistic method.
 
         ArrayList<Simulator.Pt> total = new ArrayList();
@@ -84,14 +84,14 @@ public class WaterPathfinder {
         total.addAll(Arrays.asList(nonTargets));
 
         List<AdvanceAction> currentActions = new ArrayList<>();
-        for (int i = 0; i < 30; i++) {
+        for (int i = 0; i < cnt1; i++) {
             currentActions.add(new AdvanceAction(new Simulator.Pt[0], "nothing", total, 1));
         }
 
         List<Integer> idxes = new ArrayList<>();
         int idx = currentActions.size();
         for (AdvanceAction availableAction : availableActions) {
-            for (int j = 0; j < 3; j ++) {
+            for (int j = 0; j < cnt2; j ++) {
                 currentActions.add(availableAction); // add 15 actions.
                 idxes.add(idx++);
             }
@@ -384,7 +384,7 @@ public class WaterPathfinder {
             throw new RuntimeException(e);
         }
         Waterboard waterPathfinder = new Waterboard(nodes, ptTargets.toArray(new Simulator.Pt[0]), notTargets.toArray(new Simulator.Pt[0]), switchFlips);
-        List<Waterboard.Action> actions = waterPathfinder.solve(0.9999, 0.1, 2000);
+        List<Waterboard.Action> actions = waterPathfinder.solve(0.9999, 0.1, 2000, 3, 30, 3);
 
         int cost = 0;
         for (Waterboard.Action action : actions) {

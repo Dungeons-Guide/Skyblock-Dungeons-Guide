@@ -47,6 +47,7 @@ public class Waterboard {
             Map.Entry<String, Simulator.Pt[]> entry = entryIterator.next();
             if (entry.getValue().length == 0) entryIterator.remove();
         }
+
     }
 
     public static class Action {
@@ -67,11 +68,11 @@ public class Waterboard {
         }
     }
 
-    public native Action[] nativeSolve(double temperatureMultiplier, double targetTemperature, int targetIterations);
+    public native Action[] nativeSolve(double temperatureMultiplier, double targetTemperature, int targetIterations, int moves, int cnt1, int cnt2);
 
-    public List<Action> solveUsingFallback(double temperatureMultiplier, double targetTemperature, int targetIterations) {
-        WaterPathfinder waterPathfinder = new WaterPathfinder(currentState, targets, nonTargets, switchFlips);
-        List<WaterPathfinder.AdvanceAction> actions = waterPathfinder.pathfind(temperatureMultiplier, targetTemperature, targetIterations);
+    public List<Action> solveUsingFallback(double temperatureMultiplier, double targetTemperature, int targetIterations, int moves, int cnt1, int cnt2) {
+        WaterPathfinder waterPathfinder = new WaterPathfinder(currentState, targets, nonTargets, switchFlips, moves);
+        List<WaterPathfinder.AdvanceAction> actions = waterPathfinder.pathfind(temperatureMultiplier, targetTemperature, targetIterations, cnt1, cnt2);
 
         List<Action> actionList = new ArrayList<>(actions.size());
         for (WaterPathfinder.AdvanceAction action : actions) {
@@ -80,7 +81,7 @@ public class Waterboard {
         return actionList;
     }
 
-    public List<Action> solve(double temperatureMultiplier, double targetTemperature, int targetIterations) {
-        return Arrays.asList(nativeSolve(temperatureMultiplier, targetTemperature, targetIterations));
+    public List<Action> solve(double temperatureMultiplier, double targetTemperature, int targetIterations, int moves, int cnt1, int cnt2) {
+        return Arrays.asList(nativeSolve(temperatureMultiplier, targetTemperature, targetIterations, moves, cnt1, cnt2));
     }
 }

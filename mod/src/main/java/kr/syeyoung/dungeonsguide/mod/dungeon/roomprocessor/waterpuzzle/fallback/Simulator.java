@@ -234,13 +234,13 @@ public class Simulator {
                 NodeType type = nodes[y][x].nodeType;
                 int cnt = nodes[y][x].waterLevel;
                 if (type == NodeType.BLOCK) {
-                    System.out.print("X");
+                    System.out.print("XX");
                 } else if (type == NodeType.AIR) {
-                    System.out.print(" ");
+                    System.out.print(" "+cnt);
                 } else if (type == NodeType.WATER) {
-                    System.out.print(cnt);
+                    System.out.print("#" + cnt);
                 } else {
-                    System.out.print("W");
+                    System.out.print("W"+cnt);
                 }
             }
             System.out.println();

@@ -182,7 +182,7 @@ public class FeatureRegistry {
     public static final FeatureSolverBlaze SOLVER_BLAZE = register(new FeatureSolverBlaze());
     public static final FeatureSolverTeleport SOLVER_TELEPORT = register(new FeatureSolverTeleport());
     public static final SimpleFeature SOLVER_CREEPER = register(new SimpleFeature("Puzzle Solvers", "Creeper", "Draws line between prismarine lamps in creeper room", "solver.creeper"));
-    public static final SimpleFeature SOLVER_WATERPUZZLE = register(new SimpleFeature("Puzzle Solvers", "Waterboard (Advanced)", "Calculates solution for waterboard puzzle and displays it to user", "solver.waterboard"));
+    public static final FeatureSolverWaterboard SOLVER_WATERPUZZLE = register(new FeatureSolverWaterboard());
     public static final FeatureSolverTictactoe SOLVER_TICTACTOE = register(new FeatureSolverTictactoe());
     public static final FeatureSolverRiddle SOLVER_RIDDLE = register(new FeatureSolverRiddle());
 
