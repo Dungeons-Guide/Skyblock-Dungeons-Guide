@@ -569,6 +569,7 @@ public class RenderUtils {
             GlStateManager.disableDepth();
             GlStateManager.depthMask(false);
         }
+        GlStateManager.disableLighting();
         GlStateManager.enableBlend();
         GlStateManager.disableAlpha();
         GlStateManager.tryBlendFuncSeparate(770, 771, 1, 0);
@@ -588,6 +589,7 @@ public class RenderUtils {
         }
         GlStateManager.enableAlpha();
         GlStateManager.enableTexture2D();
+        GlStateManager.enableLighting();
         GlStateManager.color(1.0F, 1.0F, 1.0F, 1.0F);
         GlStateManager.popMatrix();
     }

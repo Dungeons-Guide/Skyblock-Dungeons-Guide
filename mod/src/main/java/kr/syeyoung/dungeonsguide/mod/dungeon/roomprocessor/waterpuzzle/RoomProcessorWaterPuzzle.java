@@ -22,19 +22,24 @@ import com.google.common.util.concurrent.ThreadFactoryBuilder;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPointSet;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.GeneralRoomProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.RoomProcessorGenerator;
+import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.Simulator;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockLever;
-import net.minecraft.block.BlockLiquid;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.init.Blocks;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.EnumFacing;
+import net.minecraft.util.Vec3;
 import net.minecraft.world.World;
+import net.minecraftforge.event.entity.player.PlayerInteractEvent;
 
 import java.awt.*;
 import java.util.*;
@@ -58,13 +63,18 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private Simulator.Node nodes[][];
     private Simulator.Pt waterNodeStart;
     private Map<String, Simulator.Pt> waterNodeEnds = new HashMap<>();
-    private Map<String, List<Simulator.Pt>> switchFlips = new HashMap<>();
+    private Map<String, List<Simulator.Pt>> switchFlips = new LinkedHashMap<>(); // uhhh simulated annealing likes mainStream at first element. idk why. probably a bug but it works soooo :D
     private Map<String, BlockPos> switchLoc = new HashMap<>();
     private List<String> targetDoors = new ArrayList<>();
 
     private Map<Simulator.Pt, BlockPos> ptMapping = new HashMap<>();
-    private List<WaterPathfinder.NodeNode> solutionList = new ArrayList<>();
+
+
+    private List<Waterboard.Action> solutionList = new ArrayList<>();
+
+
     private long lastStable;
+    private long solutionStart;
     private long lastUnstable;
 
     public RoomProcessorWaterPuzzle(DungeonRoom dungeonRoom) {
@@ -84,6 +94,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             buildNodes(true);
             targetDoors();
 
+            ChatTransmitter.sendDebugChat(switchFlips+"");
         }
 
 
@@ -109,6 +120,7 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
         }
         switchLoc.put("mainStream", ((OffsetPoint) getDungeonRoom().getDungeonRoomInfo().getProperties().get("water-lever")).getBlockPos(getDungeonRoom()));
         switchFlips.put("mainStream", new ArrayList<>());
+
     }
 
     private void buildNodes(boolean switchfips) {
@@ -181,6 +193,9 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     private Future lastCalc;
 
     private int idx = 0;
+    private int changeidx = 0;
+    private int calcchangeidx = 0;
+    private int currMoveTick = 0;
     @Override
     public void tick() {
         super.tick();
@@ -194,44 +209,70 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             boolean changed = !Arrays.deepEquals(lastCopy, copy);
             lastCopy = copy;
             if (!changed) {
-                if ((System.currentTimeMillis() - lastUnstable) > 1000)
+                if ((System.currentTimeMillis() - lastUnstable) > 2000) {
                     lastStable = System.currentTimeMillis();
+                    if (idx == 0)
+                        solutionStart = lastStable;
+                }
             } else {
+                changeidx ++;
                 lastUnstable = System.currentTimeMillis();
             }
+
             Simulator.simulateTicks(nodes);
-            if ((System.currentTimeMillis() - lastUnstable) > 1000) {
-                if (lastCalc == null || lastCalc.isDone()) {
+            if ((System.currentTimeMillis() - lastUnstable) > 600) {
+                if ((lastCalc == null || lastCalc.isDone()) && changeidx != calcchangeidx) {
+                    int started = changeidx;
+                    calcchangeidx = started;
                     lastCalc = executorService.submit(() -> {
                         try {
+                            ChatTransmitter.addToQueue("§eDungeons Guide :: §fOneflow Solver :: §eStarting to calculate solution... ");
+                            long currTime = System.currentTimeMillis();
                             List<Simulator.Pt> targets = targetDoors.stream().map(waterNodeEnds::get).collect(Collectors.toList());
                             List<Simulator.Pt> nonTargets = waterNodeEnds.values().stream().filter(a -> !targets.contains(a)).collect(Collectors.toList());
 
-                            WaterPathfinder waterPathfinder = new WaterPathfinder(copy, targets, nonTargets, switchFlips);
-                            WaterPathfinder.NodeNode nodeNode = waterPathfinder.pathfind();
-                            LinkedList<WaterPathfinder.NodeNode> solution = new LinkedList<>();
-                            if (nodeNode.getParentToMeAction() != null)
-                                solution.addFirst(nodeNode);
-                            while (nodeNode.getParent() != null) {
-                                nodeNode = nodeNode.getParent();
-                                if (nodeNode.getParentToMeAction() != null)
-                                    solution.addFirst(nodeNode);
+                            Map<String, Simulator.Pt[]> flipsRebuilt = new LinkedHashMap<>();
+                            for (Map.Entry<String, List<Simulator.Pt>> stringListEntry : switchFlips.entrySet()) {
+                                flipsRebuilt.put(stringListEntry.getKey(), stringListEntry.getValue().toArray(new Simulator.Pt[0]));
                             }
-                            this.solutionList = solution;
-                            idx = 0;
-                            lastStable = System.currentTimeMillis();
-                        } catch (Exception e) {
+
+                            Waterboard waterPathfinder = new Waterboard(copy, targets.toArray(new Simulator.Pt[0]), nonTargets.toArray(new Simulator.Pt[0]), flipsRebuilt);
+                            List<Waterboard.Action> nodeNode = waterPathfinder.solve(
+                                    FeatureRegistry.SOLVER_WATERPUZZLE.getTempMult(),
+                                    FeatureRegistry.SOLVER_WATERPUZZLE.getTargetTemp(),
+                                    FeatureRegistry.SOLVER_WATERPUZZLE.getIterTarget(),
+                                    FeatureRegistry.SOLVER_WATERPUZZLE.getMoves(),
+                                    FeatureRegistry.SOLVER_WATERPUZZLE.getCnt1(),
+                                    FeatureRegistry.SOLVER_WATERPUZZLE.getCnt2());
+
+                            nodeNode = new ArrayList<>(nodeNode);
+                            if (changeidx == started) {
+
+                                while (!nodeNode.isEmpty() && nodeNode.get(0).getName().equals("nothing")) {
+                                    System.out.println(nodeNode.get(0).getName());
+                                    nodeNode.remove(0);
+                                }
+
+                                this.solutionList = nodeNode;
+                                idx = 0;
+                                currMoveTick = 0;
+                                lastStable = System.currentTimeMillis();
+
+
+                                int cnt = 0;
+                                for (Waterboard.Action action : solutionList) {
+                                    cnt += action.getMove();
+                                }
+                                ChatTransmitter.addToQueue("§eDungeons Guide :: §fOneflow Solver :: §eFound "+(cnt * 5 / 20.0)+"s solution in "+(System.currentTimeMillis() - currTime)/1000+"s!");
+                            }
+                        } catch (Throwable e) {
                             lastCopy = null;
+                            calcchangeidx = -1;
+                            e.printStackTrace();
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
+                            ChatTransmitter.addToQueue("§eDungeons Guide :: §fOneflow Solver :: §cAn error occured while generating solution: "+e.getMessage()+" Report this problem at https://dungeons.guide/discord");
                         }
                     });
-                }
-            }
-
-
-
-            if (solutionList != null && solutionList.size() > 0) {
-                while (System.currentTimeMillis() - lastStable > (long) (idx) * 2500 + 250) { // water flows 5 ticks/s
-                    idx ++;
                 }
             }
         } catch (Exception e) {
@@ -243,6 +284,40 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
     @Override
     public void drawScreen(float partialTicks) {
         super.drawScreen(partialTicks);
+    }
+
+    @Override
+    public void onInteractBlock(PlayerInteractEvent event) {
+        super.onInteractBlock(event);
+        if (!FeatureRegistry.SOLVER_WATERPUZZLE.isEnabled()) return;
+        if (!FeatureRegistry.SOLVER_WATERPUZZLE.blockClicks()) return;
+
+        if (solutionList == null || idx >= solutionList.size()) return;
+        if (event.pos == null)return;
+
+        Waterboard.Action currentAction = solutionList.get(idx);
+        BlockPos pos = switchLoc.get(currentAction.getName());
+        if (pos == null) return;
+
+        if (!event.pos.equals(pos) )  {
+            event.setCanceled(true);
+            return;
+        };
+
+        int culMoves = 0;
+        for (int i = 0; i < idx; i++) {
+            culMoves += solutionList.get(i).getMove();
+        }
+
+        long target = solutionStart + 250L * culMoves;
+
+        if (target > System.currentTimeMillis()) {
+            event.setCanceled(true);
+            return;
+        }
+        do {
+            idx++;
+        } while (idx < solutionList.size() && solutionList.get(idx).getName().equals("nothing"));
     }
 
     @Override
@@ -259,19 +334,39 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
             }
         }
 
+
         if (solutionList.size() > 0) {
+            int culMoves = 0;
+            for (int i = 0; i < idx; i++) {
+                culMoves += solutionList.get(i).getMove();
+            }
+            int startingMoves = culMoves;
             for (int i = idx; i < solutionList.size(); i++) {
 
-                String key = solutionList.get(i).getParentToMeAction().getKey();
-                if (!key.equals("nothing")) {
-                    BlockPos pos = switchLoc.get(key);
+                String key = solutionList.get(i).getName();
+                int moves = solutionList.get(i).getMove();
+                BlockPos pos = switchLoc.get(key);
+                if (pos != null) {
                     // target:
-                    long target = lastStable + 2500L * i;
+
+                    if (i == idx) {
+                        GlStateManager.color(1,1,1,1);
+                        RenderUtils.drawLine(
+                                Minecraft.getMinecraft().thePlayer.getPositionEyes(partialTicks),
+                                new Vec3(pos).addVector(0.5, 0, 0.5),
+                                Color.green,
+                                partialTicks,
+                                false);
+                    }
+
+                    long target = solutionStart + 250L * culMoves;
 
                     double time = (target-System.currentTimeMillis()) / 1000.0 + 0.051;
-                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i-idx)*0.5f - 0.5f, pos.getZ()+0.5f,
-                            time < 0.5 ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
+                    if (time < 0) time = 0;
+                    RenderUtils.drawTextAtWorld(String.format("%.1f", time)+"s", pos.getX()+0.5f, pos.getY()+(i - idx)*0.2f - 0.5f, pos.getZ()+0.5f,
+                            (i == idx) && target < System.currentTimeMillis() ? 0xFF00FF00 : 0xFFFF5500, 0.05f, false, false, partialTicks);
                 }
+                culMoves += moves;
             }
 
         }

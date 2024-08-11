@@ -177,3 +177,5 @@ signing {
 }
 if (shouldSign)
     tasks.buildStandaloneJars.dependsOn tasks.signStandaloneConsumerJar, tasks.signStandaloneDevJar
+else
+    tasks.buildStandaloneJars.dependsOn tasks.standaloneConsumerJar, tasks.standaloneDevJar
