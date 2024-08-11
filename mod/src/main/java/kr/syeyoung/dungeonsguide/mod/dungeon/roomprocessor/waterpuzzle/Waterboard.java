@@ -18,6 +18,7 @@
 
 package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 
+import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.Simulator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.WaterPathfinder;
 import lombok.AllArgsConstructor;
@@ -36,6 +37,8 @@ public class Waterboard {
     private Simulator.Pt[] nonTargets;
     private Map<String, Simulator.Pt[]> switchFlips;
 
+
+    public static boolean nativeLoaded = true;
 
     public Waterboard(Simulator.Node[][] currentState, Simulator.Pt[] targets, Simulator.Pt[] nonTargets, Map<String, Simulator.Pt[]> switchFlips) {
         this.currentState = currentState;
@@ -82,6 +85,15 @@ public class Waterboard {
     }
 
     public List<Action> solve(double temperatureMultiplier, double targetTemperature, int targetIterations, int moves, int cnt1, int cnt2) {
-        return Arrays.asList(nativeSolve(temperatureMultiplier, targetTemperature, targetIterations, moves, cnt1, cnt2));
+        if (nativeLoaded) {
+            try {
+                return Arrays.asList(nativeSolve(temperatureMultiplier, targetTemperature, targetIterations, moves, cnt1, cnt2));
+            } catch (UnsatisfiedLinkError e) {
+                nativeLoaded = false;
+                throw e;
+            }
+        } else {
+            return solveUsingFallback(temperatureMultiplier, targetTemperature, targetIterations, moves, cnt1, cnt2);
+        }
     }
 }

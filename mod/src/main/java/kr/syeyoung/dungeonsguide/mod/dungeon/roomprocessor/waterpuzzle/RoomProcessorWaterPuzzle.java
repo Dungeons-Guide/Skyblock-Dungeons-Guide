@@ -265,8 +265,12 @@ public class RoomProcessorWaterPuzzle extends GeneralRoomProcessor {
                                 }
                                 ChatTransmitter.addToQueue("§eDungeons Guide :: §fOneflow Solver :: §eFound "+(cnt * 5 / 20.0)+"s solution in "+(System.currentTimeMillis() - currTime)/1000+"s!");
                             }
-                        } catch (Exception e) {
+                        } catch (Throwable e) {
                             lastCopy = null;
+                            calcchangeidx = -1;
+                            e.printStackTrace();
+                            FeatureCollectDiagnostics.queueSendLogAsync(e);
+                            ChatTransmitter.addToQueue("§eDungeons Guide :: §fOneflow Solver :: §cAn error occured while generating solution: "+e.getMessage()+" Report this problem at https://dungeons.guide/discord");
                         }
                     });
                 }

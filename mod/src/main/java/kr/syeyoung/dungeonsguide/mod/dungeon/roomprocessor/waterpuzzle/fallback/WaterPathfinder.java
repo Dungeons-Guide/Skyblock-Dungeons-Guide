@@ -190,10 +190,10 @@ public class WaterPathfinder {
 
             iteration++;
             long dur = System.nanoTime() - start;
-            if (iteration % 100 == 0) {
-                System.out.println(iteration + "/" + lastEvaluation + "/" + temperature + "/" + chainLength + "/" + currentMinimum + "/" + lastTarget);
-                System.out.println("Iteraiton took "+ dur);
-            }
+//            if (iteration % 100 == 0) {
+//                System.out.println(iteration + "/" + lastEvaluation + "/" + temperature + "/" + chainLength + "/" + currentMinimum + "/" + lastTarget);
+//                System.out.println("Iteraiton took "+ dur);
+//            }
             temperature *= temperatureMultiplier;
 
             if (lastEvaluation > 10000 && temperature < 2.0) {
