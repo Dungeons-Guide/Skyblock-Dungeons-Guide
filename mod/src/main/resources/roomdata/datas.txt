@@ -126,3 +126,4 @@ roomdata/0877607a-b8a2-433a-b893-f4de7c83378a.roomdata
 roomdata/a1c8fd24-c105-49b6-ba56-51dfbb7023cb.roomdata
 roomdata/6b0dfb3e-c86c-41d1-8526-a172027dbb8d.roomdata
 roomdata/f9ebf3b3-1fda-4670-a296-f6ed39514129.roomdata
+roomdata/3afad77e-48e0-4b67-98c2-72ccc1ee13c1.roomdata

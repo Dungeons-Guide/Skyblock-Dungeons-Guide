@@ -408,67 +408,67 @@ public class CommandDgDebug extends CommandBase {
 
     private void checkCommand() {
         File fileroot = Main.getConfigDir();
-        for (File f : fileroot.listFiles()) {
-            if (!f.getName().endsWith(".roomdata")) {
-                continue;
-            }
-            try {
-                InputStream fis = new FileInputStream(f);
-                ObjectInputStream ois = new ObjectInputStream(fis);
-                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
-                ois.close();
-                fis.close();
-                System.out.println("Starting at " + dri.getName() + " - " + dri.getUuid());
-                for (Map.Entry<String, DungeonMechanic> value2 : dri.getMechanics().entrySet()) {
-                    DungeonMechanic value = value2.getValue();
-                    if (value instanceof DungeonSecret &&
-                            (((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.BAT
-                                    || ((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.CHEST)
-                            && ((DungeonSecret) value).getSecretPoint().getY() == 0) {
-                        OffsetPoint offsetPoint = ((DungeonSecret) value).getSecretPoint();
-                        if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
-                            dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                            System.out.println("Fixing " + value2.getKey() + " - as secret " + ((DungeonSecret) value).getSecretType() + " - at " + ((DungeonSecret) value).getSecretPoint());
-                        }
-                    } else if (value instanceof DungeonOnewayDoor) {
-                        for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {
-                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
-                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                                System.out.println("Fixing " + value2.getKey() + " - o-door - at " + offsetPoint);
-                            }
-                        }
-                    } else if (value instanceof DungeonDoor) {
-                        for (OffsetPoint offsetPoint : ((DungeonDoor) value).getSecretPoint().getOffsetPointList()) {
-                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
-                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                                System.out.println("Fixing " + value2.getKey() + " - door - at " + offsetPoint);
-                            }
-                        }
-                    } else if (value instanceof DungeonBreakableWall) {
-                        for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).getSecretPoint().getOffsetPointList()) {
-                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
-                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                                System.out.println("Fixing " + value2.getKey() + " - wall - at " + offsetPoint);
-                            }
-                        }
-                    } else if (value instanceof DungeonTomb) {
-                        for (OffsetPoint offsetPoint : ((DungeonTomb) value).getSecretPoint().getOffsetPointList()) {
-                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
-                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
-                                System.out.println("Fixing " + value2.getKey() + " - crypt - at " + offsetPoint);
-                            }
-                        }
-                    }
-                }
-                FileOutputStream fos = new FileOutputStream(f);
-                ObjectOutputStream oos = new ObjectOutputStream(fos);
-                oos.writeObject(dri);
-                oos.flush();
-                oos.close();
-            } catch (Exception e) {
-                e.printStackTrace();
-            }
-        }
+//        for (File f : fileroot.listFiles()) {
+//            if (!f.getName().endsWith(".roomdata")) {
+//                continue;
+//            }
+//            try {
+//                InputStream fis = new FileInputStream(f);
+//                ObjectInputStream ois = new ObjectInputStream(fis);
+//                DungeonRoomInfo dri = (DungeonRoomInfo) ois.readObject();
+//                ois.close();
+//                fis.close();
+//                System.out.println("Starting at " + dri.getName() + " - " + dri.getUuid());
+//                for (Map.Entry<String, DungeonMechanic> value2 : dri.getMechanics().entrySet()) {
+//                    DungeonMechanic value = value2.getValue();
+//                    if (value instanceof DungeonSecret &&
+//                            (((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.BAT
+//                                    || ((DungeonSecret) value).getSecretType() == DungeonSecret.SecretType.CHEST)
+//                            && ((DungeonSecret) value).getSecretPoint().getY() == 0) {
+//                        OffsetPoint offsetPoint = ((DungeonSecret) value).getSecretPoint();
+//                        if (dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+//                            dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+//                            System.out.println("Fixing " + value2.getKey() + " - as secret " + ((DungeonSecret) value).getSecretType() + " - at " + ((DungeonSecret) value).getSecretPoint());
+//                        }
+//                    } else if (value instanceof DungeonOnewayDoor) {
+//                        for (OffsetPoint offsetPoint : ((DungeonOnewayDoor) value).getSecretPoint().getOffsetPointList()) {
+//                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+//                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+//                                System.out.println("Fixing " + value2.getKey() + " - o-door - at " + offsetPoint);
+//                            }
+//                        }
+//                    } else if (value instanceof DungeonDoor) {
+//                        for (OffsetPoint offsetPoint : ((DungeonDoor) value).getSecretPoint().getOffsetPointList()) {
+//                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+//                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+//                                System.out.println("Fixing " + value2.getKey() + " - door - at " + offsetPoint);
+//                            }
+//                        }
+//                    } else if (value instanceof DungeonBreakableWall) {
+//                        for (OffsetPoint offsetPoint : ((DungeonBreakableWall) value).getSecretPoint().getOffsetPointList()) {
+//                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+//                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+//                                System.out.println("Fixing " + value2.getKey() + " - wall - at " + offsetPoint);
+//                            }
+//                        }
+//                    } else if (value instanceof DungeonTomb) {
+//                        for (OffsetPoint offsetPoint : ((DungeonTomb) value).getSecretPoint().getOffsetPointList()) {
+//                            if (offsetPoint.getY() == 0 && dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] != -1) {
+//                                dri.getBlocks()[offsetPoint.getZ()][offsetPoint.getX()] = -1;
+//                                System.out.println("Fixing " + value2.getKey() + " - crypt - at " + offsetPoint);
+//                            }
+//                        }
+//                    }
+//                }
+//                FileOutputStream fos = new FileOutputStream(f);
+//                ObjectOutputStream oos = new ObjectOutputStream(fos);
+//                oos.writeObject(dri);
+//                oos.flush();
+//                oos.close();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
     }
 
     private void reloadDungeonCommand() {
