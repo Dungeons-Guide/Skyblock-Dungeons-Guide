@@ -21,14 +21,8 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.Simulator;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.waterpuzzle.fallback.WaterPathfinder;
-import lombok.AllArgsConstructor;
-import net.minecraft.client.renderer.texture.Stitcher;
-import scala.actors.threadpool.Arrays;
 
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 
 public class Waterboard {
