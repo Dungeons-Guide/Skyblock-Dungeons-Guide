@@ -93,6 +93,8 @@ public class Waterboard {
                 throw e;
             }
         } else {
+            ChatTransmitter.addToQueue("§eDungeons Guide :: §fOneflow Solver :: §cUsing fallback solver (10x slower than C++ solver)");
+
             return solveUsingFallback(temperatureMultiplier, targetTemperature, targetIterations, moves, cnt1, cnt2);
         }
     }
