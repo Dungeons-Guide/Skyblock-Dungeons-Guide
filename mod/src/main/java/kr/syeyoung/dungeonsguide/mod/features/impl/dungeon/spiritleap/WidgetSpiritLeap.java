@@ -5,6 +5,7 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.WidgetDungeonMap;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.PartyFinderParty;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.WidgetPartyElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -51,7 +52,13 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
         mapConfiguration.getNameSettings().setDrawName(true);
         mapConfiguration.getNameSettings().setTextColor(new AColor(0xFFFFFFFF,true));
 
-        map.setValue(new WidgetDungeonMap(mapConfiguration));
+        map.setValue(new WidgetDungeonMap(mapConfiguration, this::getOverlays));
+    }
+
+    private List<MapOverlay> getOverlays() {
+        List<MapOverlay> overlays = new ArrayList<>();
+
+        return overlays;
     }
 
     @Bind(variableName = "api")

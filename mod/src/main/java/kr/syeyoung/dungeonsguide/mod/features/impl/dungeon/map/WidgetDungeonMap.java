@@ -6,7 +6,6 @@ import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechan
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.chat.ChatTransmitter;
-import kr.syeyoung.dungeonsguide.mod.config.types.GUIPosition;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.doorfinder.EDungeonDoorType;
 import kr.syeyoung.dungeonsguide.mod.dungeon.map.DungeonMapLayout;
@@ -15,10 +14,9 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.map.MapPlayerProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessor;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
-import kr.syeyoung.dungeonsguide.mod.guiv2.layouter.Layouter;
-import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Position;
 import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
@@ -44,20 +42,33 @@ import org.lwjgl.opengl.GL11;
 
 import javax.vecmath.Vector2d;
 import java.awt.*;
+import java.security.Provider;
 import java.util.Collections;
 import java.util.List;
 import java.util.Set;
+import java.util.function.Supplier;
 
 public class WidgetDungeonMap extends Widget implements Renderer {
 
     private MapConfiguration mapConfiguration;
-    public WidgetDungeonMap(MapConfiguration mapConfiguration) {
+    private Supplier<List<MapOverlay>> getOverlays;
+    public WidgetDungeonMap(MapConfiguration mapConfiguration, Supplier<List<MapOverlay>> getOverlays) {
         this.mapConfiguration = mapConfiguration;
+        this.getOverlays = getOverlays;
     }
 
     @Override
     public List<Widget> build(DomElement buildContext) {
         return Collections.emptyList();
+    }
+
+    private double mouseX;
+    private double mouseY;
+    @Override
+    public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
+        this.mouseX = relMouseX0;
+        this.mouseY = relMouseY0;
+        return true;
     }
 
     @Override
@@ -108,7 +119,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             BossfightProcessor bossfightProcessor = dungeonContext.getBossfightProcessor();
             BossfightRenderSettings settings = bossfightProcessor.getMapRenderSettings();
             if (settings != null) {
-                renderBossfight(partialTicks, scale, settings, bossfightProcessor.getMarkers());
+                renderBossfight(partialTicks, scale, settings, getOverlays.get());
             }
 
 
@@ -138,14 +149,31 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 snapRotation =  (yaw - 180) % 360;
             }
             renderRooms(mapProcessor);
+
+
             renderIcons(mapProcessor, scale * mapConfiguration.getMapScale(), snapRotation + 360);
             GlStateManager.color(1,1,1,1);
-            renderPlayers(partialTicks, mapProcessor, mapData, dungeonContext, scale * mapConfiguration.getMapScale());
+            for (MapOverlay marker : getOverlays.get()) {
+                double xCoord = marker.getX(partialTicks);
+                double zCoord = marker.getZ(partialTicks);
+                Vector2d loc = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(new Vec3(xCoord, 0, zCoord));
+                double px = loc.x;
+                double pz = loc.y;
+
+                GlStateManager.enableTexture2D();
+                GlStateManager.pushMatrix();
+                GlStateManager.translate(px, pz, 0);
+
+                // well mouse pos is incorrect. :/
+                marker.doRender(0, partialTicks, scale, mouseX / scale - px, mouseY / scale - pz);
+
+                GlStateManager.popMatrix();
+            }
         }
     }
 
 
-    private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings, List<MarkerData> markers) {
+    private void renderBossfight(float partialTicks, float scale, BossfightRenderSettings bossfightRenderSettings, List<MapOverlay> overlays) {
         Minecraft.getMinecraft().getTextureManager().bindTexture(bossfightRenderSettings.getResourceLocation());
         double x, y, width, height;
         if (bossfightRenderSettings.getTextureWidth() > bossfightRenderSettings.getTextureHeight()) {
@@ -162,77 +190,22 @@ public class WidgetDungeonMap extends Widget implements Renderer {
             );
         }
 
-
-
-        Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation2);
-        for (MarkerData marker : markers) {
-            MapConfiguration.PlayerHeadSettings settings = mapConfiguration.getHeadSettingsMap().get(marker.getType());
-            if (settings == null) continue;
-            if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) continue;
-            if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.ARROW) continue; // wtf arrow?
-            double xCoord = marker.getPrevX() + (marker.getCurrX() - marker.getPrevX()) * partialTicks;
-            double zCoord = marker.getPrevZ() + (marker.getCurrZ() - marker.getPrevZ()) * partialTicks;
+        for (MapOverlay marker : overlays) {
+            double xCoord = marker.getX(partialTicks);
+            double zCoord = marker.getZ(partialTicks);
             double px = width * (xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
             double pz = height * (zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
-            double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;
+
 
             GlStateManager.enableTexture2D();
             GlStateManager.pushMatrix();
             GlStateManager.translate(px, pz, 0);
-            GlStateManager.rotate((float) yaw, 0, 0, 1);
 
-            GlStateManager.scale(1 / scale, 1 / scale, 0);
-            GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 1);
+            marker.doRender(0, partialTicks, scale, mouseX / scale - px, mouseY / scale - pz);
 
-            boolean flip = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
-            int tx = marker.getMarkerIndex() % 8;
-            int ty = marker.getMarkerIndex() / 8;
-            Gui.drawScaledCustomSizeModalRect(-4, -4, tx * 72,ty * 72 + (flip ? 8 : 0) , 72, 72, 8, flip ? -8 : 8, 576, 576);
             GlStateManager.popMatrix();
         }
-
-
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-
-        Set<TabListEntry> playerList = getPlayerListCached();
-
-
-        // 21 iterations bc we only want to scan the player part of tab list
-        int i = 0;
-        for (TabListEntry playerInfo : playerList) {
-            if (++i >= 20) break;
-
-            String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
-            if (name == null) continue;
-
-
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
-
-            Vector2d pt2 = null;
-            double yaw2 = 0;
-
-            if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == thePlayer)) {
-                // getting location from player entity
-                Vec3 playerPos = entityplayer.getPositionEyes(partialTicks);
-                double px = width * (playerPos.xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
-                double pz = height * (playerPos.zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
-
-                pt2 = new Vector2d(px, pz);
-                yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
-                if(DungeonsGuide.getDungeonsGuide().verbose) System.out.println("Got player location from entity");
-            }
-
-            if(pt2 == null) return;
-
-            if (entityplayer == thePlayer) {
-                drawPlayer(mapConfiguration.getSelfSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
-            } else {
-                drawPlayer(mapConfiguration.getTeammateSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
-            }
-        }
-
     }
-    private final ResourceLocation resourceLocation2 = new ResourceLocation("dungeonsguide:map/bossfight/markers.png");
 
     private final ResourceLocation resourceLocation = new ResourceLocation("dungeonsguide:map/maptexture.png");
 
@@ -727,120 +700,17 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         }
     }
 
-    long nextRefresh;
+//    long nextRefresh;
+//
+//    Set<TabListEntry> playerListCached;
+//
+//    public Set<TabListEntry> getPlayerListCached(){
+//        if(playerListCached == null || nextRefresh <= System.currentTimeMillis()){
+//            ChatTransmitter.sendDebugChat("Refreshing players on map");
+//            playerListCached = TabList.INSTANCE.getTabListEntries();
+//            nextRefresh = System.currentTimeMillis() + 10000;
+//        }
+//        return playerListCached;
+//    }
 
-    Set<TabListEntry> playerListCached;
-
-    public Set<TabListEntry> getPlayerListCached(){
-        if(playerListCached == null || nextRefresh <= System.currentTimeMillis()){
-            ChatTransmitter.sendDebugChat("Refreshing players on map");
-            playerListCached = TabList.INSTANCE.getTabListEntries();
-            nextRefresh = System.currentTimeMillis() + 10000;
-        }
-        return playerListCached;
-    }
-
-
-    private void renderPlayers(float partialTicks, DungeonRoomScaffoldParser scaffoldParser, MapData mapData, DungeonContext context, double scale) {
-
-        EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-
-        Set<TabListEntry> playerList = getPlayerListCached();
-
-
-        // 21 iterations bc we only want to scan the player part of tab list
-        TabListEntry self = null;
-        Vector2d selfPt2 = null;
-        double selfYaw2 = 0;
-
-        int i = 0;
-        for (TabListEntry playerInfo : playerList) {
-            if (++i >= 20) break;
-
-            String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
-            if (name == null) continue;
-
-
-            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
-
-            Vector2d pt2 = null;
-            double yaw2 = 0;
-
-            if (entityplayer != null && (!entityplayer.isInvisible() || entityplayer == thePlayer)) {
-                // getting location from player entity
-                pt2 = scaffoldParser.getDungeonMapLayout().worldPointToMapPointFLOAT(entityplayer.getPositionEyes(partialTicks));
-                yaw2 = entityplayer.prevRotationYawHead + (entityplayer.rotationYawHead - entityplayer.prevRotationYawHead) * partialTicks;
-            }
-            else {
-                // getting player location from map
-                String iconName = context.getMapPlayerMarkerProcessor().getMapIconToPlayerMap().get(name);
-                if (iconName != null) {
-                    Vec4b vec = mapData.mapDecorations.get(iconName);
-                    if (vec != null) {
-                        pt2 = new Vector2d(vec.func_176112_b() / 2d + 64, vec.func_176113_c() / 2d + 64);
-                        yaw2 = vec.func_176111_d() * 360 / 16.0f;
-                    }
-                }
-            }
-
-            if(pt2 == null) continue;
-
-            if (entityplayer == thePlayer) {
-                self = playerInfo;
-                selfPt2 = pt2;
-                selfYaw2 = yaw2;
-            } else {
-                drawPlayer(mapConfiguration.getTeammateSettings(), scale, playerInfo, entityplayer, pt2, yaw2);
-            }
-        }
-
-        if (self != null)
-            drawPlayer(mapConfiguration.getSelfSettings(), scale, self, thePlayer, selfPt2, selfYaw2);
-    }
-    private void drawPlayer(MapConfiguration.PlayerHeadSettings settings, double scale, TabListEntry info, EntityPlayer entityPlayer, Vector2d pt2, double yaw2) {
-        if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) return;
-        if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.ARROW) {
-            GlStateManager.enableTexture2D();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(resourceLocation);
-            GlStateManager.pushMatrix();
-            GlStateManager.translate(pt2.x, pt2.y, 0);
-            GlStateManager.rotate((float) yaw2, 0, 0, 1);
-
-            GlStateManager.scale(1 / scale, 1 / scale, 0);
-
-            GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 128 - 16,
-                    Minecraft.getMinecraft().thePlayer == entityPlayer ? 128 - 16 : 128 - 0, 16, -16, 8, 8, 128, 128);
-            GlStateManager.popMatrix();
-        } else {
-            GlStateManager.pushMatrix();
-            boolean flag1 = settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.HEAD_FLIP;
-            GlStateManager.enableTexture2D();
-            Minecraft.getMinecraft().getTextureManager().bindTexture(
-                    info.getLocationSkin()
-            );
-            int l2 = 8 + (flag1 ? 8 : 0);
-            int i3 = 8 * (flag1 ? -1 : 1);
-
-            GlStateManager.translate(pt2.x, pt2.y, 0);
-            GlStateManager.rotate((float) yaw2, 0, 0, 1);
-
-            GlStateManager.scale(1 / scale, 1 / scale, 0);
-
-            GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
-
-            // cutting out the player head out of the skin texture
-
-            // backside of head
-            GlStateManager.pushMatrix();
-            GlStateManager.scale(9.0 / 8, 9.0 / 8.0, 1.0);
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 56.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
-            GlStateManager.popMatrix();
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
-            GlStateManager.scale(9.0 / 8, 9.0 / 8.0, 1.0);
-            Gui.drawScaledCustomSizeModalRect(-4, -4, 40.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
-            GlStateManager.popMatrix();
-        }
-
-    }
 }

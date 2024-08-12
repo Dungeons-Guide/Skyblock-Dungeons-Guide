@@ -45,6 +45,9 @@ import kr.syeyoung.dungeonsguide.mod.events.impl.DungeonStartedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.AbstractHUDFeature;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.RawRenderingGuiFeature;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlayMarker;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlayPlayer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Clip;
@@ -255,23 +258,26 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
     @DGEventHandler
     public void onDungeonStart(DungeonStartedEvent event) {
         on = true;
+        checkVisibility();
     }
 
-    @DGEventHandler(ignoreDisabled = true)
+    @DGEventHandler(ignoreDisabled = true, triggerOutOfSkyblock = true)
     public void onDungeonLeave(DungeonLeftEvent event) {
         on = false;
+        checkVisibility();
     }
 
 
     @Override
     public boolean isVisible() {
-        return on && SkyblockStatus.isOnDungeon();
+        return on && SkyblockStatus.isOnDungeon() && isEnabled();
     }
 
     @Override
     public OverlayWidget instantiateWidget() {
+        if (mapConfiguration == null) return null;
         Clip clip = new Clip();
-        clip.widget.setValue(new WidgetDungeonMap(mapConfiguration));
+        clip.widget.setValue(new WidgetFeatureWrapper2(new WidgetDungeonMap(mapConfiguration, this::getOverlay)));
         return new OverlayWidget(
                 clip,
                 OverlayType.UNDER_CHAT,
@@ -280,6 +286,37 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
         );
     }
 
+    public List<MapOverlay> getOverlay() {
+
+        DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (dungeonContext == null) return Collections.EMPTY_LIST;
+
+        List<MapOverlay> overlays = new ArrayList<>();
+        if (dungeonContext.getBossfightProcessor() != null) {
+            for (MarkerData marker : dungeonContext.getBossfightProcessor().getMarkers()) {
+                MapConfiguration.PlayerHeadSettings settings = mapConfiguration.getHeadSettingsMap().get(marker.getType());
+                if (settings == null || settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) continue;
+                overlays.add(new MapOverlayMarker(marker, settings));
+            }
+        }
+
+        int i = 0;
+        for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
+            if (++i >= 20) break;
+
+            String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
+            if (name == null) continue;
+
+            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+
+            overlays.add(new MapOverlayPlayer(playerInfo,
+                    entityplayer == Minecraft.getMinecraft().thePlayer ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings()));
+        }
+
+        return overlays;
+
+        // add players last
+    }
 
 
     @Override
@@ -289,9 +326,14 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
 
 
     public class WidgetFeatureWrapper2 extends Widget implements Layouter, MarkerProvider {
+        private  Widget widget;
+        public WidgetFeatureWrapper2(Widget widget) {
+            this.widget = widget;
+        }
+
         @Override
         public List<Widget> build(DomElement buildContext) {
-            return Collections.singletonList(new WidgetMapDemo(mapConfiguration));
+            return Collections.singletonList(widget);
         }
 
         @Override
@@ -326,7 +368,7 @@ public class FeatureDungeonMap2 extends AbstractHUDFeature {
 
     @Override
     public Widget instantiateDemoWidget() {
-        return new WidgetFeatureWrapper2();
+        return new WidgetFeatureWrapper2(new WidgetMapDemo(FeatureDungeonMap2.this));
     }
 
     @Override

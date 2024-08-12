@@ -39,7 +39,7 @@ public abstract class AbstractGuiFeature extends AbstractFeature {
     private OverlayWidget widget;
     public OverlayWidget getWidget() {
         if (widget == null || widget.wrappingWidget == null) widget = instantiateWidget();
-        if (widget.wrappingWidget == null) return null;
+        if (widget == null || widget.wrappingWidget == null) return null;
         return widget;
     }
     public void checkVisibility() {

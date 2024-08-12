@@ -23,13 +23,15 @@ import java.util.Collections;
 import java.util.List;
 
 public class WidgetMapDemo extends Widget implements Renderer {
+    private FeatureDungeonMap2 featureDungeonMap2;
     private MapConfiguration mapConfiguration;
-    public WidgetMapDemo(MapConfiguration mapConfiguration) {
-        this.mapConfiguration = mapConfiguration;
+    public WidgetMapDemo(FeatureDungeonMap2 featureDungeonMap2) {
+        this.featureDungeonMap2 = featureDungeonMap2;
+        this.mapConfiguration = featureDungeonMap2.getMapConfiguration();
     }
     @Override
     public List<Widget> build(DomElement buildContext) {
-        return Collections.singletonList( new WidgetDungeonMap(mapConfiguration));
+        return Collections.singletonList( new WidgetDungeonMap(mapConfiguration, featureDungeonMap2::getOverlay));
     }
 
 
@@ -37,11 +39,16 @@ public class WidgetMapDemo extends Widget implements Renderer {
     public void doRender(float partialTicks, RenderingContext renderCtx, DomElement buildContext) {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (SkyblockStatus.isOnDungeon() && context != null && context.getScaffoldParser() != null) {
+            renderCtx.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
             SingleChildRenderer.INSTANCE.doRender(partialTicks, renderCtx, buildContext);
+            renderCtx.popClip();
             return;
         }
+        renderCtx.pushClip(buildContext.getAbsBounds(), buildContext.getSize(), 0,0, buildContext.getSize().getWidth(), buildContext.getSize().getHeight());
+
+        System.out.println(buildContext.getSize() );
         Size featureRect = getDomElement().getSize();
-        Gui.drawRect(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(), RenderUtils.getColorAt(0,0, mapConfiguration.getBackgroundColor()));
+        Gui.drawRect(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(), RenderUtils.getColorAt(0,0, featureDungeonMap2.getMapConfiguration().getBackgroundColor()));
         FontRenderer fr = Minecraft.getMinecraft().fontRendererObj;
 
         GlStateManager.enableBlend();
@@ -51,6 +58,8 @@ public class WidgetMapDemo extends Widget implements Renderer {
         GL11.glLineWidth((float) mapConfiguration.getBorderWidth());
         RenderUtils.drawUnfilledBox(0, 0, (int) featureRect.getWidth(), (int) featureRect.getWidth(),mapConfiguration.getBorder());
 
-        
+        renderCtx.popClip();
+
+
     }
 }
