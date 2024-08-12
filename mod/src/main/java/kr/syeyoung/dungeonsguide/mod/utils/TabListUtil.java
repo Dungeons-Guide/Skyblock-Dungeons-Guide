@@ -66,6 +66,16 @@ public class TabListUtil {
 
         return getString(name, tabListRegex);
     }
+    @Nullable
+    public static String getPlayerNameWithChecksIncludingDead(TabListEntry tabListEntry) {
+        String name = tabListEntry.getEffectiveName();
+
+        if (name.trim().equals("§r") || name.startsWith("§r ")) return null;
+
+        name = TextUtils.stripColor(name);
+
+        return getString(name, tabListRegex);
+    }
 
     @Nullable
     public static String getString(String name, Pattern tabListRegex) {

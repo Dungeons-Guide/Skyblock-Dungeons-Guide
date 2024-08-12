@@ -28,7 +28,9 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import lombok.AllArgsConstructor;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.profiler.Profiler;
 
 import java.util.Collections;
 import java.util.List;
@@ -38,6 +40,7 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
     public Widget wrappingWidget;
     public OverlayType overlayType;
     public Positioner positionSize;
+    public String name;
 
     @Override
     public List<Widget> build(DomElement buildContext) {
@@ -50,10 +53,14 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
         OverlayType type = buildContext.getContext().getValue(OverlayType.class, OverlayManager.OVERLAY_TYPE_KEY);
         if (this.overlayType.ordinal() < type.ordinal()) return;
 
+
         DomElement value = buildContext.getChildren().get(0);
 
         Rect original = value.getRelativeBound();
         if (original == null) return;
+
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("Dungeons Guide Overlay Render :: "+name);
         GlStateManager.translate(original.getX(), original.getY(), 0);
 
         double absXScale = buildContext.getAbsBounds().getWidth() / buildContext.getSize().getWidth();
@@ -69,11 +76,17 @@ public class OverlayWidget extends Widget implements Renderer, Layouter {
 
         value.getRenderer().doRender(
                 partialTicks, context, value);
+
+        profiler.endSection();
     }
 
     @Override
     public Size layout(DomElement buildContext, ConstraintBox constraintBox) {
-        return SingleChildPassingLayouter.INSTANCE.layout(buildContext, constraintBox);
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("Dungeons Guide Overlay Layout :: "+name);
+        Size s = SingleChildPassingLayouter.INSTANCE.layout(buildContext, constraintBox);;
+        profiler.endSection();
+        return s;
     }
 
     @Override

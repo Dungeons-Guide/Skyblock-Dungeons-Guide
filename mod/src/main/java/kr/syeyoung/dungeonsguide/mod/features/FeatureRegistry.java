@@ -36,6 +36,7 @@ import kr.syeyoung.dungeonsguide.mod.features.impl.discord.inviteViewer.PartyInv
 import kr.syeyoung.dungeonsguide.mod.features.impl.discord.onlinealarm.PlayingDGAlarm;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.FeatureDungeonMap2;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap.FeatureCustomLeapGui;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.ability.FeatureAbilityCooldown;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.FeaturePartyList;
@@ -258,6 +259,8 @@ public class FeatureRegistry {
 
 
     // Dungeon HUD
+
+    public static final FeatureCustomLeapGui DUNGEON_LEAPGUI = register(new FeatureCustomLeapGui());
 
     // Alerts
     public static final FeatureSoulRoomWarning DUNGEON_FAIRYSOUL = register(new FeatureSoulRoomWarning());

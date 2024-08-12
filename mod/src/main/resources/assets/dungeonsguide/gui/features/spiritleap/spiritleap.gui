@@ -1,0 +1,22 @@
+<PopupManager>
+    <bgcolor  backgroundColor="#C0101010">
+        <align vAlign="CENTER" hAlign="CENTER">
+            <size width="700" height="400">
+                <row>
+                    <flexible>
+                        <col>
+                            <Text text="Spirit Leap" size="16" color="#FFFFFFFF"/>
+                            <flexible>
+                                <col bind:api="api"/>
+                            </flexible>
+                        </col>
+                    </flexible>
+                    <size width="5"/>
+                    <aspectRatio width="1" height="1">
+                        <slot bind:_="map"/>
+                    </aspectRatio>
+                </row>
+            </size>
+        </align>
+    </bgcolor>
+</PopupManager>

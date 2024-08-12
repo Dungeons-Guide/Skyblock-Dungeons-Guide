@@ -132,7 +132,7 @@ public class WidgetMapConfiguration extends AnnotatedImportOnlyWidget {
         super(new ResourceLocation("dungeonsguide:gui/features/map/editor.gui"));
         this.dungeonMap2 = featureDungeonMap2;
 
-        widgetBindableAttribute.setValue(featureDungeonMap2.instantiateDemoWidget());
+        widgetBindableAttribute.setValue(new WidgetMapDemo(featureDungeonMap2));
 
         setupThings(featureDungeonMap2);
     }

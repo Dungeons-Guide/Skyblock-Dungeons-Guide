@@ -66,7 +66,7 @@ public abstract class TextHUDFeature extends AbstractHUDFeature {
 
     @Override
     public OverlayWidget instantiateWidget() {
-        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectPositioner(this::getFeatureRect));
+        return new OverlayWidget(richText, OverlayType.UNDER_CHAT, new GUIRectPositioner(this::getFeatureRect), getClass().getSimpleName());
     }
     @DGEventHandler
     public void onTick0(DGTickEvent dgTickEvent) {

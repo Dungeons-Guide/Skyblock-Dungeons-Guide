@@ -120,8 +120,10 @@ public class EventHandlerRegistry {
                 Profiler profiler = Minecraft.getMinecraft().mcProfiler;
                 IEventListener registered;
                 ev.getListenerList().register(busID, EventPriority.NORMAL, registered = (event) -> {
+                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
                     profiler.startSection("Dungeons Guide Event Handling");
                     for (InvocationTarget target : targetList) {
+                        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
                         profiler.startSection(target.getTargetName());
                         try {
                             if (target.condition == null || (target.condition.get() == Boolean.TRUE)) { // it is safe to use this here.
@@ -134,8 +136,10 @@ public class EventHandlerRegistry {
                             FeatureCollectDiagnostics.queueSendLogAsync(t);
                             throw new RuntimeException("An catastrophic error occured while handling event: ", t);
                         }
+                        if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
                         profiler.endSection();
                     }
+                    if (Minecraft.getMinecraft().isCallingFromMinecraftThread())
                     profiler.endSection();
                 });
                 registeredHandlers.put(aClass, registered);

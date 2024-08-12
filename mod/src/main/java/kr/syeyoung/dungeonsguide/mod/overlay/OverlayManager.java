@@ -33,6 +33,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.GuiChat;
 import net.minecraft.client.gui.ScaledResolution;
 import net.minecraft.client.renderer.GlStateManager;
+import net.minecraft.profiler.Profiler;
 import net.minecraftforge.client.event.GuiScreenEvent;
 import net.minecraftforge.client.event.RenderGameOverlayEvent;
 import net.minecraftforge.fml.common.eventhandler.EventPriority;
@@ -79,6 +80,8 @@ public class OverlayManager {
 
     @SubscribeEvent()
     public void guiResize(GuiScreenEvent.InitGuiEvent.Post post){
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("Dungeons Guide Overlay Lauout");
         try {
             view.setRelativeBound(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
             view.setAbsBounds(new Rect(0,0, Minecraft.getMinecraft().displayWidth, Minecraft.getMinecraft().displayHeight));
@@ -93,23 +96,30 @@ public class OverlayManager {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
+        profiler.endSection();
     }
 
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
+            return;
+
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
         try {
-            if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-                return;
             view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
             drawScreen(postRender.partialTicks);
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
+        profiler.endSection();
     }
 
     @SubscribeEvent
     public void renderGui(GuiScreenEvent.DrawScreenEvent.Post postRender) {
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+        profiler.startSection("Dungeons Guide - DrawScreenEvent.Post :: Overlay");
         try {
             if (postRender.gui instanceof GuiChat)
                 view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.OVER_CHAT);
@@ -120,6 +130,7 @@ public class OverlayManager {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();
         }
+        profiler.endSection();
     }
 
 
@@ -129,12 +140,15 @@ public class OverlayManager {
 
         if (view.isRelayoutRequested()) {
             view.setRelayoutRequested(false);
+            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+            profiler.startSection("Dungeons Guide Overlay Lauout");
             view.getLayouter().layout(view, new ConstraintBox(
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayWidth,
                     Minecraft.getMinecraft().displayHeight,
                     Minecraft.getMinecraft().displayHeight
             ));
+            profiler.endSection();
         }
         ScaledResolution scaledResolution = new ScaledResolution(Minecraft.getMinecraft());
         GlStateManager.pushMatrix();

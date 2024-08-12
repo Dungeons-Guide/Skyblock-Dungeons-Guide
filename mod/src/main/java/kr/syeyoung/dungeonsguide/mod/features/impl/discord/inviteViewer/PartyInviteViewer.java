@@ -45,7 +45,8 @@ public class PartyInviteViewer extends AbstractGuiFeature {
         return new OverlayWidget(
                 partyInviteViewer = new WidgetPartyInviteViewer(),
                 OverlayType.OVER_ANY,
-                new WholeScreenPositioner()
+                new WholeScreenPositioner(),
+                getClass().getSimpleName()
         );
     }
 

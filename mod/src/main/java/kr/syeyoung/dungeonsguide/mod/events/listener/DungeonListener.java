@@ -60,6 +60,7 @@ import net.minecraft.entity.passive.EntityBat;
 import net.minecraft.network.Packet;
 import net.minecraft.network.play.server.S21PacketChunkData;
 import net.minecraft.network.play.server.S26PacketMapChunkBulk;
+import net.minecraft.profiler.Profiler;
 import net.minecraft.util.AxisAlignedBB;
 import net.minecraft.util.BlockPos;
 import net.minecraft.util.ChatComponentText;
@@ -110,6 +111,9 @@ public class DungeonListener {
     public void onPostDraw(GuiScreenEvent.DrawScreenEvent.Post e) {
         if (!SkyblockStatus.isOnDungeon()) return;
 
+
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         if (context != null) {
@@ -118,9 +122,11 @@ public class DungeonListener {
             if (thePlayer == null) {
                 return;
             }
+            profiler.startSection("Dungeons Guide - DrawScreen.Post: Bossfight Processor");
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().onPostGuiRender(e);
             }
+            profiler.endStartSection("Dungeons Guide - DrawScreen.Post: Room Processor");
 
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
@@ -130,6 +136,7 @@ public class DungeonListener {
                     dungeonRoom.getRoomProcessor().onPostGuiRender(e);
                 }
             }
+            profiler.endSection();
         }
 
         GlStateManager.enableBlend();
@@ -232,14 +239,18 @@ public class DungeonListener {
             return;
 
         if (!SkyblockStatus.isOnDungeon()) return;
+        Profiler profiler = Minecraft.getMinecraft().mcProfiler;
 
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (context != null) {
 
             EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
 
+            profiler.startSection("Dungeons Guide - RenderGameOverlay.Post :: Bossfight Processor");
             if (context.getBossfightProcessor() != null)
                 context.getBossfightProcessor().drawScreen(postRender.partialTicks);
+
+            profiler.endStartSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -249,6 +260,7 @@ public class DungeonListener {
                     }
                 }
             }
+            profiler.endSection();
 
         }
         GlStateManager.enableBlend();
@@ -327,12 +339,16 @@ public class DungeonListener {
         if (!SkyblockStatus.isOnDungeon()) return;
         try {
 
+            Profiler profiler = Minecraft.getMinecraft().mcProfiler;
+
             DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (context == null) {
                 return;
             }
 
+
             if (FeatureRegistry.DEBUG.isEnabled()) {
+                profiler.startSection("Dungeons Guide - Door Rendering");
                 if (context.getScaffoldParser() != null) {
                     for (DungeonRoom dungeonRoom : context.getScaffoldParser().getDungeonRoomList()) {
                         for (DungeonDoor door : dungeonRoom.getDoors()) {
@@ -340,13 +356,17 @@ public class DungeonListener {
                         }
                     }
                 }
+                profiler.endSection();
             }
 
 
+
+            profiler.startSection("Dungeons Guide - RenderWorldLast :: Bossfight Processor");
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().drawWorld(renderWorldLastEvent.partialTicks);
             }
 
+            profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Processor");
             if (context.getScaffoldParser() != null) {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
@@ -423,6 +443,8 @@ public class DungeonListener {
                 }
             }
 
+
+            profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Edit");
             if (EditingContext.getEditingContext() != null) {
                 GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
                 if (guiScreen instanceof GuiDungeonParameterEdit) {
@@ -439,6 +461,7 @@ public class DungeonListener {
                     ((GuiDungeonAddSet) guiScreen).onWorldRender(renderWorldLastEvent.partialTicks);
                 }
             }
+            profiler.endSection();
         } catch (Exception e) {
             FeatureCollectDiagnostics.queueSendLogAsync(e);
             e.printStackTrace();

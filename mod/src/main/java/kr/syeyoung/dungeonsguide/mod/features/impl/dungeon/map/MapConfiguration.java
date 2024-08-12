@@ -33,8 +33,6 @@ import java.util.UUID;
 public class MapConfiguration {
     private double mapScale;
     private MapRotation mapRotation = MapRotation.VERTICAL;
-    private PlayerHeadSettings selfSettings = new PlayerHeadSettings();
-    private PlayerHeadSettings teammateSettings = new PlayerHeadSettings();
 
     private boolean drawName;
 
@@ -48,6 +46,8 @@ public class MapConfiguration {
 
     private Map<UUID, RoomOverride> roomOverrides = new HashMap<>();
 
+    private PlayerHeadSettings selfSettings = new PlayerHeadSettings();
+    private PlayerHeadSettings teammateSettings = new PlayerHeadSettings();
     private Map<MarkerData.MobType, PlayerHeadSettings> headSettingsMap = new HashMap<>();
 
     @Data

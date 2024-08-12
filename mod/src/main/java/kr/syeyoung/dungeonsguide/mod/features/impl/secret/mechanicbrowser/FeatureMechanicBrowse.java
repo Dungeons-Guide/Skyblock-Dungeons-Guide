@@ -206,7 +206,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
                     OverlayManager.getInstance().removeOverlay(lastOpen);
                 widget = new OverlayWidget(
                     mechanicBrowser = new WidgetMechanicBrowser(dungeonRoomOpt.get()),
-                    OverlayType.OVER_CHAT, new GUIRectPositioner(this::getFeatureRect));
+                    OverlayType.OVER_CHAT, new GUIRectPositioner(this::getFeatureRect), getClass().getSimpleName());
             }
         }
         if (mechanicBrowser != null)
