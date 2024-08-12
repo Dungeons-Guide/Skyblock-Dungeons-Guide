@@ -2,6 +2,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay;
 
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.MarkerData;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
+import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
@@ -30,7 +31,7 @@ public class MapOverlayMarker implements MapOverlay{
 
     private final ResourceLocation resourceLocation2 = new ResourceLocation("dungeonsguide:map/bossfight/markers.png");
     @Override
-    public void doRender(float rotation, float partialTicks, float scale, double relPreScaleMouseX, double relPreScaleMouseY) {
+    public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
         double yaw = marker.getPrevYaw() + (marker.getCurrYaw() - marker.getPrevYaw()) * partialTicks;
         GlStateManager.rotate((float) yaw, 0, 0, 1);
 
@@ -45,7 +46,7 @@ public class MapOverlayMarker implements MapOverlay{
     }
 
     @Override
-    public void onClick(int relPreScaleMouseX, int relPreScaleMouseY) {
-
+    public boolean onClick(double relMouseX, double relMouseY, DomElement domElement) {
+        return false;
     }
 }

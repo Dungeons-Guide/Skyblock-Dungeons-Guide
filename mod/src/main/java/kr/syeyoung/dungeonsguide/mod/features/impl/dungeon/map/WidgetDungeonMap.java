@@ -33,10 +33,7 @@ import net.minecraft.client.renderer.Tessellator;
 import net.minecraft.client.renderer.WorldRenderer;
 import net.minecraft.client.renderer.vertex.DefaultVertexFormats;
 import net.minecraft.entity.player.EntityPlayer;
-import net.minecraft.util.ResourceLocation;
-import net.minecraft.util.Tuple;
-import net.minecraft.util.Vec3;
-import net.minecraft.util.Vec4b;
+import net.minecraft.util.*;
 import net.minecraft.world.storage.MapData;
 import org.lwjgl.opengl.GL11;
 
@@ -68,6 +65,94 @@ public class WidgetDungeonMap extends Widget implements Renderer {
     public boolean mouseMoved(int absMouseX, int absMouseY, double relMouseX0, double relMouseY0, boolean childHandled) {
         this.mouseX = relMouseX0;
         this.mouseY = relMouseY0;
+        return true;
+    }
+
+    @Override
+    public boolean mouseClicked(int absMouseX, int absMouseY, double relMouseX, double relMouseY, int mouseButton, boolean childHandled) {
+
+        DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
+        if (context == null || context.getScaffoldParser() == null) return false;
+        DungeonRoomScaffoldParser mapProcessor = context.getScaffoldParser();
+
+
+        Size featureRect = getDomElement().getSize();
+
+        int width2 = (int) featureRect.getWidth();
+        float scale = width2 / 128.0f;
+
+        relMouseX /= scale;
+        relMouseY /= scale;
+
+        relMouseX -= 64;
+        relMouseY -= 64;
+
+
+        if (context.getBossfightProcessor() != null) {
+            BossfightRenderSettings bossfightRenderSettings = context.getBossfightProcessor().getMapRenderSettings();
+
+            double x, y, width, height;
+            if (bossfightRenderSettings.getTextureWidth() > bossfightRenderSettings.getTextureHeight()) {
+                double rHeight = bossfightRenderSettings.getTextureHeight() * 128.0 / bossfightRenderSettings.getTextureWidth();
+                x = 0; y = (128 -rHeight) / 2; width = 128; height = rHeight;
+            } else {
+                double rWidth = bossfightRenderSettings.getTextureWidth() * 128.0 / bossfightRenderSettings.getTextureHeight();
+                x = (128 - rWidth) / 2; y = 0; width = rWidth; height = 128;
+            }
+
+            for (MapOverlay mapOverlay : getOverlays.get()) {
+                double xCoord = mapOverlay.getX(0);
+                double zCoord = mapOverlay.getZ(0);
+                double px = width * (xCoord - bossfightRenderSettings.getMinX()) / (bossfightRenderSettings.getMaxX() - bossfightRenderSettings.getMinX()) + x;
+                double pz = height * (zCoord - bossfightRenderSettings.getMinZ()) / (bossfightRenderSettings.getMaxZ() - bossfightRenderSettings.getMinZ()) + y;
+
+
+                if (mapOverlay.onClick(relMouseX + 64 - px, relMouseY + 64 - pz, getDomElement())) return true;
+            }
+        } else {
+            double yaw = ((Minecraft.getMinecraft().thePlayer.rotationYawHead) % 360 + 360) % 360;
+
+            Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(Minecraft.getMinecraft().thePlayer.getPositionEyes(0));
+
+            relMouseX /= mapConfiguration.getMapScale();
+            relMouseY /= mapConfiguration.getMapScale();
+            if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.VERTICAL) {
+                if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.CENTER) {
+                    float angle = (float) ((yaw - 180) * Math.PI / 180);
+
+                    double ncalcMouseX = Math.cos(angle) * relMouseX + Math.sin(angle) * -relMouseY;
+                    double ncalcMouseY = Math.cos(angle) * relMouseY + Math.sin(angle) * relMouseX;
+
+                    relMouseX = ncalcMouseX;
+                    relMouseY = ncalcMouseY;
+                }
+                if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.ROTATE) {
+                    relMouseX += pt.x;
+                    relMouseY += pt.y;
+                } else {
+                    relMouseX += 64;
+                    relMouseY += 64;
+                }
+            } else {
+                relMouseX += 64;
+                relMouseY += 64;
+            }
+
+            for (MapOverlay marker : getOverlays.get()) {
+                double xCoord = marker.getX(0);
+                double zCoord = marker.getZ(0);
+                Vector2d loc = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(new Vec3(xCoord, 0, zCoord));
+                double px = loc.x;
+                double pz = loc.y;
+
+
+                // well mouse pos is incorrect. :/
+                // rotate MouseX
+                if (marker.onClick(relMouseX - px, relMouseY - pz, getDomElement())) return true;
+            }
+
+        }
+
         return true;
     }
 
@@ -109,8 +194,15 @@ public class WidgetDungeonMap extends Widget implements Renderer {
         Size featureRect = getDomElement().getSize();
         int width = (int) featureRect.getWidth();
         float scale = width / 128.0f;
+        double calcMouseX = mouseX, calcMouseY = mouseY;
+
         GlStateManager.translate(width / 2.0, width / 2.0, 0);
         GlStateManager.scale(scale, scale, 0);
+        calcMouseX /= scale;
+        calcMouseY /= scale;
+
+        calcMouseX -= 64;
+        calcMouseY -= 64;
 
         Vector2d pt = mapProcessor.getDungeonMapLayout().worldPointToMapPointFLOAT(p.getPositionEyes(partialTicks));
 
@@ -129,18 +221,36 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
             boolean rotated = false;
             GlStateManager.scale(mapConfiguration.getMapScale(), mapConfiguration.getMapScale(), 0);
+            calcMouseX /= mapConfiguration.getMapScale();
+            calcMouseY /= mapConfiguration.getMapScale();
             if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.VERTICAL) {
                 if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.CENTER) {
                     GlStateManager.rotate((float) (180.0 - yaw), 0, 0, 1);
+
+
+                    float angle = (float) ((yaw - 180) * Math.PI / 180);
+
+                    double ncalcMouseX = Math.cos(angle) * calcMouseX + Math.sin(angle) * -calcMouseY;
+                    double ncalcMouseY = Math.cos(angle) * calcMouseY + Math.sin(angle) * calcMouseX;
+
+                    calcMouseX = ncalcMouseX;
+                    calcMouseY = ncalcMouseY;
+
                     rotated = true;
                 }
                 if (mapConfiguration.getMapRotation() != MapConfiguration.MapRotation.ROTATE) {
                     GlStateManager.translate(-pt.x, -pt.y, 0);
+                    calcMouseX += pt.x;
+                    calcMouseY += pt.y;
                 } else {
                     GlStateManager.translate(-64, -64, 0);
+                    calcMouseX += 64;
+                    calcMouseY += 64;
                 }
             } else {
                 GlStateManager.translate(-64, -64, 0);
+                calcMouseX += 64;
+                calcMouseY += 64;
             }
 
 
@@ -165,7 +275,9 @@ public class WidgetDungeonMap extends Widget implements Renderer {
                 GlStateManager.translate(px, pz, 0);
 
                 // well mouse pos is incorrect. :/
-                marker.doRender(0, partialTicks, scale, mouseX / scale - px, mouseY / scale - pz);
+                // rotate MouseX
+
+                marker.doRender(0, partialTicks, scale * mapConfiguration.getMapScale(), calcMouseX - px, calcMouseY - pz);
 
                 GlStateManager.popMatrix();
             }

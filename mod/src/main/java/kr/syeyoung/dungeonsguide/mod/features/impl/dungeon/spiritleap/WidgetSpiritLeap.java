@@ -6,6 +6,7 @@ import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.WidgetDungeonMap;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlayPlayer;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.PartyFinderParty;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.customgui.WidgetPartyElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
@@ -16,7 +17,13 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.Placeholder;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.data.WidgetList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabList;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
+import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.inventory.GuiChest;
+import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.init.Blocks;
 import net.minecraft.init.Items;
 import net.minecraft.inventory.Slot;
@@ -31,9 +38,9 @@ import java.util.List;
 import java.util.Map;
 
 public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
+    private MapConfiguration mapConfiguration = new MapConfiguration();
     public WidgetSpiritLeap() {
         super(new ResourceLocation("dungeonsguide:gui/features/spiritleap/spiritleap.gui"));
-        MapConfiguration mapConfiguration = new MapConfiguration();
         mapConfiguration.setMapScale(1.0);
         mapConfiguration.setBorder(new AColor(0xFF000000, true));
         mapConfiguration.setBackgroundColor(new AColor(0x33000000, true));
@@ -41,9 +48,9 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
         mapConfiguration.setBorderWidth(1.0);
         mapConfiguration.setDrawName(true);
         mapConfiguration.getSelfSettings().setIconType(MapConfiguration.PlayerHeadSettings.IconType.ARROW);
-        mapConfiguration.getSelfSettings().setIconSize(5.0);
+        mapConfiguration.getSelfSettings().setIconSize(1.0);
         mapConfiguration.getTeammateSettings().setIconType(MapConfiguration.PlayerHeadSettings.IconType.HEAD);
-        mapConfiguration.getTeammateSettings().setIconSize(5.0);
+        mapConfiguration.getTeammateSettings().setIconSize(1.0);
         mapConfiguration.getCheckmarkSettings().setCenter(true);
         mapConfiguration.getCheckmarkSettings().setScale(2.0);
         mapConfiguration.getCheckmarkSettings().setStyle(MapConfiguration.RoomInfoSettings.Style.CHECKMARK_AND_COUNT);
@@ -58,6 +65,22 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
     private List<MapOverlay> getOverlays() {
         List<MapOverlay> overlays = new ArrayList<>();
 
+        for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
+            integerWarpTargetEntry.getValue().getItemStack().getDisplayName();
+        }
+
+        int i = 0;
+        for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
+            if (++i >= 20) break;
+
+            String name = TabListUtil.getPlayerNameWithChecks(playerInfo);
+            if (name == null) continue;
+
+            EntityPlayer entityplayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByName(name);
+
+            overlays.add(new MapOverlayPlayerClickable(playerInfo, entityplayer == Minecraft.getMinecraft().thePlayer ? mapConfiguration.getSelfSettings() : mapConfiguration.getTeammateSettings(), nameMap.get(name)));
+        }
+
         return overlays;
     }
 
@@ -68,6 +91,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
     public final BindableAttribute<Widget> map = new BindableAttribute(Widget.class, new Placeholder());
 
     private Map<Integer, WarpTarget> slotMap = new HashMap<>();
+    private Map<String, WarpTarget> nameMap = new HashMap<>();
 
 
     public void onChestUpdate(WindowUpdateEvent windowUpdateEvent) {
@@ -114,6 +138,10 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
                     slotMap.put(i, new WarpTarget(item, i));
                 }
             }
+        }
+        nameMap.clear();
+        for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
+            nameMap.put(TextUtils.stripColor(integerWarpTargetEntry.getValue().getItemStack().getDisplayName()), integerWarpTargetEntry.getValue());
         }
         update();
     }

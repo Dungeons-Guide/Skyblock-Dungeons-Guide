@@ -1,12 +1,15 @@
-package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay;
+package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.MapConfiguration;
+import kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.map.overlay.MapOverlay;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
+import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
 import net.minecraft.client.renderer.GlStateManager;
 import net.minecraft.entity.player.EntityPlayer;
@@ -19,15 +22,17 @@ import javax.vecmath.Vector2d;
 import javax.vecmath.Vector3d;
 import java.awt.*;
 
-public class MapOverlayPlayer implements MapOverlay{
+public class MapOverlayPlayerClickable implements MapOverlay {
     private TabListEntry entry;
     private String name;
     private MapConfiguration.PlayerHeadSettings settings;
+    private WarpTarget target;
 
-    public MapOverlayPlayer(TabListEntry entry, MapConfiguration.PlayerHeadSettings headSettings) {
+    public MapOverlayPlayerClickable(TabListEntry entry, MapConfiguration.PlayerHeadSettings headSettings, WarpTarget target) {
         this.name = TabListUtil.getPlayerNameWithChecks(entry);
         this.entry = entry;
         this.settings = headSettings;
+        this.target = target;
     }
 
     public Vector3d getLocation(float partialTicks) {
@@ -103,6 +108,10 @@ public class MapOverlayPlayer implements MapOverlay{
             GlStateManager.scale(settings.getIconSize(), settings.getIconSize(), 0);
 
             // cutting out the player head out of the skin texture
+            if (relMouseX > -4 * settings.getIconSize() && relMouseX < 4 * settings.getIconSize() && relMouseY > -4 * settings.getIconSize() && relMouseY < 4 * settings.getIconSize()) {
+                Gui.drawRect(-6, -6, 6, 6, 0xFF00FF00);
+            }
+            GlStateManager.color(1,1,1,1);
 
             // backside of head
             GlStateManager.pushMatrix();
@@ -112,12 +121,17 @@ public class MapOverlayPlayer implements MapOverlay{
             Gui.drawScaledCustomSizeModalRect(-4, -4, 8.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
             GlStateManager.scale(9.0 / 8, 9.0 / 8.0, 1.0);
             Gui.drawScaledCustomSizeModalRect(-4, -4, 40.0F, l2, 8, i3, 8, 8, 64.0F, 64.0F);
+
         }
 
     }
 
     @Override
     public boolean onClick(double relMouseX, double relMouseY, DomElement domElement) {
-        return false;
+        if (target == null) return false;
+        if (relMouseX < -4 * settings.getIconSize() || relMouseX > 4 * settings.getIconSize() || relMouseY < -4 * settings.getIconSize() || relMouseY > 4 * settings.getIconSize()) return false;
+        Minecraft.getMinecraft().getSoundHandler().playSound(PositionedSoundRecord.create(new ResourceLocation("gui.button.press"), 1.0F));
+        GuiScreenAdapterChestOverride.getAdapter(domElement).emulateClick(this.target.getSlotId(), 0, 0);
+        return true;
     }
 }
