@@ -49,10 +49,27 @@ public class GuiScreenAdapterChestOverride extends GuiScreenAdapter {
     @Getter
     protected GuiChest guiChest;
 
+    private boolean repositionCursor = false;
+    private int cursorX;
+    private int cursorY;
+
     public GuiScreenAdapterChestOverride(Widget widget) {
         super(widget);
     }
+    public GuiScreenAdapterChestOverride(Widget widget, int cursorX, int cursorY) {
+        super(widget);
+        this.cursorX = cursorX;
+        this.cursorY = cursorY;
+        this.repositionCursor = true;
+    }
 
+    @Override
+    public void setWorldAndResolution(Minecraft mc, int width, int height) {
+        super.setWorldAndResolution(mc, width, height);
+        if (repositionCursor) {
+            Mouse.setCursorPosition(cursorX, cursorY);
+        }
+    }
 
     public void setGuiChest(GuiChest guiChest) {
         this.guiChest = guiChest;

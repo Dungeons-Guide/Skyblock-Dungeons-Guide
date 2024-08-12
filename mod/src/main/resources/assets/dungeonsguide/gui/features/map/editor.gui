@@ -19,20 +19,16 @@
 <row>
 <!--    <size width="200">-->
     <ConstrainedBox maxWidth="220">
-        <IntrinsicWidth>
-            <IntrinsicHeight>
+        <align hAlign="CENTER" vAlign="CENTER">
                 <padding top="5" left="5" bottom="5" right="5">
-                    <stack>
-<!--                        <bgcolor backgroundColor="#FF333333">-->
-                            <ScrollablePanel direction="BOTH">
-                                    <slot bind:child="demo"/>
-                            </ScrollablePanel>
-<!--                        </bgcolor>-->
-                        <Passthrough/>
-                    </stack>
+                    <aspectRatio width="1" height="1">
+                        <stack>
+                            <slot bind:child="demo"/>
+                            <Passthrough/>
+                        </stack>
+                    </aspectRatio>
                 </padding>
-            </IntrinsicHeight>
-        </IntrinsicWidth>
+        </align>
     </ConstrainedBox>
 <!--    </size>-->
     <line dir="VERTICAL" color="#FFFFFFFF"/>
