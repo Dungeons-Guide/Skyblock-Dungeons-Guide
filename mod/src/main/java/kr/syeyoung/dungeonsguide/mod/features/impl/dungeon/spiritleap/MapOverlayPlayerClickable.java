@@ -83,7 +83,9 @@ public class MapOverlayPlayerClickable implements MapOverlay {
 
     @Override
     public void doRender(float rotation, float partialTicks, double scale, double relMouseX, double relMouseY) {
-        double yaw = getLocation(partialTicks).getZ();
+        Vector3d vec = getLocation(partialTicks);
+        double yaw = vec.getZ();
+        if (vec.getX() == 0 && vec.getZ() == 0) return;
 
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.NONE) return;
         if (settings.getIconType() == MapConfiguration.PlayerHeadSettings.IconType.ARROW) {
@@ -109,7 +111,7 @@ public class MapOverlayPlayerClickable implements MapOverlay {
 
             // cutting out the player head out of the skin texture
             if (relMouseX > -4 * settings.getIconSize() && relMouseX < 4 * settings.getIconSize() && relMouseY > -4 * settings.getIconSize() && relMouseY < 4 * settings.getIconSize()) {
-                Gui.drawRect(-6, -6, 6, 6, 0xFF00FF00);
+                Gui.drawRect(-5, -5, 5, 5, 0xFF00FF00);
             }
             GlStateManager.color(1,1,1,1);
 

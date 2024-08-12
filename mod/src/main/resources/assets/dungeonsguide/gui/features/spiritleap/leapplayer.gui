@@ -5,7 +5,11 @@
                 <padding left="5" top="5" right="5" bottom="5">
                     <row>
                         <size height="40">
-                            <ResourceImage bind:location="texture" x="8" y="8" width="8" height="8" textureWidth="64" textureHeight="64"/>
+                            <stack>
+                                <ResourceImage bind:location="texture" x="40" y="8" width="8" height="8" textureWidth="64" textureHeight="64"/>
+                                <ResourceImage bind:location="texture" x="8" y="8" width="8" height="8" textureWidth="64" textureHeight="64"/>
+                                <ResourceImage bind:location="texture" x="56" y="8" width="8" height="8" textureWidth="64" textureHeight="64"/>
+                            </stack>
                         </size>
                         <size width="10"/>
                         <Text bind:text="name" size="16" color="#FF00FF00"/>

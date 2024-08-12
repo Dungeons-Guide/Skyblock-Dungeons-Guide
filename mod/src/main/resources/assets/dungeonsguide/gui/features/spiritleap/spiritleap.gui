@@ -1,7 +1,7 @@
 <PopupManager>
     <bgcolor  backgroundColor="#C0101010">
         <align vAlign="CENTER" hAlign="CENTER">
-            <size width="600" height="400">
+            <size width="700" height="400">
                 <row>
                     <flexible>
                         <col>

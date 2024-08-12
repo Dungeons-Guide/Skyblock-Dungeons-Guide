@@ -4,6 +4,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.BindableAttribute;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedImportOnlyWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
+import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import kr.syeyoung.dungeonsguide.mod.utils.cursor.EnumCursor;
 import net.minecraft.client.Minecraft;
@@ -24,13 +25,13 @@ public class WidgetLeapPlayer extends AnnotatedImportOnlyWidget {
 
     private WarpTarget warpTarget;
 
-    public WidgetLeapPlayer(WarpTarget target) {
+    public WidgetLeapPlayer(WarpTarget target, TabListEntry entry) {
         super(new ResourceLocation("dungeonsguide:gui/features/spiritleap/leapplayer.gui"));
         this.backgroundColor.setValue(0xFF555555);
         this.borderColor.setValue(0xFFFFFFFF);
 
         this.playerName.setValue(target.getItemStack().getDisplayName());
-        this.texture.setValue("dungeonsguide:map/maptexture.png");
+        this.texture.setValue(entry != null ? entry.getLocationSkin().toString() : "dungeonsguide:map/maptexture.png");
         this.warpTarget = target;
     }
 

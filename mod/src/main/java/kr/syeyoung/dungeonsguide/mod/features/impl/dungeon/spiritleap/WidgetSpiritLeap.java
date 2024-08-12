@@ -1,5 +1,6 @@
 package kr.syeyoung.dungeonsguide.mod.features.impl.dungeon.spiritleap;
 
+import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
 import kr.syeyoung.dungeonsguide.mod.events.impl.WindowUpdateEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
@@ -41,33 +42,26 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
     private MapConfiguration mapConfiguration = new MapConfiguration();
     public WidgetSpiritLeap() {
         super(new ResourceLocation("dungeonsguide:gui/features/spiritleap/spiritleap.gui"));
+        MapConfiguration defaultConfig = FeatureRegistry.DUNGEON_MAP2.getMapConfiguration();
         mapConfiguration.setMapScale(1.0);
-        mapConfiguration.setBorder(new AColor(0xFF000000, true));
-        mapConfiguration.setBackgroundColor(new AColor(0x33000000, true));
+        mapConfiguration.setBorder(defaultConfig.getBorder());
+        mapConfiguration.setBackgroundColor(defaultConfig.getBackgroundColor());
         mapConfiguration.setMapRotation(MapConfiguration.MapRotation.VERTICAL);
-        mapConfiguration.setBorderWidth(1.0);
-        mapConfiguration.setDrawName(true);
+        mapConfiguration.setBorderWidth(defaultConfig.getBorderWidth());
+        mapConfiguration.setDrawName(defaultConfig.isDrawName());
         mapConfiguration.getSelfSettings().setIconType(MapConfiguration.PlayerHeadSettings.IconType.ARROW);
-        mapConfiguration.getSelfSettings().setIconSize(1.0);
+        mapConfiguration.getSelfSettings().setIconSize(1.4);
         mapConfiguration.getTeammateSettings().setIconType(MapConfiguration.PlayerHeadSettings.IconType.HEAD);
-        mapConfiguration.getTeammateSettings().setIconSize(1.0);
-        mapConfiguration.getCheckmarkSettings().setCenter(true);
-        mapConfiguration.getCheckmarkSettings().setScale(2.0);
-        mapConfiguration.getCheckmarkSettings().setStyle(MapConfiguration.RoomInfoSettings.Style.CHECKMARK_AND_COUNT);
-        mapConfiguration.getNameSettings().setNameRotation(MapConfiguration.NameSettings.NameRotation.SNAP_LONG);
-        mapConfiguration.getNameSettings().setPadding(5.0);
-        mapConfiguration.getNameSettings().setDrawName(true);
-        mapConfiguration.getNameSettings().setTextColor(new AColor(0xFFFFFFFF,true));
-
+        mapConfiguration.getTeammateSettings().setIconSize(1.4);
+        mapConfiguration.setCheckmarkSettings(defaultConfig.getCheckmarkSettings());
+        mapConfiguration.setNameSettings(defaultConfig.getNameSettings());
+        mapConfiguration.setRoomOverrides(FeatureRegistry.DUNGEON_MAP2.getMapConfiguration().getRoomOverrides());
         map.setValue(new WidgetDungeonMap(mapConfiguration, this::getOverlays));
     }
 
     private List<MapOverlay> getOverlays() {
         List<MapOverlay> overlays = new ArrayList<>();
 
-        for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
-            integerWarpTargetEntry.getValue().getItemStack().getDisplayName();
-        }
 
         int i = 0;
         for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
@@ -148,8 +142,23 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
 
     public void update() {
         this.api.getValue().removeAllWidget();
+
+        Map<String, TabListEntry> map = new HashMap<>();
+        int i = 0;
+        for (TabListEntry playerInfo : TabList.INSTANCE.getTabListEntries()) {
+            if (++i >= 20) break;
+
+            String name = TabListUtil.getPlayerNameWithChecksIncludingDead(playerInfo);
+            if (name == null) continue;
+
+            map.put(name, playerInfo);
+
+
+        }
+
+
         for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
-            this.api.getValue().addWidget(new WidgetLeapPlayer(integerWarpTargetEntry.getValue()));
+            this.api.getValue().addWidget(new WidgetLeapPlayer(integerWarpTargetEntry.getValue(), map.get(TextUtils.stripColor(integerWarpTargetEntry.getValue().getItemStack().getDisplayName()))));
         }
     }
 }
