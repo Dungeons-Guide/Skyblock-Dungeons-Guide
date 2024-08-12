@@ -101,11 +101,12 @@ public class OverlayManager {
 
     @SubscribeEvent
     public void renderOverlay(RenderGameOverlayEvent.Post postRender) {
+        if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
+            return;
+
         Profiler profiler = Minecraft.getMinecraft().mcProfiler;
         profiler.startSection("Dungeons Guide - RenderGameOverlayEvent.Post :: Overlay");
         try {
-            if (!(postRender.type == RenderGameOverlayEvent.ElementType.ALL))
-                return;
             view.getContext().CONTEXT.put(OVERLAY_TYPE_KEY, OverlayType.UNDER_CHAT);
             drawScreen(postRender.partialTicks);
         } catch (Exception e) {

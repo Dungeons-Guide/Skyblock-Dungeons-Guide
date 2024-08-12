@@ -242,7 +242,7 @@ public class DungeonListener {
             if (context.getBossfightProcessor() != null)
                 context.getBossfightProcessor().drawScreen(postRender.partialTicks);
 
-            profiler.startSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
+            profiler.endStartSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
             if (context.getScaffoldParser() != null) {
                 Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
@@ -252,6 +252,7 @@ public class DungeonListener {
                     }
                 }
             }
+            profiler.endSection();
 
         }
         GlStateManager.enableBlend();
@@ -390,7 +391,7 @@ public class DungeonListener {
             }
 
 
-            profiler.startSection("Dungeons Guide - RenderWorldLast :: Room Edit");
+            profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Edit");
             if (EditingContext.getEditingContext() != null) {
                 GuiScreen guiScreen = EditingContext.getEditingContext().getCurrent();
                 if (guiScreen instanceof GuiDungeonParameterEdit) {
