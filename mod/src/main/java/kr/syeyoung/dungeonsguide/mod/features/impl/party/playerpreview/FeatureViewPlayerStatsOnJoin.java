@@ -148,7 +148,8 @@ public class FeatureViewPlayerStatsOnJoin extends SimpleFeature {
                         }
                     }),
                     OverlayType.OVER_CHAT,
-                    new AbsPosPositioner(mouseX, mouseY-height)
+                    new AbsPosPositioner(mouseX, mouseY-height),
+                    getClass().getSimpleName()
             );
             OverlayManager.getInstance().addOverlay(widget);
         }

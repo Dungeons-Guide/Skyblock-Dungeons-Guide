@@ -41,7 +41,8 @@ public class PlayingDGAlarm extends AbstractGuiFeature {
         return new OverlayWidget(
                 onlinePeopleViewer = new WidgetOnlinePeopleViewer(),
                 OverlayType.OVER_ANY,
-                new WholeScreenPositioner()
+                new WholeScreenPositioner(),
+                getClass().getSimpleName()
         );
     }
 

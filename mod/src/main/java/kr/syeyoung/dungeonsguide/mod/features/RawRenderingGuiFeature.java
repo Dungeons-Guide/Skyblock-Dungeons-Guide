@@ -136,7 +136,8 @@ public abstract class RawRenderingGuiFeature extends AbstractHUDFeature {
         return new OverlayWidget(
                 clip,
                 OverlayType.UNDER_CHAT,
-                new GUIRectPositioner(this::getFeatureRect)
+                new GUIRectPositioner(this::getFeatureRect),
+                getClass().getSimpleName()
         );
     }
 
