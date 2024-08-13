@@ -104,7 +104,8 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
         return new OverlayWidget(
                 progress = new WidgetProgress(),
                 OverlayType.OVER_ANY,
-                new WholeScreenPositioner()
+                new WholeScreenPositioner(),
+                getClass().getSimpleName()
         );
     }
 
