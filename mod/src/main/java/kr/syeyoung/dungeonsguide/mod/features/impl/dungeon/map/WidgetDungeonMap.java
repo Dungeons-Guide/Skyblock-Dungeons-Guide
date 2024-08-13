@@ -153,7 +153,7 @@ public class WidgetDungeonMap extends Widget implements Renderer {
 
         }
 
-        return true;
+        return false;
     }
 
     @Override
