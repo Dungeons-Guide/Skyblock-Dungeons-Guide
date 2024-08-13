@@ -116,7 +116,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
                     if (stack != null && stack.getItem() == Items.skull) {
 //                    if (prev == null) prev = new WidgetPartyElement(this, i);
 //                    prev.update(PartyFinderParty.fromItemStack(stack));
-                        System.out.println(stack.getTagCompound());
+//                        System.out.println(stack.getTagCompound());
                         slotMap.put(i, new WarpTarget(stack, i));
                     }
                 }
@@ -152,10 +152,7 @@ public class WidgetSpiritLeap extends AnnotatedImportOnlyWidget {
             if (name == null) continue;
 
             map.put(name, playerInfo);
-
-
         }
-
 
         for (Map.Entry<Integer, WarpTarget> integerWarpTargetEntry : slotMap.entrySet()) {
             this.api.getValue().addWidget(new WidgetLeapPlayer(integerWarpTargetEntry.getValue(), map.get(TextUtils.stripColor(integerWarpTargetEntry.getValue().getItemStack().getDisplayName()))));

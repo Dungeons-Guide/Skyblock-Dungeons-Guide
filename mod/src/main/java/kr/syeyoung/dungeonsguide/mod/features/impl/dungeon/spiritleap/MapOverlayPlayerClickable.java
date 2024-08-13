@@ -8,6 +8,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.GuiScreenAdapterChestOverride;
 import kr.syeyoung.dungeonsguide.mod.parallelUniverse.tab.TabListEntry;
 import kr.syeyoung.dungeonsguide.mod.utils.TabListUtil;
+import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.audio.PositionedSoundRecord;
 import net.minecraft.client.gui.Gui;
@@ -27,12 +28,23 @@ public class MapOverlayPlayerClickable implements MapOverlay {
     private String name;
     private MapConfiguration.PlayerHeadSettings settings;
     private WarpTarget target;
+    private String clazz;
 
     public MapOverlayPlayerClickable(TabListEntry entry, MapConfiguration.PlayerHeadSettings headSettings, WarpTarget target) {
         this.name = TabListUtil.getPlayerNameWithChecks(entry);
         this.entry = entry;
         this.settings = headSettings;
         this.target = target;
+
+
+        if (entry == null) {
+            this.clazz = "";
+        } else {
+            int idx = entry.getEffectiveName().indexOf("§r§f(");
+            String clazzThing = entry.getEffectiveName().substring(idx);
+
+            this.clazz = TextUtils.stripColor(clazzThing).substring(1);
+        }
     }
 
     public Vector3d getLocation(float partialTicks) {
@@ -112,6 +124,22 @@ public class MapOverlayPlayerClickable implements MapOverlay {
             // cutting out the player head out of the skin texture
             if (relMouseX > -4 * settings.getIconSize() && relMouseX < 4 * settings.getIconSize() && relMouseY > -4 * settings.getIconSize() && relMouseY < 4 * settings.getIconSize()) {
                 Gui.drawRect(-5, -5, 5, 5, 0xFF00FF00);
+            } else {
+                int color = 0xFFFFFFFF;
+                if (clazz.startsWith("Archer")) {
+                    color = (0xFF5cae76); // green
+                } else if (clazz.startsWith("Berserk")) {
+                    color = (0xFFdb4d46); // red
+                } else if (clazz.startsWith("Mage")) {
+                    color = (0xFFba75e6); // purple
+                } else if (clazz.startsWith("Healer")) {
+                    color = (0xFFe4b64e); // yellow
+                } else if (clazz.startsWith("Tank")) {
+                    color = (0xFF8fd1c9); // blue
+                } else if (clazz.startsWith("DEAD")) {
+                    color = (0xFF333333); // black
+                }
+                Gui.drawRect(-5, -5, 5, 5, color);
             }
             GlStateManager.color(1,1,1,1);
 
