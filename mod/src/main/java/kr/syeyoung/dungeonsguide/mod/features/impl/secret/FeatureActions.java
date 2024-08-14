@@ -64,7 +64,7 @@ public class FeatureActions extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return false;
         return dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor;
@@ -103,7 +103,7 @@ public class FeatureActions extends TextHUDFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
         for (ActionRoute path : ((GeneralRoomProcessor) dungeonRoom.getRoomProcessor()).getPath().values()) {

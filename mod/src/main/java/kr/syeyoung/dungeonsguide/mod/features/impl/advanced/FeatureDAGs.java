@@ -55,7 +55,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return false;
         return dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor;
@@ -77,7 +77,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
         GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
@@ -133,7 +133,7 @@ public class FeatureDAGs extends RawRenderingGuiFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
         GeneralRoomProcessor roomProcessor = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();

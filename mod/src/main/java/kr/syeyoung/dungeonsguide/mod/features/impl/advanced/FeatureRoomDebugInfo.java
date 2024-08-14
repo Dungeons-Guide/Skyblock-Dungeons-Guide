@@ -66,7 +66,7 @@ public class FeatureRoomDebugInfo extends TextHUDFeature {
         if (context == null) return new TextSpan(new NullTextStyle(), "");
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         if (context.getScaffoldParser() == null) return new TextSpan(new NullTextStyle(), "");
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
 

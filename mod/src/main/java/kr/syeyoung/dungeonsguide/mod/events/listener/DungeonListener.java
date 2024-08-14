@@ -129,7 +129,7 @@ public class DungeonListener {
             profiler.endStartSection("Dungeons Guide - DrawScreen.Post: Room Processor");
 
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
@@ -156,7 +156,7 @@ public class DungeonListener {
             if (thePlayer == null) return;
             if (context.getBossfightProcessor() != null) context.getBossfightProcessor().onEntityUpdate(e);
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null && dungeonRoom.getRoomProcessor() != null) {
@@ -219,7 +219,7 @@ public class DungeonListener {
                 context.getBossfightProcessor().tick();
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
@@ -252,7 +252,7 @@ public class DungeonListener {
 
             profiler.endStartSection("Dungeons Guide - RenderGameOverlay.Post :: Room Processor");
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
@@ -304,7 +304,7 @@ public class DungeonListener {
                 }
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
 
                 RoomProcessor roomProcessor = null;
@@ -369,7 +369,7 @@ public class DungeonListener {
             profiler.endStartSection("Dungeons Guide - RenderWorldLast :: Room Processor");
             if (context.getScaffoldParser() != null) {
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
@@ -481,7 +481,7 @@ public class DungeonListener {
                 context.getBossfightProcessor().onKeybindPress(keyInputEvent);
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
@@ -505,7 +505,7 @@ public class DungeonListener {
                 context.getBossfightProcessor().onInteract(interact);
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
@@ -531,7 +531,7 @@ public class DungeonListener {
                 context.getBossfightProcessor().onBlockUpdate(postInteract);
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
@@ -555,7 +555,7 @@ public class DungeonListener {
                 }
                 EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
                 if (context.getScaffoldParser() != null) {
-                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                    Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                     DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
 
                     if (dungeonRoom == null) {
@@ -590,7 +590,7 @@ public class DungeonListener {
             }
 
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {
@@ -675,7 +675,7 @@ public class DungeonListener {
                 context.getBossfightProcessor().onEntityDeath(deathEvent);
             }
             if (context.getScaffoldParser() != null) {
-                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+                Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
                 DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
                 if (dungeonRoom != null) {
                     if (dungeonRoom.getRoomProcessor() != null) {

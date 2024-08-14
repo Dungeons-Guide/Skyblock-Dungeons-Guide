@@ -107,7 +107,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
@@ -145,7 +145,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
         DungeonContext context = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) return;
         if (!(dungeonRoom.getRoomProcessor() instanceof GeneralRoomProcessor)) return;
@@ -190,7 +190,7 @@ public class FeatureMechanicBrowse extends RawRenderingGuiFeature {
     public void onTick(DGTickEvent event) {
         Optional<DungeonRoom> dungeonRoomOpt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getScaffoldParser)
-                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition()))
+                .map(a->a.getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector()))
                 .map(a -> DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(a))
                 .filter(a -> a.getRoomProcessor() != null);
         UUID currentUID = dungeonRoomOpt.filter(a -> a.getDungeonRoomInfo() != null)

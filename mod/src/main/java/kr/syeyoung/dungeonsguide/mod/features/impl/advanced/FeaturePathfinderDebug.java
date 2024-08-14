@@ -69,7 +69,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null) return;
         DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition())
+                dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
         );
         if (drm == null) return;
 
@@ -121,7 +121,7 @@ public class FeaturePathfinderDebug extends SimpleFeature {
                 PathfindCache pfc = new PathfindCache(new File(args[2]));
                 DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
                 DungeonRoom drm = dungeonContext.getScaffoldParser().getRoomMap().get(
-                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition())
+                        dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())
                 );
 
                 CachedPathfinder cachedPathfinder = (CachedPathfinder) pfc.createPathfinder(drm.getRoomMatcher().getRotation());

@@ -230,7 +230,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         Point roompt = Optional.ofNullable(DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext())
                 .map(DungeonContext::getScaffoldParser)
                 .map(DungeonRoomScaffoldParser::getDungeonMapLayout)
-                .map(a -> a.worldPointToRoomPoint(event.entity.getPosition())).orElse(null);
+                .map(a -> a.worldPointToRoomPoint(event.entity.getPositionVector())).orElse(null);
         if (roompt == null) return;;
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
@@ -275,7 +275,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (!event.message.getFormattedText().contains(":")) {
             // this is not user message.
             if (Minecraft.getMinecraft().thePlayer == null) return;
-            BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -297,7 +297,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
         if (secret != lastNo || total != totalSecret) {
             lastNo = secret;
             totalSecret = total;
-            BlockPos pos = Minecraft.getMinecraft().thePlayer.getPosition();
+            Vec3 pos = Minecraft.getMinecraft().thePlayer.getPositionVector();
 
             DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
             if (dungeonContext == null|| dungeonContext.getScaffoldParser() == null) return;
@@ -312,7 +312,7 @@ public class FeatureCollectDungeonRooms extends SimpleFeature {
 
         DungeonContext dungeonContext = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext();
         if (dungeonContext == null || dungeonContext.getScaffoldParser() == null) return;
-        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition());
+        Point roompt = dungeonContext.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = dungeonContext.getScaffoldParser().getRoomMap().get(roompt);
         if (dungeonRoom == null) return;
         RoomInfo roomInfo = roomInfoMap.get(dungeonRoom);

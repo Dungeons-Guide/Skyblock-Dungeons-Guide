@@ -1216,7 +1216,7 @@ public class CommandDgDebug extends CommandBase {
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().tick();
             }
-            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();
@@ -1550,7 +1550,7 @@ public class CommandDgDebug extends CommandBase {
             if (context.getBossfightProcessor() != null) {
                 context.getBossfightProcessor().tick();
             }
-            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+            Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
 
             DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
             GeneralRoomProcessor grp = (GeneralRoomProcessor) dungeonRoom.getRoomProcessor();

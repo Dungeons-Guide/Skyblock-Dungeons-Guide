@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.advanced;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.SkyblockStatus;
 import kr.syeyoung.dungeonsguide.mod.config.types.AColor;
@@ -61,7 +62,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
         if (context.getScaffoldParser() == null) return false;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
             return false;
@@ -76,7 +77,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         if (context == null) return new TextSpan(new NullTextStyle(), "");
 
         EntityPlayerSP thePlayer = Minecraft.getMinecraft().thePlayer;
-        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPosition());
+        Point roomPt = context.getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(thePlayer.getPositionVector());
         DungeonRoom dungeonRoom = context.getScaffoldParser().getRoomMap().get(roomPt);
         if (dungeonRoom == null) {
             return new TextSpan(new NullTextStyle(), "");
@@ -92,9 +93,9 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
         } else {
             int real = (facing / 90 + dungeonRoom.getRoomMatcher().getRotation()) % 4;
 
-            OffsetPoint offsetPoint = new OffsetPoint(dungeonRoom, new BlockPos((int) thePlayer.posX, (int) thePlayer.posY, (int) thePlayer.posZ));
+            OffsetVec3 offsetPoint = new OffsetVec3(dungeonRoom, thePlayer.getPositionVector());
 
-            return new TextSpan(getStyle("coord"), "X: " + offsetPoint.getX() + " Y: " + offsetPoint.getY() + " Z: " + offsetPoint.getZ() + " Facing: " + FeatureRoomCoordDisplay.facing[real]);
+            return new TextSpan(getStyle("coord"), "X: " + offsetPoint.getXCoord() + " Y: " + offsetPoint.getYCoord() + " Z: " + offsetPoint.getZCoord() + " Facing: " + FeatureRoomCoordDisplay.facing[real]);
         }
     }
 

@@ -70,7 +70,7 @@ public class FeatureDungeonRoomName extends TextHUDFeature {
     public TextSpan getText() {
         EntityPlayerSP player = Minecraft.getMinecraft().thePlayer;
 
-        Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(player.getPosition());
+        Point roomPt = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(player.getPositionVector());
         DungeonRoom dungeonRoom = DungeonsGuide.getDungeonsGuide().getDungeonFacade().getContext().getScaffoldParser().getRoomMap().get(roomPt);
         TextSpan actualBit = new TextSpan(new NullTextStyle(), "");
         actualBit.addChild(new TextSpan(getStyle("in"), "You're in "));

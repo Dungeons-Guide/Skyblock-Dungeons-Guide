@@ -54,6 +54,11 @@ public class DungeonMapLayout {
         if (worldMin == null) return null;
         return new Point((int) Math.floor((worldPoint.getX() - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.getZ() - worldMin.getZ()) / 32.0));
     }
+    public Point worldPointToRoomPoint(Vec3 worldPoint) {
+        if (worldMin == null) return null;
+        return new Point((int) Math.floor((worldPoint.xCoord - worldMin.getX()) / 32.0), (int) Math.floor((worldPoint.zCoord - worldMin.getZ()) / 32.0));
+    }
+
 
     public Point worldPointToMapPoint(Vec3 worldPoint) {
         if (worldMin == null) return null;

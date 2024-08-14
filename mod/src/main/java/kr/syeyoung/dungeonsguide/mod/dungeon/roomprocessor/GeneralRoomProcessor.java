@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor;
 
 
 import kr.syeyoung.dungeonsguide.dungeon.data.OffsetPoint;
+import kr.syeyoung.dungeonsguide.dungeon.data.OffsetVec3;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.*;
 import kr.syeyoung.dungeonsguide.dungeon.mechanics.dunegonmechanic.DungeonMechanic;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
@@ -115,13 +116,23 @@ public class GeneralRoomProcessor implements RoomProcessor {
 
     @Override
     public void tick() {
-        if (!ticked && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
+        boolean shouldPathfind = !ticked;
+        if (!ticked) {
+            OffsetVec3 offsetVec3 = new OffsetVec3(getDungeonRoom(), Minecraft.getMinecraft().thePlayer.getPositionVector());
+            if (offsetVec3.xCoord <= 1.25 || offsetVec3.zCoord <= 1.25) {
+                shouldPathfind = false;
+            }
+
+        }
+
+
+        if (shouldPathfind && FeatureRegistry.SECRET_AUTO_START.isEnabled()) {
             searchForNextTarget();
         }
-        if (!ticked && FeatureRegistry.SECRET_SMART_AUTO_START.isEnabled()) {
+        if (shouldPathfind && FeatureRegistry.SECRET_SMART_AUTO_START.isEnabled()) {
             createSmartRoute();
         }
-        if (!ticked && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
+        if (shouldPathfind && FeatureRegistry.SECRET_PATHFIND_ALL.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getDungeonRoomInfo().getMechanics().entrySet()) {
                 if (value.getValue() instanceof ISecret && !((ISecret) value.getValue()).isFound(getDungeonRoom())) {
                     ISecret secret = (ISecret) value.getValue();
@@ -140,7 +151,7 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
         }
-        if (!ticked && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
+        if (shouldPathfind && FeatureRegistry.SECRET_BLOOD_RUSH.isEnabled()) {
             for (Map.Entry<String, DungeonMechanic> value : getDungeonRoom().getMechanics().entrySet()) {
                 if (value.getValue() instanceof DungeonRoomDoor) {
                     DungeonRoomDoor dungeonDoor = (DungeonRoomDoor) value.getValue();

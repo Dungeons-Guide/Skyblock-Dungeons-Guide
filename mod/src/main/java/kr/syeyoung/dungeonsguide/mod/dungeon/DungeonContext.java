@@ -174,7 +174,7 @@ public class DungeonContext {
                     dungeonRoom.tryRematch();
                 }
             }
-            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPosition())));
+            executor.setRoomIn(scaffoldParser.getRoomMap().get(getScaffoldParser().getDungeonMapLayout().worldPointToRoomPoint(Minecraft.getMinecraft().thePlayer.getPositionVector())));
         }
 
 
