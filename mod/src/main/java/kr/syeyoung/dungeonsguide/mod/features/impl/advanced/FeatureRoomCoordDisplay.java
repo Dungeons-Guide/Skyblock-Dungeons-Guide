@@ -95,7 +95,7 @@ public class FeatureRoomCoordDisplay extends TextHUDFeature {
 
             OffsetVec3 offsetPoint = new OffsetVec3(dungeonRoom, thePlayer.getPositionVector());
 
-            return new TextSpan(getStyle("coord"), "X: " + offsetPoint.getXCoord() + " Y: " + offsetPoint.getYCoord() + " Z: " + offsetPoint.getZCoord() + " Facing: " + FeatureRoomCoordDisplay.facing[real]);
+            return new TextSpan(getStyle("coord"), "X: " +String.format("%.2f",  offsetPoint.getXCoord()) + " Y: " + String.format("%.2f",  offsetPoint.getYCoord()) + " Z: " + String.format("%.2f",  offsetPoint.getZCoord()) + " Facing: " + FeatureRoomCoordDisplay.facing[real] + " In? "+dungeonRoom.isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector()));
         }
     }
 

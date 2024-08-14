@@ -118,11 +118,11 @@ public class GeneralRoomProcessor implements RoomProcessor {
     public void tick() {
         boolean shouldPathfind = !ticked;
         if (!ticked) {
-            OffsetVec3 offsetVec3 = new OffsetVec3(getDungeonRoom(), Minecraft.getMinecraft().thePlayer.getPositionVector());
-            if (offsetVec3.xCoord <= 1.25 || offsetVec3.zCoord <= 1.25) {
+            if (!getDungeonRoom().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
                 shouldPathfind = false;
+            } else {
+                ticked = true;
             }
-
         }
 
 
@@ -174,7 +174,6 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 }
             }
         }
-        ticked = true;
 
         Set<String> toRemove = new HashSet<>();
         path.entrySet().forEach(a -> {
@@ -417,7 +416,12 @@ public class GeneralRoomProcessor implements RoomProcessor {
     @Override
     public void onKeybindPress(KeyBindPressedEvent keyInputEvent) {
         if (FeatureRegistry.SECRET_NEXT_KEY.isEnabled() && FeatureRegistry.SECRET_NEXT_KEY.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
+            if (!getDungeonRoom().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
+                return;
+            }
+
             searchForNextTarget();
+
         } else if (FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getKeybind() == keyInputEvent.getKey() && FeatureRegistry.SECRET_CREATE_REFRESH_LINE.isEnabled()) {
             ActionRoute actionRoute = getBestFit(0);
             // Because no route found!
@@ -440,6 +444,10 @@ public class GeneralRoomProcessor implements RoomProcessor {
                 actionRoute.getActionRouteProperties().setLineRefreshRate(FeatureRegistry.SECRET_CREATE_REFRESH_LINE.getRefreshRate());
             }
         } else if (FeatureRegistry.SECRET_SMART_KEYBIND.isEnabled() && FeatureRegistry.SECRET_SMART_KEYBIND.<Integer>getParameter("key").getValue() == keyInputEvent.getKey()) {
+            if (!getDungeonRoom().isFullyWithin(Minecraft.getMinecraft().thePlayer.getPositionVector())) {
+                return;
+            }
+
             createSmartRoute();
         }
     }

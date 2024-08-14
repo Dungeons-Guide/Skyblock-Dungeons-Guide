@@ -559,6 +559,14 @@ public class DungeonRoom implements IPathfindWorld {
 
     private HashSet<BlockPos> poses = new HashSet<>();
 
+    public boolean isFullyWithin(Vec3 vec) {
+        if (vec.xCoord * 2 <= minx + 1 || vec.zCoord * 2 <= minz + 1) return false;
+        if (vec.xCoord * 2 >= maxx - 1 || vec.zCoord * 2 >= maxz - 1) return false;
+        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minx + 1) / 2), (int) Math.floor((vec.zCoord * 2 - minz + 1) / 2))) return false;
+        if (!canAccessRelative( (int) Math.floor((vec.xCoord * 2 - minx + 3) / 2), (int) Math.floor((vec.zCoord * 2 - minz + 3) / 2))) return false;
+        return true;
+    }
+
     private CollisionState calculateIsBlocked(int x, int y, int z) {
 //        if (x < minx || z < minz || x >= maxx || z >= maxz || y < miny || y+4 >= maxy) return CollisionState.BLOCKED;
         if (!canAccessRelative( (x - minx + 2) / 2, (z - minz + 2) / 2)) return CollisionState.BLOCKED;
