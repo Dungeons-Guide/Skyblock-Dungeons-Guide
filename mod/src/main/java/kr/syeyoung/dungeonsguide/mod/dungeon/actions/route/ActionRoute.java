@@ -26,8 +26,6 @@ import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGBuilder;
 import kr.syeyoung.dungeonsguide.mod.dungeon.actions.tree.ActionDAGNode;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomfinder.DungeonRoom;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
-import lombok.AllArgsConstructor;
-import lombok.Data;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.util.Vec3;
@@ -88,13 +86,6 @@ public class ActionRoute {
     private static final ExecutorService pathCalculator = DungeonsGuide.getDungeonsGuide().registerExecutorService(Executors.newWorkStealingPool(10));
 
 
-    @Data @AllArgsConstructor
-    private static class PartialCalculationResult {
-        private int dagId;
-        private List<ActionDAGNode> route;
-        private double cost;
-        private int searchSpace;
-    }
     private void recalculatePath() {
         calculating = true;
         current = 0;
@@ -106,59 +97,33 @@ public class ActionRoute {
 
             long startttt = System.currentTimeMillis();
 
-            boolean stupidheuristic = false;
-            int minCount = 0;
-            for (int i = 0; i < dag.getCount(); i++) {
 
+            int minCount = 0;
+            boolean annealing = false;
+            for (int i = 0; i < dag.getCount(); i++) {
                 for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
                     minCount++;
                     if (minCount > 1000000) {
+                        annealing = true;
                         break;
                     }
                 }
             }
-            ChatTransmitter.sendDebugChat("With "+minCount+" Sorts");
+            ChatTransmitter.sendDebugChat("With "+minCount+" Sorts :: Annealing? "+annealing);
 
             Map<String, Object> memoization = new ConcurrentHashMap<>();
-            List<PartialCalculationResult> results = IntStream.range(0, dag.getCount())
+            boolean finalAnnealing = annealing;
+            List<TravelingSalesman.PartialCalculationResult> results = IntStream.range(0, dag.getCount())
                     .parallel()
                     .mapToObj((dagId) -> {
-                        int[] nodeStatus = dag.getNodeStatus(dagId);
-                        if (stupidheuristic) {
-                            if (dag.getAllNodes().stream().flatMap(a -> a.getOptional().stream())
-                                    .anyMatch(a -> nodeStatus[a.getId()] == 0)) return new PartialCalculationResult(dagId, null, Double.POSITIVE_INFINITY, 0);
-                        }
-                        int cnt = 0;
-                        double localMinCost = Double.POSITIVE_INFINITY;
-                        List<ActionDAGNode> localMinCostRoute = null;
-
-                        for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(dagId)) {
-                            cnt++;
-
-                            RoomState roomState = new RoomState();
-                            roomState.setPlayerPos(start);
-                            double cost = 0;
-                            for (ActionDAGNode actionDAGNode : actionDAGNodes) {
-                                cost += actionDAGNode.getAction().evalulateCost(roomState, dungeonRoom, memoization);
-                                if (cost == Double.POSITIVE_INFINITY) break;
-                            }
-                            if (cost < localMinCost) {
-                                localMinCost = cost;
-                                localMinCostRoute = actionDAGNodes;
-                            }
-
-                            if (cnt > 1000000)  {
-                                ChatTransmitter.sendDebugChat("While traversing "+dagId+ " limit of 1000000 was reached");
-                                break;
-                            }
-                        }
-                        return new PartialCalculationResult(dagId, localMinCostRoute, localMinCost, cnt);
+                        if (finalAnnealing) return TravelingSalesman.annealing(dagId, dag, start, dungeonRoom, memoization);
+                        else return TravelingSalesman.bruteforce(dagId, dag, start, dungeonRoom, memoization);
                     })
                     .collect(Collectors.toList());
-            PartialCalculationResult minCostRoute = results.stream()
-                    .min(Comparator.comparingDouble(a -> a.cost)).orElse(null);
+            TravelingSalesman.PartialCalculationResult minCostRoute = results.stream()
+                    .min(Comparator.comparingDouble(a -> a.getCost())).orElse(null);
 
-            int cnt = results.stream().mapToInt(a -> a.searchSpace).sum();
+            int cnt = results.stream().mapToInt(a -> a.getSearchSpace()).sum();
 
             if (minCostRoute == null) {
                 try {
@@ -168,11 +133,11 @@ public class ActionRoute {
                 }
             }
 
-            this.dagId = minCostRoute == null ? 0 : minCostRoute.dagId;
-            order = minCostRoute == null ? new ArrayList<>() : minCostRoute.route;
-            ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+(minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.cost)+" cost with Id "+dagId);
+            this.dagId = minCostRoute == null ? 0 : minCostRoute.getDagId();
+            order = minCostRoute == null ? new ArrayList<>() : minCostRoute.getRoute();
+            ChatTransmitter.sendDebugChat("ActionRoute has "+cnt+" Possible subroutes :: Chosen route with "+(minCostRoute == null ? Double.POSITIVE_INFINITY : minCostRoute.getCost())+" cost with Id "+dagId);
             ChatTransmitter.sendDebugChat("Pathfinding took "+ (System.currentTimeMillis() - startttt)+"ms");
-            List<AbstractAction> nodes = minCostRoute != null ? minCostRoute.route.stream().map(ActionDAGNode::getAction).collect(Collectors.toList()) : new ArrayList<>();
+            List<AbstractAction> nodes = minCostRoute != null ? minCostRoute.getRoute().stream().map(ActionDAGNode::getAction).collect(Collectors.toList()) : new ArrayList<>();
             nodes.add(new ActionComplete());
             actions = nodes;
             current = 0;
