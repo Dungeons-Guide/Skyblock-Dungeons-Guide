@@ -8,10 +8,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import net.minecraft.util.Vec3;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
+import java.util.*;
 
 public class TravelingSalesman {
 
@@ -41,19 +38,24 @@ public class TravelingSalesman {
         List<ActionDAGNode> currentSolution = dag.topologicalSort(dagId).iterator().next(); // get initial solution
         double lastScore = Double.POSITIVE_INFINITY;
         double temperature = 100;
+        int len = currentSolution.size();
         while(true) {
             cnt++;
 
-            if (cnt % 100 == 0)
-                System.out.println(lastScore+ " / "+temperature+ " / "+cnt+" for dagid="+dagId);
+//            if (cnt % 10000 == 0)
+//                System.out.println(cnt+"-"+dagId+" : " + lastScore+ " / "+temperature);
 
-            if (cnt > 100000)  {
-                ChatTransmitter.sendDebugChat("While traversing "+dagId+ " limit of 100000 was reached :: "+actualMoves);
+            if (cnt > 5000 && lastScore > 1000000000) {
                 break;
             }
 
-            int p1 = r.nextInt();
-            int p2 = r.nextInt();
+            if (cnt > 1000000)  {
+                ChatTransmitter.sendDebugChat("While traversing "+dagId+ " limit of 1000000 was reached :: "+actualMoves);
+                break;
+            }
+
+            int p1 = r.nextInt(len);
+            int p2 = r.nextInt(len);
 
             // swap.
             ActionDAGNode p1Node = currentSolution.get(p1);
@@ -94,11 +96,31 @@ public class TravelingSalesman {
 
             actualMoves++;
 
-            temperature *= 0.99;
+            temperature *= 0.999;
             if (temperature < 0.1) {
                 break;
             }
         }
+
+        // process solution
+        if (localMinCostRoute != null) {
+            Set<ActionDAGNode> sanityChecks = new HashSet<>();
+            for (ActionDAGNode actionDAGNode : localMinCostRoute) {
+                if (actionDAGNode.getAction().isSanityCheck())
+                    sanityChecks.add(actionDAGNode);
+            }
+            for (ActionDAGNode sanityCheck : sanityChecks) {
+                localMinCostRoute.remove(sanityCheck);
+                int maxIdx = 0;
+                for (ActionDAGNode potentialRequire : sanityCheck.getPotentialRequires(dagId)) {
+                    int idx2 = localMinCostRoute.indexOf(potentialRequire);
+                    if (idx2 > maxIdx) maxIdx = idx2;
+                }
+                System.out.println(sanityCheck + " to " + (maxIdx + 1));
+                localMinCostRoute.add(maxIdx + 1, sanityCheck);
+            }
+        }
+
         return new PartialCalculationResult(dagId, localMinCostRoute, localMinCost, cnt);
     }
 

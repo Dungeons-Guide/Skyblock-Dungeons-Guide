@@ -32,6 +32,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.UUID;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 public class WidgetMissingPrecalculations extends AnnotatedImportOnlyWidget {
     @Bind(variableName = "shape")
@@ -89,8 +90,27 @@ public class WidgetMissingPrecalculations extends AnnotatedImportOnlyWidget {
         this.roomColor.setValue(color);
 
         Set<String> loadedIds = pathfindCaches.stream().map(a -> a.getId()).collect(Collectors.toSet());
-        this.missing.setValue(required.stream().map(a -> a.getId()).filter(a -> !loadedIds.contains(a))
-                .map(a -> a.substring(36, Math.min(136, a.length()))).collect(Collectors.joining("\n")));
+        Set<String> requestIds = required.stream().map(a -> a.getId()).collect(Collectors.toSet());
+        this.missing.setValue(
+                Stream.concat(
+                        loadedIds.stream().filter(a -> !requestIds.contains(a))
+                                .map(a -> a.substring(36, Math.min(136, a.length()))),
+                        requestIds.stream().filter(a -> !loadedIds.contains(a))
+                                .map(a-> a.substring(36, Math.min(136, a.length())))
+                        ).collect(Collectors.joining("\n")));
+
+        System.out.println(uuid2 + " / "+dungeonRoomInfo.getName());
+        for (String loadedId : loadedIds) {
+            if (!requestIds.contains(loadedId)) {
+                System.out.println("Redundant: "+loadedId);
+            }
+        }
+        for (String requestId : requestIds) {
+            if (!loadedIds.contains(requestId)) {
+                System.out.println("Extra: "+requestId);
+            }
+        }
+
         this.loaded.setValue(pathfindCaches.stream().map(a -> a.getId().substring(36, Math.min(136, a.getId().length()))).collect(Collectors.joining("\n")));
     }
 }

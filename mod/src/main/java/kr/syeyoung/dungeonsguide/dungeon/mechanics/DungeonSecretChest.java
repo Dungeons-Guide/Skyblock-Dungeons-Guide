@@ -59,7 +59,7 @@ public class DungeonSecretChest implements DungeonMechanic, ISecret {
 
     public void tick(DungeonRoom dungeonRoom) {
             BlockPos pos = secretPoint.getBlockPos(dungeonRoom);
-            IBlockState blockState = dungeonRoom.getCachedWorld().getBlockState(pos);
+            IBlockState blockState = dungeonRoom.getContext().getWorld().getBlockState(pos);
             if (blockState.getBlock() == Blocks.chest || blockState.getBlock() == Blocks.trapped_chest) {
                 TileEntityChest chest = (TileEntityChest) dungeonRoom.getContext().getWorld().getTileEntity(pos);
                 if(chest != null){

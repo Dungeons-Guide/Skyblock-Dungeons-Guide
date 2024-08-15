@@ -166,9 +166,9 @@ public class DungeonRoom implements IPathfindWorld {
     public PathfinderExecutor loadPrecalculated(String id) {
         PathfinderExecutor executor1 =         idExecutor.get(id);
         if (executor1 != null) return executor1;
-        System.out.println(id);
+//        System.out.println(id);
         PathfindCache cachedPathfinder = CachedPathfinderRegistry.getById(id);
-        System.out.println(cachedPathfinder);
+//        System.out.println(cachedPathfinder);
         if (cachedPathfinder == null) return null;
         try {
             IPathfinder pathfinder = cachedPathfinder.createPathfinder(getRoomMatcher().getRotation());

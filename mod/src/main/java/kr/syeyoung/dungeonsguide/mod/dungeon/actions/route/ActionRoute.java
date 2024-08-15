@@ -103,7 +103,7 @@ public class ActionRoute {
             for (int i = 0; i < dag.getCount(); i++) {
                 for (List<ActionDAGNode> actionDAGNodes : dag.topologicalSort(i)) {
                     minCount++;
-                    if (minCount > 1000000) {
+                    if (minCount > 100000) {
                         annealing = true;
                         break;
                     }
