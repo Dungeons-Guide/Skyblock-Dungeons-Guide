@@ -1,0 +1,80 @@
+plugins {
+    id "signing"
+}
+
+configurations {
+    loaderOnly {
+        transitive = false
+        canBeConsumed = false
+    }
+    loaderOnlyDev {
+        transitive = false
+        canBeConsumed = false
+    }
+    modOnly {
+        transitive = false
+        canBeConsumed = false
+    }
+    modOnlyDev {
+        transitive = false
+        canBeConsumed = false
+    }
+
+
+    standaloneDev {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+    standalone {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+}
+
+
+dependencies {
+    loaderOnly(project(path: ":loader", configuration: "remappedMod"))
+    loaderOnlyDev(project(path: ":loader", configuration: "unmappedMod"))
+    modOnly(project(path: ":mod", configuration: "remappedMod"))
+    modOnlyDev(project(path: ":mod", configuration: "unmappedMod"))
+}
+
+task standaloneJar(type: Jar) {
+    archiveClassifier = "standalone"
+    dependsOn ":mod:build", ":loader:build"
+    from(zipTree(configurations.loaderOnly.files[0]))
+    archiveFileName = configurations.modOnly.files.name.get(0).replace("-mapped.jar", "")+"-standalone.jar"
+
+//    print(configurations.remappedMod.version)
+
+    from(configurations.modOnly.files) {
+        rename ".+\\.jar", "mod.jar"
+    }
+    doLast {
+        println(archiveFile.get().asFile)
+    }
+}
+
+task standaloneDevJar(type: Jar) {
+    archiveClassifier = "devStandalone"
+    dependsOn ":mod:build", ":loader:build"
+    from(zipTree(configurations.loaderOnlyDev.files[0]))
+    archiveFileName = configurations.modOnlyDev.files.name.get(0).replace(".jar", "")+"-devStandalone.jar"
+    from(configurations.modOnlyDev.files) {
+        rename ".+\\.jar", "mod.jar"
+    }
+    doLast {
+        println(archiveFile.get().asFile)
+    }
+}
+
+signing {
+    required ( project.findProperty("dg.dosign") == "true")
+    useGpgCmd()
+    sign standaloneDevJar
+    sign standaloneJar
+}
+
+tasks.standaloneDevJar.dependsOn project(":mod").task("archive")
+
+tasks.build.dependsOn tasks.signStandaloneJar, tasks.signStandaloneDevJar
