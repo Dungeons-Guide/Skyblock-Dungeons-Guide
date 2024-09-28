@@ -288,9 +288,8 @@ public class ApiFetcher {
         String dgAPIToken = AuthManager.getInstance().getWorkingTokenOrThrow();
 
         System.out.println("Fetching player profiles");
-        JsonObject json = getJsonWithAuth(Main.DOMAIN+"/skyblock/player/"+uid, dgAPIToken);
+        JsonObject json = getJsonWithAuth(Main.DOMAIN+"/skyblock/player/v2/"+uid, dgAPIToken);
 
-        int secrets = json.get("secrets").getAsInt();
 
         System.out.println("Downloaded data from api");
         JsonArray profiles = json.getAsJsonArray("profiles");
@@ -311,11 +310,7 @@ public class ApiFetcher {
 
             System.out.println("Parsing profile");
             PlayerProfile e = PlayerProfileParser.parseProfile(semiProfile, dashTrimmed);
-
             System.out.println("Finished Parsing Profile");
-
-
-            e.setTotalSecrets(secrets);
 
             System.out.println("Getting selected profile");
             if (e.isSelected()) {
