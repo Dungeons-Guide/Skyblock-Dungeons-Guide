@@ -66,12 +66,13 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
+
+        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 25) return;
 
         for (int y = 0; y < 5; y++){
             for (int x = 0; x < 5; x++) {
                 if (solution[y][x] == -1) continue;
-                RenderUtils.drawTextAtWorldDepth((solution[y][x]-pendingClicks[y][x]) + "", -2, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
+                RenderUtils.drawTextAtWorld((solution[y][x]-pendingClicks[y][x]) + "", -2, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
             }
         }
     }
