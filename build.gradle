@@ -1,5 +1,8 @@
+
 plugins {
     id "signing"
+    id "com.modrinth.minotaur" version "2.+"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.9"
 }
 
 configurations {
@@ -78,3 +81,37 @@ signing {
 tasks.standaloneDevJar.dependsOn project(":mod").task("archive")
 
 tasks.build.dependsOn tasks.signStandaloneJar, tasks.signStandaloneDevJar
+
+
+modrinth {
+    token = System.getenv("MODRINTH_TOKEN")
+    projectId = "nU0bz6EH"
+    versionNumber = project(":mod").version
+    versionType = "beta"
+    uploadFile = standaloneJar
+    gameVersions = ["1.8.9"]
+    loaders = ["forge"]
+    dependencies {
+    }
+}
+
+import org.jetbrains.gradle.ext.*
+idea.project.settings {
+    runConfigurations {
+        "Build Standalone Jars With Signing"(Gradle) {
+            taskNames = ["build -Pdg.dosign=true"]
+        }
+        "Build Standalone Jars"(Gradle) {
+            taskNames = ["build"]
+        }
+        "Build Loader Only With Signing"(Gradle) {
+            taskNames = [":loader:build -Pdg.dosign=true"]
+        }
+        "Build Loader Only"(Gradle) {
+            taskNames = [":loader:build"]
+        }
+        "Build Mod Only With Signing"(Gradle) {
+            taskNames = [":mod:build -Pdg.dosign=true"]
+        }
+    }
+}

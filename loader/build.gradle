@@ -32,8 +32,8 @@ loom {
         }
     }
     runs {
-
         client {
+            name = "Launch Loader Only"
             runDir = '../runtime'
             property('devauth.enabled','true')
             property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
