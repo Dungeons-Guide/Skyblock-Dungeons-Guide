@@ -208,6 +208,7 @@ public class PlayerProfileParser {
             }
         }
 
+        playerProfile.setTotalSecrets(getOrDefault(playerData, "dungeons.secrets", 0));
         // ######???####
         JsonObject dungeon_types = getJsonObject(playerData, "dungeons.dungeon_types");
         if (dungeon_types != null) {
