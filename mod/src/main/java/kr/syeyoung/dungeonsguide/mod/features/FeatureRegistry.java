@@ -158,6 +158,7 @@ public class FeatureRegistry {
         categoryDescription.put("Discord", "Discord RPC! (Supports ask-to-invite)");
         categoryDescription.put("Bossfight", "Anything that might help in bossfight");
         categoryDescription.put("Bossfight.Floor 7", "F7 Specific bossfight settings w/ Terminal Solvers");
+        categoryDescription.put("Bossfight.Floor 7.Terminal", "Enable and configure Terminal Solvers.");
         categoryDescription.put("Bossfight.Floor 6", "F6 Specific bossfight HUDs and settings");
         categoryDescription.put("Bossfight.Floor 5", "F5 Specific bossfight settings w/ Real Livid detector");
         categoryDescription.put("Bossfight.Floor 4", "F4 Specific bossfight settings");
