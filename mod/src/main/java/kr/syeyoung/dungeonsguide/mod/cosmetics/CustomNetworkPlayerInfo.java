@@ -96,9 +96,10 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
             if (cosmeticData.getCosmeticType().equals("ncolor")) color = cosmeticData;
         }
 
-        if (color != null) {
+//        FontRenderer
+        if (color != null) { // ᨠ
             String coloredName = color.getData() + actualName;
-            return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
+            return new ChatComponentText("\ued00 "+rawPlayerString.replace(actualName, coloredName));
         } else {
             return new ChatComponentText(rawPlayerString);
         }

@@ -62,6 +62,7 @@ import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.client.renderer.ThreadDownloadImageData;
 import net.minecraft.client.renderer.texture.ITextureObject;
 import net.minecraft.client.renderer.texture.TextureManager;
+import net.minecraft.client.resources.IReloadableResourceManager;
 import net.minecraft.client.resources.IResourceManager;
 import net.minecraft.client.resources.IResourcePack;
 import net.minecraft.command.CommandHandler;
@@ -299,6 +300,7 @@ public class DungeonsGuide implements DGInterface {
         // Fix Parallel universe not working when player joins hypickle before dg loads
         if (Minecraft.getMinecraft().getNetHandler() != null)
             Minecraft.getMinecraft().getNetHandler().getNetworkManager().channel().pipeline().addBefore("packet_handler", "dg_packet_handler", packetInjector);
+
     }
 
     // hotswap fails in dev env due to intellij auto log collection or smth. it holds ref to stacktrace.
@@ -477,6 +479,12 @@ public class DungeonsGuide implements DGInterface {
         GLCursors.setupCursors();
         DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
         ShaderManager.onResourceReload();
+
+        FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
+        byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth");
+        for (int i = 0; i < 255; i++) {
+            glypthWidths[0xed00 + i] = 15;
+        }
     }
 
     private boolean showedStartUpGuide;
