@@ -25,10 +25,7 @@ import kr.syeyoung.dungeonsguide.mod.config.types.TCKeybind;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.EventHandlerRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.advanced.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.boss.*;
-import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureArrowPathSolver;
-import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureChangeAllToSameColorSolver;
-import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureSimonSaysSolver;
-import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.FeatureTerminalSolvers;
+import kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal.*;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeatureNicknameColor;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeatureNicknamePrefix;
 import kr.syeyoung.dungeonsguide.mod.features.impl.cosmetics.FeaturePlayerModel;
@@ -195,7 +192,13 @@ public class FeatureRegistry {
     public static final FeatureBoxRealLivid BOSSFIGHT_BOX_REALLIVID = register(new FeatureBoxRealLivid());
     public static final FeatureTerracotaTimer BOSSFIGHT_TERRACOTTA_TIMER = register(new FeatureTerracotaTimer());
     public static final FeatureCurrentPhase BOSSFIGHT_CURRENT_PHASE = register(new FeatureCurrentPhase());
-    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVERS = register(new FeatureTerminalSolvers());
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVER_STARTS_WITH = register(new FeatureTerminalSolvers(new WhatStartsWithSolutionProvider(), "What starts with...?", "Solve f7 gui terminals", "bossfight.terminals.startswith"));
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVER_SELECT_ALL_COLOR = register(new FeatureTerminalSolvers(new SelectAllColorSolutionProvider(), "Select All the (color)", "Solve f7 gui terminals", "bossfight.terminals.selectallcolor"));
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVER_SELECT_IN_ORDER = register(new FeatureTerminalSolvers(new SelectInOrderSolutionProvider(), "Click in Order!", "Solve f7 gui terminals", "bossfight.terminals.selectinorder"));
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVER_NAVIGATE_MAZE = register(new FeatureTerminalSolvers(new NavigateMazeSolutionProvider(), "Navigate the maze!", "Solve f7 gui terminals", "bossfight.terminals.navigate"));
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVER_CORRECT_PANE = register(new FeatureTerminalSolvers(new CorrectThePaneSolutionProvider(), "Correct all the panes!", "Solve f7 gui terminals", "bossfight.terminals.correctpane"));
+    public static final FeatureTerminalSolvers BOSSFIGHT_TERMINAL_SOLVER_MELODY = register(new FeatureTerminalSolvers(new MelodySolutionProvider(), "Click all buttons on time! (melody)", "Solve f7 gui terminals / Might want to disable cancel wrong click if you have high ping", "bossfight.terminals.melody"));
+
     public static final FeatureChangeAllToSameColorSolver BOSSFIGHT_CHANGE_ALL_SAME_TERMINAL_SOLVER = register(new FeatureChangeAllToSameColorSolver());
     public static final FeatureSimonSaysSolver BOSSFIGHT_SIMONSAYS_SOLVER = register(new FeatureSimonSaysSolver());
     public static final FeatureArrowPathSolver BOSSFIGHT_ARROWPATH_SOLVER = register(new FeatureArrowPathSolver());
