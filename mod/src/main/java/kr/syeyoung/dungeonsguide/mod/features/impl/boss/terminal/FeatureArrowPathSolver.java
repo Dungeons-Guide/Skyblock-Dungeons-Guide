@@ -20,12 +20,14 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.boss.terminal;
 
 
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.config.types.TCBoolean;
 import kr.syeyoung.dungeonsguide.mod.dungeon.DungeonContext;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorMasterModeNecron;
 import kr.syeyoung.dungeonsguide.mod.dungeon.roomprocessor.bossfight.BossfightProcessorNecron;
 import kr.syeyoung.dungeonsguide.mod.events.annotations.DGEventHandler;
 import kr.syeyoung.dungeonsguide.mod.events.impl.DGTickEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerInteractEntityEvent;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureParameter;
 import kr.syeyoung.dungeonsguide.mod.features.SimpleFeature;
 import kr.syeyoung.dungeonsguide.mod.utils.RenderUtils;
 import net.minecraft.client.Minecraft;
@@ -53,7 +55,12 @@ import java.util.Queue;
 public class FeatureArrowPathSolver extends SimpleFeature {
     public FeatureArrowPathSolver() {
         super("Bossfight.Floor 7","Arrow Maze Solver","Solver for Arrow Maze device", "Dungeon.Bossfight.arrowpath");
+        addParameter("cancelwrongclick", new FeatureParameter<>("cancelwrongclick", "Block clicks on complete arrows", "", true, TCBoolean.INSTANCE, nval -> cancelwrongclick = nval));
+        addParameter("depth", new FeatureParameter<>("depth", "Disable depth", "", false, TCBoolean.INSTANCE, nval -> depth = nval));
     }
+
+    private boolean depth;
+    private boolean cancelwrongclick;
 
     private int[][] solution = new int[5][5];
     private int[][] pendingClicks = new int[5][5];
@@ -66,12 +73,17 @@ public class FeatureArrowPathSolver extends SimpleFeature {
             return;
         }
         if (!(dc.getBossfightProcessor() instanceof BossfightProcessorNecron || dc.getBossfightProcessor() instanceof BossfightProcessorMasterModeNecron)) return;
-        if (Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
+
+        if (depth && Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 400) return;
+        if (!depth && Minecraft.getMinecraft().thePlayer.getPosition().distanceSq(-2,120,75) > 25) return;
 
         for (int y = 0; y < 5; y++){
             for (int x = 0; x < 5; x++) {
                 if (solution[y][x] == -1) continue;
-                RenderUtils.drawTextAtWorldDepth((solution[y][x]-pendingClicks[y][x]) + "", -2, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
+                if (depth)
+                    RenderUtils.drawTextAtWorldDepth((solution[y][x]-pendingClicks[y][x]) + "", -1.7f, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
+                else
+                    RenderUtils.drawTextAtWorld((solution[y][x]-pendingClicks[y][x]) + "", -1.7f, 120.5f + y, 75.5f + x, 0xFF00FF00, 0.03f, false, false, event.partialTicks);
             }
         }
     }
@@ -208,7 +220,8 @@ public class FeatureArrowPathSolver extends SimpleFeature {
         int x = pos.getZ() - 75;
 
         if (((solution[y][x] - pendingClicks[y][x]) % 8 + 8) % 8 == 0) {
-            event.setCanceled(true);
+            if (cancelwrongclick)
+                event.setCanceled(true);
             // prevent click.
         } else {
             pendingClicks[y][x] ++;

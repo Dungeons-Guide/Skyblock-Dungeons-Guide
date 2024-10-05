@@ -48,7 +48,7 @@ import java.util.Map;
 
 public class FeatureChangeAllToSameColorSolver extends SimpleFeature {
     public FeatureChangeAllToSameColorSolver() {
-        super("Bossfight.Floor 7","F7 Change All To Same Color Terminal Solver", "Optimal solver for change to same color terminal", "bossfight.samecolorterminal");
+        super("Bossfight.Floor 7.Terminal","Change All To Same Color", "Optimal solver for change to same color terminal", "bossfight.samecolorterminal");
 
         addParameter("cancelwrongclick", new FeatureParameter<>("cancelwrongclick", "Block non optimal clicks", "", true, TCBoolean.INSTANCE, nval -> block = nval));
     }

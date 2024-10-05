@@ -100,6 +100,12 @@ public class Main
         MinecraftForge.EVENT_BUS.register(GuiDisplayer.INSTANCE);
         MinecraftForge.EVENT_BUS.register(NotificationManager.getEventHandler());
 
+
+        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
+            if (dgInterface != null) dgInterface.onResourceReload(a);
+            DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
+        });
+
         NotificationManager.getInstance().updateNotification(dgUnloaded, new WidgetNotification(dgUnloaded, Notification.builder()
                         .title("Dungeons Guide Not Loaded")
                         .titleColor(0xFFFF0000)
@@ -331,10 +337,6 @@ public class Main
         while(bar.getStep() < bar.getSteps()) bar.step("");
         ProgressManager.pop(bar);
 
-        ((IReloadableResourceManager) Minecraft.getMinecraft().getResourceManager()).registerReloadListener(a -> {
-            if (dgInterface != null) dgInterface.onResourceReload(a);
-            DefaultFontRenderer.DEFAULT_RENDERER.onResourceManagerReload();
-        });
 //        UUID uid = UUID.randomUUID();
 //        NotificationManager.getInstance().updateNotification(uid, new WidgetNotification(uid, Notification.builder()
 //                .title("Privacy Policy")

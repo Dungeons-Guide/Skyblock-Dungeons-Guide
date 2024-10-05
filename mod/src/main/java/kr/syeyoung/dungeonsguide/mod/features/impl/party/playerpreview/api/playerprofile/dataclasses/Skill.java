@@ -24,8 +24,18 @@ import lombok.Getter;
 @Getter
 @AllArgsConstructor
 public enum Skill {
-    RUNECRAFTING("runecrafting", "Runecrafting"), COMBAT("combat", "Combat"), MINING("mining", "Mining"), ALCHEMY("alchemy", "Alchemy"), FARMING("farming", "Farming"), TAMING("taming", "Taming"), ENCHANTING("enchanting", "Enchanting"), FISHING("fishing", "Fishing"), FORAGING("foraging", "Foraging"), CARPENTRY("carpentry", "Carpentry");
+    RUNECRAFTING("RUNECRAFTING", "runecrafting", "Runecrafting"),
+    COMBAT("COMBAT", "combat", "Combat"),
+    MINING("MINING", "mining","Mining"),
+    ALCHEMY("ALCHEMY", "alchemy", "Alchemy"),
+    FARMING("FARMING", "farming","Farming"),
+    TAMING("TAMING", "taming", "Taming"),
+    ENCHANTING("ENCHANTING", "enchanting", "Enchanting"),
+    FISHING("FISHING", "fishing", "Fishing"),
+    FORAGING("FORAGING", "foraging", "Foraging"),
+    CARPENTRY("CARPENTRY", "carpentry", "Carpentry");
 
     private final String jsonName;
+    private final String dataRendererName;
     private final String friendlyName;
 }

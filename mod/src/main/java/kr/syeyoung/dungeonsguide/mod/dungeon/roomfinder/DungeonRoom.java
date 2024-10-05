@@ -121,7 +121,6 @@ public class DungeonRoom implements IPathfindWorld {
                 }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
-                    ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
                     throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
                 boolean nonNull = false;
@@ -132,7 +131,6 @@ public class DungeonRoom implements IPathfindWorld {
                     }
                 }
                 if (!nonNull) {
-                    ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
                     throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
             }

@@ -59,28 +59,61 @@ public class PlayerProfileParser {
     }
 
     public static int getOrDefault(JsonObject jsonObject, String key, int value) {
-        if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
-        return jsonObject.get(key).getAsInt();
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return value;
+        return element.getAsInt();
     }
 
     public static long getOrDefault(JsonObject jsonObject, String key, long value) {
-        if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
-        return jsonObject.get(key).getAsLong();
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return value;
+        return element.getAsLong();
     }
 
     public static double getOrDefault(JsonObject jsonObject, String key, double value) {
-        if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
-        return jsonObject.get(key).getAsDouble();
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return value;
+        return element.getAsDouble();
     }
 
     public static String getOrDefault(JsonObject jsonObject, String key, String value) {
-        if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
-        return jsonObject.get(key).getAsString();
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return value;
+        return element.getAsString();
+    }
+    public static boolean getOrDefault(JsonObject jsonObject, String key, boolean value) {
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return value;
+        return element.getAsBoolean();
+    }
+    public static JsonObject getJsonObject(JsonObject jsonObject, String key) {
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return null;
+        return element.getAsJsonObject();
     }
 
+
     public static Double getOrDefaultNullable(JsonObject jsonObject, String key, Double value) {
-        if (jsonObject == null || !jsonObject.has(key) || jsonObject.get(key) instanceof JsonNull) return value;
-        return jsonObject.get(key).getAsDouble();
+        JsonElement element = getPathElementOrDefault(jsonObject, key);
+        if (element == null) return value;
+        return element.getAsDouble();
+    }
+
+    public static JsonElement getPathElementOrDefault(JsonObject jsonObject, String key) {
+        JsonElement current = jsonObject;
+        for (String s : key.split("\\.")) {
+            if (current instanceof JsonNull) return null;
+            if (current instanceof JsonObject) {
+                if (!((JsonObject) current).has(s)) return null;
+                current = ((JsonObject) current).get(s);
+            } else if (current instanceof JsonArray) {
+                int idx = Integer.parseInt(s);
+                if (((JsonArray) current).size() <= idx) return null;
+                current = ((JsonArray) current).get(idx);
+            }
+        }
+        if (current instanceof JsonNull) return null;
+        return current;
     }
 
     public static NBTTagCompound parseBase64NBT(String nbt) throws IOException {
@@ -94,77 +127,75 @@ public class PlayerProfileParser {
         return itemStack;
     }
 
+    public static ItemStack[] parseInventory(JsonObject object, String path, ItemStack[] itemStacks) throws IOException {
+        String nbt = getOrDefault(object, path, null);
+        if (nbt == null) return null;
+
+        NBTTagCompound armor = parseBase64NBT(nbt);
+        NBTTagList array = armor.getTagList("i", 10);
+        if (itemStacks == null || array.tagCount() > itemStacks.length)
+            itemStacks = new ItemStack[array.tagCount()];
+
+        for (int i = 0; i < array.tagCount(); i++) {
+            NBTTagCompound item = array.getCompoundTagAt(i);
+            itemStacks[i] = deserializeNBT(item);
+        }
+        return itemStacks;
+    }
+
     public static PlayerProfile parseProfile(JsonObject profile, String dashTrimmed) throws IOException {
         PlayerProfile playerProfile = new PlayerProfile();
         playerProfile.setProfileUID(getOrDefault(profile, "profile_id", ""));
         playerProfile.setMemberUID(dashTrimmed);
         playerProfile.setProfileName(getOrDefault(profile, "cute_name", ""));
 
-        JsonObject playerData = profile.getAsJsonObject("members").getAsJsonObject(dashTrimmed);
-        playerProfile.setSelected(profile.has("selected") && profile.get("selected").getAsBoolean());
-        playerProfile.setFairySouls(getOrDefault(playerData, "fairy_souls_collected", 0));
-        playerProfile.setFairyExchanges(getOrDefault(playerData, "fairy_exchanges", 0));
+        JsonObject playerData = getJsonObject(profile, "members."+dashTrimmed);
+        if (playerData == null) throw new IllegalArgumentException("profile does not have player");
 
-        if (playerData.has("inv_armor")) {
-            playerProfile.setCurrentArmor(new PlayerProfile.Armor());
-            NBTTagCompound armor = parseBase64NBT(playerData.getAsJsonObject("inv_armor")
-                    .get("data")
-                    .getAsString());
-            NBTTagList array = armor.getTagList("i", 10);
-            for (int i = 0; i < 4; i++) {
-                NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getCurrentArmor().getArmorSlots()[i] = deserializeNBT(item);
+        playerProfile.setSelected(getOrDefault(profile, "selected", false));
+
+
+        playerProfile.setFairySouls(getOrDefault(playerData, "fairy_soul.total_collected", 0));
+        playerProfile.setFairyExchanges(getOrDefault(playerData, "fairy_soul.fairy_exchanges", 0));
+
+        if (playerData.has("inventory")) {
+            JsonObject inventory = playerData.getAsJsonObject("inventory");
+
+            if (inventory.has("inv_armor")) {
+                playerProfile.setCurrentArmor(new PlayerProfile.Armor());
+                parseInventory(inventory, "inv_armor.data", playerProfile.getCurrentArmor().getArmorSlots());
             }
+            // migrated til here.
+
+            if (inventory.has("wardrobe_contents")) {
+                NBTTagCompound armor = parseBase64NBT(getOrDefault(inventory, "wardrobe_contents.data", null));
+                NBTTagList array = armor.getTagList("i", 10);
+                for (int i = 0; i < array.tagCount(); i++) {
+                    if (i % 4 == 0) playerProfile.getWardrobe().add(new PlayerProfile.Armor());
+                    NBTTagCompound item = array.getCompoundTagAt(i);
+                    playerProfile.getWardrobe().get(i / 4).getArmorSlots()[i % 4] = deserializeNBT(item);
+                }
+            }
+
+            playerProfile.setSelectedWardrobe(getOrDefault(inventory, "wardrobe_equipped_slot", -1));
+            playerProfile.setInventory(parseInventory(inventory, "inv_contents.data", null));
+            playerProfile.setEnderChest(parseInventory(inventory, "ender_chest_contents.data", null));
+            playerProfile.setTalismans(parseInventory(inventory, "bag_contents.talisman_bag.data", null));
         }
 
-        if (playerData.has("wardrobe_contents")) {
-            NBTTagCompound armor = parseBase64NBT(playerData.getAsJsonObject("wardrobe_contents").get("data").getAsString());
-            NBTTagList array = armor.getTagList("i", 10);
-            for (int i = 0; i < array.tagCount(); i++) {
-                if (i % 4 == 0) playerProfile.getWardrobe().add(new PlayerProfile.Armor());
-                NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getWardrobe().get(i / 4).getArmorSlots()[i % 4] = deserializeNBT(item);
-            }
-
-        }
-        playerProfile.setSelectedWardrobe(getOrDefault(playerData, "wardrobe_equipped_slot", -1));
-
-        if (playerData.has("inv_contents")) {
-            NBTTagCompound armor = parseBase64NBT(playerData.getAsJsonObject("inv_contents").get("data").getAsString());
-            NBTTagList array = armor.getTagList("i", 10);
-            playerProfile.setInventory(new ItemStack[array.tagCount()]);
-            for (int i = 0; i < array.tagCount(); i++) {
-                NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getInventory()[i] = deserializeNBT(item);
-            }
-        }
-        if (playerData.has("ender_chest_contents")) {
-            NBTTagCompound armor = parseBase64NBT(playerData.getAsJsonObject("ender_chest_contents").get("data").getAsString());
-            NBTTagList array = armor.getTagList("i", 10);
-            playerProfile.setEnderChest(new ItemStack[array.tagCount()]);
-            for (int i = 0; i < array.tagCount(); i++) {
-                NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getEnderChest()[i] = deserializeNBT(item);
-            }
-        }
-        if (playerData.has("talisman_bag")) {
-            NBTTagCompound armor = parseBase64NBT(playerData.getAsJsonObject("talisman_bag").get("data").getAsString());
-            NBTTagList array = armor.getTagList("i", 10);
-            playerProfile.setTalismans(new ItemStack[array.tagCount()]);
-            for (int i = 0; i < array.tagCount(); i++) {
-                NBTTagCompound item = array.getCompoundTagAt(i);
-                playerProfile.getTalismans()[i] = deserializeNBT(item);
-            }
-        }
 
         playerProfile.setSkillXp(new HashMap<>());
         for (Skill value : Skill.values()) {
-            playerProfile.getSkillXp().put(value, getOrDefaultNullable(playerData, "experience_skill_" + value.getJsonName(), null));
+            playerProfile.getSkillXp().put(value,
+                    getOrDefaultNullable(playerData
+                            .getAsJsonObject("player_data")
+                            .getAsJsonObject("experience"), "SKILL_" + value.getJsonName(), null));
         }
 
-        if (playerData.has("pets")) {
-            for (JsonElement pets : playerData.getAsJsonArray("pets")) {
-                JsonObject pet = pets.getAsJsonObject();
+        JsonElement pets = getPathElementOrDefault(playerData, "pets_data.pets");
+        if (pets != null) {
+            for (JsonElement pet_ : pets.getAsJsonArray()) {
+                JsonObject pet = pet_.getAsJsonObject();
                 Pet petObj = new Pet();
                 petObj.setActive(pet.get("active").getAsBoolean());
                 petObj.setExp(getOrDefault(pet, "exp", 0.0));
@@ -177,36 +208,37 @@ public class PlayerProfileParser {
             }
         }
 
-        if (playerData.has("dungeons") && playerData.getAsJsonObject("dungeons").has("dungeon_types")) {
-            JsonObject types = playerData.getAsJsonObject("dungeons")
-                    .getAsJsonObject("dungeon_types");
+        playerProfile.setTotalSecrets(getOrDefault(playerData, "dungeons.secrets", 0));
+        // ######???####
+        JsonObject dungeon_types = getJsonObject(playerData, "dungeons.dungeon_types");
+        if (dungeon_types != null) {
             for (DungeonType value : DungeonType.values()) {
                 DungeonStat dungeonStat = new DungeonStat();
                 DungeonSpecificData<DungeonStat> dungeonSpecificData = new DungeonSpecificData<>(value, dungeonStat);
                 playerProfile.getDungeonStats().put(value, dungeonSpecificData);
 
-                if (!types.has(value.getJsonName())) continue;
+                if (!dungeon_types.has(value.getJsonName())) continue;
 
-                JsonObject dungeonObj = types.getAsJsonObject(value.getJsonName());
+                JsonObject dungeonObj = dungeon_types.getAsJsonObject(value.getJsonName());
 
                 dungeonStat.setHighestCompleted(getOrDefault(dungeonObj, "highest_tier_completed", -1));
 
                 for (Integer validFloor : value.getValidFloors()) {
                     DungeonStat.PlayedFloor playedFloor = new DungeonStat.PlayedFloor();
-                    playedFloor.setBestScore(getOrDefault(dungeonObj.getAsJsonObject("best_score"), "" + validFloor, 0));
-                    playedFloor.setCompletions(getOrDefault(dungeonObj.getAsJsonObject("tier_completions"), "" + validFloor, 0));
-                    playedFloor.setFastestTime(getOrDefault(dungeonObj.getAsJsonObject("fastest_time"), "" + validFloor, -1));
-                    playedFloor.setFastestTimeS(getOrDefault(dungeonObj.getAsJsonObject("fastest_time_s"), "" + validFloor, -1));
-                    playedFloor.setFastestTimeSPlus(getOrDefault(dungeonObj.getAsJsonObject("fastest_time_s_plus"), "" + validFloor, -1));
-                    playedFloor.setMobsKilled(getOrDefault(dungeonObj.getAsJsonObject("mobs_killed"), "" + validFloor, 0));
-                    playedFloor.setMostMobsKilled(getOrDefault(dungeonObj.getAsJsonObject("most_mobs_killed"), "" + validFloor, 0));
-                    playedFloor.setMostHealing(getOrDefault(dungeonObj.getAsJsonObject("most_healing"), "" + validFloor, 0));
-                    playedFloor.setTimes_played(getOrDefault(dungeonObj.getAsJsonObject("times_played"), "" + validFloor, 0));
-                    playedFloor.setWatcherKills(getOrDefault(dungeonObj.getAsJsonObject("watcher_kills"), "" + validFloor, 0));
+                    playedFloor.setBestScore(getOrDefault(dungeonObj, "best_score." + validFloor, 0));
+                    playedFloor.setCompletions(getOrDefault(dungeonObj, "tier_completions."+ validFloor, 0));
+                    playedFloor.setFastestTime(getOrDefault(dungeonObj, "fastest_time."+ validFloor, -1));
+                    playedFloor.setFastestTimeS(getOrDefault(dungeonObj, "fastest_time_s."+ validFloor, -1));
+                    playedFloor.setFastestTimeSPlus(getOrDefault(dungeonObj, "fastest_time_s_plus."+ validFloor, -1));
+                    playedFloor.setMobsKilled(getOrDefault(dungeonObj, "mobs_killed."+ validFloor, 0));
+                    playedFloor.setMostMobsKilled(getOrDefault(dungeonObj, "most_mobs_killed."+ validFloor, 0));
+                    playedFloor.setMostHealing(getOrDefault(dungeonObj, "most_healing."+ validFloor, 0));
+                    playedFloor.setTimes_played(getOrDefault(dungeonObj, "times_played."+ validFloor, 0));
+                    playedFloor.setWatcherKills(getOrDefault(dungeonObj, "watcher_kills."+ validFloor, 0));
 
                     for (DungeonClass dungeonClass : DungeonClass.values()) {
                         DungeonStat.PlayedFloor.ClassStatistics classStatistics = new DungeonStat.PlayedFloor.ClassStatistics();
-                        classStatistics.setMostDamage(getOrDefault(dungeonObj.getAsJsonObject("most_damage_" + dungeonClass.getJsonName()), "" + validFloor, 0));
+                        classStatistics.setMostDamage(getOrDefault(dungeonObj, "most_damage_" + dungeonClass.getJsonName()+"."+ validFloor, 0));
                         ClassSpecificData<DungeonStat.PlayedFloor.ClassStatistics> classStatisticsClassSpecificData = new ClassSpecificData<>(dungeonClass, classStatistics);
 
                         playedFloor.getClassStatistics().put(dungeonClass, classStatisticsClassSpecificData);
@@ -221,22 +253,23 @@ public class PlayerProfileParser {
 
             }
         }
-        if (playerData.has("dungeons") && playerData.getAsJsonObject("dungeons").has("player_classes")) {
-            JsonObject classes = playerData.getAsJsonObject("dungeons")
-                    .getAsJsonObject("player_classes");
+        JsonObject dungeon_classes = getJsonObject(playerData, "dungeons.player_classes");
+        if (dungeon_classes != null) {
             for (DungeonClass dungeonClass : DungeonClass.values()) {
                 PlayerProfile.PlayerClassData classStatistics = new PlayerProfile.PlayerClassData();
-                classStatistics.setExperience(getOrDefault(classes.getAsJsonObject(dungeonClass.getJsonName()), "experience", 0));
+                classStatistics.setExperience(getOrDefault(dungeon_classes, dungeonClass.getJsonName()+".experience", 0));
                 ClassSpecificData<PlayerProfile.PlayerClassData> classStatisticsClassSpecificData = new ClassSpecificData<>(dungeonClass, classStatistics);
 
                 playerProfile.getPlayerClassData().put(dungeonClass, classStatisticsClassSpecificData);
             }
         }
+
         if (playerData.has("dungeons")) {
             String id = getOrDefault(playerData.getAsJsonObject("dungeons"), "selected_dungeon_class", null);
             DungeonClass dungeonClass = DungeonClass.getClassByJsonName(id);
             playerProfile.setSelectedClass(dungeonClass);
         }
+
         try {
             calculateLilyWeight(playerProfile, playerData);
         } catch (NullPointerException e) {
@@ -251,12 +284,11 @@ public class PlayerProfileParser {
     private static void calculateLilyWeight(PlayerProfile playerProfile, JsonObject playerData) throws ExecutionException, InterruptedException {
         JsonObject constants = getLilyWeightConstants();
         double[] slayerXP = new double[4];
-        if (playerData.has("slayer_bosses")) {
-            slayerXP[0] = getOrDefault(playerData.getAsJsonObject("slayer_bosses").getAsJsonObject("zombie"), "xp", 0);
-            slayerXP[1] = getOrDefault(playerData.getAsJsonObject("slayer_bosses").getAsJsonObject("spider"), "xp", 0);
-            slayerXP[2] = getOrDefault(playerData.getAsJsonObject("slayer_bosses").getAsJsonObject("wolf"), "xp", 0);
-            slayerXP[3] = getOrDefault(playerData.getAsJsonObject("slayer_bosses").getAsJsonObject("enderman"), "xp", 0);
-        }
+        slayerXP[0] = getOrDefault(playerData, "slayer.slayer_bosses.zombie.xp", 0);
+        slayerXP[1] = getOrDefault(playerData, "slayer.slayer_bosses.spider.xp", 0);
+        slayerXP[2] = getOrDefault(playerData, "slayer.slayer_bosses.wolf.xp", 0);
+        slayerXP[3] = getOrDefault(playerData, "slayer.slayer_bosses.enderman.xp", 0);
+
         double skillWeight = 0;
         double overflowWeight = 0;
         {
@@ -267,14 +299,14 @@ public class PlayerProfileParser {
 
             double skillAvg = playerProfile.getSkillXp().entrySet().stream()
                     .filter(a -> a.getValue() != null)
-                    .filter(a -> srw.has(a.getKey().getJsonName()))
+                    .filter(a -> srw.has(a.getKey().getDataRendererName()))
                     .map(a -> XPUtils.getSkillXp(a.getKey(), a.getValue()).getLevel()).collect(Collectors.averagingInt(a -> a));
 
             double n = 12 * (skillAvg / 60) * (skillAvg / 60);
             double r2 = Math.sqrt(2);
 
             for (Map.Entry<Skill, Double> skillDoubleEntry : playerProfile.getSkillXp().entrySet()) {
-                String jsonName = skillDoubleEntry.getKey().getJsonName();
+                String jsonName = skillDoubleEntry.getKey().getDataRendererName();
                 JsonArray temp_srw = srw.getAsJsonArray(jsonName);
                 if (temp_srw == null) continue;
                 int lv = XPUtils.getSkillXp(skillDoubleEntry.getKey(), skillDoubleEntry.getValue()).getLevel();

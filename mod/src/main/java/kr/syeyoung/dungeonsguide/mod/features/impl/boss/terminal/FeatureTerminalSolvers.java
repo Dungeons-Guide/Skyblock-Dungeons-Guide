@@ -40,24 +40,21 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class FeatureTerminalSolvers extends SimpleFeature {
-    public FeatureTerminalSolvers() {
-        super("Bossfight.Floor 7","F7 GUI Terminal Solver", "Solve f7 gui terminals. (color, starts with, order, navigate, correct panes, click in time)", "bossfight.terminals");
+    private TerminalSolutionProvider provider;
+    public FeatureTerminalSolvers(TerminalSolutionProvider provider, String name, String description, String key) {
+        super("Bossfight.Floor 7.Terminal",name, description, key);
 
         addParameter("cancelwrongclick", new FeatureParameter<>("cancelwrongclick", "Block invalid clicks", "", true, TCBoolean.INSTANCE, nval -> block = nval));
+        this.provider = provider;
     }
 
     private boolean block = true;
 
-    public static final List<TerminalSolutionProvider> solutionProviders = new ArrayList<TerminalSolutionProvider>();
+//    public static final List<TerminalSolutionProvider> solutionProviders = new ArrayList<TerminalSolutionProvider>();
 
-    static  {
-        solutionProviders.add(new WhatStartsWithSolutionProvider());
-        solutionProviders.add(new SelectAllColorSolutionProvider());
-        solutionProviders.add(new SelectInOrderSolutionProvider());
-        solutionProviders.add(new NavigateMazeSolutionProvider());
-        solutionProviders.add(new CorrectThePaneSolutionProvider());
-        solutionProviders.add(new MelodySolutionProvider());
-    }
+//    static  {
+//        solutionProviders.add(new MelodySolutionProvider());
+//    }
 
     private TerminalSolutionProvider solutionProvider;
     private TerminalSolution solution;
@@ -71,11 +68,9 @@ public class FeatureTerminalSolvers extends SimpleFeature {
         clicked.clear();
         if (event.gui instanceof GuiChest) {
             ContainerChest cc = (ContainerChest) ((GuiChest) event.gui).inventorySlots;
-            for (TerminalSolutionProvider solutionProvider : solutionProviders) {
-                if (solutionProvider.isApplicable(cc)) {
-                    solution = solutionProvider.provideSolution(cc, clicked);
-                    this.solutionProvider = solutionProvider;
-                }
+            if (provider.isApplicable(cc)) {
+                solution = provider.provideSolution(cc, clicked);
+                this.solutionProvider = provider;
             }
         }
     }

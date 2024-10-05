@@ -153,6 +153,7 @@ public class StompClient extends WebSocketClient {
 
 
     private final Map<Integer, StompSubscription> stompSubscriptionMap = new HashMap<>();
+    private final Map<String, Integer> stompSubscriptionDestMap = new HashMap<>();
     private final Map<Integer, StompPayload> receiptMap = new HashMap<>();
 
     private int idIncrement = 0;
@@ -166,22 +167,45 @@ public class StompClient extends WebSocketClient {
         payload.method(StompHeader.SEND);
         if (payload.headers().get("receipt") != null)
             receiptMap.put(Integer.parseInt(payload.headers().get("receipt")), payload);
-        send(payload.getBuilt());
+        ex.submit(() -> {
+            send(payload.getBuilt());
+        });
     }
 
-    public void subscribe(String destination, StompSubscription listener) {
+    public int subscribe(String destination, StompSubscription listener) {
         makeSureStompIsConnected();
         int id = ++idIncrement;
 
-        send(new StompPayload()
-                .method(StompHeader.SUBSCRIBE)
-                .header("id", String.valueOf(id))
-                .destination(destination)
-                .header("ack", "auto")
-                .getBuilt()
+        ex.submit(() -> {
+            send(new StompPayload()
+                            .method(StompHeader.SUBSCRIBE)
+                            .header("id", String.valueOf(id))
+                            .destination(destination)
+                            .header("ack", "auto")
+                            .getBuilt()
+                    );
+                }
         );
 
         stompSubscriptionMap.put(id, listener);
+        stompSubscriptionDestMap.put(destination, id);
+        return id;
+    }
+
+    public void unsubscribe(String destination) {
+        Integer id = stompSubscriptionDestMap.remove(destination);
+        if (id == null) return;
+
+        ex.submit(() -> {
+                    send(new StompPayload()
+                            .method(StompHeader.UNSUBSCRIBE)
+                            .header("id", String.valueOf(id))
+                            .destination(destination)
+                            .header("ack", "auto")
+                            .getBuilt()
+                    );
+        });
+        stompSubscriptionMap.remove(id);
     }
 
 
@@ -191,8 +215,10 @@ public class StompClient extends WebSocketClient {
 
         StompPayload stompPayload = new StompPayload().method(StompHeader.DISCONNECT).header("receipt", String.valueOf(++idIncrement));
 
-        send(stompPayload.getBuilt());
         receiptMap.put(idIncrement, stompPayload);
+        ex.submit(() -> {
+                    send(stompPayload.getBuilt());
+                });
     }
 
 

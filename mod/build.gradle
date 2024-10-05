@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.0.0-beta11.0-experimental5.0"
+version = "4.0.0-beta12.0-experimental5.0"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide"
 
@@ -17,13 +17,6 @@ java {
 
 sourceSets.main {
     output.setResourcesDir(file("$buildDir/classes/java/main"))
-}
-
-signing {
-    useGpgCmd()
-    if (project.findProperty("dg.dosign") == "true"){
-        sign configurations.archives
-    }
 }
 
 repositories {
@@ -50,13 +43,12 @@ configurations {
     }
 }
 
-def devenvMod = configurations.create("devenvMod") {
-    setTransitive(false)
-    setVisible(false)
+configurations {
+    devenvMod {
+        transitive = false
+        visible = false
+    }
 }
-
-def testWithNeu = project.findProperty("dg.testwithneu") == "true"
-printf("TestWithNeu: %s", testWithNeu)
 
 dependencies {
     minecraft("com.mojang:minecraft:1.8.9")
@@ -82,25 +74,16 @@ dependencies {
 
 
     compileOnly project(path: ":loader")
-    runtimeOnly project(path: ":loader")
 
-    if (testWithNeu) {
-        runtimeOnly 'org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.7.22'
-//        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:1f4d692:all')
-//        add("devenvMod", 'com.github.notenoughupdates:notenoughupdates:museumthing-SNAPSHOT:all')
-    }
-    def files= fileTree("../runtime/mods2").filter { it.isFile() }
-    add("devenvMod", files)
+    devenvMod(project(path: ":loader", configuration: "unmappedMod"))
+    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
 }
 
 loom {
     launchConfigs {
         client {
-            // probably will have to my own mixin tweaker, due to dungeonsguide's weird dynamic loading stuff
-//            property("mixin.debug", "true")
-//            property("asmhelper.verbose", "true")
-//            arg("--mixin", "mixins.examplemod.json")
-            arg("--mods", devenvMod.files.collect { file("../runtime").relativePath(it) }.join(","))
+            arg("--mods", configurations.devenvMod.files
+                    .collect { file("../runtime").relativePath(it) }.join(","))
         }
     }
     runConfigs {
@@ -111,9 +94,9 @@ loom {
     }
     runs {
         client {
+            name = "Launch Dungeons Guide"
             runDir = '../runtime'
             property('devauth.enabled', 'true')
-            property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
             property('dg.loader', 'devenv')
             client()
             vmArgs.remove("-XstartOnFirstThread")
@@ -142,20 +125,14 @@ tasks.withType(JavaCompile) {
 tasks.withType(Jar) {
     archivesBaseName = "dungeonsguide"
     manifest {
-        // If you don't want mixins, remove these lines
-//        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
-//        this["MixinConfigs"] = "mixins.examplemod.json"
+
     }
-
-
 }
 
 
 tasks.shadowJar {
-
     archiveFileName = jar.archiveFileName
 
-//    relocate 'com.sun.jna', "kr.syeyoung.dungeonsguide.com.sun.jna"
     relocate "org.java_websocket", "kr.syeyoung.dungeonsguide.org.java_websocket"
     relocate 'com.jagrosh.discordipc', 'kr.syeyoung.dungeonsguide.com.jagrosh.discordipc'
 
@@ -177,6 +154,12 @@ tasks.named("remapJar") {
 
 
 tasks.assemble.dependsOn tasks.remapJar
+
+signing {
+    required(project.findProperty("dg.dosign") == "true")
+    useGpgCmd()
+    sign configurations.archives
+}
 
 artifacts {
     remappedMod(tasks.remapJar)

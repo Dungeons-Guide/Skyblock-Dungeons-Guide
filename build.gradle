@@ -1,0 +1,108 @@
+
+plugins {
+    id "signing"
+    id "org.jetbrains.gradle.plugin.idea-ext" version "1.1.9"
+}
+
+configurations {
+    loaderOnly {
+        transitive = false
+        canBeConsumed = false
+    }
+    loaderOnlyDev {
+        transitive = false
+        canBeConsumed = false
+    }
+    modOnly {
+        transitive = false
+        canBeConsumed = false
+    }
+    modOnlyDev {
+        transitive = false
+        canBeConsumed = false
+    }
+
+
+    standaloneDev {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+    standalone {
+        canBeConsumed = true
+        canBeResolved = false
+    }
+}
+
+
+dependencies {
+    loaderOnly(project(path: ":loader", configuration: "remappedMod"))
+    loaderOnlyDev(project(path: ":loader", configuration: "unmappedMod"))
+    modOnly(project(path: ":mod", configuration: "remappedMod"))
+    modOnlyDev(project(path: ":mod", configuration: "unmappedMod"))
+}
+
+task standaloneJar(type: Jar) {
+    group = "build"
+
+    archiveClassifier = "standalone"
+    dependsOn ":mod:build", ":loader:build"
+    from(zipTree(configurations.loaderOnly.files[0]))
+    archiveFileName = configurations.modOnly.files.name.get(0).replace("-mapped.jar", "")+"-standalone.jar"
+
+//    print(configurations.remappedMod.version)
+
+    from(configurations.modOnly.files) {
+        rename ".+\\.jar", "mod.jar"
+    }
+    doLast {
+        println(archiveFile.get().asFile)
+    }
+}
+
+task standaloneDevJar(type: Jar) {
+    group = "build"
+
+    archiveClassifier = "devStandalone"
+    dependsOn ":mod:build", ":loader:build"
+    from(zipTree(configurations.loaderOnlyDev.files[0]))
+    archiveFileName = configurations.modOnlyDev.files.name.get(0).replace(".jar", "")+"-devStandalone.jar"
+    from(configurations.modOnlyDev.files) {
+        rename ".+\\.jar", "mod.jar"
+    }
+    doLast {
+        println(archiveFile.get().asFile)
+    }
+}
+
+signing {
+    required ( project.findProperty("dg.dosign") == "true")
+    useGpgCmd()
+    sign standaloneDevJar
+    sign standaloneJar
+}
+
+tasks.standaloneDevJar.dependsOn project(":mod").task("archive")
+
+tasks.build.dependsOn tasks.signStandaloneJar, tasks.signStandaloneDevJar
+
+
+import org.jetbrains.gradle.ext.*
+idea.project.settings {
+    runConfigurations {
+        "Build Standalone Jars With Signing"(Gradle) {
+            taskNames = ["build -Pdg.dosign=true"]
+        }
+        "Build Standalone Jars"(Gradle) {
+            taskNames = ["build"]
+        }
+        "Build Loader Only With Signing"(Gradle) {
+            taskNames = [":loader:build -Pdg.dosign=true"]
+        }
+        "Build Loader Only"(Gradle) {
+            taskNames = [":loader:build"]
+        }
+        "Build Mod Only With Signing"(Gradle) {
+            taskNames = [":mod:build -Pdg.dosign=true"]
+        }
+    }
+}

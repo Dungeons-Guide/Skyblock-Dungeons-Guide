@@ -45,7 +45,7 @@ public class DataRendererRegistry {
         }
         dataRendererMap.put("selected_class_lv", new DataRendererSelectedClassLv());
         for (Skill value : Skill.values()) {
-            dataRendererMap.put("skill_"+value.getJsonName()+"_lv", new DataRendererSkillLv(value));
+            dataRendererMap.put("skill_"+value.getDataRendererName()+"_lv", new DataRendererSkillLv(value));
         }
         for (DungeonType value : DungeonType.values()) {
             for (Integer validFloor : value.getValidFloors()) {

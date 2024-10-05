@@ -7,7 +7,7 @@ plugins {
     id "gg.essential.loom" version "0.10.0.+"
 }
 
-version = "4.0.2"
+version = "4.1.0"
 group = "kr.syeyoung.dungeonsguide"
 archivesBaseName = "dungeonsguide-loader"
 
@@ -32,8 +32,8 @@ loom {
         }
     }
     runs {
-
         client {
+            name = "Launch Loader Only"
             runDir = '../runtime'
             property('devauth.enabled','true')
             property("fml.coreMods.load", "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker")
@@ -61,15 +61,13 @@ repositories {
 
 configurations {
     implementation.extendsFrom shadowImpl
-    modRuntimeOnly.extendsFrom devEnv {
-        transitive = false
-        visible = false
-    }
     unmappedMod {
-        visible = false
+        canBeConsumed = true
+        canBeResolved = false
     }
     remappedMod {
-        visible = false
+        canBeConsumed = true
+        canBeResolved = false
     }
 }
 dependencies {
@@ -91,10 +89,7 @@ dependencies {
     testAnnotationProcessor "org.projectlombok:lombok:1.18.20"
 
 
-    devEnv("me.djtheredstoner:DevAuth-forge-legacy:1.1.0")
-
-    unmappedMod(project(path: ':mod', configuration: 'unmappedMod'))
-    remappedMod(project(path: ':mod', configuration: 'remappedMod'))
+    modLocalRuntime("me.djtheredstoner:DevAuth-forge-legacy:1.1.0") {}
 }
 
 
@@ -106,12 +101,6 @@ tasks.withType(Jar) {
     manifest {
         attributes["FMLCorePluginContainsFMLMod"] = "true"
         attributes["FMLCorePlugin"] = 'kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker'
-//        attributes["ForceLoadAsMod"] = "true" not applicable, not using mixins
-//        attributes["TweakClass"] = "kr.syeyoung.dungeonsguide.launcher.coremod.DGTweaker"
-
-        // If you don't want mixins, remove these lines
-//        this["TweakClass"] = "org.spongepowered.asm.launch.MixinTweaker"
-//        this["MixinConfigs"] = "mixins.examplemod.json"
     }
 }
 
@@ -134,48 +123,14 @@ tasks.named("remapJar") {
     input = tasks.shadowJar.archiveFile
 }
 
-task standaloneConsumerJar(type: Jar) {
-    archiveClassifier = "standalone"
-    from(zipTree(tasks.remapJar.archiveFile))
-    archiveFileName = configurations.remappedMod.files.name.get(0).replace("-mapped.jar", "")+"-standalone.jar"
 
-//    print(configurations.remappedMod.version)
-
-    from(configurations.remappedMod.files) {
-        rename ".+\\.jar", "mod.jar"
-    }
-    doLast {
-        println(archiveFile.get().asFile)
-    }
-}
-task standaloneDevJar(type: Jar) {
-    archiveClassifier = "devStandalone"
-    from(zipTree(tasks.shadowJar.archiveFile))
-    archiveFileName = configurations.unmappedMod.files.name.get(0).replace(".jar", "")+"-devStandalone.jar"
-    from(configurations.unmappedMod.files) {
-        rename ".+\\.jar", "mod.jar"
-    }
-    doLast {
-        println(archiveFile.get().asFile)
-    }
-}
-
-
-
-tasks.assemble.dependsOn tasks.remapJar
-
-task buildStandaloneJars {}
-
-def shouldSign = project.findProperty("dg.dosign") == "true"
 signing {
+    required(project.findProperty("dg.dosign") == "true")
     useGpgCmd()
-    if (shouldSign) {
-        sign configurations.archives
-        sign standaloneDevJar
-        sign standaloneConsumerJar
-    }
+    sign configurations.archives
 }
-if (shouldSign)
-    tasks.buildStandaloneJars.dependsOn tasks.signStandaloneConsumerJar, tasks.signStandaloneDevJar
-else
-    tasks.buildStandaloneJars.dependsOn tasks.standaloneConsumerJar, tasks.standaloneDevJar
+
+artifacts {
+    remappedMod(tasks.remapJar)
+    unmappedMod(tasks.shadowJar)
+}
