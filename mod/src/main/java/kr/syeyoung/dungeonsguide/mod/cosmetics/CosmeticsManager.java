@@ -22,10 +22,13 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.chatdetectors.*;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.ReplacementContext;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.surgical.SurgicalReplacer;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerJoinEvent;
+import kr.syeyoung.dungeonsguide.mod.events.impl.DGPlayerQuitEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.PlayerListItemPacketEvent;
 import kr.syeyoung.dungeonsguide.mod.events.impl.StompConnectedEvent;
 import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.etc.FeatureCollectDiagnostics;
+import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompHeader;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompPayload;
@@ -64,6 +67,9 @@ public class CosmeticsManager {
     private Map<String, List<ActiveCosmetic>> activeCosmeticByPlayerNameLowerCase = new ConcurrentHashMap<>();
     @Getter
     private Set<String> perms = new CopyOnWriteArraySet<>();
+
+    @Getter
+    private Map<String, UUID> nameIdCache = new HashMap<>();
 
     public void requestActiveCosmetics() {
         StompManager.getInstance().send(new StompPayload()
@@ -162,14 +168,7 @@ public class CosmeticsManager {
                 activeCosmetics.remove(previousThing);
             }
 
-            try {
-                if (Minecraft.getMinecraft().theWorld != null) {
-                    EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(activeCosmetic.getPlayerUID());
-                    if (entityPlayer != null) entityPlayer.refreshDisplayName();
-                }
-            } catch (Exception exception) {
-                FeatureCollectDiagnostics.queueSendLogAsync(exception);
-                exception.printStackTrace();}
+            refresh(activeCosmetic.getPlayerUID());
         });
 
 
@@ -393,13 +392,71 @@ public class CosmeticsManager {
             for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
                 playerInfoMap.remove(entry.getProfile().getId());
                 playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
+
+                if (entry.getProfile().getId().version() == 4 && entry.getProfile().getName() != null) {
+                    PlayerManager.INSTANCE.subscribeTo(entry.getProfile().getId());
+                    PlayerManager.INSTANCE.ping(entry.getProfile().getId());
+
+                    nameIdCache.put(entry.getProfile().getName(), entry.getProfile().getId());
+                }
+            }
+        } else if (asd.getAction() == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
+            for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
+                if (entry.getProfile().getId().version() == 4) {
+                    PlayerManager.INSTANCE.unsubscribe(entry.getProfile().getId());
+                }
             }
         }
     }
 
+    private void refresh(UUID uuid) {
+        try {
+            if (Minecraft.getMinecraft().theWorld != null) {
+                EntityPlayer entityPlayer = Minecraft.getMinecraft().theWorld.getPlayerEntityByUUID(uuid);
+                if (entityPlayer != null) entityPlayer.refreshDisplayName();
+            }
+        } catch (Exception exception) {
+            FeatureCollectDiagnostics.queueSendLogAsync(exception);
+            exception.printStackTrace();}
+    }
+
+    @SubscribeEvent
+    public void onUpdate(DGPlayerJoinEvent event) {
+        refresh(event.getUuid());
+    }
+    @SubscribeEvent
+    public void onUpdate(DGPlayerQuitEvent event) {
+        refresh(event.getUuid());
+    }
+
+
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void nameFormat(PlayerEvent.NameFormat nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
+        boolean dg = PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().getId(), false);
+
+        MarkedChatComponent markedChatComponent = null;
+        for (IChatComponent entityPlayerPrefix : nameFormat.entityPlayer.getPrefixes()) {
+            if (entityPlayerPrefix instanceof MarkedChatComponent) {
+                markedChatComponent = (MarkedChatComponent) entityPlayerPrefix;
+                break;
+            }
+        }
+
+        if (markedChatComponent == null) {
+            nameFormat.entityPlayer.addPrefix(markedChatComponent = new MarkedChatComponent("", ""));
+        }
+
+
+        String formatted = "";
+        if (dg) {
+            formatted += "\ued01";
+        }
+
+        markedChatComponent.setFormatted(formatted);
+        markedChatComponent.setUnformatted(formatted);
+
+
         if (activeCosmetics == null) return;
         String color=null, rawPrefix=null, rawPrefixColor=null;
             for (ActiveCosmetic activeCosmetic : activeCosmetics) {
@@ -426,8 +483,8 @@ public class CosmeticsManager {
         if (color != null)
             nameFormat.displayname = color+nameFormat.username;
 
-        if (prefix != null)
-            nameFormat.displayname = prefix+" "+nameFormat.displayname;
-
+        formatted += prefix+ " ";
+        markedChatComponent.setFormatted(formatted);
+        markedChatComponent.setUnformatted(formatted);
     }
 }

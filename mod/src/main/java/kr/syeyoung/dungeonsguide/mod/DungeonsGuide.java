@@ -43,6 +43,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.PassthroughManager;
 import kr.syeyoung.dungeonsguide.mod.guiv2.elements.richtext.fonts.DefaultFontRenderer;
 import kr.syeyoung.dungeonsguide.mod.overlay.OverlayManager;
 import kr.syeyoung.dungeonsguide.mod.party.PartyManager;
+import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.resources.DGTexturePack;
 import kr.syeyoung.dungeonsguide.mod.shader.ShaderManager;
 import kr.syeyoung.dungeonsguide.mod.stomp.StompManager;
@@ -260,6 +261,7 @@ public class DungeonsGuide implements DGInterface {
 
         registerEventsForge(PartyManager.INSTANCE);
         registerEventsForge(ChatProcessor.INSTANCE);
+        registerEventsForge(PlayerManager.INSTANCE);
         registerEventsForge(StaticResourceCache.INSTANCE);
         registerEventsForge(OverlayManager.getEventHandler());
 
@@ -483,8 +485,9 @@ public class DungeonsGuide implements DGInterface {
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
         byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth");
         for (int i = 0; i < 255; i++) {
-            glypthWidths[0xed00 + i] = 15;
+            glypthWidths[0xed00 + i] = 14;
         }
+        glypthWidths[0xed02] = 1;
     }
 
     private boolean showedStartUpGuide;
