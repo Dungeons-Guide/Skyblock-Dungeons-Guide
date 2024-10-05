@@ -1,6 +1,6 @@
 /*
  * Dungeons Guide - The most intelligent Hypixel Skyblock Dungeons Mod
- * Copyright (C) 2022  cyoung06 (syeyoung)
+ * Copyright (C) 2021  cyoung06
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU Affero General Public License as published
@@ -16,8 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-package kr.syeyoung.dungeonsguide.launcher;
+package kr.syeyoung.dungeonsguide.mod.events.impl;
 
-public class LoaderMeta {
-    public static final int LOADER_VERSION = 5;
+import lombok.*;
+import net.minecraft.world.chunk.Chunk;
+import net.minecraftforge.fml.common.eventhandler.Event;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+
+@Data @AllArgsConstructor @NoArgsConstructor
+public class DGPlayerJoinEvent extends Event {
+    private UUID uuid;
 }

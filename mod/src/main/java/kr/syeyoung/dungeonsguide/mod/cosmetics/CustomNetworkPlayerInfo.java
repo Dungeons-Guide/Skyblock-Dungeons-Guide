@@ -20,7 +20,10 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
+import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
+import net.minecraft.client.Minecraft;
 import net.minecraft.client.network.NetworkPlayerInfo;
 import net.minecraft.network.play.server.S38PacketPlayerListItem;
 import net.minecraft.scoreboard.ScorePlayerTeam;
@@ -28,6 +31,7 @@ import net.minecraft.util.ChatComponentText;
 import net.minecraft.util.IChatComponent;
 
 import java.util.List;
+import java.util.UUID;
 
 // Reimplement this using ASM. Removing reference to this is too painful.
 public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
@@ -42,8 +46,8 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
 
 
     private IChatComponent displayName;
+
     private String formatted;
-    private String playerNameWithoutColor;
 
     public IChatComponent getOriginalDisplayName() {
         return displayName;
@@ -58,25 +62,13 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
         }
 
         formatted = displayName.getFormattedText();
-
-
-        playerNameWithoutColor = "";
-        for (String s : formatted.split(" ")) {
-            String stripped = TextUtils.stripColor(s);
-            if (stripped.startsWith("[")) {
-                continue;
-            }
-            playerNameWithoutColor = stripped;
-            break;
-        }
     }
 
 
     public IChatComponent getDisplayName()
     {
+        String rawPlayerString = formatted != null ? formatted : ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());
 
-        String rawPlayerString =
-                formatted != null ? formatted : ScorePlayerTeam.formatPlayerName(super.getPlayerTeam(), super.getGameProfile().getName());;
         String actualName = null;
         List<ActiveCosmetic> activeCosmetics;
         for (String s : rawPlayerString.split(" ")) {
@@ -85,10 +77,17 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
             actualName = strippped;
             break;
         }
-        // in case that the set player name is not called we do this
+
         if (actualName == null) return displayName;
+
+        UUID uuid = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getNameIdCache().get(actualName);
+        boolean dg = FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
+
+
         activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
-        if (activeCosmetics == null) return displayName;
+        if (activeCosmetics == null && dg) return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString);
+        else if (activeCosmetics == null) return displayName;
+
         CosmeticData color=null;
         for (ActiveCosmetic activeCosmetic : activeCosmetics) {
             CosmeticData cosmeticData = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getCosmeticDataMap().get(activeCosmetic.getCosmeticData());
@@ -96,11 +95,20 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
             if (cosmeticData.getCosmeticType().equals("ncolor")) color = cosmeticData;
         }
 
-        if (color != null) {
+//        FontRenderer
+        if (color != null) { // ᨠ
             String coloredName = color.getData() + actualName;
-            return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
+            if (dg) {
+                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString.replace(actualName, coloredName));
+            } else {
+                return new ChatComponentText(rawPlayerString.replace(actualName, coloredName));
+            }
         } else {
-            return new ChatComponentText(rawPlayerString);
+            if (dg) {
+                return new MarkedChatComponent(formatted == null ? rawPlayerString : displayName.getUnformattedText(), "\ued00" + rawPlayerString);
+            } else {
+                return displayName;
+            }
         }
     }
 }

@@ -18,15 +18,17 @@
 
 package kr.syeyoung.dungeonsguide.mod.resources;
 
+import com.google.common.collect.Sets;
 import net.minecraft.client.resources.AbstractResourcePack;
 
+import java.io.File;
 import java.io.InputStream;
 import java.util.Collections;
 import java.util.Set;
 
 public class DGTexturePack extends AbstractResourcePack {
     public DGTexturePack() {
-        super(null);
+        super(new File(""));
     }
 
     @Override
@@ -41,7 +43,7 @@ public class DGTexturePack extends AbstractResourcePack {
 
     @Override
     public Set<String> getResourceDomains() {
-        return Collections.singleton("dungeonsguide");
+        return Sets.newHashSet("dungeonsguide", "minecraft");
     }
 
     @Override
