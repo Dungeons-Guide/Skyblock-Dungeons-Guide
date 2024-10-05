@@ -308,6 +308,7 @@ public class FeatureRegistry {
 
     public static final FeatureUpdateAlarm ETC_TEST = register(new FeatureUpdateAlarm());
     public static final SimpleFeature FIX_SPIRIT_BOOTS = register(new SimpleFeature("Misc", "Spirit Boots Fixer", "Fix Spirit boots messing up with inventory", "fixes.spirit", true));
+    public static final SimpleFeature DG_INDICATOR = register(new SimpleFeature("Misc", "DG Indicator", "Indicator for people who uses dg on tab and nametag", "misc.dgindicator", true));
 
     public static final FeaturePressAnyKeyToCloseChest DUNGEON_CLOSECHEST = register(new FeaturePressAnyKeyToCloseChest());
 

@@ -433,7 +433,9 @@ public class CosmeticsManager {
     @SubscribeEvent(priority = EventPriority.LOWEST)
     public void nameFormat(PlayerEvent.NameFormat nameFormat) {
         List<ActiveCosmetic> activeCosmetics = activeCosmeticByPlayer.get(nameFormat.entityPlayer.getGameProfile().getId());
-        boolean dg = PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().getId(), false);
+        boolean dg =
+                FeatureRegistry.DG_INDICATOR.isEnabled() &&
+                PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(nameFormat.entityPlayer.getGameProfile().getId(), false);
 
         MarkedChatComponent markedChatComponent = null;
         for (IChatComponent entityPlayerPrefix : nameFormat.entityPlayer.getPrefixes()) {

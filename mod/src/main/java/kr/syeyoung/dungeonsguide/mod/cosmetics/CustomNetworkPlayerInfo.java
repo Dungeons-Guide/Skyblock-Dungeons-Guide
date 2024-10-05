@@ -20,6 +20,7 @@ package kr.syeyoung.dungeonsguide.mod.cosmetics;
 
 import com.mojang.authlib.GameProfile;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import kr.syeyoung.dungeonsguide.mod.utils.TextUtils;
 import net.minecraft.client.Minecraft;
@@ -80,7 +81,7 @@ public class CustomNetworkPlayerInfo extends NetworkPlayerInfo {
         if (actualName == null) return displayName;
 
         UUID uuid = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getNameIdCache().get(actualName);
-        boolean dg = PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
+        boolean dg = FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(uuid, false);
 
 
         activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayerNameLowerCase().get(actualName.toLowerCase());
