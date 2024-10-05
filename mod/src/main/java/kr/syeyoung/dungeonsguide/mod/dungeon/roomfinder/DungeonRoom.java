@@ -110,12 +110,10 @@ public class DungeonRoom {
                 }
                 Chunk c = getContext().getWorld().getChunkFromChunkCoords(x,z);
                 if (c.isEmpty()) {
-                    ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
                     throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                 }
                 for (ExtendedBlockStorage extendedBlockStorage : c.getBlockStorageArray()) {
                     if (extendedBlockStorage == null) {
-                        ChatTransmitter.sendDebugChat("Chunk not loaded: "+x+"/"+z);
                         throw new IllegalStateException("Chunk not loaded: "+x+"/"+z);
                     }
                 }
