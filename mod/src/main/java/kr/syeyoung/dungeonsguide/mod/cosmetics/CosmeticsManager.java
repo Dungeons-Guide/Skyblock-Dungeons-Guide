@@ -404,6 +404,7 @@ public class CosmeticsManager {
             for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
                 if (entry.getProfile().getId().version() == 4) {
                     PlayerManager.INSTANCE.unsubscribe(entry.getProfile().getId());
+                    nameIdCache.remove(entry.getProfile().getName(), entry.getProfile().getId());
                 }
             }
         }
