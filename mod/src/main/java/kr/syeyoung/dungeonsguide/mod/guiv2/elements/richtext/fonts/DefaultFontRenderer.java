@@ -54,6 +54,11 @@ public class DefaultFontRenderer implements FontRenderer {
     public void onResourceManagerReload() {
         this.readFontTexture();
         this.readGlyphSizes();
+
+        for (int i = 0; i < 255; i++) {
+            glyphData[0xed00 + i] = 14;
+        }
+        glyphData[0xed02] = 1;
     }
 
     private void readFontTexture() {

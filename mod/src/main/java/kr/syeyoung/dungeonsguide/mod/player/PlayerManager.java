@@ -22,28 +22,34 @@ public class PlayerManager {
     private final Map<UUID, Boolean> onlineStatus = new HashMap<>();
 
     public void publish(JSONObject jsonObject) {
-        StompManager.getInstance().send(new StompPayload().method(StompHeader.SEND).header("destination", "/app/player.broadcast").payload(jsonObject.toString()));
+        try {
+            StompManager.getInstance().send(new StompPayload().method(StompHeader.SEND).header("destination", "/app/player.broadcast").payload(jsonObject.toString()));
+        } catch (Exception e) {}
     }
 
     public void ping(UUID uuid) {
-        StompManager.getInstance().send(new StompPayload().method(StompHeader.SEND).header("destination", "/app/player.ping").payload(uuid.toString()));
+        try {
+            StompManager.getInstance().send(new StompPayload().method(StompHeader.SEND).header("destination", "/app/player.ping").payload(uuid.toString()));
+        } catch (Exception e) {}
     }
 
     public void subscribeTo(UUID uuid) {
         if (!subscribedTo.add(uuid)) return;
         StompClient stompInterface = StompManager.getInstance().getStompConnection();
         if (stompInterface == null) return;
-        stompInterface.subscribe("/topic/player/"+uuid.toString(), (client, msg) -> {
-            JSONObject obj = new JSONObject(msg);
-            String type = obj.getString("type");
-            if ("joined".equals(type)) {
-                MinecraftForge.EVENT_BUS.post(new DGPlayerJoinEvent(uuid));
-            } else if ("quit".equals(type)) {
-                MinecraftForge.EVENT_BUS.post(new DGPlayerQuitEvent(uuid));
-            } else {
-                MinecraftForge.EVENT_BUS.post(new DGPlayerEvent(uuid, type, obj.getJSONObject("payload")));
-            }
-        });
+        try {
+            stompInterface.subscribe("/topic/player/"+uuid.toString(), (client, msg) -> {
+                JSONObject obj = new JSONObject(msg);
+                String type = obj.getString("type");
+                if ("joined".equals(type)) {
+                    MinecraftForge.EVENT_BUS.post(new DGPlayerJoinEvent(uuid));
+                } else if ("quit".equals(type)) {
+                    MinecraftForge.EVENT_BUS.post(new DGPlayerQuitEvent(uuid));
+                } else {
+                    MinecraftForge.EVENT_BUS.post(new DGPlayerEvent(uuid, type, obj.getJSONObject("payload")));
+                }
+            });
+        } catch (Exception e) {}
     }
 
     public void unsubscribe(UUID uuid) {
@@ -51,7 +57,9 @@ public class PlayerManager {
 
         StompClient stompInterface = StompManager.getInstance().getStompConnection();
         if (stompInterface == null) return;
-        stompInterface.unsubscribe("/topic/player/"+uuid.toString());
+        try {
+            stompInterface.unsubscribe("/topic/player/"+uuid.toString());
+        } catch (Exception e) {}
         onlineStatus.remove(uuid.toString());
     }
 
@@ -64,6 +72,12 @@ public class PlayerManager {
             if (online) MinecraftForge.EVENT_BUS.post(new DGPlayerJoinEvent(playeruid));
             else MinecraftForge.EVENT_BUS.post(new DGPlayerQuitEvent(playeruid));
         });
+
+        Set<UUID> newSet = new HashSet<>(subscribedTo);
+        subscribedTo.clear();
+        for (UUID uuid : newSet) {
+            subscribeTo(uuid);
+        }
     }
 
     @SubscribeEvent

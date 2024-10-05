@@ -26,6 +26,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.elements.popups.PopupMgr;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedWidget;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.Bind;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.annotations.On;
+import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import net.minecraft.util.ResourceLocation;
 
 public class WidgetProfileViewer extends AnnotatedWidget {
@@ -52,6 +53,7 @@ public class WidgetProfileViewer extends AnnotatedWidget {
         actualPV.setValue(null);
 
         visiblePage.setValue("fetching");
+        PlayerManager.INSTANCE.ping(gameProfile.getId());
         ApiFetcher.fetchMostRecentProfileAsync(gameProfile.getId().toString())
                 .whenComplete((a,e) -> {
                     if (e != null) {

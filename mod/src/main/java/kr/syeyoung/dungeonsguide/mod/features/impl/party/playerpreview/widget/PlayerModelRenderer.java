@@ -21,6 +21,7 @@ package kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.widget;
 import kr.syeyoung.dungeonsguide.mod.DungeonsGuide;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.ActiveCosmetic;
 import kr.syeyoung.dungeonsguide.mod.cosmetics.CosmeticData;
+import kr.syeyoung.dungeonsguide.mod.features.FeatureRegistry;
 import kr.syeyoung.dungeonsguide.mod.features.impl.party.playerpreview.FakePlayer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.DomElement;
 import kr.syeyoung.dungeonsguide.mod.guiv2.Widget;
@@ -33,6 +34,7 @@ import kr.syeyoung.dungeonsguide.mod.guiv2.primitive.Size;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.Renderer;
 import kr.syeyoung.dungeonsguide.mod.guiv2.renderer.RenderingContext;
 import kr.syeyoung.dungeonsguide.mod.guiv2.xml.AnnotatedExportOnlyWidget;
+import kr.syeyoung.dungeonsguide.mod.player.PlayerManager;
 import lombok.Setter;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.FontRenderer;
@@ -83,6 +85,9 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
         String toDraw = fakePlayer.getName();
         List<ActiveCosmetic> activeCosmetics = DungeonsGuide.getDungeonsGuide().getCosmeticsManager().getActiveCosmeticByPlayer().get(
                 fakePlayer.getGameProfile().getId());
+
+
+
         String color=null, rawPrefix=null, rawPrefixColor=null;
         if (activeCosmetics != null) {
             for (ActiveCosmetic activeCosmetic : activeCosmetics) {
@@ -107,9 +112,14 @@ public class PlayerModelRenderer extends AnnotatedExportOnlyWidget implements La
             }
         }
 
+
+
         toDraw = (color == null ? "§e" : color) + toDraw;
         if (prefix != null) toDraw = prefix + " " + toDraw;
 
+        if (FeatureRegistry.DG_INDICATOR.isEnabled() && PlayerManager.INSTANCE.getOnlineStatus().getOrDefault(fakePlayer.getGameProfile().getId(), false)) {
+            toDraw = "\ued00\ued02"+ toDraw;
+        }
         GlStateManager.enableBlend();
         GL14.glBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
         GlStateManager.tryBlendFuncSeparate(GL11.GL_SRC_ALPHA, GL11.GL_ONE_MINUS_SRC_ALPHA, GL11.GL_ONE, GL11.GL_ONE_MINUS_SRC_ALPHA);
