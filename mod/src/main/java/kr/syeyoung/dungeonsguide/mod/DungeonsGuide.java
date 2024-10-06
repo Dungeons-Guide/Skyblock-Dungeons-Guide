@@ -483,7 +483,7 @@ public class DungeonsGuide implements DGInterface {
         ShaderManager.onResourceReload();
 
         FontRenderer fontRenderer = Minecraft.getMinecraft().fontRendererObj;
-        byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth");
+        byte[] glypthWidths = ReflectionHelper.getPrivateValue(FontRenderer.class, fontRenderer, "glyphWidth", "field_78287_e", "field_2819", "e");
         for (int i = 0; i < 255; i++) {
             glypthWidths[0xed00 + i] = 14;
         }
