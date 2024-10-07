@@ -423,6 +423,7 @@ public class FeatureRequestCalculation extends AbstractGuiFeature {
                     httpsURLConnection.setDoOutput(true);
                     httpsURLConnection.setRequestProperty("Content-Length", f.length()+"");
                     httpsURLConnection.setRequestProperty("Content-Type", "application/zip");
+                    httpsURLConnection.setFixedLengthStreamingMode(f.length());
                     httpsURLConnection.setRequestMethod("PUT");
                     FileInputStream fileInputStream = new FileInputStream(f);
                     byte buf[] = new byte[1024 *1024];
