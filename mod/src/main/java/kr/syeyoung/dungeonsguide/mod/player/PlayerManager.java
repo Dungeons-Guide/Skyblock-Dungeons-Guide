@@ -31,10 +31,12 @@ public class PlayerManager {
 
     public void ping(UUID uuid) {
         try {
-            StompManager.getInstance().send(new StompPayload().method(StompHeader.SEND).header("destination", "/app/player.ping").payload(uuid.toString()));
+            JSONArray jsonArray = new JSONArray();
+            jsonArray.put(uuid.toString());
+            StompManager.getInstance().send(new StompPayload().method(StompHeader.SEND).header("destination", "/app/player.ping2").payload(jsonArray.toString()));
         } catch (Exception e) {}
     }
-    public void pings(List<UUID> uuid) {
+    public void ping(List<UUID> uuid) {
         try {
             JSONArray jsonArray = new JSONArray();
             jsonArray.putAll(uuid.stream().map(UUID::toString).collect(Collectors.toList()));
@@ -74,13 +76,6 @@ public class PlayerManager {
 
     @SubscribeEvent
     public void stompConnect(StompConnectedEvent event) {
-        event.getStompInterface().subscribe("/user/queue/reply/player.ping", (stompClient ,payload) -> {
-            JSONObject object = new JSONObject(payload);
-            UUID playeruid = UUID.fromString(object.getString("uuid"));
-            boolean online = object.getBoolean("online");
-            if (online) MinecraftForge.EVENT_BUS.post(new DGPlayerJoinEvent(playeruid));
-            else MinecraftForge.EVENT_BUS.post(new DGPlayerQuitEvent(playeruid));
-        });
         event.getStompInterface().subscribe("/user/queue/reply/player.ping2", (stompClient ,payload) -> {
             JSONArray jsonArray = new JSONArray(payload);
             for (Object o : jsonArray) {

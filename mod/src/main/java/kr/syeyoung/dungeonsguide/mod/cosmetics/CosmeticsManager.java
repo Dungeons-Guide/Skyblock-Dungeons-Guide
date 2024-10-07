@@ -389,17 +389,19 @@ public class CosmeticsManager {
             if (Minecraft.getMinecraft().getNetHandler() == null) return;
 
             Map<UUID, NetworkPlayerInfo> playerInfoMap = ReflectionHelper.getPrivateValue(NetHandlerPlayClient.class, Minecraft.getMinecraft().getNetHandler(), "playerInfoMap", "field_147310_i","i");
+            List<UUID> pingTarget = new ArrayList<>();
             for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
                 playerInfoMap.remove(entry.getProfile().getId());
                 playerInfoMap.put(entry.getProfile().getId(), new CustomNetworkPlayerInfo(entry));
 
                 if (entry.getProfile().getId().version() == 4 && entry.getProfile().getName() != null) {
                     PlayerManager.INSTANCE.subscribeTo(entry.getProfile().getId());
-                    PlayerManager.INSTANCE.ping(entry.getProfile().getId());
+                    pingTarget.add(entry.getProfile().getId());
 
                     nameIdCache.put(entry.getProfile().getName(), entry.getProfile().getId());
                 }
             }
+            PlayerManager.INSTANCE.ping(pingTarget);
         } else if (asd.getAction() == S38PacketPlayerListItem.Action.REMOVE_PLAYER) {
             for (S38PacketPlayerListItem.AddPlayerData entry : asd.getEntries()) {
                 if (entry.getProfile().getId().version() == 4) {
