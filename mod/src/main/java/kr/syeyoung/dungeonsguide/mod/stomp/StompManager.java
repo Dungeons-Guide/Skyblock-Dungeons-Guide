@@ -52,6 +52,11 @@ public class StompManager {
     @Getter
     private StompClient stompConnection;
 
+    private int exponentialBackoffCoefficient = 0;
+
+    void resetExponentialBackoff() {
+        exponentialBackoffCoefficient = 0;
+    }
 
     public boolean isStompConnected(){
         if(stompConnection != null && stompConnection.getStompClientStatus() == StompClient.StompClientStatus.CONNECTED) return true;
@@ -73,23 +78,30 @@ public class StompManager {
     private volatile boolean disconnecting = false;
     public void onStompDied(StompDiedEvent event) {
         if (disconnecting) return;
-        logger.info("Stomp Connection closed, trying to reconnect - {} - {}", event.reason, event.code);
+        logger.info("Stomp Connection closed, trying to reconnect in - {} - {} - {}", event.reason, event.code, 2 << exponentialBackoffCoefficient);
         connectStomp();
     }
 
     public void connectStomp() {
         ex.schedule(() -> {
+            if (exponentialBackoffCoefficient < 5)
+                exponentialBackoffCoefficient++;
             if (AuthManager.getInstance().getToken() == null) return;
             try {
-                if (stompConnection != null) {
-                    stompConnection.disconnect();
+                try {
+                    if (stompConnection != null
+                            && stompConnection.getStompClientStatus() == StompClient.StompClientStatus.CONNECTED) {
+                        stompConnection.disconnect();
+                    }
+                } catch (Exception e) {
+                    logger.error("Failed to reconnect (disconnection) to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
                 }
                 stompConnection = new StompClient(new URI(StompManager.STOMP_URL), AuthManager.getInstance().getWorkingTokenOrNull());
                 MinecraftForge.EVENT_BUS.post(new StompConnectedEvent(stompConnection));
             } catch (Exception e) {
                 logger.error("Failed to connect to Stomp with message: {}", String.valueOf(Throwables.getRootCause(e)));
             }
-        }, 5L, TimeUnit.SECONDS);
+        }, 1L * (2L << exponentialBackoffCoefficient), TimeUnit.SECONDS);
     }
 
     public void cleanup() {
