@@ -17,9 +17,14 @@
   -->
 <padding top="5" left="0" right="0">
     <row>
-        <Text bind:text="key" color="#FFFFFFFF" size="8"/>
-        <Text bind:text="timestamp" color="#FFCCCCCC" size="8"/>
-        <flexible><size height="0"/></flexible>
+        <flexible>
+            <align vAlign="LEFT">
+                <row>
+                    <Text bind:text="key" color="#FFFFFFFF" size="8"/>
+                    <Text bind:text="timestamp" color="#FFCCCCCC" size="8"/>
+                </row>
+            </align>
+        </flexible>
         <size height="12" width="50">
             <RoundButton text="Download" on:click="download"/>
         </size>

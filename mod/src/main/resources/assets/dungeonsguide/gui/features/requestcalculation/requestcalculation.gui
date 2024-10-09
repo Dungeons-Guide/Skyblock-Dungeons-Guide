@@ -40,8 +40,11 @@
                         <row>
                             <Text text="Your tokens: " color="#FFFFFFFF" size="8"/>
                             <Text bind:text="token" color="#FFFFFFFF" size="8"/>
-                            <flexible><size height="0"/></flexible>
-                            <Text text="1 token allows you to request 1 pathfind with zip file" color="#FFCCCCCC" size="8"/>
+                            <flexible>
+                                <align vAlign="END">
+                                    <Text text="1 token allows you to request 1 pathfind with zip file" color="#FFCCCCCC" size="8"/>
+                                </align>
+                            </flexible>
                             <size width="5"/>
                             <size height="20" width="100">
                                 <RoundButton text="Purchase Tokens" on:click="purchaseToken"/>
