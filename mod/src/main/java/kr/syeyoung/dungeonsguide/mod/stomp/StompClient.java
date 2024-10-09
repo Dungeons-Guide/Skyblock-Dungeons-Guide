@@ -109,7 +109,6 @@ public class StompClient extends WebSocketClient {
                     stompClientStatus = StompClientStatus.CONNECTED;
 
                     String serverHeartbeat = payload.headers().get("heart-beat");
-                    System.out.println(serverHeartbeat);
                     if (serverHeartbeat != null) {
                         String[] hearbeatsettings = serverHeartbeat.split(",");
                         int serverHeartbeatReceiveInterval = Integer.parseInt(hearbeatsettings[1]);
