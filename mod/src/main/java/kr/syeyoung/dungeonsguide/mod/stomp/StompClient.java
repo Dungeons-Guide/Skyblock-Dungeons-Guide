@@ -47,6 +47,7 @@ public class StompClient extends WebSocketClient {
         addHeader("Authorization", token);
         addHeader("User-Agent", "DungeonsGuide/"+ VersionInfo.VERSION);
 
+        setConnectionLostTimeout(5);
         logger.info("connecting websocket");
         if (!connectBlocking()) {
             throw new FailedWebSocketConnection("Cant connect to ws");
@@ -55,6 +56,8 @@ public class StompClient extends WebSocketClient {
         logger.info("connected, stomp handshake");
         while(this.stompClientStatus == StompClientStatus.CONNECTING);
         logger.info("fully connected");
+
+        StompManager.getInstance().resetExponentialBackoff();
     }
 
 
@@ -70,11 +73,16 @@ public class StompClient extends WebSocketClient {
             new ThreadFactoryBuilder()
                     .setThreadFactory(DungeonsGuide.THREAD_FACTORY)
                     .setNameFormat("DG-StompClient-%d").build()));
+
+
+    private final int clientHeartbeatSendInterval = 30000;
+    private final int clientHeartbeatReceiveInterval = 30000;
+
     @Override
     public void onOpen(ServerHandshake handshakeData) {
         send(new StompPayload().method(StompHeader.CONNECT)
                 .header("accept-version","1.2")
-                .header("heart-beat", "30000,30000")
+                .header("heart-beat", clientHeartbeatSendInterval+","+clientHeartbeatReceiveInterval)
                 .header("host",uri.getHost()).getBuilt()
         );
     }
@@ -82,6 +90,7 @@ public class StompClient extends WebSocketClient {
     @Override
     public void onMessage(String message) {
         try {
+            if (message.equals("\n")) return;
             StompPayload payload = StompPayload.parse(message);
 
             switch (payload.method()){
@@ -101,8 +110,17 @@ public class StompClient extends WebSocketClient {
 
                     String serverHeartbeat = payload.headers().get("heart-beat");
                     if (serverHeartbeat != null) {
-                        int heartbeatMS = 30;
-                        this.heartbeat = ex.scheduleAtFixedRate(() -> send("\n"), heartbeatMS-1, heartbeatMS-1, TimeUnit.SECONDS);
+                        String[] hearbeatsettings = serverHeartbeat.split(",");
+                        int serverHeartbeatReceiveInterval = Integer.parseInt(hearbeatsettings[1]);
+
+                        int targetHeartbeatInterval = Integer.max(serverHeartbeatReceiveInterval, clientHeartbeatSendInterval); // umm spec says so lol
+
+                        int serverHeartbeatSendInterval = Integer.parseInt(hearbeatsettings[0]);
+                        int targetHeartbeatReceiveInterval = Integer.max(serverHeartbeatSendInterval, clientHeartbeatReceiveInterval);
+
+                        // this doesn't work as intended but it is good enough lol
+
+                        this.heartbeat = ex.scheduleAtFixedRate(() -> send("\n"), targetHeartbeatInterval, targetHeartbeatInterval, TimeUnit.MILLISECONDS);
                     }
 
                     break;
