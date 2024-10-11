@@ -77,6 +77,7 @@ public class FeatureDungeonTotalCrypts extends TextHUDFeature {
         }
         int cnt = 0;
         for (DungeonRoom dungeonRoom : parser.getDungeonRoomList()) {
+            if (dungeonRoom.getDungeonRoomInfo() == null) continue;
             for (DungeonMechanic value : dungeonRoom.getMechanics().values()) {
                 if (value instanceof DungeonTomb) {
                     cnt ++;
