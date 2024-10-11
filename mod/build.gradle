@@ -63,9 +63,7 @@ dependencies {
     shadowImpl 'com.github.Dungeons-Guide:DiscordIPC:d403df89'
     shadowImpl "com.twelvemonkeys.imageio:imageio-bmp:3.7.0"
 
-
     compileOnly "org.projectlombok:lombok:1.18.20"
-    compileOnly files("../jars/Hychat-1.12.1-BETA.jar")
     annotationProcessor "org.projectlombok:lombok:1.18.16"
 
     testCompileOnly "org.projectlombok:lombok:1.18.20"
